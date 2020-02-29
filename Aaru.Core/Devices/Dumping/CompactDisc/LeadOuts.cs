@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
 
@@ -295,8 +295,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             for(int b = 0; b < _maximumReadable; b++)
                             {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
-                                           sectorSize);
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }

@@ -65,11 +65,11 @@ namespace Aaru.DiscImages
 
             switch(extension)
             {
-                case".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
+                case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
                     imageInfo.SectorSize = 2048;
 
                     break;
-                case".d81" when imageFilter.GetDataForkLength() == 819200:
+                case ".d81" when imageFilter.GetDataForkLength() == 819200:
                     imageInfo.SectorSize = 256;
 
                     break;
@@ -326,7 +326,7 @@ namespace Aaru.DiscImages
                     filter.GetDataForkStream().Read(data, 0, data.Length);
                     mediaTags.Add(sidecar.tag, data);
                 }
-                catch(IOException) { }
+                catch(IOException) {}
 
             // If there are INQUIRY and IDENTIFY tags, it's ATAPI
             if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
@@ -1001,7 +1001,7 @@ namespace Aaru.DiscImages
             // It's ATA, check tags
             if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
             {
-                Identify.IdentifyDevice? ataId = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
+                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
 
                 if(ataId.HasValue)
                 {

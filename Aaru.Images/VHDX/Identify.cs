@@ -43,7 +43,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());

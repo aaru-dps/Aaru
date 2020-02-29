@@ -35,8 +35,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using Aaru.Gui.Dialogs;
-using Aaru.Gui.Panels;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -46,8 +44,9 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media.Info;
 using Aaru.Database;
-using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Aaru.Gui.Dialogs;
+using Aaru.Gui.Panels;
 using Aaru.Settings;
 using Eto.Drawing;
 using Eto.Forms;
@@ -107,16 +106,13 @@ namespace Aaru.Gui.Forms
                                GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.inode-directory.png"));
 
             devicesIcon =
-                new Bitmap(ResourceHandler.
-                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.computer.png"));
+                new Bitmap(ResourceHandler.GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.computer.png"));
 
             hardDiskIcon =
-                new Bitmap(ResourceHandler.
-                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-harddisk.png"));
+                new Bitmap(ResourceHandler.GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-harddisk.png"));
 
             opticalIcon =
-                new Bitmap(ResourceHandler.
-                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-optical.png"));
+                new Bitmap(ResourceHandler.GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-optical.png"));
 
             usbIcon =
                 new Bitmap(ResourceHandler.
@@ -131,12 +127,10 @@ namespace Aaru.Gui.Forms
                                GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-flash-sd-mmc.png"));
 
             tapeIcon =
-                new Bitmap(ResourceHandler.
-                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-tape.png"));
+                new Bitmap(ResourceHandler.GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-tape.png"));
 
             ejectIcon =
-                new Bitmap(ResourceHandler.
-                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-eject.png"));
+                new Bitmap(ResourceHandler.GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-eject.png"));
 
             imagesRoot = new TreeGridItem
             {
@@ -305,7 +299,7 @@ namespace Aaru.Gui.Forms
         {
             base.OnLoad(e);
 
-            if(Aaru.Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new dlgSettings(true).ShowModal(this);
         }
 
@@ -425,7 +419,7 @@ namespace Aaru.Gui.Forms
 
                                 AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                                Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
+                                Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                                 if(idPlugins.Count == 0)
                                     AaruConsole.WriteLine("Filesystem not identified");
@@ -487,7 +481,7 @@ namespace Aaru.Gui.Forms
                             Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                         };
 
-                        Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                         if(idPlugins.Count == 0)
                             AaruConsole.WriteLine("Filesystem not identified");
@@ -608,8 +602,8 @@ namespace Aaru.Gui.Forms
                                                     ThenBy(d => d.Model))
                 {
                     AaruConsole.DebugWriteLine("Main window",
-                                              "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
-                                              device.Model, device.Vendor, device.Bus, device.Path);
+                                               "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
+                                               device.Model, device.Vendor, device.Bus, device.Path);
 
                     var devItem = new TreeGridItem
                     {
@@ -696,7 +690,7 @@ namespace Aaru.Gui.Forms
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&
@@ -885,8 +879,7 @@ namespace Aaru.Gui.Forms
                     {
                         // TODO: SVG
                         Stream logo =
-                            ResourceHandler.
-                                GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
+                            ResourceHandler.GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
 
                         deviceItem.Children.Add(new TreeGridItem
                         {

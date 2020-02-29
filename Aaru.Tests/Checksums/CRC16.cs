@@ -36,26 +36,34 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Crc16
     {
-        static readonly byte[] ExpectedEmpty  = {0x00, 0x00};
-        static readonly byte[] ExpectedRandom = {0x2d, 0x6d};
-
-        [Test]
-        public void Crc16EmptyFile()
+        static readonly byte[] ExpectedEmpty =
         {
-            byte[] result = Crc16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
-            Assert.AreEqual(ExpectedEmpty, result);
-        }
+            0x00, 0x00
+        };
+        static readonly byte[] ExpectedRandom =
+        {
+            0x2d, 0x6d
+        };
 
         [Test]
         public void Crc16EmptyData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            Crc16Context.Data(data, out byte[] result);
+            CRC16CCITTContext.Data(data, out byte[] result);
+            Assert.AreEqual(ExpectedEmpty, result);
+        }
+
+        [Test]
+        public void Crc16EmptyFile()
+        {
+            byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"));
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
@@ -63,34 +71,38 @@ namespace Aaru.Tests.Checksums
         public void Crc16EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            IChecksum ctx = new Crc16Context();
+            IChecksum ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedEmpty, result);
         }
 
         [Test]
-        public void Crc16RandomFile()
+        public void Crc16RandomData()
         {
-            byte[] result = Crc16Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            byte[] data = new byte[1048576];
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
+            fs.Read(data, 0, 1048576);
+            fs.Close();
+            fs.Dispose();
+            CRC16CCITTContext.Data(data, out byte[] result);
             Assert.AreEqual(ExpectedRandom, result);
         }
 
         [Test]
-        public void Crc16RandomData()
+        public void Crc16RandomFile()
         {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            Crc16Context.Data(data, out byte[] result);
+            byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
             Assert.AreEqual(ExpectedRandom, result);
         }
 
@@ -98,12 +110,14 @@ namespace Aaru.Tests.Checksums
         public void Crc16RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
-            IChecksum ctx = new Crc16Context();
+            IChecksum ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
             Assert.AreEqual(ExpectedRandom, result);

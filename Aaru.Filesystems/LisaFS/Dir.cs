@@ -41,30 +41,30 @@ namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        /// <summary>
-        ///     Solves a symbolic link.
-        /// </summary>
+        /// <summary>Solves a symbolic link.</summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
+
             // LisaFS does not support symbolic links (afaik)
             return Errno.NotSupported;
         }
 
-        /// <summary>
-        ///     Lists contents from a directory.
-        /// </summary>
+        /// <summary>Lists contents from a directory.</summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
-            if(error != Errno.NoError) return error;
 
-            if(!isDir) return Errno.NotDirectory;
+            if(error != Errno.NoError)
+                return error;
+
+            if(!isDir)
+                return Errno.NotDirectory;
 
             /*List<CatalogEntry> catalog;
             error = ReadCatalog(fileId, out catalog);
@@ -86,6 +86,7 @@ namespace Aaru.Filesystems.LisaFS
             }
 
             contents.Sort();
+
             return Errno.NoError;
         }
 
@@ -93,27 +94,28 @@ namespace Aaru.Filesystems.LisaFS
         {
             // Do same trick as Mac OS X, replace filesystem '/' with '-',
             // as '-' is the path separator in Lisa OS
-            contents = (from entry in catalogCache
-                        where entry.parentID == dirId
+            contents = (from entry in catalogCache where entry.parentID == dirId
                         select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Reads, interprets and caches the Catalog File
-        /// </summary>
+        /// <summary>Reads, interprets and caches the Catalog File</summary>
         Errno ReadCatalog()
         {
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             catalogCache = new List<CatalogEntry>();
 
             // Do differently for V1 and V2
-            if(mddf.fsversion == LISA_V2 || mddf.fsversion == LISA_V1)
+            if(mddf.fsversion == LISA_V2 ||
+               mddf.fsversion == LISA_V1)
             {
                 Errno error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
-                if(error != Errno.NoError) return error;
+
+                if(error != Errno.NoError)
+                    return error;
 
                 int                  offset    = 0;
                 List<CatalogEntryV2> catalogV2 = new List<CatalogEntryV2>();
@@ -121,23 +123,25 @@ namespace Aaru.Filesystems.LisaFS
                 // For each entry on the catalog
                 while(offset + 54 < buf.Length)
                 {
-                    CatalogEntryV2 entV2 = new CatalogEntryV2
+                    var entV2 = new CatalogEntryV2
                     {
-                        filenameLen = buf[offset],
-                        filename    = new byte[E_NAME],
-                        unknown1    = buf[offset                                + 0x21],
-                        fileType    = buf[offset                                + 0x22],
-                        unknown2    = buf[offset                                + 0x23],
-                        fileID      = BigEndianBitConverter.ToInt16(buf, offset + 0x24),
+                        filenameLen = buf[offset], filename = new byte[E_NAME], unknown1 = buf[offset + 0x21],
+                        fileType    = buf[offset                                                      + 0x22],
+                        unknown2    = buf[offset                                                      + 0x23],
+                        fileID      = BigEndianBitConverter.ToInt16(buf, offset                       + 0x24),
                         unknown3    = new byte[16]
                     };
+
                     Array.Copy(buf, offset + 0x01, entV2.filename, 0, E_NAME);
                     Array.Copy(buf, offset + 0x26, entV2.unknown3, 0, 16);
 
                     offset += 54;
 
                     // Check that the entry is correct, not empty or garbage
-                    if(entV2.filenameLen != 0 && entV2.filenameLen <= E_NAME && entV2.fileType != 0 && entV2.fileID > 0)
+                    if(entV2.filenameLen != 0      &&
+                       entV2.filenameLen <= E_NAME &&
+                       entV2.fileType    != 0      &&
+                       entV2.fileID      > 0)
                         catalogV2.Add(entV2);
                 }
 
@@ -145,17 +149,16 @@ namespace Aaru.Filesystems.LisaFS
                 foreach(CatalogEntryV2 entV2 in catalogV2)
                 {
                     error = ReadExtentsFile(entV2.fileID, out ExtentFile ext);
-                    if(error != Errno.NoError) continue;
 
-                    CatalogEntry entV3 = new CatalogEntry
+                    if(error != Errno.NoError)
+                        continue;
+
+                    var entV3 = new CatalogEntry
                     {
-                        fileID   = entV2.fileID,
-                        filename = new byte[32],
-                        fileType = entV2.fileType,
-                        length   = (int)srecords[entV2.fileID].filesize,
-                        dtc      = ext.dtc,
-                        dtm      = ext.dtm
+                        fileID = entV2.fileID, filename                    = new byte[32], fileType = entV2.fileType,
+                        length = (int)srecords[entV2.fileID].filesize, dtc = ext.dtc, dtm           = ext.dtm
                     };
+
                     Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
 
                     catalogCache.Add(entV3);
@@ -173,14 +176,18 @@ namespace Aaru.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
 
-                if(catTag.FileId != FILEID_CATALOG || catTag.RelPage != 0) continue;
+                if(catTag.FileId  != FILEID_CATALOG ||
+                   catTag.RelPage != 0)
+                    continue;
 
                 firstCatalogBlock = device.ReadSectors(i, 4);
+
                 break;
             }
 
             // Catalog not found
-            if(firstCatalogBlock == null) return Errno.NoSuchFile;
+            if(firstCatalogBlock == null)
+                return Errno.NoSuchFile;
 
             ulong prevCatalogPointer;
             prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -191,7 +198,8 @@ namespace Aaru.Filesystems.LisaFS
                 DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
                           out LisaTag.PriamTag prevTag);
 
-                if(prevTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
+                if(prevTag.FileId != FILEID_CATALOG)
+                    return Errno.InvalidArgument;
 
                 firstCatalogBlock  = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
@@ -200,7 +208,10 @@ namespace Aaru.Filesystems.LisaFS
             ulong nextCatalogPointer;
             nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
-            List<byte[]> catalogBlocks = new List<byte[]> {firstCatalogBlock};
+            List<byte[]> catalogBlocks = new List<byte[]>
+            {
+                firstCatalogBlock
+            };
 
             // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
@@ -208,7 +219,8 @@ namespace Aaru.Filesystems.LisaFS
                 DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
                           out LisaTag.PriamTag nextTag);
 
-                if(nextTag.FileId != FILEID_CATALOG) return Errno.InvalidArgument;
+                if(nextTag.FileId != FILEID_CATALOG)
+                    return Errno.InvalidArgument;
 
                 byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
@@ -222,33 +234,46 @@ namespace Aaru.Filesystems.LisaFS
 
                 // Traverse all entries
                 while(offset + 64 <= buf.Length)
+
                     // Catalog block header
                     if(buf[offset + 0x24] == 0x08)
                         offset += 78;
+
                     // Maybe just garbage? Found in more than 1 disk
-                    else if(buf[offset + 0x24] == 0x7C) offset += 50;
+                    else if(buf[offset + 0x24] == 0x7C)
+                        offset += 50;
+
                     // Apparently reserved to indicate end of catalog?
-                    else if(buf[offset + 0x24] == 0xFF) break;
+                    else if(buf[offset + 0x24] == 0xFF)
+                        break;
+
                     // Normal entry
-                    else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
+                    else if(buf[offset + 0x24] == 0x03 &&
+                            buf[offset]        == 0x24)
                     {
-                        CatalogEntry entry = new CatalogEntry
+                        var entry = new CatalogEntry
                         {
                             marker     = buf[offset],
                             parentID   = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
                             filename   = new byte[E_NAME],
-                            terminator = buf[offset                                 + 0x23],
-                            fileType   = buf[offset                                 + 0x24],
-                            unknown    = buf[offset                                 + 0x25],
-                            fileID     = BigEndianBitConverter.ToInt16(buf, offset  + 0x26),
-                            dtc        = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
-                            dtm        = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
-                            length     = BigEndianBitConverter.ToInt32(buf, offset  + 0x30),
-                            wasted     = BigEndianBitConverter.ToInt32(buf, offset  + 0x34),
-                            tail       = new byte[8]
+                            terminator = buf[offset + 0x23],
+                            fileType   = buf[offset + 0x24],
+                            unknown =
+                                buf[offset + 0x25],
+                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
+                            dtc =
+                                BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm =
+                                BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length =
+                                BigEndianBitConverter.ToInt32(buf, offset + 0x30),
+                            wasted =
+                                BigEndianBitConverter.ToInt32(buf, offset + 0x34),
+                            tail = new byte[8]
                         };
+
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                        Array.Copy(buf, offset + 0x38, entry.tail,     0, 8);
+                        Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
                         if(ReadExtentsFile(entry.fileID, out _) == Errno.NoError)
                             if(!fileSizeCache.ContainsKey(entry.fileID))
@@ -259,24 +284,29 @@ namespace Aaru.Filesystems.LisaFS
 
                         offset += 64;
                     }
+
                     // Subdirectory entry
-                    else if(buf[offset + 0x24] == 0x01 && buf[offset] == 0x24)
+                    else if(buf[offset + 0x24] == 0x01 &&
+                            buf[offset]        == 0x24)
                     {
-                        CatalogEntry entry = new CatalogEntry
+                        var entry = new CatalogEntry
                         {
                             marker     = buf[offset],
                             parentID   = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
                             filename   = new byte[E_NAME],
-                            terminator = buf[offset                                 + 0x23],
-                            fileType   = buf[offset                                 + 0x24],
-                            unknown    = buf[offset                                 + 0x25],
-                            fileID     = BigEndianBitConverter.ToInt16(buf, offset  + 0x26),
-                            dtc        = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
-                            dtm        = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
-                            length     = 0,
-                            wasted     = 0,
-                            tail       = null
+                            terminator = buf[offset + 0x23],
+                            fileType   = buf[offset + 0x24],
+                            unknown =
+                                buf[offset + 0x25],
+                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
+                            dtc =
+                                BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm =
+                                BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length = 0, wasted = 0,
+                            tail   = null
                         };
+
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
 
                         if(!directoryDtcCache.ContainsKey(entry.fileID))
@@ -286,7 +316,8 @@ namespace Aaru.Filesystems.LisaFS
 
                         offset += 48;
                     }
-                    else break;
+                    else
+                        break;
             }
 
             return Errno.NoError;
@@ -296,20 +327,14 @@ namespace Aaru.Filesystems.LisaFS
         {
             stat = null;
 
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(),
-                Inode      = FILEID_CATALOG,
-                Mode       = 0x16D,
-                Links      = 0,
-                UID        = 0,
-                GID        = 0,
-                DeviceNo   = 0,
-                Length     = 0,
-                BlockSize  = mddf.datasize,
-                Blocks     = 0
+                Attributes = new FileAttributes(), Inode = FILEID_CATALOG, Mode = 0x16D, Links = 0,
+                UID        = 0, GID                      = 0, DeviceNo          = 0, Length    = 0,
+                BlockSize  = mddf.datasize, Blocks       = 0
             };
 
             directoryDtcCache.TryGetValue(dirId, out DateTime tmp);

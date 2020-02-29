@@ -44,7 +44,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());

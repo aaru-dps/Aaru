@@ -47,12 +47,13 @@ namespace Aaru.DiscImages.CopyTape
         public bool Open(IFilter imageFilter)
         {
             List<long> blockPositions = new List<long>();
-            Regex      partialBlockRx = new Regex(PartialBlockRegex);
-            Regex      blockRx        = new Regex(BlockRegex);
-            Regex      filemarkRx     = new Regex(FilemarkRegex);
-            Regex      eotRx          = new Regex(EndOfTapeRegex);
+            var        partialBlockRx = new Regex(PartialBlockRegex);
+            var        blockRx        = new Regex(BlockRegex);
+            var        filemarkRx     = new Regex(FilemarkRegex);
+            var        eotRx          = new Regex(EndOfTapeRegex);
 
-            if(imageFilter.GetDataForkLength() <= 16) return false;
+            if(imageFilter.GetDataForkLength() <= 16)
+                return false;
 
             imageStream          = imageFilter.GetDataForkStream();
             imageStream.Position = 0;
@@ -75,23 +76,24 @@ namespace Aaru.DiscImages.CopyTape
                 Match filemarkMt     = filemarkRx.Match(mark);
                 Match eotMt          = eotRx.Match(mark);
 
-                if(eotMt.Success) break;
+                if(eotMt.Success)
+                    break;
 
                 if(filemarkMt.Success)
                 {
                     Files.Add(new TapeFile
                     {
-                        File       = currentFile,
-                        FirstBlock = currentFileStart,
-                        LastBlock  = currentBlock - 1,
-                        Partition  = 0
+                        File = currentFile, FirstBlock = currentFileStart, LastBlock = currentBlock - 1, Partition = 0
                     });
+
                     inFile = false;
                     currentFile++;
+
                     continue;
                 }
 
-                if(!partialBlockMt.Success) throw new ArgumentException("Found unhandled header, cannot open.");
+                if(!partialBlockMt.Success)
+                    throw new ArgumentException("Found unhandled header, cannot open.");
 
                 imageStream.Position -= 9;
 
@@ -105,7 +107,8 @@ namespace Aaru.DiscImages.CopyTape
                 mark = Encoding.ASCII.GetString(blockHeader);
                 Match blockMt = blockRx.Match(mark);
 
-                if(!blockMt.Success) throw new ArgumentException("Cannot decode block header, cannot open.");
+                if(!blockMt.Success)
+                    throw new ArgumentException("Cannot decode block header, cannot open.");
 
                 string blkSize = blockMt.Groups["blockSize"].Value;
 
@@ -115,26 +118,33 @@ namespace Aaru.DiscImages.CopyTape
                 if(!uint.TryParse(blkSize, out uint blockSize))
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
-                if(blockSize == 0 || blockSize + 17 > imageFilter.GetDataForkLength())
+                if(blockSize      == 0 ||
+                   blockSize + 17 > imageFilter.GetDataForkLength())
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
                 imageStream.Position += blockSize;
 
                 int newLine = imageStream.ReadByte();
 
-                if(newLine != 0x0A) throw new ArgumentException("Cannot decode block header, cannot open.");
+                if(newLine != 0x0A)
+                    throw new ArgumentException("Cannot decode block header, cannot open.");
 
                 blockPositions.Add(imageStream.Position - blockSize - 17);
                 currentBlock++;
                 imageInfo.ImageSize += blockSize;
-                if(imageInfo.SectorSize < blockSize) imageInfo.SectorSize = blockSize;
+
+                if(imageInfo.SectorSize < blockSize)
+                    imageInfo.SectorSize = blockSize;
             }
 
             blockPositionCache = blockPositions.ToArray();
 
             TapePartitions = new List<TapePartition>
             {
-                new TapePartition {FirstBlock = 0, LastBlock = currentBlock - 1, Number = 0}
+                new TapePartition
+                {
+                    FirstBlock = 0, LastBlock = currentBlock - 1, Number = 0
+                }
             };
 
             imageInfo.Sectors              = (ulong)blockPositionCache.LongLength;
@@ -157,13 +167,14 @@ namespace Aaru.DiscImages.CopyTape
             imageStream.Position = blockPositionCache[sectorAddress];
 
             byte[] blockHeader = new byte[16];
-            Regex  blockRx     = new Regex(BlockRegex);
+            var    blockRx     = new Regex(BlockRegex);
 
             imageStream.Read(blockHeader, 0, 16);
             string mark    = Encoding.ASCII.GetString(blockHeader);
             Match  blockMt = blockRx.Match(mark);
 
-            if(!blockMt.Success) throw new ArgumentException("Cannot decode block header, cannot read.");
+            if(!blockMt.Success)
+                throw new ArgumentException("Cannot decode block header, cannot read.");
 
             string blkSize = blockMt.Groups["blockSize"].Value;
 
@@ -173,21 +184,23 @@ namespace Aaru.DiscImages.CopyTape
             if(!uint.TryParse(blkSize, out uint blockSize))
                 throw new ArgumentException("Cannot decode block header, cannot read.");
 
-            if(blockSize == 0 || blockSize + 17 > imageStream.Length)
+            if(blockSize      == 0 ||
+               blockSize + 17 > imageStream.Length)
                 throw new ArgumentException("Cannot decode block header, cannot read.");
 
             byte[] data = new byte[blockSize];
 
             imageStream.Read(data, 0, (int)blockSize);
 
-            if(imageStream.ReadByte() != 0x0A) throw new ArgumentException("Cannot decode block header, cannot read.");
+            if(imageStream.ReadByte() != 0x0A)
+                throw new ArgumentException("Cannot decode block header, cannot read.");
 
             return data;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            MemoryStream dataMs = new MemoryStream();
+            var dataMs = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {

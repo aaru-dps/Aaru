@@ -43,46 +43,46 @@ namespace Aaru.DiscImages
         struct Bw5Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] signature;
+            public readonly byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] unknown1;
-            public ProfileNumber profile;
-            public ushort        sessions;
+            public readonly uint[] unknown1;
+            public readonly ProfileNumber profile;
+            public readonly ushort        sessions;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] unknown2;
+            public readonly uint[] unknown2;
             [MarshalAs(UnmanagedType.U1, SizeConst = 3)]
-            public bool mcnIsValid;
+            public readonly bool mcnIsValid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
-            public byte[] mcn;
-            public ushort unknown3;
+            public readonly byte[] mcn;
+            public readonly ushort unknown3;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public uint[] unknown4;
-            public ushort pmaLen;
-            public ushort atipLen;
-            public ushort cdtLen;
-            public ushort cdInfoLen;
-            public uint   bcaLen;
+            public readonly uint[] unknown4;
+            public readonly ushort pmaLen;
+            public readonly ushort atipLen;
+            public readonly ushort cdtLen;
+            public readonly ushort cdInfoLen;
+            public readonly uint   bcaLen;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] unknown5;
-            public uint dvdStrLen;
-            public uint dvdInfoLen;
+            public readonly uint[] unknown5;
+            public readonly uint dvdStrLen;
+            public readonly uint dvdInfoLen;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] unknown6;
+            public readonly byte[] unknown6;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] manufacturer;
+            public readonly byte[] manufacturer;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] product;
+            public readonly byte[] product;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] revision;
+            public readonly byte[] revision;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] vendor;
+            public readonly byte[] vendor;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volumeId;
-            public uint mode2ALen;
-            public uint unkBlkLen;
-            public uint dataLen;
-            public uint sessionsLen;
-            public uint dpmLen;
+            public readonly byte[] volumeId;
+            public readonly uint mode2ALen;
+            public readonly uint unkBlkLen;
+            public readonly uint dataLen;
+            public readonly uint sessionsLen;
+            public readonly uint dpmLen;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -107,36 +107,37 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Bw5TrackDescriptor
         {
-            public Bw5TrackType type;
+            public readonly Bw5TrackType type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] unknown1;
-            public uint               unknown2;
-            public Bw5TrackSubchannel subchannel;
-            public byte               unknown3;
-            public byte               ctl;
-            public byte               adr;
-            public byte               point;
-            public byte               tno;
-            public byte               min;
-            public byte               sec;
-            public byte               frame;
-            public byte               zero;
-            public byte               pmin;
-            public byte               psec;
-            public byte               pframe;
-            public byte               unknown5;
-            public uint               pregap;
+            public readonly byte[] unknown1;
+            public readonly uint               unknown2;
+            public readonly Bw5TrackSubchannel subchannel;
+            public readonly byte               unknown3;
+            public readonly byte               ctl;
+            public readonly byte               adr;
+            public readonly byte               point;
+            public readonly byte               tno;
+            public readonly byte               min;
+            public readonly byte               sec;
+            public readonly byte               frame;
+            public readonly byte               zero;
+            public readonly byte               pmin;
+            public readonly byte               psec;
+            public readonly byte               pframe;
+            public readonly byte               unknown5;
+            public readonly uint               pregap;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public uint[] unknown6;
-            public int startLba;
-            public int sectors;
+            public readonly uint[] unknown6;
+            public readonly int startLba;
+            public readonly int sectors;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] unknown7;
-            public uint   session;
-            public ushort unknown8;
+            public readonly uint[] unknown7;
+            public readonly uint   session;
+            public readonly ushort unknown8;
+
             // Seems to be only on non DVD track descriptors
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] unknown9;
+            public readonly uint[] unknown9;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

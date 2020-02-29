@@ -46,48 +46,54 @@ namespace Aaru.DiscImages
     public partial class Qed
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
             // TODO: Correct this calculation
-            if(sectors * sectorSize / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
+            if((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
             qHdr = new QedHeader
             {
-                magic           = QED_MAGIC,
-                cluster_size    = DEFAULT_CLUSTER_SIZE,
-                table_size      = DEFAULT_TABLE_SIZE,
-                header_size     = 1,
-                l1_table_offset = DEFAULT_CLUSTER_SIZE,
-                image_size      = sectors * sectorSize
+                magic       = QED_MAGIC, cluster_size = DEFAULT_CLUSTER_SIZE, table_size = DEFAULT_TABLE_SIZE,
+                header_size = 1, l1_table_offset      = DEFAULT_CLUSTER_SIZE, image_size = sectors * sectorSize
             };
 
-            clusterSectors = qHdr.cluster_size                   / 512;
-            tableSize      = qHdr.cluster_size * qHdr.table_size / 8;
+            clusterSectors = qHdr.cluster_size                     / 512;
+            tableSize      = (qHdr.cluster_size * qHdr.table_size) / 8;
 
             l1Table = new ulong[tableSize];
             l1Mask  = 0;
@@ -100,26 +106,31 @@ namespace Aaru.DiscImages
             {
                 l1Mask <<= 1;
 
-                if(c >= 64 - l1Shift) continue;
+                if(c >= 64 - l1Shift)
+                    continue;
 
                 l1Mask += 1;
                 c++;
             }
 
             sectorMask = 0;
-            for(int i = 0; i < clusterBits; i++) sectorMask = (sectorMask << 1) + 1;
 
-            byte[] empty = new byte[qHdr.l1_table_offset + tableSize * 8];
+            for(int i = 0; i < clusterBits; i++)
+                sectorMask = (sectorMask << 1) + 1;
+
+            byte[] empty = new byte[qHdr.l1_table_offset + (tableSize * 8)];
             writingStream.Write(empty, 0, empty.Length);
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -128,23 +139,27 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
             ulong byteAddress = sectorAddress * 512;
 
@@ -167,7 +182,7 @@ namespace Aaru.DiscImages
 
             ulong l2Off = (byteAddress & l2Mask) >> clusterBits;
 
-            writingStream.Seek((long)(l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
+            writingStream.Seek((long)(l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
 
             byte[] entry = new byte[8];
             writingStream.Read(entry, 0, 8);
@@ -178,7 +193,7 @@ namespace Aaru.DiscImages
                 offset = (ulong)writingStream.Length;
                 byte[] cluster = new byte[qHdr.cluster_size];
                 entry = BitConverter.GetBytes(offset);
-                writingStream.Seek((long)(l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
+                writingStream.Seek((long)(l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
                 writingStream.Write(entry, 0, 8);
                 writingStream.Seek(0, SeekOrigin.End);
                 writingStream.Write(cluster, 0, cluster.Length);
@@ -188,6 +203,7 @@ namespace Aaru.DiscImages
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -197,44 +213,53 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
             for(uint i = 0; i < length; i++)
             {
                 byte[] tmp = new byte[imageInfo.SectorSize];
                 Array.Copy(data, i * imageInfo.SectorSize, tmp, 0, imageInfo.SectorSize);
-                if(!WriteSector(tmp, sectorAddress + i)) return false;
+
+                if(!WriteSector(tmp, sectorAddress + i))
+                    return false;
             }
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -243,6 +268,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -261,6 +287,7 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -271,12 +298,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 

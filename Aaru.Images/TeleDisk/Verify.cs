@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 
         public bool? VerifySector(ulong sectorAddress) => !sectorsWhereCrcHasFailed.Contains(sectorAddress);
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
             failingLbas = new List<ulong>();

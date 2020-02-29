@@ -34,6 +34,9 @@ namespace Aaru.DiscImages
 {
     public partial class RsIde
     {
-        readonly byte[] signature = {0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A};
+        readonly byte[] signature =
+        {
+            0x52, 0x53, 0x2D, 0x49, 0x44, 0x45, 0x1A
+        };
     }
 }

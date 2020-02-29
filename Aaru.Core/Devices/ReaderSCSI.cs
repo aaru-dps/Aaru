@@ -376,11 +376,11 @@ namespace Aaru.Core.Devices
                 {
                     switch(dev.Manufacturer)
                     {
-                        case"HL-DT-ST":
+                        case "HL-DT-ST":
                             hldtstReadRaw = !dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
 
                             break;
-                        case"PLEXTOR":
+                        case "PLEXTOR":
                             plextorReadRaw = !dev.PlextorReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
 
                             break;

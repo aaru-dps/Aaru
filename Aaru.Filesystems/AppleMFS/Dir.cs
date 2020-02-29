@@ -132,13 +132,13 @@ namespace Aaru.Filesystems.AppleMFS
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
 
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}",
-                                              DateHandlers.MacToDateTime(entry.flCrDat));
+                                               DateHandlers.MacToDateTime(entry.flCrDat));
 
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
-                                              DateHandlers.MacToDateTime(entry.flMdDat));
+                                               DateHandlers.MacToDateTime(entry.flMdDat));
 
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
-                                              StringHandlers.PascalToString(entry.flNam, Encoding));
+                                               StringHandlers.PascalToString(entry.flNam, Encoding));
                 }
 
                 offset += 50 + entry.flNam.Length;

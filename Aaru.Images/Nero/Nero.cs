@@ -43,38 +43,40 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-    [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
+    [SuppressMessage("ReSharper", "NotAccessedField.Local"),
+     SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public partial class Nero : IOpticalMediaImage
     {
-        bool                        imageNewFormat;
-        Stream                      imageStream;
-        ImageInfo                   imageInfo;
-        NeroCdText                  neroCdtxt;
-        NeroV1Cuesheet              neroCuesheetV1;
-        NeroV2Cuesheet              neroCuesheetV2;
-        NeroV1Dao                   neroDaov1;
-        NeroV2Dao                   neroDaov2;
-        NeroDiscInformation         neroDiscInfo;
-        IFilter                     neroFilter;
-        NeroMediaType               neroMediaTyp;
-        NeroReloChunk               neroRelo;
-        Dictionary<ushort, uint>    neroSessions;
-        NeroV1Tao                   neroTaov1;
-        NeroV2Tao                   neroTaov2;
-        NeroTocChunk                neroToc;
-        Dictionary<uint, NeroTrack> neroTracks;
-        Dictionary<uint, ulong>     offsetmap;
-        Dictionary<uint, byte[]>    trackIsrCs;
-        byte[]                      upc;
+        bool                                 imageNewFormat;
+        Stream                               imageStream;
+        ImageInfo                            imageInfo;
+        NeroCdText                           neroCdtxt;
+        NeroV1Cuesheet                       neroCuesheetV1;
+        NeroV2Cuesheet                       neroCuesheetV2;
+        NeroV1Dao                            neroDaov1;
+        NeroV2Dao                            neroDaov2;
+        NeroDiscInformation                  neroDiscInfo;
+        IFilter                              neroFilter;
+        NeroMediaType                        neroMediaTyp;
+        NeroReloChunk                        neroRelo;
+        readonly Dictionary<ushort, uint>    neroSessions;
+        NeroV1Tao                            neroTaov1;
+        NeroV2Tao                            neroTaov2;
+        NeroTocChunk                         neroToc;
+        readonly Dictionary<uint, NeroTrack> neroTracks;
+        readonly Dictionary<uint, ulong>     offsetmap;
+        Dictionary<uint, byte[]>             trackIsrCs;
+        byte[]                               upc;
 
         public Nero()
         {
             imageNewFormat = false;
+
             imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>()
             };
+
             neroSessions = new Dictionary<ushort, uint>();
             neroTracks   = new Dictionary<uint, NeroTrack>();
             offsetmap    = new Dictionary<uint, ulong>();

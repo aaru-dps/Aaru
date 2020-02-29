@@ -48,13 +48,14 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2 + 2 * 82);
+            byte[] header = new byte[2 + (2 * 82)];
+            stream.Read(header, 0, 2 + (2 * 82));
 
             HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
+
             AaruConsole.DebugWriteLine("HDCP plugin",
-                                      "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
-                                      fheader.lastCylinder + 1, fheader.sectorsPerTrack);
+                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
+                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
             imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
             imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
@@ -68,12 +69,13 @@ namespace Aaru.DiscImages
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2,
                                                          (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
                                                          false));
 
             // the start offset of the track data
-            long currentOffset = 2 + 2 * 82;
+            long currentOffset = 2 + (2 * 82);
 
             // build table of track offsets
             for(int i = 0; i < imageInfo.Cylinders * 2; i++)
@@ -82,30 +84,36 @@ namespace Aaru.DiscImages
                 else
                 {
                     // track is present, read the block header
-                    if(currentOffset + 3 >= stream.Length) return false;
+                    if(currentOffset + 3 >= stream.Length)
+                        return false;
 
                     byte[] blkHeader = new byte[2];
                     stream.Read(blkHeader, 0, 2);
                     short blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                     // assume block sizes are positive
-                    if(blkLength < 0) return false;
+                    if(blkLength < 0)
+                        return false;
 
-                    AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
-                                              blkLength);
+                    AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i,
+                                               currentOffset, blkLength);
+
                     trackOffset[i] = currentOffset;
 
                     currentOffset += 2 + blkLength;
+
                     // skip the block data
                     stream.Seek(blkLength, SeekOrigin.Current);
                 }
 
             // ensure that the last track is present completely
-            if(currentOffset > stream.Length) return false;
+            if(currentOffset > stream.Length)
+                return false;
 
             // save some variables for later use
             fileHeader      = fheader;
             hdcpImageFilter = imageFilter;
+
             return true;
         }
 
@@ -121,11 +129,14 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
             byte[] result = new byte[imageInfo.SectorSize];
-            if(trackOffset[trackNum] == -1) Array.Clear(result, 0, (int)imageInfo.SectorSize);
+
+            if(trackOffset[trackNum] == -1)
+                Array.Clear(result, 0, (int)imageInfo.SectorSize);
             else
             {
                 // track is present in file, make sure it has been loaded
-                if(!trackCache.ContainsKey(trackNum)) ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
+                if(!trackCache.ContainsKey(trackNum))
+                    ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
 
                 Array.Copy(trackCache[trackNum], sectorOffset * imageInfo.SectorSize, result, 0, imageInfo.SectorSize);
             }

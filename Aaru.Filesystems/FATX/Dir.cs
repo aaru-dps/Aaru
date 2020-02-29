@@ -43,11 +43,15 @@ namespace Aaru.Filesystems.FATX
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(string.IsNullOrWhiteSpace(path) || path == "/")
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(string.IsNullOrWhiteSpace(path) ||
+               path == "/")
             {
                 contents = rootDirectory.Keys.ToList();
+
                 return Errno.NoError;
             }
 
@@ -56,17 +60,23 @@ namespace Aaru.Filesystems.FATX
             if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
+
                 return Errno.NoError;
             }
 
-            string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pieces = cutPath.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DirectoryEntry> entry =
                 rootDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[0]);
 
-            if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key))
+                return Errno.NoSuchFile;
 
-            if(!entry.Value.attributes.HasFlag(Attributes.Directory)) return Errno.NotDirectory;
+            if(!entry.Value.attributes.HasFlag(Attributes.Directory))
+                return Errno.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -76,49 +86,60 @@ namespace Aaru.Filesystems.FATX
             {
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[p]);
 
-                if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+                if(string.IsNullOrEmpty(entry.Key))
+                    return Errno.NoSuchFile;
 
-                if(!entry.Value.attributes.HasFlag(Attributes.Directory)) return Errno.NotDirectory;
+                if(!entry.Value.attributes.HasFlag(Attributes.Directory))
+                    return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.firstCluster;
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
+                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                    continue;
 
                 uint[] clusters = GetClusters(currentCluster);
 
-                if(clusters is null) return Errno.InvalidArgument;
+                if(clusters is null)
+                    return Errno.InvalidArgument;
 
                 byte[] directoryBuffer = new byte[bytesPerCluster * clusters.Length];
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
-                    byte[] buffer = imagePlugin.ReadSectors(firstClusterSector + (clusters[i] - 1) * sectorsPerCluster,
-                                                            sectorsPerCluster);
+                    byte[] buffer =
+                        imagePlugin.ReadSectors(firstClusterSector + ((clusters[i] - 1) * sectorsPerCluster),
+                                                sectorsPerCluster);
+
                     Array.Copy(buffer, 0, directoryBuffer, i * bytesPerCluster, bytesPerCluster);
                 }
 
                 currentDirectory = new Dictionary<string, DirectoryEntry>();
 
                 int pos = 0;
+
                 while(pos < directoryBuffer.Length)
                 {
                     DirectoryEntry dirent = littleEndian
-                                                ? Marshal
-                                                   .ByteArrayToStructureLittleEndian<DirectoryEntry
+                                                ? Marshal.
+                                                    ByteArrayToStructureLittleEndian<DirectoryEntry
                                                     >(directoryBuffer, pos, Marshal.SizeOf<DirectoryEntry>())
                                                 : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
                                                                                                         pos,
-                                                                                                        Marshal
-                                                                                                           .SizeOf<
+                                                                                                        Marshal.
+                                                                                                            SizeOf<
                                                                                                                 DirectoryEntry
                                                                                                             >());
 
                     pos += Marshal.SizeOf<DirectoryEntry>();
 
-                    if(dirent.filenameSize == UNUSED_DIRENTRY || dirent.filenameSize == FINISHED_DIRENTRY) break;
+                    if(dirent.filenameSize == UNUSED_DIRENTRY ||
+                       dirent.filenameSize == FINISHED_DIRENTRY)
+                        break;
 
-                    if(dirent.filenameSize == DELETED_DIRENTRY || dirent.filenameSize > MAX_FILENAME) continue;
+                    if(dirent.filenameSize == DELETED_DIRENTRY ||
+                       dirent.filenameSize > MAX_FILENAME)
+                        continue;
 
                     string filename = Encoding.GetString(dirent.filename, 0, dirent.filenameSize);
 
@@ -129,6 +150,7 @@ namespace Aaru.Filesystems.FATX
             }
 
             contents = currentDirectory?.Keys.ToList();
+
             return Errno.NoError;
         }
     }

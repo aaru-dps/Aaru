@@ -50,35 +50,38 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] vHdrB = new byte[Marshal.SizeOf<VdiHeader>()];
             stream.Read(vHdrB, 0, Marshal.SizeOf<VdiHeader>());
             vHdr = Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
 
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}",   vHdr.magic);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}", vHdr.magic);
+
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", vHdr.majorVersion,
-                                      vHdr.minorVersion);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}",      vHdr.headerSize);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}",       vHdr.imageType);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}",      vHdr.imageFlags);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}",     vHdr.comments);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}",    vHdr.offsetBlocks);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}",      vHdr.offsetData);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}",       vHdr.cylinders);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}",           vHdr.heads);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}",             vHdr.spt);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}",      vHdr.sectorSize);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}",            vHdr.size);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}",       vHdr.blockSize);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}",  vHdr.blockExtraData);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}",          vHdr.blocks);
+                                       vHdr.minorVersion);
+
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}", vHdr.headerSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}", vHdr.imageType);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}", vHdr.imageFlags);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", vHdr.comments);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}", vHdr.offsetBlocks);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}", vHdr.offsetData);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}", vHdr.cylinders);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}", vHdr.heads);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}", vHdr.spt);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}", vHdr.sectorSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}", vHdr.size);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}", vHdr.blockSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}", vHdr.blockExtraData);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}", vHdr.blocks);
             AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", vHdr.allocatedBlocks);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}",            vHdr.uuid);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}",    vHdr.snapshotUuid);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}",        vHdr.linkUuid);
-            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}",      vHdr.parentUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}", vHdr.uuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}", vHdr.snapshotUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", vHdr.linkUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", vHdr.parentUuid);
 
             if(vHdr.imageType != VdiImageType.Normal)
                 throw new
@@ -91,8 +94,9 @@ namespace Aaru.DiscImages
             stream.Read(ibmB, 0, ibmB.Length);
             ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
             DateTime end = DateTime.UtcNow;
+
             AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
-                                      (end - start).TotalMilliseconds);
+                                       (end - start).TotalMilliseconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -111,25 +115,32 @@ namespace Aaru.DiscImages
             {
                 case SUN_VDI:
                     imageInfo.Application = "Sun VirtualBox";
+
                     break;
                 case SUN_OLD_VDI:
                     imageInfo.Application = "Sun xVM";
+
                     break;
                 case ORACLE_VDI:
                     imageInfo.Application = "Oracle VirtualBox";
+
                     break;
                 case QEMUVDI:
                     imageInfo.Application = "QEMU";
+
                     break;
                 case INNOTEK_VDI:
                 case INNOTEK_OLD_VDI:
                     imageInfo.Application = "innotek VirtualBox";
+
                     break;
                 case DIC_VDI:
                     imageInfo.Application = "DiscImageChef";
+
                     break;
                 case DIC_AARU:
                     imageInfo.Application = "Aaru";
+
                     break;
             }
 
@@ -148,16 +159,18 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+                return sector;
 
-            ulong index  = sectorAddress * vHdr.sectorSize / vHdr.blockSize;
-            ulong secOff = sectorAddress * vHdr.sectorSize % vHdr.blockSize;
+            ulong index  = (sectorAddress * vHdr.sectorSize) / vHdr.blockSize;
+            ulong secOff = (sectorAddress * vHdr.sectorSize) % vHdr.blockSize;
 
             uint ibmOff = ibm[(int)index];
 
-            if(ibmOff == VDI_EMPTY) return new byte[vHdr.sectorSize];
+            if(ibmOff == VDI_EMPTY)
+                return new byte[vHdr.sectorSize];
 
-            ulong imageOff = vHdr.offsetData + ibmOff * vHdr.blockSize;
+            ulong imageOff = vHdr.offsetData + (ibmOff * vHdr.blockSize);
 
             byte[] cluster = new byte[vHdr.blockSize];
             imageStream.Seek((long)imageOff, SeekOrigin.Begin);
@@ -165,7 +178,8 @@ namespace Aaru.DiscImages
             sector = new byte[vHdr.sectorSize];
             Array.Copy(cluster, (int)secOff, sector, 0, vHdr.sectorSize);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS)
+                sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -182,7 +196,7 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({sectorAddress} + {length}) than available ({imageInfo.Sectors})");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {

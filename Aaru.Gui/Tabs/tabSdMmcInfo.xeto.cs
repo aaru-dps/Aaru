@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
-using Aaru.Decoders.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
@@ -39,47 +38,47 @@ namespace Aaru.Gui.Tabs
 {
     public class tabSdMmcInfo : TabPage
     {
-        public tabSdMmcInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabSdMmcInfo() => XamlReader.Load(this);
 
         internal void LoadData(DeviceType deviceType, byte[] cid, byte[] csd, byte[] ocr, byte[] extendedCsd,
-                               byte[]     scr)
+                               byte[] scr)
         {
             switch(deviceType)
             {
                 case DeviceType.MMC:
                 {
                     Text = "MultiMediaCard";
+
                     if(cid != null)
                     {
                         tabCid.Visible = true;
-                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyCID(cid);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCID(cid);
                     }
 
                     if(csd != null)
                     {
                         tabCsd.Visible = true;
-                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyCSD(csd);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCSD(csd);
                     }
 
                     if(ocr != null)
                     {
                         tabOcr.Visible = true;
-                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyOCR(ocr);
+                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyOCR(ocr);
                     }
 
                     if(extendedCsd != null)
                     {
                         tabExtendedCsd.Visible = true;
-                        txtCid.Text            = Aaru.Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
+                        txtCid.Text            = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
                     }
                 }
+
                     break;
                 case DeviceType.SecureDigital:
                 {
                     Text = "SecureDigital";
+
                     if(cid != null)
                     {
                         tabCid.Visible = true;
@@ -106,6 +105,7 @@ namespace Aaru.Gui.Tabs
                         txtCid.Text    = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
                     }
                 }
+
                     break;
             }
 

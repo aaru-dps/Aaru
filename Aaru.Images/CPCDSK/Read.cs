@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
             CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
             if(!cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) &&
-               !edskId.SequenceEqual(header.magic)   &&
+               !edskId.SequenceEqual(header.magic)                         &&
                !du54Id.SequenceEqual(header.magic))
                 return false;
 
@@ -68,13 +68,13 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", extended);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
-                                      StringHandlers.CToString(header.magic));
+                                       StringHandlers.CToString(header.magic));
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic2 = \"{0}\"",
-                                      StringHandlers.CToString(header.magic2));
+                                       StringHandlers.CToString(header.magic2));
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
-                                      StringHandlers.CToString(header.creator));
+                                       StringHandlers.CToString(header.creator));
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
                 {
                     for(int j = 0; j < header.sides; j++)
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "Track {0} Side {1} size = {2}", i, j,
-                                                  header.tracksizeTable[(i * header.sides) + j] * 256);
+                                                   header.tracksizeTable[(i * header.sides) + j] * 256);
                 }
 
             ulong currentSector = 0;
@@ -121,31 +121,33 @@ namespace Aaru.DiscImages
                     }
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].magic = \"{0}\"",
-                                              StringHandlers.CToString(trackInfo.magic), i, j);
+                                               StringHandlers.CToString(trackInfo.magic), i, j);
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].bps = {0}",
-                                              SizeCodeToBytes(trackInfo.bps), i, j);
+                                               SizeCodeToBytes(trackInfo.bps), i, j);
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate,
-                                              i, j);
+                                               i, j);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler,
-                                              i, j);
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].filler = 0x{0:X2}",
+                                               trackInfo.filler, i, j);
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i,
-                                              j);
+                                               j);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
-                                              j);
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding,
+                                               i, j);
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].recordingMode = {0}",
-                                              trackInfo.recordingMode, i, j);
+                                               trackInfo.recordingMode, i, j);
 
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
-                                              j);
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors,
+                                               i, j);
 
                     AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
-                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
+
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i,
+                                               j);
 
                     if(trackInfo.sectors != sectorsPerTrack)
                         if(sectorsPerTrack == 0)
@@ -159,25 +161,25 @@ namespace Aaru.DiscImages
                     for(int k = 1; k <= trackInfo.sectors; k++)
                     {
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
-                                                  trackInfo.sectorsInfo[k - 1].id, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].id, i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].len = {0}",
-                                                  trackInfo.sectorsInfo[k - 1].len, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].len, i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].side = {0}",
-                                                  trackInfo.sectorsInfo[k - 1].side, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].side, i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].size = {0}",
-                                                  SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size), i, j, k);
+                                                   SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size), i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
-                                                  trackInfo.sectorsInfo[k - 1].st1, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].st1, i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
-                                                  trackInfo.sectorsInfo[k - 1].st2, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].st2, i, j, k);
 
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
-                                                  trackInfo.sectorsInfo[k - 1].track, i, j, k);
+                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                         int sectLen = extended ? trackInfo.sectorsInfo[k - 1].len
                                           : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);

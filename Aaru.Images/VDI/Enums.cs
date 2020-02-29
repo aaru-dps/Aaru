@@ -54,8 +54,8 @@ namespace Aaru.DiscImages
         enum VdiImageFlags : uint
         {
             /// <summary>
-            ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set
-            ///     for opened existing images.
+            ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set for
+            ///     opened existing images.
             /// </summary>
             ZeroExpand = 0x100
         }

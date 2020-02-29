@@ -92,11 +92,11 @@ namespace Aaru.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Aaru.Devices.Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Aaru.Devices.Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -106,14 +106,14 @@ namespace Aaru.Commands.Media
                 {
                     AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
-                    return(int)ErrorNumber.CannotOpenDevice;
+                    return (int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
                 AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
-                return(int)ErrorNumber.CannotOpenDevice;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -135,7 +135,7 @@ namespace Aaru.Commands.Media
             ScanResults results = scanner.Scan();
 
             AaruConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
-                                 results.ProcessingTime);
+                                  results.ProcessingTime);
 
             AaruConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
             AaruConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
@@ -164,12 +164,13 @@ namespace Aaru.Commands.Media
 
                 // ReSharper restore CompareOfFloatsByEqualityOperator
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-                AaruConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
-                                     results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
+                AaruConsole.
+                    WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
+                              results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
             dev.Close();
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

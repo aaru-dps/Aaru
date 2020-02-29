@@ -718,8 +718,8 @@ namespace Aaru.Core.Devices.Report
 
             switch(mediaType)
             {
-                case"DVD-ROM":
-                case"HD DVD-ROM":
+                case "DVD-ROM":
+                case "HD DVD-ROM":
                     AaruConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
@@ -743,8 +743,8 @@ namespace Aaru.Core.Devices.Report
                     mediaTest.DvdAacsData = buffer;
 
                     break;
-                case"Nintendo GameCube game":
-                case"Nintendo Wii game":
+                case "Nintendo GameCube game":
+                case "Nintendo Wii game":
                     AaruConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
@@ -757,12 +757,12 @@ namespace Aaru.Core.Devices.Report
                     mediaTest.DvdBcaData = buffer;
 
                     break;
-                case"BD-ROM":
-                case"Ultra HD Blu-ray movie":
-                case"PlayStation 3 game":
-                case"PlayStation 4 game":
-                case"Xbox One game":
-                case"Nintendo Wii U game":
+                case "BD-ROM":
+                case "Ultra HD Blu-ray movie":
+                case "PlayStation 3 game":
+                case "PlayStation 4 game":
+                case "Xbox One game":
+                case "Nintendo Wii U game":
                     AaruConsole.WriteLine("Querying BD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
@@ -775,10 +775,10 @@ namespace Aaru.Core.Devices.Report
                     mediaTest.BluBcaData = buffer;
 
                     break;
-                case"DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)":
-                case"DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)":
-                case"HD DVD-RAM":
-                case"PD-650":
+                case "DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)":
+                case "DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)":
+                case "HD DVD-RAM":
+                case "PD-650":
                     mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                    MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout,
@@ -1284,7 +1284,7 @@ namespace Aaru.Core.Devices.Report
                                                                                   out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                              !mediaTest.CanReadCorrectedSubchannelWithC2);
+                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
@@ -1393,7 +1393,7 @@ namespace Aaru.Core.Devices.Report
                                                                                   out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                              !mediaTest.CanReadCorrectedSubchannelWithC2);
+                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
@@ -1500,7 +1500,7 @@ namespace Aaru.Core.Devices.Report
                                                                                   out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                              !mediaTest.CanReadCorrectedSubchannelWithC2);
+                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
@@ -1665,13 +1665,13 @@ namespace Aaru.Core.Devices.Report
                         }
 
                         AaruConsole.DebugWriteLine("SCSI Report",
-                                                  "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
-                                                  firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
-                                                  firstSessionLeadOutTrack.PFRAME);
+                                                   "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
+                                                   firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
+                                                   firstSessionLeadOutTrack.PFRAME);
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Second session starts at {0:D2}:{1:D2}:{2:D2}",
-                                                  secondSessionFirstTrack.PMIN, secondSessionFirstTrack.PSEC,
-                                                  secondSessionFirstTrack.PFRAME);
+                                                   secondSessionFirstTrack.PMIN, secondSessionFirstTrack.PSEC,
+                                                   secondSessionFirstTrack.PFRAME);
 
                         // Skip Lead-Out pre-gap
                         uint firstSessionLeadOutLba = (uint)((firstSessionLeadOutTrack.PMIN * 60 * 75) +
@@ -1715,7 +1715,7 @@ namespace Aaru.Core.Devices.Report
                         }
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                  !mediaTest.CanReadingIntersessionLeadOut);
+                                                   !mediaTest.CanReadingIntersessionLeadOut);
 
                         mediaTest.IntersessionLeadOutData = buffer;
 
@@ -1750,7 +1750,7 @@ namespace Aaru.Core.Devices.Report
                         }
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                  !mediaTest.CanReadingIntersessionLeadIn);
+                                                   !mediaTest.CanReadingIntersessionLeadIn);
 
                         mediaTest.IntersessionLeadInData = buffer;
                     }

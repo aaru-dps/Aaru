@@ -38,19 +38,26 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
+
 // Commit count
 using commitcnt_t = System.Int32;
+
 // Disk address
 using daddr_t = System.Int32;
+
 // Fstore
 using fstore_t = System.Int32;
+
 // Global File System number
 using gfs_t = System.Int32;
+
 // Inode number
 using ino_t = System.Int32;
 using Marshal = Aaru.Helpers.Marshal;
+
 // Filesystem pack number
 using pckno_t = System.Int16;
+
 // Timestamp
 using time_t = System.Int32;
 
@@ -76,65 +83,87 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             for(ulong location = 0; location <= 8; location++)
             {
                 uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-                if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
+                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                    sbSize++;
+
+                if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
+                    break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf<Locus_Superblock>()) return false;
+
+                if(sector.Length < Marshal.SizeOf<Locus_Superblock>())
+                    return false;
 
                 Locus_Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
                 AaruConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
 
-                if(locusSb.s_magic == LOCUS_MAGIC     || locusSb.s_magic == LOCUS_CIGAM ||
-                   locusSb.s_magic == LOCUS_MAGIC_OLD || locusSb.s_magic == LOCUS_CIGAM_OLD) return true;
+                if(locusSb.s_magic == LOCUS_MAGIC     ||
+                   locusSb.s_magic == LOCUS_CIGAM     ||
+                   locusSb.s_magic == LOCUS_MAGIC_OLD ||
+                   locusSb.s_magic == LOCUS_CIGAM_OLD)
+                    return true;
             }
 
             return false;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
 
-            Locus_Superblock locusSb = new Locus_Superblock();
-            byte[]           sector  = null;
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
+
+            var    locusSb = new Locus_Superblock();
+            byte[] sector  = null;
 
             for(ulong location = 0; location <= 8; location++)
             {
                 uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                    sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf<Locus_Superblock>()) return;
+
+                if(sector.Length < Marshal.SizeOf<Locus_Superblock>())
+                    return;
 
                 locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
-                if(locusSb.s_magic == LOCUS_MAGIC     || locusSb.s_magic == LOCUS_CIGAM ||
-                   locusSb.s_magic == LOCUS_MAGIC_OLD || locusSb.s_magic == LOCUS_CIGAM_OLD) break;
+                if(locusSb.s_magic == LOCUS_MAGIC     ||
+                   locusSb.s_magic == LOCUS_CIGAM     ||
+                   locusSb.s_magic == LOCUS_MAGIC_OLD ||
+                   locusSb.s_magic == LOCUS_CIGAM_OLD)
+                    break;
             }
 
             // We don't care about old version for information
-            if(locusSb.s_magic != LOCUS_MAGIC && locusSb.s_magic != LOCUS_CIGAM && locusSb.s_magic != LOCUS_MAGIC_OLD &&
-               locusSb.s_magic != LOCUS_CIGAM_OLD) return;
+            if(locusSb.s_magic != LOCUS_MAGIC     &&
+               locusSb.s_magic != LOCUS_CIGAM     &&
+               locusSb.s_magic != LOCUS_MAGIC_OLD &&
+               locusSb.s_magic != LOCUS_CIGAM_OLD)
+                return;
 
             // Numerical arrays are not important for information so no need to swap them
-            if(locusSb.s_magic == LOCUS_CIGAM || locusSb.s_magic == LOCUS_CIGAM_OLD)
+            if(locusSb.s_magic == LOCUS_CIGAM ||
+               locusSb.s_magic == LOCUS_CIGAM_OLD)
             {
                 locusSb         = Marshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
                 locusSb.s_flags = (LocusFlags)Swapping.Swap((ushort)locusSb.s_flags);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD ? "Locus filesystem (old)" : "Locus filesystem");
 
@@ -144,49 +173,77 @@ namespace Aaru.Filesystems
             string s_fpack = StringHandlers.CToString(locusSb.s_fpack, Encoding);
 
             AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_magic = 0x{0:X8}", locusSb.s_magic);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfs = {0}",        locusSb.s_gfs);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fsize = {0}",      locusSb.s_fsize);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_lwm = {0}",        locusSb.s_lwm);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_hwm = {0}",        locusSb.s_hwm);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_llst = {0}",       locusSb.s_llst);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fstore = {0}",     locusSb.s_fstore);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_time = {0}",       locusSb.s_time);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_tfree = {0}",      locusSb.s_tfree);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_isize = {0}",      locusSb.s_isize);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_nfree = {0}",      locusSb.s_nfree);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_flags = {0}",      locusSb.s_flags);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_tinode = {0}",     locusSb.s_tinode);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_lasti = {0}",      locusSb.s_lasti);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_nbehind = {0}",    locusSb.s_nbehind);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfspack = {0}",    locusSb.s_gfspack);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_ninode = {0}",     locusSb.s_ninode);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_flock = {0}",      locusSb.s_flock);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_ilock = {0}",      locusSb.s_ilock);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fmod = {0}",       locusSb.s_fmod);
-            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_version = {0}",    locusSb.s_version);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfs = {0}", locusSb.s_gfs);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fsize = {0}", locusSb.s_fsize);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_lwm = {0}", locusSb.s_lwm);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_hwm = {0}", locusSb.s_hwm);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_llst = {0}", locusSb.s_llst);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fstore = {0}", locusSb.s_fstore);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_time = {0}", locusSb.s_time);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_tfree = {0}", locusSb.s_tfree);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_isize = {0}", locusSb.s_isize);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_nfree = {0}", locusSb.s_nfree);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_flags = {0}", locusSb.s_flags);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_tinode = {0}", locusSb.s_tinode);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_lasti = {0}", locusSb.s_lasti);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_nbehind = {0}", locusSb.s_nbehind);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_gfspack = {0}", locusSb.s_gfspack);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_ninode = {0}", locusSb.s_ninode);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_flock = {0}", locusSb.s_flock);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_ilock = {0}", locusSb.s_ilock);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_fmod = {0}", locusSb.s_fmod);
+            AaruConsole.DebugWriteLine("Locus plugin", "LocusSb.s_version = {0}", locusSb.s_version);
 
-            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UnixToDateTime(locusSb.s_time))
-              .AppendLine();
+            sb.AppendFormat("Superblock last modified on {0}", DateHandlers.UnixToDateTime(locusSb.s_time)).
+               AppendLine();
+
             sb.AppendFormat("Volume has {0} blocks of {1} bytes each (total {2} bytes)", locusSb.s_fsize, blockSize,
                             locusSb.s_fsize * blockSize).AppendLine();
+
             sb.AppendFormat("{0} blocks free ({1} bytes)", locusSb.s_tfree, locusSb.s_tfree * blockSize).AppendLine();
             sb.AppendFormat("I-node list uses {0} blocks", locusSb.s_isize).AppendLine();
             sb.AppendFormat("{0} free inodes", locusSb.s_tinode).AppendLine();
             sb.AppendFormat("Next free inode search will start at inode {0}", locusSb.s_lasti).AppendLine();
-            sb.AppendFormat("There are an estimate of {0} free inodes before next search start", locusSb.s_nbehind)
-              .AppendLine();
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RDONLY)) sb.AppendLine("Read-only volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN)) sb.AppendLine("Clean volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY)) sb.AppendLine("Dirty volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RMV)) sb.AppendLine("Removable volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_PRIMPACK)) sb.AppendLine("This is the primary pack");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_REPLTYPE)) sb.AppendLine("Replicated volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_USER)) sb.AppendLine("User replicated volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BACKBONE)) sb.AppendLine("Backbone volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NFS)) sb.AppendLine("NFS volume");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BYHAND)) sb.AppendLine("Volume inhibits automatic fsck");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NOSUID)) sb.AppendLine("Set-uid/set-gid is disabled");
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_SYNCW)) sb.AppendLine("Volume uses synchronous writes");
+
+            sb.AppendFormat("There are an estimate of {0} free inodes before next search start", locusSb.s_nbehind).
+               AppendLine();
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RDONLY))
+                sb.AppendLine("Read-only volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN))
+                sb.AppendLine("Clean volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY))
+                sb.AppendLine("Dirty volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RMV))
+                sb.AppendLine("Removable volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_PRIMPACK))
+                sb.AppendLine("This is the primary pack");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_REPLTYPE))
+                sb.AppendLine("Replicated volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_USER))
+                sb.AppendLine("User replicated volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BACKBONE))
+                sb.AppendLine("Backbone volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NFS))
+                sb.AppendLine("NFS volume");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BYHAND))
+                sb.AppendLine("Volume inhibits automatic fsck");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NOSUID))
+                sb.AppendLine("Set-uid/set-gid is disabled");
+
+            if(locusSb.s_flags.HasFlag(LocusFlags.SB_SYNCW))
+                sb.AppendLine("Volume uses synchronous writes");
+
             sb.AppendFormat("Volume label: {0}", s_fsmnt).AppendLine();
             sb.AppendFormat("Physical volume name: {0}", s_fpack).AppendLine();
             sb.AppendFormat("Global File System number: {0}", locusSb.s_gfs).AppendLine();
@@ -196,23 +253,19 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "Locus filesystem",
-                ClusterSize = (uint)blockSize,
-                Clusters    = (ulong)locusSb.s_fsize,
+                Type = "Locus filesystem", ClusterSize = (uint)blockSize, Clusters = (ulong)locusSb.s_fsize,
+
                 // Sometimes it uses one, or the other. Use the bigger
-                VolumeName                = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
-                ModificationDate          = DateHandlers.UnixToDateTime(locusSb.s_time),
-                ModificationDateSpecified = true,
+                VolumeName       = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
+                ModificationDate = DateHandlers.UnixToDateTime(locusSb.s_time), ModificationDateSpecified = true,
                 Dirty = !locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) ||
-                                            locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
-                FreeClusters          = (ulong)locusSb.s_tfree,
-                FreeClustersSpecified = true
+                                   locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
+                FreeClusters = (ulong)locusSb.s_tfree, FreeClustersSpecified = true
             };
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
+         StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Locus_Superblock
         {
             public readonly uint s_magic; /* identifies this as a locus filesystem */
@@ -245,6 +298,7 @@ namespace Aaru.Filesystems
             public readonly short      s_ninode;  /* number of i-nodes in s_inode */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly short[] s_dinfo; /* interleave stuff */
+
             //#define s_m s_dinfo[0]
             //#define s_skip  s_dinfo[0]      /* AIX defines  */
             //#define s_n s_dinfo[1]
@@ -265,9 +319,8 @@ namespace Aaru.Filesystems
             public readonly byte s_byteorder;  /* byte order of integers */
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
+         StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Locus_OldSuperblock
         {
             public readonly uint s_magic; /* identifies this as a locus filesystem */
@@ -300,6 +353,7 @@ namespace Aaru.Filesystems
             public readonly short      s_ninode;  /* number of i-nodes in s_inode */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly short[] s_dinfo; /* interleave stuff */
+
             //#define s_m s_dinfo[0]
             //#define s_skip  s_dinfo[0]      /* AIX defines  */
             //#define s_n s_dinfo[1]
@@ -320,33 +374,35 @@ namespace Aaru.Filesystems
             public readonly byte s_byteorder;  /* byte order of integers */
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
+         Flags]
         enum LocusFlags : ushort
         {
-            SB_RDONLY   = 0x1,   /* no writes on filesystem */
-            SB_CLEAN    = 0x2,   /* fs unmounted cleanly (or checks run) */
-            SB_DIRTY    = 0x4,   /* fs mounted without CLEAN bit set */
-            SB_RMV      = 0x8,   /* fs is a removable file system */
-            SB_PRIMPACK = 0x10,  /* This is the primary pack of the filesystem */
-            SB_REPLTYPE = 0x20,  /* This is a replicated type filesystem. */
-            SB_USER     = 0x40,  /* This is a "user" replicated filesystem. */
-            SB_BACKBONE = 0x80,  /* backbone pack ; complete copy of primary pack but not modifiable */
-            SB_NFS      = 0x100, /* This is a NFS type filesystem */
-            SB_BYHAND   = 0x200, /* Inhibits automatic fscks on a mangled file system */
-            SB_NOSUID   = 0x400, /* Set-uid/Set-gid is disabled */
-            SB_SYNCW    = 0x800  /* Synchronous Write */
+            SB_RDONLY = 0x1,                                                      /* no writes on filesystem */
+            SB_CLEAN  = 0x2,                                                      /* fs unmounted cleanly (or checks run) */
+            SB_DIRTY  = 0x4, /* fs mounted without CLEAN bit set */ SB_RMV = 0x8, /* fs is a removable file system */
+            SB_PRIMPACK =
+                0x10, /* This is the primary pack of the filesystem */
+            SB_REPLTYPE =
+                0x20, /* This is a replicated type filesystem. */
+            SB_USER =
+                0x40, /* This is a "user" replicated filesystem. */
+            SB_BACKBONE =
+                0x80,       /* backbone pack ; complete copy of primary pack but not modifiable */
+            SB_NFS = 0x100, /* This is a NFS type filesystem */
+            SB_BYHAND =
+                0x200,                                                            /* Inhibits automatic fscks on a mangled file system */
+            SB_NOSUID = 0x400, /* Set-uid/Set-gid is disabled */ SB_SYNCW = 0x800 /* Synchronous Write */
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        [Flags]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
+         Flags]
         enum LocusVersion : byte
         {
-            SB_SB4096  = 1, /* smallblock filesys with 4096 byte blocks */
-            SB_B1024   = 2, /* 1024 byte block filesystem */
-            NUMSCANDEV = 5  /* Used by scangfs(), refed in space.h */
+            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */
+            SB_B1024  = 2, /* 1024 byte block filesystem */
+            NUMSCANDEV =
+                5 /* Used by scangfs(), refed in space.h */
         }
     }
 }

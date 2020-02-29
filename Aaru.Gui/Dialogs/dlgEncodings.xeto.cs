@@ -42,7 +42,7 @@ namespace Aaru.Gui.Dialogs
 {
     public class dlgEncodings : Dialog
     {
-        ObservableCollection<CommonEncodingInfo> encodings;
+        readonly ObservableCollection<CommonEncodingInfo> encodings;
 
         public dlgEncodings()
         {
@@ -54,26 +54,25 @@ namespace Aaru.Gui.Dialogs
             encodings = new ObservableCollection<CommonEncodingInfo>();
 
             grdEncodings.DataStore = encodings;
+
             grdEncodings.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<CommonEncodingInfo, string>(r => r.Name)
                 },
-                HeaderText = "Code",
-                Sortable   = true
+                HeaderText = "Code", Sortable = true
             });
+
             grdEncodings.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding =
-                        Binding
-                           .Property<CommonEncodingInfo, string>(r => r.DisplayName)
+                    Binding = Binding.Property<CommonEncodingInfo, string>(r => r.DisplayName)
                 },
-                HeaderText = "Name",
-                Sortable   = true
+                HeaderText = "Name", Sortable = true
             });
+
             grdEncodings.AllowMultipleSelection = false;
             grdEncodings.AllowColumnReordering  = true;
         }
@@ -84,26 +83,21 @@ namespace Aaru.Gui.Dialogs
 
             encodings.Clear();
 
-            List<CommonEncodingInfo> _encodings = Encoding
-                                                 .GetEncodings().Select(info => new CommonEncodingInfo
-                                                  {
-                                                      Name = info.Name,
-                                                      DisplayName =
-                                                          info.GetEncoding().EncodingName
-                                                  }).ToList();
-            _encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
-                                       .Select(info => new CommonEncodingInfo
-                                        {
-                                            Name = info.Name, DisplayName = info.DisplayName
-                                        }));
+            List<CommonEncodingInfo> _encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+            {
+                Name = info.Name, DisplayName = info.GetEncoding().EncodingName
+            }).ToList();
 
-            foreach(CommonEncodingInfo encoding in _encodings.OrderBy(t => t.DisplayName)) encodings.Add(encoding);
+            _encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+            {
+                Name = info.Name, DisplayName = info.DisplayName
+            }));
+
+            foreach(CommonEncodingInfo encoding in _encodings.OrderBy(t => t.DisplayName))
+                encodings.Add(encoding);
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         class CommonEncodingInfo
         {

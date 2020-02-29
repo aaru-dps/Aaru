@@ -40,17 +40,35 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class HammerMbr
     {
-        readonly string[] testfiles = {"dflybsd_3.6.1.vdi.lz", "dflybsd_4.0.5.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "dflybsd_3.6.1.vdi.lz", "dflybsd_4.0.5.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {104857600, 104857600};
+        readonly ulong[] sectors =
+        {
+            104857600, 104857600
+        };
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512
+        };
 
-        readonly long[] clusters = {6310, 6310};
+        readonly long[] clusters =
+        {
+            6310, 6310
+        };
 
-        readonly int[] clustersize = {8388608, 8388608};
+        readonly int[] clustersize =
+        {
+            8388608, 8388608
+        };
 
-        readonly string[] volumename = {"Volume label", "Volume label"};
+        readonly string[] volumename =
+        {
+            "Volume label", "Volume label"
+        };
 
         readonly string[] volumeserial =
         {
@@ -66,26 +84,28 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new HAMMER();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Hammer")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual("HAMMER",        fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HAMMER", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }

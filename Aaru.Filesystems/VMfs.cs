@@ -42,9 +42,7 @@ namespace Aaru.Filesystems
 {
     public class VMfs : IFilesystem
     {
-        /// <summary>
-        ///     Identifier for VMfs
-        /// </summary>
+        /// <summary>Identifier for VMfs</summary>
         const uint VMFS_MAGIC = 0xC001D00D;
         const uint VMFS_BASE = 0x00100000;
 
@@ -56,11 +54,13 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End) return false;
+            if(partition.Start >= partition.End)
+                return false;
 
             ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
 
-            if(partition.Start + vmfsSuperOff > partition.End) return false;
+            if(partition.Start + vmfsSuperOff > partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
@@ -70,7 +70,7 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             ulong  vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
@@ -78,7 +78,7 @@ namespace Aaru.Filesystems
 
             VolumeInfo volInfo = Marshal.ByteArrayToStructureLittleEndian<VolumeInfo>(sector);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("VMware file system");
 
@@ -88,13 +88,17 @@ namespace Aaru.Filesystems
             uint mtimeNanoSecs = (uint)(volInfo.mtime % 1000000);
 
             sbInformation.AppendFormat("Volume version {0}", volInfo.version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, Encoding))
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(volInfo.name, Encoding)).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume size {0} bytes", volInfo.size * 256).AppendLine();
             sbInformation.AppendFormat("Volume UUID {0}", volInfo.uuid).AppendLine();
-            sbInformation
-               .AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
-               .AppendLine();
+
+            sbInformation.
+                AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).
+                AppendLine();
+
             sbInformation.AppendFormat("Volume last modified on {0}",
                                        DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).AppendLine();
 
@@ -107,17 +111,15 @@ namespace Aaru.Filesystems
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
-                Clusters                  = volInfo.size * 256 / imagePlugin.Info.SectorSize,
-                ClusterSize               = imagePlugin.Info.SectorSize,
-                VolumeSerial              = volInfo.uuid.ToString()
+                Clusters                  = (volInfo.size * 256) / imagePlugin.Info.SectorSize,
+                ClusterSize               = imagePlugin.Info.SectorSize, VolumeSerial = volInfo.uuid.ToString()
             };
         }
 
         [Flags]
         enum VMfsFlags : byte
         {
-            RecyledFolder = 64,
-            CaseSensitive = 128
+            RecyledFolder = 64, CaseSensitive = 128
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

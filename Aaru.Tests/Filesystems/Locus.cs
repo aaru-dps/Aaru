@@ -38,23 +38,50 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Locus
     {
-        readonly string[] testfiles = {"mf2dd.img.lz", "mf2hd.img.lz"};
+        readonly string[] testfiles =
+        {
+            "mf2dd.img.lz", "mf2hd.img.lz"
+        };
 
-        readonly MediaType[] mediatypes = {MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
+        readonly MediaType[] mediatypes =
+        {
+            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
+        };
 
-        readonly ulong[] sectors = {1440, 2880};
+        readonly ulong[] sectors =
+        {
+            1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512
+        };
 
-        readonly long[] clusters = {180, 360};
+        readonly long[] clusters =
+        {
+            180, 360
+        };
 
-        readonly int[] clustersize = {4096, 4096};
+        readonly int[] clustersize =
+        {
+            4096, 4096
+        };
 
-        readonly string[] volumename = {"Label", "Label"};
+        readonly string[] volumename =
+        {
+            "Label", "Label"
+        };
 
-        readonly string[] volumeserial = {null, null};
+        readonly string[] volumeserial =
+        {
+            null, null
+        };
 
-        readonly string[] oemid = {null, null};
+        readonly string[] oemid =
+        {
+            null, null
+        };
 
         [Test]
         public void Test()
@@ -65,25 +92,26 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new Aaru.Filesystems.Locus();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],        fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],     fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],      fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i],    fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],           fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }

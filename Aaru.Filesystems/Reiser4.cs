@@ -58,18 +58,26 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
-            uint sbAddr            = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<Reiser4_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-            if(partition.Start + sbAddr + sbSize >= partition.End) return false;
+            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
+
+            if(partition.Start + sbAddr + sbSize >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>()) return false;
+
+            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>())
+                return false;
 
             Reiser4_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
 
@@ -77,26 +85,35 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr            = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
+
+            uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<Reiser4_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>()) return;
+
+            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>())
+                return;
 
             Reiser4_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
 
-            if(!reiser4_magic.SequenceEqual(reiserSb.magic)) return;
+            if(!reiser4_magic.SequenceEqual(reiserSb.magic))
+                return;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("Reiser 4 filesystem");
             sb.AppendFormat("{0} bytes per block", reiserSb.blocksize).AppendLine();
@@ -108,11 +125,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type         = "Reiser 4 filesystem",
-                ClusterSize  = reiserSb.blocksize,
-                Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
-                VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),
-                VolumeSerial = reiserSb.uuid.ToString()
+                Type       = "Reiser 4 filesystem", ClusterSize = reiserSb.blocksize,
+                Clusters   = ((partition.End - partition.Start) * imagePlugin.Info.SectorSize) / reiserSb.blocksize,
+                VolumeName = StringHandlers.CToString(reiserSb.label, Encoding), VolumeSerial = reiserSb.uuid.ToString()
             };
         }
 

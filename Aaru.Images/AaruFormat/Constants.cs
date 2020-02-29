@@ -39,8 +39,8 @@ namespace Aaru.DiscImages
         /// <summary>Magic identidier = "AARUFRMT".</summary>
         const ulong AARU_MAGIC = 0x544D524655524141;
         /// <summary>
-        ///     Image format version. A change in this number indicates an incompatible change to the format that
-        ///     prevents older implementations from reading it correctly, if at all.
+        ///     Image format version. A change in this number indicates an incompatible change to the format that prevents
+        ///     older implementations from reading it correctly, if at all.
         /// </summary>
         const byte AARUFMT_VERSION = 1;
         /// <summary>Maximum read cache size, 256MiB.</summary>

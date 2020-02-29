@@ -32,11 +32,11 @@
 
 using System;
 using System.Threading;
-using Aaru.Gui.Controls;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Core.Media.Info;
 using Aaru.Devices;
+using Aaru.Gui.Controls;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;

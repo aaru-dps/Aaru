@@ -57,8 +57,8 @@ namespace Aaru.DiscImages
             WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
 
             AaruConsole.DebugWriteLine("d2f plugin",
-                                      "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
-                                      fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
+                                       "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
+                                       fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
 
             imageInfo.Cylinders       = fheader.cylinders;
             imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
@@ -175,7 +175,7 @@ namespace Aaru.DiscImages
             if(badSectors[(cylinderNumber, headNumber, sectorNumber)])
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "reading bad sector {0} ({1},{2},{3})", sectorAddress,
-                                          cylinderNumber, headNumber, sectorNumber);
+                                           cylinderNumber, headNumber, sectorNumber);
 
                 /* if we have sector data, return that */
                 if(sectorCache.ContainsKey((cylinderNumber, headNumber, sectorNumber)))
@@ -248,8 +248,8 @@ namespace Aaru.DiscImages
 
                         if(calculatedCRC != sheader.crc)
                             AaruConsole.DebugWriteLine("d2f plugin",
-                                                      "CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
-                                                      cyl, head, sect, sheader.crc, calculatedCRC);
+                                                       "CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
+                                                       cyl, head, sect, sheader.crc, calculatedCRC);
 
                         break;
                     case SectorFlag.BadSector:

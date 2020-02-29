@@ -54,7 +54,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 256) return false;
+            if(imagePlugin.Info.SectorSize < 256)
+                return false;
 
             byte[]         sector = imagePlugin.ReadSector(partition.Start);
             LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
@@ -64,25 +65,28 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            if(imagePlugin.Info.SectorSize < 256) return;
+            if(imagePlugin.Info.SectorSize < 256)
+                return;
 
             byte[]         sector = imagePlugin.ReadSector(partition.Start);
             LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
 
-            if(lifSb.magic != LIF_MAGIC) return;
+            if(lifSb.magic != LIF_MAGIC)
+                return;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("HP Logical Interchange Format");
             sb.AppendFormat("Directory starts at cluster {0}", lifSb.directoryStart).AppendLine();
             sb.AppendFormat("LIF identifier: {0}", lifSb.lifId).AppendLine();
             sb.AppendFormat("Directory size: {0} clusters", lifSb.directorySize).AppendLine();
             sb.AppendFormat("LIF version: {0}", lifSb.lifVersion).AppendLine();
+
             // How is this related to volume size? I have only CDs to test and makes no sense there
             sb.AppendFormat("{0} tracks", lifSb.tracks).AppendLine();
             sb.AppendFormat("{0} heads", lifSb.heads).AppendLine();
@@ -94,12 +98,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "HP Logical Interchange Format",
-                ClusterSize           = 256,
-                Clusters              = partition.Size / 256,
-                CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),
-                CreationDateSpecified = true,
-                VolumeName            = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
+                Type         = "HP Logical Interchange Format", ClusterSize = 256,
+                Clusters     = partition.Size / 256,
+                CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate), CreationDateSpecified = true,
+                VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
             };
         }
 

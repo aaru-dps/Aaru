@@ -36,23 +36,28 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems.CPM
 {
-    partial class CPM
+    internal partial class CPM
     {
-        /// <summary>
-        ///     Reads an extended attribute, alternate data stream or fork from the given file.
-        /// </summary>
+        /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
         /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
         /// <param name="buf">Buffer.</param>
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                return Errno.NoSuchFile;
 
             if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
                 if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
@@ -61,29 +66,36 @@ namespace Aaru.Filesystems.CPM
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 
-            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)
-                       ? Errno.NoError
+            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError
                        : Errno.NoSuchExtendedAttribute;
         }
 
-        /// <summary>
-        ///     Lists all extended attributes, alternate data streams and forks of the given file.
-        /// </summary>
+        /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            if(!mounted)
+                return Errno.AccessDenied;
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return Errno.NoSuchFile;
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                return Errno.NoSuchFile;
 
             xattrs = new List<string>();
-            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant())) xattrs.Add("com.caldera.cpm.password");
+
+            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+                xattrs.Add("com.caldera.cpm.password");
 
             if(decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 xattrs.Add("com.caldera.cpm.password.text");

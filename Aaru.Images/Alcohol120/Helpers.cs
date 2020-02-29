@@ -162,6 +162,6 @@ namespace Aaru.DiscImages
         }
 
         static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)((sector + 150) / 75 / 60), (byte)((sector + 150) / 75 % 60), (byte)((sector + 150) % 75));
+            ((byte)((sector + 150) / 75 / 60), (byte)(((sector + 150) / 75) % 60), (byte)((sector + 150) % 75));
     }
 }

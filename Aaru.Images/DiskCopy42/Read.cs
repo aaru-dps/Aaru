@@ -33,13 +33,13 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Claunia.Encoding;
-using Claunia.RsrcFork;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Claunia.Encoding;
+using Claunia.RsrcFork;
 using Version = Resources.Version;
 
 namespace Aaru.DiscImages
@@ -56,7 +56,8 @@ namespace Aaru.DiscImages
             IsWriting = false;
 
             // Incorrect pascal string length, not DC42
-            if(buffer[0] > 63) return false;
+            if(buffer[0] > 63)
+                return false;
 
             header = new Dc42Header();
 
@@ -71,17 +72,19 @@ namespace Aaru.DiscImages
             header.Valid        = buffer[0x52];
             header.Reserved     = buffer[0x53];
 
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.diskName = \"{0}\"",      header.DiskName);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.dataSize = {0} bytes",    header.DataSize);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagSize = {0} bytes",     header.TagSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.diskName = \"{0}\"", header.DiskName);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.dataSize = {0} bytes", header.DataSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagSize = {0} bytes", header.TagSize);
             AaruConsole.DebugWriteLine("DC42 plugin", "header.dataChecksum = 0x{0:X8}", header.DataChecksum);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagChecksum = 0x{0:X8}",  header.TagChecksum);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.format = 0x{0:X2}",       header.Format);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.fmtByte = 0x{0:X2}",      header.FmtByte);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}",             header.Valid);
-            AaruConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}",          header.Reserved);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagChecksum = 0x{0:X8}", header.TagChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.format = 0x{0:X2}", header.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.fmtByte = 0x{0:X2}", header.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}", header.Valid);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}", header.Reserved);
 
-            if(header.Valid != 1 || header.Reserved != 0) return false;
+            if(header.Valid    != 1 ||
+               header.Reserved != 0)
+                return false;
 
             // Some versions seem to incorrectly create little endian fields
             if(header.DataSize + header.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
@@ -93,12 +96,16 @@ namespace Aaru.DiscImages
                 header.TagChecksum  = BitConverter.ToUInt32(buffer, 0x4C);
 
                 if(header.DataSize + header.TagSize + 0x54 != imageFilter.GetDataForkLength() &&
-                   header.Format                           != kSigmaFormatTwiggy) return false;
+                   header.Format                           != kSigmaFormatTwiggy)
+                    return false;
             }
 
-            if(header.Format != kSonyFormat400K  && header.Format != kSonyFormat800K    &&
-               header.Format != kSonyFormat720K  && header.Format != kSonyFormat1440K   &&
-               header.Format != kSonyFormat1680K && header.Format != kSigmaFormatTwiggy &&
+            if(header.Format != kSonyFormat400K    &&
+               header.Format != kSonyFormat800K    &&
+               header.Format != kSonyFormat720K    &&
+               header.Format != kSonyFormat1440K   &&
+               header.Format != kSonyFormat1680K   &&
+               header.Format != kSigmaFormatTwiggy &&
                header.Format != kNotStandardFormat)
             {
                 AaruConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.Format);
@@ -106,12 +113,17 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(header.FmtByte != kSonyFmtByte400K          && header.FmtByte != kSonyFmtByte800K    &&
-               header.FmtByte != kSonyFmtByte800KIncorrect && header.FmtByte != kSonyFmtByteProDos  &&
-               header.FmtByte != kInvalidFmtByte           && header.FmtByte != kSigmaFmtByteTwiggy &&
-               header.FmtByte != kFmtNotStandard           && header.FmtByte != kMacOSXFmtByte)
+            if(header.FmtByte != kSonyFmtByte400K          &&
+               header.FmtByte != kSonyFmtByte800K          &&
+               header.FmtByte != kSonyFmtByte800KIncorrect &&
+               header.FmtByte != kSonyFmtByteProDos        &&
+               header.FmtByte != kInvalidFmtByte           &&
+               header.FmtByte != kSigmaFmtByteTwiggy       &&
+               header.FmtByte != kFmtNotStandard           &&
+               header.FmtByte != kMacOSXFmtByte)
             {
-                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.FmtByte);
+                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
+                                           header.FmtByte);
 
                 return false;
             }
@@ -136,16 +148,19 @@ namespace Aaru.DiscImages
                 bptag = (uint)(header.TagSize / imageInfo.Sectors);
                 AaruConsole.DebugWriteLine("DC42 plugin", "bptag = {0} bytes", bptag);
 
-                if(bptag != 12 && bptag != 20 && bptag != 24)
+                if(bptag != 12 &&
+                   bptag != 20 &&
+                   bptag != 24)
                 {
                     AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
+
                     return false;
                 }
 
                 imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
             }
 
-            imageInfo.ImageSize            = imageInfo.Sectors * imageInfo.SectorSize + imageInfo.Sectors * bptag;
+            imageInfo.ImageSize            = (imageInfo.Sectors * imageInfo.SectorSize) + (imageInfo.Sectors * bptag);
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = header.DiskName;
@@ -154,45 +169,57 @@ namespace Aaru.DiscImages
             {
                 case kSonyFormat400K:
                     imageInfo.MediaType = imageInfo.Sectors == 1600 ? MediaType.AppleSonyDS : MediaType.AppleSonySS;
+
                     break;
                 case kSonyFormat800K:
                     imageInfo.MediaType = MediaType.AppleSonyDS;
+
                     break;
                 case kSonyFormat720K:
                     imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+
                     break;
                 case kSonyFormat1440K:
                     imageInfo.MediaType = MediaType.DOS_35_HD;
+
                     break;
                 case kSonyFormat1680K:
                     imageInfo.MediaType = MediaType.DMF;
+
                     break;
                 case kSigmaFormatTwiggy:
                     imageInfo.MediaType = MediaType.AppleFileWare;
+
                     break;
                 case kNotStandardFormat:
                     switch(imageInfo.Sectors)
                     {
                         case 9728:
                             imageInfo.MediaType = MediaType.AppleProfile;
+
                             break;
                         case 19456:
                             imageInfo.MediaType = MediaType.AppleProfile;
+
                             break;
                         case 38912:
                             imageInfo.MediaType = MediaType.AppleWidget;
+
                             break;
                         case 39040:
                             imageInfo.MediaType = MediaType.AppleHD20;
+
                             break;
                         default:
                             imageInfo.MediaType = MediaType.Unknown;
+
                             break;
                     }
 
                     break;
                 default:
                     imageInfo.MediaType = MediaType.Unknown;
+
                     break;
             }
 
@@ -213,43 +240,69 @@ namespace Aaru.DiscImages
                 tagstream.Seek(tagOffset, SeekOrigin.Begin);
                 tagstream.Read(tags, 0, (int)header.TagSize);
 
-                ushort mfsMagic     = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x400);
-                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, data.Length / 2 + 0x412);
+                ushort mfsMagic     = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x400);
+                ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x412);
 
                 // Detect a Macintosh Twiggy
-                if(mfsMagic == 0xD2D7 && mfsAllBlocks == 422)
+                if(mfsMagic     == 0xD2D7 &&
+                   mfsAllBlocks == 422)
                 {
                     AaruConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
-                    Array.Copy(data, header.DataSize / 2, twiggyCache,     0, header.DataSize / 2);
-                    Array.Copy(tags, header.TagSize  / 2, twiggyCacheTags, 0, header.TagSize  / 2);
-                    Array.Copy(data, 0,                   twiggyCache,     header.DataSize    / 2, header.DataSize / 2);
-                    Array.Copy(tags, 0,                   twiggyCacheTags, header.TagSize     / 2, header.TagSize  / 2);
+                    Array.Copy(data, header.DataSize                    / 2, twiggyCache, 0, header.DataSize    / 2);
+                    Array.Copy(tags, header.TagSize                     / 2, twiggyCacheTags, 0, header.TagSize / 2);
+                    Array.Copy(data, 0, twiggyCache, header.DataSize    / 2, header.DataSize                    / 2);
+                    Array.Copy(tags, 0, twiggyCacheTags, header.TagSize / 2, header.TagSize                     / 2);
                 }
                 else
                 {
                     AaruConsole.DebugWriteLine("DC42 plugin", "Lisa Twiggy detected, reversing second half of disk");
-                    Array.Copy(data, 0, twiggyCache,     0, header.DataSize / 2);
-                    Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize  / 2);
+                    Array.Copy(data, 0, twiggyCache, 0, header.DataSize    / 2);
+                    Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize / 2);
 
                     int copiedSectors = 0;
                     int sectorsToCopy = 0;
 
                     for(int i = 0; i < 46; i++)
                     {
-                        if(i >= 0  && i <= 3) sectorsToCopy  = 22;
-                        if(i >= 4  && i <= 10) sectorsToCopy = 21;
-                        if(i >= 11 && i <= 16) sectorsToCopy = 20;
-                        if(i >= 17 && i <= 22) sectorsToCopy = 19;
-                        if(i >= 23 && i <= 28) sectorsToCopy = 18;
-                        if(i >= 29 && i <= 34) sectorsToCopy = 17;
-                        if(i >= 35 && i <= 41) sectorsToCopy = 16;
-                        if(i >= 42 && i <= 45) sectorsToCopy = 15;
+                        if(i >= 0 &&
+                           i <= 3)
+                            sectorsToCopy = 22;
 
-                        Array.Copy(data, header.DataSize / 2                + copiedSectors * 512, twiggyCache,
-                                   twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
-                        Array.Copy(tags, header.TagSize / 2 + copiedSectors * bptag,
+                        if(i >= 4 &&
+                           i <= 10)
+                            sectorsToCopy = 21;
+
+                        if(i >= 11 &&
+                           i <= 16)
+                            sectorsToCopy = 20;
+
+                        if(i >= 17 &&
+                           i <= 22)
+                            sectorsToCopy = 19;
+
+                        if(i >= 23 &&
+                           i <= 28)
+                            sectorsToCopy = 18;
+
+                        if(i >= 29 &&
+                           i <= 34)
+                            sectorsToCopy = 17;
+
+                        if(i >= 35 &&
+                           i <= 41)
+                            sectorsToCopy = 16;
+
+                        if(i >= 42 &&
+                           i <= 45)
+                            sectorsToCopy = 15;
+
+                        Array.Copy(data, (header.DataSize / 2)                + (copiedSectors * 512), twiggyCache,
+                                   twiggyCache.Length - (copiedSectors * 512) - (sectorsToCopy * 512),
+                                   sectorsToCopy * 512);
+
+                        Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag),
                                    twiggyCacheTags,
-                                   twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag,
+                                   twiggyCacheTags.Length - (copiedSectors * bptag) - (sectorsToCopy * bptag),
                                    sectorsToCopy * bptag);
 
                         copiedSectors += sectorsToCopy;
@@ -261,7 +314,8 @@ namespace Aaru.DiscImages
             {
                 if(imageFilter.HasResourceFork())
                 {
-                    ResourceFork rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+                    var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+
                     if(rsrcFork.ContainsKey(0x76657273))
                     {
                         Resource versRsrc = rsrcFork.GetResource(0x76657273);
@@ -270,31 +324,40 @@ namespace Aaru.DiscImages
 
                         if(vers != null)
                         {
-                            Version version = new Version(vers);
+                            var version = new Version(vers);
 
                             string release = null;
                             string dev     = null;
                             string pre     = null;
 
-                            string major                              = $"{version.MajorVersion}";
-                            string minor                              = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
+                            string major = $"{version.MajorVersion}";
+                            string minor = $".{version.MinorVersion / 10}";
+
+                            if(version.MinorVersion % 10 > 0)
+                                release = $".{version.MinorVersion % 10}";
+
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
                                     dev = "a";
+
                                     break;
                                 case Version.DevelopmentStage.Beta:
                                     dev = "b";
+
                                     break;
                                 case Version.DevelopmentStage.PreAlpha:
                                     dev = "d";
+
                                     break;
                             }
 
-                            if(dev == null && version.PreReleaseVersion > 0) dev = "f";
+                            if(dev                       == null &&
+                               version.PreReleaseVersion > 0)
+                                dev = "f";
 
-                            if(dev != null) pre = $"{version.PreReleaseVersion}";
+                            if(dev != null)
+                                pre = $"{version.PreReleaseVersion}";
 
                             imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                             imageInfo.Application        = version.VersionString;
@@ -305,11 +368,13 @@ namespace Aaru.DiscImages
                     if(rsrcFork.ContainsKey(0x64437079))
                     {
                         Resource dCpyRsrc = rsrcFork.GetResource(0x64437079);
+
                         if(dCpyRsrc != null)
                         {
                             string dCpy = StringHandlers.PascalToString(dCpyRsrc.GetResource(dCpyRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
-                            Regex dCpyEx    = new Regex(REGEX_DCPY);
+
+                            var   dCpyEx    = new Regex(REGEX_DCPY);
                             Match dCpyMatch = dCpyEx.Match(dCpy);
 
                             if(dCpyMatch.Success)
@@ -321,10 +386,10 @@ namespace Aaru.DiscImages
                     }
                 }
             }
-            catch(InvalidCastException) { }
+            catch(InvalidCastException) {}
 
             AaruConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", imageInfo.Application,
-                                      imageInfo.ApplicationVersion);
+                                       imageInfo.ApplicationVersion);
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             AaruConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", imageInfo.MediaType);
@@ -335,55 +400,66 @@ namespace Aaru.DiscImages
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 10;
+
                     break;
                 case MediaType.AppleSonyDS:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 10;
+
                     break;
                 case MediaType.DOS_35_DS_DD_9:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case MediaType.DOS_35_HD:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
+
                     break;
                 case MediaType.DMF:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 21;
+
                     break;
                 case MediaType.AppleProfile:
                     switch(imageInfo.Sectors)
                     {
                         case 9728:
                             imageInfo.Cylinders = 152;
+
                             break;
                         case 19456:
                             imageInfo.Cylinders = 304;
+
                             break;
                     }
 
                     imageInfo.Heads           = 4;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case MediaType.AppleWidget:
                     imageInfo.Cylinders       = 608;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case MediaType.AppleHD20:
                     imageInfo.Cylinders       = 610;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 default:
                     imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
                     imageInfo.Heads           = 16;
                     imageInfo.SectorsPerTrack = 63;
+
                     break;
             }
 
@@ -410,7 +486,7 @@ namespace Aaru.DiscImages
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
-                stream.Seek((long)(dataOffset + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+                stream.Seek((long)(dataOffset + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
                 stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
             }
 
@@ -422,7 +498,8 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(header.TagSize == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
+            if(header.TagSize == 0)
+                throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -432,11 +509,12 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[length * bptag];
 
-            if(twiggy) Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
+            if(twiggy)
+                Array.Copy(twiggyCacheTags, (int)sectorAddress * bptag, buffer, 0, length * bptag);
             else
             {
                 Stream stream = dc42ImageFilter.GetDataForkStream();
-                stream.Seek((long)(tagOffset + sectorAddress * bptag), SeekOrigin.Begin);
+                stream.Seek((long)(tagOffset + (sectorAddress * bptag)), SeekOrigin.Begin);
                 stream.Read(buffer, 0, (int)(length * bptag));
             }
 
@@ -461,7 +539,8 @@ namespace Aaru.DiscImages
             {
                 Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + bptag),
                            imageInfo.SectorSize);
-                Array.Copy(tags, i * bptag, buffer, i * (imageInfo.SectorSize + bptag) + imageInfo.SectorSize, bptag);
+
+                Array.Copy(tags, i * bptag, buffer, (i * (imageInfo.SectorSize + bptag)) + imageInfo.SectorSize, bptag);
             }
 
             return buffer;

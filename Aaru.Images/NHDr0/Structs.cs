@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
             public byte[] szFileID;
-            public byte reserved1;
+            public readonly byte reserved1;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
             public byte[] szComment;
             public int   dwHeadSize;

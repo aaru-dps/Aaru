@@ -36,10 +36,8 @@ namespace Aaru.DiscImages
     {
         enum PCompression : uint
         {
-            None  = 0,
-            Gzip  = 1,
-            Bzip2 = 2,
-            Lzo   = 3
+            None = 0, Gzip = 1, Bzip2 = 2,
+            Lzo  = 3
         }
 
         enum PEncryption : uint

@@ -49,7 +49,8 @@ namespace Aaru.Gui.Controls
             get => svgStream;
             set
             {
-                if(svgStream == value) return;
+                if(svgStream == value)
+                    return;
 
                 svgStream = value;
                 Redraw();
@@ -58,7 +59,10 @@ namespace Aaru.Gui.Controls
 
         void Redraw()
         {
-            if(Width == -1 || Height == -1 || svgStream == null) return;
+            if(Width     == -1 ||
+               Height    == -1 ||
+               svgStream == null)
+                return;
 
             svgStream.Position = 0;
 

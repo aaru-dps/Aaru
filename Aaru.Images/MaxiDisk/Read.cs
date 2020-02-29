@@ -45,7 +45,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < 8) return false;
+            if(stream.Length < 8)
+                return false;
 
             byte[] buffer = new byte[8];
             stream.Seek(0, SeekOrigin.Begin);
@@ -59,18 +60,23 @@ namespace Aaru.DiscImages
             //    return false;
 
             // Only floppies supported
-            if(tmpHeader.heads == 0 || tmpHeader.heads > 2) return false;
+            if(tmpHeader.heads == 0 ||
+               tmpHeader.heads > 2)
+                return false;
 
             // No floppies with more than this?
-            if(tmpHeader.cylinders > 90) return false;
+            if(tmpHeader.cylinders > 90)
+                return false;
 
             // Maximum supported bps is 16384
-            if(tmpHeader.bytesPerSector > 7) return false;
+            if(tmpHeader.bytesPerSector > 7)
+                return false;
 
-            int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                                   (128 << tmpHeader.bytesPerSector) + 8;
+            int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                    (128 << tmpHeader.bytesPerSector)) + 8;
 
-            if(expectedFileSize != stream.Length) return false;
+            if(expectedFileSize != stream.Length)
+                return false;
 
             imageInfo.Cylinders       = tmpHeader.cylinders;
             imageInfo.Heads           = tmpHeader.heads;
@@ -106,7 +112,7 @@ namespace Aaru.DiscImages
             byte[] buffer = new byte[length * imageInfo.SectorSize];
 
             Stream stream = hdkImageFilter.GetDataForkStream();
-            stream.Seek((long)(8 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(8 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 
             return buffer;

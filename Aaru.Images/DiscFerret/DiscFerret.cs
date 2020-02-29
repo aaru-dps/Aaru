@@ -40,35 +40,23 @@ namespace Aaru.DiscImages
     public partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
     {
         ImageInfo imageInfo;
+
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<int, long> TrackLengths;
         public SortedDictionary<int, long> TrackOffsets;
 
-        public DiscFerret()
+        public DiscFerret() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Version               = null,
-                Application           = null,
-                ApplicationVersion    = null,
-                Creator               = null,
-                Comments              = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = false, HasSessions                           = false, Version = null,
+            Application        = null,
+            ApplicationVersion = null, Creator = null, Comments = null,
+            MediaManufacturer  = null,
+            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
+            MediaPartNumber    = null,
+            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
+            DriveModel         = null,
+            DriveSerialNumber  = null, DriveFirmwareRevision = null
+        };
     }
 }

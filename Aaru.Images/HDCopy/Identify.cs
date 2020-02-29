@@ -44,10 +44,11 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 2 + 2 * 82) return false;
+            if(stream.Length < 2 + (2 * 82))
+                return false;
 
-            byte[] header = new byte[2 + 2 * 82];
-            stream.Read(header, 0, 2 + 2 * 82);
+            byte[] header = new byte[2 + (2 * 82)];
+            stream.Read(header, 0, 2 + (2 * 82));
 
             HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
 
@@ -55,12 +56,18 @@ namespace Aaru.DiscImages
              * We know the image is from a DOS floppy disk, so assume
              * some sane cylinder and sectors-per-track count.
              */
-            if(fheader.sectorsPerTrack < 8 || fheader.sectorsPerTrack > 40) return false;
+            if(fheader.sectorsPerTrack < 8 ||
+               fheader.sectorsPerTrack > 40)
+                return false;
 
-            if(fheader.lastCylinder < 37 || fheader.lastCylinder >= 82) return false;
+            if(fheader.lastCylinder < 37 ||
+               fheader.lastCylinder >= 82)
+                return false;
 
             // Validate the trackmap. First two tracks need to be present
-            if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
+            if(fheader.trackMap[0] != 1 ||
+               fheader.trackMap[1] != 1)
+                return false;
 
             // all other tracks must be either present (=1) or absent (=0)
             for(int i = 0; i < 2 * 82; i++)

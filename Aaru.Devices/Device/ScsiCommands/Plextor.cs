@@ -72,8 +72,8 @@ namespace Aaru.Devices
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device",
-                                      "Plextor READ CD-DA (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Subchannel: {4}, Sense: {5}, Last Error: {6}) took {0} ms.",
-                                      duration, lba, blockSize, transferLength, subchannel, sense, LastError);
+                                       "Plextor READ CD-DA (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Subchannel: {4}, Sense: {5}, Last Error: {6}) took {0} ms.",
+                                       duration, lba, blockSize, transferLength, subchannel, sense, LastError);
 
             return sense;
         }

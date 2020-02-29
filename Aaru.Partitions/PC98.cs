@@ -52,14 +52,19 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset != 0) return false;
+            if(sectorOffset != 0)
+                return false;
 
             byte[] bootSector = imagePlugin.ReadSector(0);
             byte[] sector     = imagePlugin.ReadSector(1);
-            if(bootSector[bootSector.Length - 2] != 0x55 || bootSector[bootSector.Length - 1] != 0xAA) return false;
+
+            if(bootSector[bootSector.Length - 2] != 0x55 ||
+               bootSector[bootSector.Length - 1] != 0xAA)
+                return false;
 
             // Prevent false positives with some FAT BPBs
-            if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT") return false;
+            if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT")
+                return false;
 
             PC98Table table = Marshal.ByteArrayToStructureLittleEndian<PC98Table>(sector);
 
@@ -67,53 +72,61 @@ namespace Aaru.Partitions
 
             foreach(PC98Partition entry in table.entries)
             {
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}",      entry.dp_mid);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}",      entry.dp_sid);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}",     entry.dp_dum1);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}",     entry.dp_dum2);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}",  entry.dp_ipl_sct);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}", entry.dp_mid);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}", entry.dp_sid);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}", entry.dp_dum1);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}", entry.dp_dum2);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}", entry.dp_ipl_sct);
                 AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}",  entry.dp_ipl_cyl);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}",    entry.dp_ssect);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}",      entry.dp_shd);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}",     entry.dp_scyl);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}",    entry.dp_esect);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}",      entry.dp_ehd);
-                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}",     entry.dp_ecyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}", entry.dp_ipl_cyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}", entry.dp_ssect);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}", entry.dp_shd);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}", entry.dp_scyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}", entry.dp_esect);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}", entry.dp_ehd);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}", entry.dp_ecyl);
+
                 AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
-                                          StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
+                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
-                if(entry.dp_scyl  == entry.dp_ecyl             || entry.dp_ecyl <= 0 ||
-                   entry.dp_scyl  > imagePlugin.Info.Cylinders ||
-                   entry.dp_ecyl  > imagePlugin.Info.Cylinders || entry.dp_shd   > imagePlugin.Info.Heads           ||
-                   entry.dp_ehd   > imagePlugin.Info.Heads     || entry.dp_ssect > imagePlugin.Info.SectorsPerTrack ||
-                   entry.dp_esect > imagePlugin.Info.SectorsPerTrack) continue;
+                if(entry.dp_scyl  == entry.dp_ecyl                   ||
+                   entry.dp_ecyl  <= 0                               ||
+                   entry.dp_scyl  > imagePlugin.Info.Cylinders       ||
+                   entry.dp_ecyl  > imagePlugin.Info.Cylinders       ||
+                   entry.dp_shd   > imagePlugin.Info.Heads           ||
+                   entry.dp_ehd   > imagePlugin.Info.Heads           ||
+                   entry.dp_ssect > imagePlugin.Info.SectorsPerTrack ||
+                   entry.dp_esect > imagePlugin.Info.SectorsPerTrack)
+                    continue;
 
-                Partition part = new Partition
+                var part = new Partition
                 {
-                    Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1),
-                                      imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack),
+                    Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
+                                      imagePlugin.Info.SectorsPerTrack),
                     Type     = DecodePC98Sid(entry.dp_sid),
                     Name     = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
-                    Sequence = counter,
-                    Scheme   = Name
+                    Sequence = counter, Scheme = Name
                 };
+
                 part.Offset = part.Start * imagePlugin.Info.SectorSize;
+
                 part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.Info.Heads,
                                         imagePlugin.Info.SectorsPerTrack) - part.Start;
+
                 part.Size = part.Length * imagePlugin.Info.SectorSize;
 
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}",    part.Start);
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}",     part.Type);
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}",     part.Name);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}", part.Start);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}", part.Type);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}", part.Name);
                 AaruConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}",   part.Offset);
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}",   part.Length);
-                AaruConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}",     part.Size);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}", part.Offset);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}", part.Length);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}", part.Size);
 
-                if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
-                   part.Start >= imagePlugin.Info.Sectors                         ||
-                   part.End   > imagePlugin.Info.Sectors) continue;
+                if(((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44) ||
+                   part.Start >= imagePlugin.Info.Sectors                           ||
+                   part.End   > imagePlugin.Info.Sectors)
+                    continue;
 
                 partitions.Add(part);
                 counter++;
@@ -129,6 +142,7 @@ namespace Aaru.Partitions
                 case 0x01: return "FAT12";
                 case 0x04: return "PC-UX";
                 case 0x06: return "N88-BASIC(86)";
+
                 // Supposedly for FAT16 < 32 MiB, seen in bigger partitions
                 case 0x11:
                 case 0x21: return "FAT16";
@@ -146,33 +160,29 @@ namespace Aaru.Partitions
         struct PC98Table
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public PC98Partition[] entries;
+            public readonly PC98Partition[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PC98Partition
         {
-            /// <summary>
-            ///     Some ID, if 0x80 bit is set, it is bootable
-            /// </summary>
-            public byte dp_mid;
-            /// <summary>
-            ///     Some ID, if 0x80 bit is set, it is active
-            /// </summary>
-            public byte dp_sid;
-            public byte   dp_dum1;
-            public byte   dp_dum2;
-            public byte   dp_ipl_sct;
-            public byte   dp_ipl_head;
-            public ushort dp_ipl_cyl;
-            public byte   dp_ssect;
-            public byte   dp_shd;
-            public ushort dp_scyl;
-            public byte   dp_esect;
-            public byte   dp_ehd;
-            public ushort dp_ecyl;
+            /// <summary>Some ID, if 0x80 bit is set, it is bootable</summary>
+            public readonly byte dp_mid;
+            /// <summary>Some ID, if 0x80 bit is set, it is active</summary>
+            public readonly byte dp_sid;
+            public readonly byte   dp_dum1;
+            public readonly byte   dp_dum2;
+            public readonly byte   dp_ipl_sct;
+            public readonly byte   dp_ipl_head;
+            public readonly ushort dp_ipl_cyl;
+            public readonly byte   dp_ssect;
+            public readonly byte   dp_shd;
+            public readonly ushort dp_scyl;
+            public readonly byte   dp_esect;
+            public readonly byte   dp_ehd;
+            public readonly ushort dp_ecyl;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] dp_name;
+            public readonly byte[] dp_name;
         }
     }
 }

@@ -36,8 +36,29 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Crc64
     {
-        static readonly byte[] ExpectedEmpty  = {0x60, 0x6b, 0x70, 0xa2, 0x3e, 0xba, 0xf6, 0xc2};
-        static readonly byte[] ExpectedRandom = {0xbf, 0x09, 0x99, 0x2c, 0xc5, 0xed, 0xe3, 0x8e};
+        static readonly byte[] ExpectedEmpty =
+        {
+            0x60, 0x6b, 0x70, 0xa2, 0x3e, 0xba, 0xf6, 0xc2
+        };
+        static readonly byte[] ExpectedRandom =
+        {
+            0xbf, 0x09, 0x99, 0x2c, 0xc5, 0xed, 0xe3, 0x8e
+        };
+
+        [Test]
+        public void Crc64EmptyData()
+        {
+            byte[] data = new byte[1048576];
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
+            fs.Read(data, 0, 1048576);
+            fs.Close();
+            fs.Dispose();
+            Crc64Context.Data(data, out byte[] result);
+            Assert.AreEqual(ExpectedEmpty, result);
+        }
 
         [Test]
         public void Crc64EmptyFile()
@@ -47,24 +68,13 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void Crc64EmptyData()
-        {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            Crc64Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedEmpty, result);
-        }
-
-        [Test]
         public void Crc64EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -75,18 +85,13 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void Crc64RandomFile()
-        {
-            byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
-        }
-
-        [Test]
         public void Crc64RandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -95,11 +100,20 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
+        public void Crc64RandomFile()
+        {
+            byte[] result = Crc64Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            Assert.AreEqual(ExpectedRandom, result);
+        }
+
+        [Test]
         public void Crc64RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

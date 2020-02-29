@@ -48,7 +48,7 @@ namespace Aaru.DiscImages
             // Search for SecureDigital CID
             if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
             {
-                CID decoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
 
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
                     imageInfo.DriveManufacturer = VendorString.Prettify(decoded.Manufacturer);
@@ -67,10 +67,10 @@ namespace Aaru.DiscImages
             // Search for MultiMediaCard CID
             if(mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
             {
-                global::Aaru.Decoders.MMC.CID decoded = global::Aaru.Decoders.MMC.Decoders.DecodeCID(mmcCid);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
 
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
-                    imageInfo.DriveManufacturer = global::Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                    imageInfo.DriveManufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
 
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
                     imageInfo.DriveModel = decoded.ProductName;
@@ -109,7 +109,7 @@ namespace Aaru.DiscImages
                !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify))
                 return;
 
-            Identify.IdentifyDevice? nullableIdentify = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.Decode(ataIdentify);
+            Identify.IdentifyDevice? nullableIdentify = CommonTypes.Structs.Devices.ATA.Identify.Decode(ataIdentify);
 
             if(!nullableIdentify.HasValue)
                 return;

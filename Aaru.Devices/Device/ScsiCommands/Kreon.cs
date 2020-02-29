@@ -37,9 +37,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Sets the drive to the xtreme unlocked state
-        /// </summary>
+        /// <summary>Sets the drive to the xtreme unlocked state</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -57,6 +55,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
@@ -64,9 +63,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Sets the drive to the locked state.
-        /// </summary>
+        /// <summary>Sets the drive to the locked state.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -74,9 +71,7 @@ namespace Aaru.Devices
         public bool KreonLock(out byte[] senseBuffer, uint timeout, out double duration) =>
             KreonSetLockState(out senseBuffer, KreonLockStates.Locked, timeout, out duration);
 
-        /// <summary>
-        ///     Sets the drive to the xtreme unlocked state
-        /// </summary>
+        /// <summary>Sets the drive to the xtreme unlocked state</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -84,9 +79,7 @@ namespace Aaru.Devices
         public bool KreonUnlockXtreme(out byte[] senseBuffer, uint timeout, out double duration) =>
             KreonSetLockState(out senseBuffer, KreonLockStates.Xtreme, timeout, out duration);
 
-        /// <summary>
-        ///     Sets the drive to the wxripper unlocked state
-        /// </summary>
+        /// <summary>Sets the drive to the wxripper unlocked state</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -94,9 +87,7 @@ namespace Aaru.Devices
         public bool KreonUnlockWxripper(out byte[] senseBuffer, uint timeout, out double duration) =>
             KreonSetLockState(out senseBuffer, KreonLockStates.Wxripper, timeout, out duration);
 
-        /// <summary>
-        ///     Sets the drive to the specified lock state
-        /// </summary>
+        /// <summary>Sets the drive to the specified lock state</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -116,6 +107,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
@@ -123,9 +115,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets a list of supported features
-        /// </summary>
+        /// <summary>Gets a list of supported features</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -146,51 +136,68 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
 
-            if(sense) return true;
+            if(sense)
+                return true;
 
-            if(buffer[0] != 0xA5 || buffer[1] != 0x5A || buffer[2] != 0x5A || buffer[3] != 0xA5) return true;
+            if(buffer[0] != 0xA5 ||
+               buffer[1] != 0x5A ||
+               buffer[2] != 0x5A ||
+               buffer[3] != 0xA5)
+                return true;
 
             for(int i = 4; i < 26; i += 2)
             {
                 ushort feature = BitConverter.ToUInt16(buffer, i);
 
-                if(feature == 0x0000) break;
+                if(feature == 0x0000)
+                    break;
 
                 switch(feature)
                 {
                     case 0x0001:
                         features |= KreonFeatures.XtremeUnlock360;
+
                         break;
                     case 0x0101:
                         features |= KreonFeatures.WxripperUnlock360;
+
                         break;
                     case 0x2001:
                         features |= KreonFeatures.DecryptSs360;
+
                         break;
                     case 0x2101:
                         features |= KreonFeatures.ChallengeResponse360;
+
                         break;
                     case 0x0002:
                         features |= KreonFeatures.XtremeUnlock;
+
                         break;
                     case 0x0102:
                         features |= KreonFeatures.WxripperUnlock;
+
                         break;
                     case 0x2002:
                         features |= KreonFeatures.DecryptSs;
+
                         break;
                     case 0x2102:
                         features |= KreonFeatures.ChallengeResponse;
+
                         break;
                     case 0x00F0:
                         features |= KreonFeatures.Lock;
+
                         break;
                     case 0x01F0:
                         features |= KreonFeatures.ErrorSkipping;
+
                         break;
                 }
             }
@@ -198,9 +205,7 @@ namespace Aaru.Devices
             return false;
         }
 
-        /// <summary>
-        ///     Gets the SS sector.
-        /// </summary>
+        /// <summary>Gets the SS sector.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -208,7 +213,7 @@ namespace Aaru.Devices
         /// <param name="buffer">The SS sector.</param>
         /// <param name="requestNumber">Request number.</param>
         public bool KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration,
-                                   byte       requestNumber = 0x00)
+                                   byte requestNumber = 0x00)
         {
             buffer = new byte[2048];
             byte[] cdb = new byte[12];
@@ -229,6 +234,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);

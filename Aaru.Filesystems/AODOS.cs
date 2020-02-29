@@ -45,23 +45,30 @@ namespace Aaru.Filesystems
     // This may be missing fields, or not, I don't know russian so any help is appreciated
     public class AODOS : IFilesystem
     {
-        readonly byte[]         AODOSIdentifier = {0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20};
-        public   FileSystemType XmlFsType { get; private set; }
-        public   string         Name      => "Alexander Osipov DOS file system";
-        public   Guid           Id        => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
-        public   Encoding       Encoding  { get; private set; }
-        public   string         Author    => "Natalia Portillo";
+        readonly byte[] AODOSIdentifier =
+        {
+            0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20
+        };
+        public FileSystemType XmlFsType { get; private set; }
+        public string         Name      => "Alexander Osipov DOS file system";
+        public Guid           Id        => new Guid("668E5039-9DDD-442A-BE1B-A315D6E38E26");
+        public Encoding       Encoding  { get; private set; }
+        public string         Author    => "Natalia Portillo";
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // Does AO-DOS support hard disks?
-            if(partition.Start > 0) return false;
+            if(partition.Start > 0)
+                return false;
 
             // How is it really?
-            if(imagePlugin.Info.SectorSize != 512) return false;
+            if(imagePlugin.Info.SectorSize != 512)
+                return false;
 
             // Does AO-DOS support any other kind of disk?
-            if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600) return false;
+            if(imagePlugin.Info.Sectors != 800 &&
+               imagePlugin.Info.Sectors != 1600)
+                return false;
 
             byte[]          sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
@@ -70,33 +77,31 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = Encoding.GetEncoding("koi8-r");
             byte[]          sector = imagePlugin.ReadSector(0);
             AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Alexander Osipov DOS file system");
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "Alexander Osipov DOS file system",
-                Clusters              = imagePlugin.Info.Sectors,
-                ClusterSize           = imagePlugin.Info.SectorSize,
-                Files                 = bb.files,
-                FilesSpecified        = true,
-                FreeClusters          = imagePlugin.Info.Sectors - bb.usedSectors,
-                FreeClustersSpecified = true,
-                VolumeName            = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
-                Bootable              = true
+                Type           = "Alexander Osipov DOS file system",
+                Clusters       = imagePlugin.Info.Sectors,
+                ClusterSize    = imagePlugin.Info.SectorSize, Files = bb.files,
+                FilesSpecified = true,
+                FreeClusters   = imagePlugin.Info.Sectors - bb.usedSectors, FreeClustersSpecified       = true,
+                VolumeName     = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding), Bootable = true
             };
 
             sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();
             sbInformation.AppendFormat("{0} used sectors on volume", bb.usedSectors).AppendLine();
-            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, Encoding))
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Disk name: {0}", StringHandlers.CToString(bb.volumeLabel, Encoding)).
+                          AppendLine();
 
             information = sbInformation.ToString();
         }
@@ -104,35 +109,21 @@ namespace Aaru.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AODOS_BootBlock
         {
-            /// <summary>
-            ///     A NOP opcode
-            /// </summary>
+            /// <summary>A NOP opcode</summary>
             public readonly byte nop;
-            /// <summary>
-            ///     A branch to real bootloader
-            /// </summary>
+            /// <summary>A branch to real bootloader</summary>
             public readonly ushort branch;
-            /// <summary>
-            ///     Unused
-            /// </summary>
+            /// <summary>Unused</summary>
             public readonly byte unused;
-            /// <summary>
-            ///     " AO-DOS "
-            /// </summary>
+            /// <summary>" AO-DOS "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] identifier;
-            /// <summary>
-            ///     Volume label
-            /// </summary>
+            /// <summary>Volume label</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
             public readonly byte[] volumeLabel;
-            /// <summary>
-            ///     How many files are present in disk
-            /// </summary>
+            /// <summary>How many files are present in disk</summary>
             public readonly ushort files;
-            /// <summary>
-            ///     How many sectors are used
-            /// </summary>
+            /// <summary>How many sectors are used</summary>
             public readonly ushort usedSectors;
         }
     }

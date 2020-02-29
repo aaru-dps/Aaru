@@ -54,30 +54,41 @@ namespace Aaru.Filesystems
         // FreeBSD specifies starts at byte offsets 0, 8192, 65536 and 262144, but in other cases it's following sectors
         // Without bootcode
         const ulong sb_start_floppy = 0;
+
         // With bootcode
         const ulong sb_start_boot = 1;
+
         // Dunno, longer boot code
         const ulong sb_start_long_boot = 8;
+
         // Found on AT&T for MD-2D floppieslzio
         const ulong sb_start_att_dsdd = 14;
+
         // Found on hard disks (Atari UNIX e.g.)
         const ulong sb_start_piggy = 32;
 
         // MAGICs
         // UFS magic
         const uint UFS_MAGIC = 0x00011954;
+
         // Big-endian UFS magic
         const uint UFS_CIGAM = 0x54190100;
+
         // BorderWare UFS
         const uint UFS_MAGIC_BW = 0x0F242697;
+
         // Big-endian BorderWare UFS
         const uint UFS_CIGAM_BW = 0x9726240F;
+
         // UFS2 magic
         const uint UFS2_MAGIC = 0x19540119;
+
         // Big-endian UFS2 magic
         const uint UFS2_CIGAM = 0x19015419;
+
         // Incomplete newfs
         const uint UFS_BAD_MAGIC = 0x19960408;
+
         // Big-endian incomplete newfs
         const uint UFS_BAD_CIGAM = 0x08049619;
 
@@ -89,13 +100,17 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(2 + partition.Start >= partition.End) return false;
+            if(2 + partition.Start >= partition.End)
+                return false;
 
             uint sbSizeInSectors;
 
-            if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
-               imagePlugin.Info.SectorSize == 2448) sbSizeInSectors = block_size / 2048;
-            else sbSizeInSectors                                    = block_size / imagePlugin.Info.SectorSize;
+            if(imagePlugin.Info.SectorSize == 2336 ||
+               imagePlugin.Info.SectorSize == 2352 ||
+               imagePlugin.Info.SectorSize == 2448)
+                sbSizeInSectors = block_size / 2048;
+            else
+                sbSizeInSectors = block_size / imagePlugin.Info.SectorSize;
 
             ulong[] locations =
             {
@@ -106,22 +121,25 @@ namespace Aaru.Filesystems
 
             try
             {
-                return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors)
-                                .Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors))
-                                .Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C))
-                                .Any(magic => magic == UFS_MAGIC     || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW ||
+                return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors).
+                                 Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors)).
+                                 Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C)).
+                                 Any(magic => magic == UFS_MAGIC     || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW ||
                                               magic == UFS_CIGAM_BW  || magic == UFS2_MAGIC || magic == UFS2_CIGAM   ||
                                               magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
             }
-            catch(Exception) { return false; }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             uint   magic = 0;
             uint   sb_size_in_sectors;
@@ -135,9 +153,12 @@ namespace Aaru.Filesystems
             bool   fs_type_sun   = false;
             bool   fs_type_sun86 = false;
 
-            if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
-               imagePlugin.Info.SectorSize == 2448) sb_size_in_sectors = block_size / 2048;
-            else sb_size_in_sectors                                    = block_size / imagePlugin.Info.SectorSize;
+            if(imagePlugin.Info.SectorSize == 2336 ||
+               imagePlugin.Info.SectorSize == 2352 ||
+               imagePlugin.Info.SectorSize == 2448)
+                sb_size_in_sectors = block_size / 2048;
+            else
+                sb_size_in_sectors = block_size / imagePlugin.Info.SectorSize;
 
             ulong[] locations =
             {
@@ -151,10 +172,17 @@ namespace Aaru.Filesystems
                 ufs_sb_sectors = imagePlugin.ReadSectors(partition.Start + loc, sb_size_in_sectors);
                 magic          = BitConverter.ToUInt32(ufs_sb_sectors, 0x055C);
 
-                if(magic == UFS_MAGIC  || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW  || magic == UFS_CIGAM_BW ||
-                   magic == UFS2_MAGIC || magic == UFS2_CIGAM || magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM)
+                if(magic == UFS_MAGIC     ||
+                   magic == UFS_CIGAM     ||
+                   magic == UFS_MAGIC_BW  ||
+                   magic == UFS_CIGAM_BW  ||
+                   magic == UFS2_MAGIC    ||
+                   magic == UFS2_CIGAM    ||
+                   magic == UFS_BAD_MAGIC ||
+                   magic == UFS_BAD_CIGAM)
                 {
                     sb_offset = partition.Start + loc;
+
                     break;
                 }
 
@@ -164,6 +192,7 @@ namespace Aaru.Filesystems
             if(magic == 0)
             {
                 information = "Not a UFS filesystem, I shouldn't have arrived here!";
+
                 return;
             }
 
@@ -174,36 +203,44 @@ namespace Aaru.Filesystems
                 case UFS_MAGIC:
                     sbInformation.AppendLine("UFS filesystem");
                     XmlFsType.Type = "UFS";
+
                     break;
                 case UFS_CIGAM:
                     sbInformation.AppendLine("Big-endian UFS filesystem");
                     XmlFsType.Type = "UFS";
+
                     break;
                 case UFS_MAGIC_BW:
                     sbInformation.AppendLine("BorderWare UFS filesystem");
                     XmlFsType.Type = "UFS";
+
                     break;
                 case UFS_CIGAM_BW:
                     sbInformation.AppendLine("Big-endian BorderWare UFS filesystem");
                     XmlFsType.Type = "UFS";
+
                     break;
                 case UFS2_MAGIC:
                     sbInformation.AppendLine("UFS2 filesystem");
                     XmlFsType.Type = "UFS2";
+
                     break;
                 case UFS2_CIGAM:
                     sbInformation.AppendLine("Big-endian UFS2 filesystem");
                     XmlFsType.Type = "UFS2";
+
                     break;
                 case UFS_BAD_MAGIC:
                     sbInformation.AppendLine("Incompletely initialized UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
                     XmlFsType.Type = "UFS";
+
                     break;
                 case UFS_BAD_CIGAM:
                     sbInformation.AppendLine("Incompletely initialized big-endian UFS filesystem");
                     sbInformation.AppendLine("BEWARE!!! Following information may be completely wrong!");
                     XmlFsType.Type = "UFS";
+
                     break;
             }
 
@@ -213,10 +250,11 @@ namespace Aaru.Filesystems
             UFSSuperBlock ufs_sb = Marshal.ByteArrayToStructureLittleEndian<UFSSuperBlock>(ufs_sb_sectors);
 
             UFSSuperBlock bs_sfu = Marshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
-            if(bs_sfu.fs_magic == UFS_MAGIC     && ufs_sb.fs_magic == UFS_CIGAM    ||
-               bs_sfu.fs_magic == UFS_MAGIC_BW  && ufs_sb.fs_magic == UFS_CIGAM_BW ||
-               bs_sfu.fs_magic == UFS2_MAGIC    && ufs_sb.fs_magic == UFS2_CIGAM   ||
-               bs_sfu.fs_magic == UFS_BAD_MAGIC && ufs_sb.fs_magic == UFS_BAD_CIGAM)
+
+            if((bs_sfu.fs_magic == UFS_MAGIC     && ufs_sb.fs_magic == UFS_CIGAM)    ||
+               (bs_sfu.fs_magic == UFS_MAGIC_BW  && ufs_sb.fs_magic == UFS_CIGAM_BW) ||
+               (bs_sfu.fs_magic == UFS2_MAGIC    && ufs_sb.fs_magic == UFS2_CIGAM)   ||
+               (bs_sfu.fs_magic == UFS_BAD_MAGIC && ufs_sb.fs_magic == UFS_BAD_CIGAM))
             {
                 ufs_sb                           = bs_sfu;
                 ufs_sb.fs_old_cstotal.cs_nbfree  = Swapping.Swap(ufs_sb.fs_old_cstotal.cs_nbfree);
@@ -234,46 +272,47 @@ namespace Aaru.Filesystems
             }
 
             AaruConsole.DebugWriteLine("FFS plugin", "ufs_sb offset: 0x{0:X8}", sb_offset);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_rlink: 0x{0:X8}",      ufs_sb.fs_rlink);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_sblkno: 0x{0:X8}",     ufs_sb.fs_sblkno);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_cblkno: 0x{0:X8}",     ufs_sb.fs_cblkno);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_iblkno: 0x{0:X8}",     ufs_sb.fs_iblkno);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_dblkno: 0x{0:X8}",     ufs_sb.fs_dblkno);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_size: 0x{0:X8}",       ufs_sb.fs_size);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_dsize: 0x{0:X8}",      ufs_sb.fs_dsize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_ncg: 0x{0:X8}",        ufs_sb.fs_ncg);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_bsize: 0x{0:X8}",      ufs_sb.fs_bsize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fsize: 0x{0:X8}",      ufs_sb.fs_fsize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_frag: 0x{0:X8}",       ufs_sb.fs_frag);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_minfree: 0x{0:X8}",    ufs_sb.fs_minfree);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_bmask: 0x{0:X8}",      ufs_sb.fs_bmask);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fmask: 0x{0:X8}",      ufs_sb.fs_fmask);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_bshift: 0x{0:X8}",     ufs_sb.fs_bshift);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fshift: 0x{0:X8}",     ufs_sb.fs_fshift);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_maxcontig: 0x{0:X8}",  ufs_sb.fs_maxcontig);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_maxbpg: 0x{0:X8}",     ufs_sb.fs_maxbpg);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fragshift: 0x{0:X8}",  ufs_sb.fs_fragshift);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fsbtodb: 0x{0:X8}",    ufs_sb.fs_fsbtodb);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_sbsize: 0x{0:X8}",     ufs_sb.fs_sbsize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_csmask: 0x{0:X8}",     ufs_sb.fs_csmask);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_csshift: 0x{0:X8}",    ufs_sb.fs_csshift);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_nindir: 0x{0:X8}",     ufs_sb.fs_nindir);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_inopb: 0x{0:X8}",      ufs_sb.fs_inopb);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_optim: 0x{0:X8}",      ufs_sb.fs_optim);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_id_1: 0x{0:X8}",       ufs_sb.fs_id_1);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_id_2: 0x{0:X8}",       ufs_sb.fs_id_2);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_csaddr: 0x{0:X8}",     ufs_sb.fs_csaddr);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_cssize: 0x{0:X8}",     ufs_sb.fs_cssize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_cgsize: 0x{0:X8}",     ufs_sb.fs_cgsize);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_ipg: 0x{0:X8}",        ufs_sb.fs_ipg);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fpg: 0x{0:X8}",        ufs_sb.fs_fpg);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_fmod: 0x{0:X2}",       ufs_sb.fs_fmod);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_clean: 0x{0:X2}",      ufs_sb.fs_clean);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_ronly: 0x{0:X2}",      ufs_sb.fs_ronly);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_flags: 0x{0:X2}",      ufs_sb.fs_flags);
-            AaruConsole.DebugWriteLine("FFS plugin", "fs_magic: 0x{0:X8}",      ufs_sb.fs_magic);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_rlink: 0x{0:X8}", ufs_sb.fs_rlink);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_sblkno: 0x{0:X8}", ufs_sb.fs_sblkno);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_cblkno: 0x{0:X8}", ufs_sb.fs_cblkno);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_iblkno: 0x{0:X8}", ufs_sb.fs_iblkno);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_dblkno: 0x{0:X8}", ufs_sb.fs_dblkno);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_size: 0x{0:X8}", ufs_sb.fs_size);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_dsize: 0x{0:X8}", ufs_sb.fs_dsize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_ncg: 0x{0:X8}", ufs_sb.fs_ncg);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_bsize: 0x{0:X8}", ufs_sb.fs_bsize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fsize: 0x{0:X8}", ufs_sb.fs_fsize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_frag: 0x{0:X8}", ufs_sb.fs_frag);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_minfree: 0x{0:X8}", ufs_sb.fs_minfree);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_bmask: 0x{0:X8}", ufs_sb.fs_bmask);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fmask: 0x{0:X8}", ufs_sb.fs_fmask);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_bshift: 0x{0:X8}", ufs_sb.fs_bshift);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fshift: 0x{0:X8}", ufs_sb.fs_fshift);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_maxcontig: 0x{0:X8}", ufs_sb.fs_maxcontig);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_maxbpg: 0x{0:X8}", ufs_sb.fs_maxbpg);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fragshift: 0x{0:X8}", ufs_sb.fs_fragshift);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fsbtodb: 0x{0:X8}", ufs_sb.fs_fsbtodb);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_sbsize: 0x{0:X8}", ufs_sb.fs_sbsize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_csmask: 0x{0:X8}", ufs_sb.fs_csmask);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_csshift: 0x{0:X8}", ufs_sb.fs_csshift);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_nindir: 0x{0:X8}", ufs_sb.fs_nindir);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_inopb: 0x{0:X8}", ufs_sb.fs_inopb);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_optim: 0x{0:X8}", ufs_sb.fs_optim);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_id_1: 0x{0:X8}", ufs_sb.fs_id_1);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_id_2: 0x{0:X8}", ufs_sb.fs_id_2);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_csaddr: 0x{0:X8}", ufs_sb.fs_csaddr);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_cssize: 0x{0:X8}", ufs_sb.fs_cssize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_cgsize: 0x{0:X8}", ufs_sb.fs_cgsize);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_ipg: 0x{0:X8}", ufs_sb.fs_ipg);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fpg: 0x{0:X8}", ufs_sb.fs_fpg);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_fmod: 0x{0:X2}", ufs_sb.fs_fmod);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_clean: 0x{0:X2}", ufs_sb.fs_clean);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_ronly: 0x{0:X2}", ufs_sb.fs_ronly);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_flags: 0x{0:X2}", ufs_sb.fs_flags);
+            AaruConsole.DebugWriteLine("FFS plugin", "fs_magic: 0x{0:X8}", ufs_sb.fs_magic);
 
-            if(ufs_sb.fs_magic == UFS2_MAGIC) fs_type_ufs2 = true;
+            if(ufs_sb.fs_magic == UFS2_MAGIC)
+                fs_type_ufs2 = true;
             else
             {
                 const uint
@@ -307,7 +346,8 @@ namespace Aaru.Filesystems
                     fs_type_43bsd = false;
                 }
 
-                if(ufs_sb.fs_cgrotor > 0x00000000 && (uint)ufs_sb.fs_cgrotor < 0xFFFFFFFF)
+                if(ufs_sb.fs_cgrotor       > 0x00000000 &&
+                   (uint)ufs_sb.fs_cgrotor < 0xFFFFFFFF)
                 {
                     fs_type_42bsd = false;
                     fs_type_sun   = false;
@@ -326,42 +366,63 @@ namespace Aaru.Filesystems
             if(!fs_type_ufs2)
             {
                 sbInformation.AppendLine("There are a lot of variants of UFS using overlapped values on same fields");
-                sbInformation
-                   .AppendLine("I will try to guess which one it is, but unless it's UFS2, I may be surely wrong");
+
+                sbInformation.
+                    AppendLine("I will try to guess which one it is, but unless it's UFS2, I may be surely wrong");
             }
 
-            if(fs_type_42bsd) sbInformation.AppendLine("Guessed as 42BSD FFS");
-            if(fs_type_43bsd) sbInformation.AppendLine("Guessed as 43BSD FFS");
-            if(fs_type_44bsd) sbInformation.AppendLine("Guessed as 44BSD FFS");
-            if(fs_type_sun) sbInformation.AppendLine("Guessed as SunOS FFS");
-            if(fs_type_sun86) sbInformation.AppendLine("Guessed as SunOS/x86 FFS");
-            if(fs_type_ufs) sbInformation.AppendLine("Guessed as UFS");
+            if(fs_type_42bsd)
+                sbInformation.AppendLine("Guessed as 42BSD FFS");
+
+            if(fs_type_43bsd)
+                sbInformation.AppendLine("Guessed as 43BSD FFS");
+
+            if(fs_type_44bsd)
+                sbInformation.AppendLine("Guessed as 44BSD FFS");
+
+            if(fs_type_sun)
+                sbInformation.AppendLine("Guessed as SunOS FFS");
+
+            if(fs_type_sun86)
+                sbInformation.AppendLine("Guessed as SunOS/x86 FFS");
+
+            if(fs_type_ufs)
+                sbInformation.AppendLine("Guessed as UFS");
 
             if(fs_type_42bsd)
                 sbInformation.AppendFormat("Linked list of filesystems: 0x{0:X8}", ufs_sb.fs_link).AppendLine();
+
             sbInformation.AppendFormat("Superblock LBA: {0}", ufs_sb.fs_sblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder-block LBA: {0}", ufs_sb.fs_cblkno).AppendLine();
             sbInformation.AppendFormat("inode-block LBA: {0}", ufs_sb.fs_iblkno).AppendLine();
             sbInformation.AppendFormat("First data block LBA: {0}", ufs_sb.fs_dblkno).AppendLine();
             sbInformation.AppendFormat("Cylinder group offset in cylinder: {0}", ufs_sb.fs_old_cgoffset).AppendLine();
-            sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_time))
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_time)).
+                          AppendLine();
+
             XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(ufs_sb.fs_old_time);
             XmlFsType.ModificationDateSpecified = true;
+
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size,
                                        (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
+
             XmlFsType.Clusters    = (ulong)ufs_sb.fs_old_size;
             XmlFsType.ClusterSize = (uint)ufs_sb.fs_fsize;
+
             sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_old_dsize,
                                        (long)ufs_sb.fs_old_dsize * ufs_sb.fs_fsize).AppendLine();
+
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a basic block", ufs_sb.fs_bsize).AppendLine();
             sbInformation.AppendFormat("{0} bytes in a frag block", ufs_sb.fs_fsize).AppendLine();
             sbInformation.AppendFormat("{0} frags in a block", ufs_sb.fs_frag).AppendLine();
             sbInformation.AppendFormat("{0}% of blocks must be free", ufs_sb.fs_minfree).AppendLine();
             sbInformation.AppendFormat("{0}ms for optimal next block", ufs_sb.fs_old_rotdelay).AppendLine();
+
             sbInformation.AppendFormat("disk rotates {0} times per second ({1}rpm)", ufs_sb.fs_old_rps,
                                        ufs_sb.fs_old_rps * 60).AppendLine();
+
             /*          sbInformation.AppendFormat("fs_bmask: 0x{0:X8}", ufs_sb.fs_bmask).AppendLine();
                         sbInformation.AppendFormat("fs_fmask: 0x{0:X8}", ufs_sb.fs_fmask).AppendLine();
                         sbInformation.AppendFormat("fs_bshift: 0x{0:X8}", ufs_sb.fs_bshift).AppendLine();
@@ -372,28 +433,39 @@ namespace Aaru.Filesystems
             sbInformation.AppendFormat("NINDIR: 0x{0:X8}", ufs_sb.fs_nindir).AppendLine();
             sbInformation.AppendFormat("INOPB: 0x{0:X8}", ufs_sb.fs_inopb).AppendLine();
             sbInformation.AppendFormat("NSPF: 0x{0:X8}", ufs_sb.fs_old_nspf).AppendLine();
+
             switch(ufs_sb.fs_optim)
             {
                 case 0:
                     sbInformation.AppendLine("Filesystem will minimize allocation time");
+
                     break;
                 case 1:
                     sbInformation.AppendLine("Filesystem will minimize volume fragmentation");
+
                     break;
                 default:
                     sbInformation.AppendFormat("Unknown optimization value: 0x{0:X8}", ufs_sb.fs_optim).AppendLine();
+
                     break;
             }
 
-            if(fs_type_sun) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_old_npsect).AppendLine();
+            if(fs_type_sun)
+                sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_old_npsect).AppendLine();
             else if(fs_type_sun86)
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect))
-                             .AppendLine();
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect)).
+                              AppendLine();
+
             sbInformation.AppendFormat("Hardware sector interleave: {0}", ufs_sb.fs_old_interleave).AppendLine();
             sbInformation.AppendFormat("Sector 0 skew: {0}/track", ufs_sb.fs_old_trackskew).AppendLine();
-            if(!fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
+
+            if(!fs_type_43bsd     &&
+               ufs_sb.fs_id_1 > 0 &&
+               ufs_sb.fs_id_2 > 0)
                 sbInformation.AppendFormat("Volume ID: 0x{0:X8}{1:X8}", ufs_sb.fs_id_1, ufs_sb.fs_id_2).AppendLine();
-            else if(fs_type_43bsd && ufs_sb.fs_id_1 > 0 && ufs_sb.fs_id_2 > 0)
+            else if(fs_type_43bsd      &&
+                    ufs_sb.fs_id_1 > 0 &&
+                    ufs_sb.fs_id_2 > 0)
             {
                 sbInformation.AppendFormat("{0} µsec for head switch", ufs_sb.fs_id_1).AppendLine();
                 sbInformation.AppendFormat("{0} µsec for track-to-track seek", ufs_sb.fs_id_2).AppendLine();
@@ -410,75 +482,99 @@ namespace Aaru.Filesystems
             sbInformation.AppendFormat("{0} inodes per cylinder group", ufs_sb.fs_ipg).AppendLine();
             sbInformation.AppendFormat("{0} blocks per group", ufs_sb.fs_fpg / ufs_sb.fs_frag).AppendLine();
             sbInformation.AppendFormat("{0} directories", ufs_sb.fs_old_cstotal.cs_ndir).AppendLine();
+
             sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_old_cstotal.cs_nbfree,
                                        (long)ufs_sb.fs_old_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
+
             XmlFsType.FreeClusters          = (ulong)ufs_sb.fs_old_cstotal.cs_nbfree;
             XmlFsType.FreeClustersSpecified = true;
             sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_old_cstotal.cs_nifree).AppendLine();
             sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_old_cstotal.cs_nffree).AppendLine();
+
             if(ufs_sb.fs_fmod == 1)
             {
                 sbInformation.AppendLine("Superblock is under modification");
                 XmlFsType.Dirty = true;
             }
 
-            if(ufs_sb.fs_clean == 1) sbInformation.AppendLine("Volume is clean");
-            if(ufs_sb.fs_ronly == 1) sbInformation.AppendLine("Volume is read-only");
+            if(ufs_sb.fs_clean == 1)
+                sbInformation.AppendLine("Volume is clean");
+
+            if(ufs_sb.fs_ronly == 1)
+                sbInformation.AppendLine("Volume is read-only");
+
             sbInformation.AppendFormat("Volume flags: 0x{0:X2}", ufs_sb.fs_flags).AppendLine();
+
             if(fs_type_ufs)
-                sbInformation.AppendFormat("Volume last mounted on \"{0}\"", StringHandlers.CToString(ufs_sb.fs_fsmnt))
-                             .AppendLine();
+                sbInformation.AppendFormat("Volume last mounted on \"{0}\"", StringHandlers.CToString(ufs_sb.fs_fsmnt)).
+                              AppendLine();
             else if(fs_type_ufs2)
             {
-                sbInformation.AppendFormat("Volume last mounted on \"{0}\"", StringHandlers.CToString(ufs_sb.fs_fsmnt))
-                             .AppendLine();
-                sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(ufs_sb.fs_volname))
-                             .AppendLine();
+                sbInformation.AppendFormat("Volume last mounted on \"{0}\"", StringHandlers.CToString(ufs_sb.fs_fsmnt)).
+                              AppendLine();
+
+                sbInformation.AppendFormat("Volume name: \"{0}\"", StringHandlers.CToString(ufs_sb.fs_volname)).
+                              AppendLine();
+
                 XmlFsType.VolumeName = StringHandlers.CToString(ufs_sb.fs_volname);
                 sbInformation.AppendFormat("Volume ID: 0x{0:X16}", ufs_sb.fs_swuid).AppendLine();
+
                 //xmlFSType.VolumeSerial = string.Format("{0:X16}", ufs_sb.fs_swuid);
                 sbInformation.AppendFormat("Last searched cylinder group: {0}", ufs_sb.fs_cgrotor).AppendLine();
                 sbInformation.AppendFormat("{0} contiguously allocated directories", ufs_sb.fs_contigdirs).AppendLine();
                 sbInformation.AppendFormat("Standard superblock LBA: {0}", ufs_sb.fs_sblkno).AppendLine();
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal.cs_ndir).AppendLine();
+
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal.cs_nbfree,
                                            ufs_sb.fs_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
+
                 XmlFsType.FreeClusters          = (ulong)ufs_sb.fs_cstotal.cs_nbfree;
                 XmlFsType.FreeClustersSpecified = true;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal.cs_nifree).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal.cs_nffree).AppendLine();
                 sbInformation.AppendFormat("{0} free clusters", ufs_sb.fs_cstotal.cs_numclusters).AppendLine();
-                sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_time))
-                             .AppendLine();
+
+                sbInformation.AppendFormat("Volume last written on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_time)).
+                              AppendLine();
+
                 XmlFsType.ModificationDate          = DateHandlers.UnixToDateTime(ufs_sb.fs_time);
                 XmlFsType.ModificationDateSpecified = true;
-                sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize)
-                             .AppendLine();
+
+                sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize).
+                              AppendLine();
+
                 XmlFsType.Clusters = (ulong)ufs_sb.fs_size;
-                sbInformation
-                   .AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_fsize)
-                   .AppendLine();
+
+                sbInformation.
+                    AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_fsize).
+                    AppendLine();
+
                 sbInformation.AppendFormat("Cylinder group summary area LBA: {0}", ufs_sb.fs_csaddr).AppendLine();
                 sbInformation.AppendFormat("{0} blocks pending of being freed", ufs_sb.fs_pendingblocks).AppendLine();
                 sbInformation.AppendFormat("{0} inodes pending of being freed", ufs_sb.fs_pendinginodes).AppendLine();
             }
 
             if(fs_type_sun)
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect))
-                             .AppendLine();
-            else if(fs_type_sun86) sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_state).AppendLine();
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_old_npsect)).
+                              AppendLine();
+            else if(fs_type_sun86)
+                sbInformation.AppendFormat("{0} sectors/track", ufs_sb.fs_state).AppendLine();
             else if(fs_type_44bsd)
             {
                 sbInformation.AppendFormat("{0} blocks on cluster summary array", ufs_sb.fs_contigsumsize).AppendLine();
-                sbInformation.AppendFormat("Maximum length of a symbolic link: {0}", ufs_sb.fs_maxsymlinklen)
-                             .AppendLine();
+
+                sbInformation.AppendFormat("Maximum length of a symbolic link: {0}", ufs_sb.fs_maxsymlinklen).
+                              AppendLine();
+
                 sbInformation.AppendFormat("A file can be {0} bytes at max", ufs_sb.fs_maxfilesize).AppendLine();
-                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_state))
-                             .AppendLine();
+
+                sbInformation.AppendFormat("Volume state on {0}", DateHandlers.UnixToDateTime(ufs_sb.fs_state)).
+                              AppendLine();
             }
 
             if(ufs_sb.fs_old_nrpos > 0)
                 sbInformation.AppendFormat("{0} rotational positions", ufs_sb.fs_old_nrpos).AppendLine();
+
             if(ufs_sb.fs_old_rotbloff > 0)
                 sbInformation.AppendFormat("{0} blocks per rotation", ufs_sb.fs_old_rotbloff).AppendLine();
 
@@ -521,10 +617,7 @@ namespace Aaru.Filesystems
         {
             /// <summary>linked list of file systems</summary>
             public readonly uint fs_link;
-            /// <summary>
-            ///     used for incore super blocks
-            ///     on Sun: uint fs_rolled; // logging only: fs fully rolled
-            /// </summary>
+            /// <summary>used for incore super blocks on Sun: uint fs_rolled; // logging only: fs fully rolled</summary>
             public readonly uint fs_rlink;
             /// <summary>addr of super-block in filesys</summary>
             public readonly int fs_sblkno;
@@ -591,29 +684,17 @@ namespace Aaru.Filesystems
             /// <summary>value of NSPF</summary>
             public readonly int fs_old_nspf;
             /* yet another configuration parameter */
-            /// <summary>
-            ///     optimization preference, see below
-            ///     On SVR: int fs_state; // file system state
-            /// </summary>
+            /// <summary>optimization preference, see below On SVR: int fs_state; // file system state</summary>
             public readonly int fs_optim;
             /// <summary># sectors/track including spares</summary>
             public readonly int fs_old_npsect;
             /// <summary>hardware sector interleave</summary>
             public readonly int fs_old_interleave;
-            /// <summary>
-            ///     sector 0 skew, per track
-            ///     On A/UX: int fs_state; // file system state
-            /// </summary>
+            /// <summary>sector 0 skew, per track On A/UX: int fs_state; // file system state</summary>
             public readonly int fs_old_trackskew;
-            /// <summary>
-            ///     unique filesystem id
-            ///     On old: int fs_headswitch; // head switch time, usec
-            /// </summary>
+            /// <summary>unique filesystem id On old: int fs_headswitch; // head switch time, usec</summary>
             public readonly int fs_id_1;
-            /// <summary>
-            ///     unique filesystem id
-            ///     On old: int fs_trkseek; // track-to-track seek, usec
-            /// </summary>
+            /// <summary>unique filesystem id On old: int fs_trkseek; // track-to-track seek, usec</summary>
             public readonly int fs_id_2;
             /* sizes determined by number of cylinder groups and their sizes */
             /// <summary>blk addr of cyl grp summary area</summary>

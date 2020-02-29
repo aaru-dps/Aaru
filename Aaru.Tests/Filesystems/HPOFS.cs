@@ -39,26 +39,50 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Hpofs
     {
-        readonly string[] testfiles = {"rid1.img.lz", "rid10.img.lz", "rid66percent.img.lz", "rid266.img.lz"};
+        readonly string[] testfiles =
+        {
+            "rid1.img.lz", "rid10.img.lz", "rid66percent.img.lz", "rid266.img.lz"
+        };
 
         readonly MediaType[] mediatypes =
         {
             MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {2880, 2880, 2880, 2880};
+        readonly ulong[] sectors =
+        {
+            2880, 2880, 2880, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {2880, 2880, 2880, 2880};
+        readonly long[] clusters =
+        {
+            2880, 2880, 2880, 2880
+        };
 
-        readonly int[] clustersize = {512, 512, 512, 512};
+        readonly int[] clustersize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly string[] volumename = {"VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL"};
+        readonly string[] volumename =
+        {
+            "VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL", "VOLUME LABEL"
+        };
 
-        readonly string[] volumeserial = {"AC226814", "AC160814", "AC306C14", "ABEF2C14"};
+        readonly string[] volumeserial =
+        {
+            "AC226814", "AC160814", "AC306C14", "ABEF2C14"
+        };
 
-        readonly string[] oemid = {"IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2"};
+        readonly string[] oemid =
+        {
+            "IBM 10.2", "IBM 10.2", "IBM 10.2", "IBM 10.2"
+        };
 
         [Test]
         public void Test()
@@ -69,25 +93,26 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new HPOFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("HPOFS",         fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HPOFS", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }

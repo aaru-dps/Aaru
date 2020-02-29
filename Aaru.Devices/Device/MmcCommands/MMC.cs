@@ -40,12 +40,10 @@ namespace Aaru.Devices
         {
             buffer = new byte[16];
 
-            LastError = SendMmcCommand(MmcCommands.SendCsd, false,
-                                       false,
-                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0,
-                                       16,                                                                1,
-                                       ref buffer,                                                        out response,
-                                       out duration,                                                      out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SendCsd, false, false,
+                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("MMC Device", "SEND_CSD took {0} ms.", duration);
@@ -57,12 +55,10 @@ namespace Aaru.Devices
         {
             buffer = new byte[16];
 
-            LastError = SendMmcCommand(MmcCommands.SendCid, false,
-                                       false,
-                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0,
-                                       16,                                                                1,
-                                       ref buffer,                                                        out response,
-                                       out duration,                                                      out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SendCid, false, false,
+                                       MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("MMC Device", "SEND_CID took {0} ms.", duration);
@@ -74,12 +70,10 @@ namespace Aaru.Devices
         {
             buffer = new byte[4];
 
-            LastError = SendMmcCommand(MmcCommands.SendOpCond, false,
-                                       true,
-                                       MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
-                                       4,                                                                  1,
-                                       ref buffer,                                                         out response,
-                                       out duration,                                                       out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SendOpCond, false, true,
+                                       MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_OP_COND took {0} ms.", duration);
@@ -91,12 +85,10 @@ namespace Aaru.Devices
         {
             buffer = new byte[512];
 
-            LastError = SendMmcCommand(MmcCommands.SendExtCsd, false,
-                                       false,
-                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0,
-                                       512,                                                                 1,
-                                       ref buffer,
-                                       out response, out duration, out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SendExtCsd, false, false,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 512, 1,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("MMC Device", "SEND_EXT_CSD took {0} ms.", duration);
@@ -108,12 +100,10 @@ namespace Aaru.Devices
         {
             byte[] buffer = new byte[0];
 
-            LastError = SendMmcCommand(MmcCommands.SetBlocklen, false,
-                                       false,
-                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length,
-                                       0,                                                                 0,
-                                       ref buffer,                                                        out response,
-                                       out duration,                                                      out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0, 0,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
@@ -121,38 +111,39 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                         uint       transferLength,
-                         bool       byteAddressed, uint timeout, out double duration)
+        public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, uint transferLength,
+                         bool byteAddressed, uint timeout, out double duration)
         {
             buffer = new byte[transferLength * blockSize];
             uint address;
-            if(byteAddressed) address = lba * blockSize;
-            else address              = lba;
+
+            if(byteAddressed)
+                address = lba * blockSize;
+            else
+                address = lba;
 
             MmcCommands command = transferLength > 1 ? MmcCommands.ReadMultipleBlock : MmcCommands.ReadSingleBlock;
 
-            LastError = SendMmcCommand(command, false,
-                                       false,
+            LastError = SendMmcCommand(command, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize,
-                                       transferLength, ref buffer, out response, out duration,
+                                       blockSize, transferLength, ref buffer, out response, out duration,
                                        out bool sense, timeout);
+
             Error = LastError != 0;
 
             if(transferLength > 1)
             {
                 byte[] foo = new byte[0];
-                SendMmcCommand(MmcCommands.StopTransmission, false,
-                               false,
-                               MmcFlags.ResponseR1B | MmcFlags.ResponseSpiR1B | MmcFlags.CommandAc, 0,
-                               0,                                                                   0, ref foo,
-                               out _,
-                               out double stopDuration, out bool _, timeout);
+
+                SendMmcCommand(MmcCommands.StopTransmission, false, false,
+                               MmcFlags.ResponseR1B | MmcFlags.ResponseSpiR1B | MmcFlags.CommandAc, 0, 0, 0, ref foo,
+                               out _, out double stopDuration, out bool _, timeout);
+
                 duration += stopDuration;
                 AaruConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
             }
-            else AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+            else
+                AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
 
             return sense;
         }
@@ -161,12 +152,10 @@ namespace Aaru.Devices
         {
             buffer = new byte[4];
 
-            LastError = SendMmcCommand(MmcCommands.SendStatus, false,
-                                       true,
-                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0,
-                                       4,                                                                 1,
-                                       ref buffer,                                                        out response,
-                                       out duration,                                                      out bool sense, timeout);
+            LastError = SendMmcCommand(MmcCommands.SendStatus, false, true,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 4, 1,
+                                       ref buffer, out response, out duration, out bool sense, timeout);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_STATUS took {0} ms.", duration);

@@ -40,9 +40,7 @@ namespace Aaru.Core
 {
     public static class ImageFormat
     {
-        /// <summary>
-        ///     Detects the image plugin that recognizes the data inside a filter
-        /// </summary>
+        /// <summary>Detects the image plugin that recognizes the data inside a filter</summary>
         /// <param name="imageFilter">Filter</param>
         /// <returns>Detected image plugin</returns>
         public static IMediaImage Detect(IFilter imageFilter)
@@ -62,9 +60,12 @@ namespace Aaru.Core
                     try
                     {
                         AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                        if(!imageplugin.Identify(imageFilter)) continue;
+
+                        if(!imageplugin.Identify(imageFilter))
+                            continue;
 
                         imageFormat = imageplugin;
+
                         break;
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -73,7 +74,8 @@ namespace Aaru.Core
                         // ignored
                     }
 
-                if(imageFormat != null) return imageFormat;
+                if(imageFormat != null)
+                    return imageFormat;
 
                 // Check only RAW plugin
                 foreach(IMediaImage imageplugin in plugins.ImagePluginsList.Values.Where(imageplugin =>
@@ -84,9 +86,12 @@ namespace Aaru.Core
                     try
                     {
                         AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
-                        if(!imageplugin.Identify(imageFilter)) continue;
+
+                        if(!imageplugin.Identify(imageFilter))
+                            continue;
 
                         imageFormat = imageplugin;
+
                         break;
                     }
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
@@ -98,7 +103,10 @@ namespace Aaru.Core
                 // Still not recognized
                 return imageFormat;
             }
-            catch { return null; }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

@@ -47,9 +47,10 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            FdiHeader hdr = new FdiHeader();
+            var hdr = new FdiHeader();
 
-            if(stream.Length < Marshal.SizeOf<FdiHeader>()) return false;
+            if(stream.Length < Marshal.SizeOf<FdiHeader>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -57,11 +58,11 @@ namespace Aaru.DiscImages
             hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
             AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}",  hdr.cylinders);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}",    hdr.dataOff);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}",    hdr.descOff);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}",      hdr.flags);
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}",      hdr.heads);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}", hdr.dataOff);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}", hdr.descOff);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}", hdr.flags);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}", hdr.heads);
 
             stream.Seek(hdr.descOff, SeekOrigin.Begin);
             byte[] description = new byte[hdr.dataOff - hdr.descOff];
@@ -93,40 +94,44 @@ namespace Aaru.DiscImages
                     byte sectors = (byte)stream.ReadByte();
                     uint trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}",       cyl);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}",       head);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}", cyl);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}", head);
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
-                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}",     trkOff);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
 
                     sectorsOff[cyl][head]  = new uint[sectors];
                     sectorsData[cyl][head] = new byte[sectors][];
 
-                    if(sectors < spt && sectors > 0) spt = sectors;
+                    if(sectors < spt &&
+                       sectors > 0)
+                        spt = sectors;
 
                     for(ushort sec = 0; sec < sectors; sec++)
                     {
-                        byte        c    = (byte)stream.ReadByte();
-                        byte        h    = (byte)stream.ReadByte();
-                        byte        r    = (byte)stream.ReadByte();
-                        byte        n    = (byte)stream.ReadByte();
-                        SectorFlags f    = (SectorFlags)stream.ReadByte();
-                        byte[]      offB = new byte[2];
+                        byte   c    = (byte)stream.ReadByte();
+                        byte   h    = (byte)stream.ReadByte();
+                        byte   r    = (byte)stream.ReadByte();
+                        byte   n    = (byte)stream.ReadByte();
+                        var    f    = (SectorFlags)stream.ReadByte();
+                        byte[] offB = new byte[2];
                         stream.Read(offB, 0, 2);
                         ushort secOff = BitConverter.ToUInt16(offB, 0);
 
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}",       c);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}",       h);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}",       r);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}", c);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}", h);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}", r);
                         AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
-                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}",       f);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}", f);
+
                         AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
-                                                  secOff + trkOff + hdr.dataOff);
+                                                   secOff + trkOff + hdr.dataOff);
 
                         // TODO: This assumes sequential sectors.
                         sectorsOff[cyl][head][sec]  = secOff + trkOff + hdr.dataOff;
                         sectorsData[cyl][head][sec] = new byte[128 << n];
 
-                        if(128 << n > imageInfo.SectorSize) imageInfo.SectorSize = (uint)(128 << n);
+                        if(128 << n > imageInfo.SectorSize)
+                            imageInfo.SectorSize = (uint)(128 << n);
                     }
                 }
             }
@@ -145,20 +150,27 @@ namespace Aaru.DiscImages
                     }
 
                     // For empty cylinders
-                    if(sectorsOff[cyl][head].Length != 0) continue;
+                    if(sectorsOff[cyl][head].Length != 0)
+                        continue;
 
                     if(cyl + 1 == hdr.cylinders ||
+
                        // Next cylinder is also empty
-                       sectorsOff[cyl + 1][head].Length == 0) emptyCyl = true;
+                       sectorsOff[cyl + 1][head].Length == 0)
+                        emptyCyl = true;
+
                     // Create empty sectors
                     else
                     {
                         sectorsData[cyl][head] = new byte[spt][];
-                        for(int i = 0; i < spt; i++) sectorsData[cyl][head][i] = new byte[imageInfo.SectorSize];
+
+                        for(int i = 0; i < spt; i++)
+                            sectorsData[cyl][head][i] = new byte[imageInfo.SectorSize];
                     }
                 }
 
-                if(emptyCyl) imageInfo.Cylinders--;
+                if(emptyCyl)
+                    imageInfo.Cylinders--;
             }
 
             // TODO: What about double sided, half track pitch compact floppies?
@@ -198,7 +210,8 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream buffer = new MemoryStream();
+            var buffer = new MemoryStream();
+
             for(uint i = 0; i < length; i++)
             {
                 byte[] sector = ReadSector(sectorAddress + i);

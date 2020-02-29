@@ -12,11 +12,15 @@ namespace Aaru.Filesystems
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(string.IsNullOrWhiteSpace(path) || path == "/")
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(string.IsNullOrWhiteSpace(path) ||
+               path == "/")
             {
                 contents = rootDirectoryCache.Keys.ToList();
+
                 return Errno.NoError;
             }
 
@@ -27,17 +31,23 @@ namespace Aaru.Filesystems
             if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
+
                 return Errno.NoError;
             }
 
-            string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pieces = cutPath.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DirectoryEntryWithPointers> entry =
                 rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
-            if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key))
+                return Errno.NoSuchFile;
 
-            if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return Errno.NotDirectory;
+            if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
+                return Errno.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -47,15 +57,19 @@ namespace Aaru.Filesystems
             {
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
-                if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+                if(string.IsNullOrEmpty(entry.Key))
+                    return Errno.NoSuchFile;
 
-                if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return Errno.NotDirectory;
+                if((entry.Value.entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
+                    return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
+                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                    continue;
 
-                if(entry.Value.pointers.Length < 1) return Errno.InvalidArgument;
+                if(entry.Value.pointers.Length < 1)
+                    return Errno.InvalidArgument;
 
                 currentDirectory = DecodeDirectory((int)entry.Value.pointers[0]);
 
@@ -63,6 +77,7 @@ namespace Aaru.Filesystems
             }
 
             contents = currentDirectory?.Keys.ToList();
+
             return Errno.NoError;
         }
 
@@ -83,31 +98,34 @@ namespace Aaru.Filesystems
 
                 int off = (int)header.first_used;
 
-                DirectoryEntry entry = new DirectoryEntry();
+                var entry = new DirectoryEntry();
 
                 while(off + DirectoryEntrySize < data.Length)
                 {
                     entry = Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(data, off, DirectoryEntrySize);
                     string name = StringHandlers.CToString(entry.name, Encoding);
 
-                    DirectoryEntryWithPointers entryWithPointers =
-                        new DirectoryEntryWithPointers {entry = entry, pointers = new uint[entry.last_copy + 1]};
+                    var entryWithPointers = new DirectoryEntryWithPointers
+                    {
+                        entry = entry, pointers = new uint[entry.last_copy + 1]
+                    };
 
                     for(int i = 0; i <= entry.last_copy; i++)
                         entryWithPointers.pointers[i] =
-                            BigEndianBitConverter.ToUInt32(data, off + DirectoryEntrySize + i * 4);
+                            BigEndianBitConverter.ToUInt32(data, off + DirectoryEntrySize + (i * 4));
 
                     entries.Add(name, entryWithPointers);
 
                     if((entry.flags & (uint)FileFlags.LastEntry)        != 0 ||
-                       (entry.flags & (uint)FileFlags.LastEntryInBlock) != 0) break;
+                       (entry.flags & (uint)FileFlags.LastEntryInBlock) != 0)
+                        break;
 
-                    off += (int)(DirectoryEntrySize + (entry.last_copy + 1) * 4);
+                    off += (int)(DirectoryEntrySize + ((entry.last_copy + 1) * 4));
                 }
 
-                if((entry.flags & (uint)FileFlags.LastEntry) != 0) break;
-            }
-            while(header.next_block != -1);
+                if((entry.flags & (uint)FileFlags.LastEntry) != 0)
+                    break;
+            } while(header.next_block != -1);
 
             return entries;
         }

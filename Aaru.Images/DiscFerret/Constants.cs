@@ -34,13 +34,9 @@ namespace Aaru.DiscImages
 {
     public partial class DiscFerret
     {
-        /// <summary>
-        ///     "DFER"
-        /// </summary>
+        /// <summary>"DFER"</summary>
         const uint DFI_MAGIC = 0x52454644;
-        /// <summary>
-        ///     "DFE2"
-        /// </summary>
+        /// <summary>"DFE2"</summary>
         const uint DFI_MAGIC2 = 0x32454644;
     }
 }

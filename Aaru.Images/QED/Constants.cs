@@ -34,27 +34,17 @@ namespace Aaru.DiscImages
 {
     public partial class Qed
     {
-        /// <summary>
-        ///     Magic number: 'Q', 'E', 'D', 0x00
-        /// </summary>
+        /// <summary>Magic number: 'Q', 'E', 'D', 0x00</summary>
         const uint QED_MAGIC = 0x00444551;
 
-        /// <summary>
-        ///     Mask of unsupported incompatible features
-        /// </summary>
+        /// <summary>Mask of unsupported incompatible features</summary>
         const ulong QED_FEATURE_MASK = 0xFFFFFFFFFFFFFFF8;
 
-        /// <summary>
-        ///     File is differential (has a backing file)
-        /// </summary>
+        /// <summary>File is differential (has a backing file)</summary>
         const ulong QED_FEATURE_BACKING_FILE = 0x01;
-        /// <summary>
-        ///     Image needs a consistency check before writing
-        /// </summary>
+        /// <summary>Image needs a consistency check before writing</summary>
         const ulong QED_FEATURE_NEEDS_CHECK = 0x02;
-        /// <summary>
-        ///     Backing file is a raw disk image
-        /// </summary>
+        /// <summary>Backing file is a raw disk image</summary>
         const ulong QED_FEATURE_RAW_BACKING = 0x04;
 
         const int  MAX_CACHE_SIZE       = 16777216;

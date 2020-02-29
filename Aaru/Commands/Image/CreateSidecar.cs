@@ -119,7 +119,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
-                    return(int)ErrorNumber.EncodingUnknown;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             if(File.Exists(imagePath))
@@ -128,7 +128,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
 
-                    return(int)ErrorNumber.ExpectedDirectory;
+                    return (int)ErrorNumber.ExpectedDirectory;
                 }
 
                 var     filtersList = new FiltersList();
@@ -138,7 +138,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                    return(int)ErrorNumber.CannotOpenFile;
+                    return (int)ErrorNumber.CannotOpenFile;
                 }
 
                 try
@@ -149,12 +149,12 @@ namespace Aaru.Commands.Image
                     {
                         AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
-                        return(int)ErrorNumber.UnrecognizedFormat;
+                        return (int)ErrorNumber.UnrecognizedFormat;
                     }
 
                     if(verbose)
                         AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                    imageFormat.Id);
+                                                     imageFormat.Id);
                     else
                         AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
@@ -165,7 +165,7 @@ namespace Aaru.Commands.Image
                             AaruConsole.WriteLine("Unable to open image format");
                             AaruConsole.WriteLine("No error given");
 
-                            return(int)ErrorNumber.CannotOpenFormat;
+                            return (int)ErrorNumber.CannotOpenFormat;
                         }
 
                         AaruConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
@@ -175,7 +175,7 @@ namespace Aaru.Commands.Image
                         AaruConsole.ErrorWriteLine("Unable to open image format");
                         AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
 
-                        return(int)ErrorNumber.CannotOpenFormat;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     Statistics.AddMediaFormat(imageFormat.Format);
@@ -214,7 +214,7 @@ namespace Aaru.Commands.Image
                     AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                     AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
 
-                    return(int)ErrorNumber.UnexpectedException;
+                    return (int)ErrorNumber.UnexpectedException;
                 }
             }
             else if(Directory.Exists(imagePath))
@@ -223,7 +223,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
 
-                    return(int)ErrorNumber.ExpectedFile;
+                    return (int)ErrorNumber.ExpectedFile;
                 }
 
                 string[]     contents = Directory.GetFiles(imagePath, "*", SearchOption.TopDirectoryOnly);
@@ -255,7 +255,7 @@ namespace Aaru.Commands.Image
             else
                 AaruConsole.ErrorWriteLine("The specified input file cannot be found.");
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

@@ -40,14 +40,10 @@ using Aaru.Partitions;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    ///     Implements methods for handling partitions
-    /// </summary>
+    /// <summary>Implements methods for handling partitions</summary>
     public static class Partitions
     {
-        /// <summary>
-        ///     Gets a list of all partitions present in the specified image
-        /// </summary>
+        /// <summary>Gets a list of all partitions present in the specified image</summary>
         /// <param name="image">Image</param>
         /// <returns>List of found partitions</returns>
         public static List<Partition> GetAll(IMediaImage image)
@@ -57,8 +53,8 @@ namespace Aaru.Core
             List<Partition> childPartitions  = new List<Partition>();
             List<ulong>     checkedLocations = new List<ulong>();
 
-            ITapeImage               tapeImage          = image as ITapeImage;
-            IPartitionableMediaImage partitionableImage = image as IPartitionableMediaImage;
+            var tapeImage          = image as ITapeImage;
+            var partitionableImage = image as IPartitionableMediaImage;
 
             // Create partitions from image files
             if(tapeImage?.Files != null)
@@ -68,12 +64,14 @@ namespace Aaru.Core
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
                         {
                             foundPartitions.AddRange(partitions);
+
                             AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
-                                                      tapeFile.FirstBlock);
+                                                       tapeFile.FirstBlock);
                         }
 
                     checkedLocations.Add(tapeFile.FirstBlock);
                 }
+
             // Getting all partitions from device (e.g. tracks)
             else if(partitionableImage?.Partitions != null)
                 foreach(Partition imagePartition in partitionableImage.Partitions)
@@ -82,12 +80,14 @@ namespace Aaru.Core
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
                         {
                             foundPartitions.AddRange(partitions);
+
                             AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
-                                                      imagePartition.Start);
+                                                       imagePartition.Start);
                         }
 
                     checkedLocations.Add(imagePartition.Start);
                 }
+
             // Getting all partitions at start of device
             else
             {
@@ -107,6 +107,7 @@ namespace Aaru.Core
                 {
                     childPartitions.Add(foundPartitions[0]);
                     foundPartitions.RemoveAt(0);
+
                     continue;
                 }
 
@@ -115,12 +116,14 @@ namespace Aaru.Core
                 foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                 {
                     AaruConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
-                                              foundPartitions[0].Start);
+                                               foundPartitions[0].Start);
+
                     if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
                         continue;
 
                     AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
-                                              foundPartitions[0].Start);
+                                               foundPartitions[0].Start);
+
                     childs.AddRange(partitions);
                 }
 
@@ -133,8 +136,10 @@ namespace Aaru.Core
                     foundPartitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
-                        if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
-                        else foundPartitions.Add(child);
+                        if(checkedLocations.Contains(child.Start))
+                            childPartitions.Add(child);
+                        else
+                            foundPartitions.Add(child);
                 }
                 else
                 {
@@ -142,7 +147,7 @@ namespace Aaru.Core
                     foundPartitions.RemoveAt(0);
                 }
 
-                AaruConsole.DebugWriteLine("Partitions", "Got {0} parents",    foundPartitions.Count);
+                AaruConsole.DebugWriteLine("Partitions", "Got {0} parents", foundPartitions.Count);
                 AaruConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
             }
 
@@ -153,12 +158,11 @@ namespace Aaru.Core
                     childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
 
                 if(tapeImage.Files != null)
-                    childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock))
-                                                      .Select(tapeFile => new Partition
+                    childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock)).
+                                                       Select(tapeFile => new Partition
                                                        {
-                                                           Start = tapeFile.FirstBlock,
-                                                           Length = tapeFile.LastBlock -
-                                                                    tapeFile.FirstBlock + 1,
+                                                           Start    = tapeFile.FirstBlock,
+                                                           Length   = (tapeFile.LastBlock - tapeFile.FirstBlock) + 1,
                                                            Sequence = tapeFile.File
                                                        }));
             }
@@ -169,34 +173,36 @@ namespace Aaru.Core
 
                 if(partitionableImage.Partitions != null)
                     childPartitions.AddRange(partitionableImage.Partitions.Where(imagePartition =>
-                                                                                     !startLocations
-                                                                                        .Contains(imagePartition
-                                                                                                     .Start)));
+                                                                                     !startLocations.
+                                                                                         Contains(imagePartition.
+                                                                                                      Start)));
             }
 
-            Partition[] childArray = childPartitions
-                                    .OrderBy(part => part.Start).ThenBy(part => part.Length).ThenBy(part => part.Scheme)
-                                    .ToArray();
+            Partition[] childArray = childPartitions.
+                                     OrderBy(part => part.Start).ThenBy(part => part.Length).
+                                     ThenBy(part => part.Scheme).ToArray();
 
-            for(long i = 0; i < childArray.LongLength; i++) childArray[i].Sequence = (ulong)i;
+            for(long i = 0; i < childArray.LongLength; i++)
+                childArray[i].Sequence = (ulong)i;
 
             return childArray.ToList();
         }
 
-        /// <summary>
-        ///     Adds all partition schemes from the specified list of partitions to statistics
-        /// </summary>
+        /// <summary>Adds all partition schemes from the specified list of partitions to statistics</summary>
         /// <param name="partitions">List of partitions</param>
         public static void AddSchemesToStats(List<Partition> partitions)
         {
-            if(partitions == null || partitions.Count == 0) return;
+            if(partitions       == null ||
+               partitions.Count == 0)
+                return;
 
             List<string> schemes = new List<string>();
 
             foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme)))
                 schemes.Add(part.Scheme);
 
-            foreach(string scheme in schemes) Statistics.AddPartition(scheme);
+            foreach(string scheme in schemes)
+                Statistics.AddPartition(scheme);
         }
     }
 }

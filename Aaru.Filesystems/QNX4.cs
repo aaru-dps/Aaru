@@ -56,41 +56,53 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start + 1 >= imagePlugin.Info.Sectors) return false;
+            if(partition.Start + 1 >= imagePlugin.Info.Sectors)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
-            if(sector.Length < 512) return false;
+
+            if(sector.Length < 512)
+                return false;
 
             QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
             // Check root directory name
-            if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
+            if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname))
+                return false;
 
             // Check sizes are multiple of blocks
-            if(qnxSb.rootDir.di_size % 512 != 0 || qnxSb.inode.di_size % 512 != 0 || qnxSb.boot.di_size % 512 != 0 ||
-               qnxSb.altBoot.di_size % 512 != 0) return false;
+            if(qnxSb.rootDir.di_size % 512 != 0 ||
+               qnxSb.inode.di_size   % 512 != 0 ||
+               qnxSb.boot.di_size    % 512 != 0 ||
+               qnxSb.altBoot.di_size % 512 != 0)
+                return false;
 
             // Check extents are not past device
             if(qnxSb.rootDir.di_first_xtnt.block + partition.Start >= partition.End ||
                qnxSb.inode.di_first_xtnt.block   + partition.Start >= partition.End ||
                qnxSb.boot.di_first_xtnt.block    + partition.Start >= partition.End ||
-               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End) return false;
+               qnxSb.altBoot.di_first_xtnt.block + partition.Start >= partition.End)
+                return false;
 
             // Check inodes are in use
-            if((qnxSb.rootDir.di_status & 0x01) != 0x01 || (qnxSb.inode.di_status & 0x01) != 0x01 ||
-               (qnxSb.boot.di_status    & 0x01) != 0x01) return false;
+            if((qnxSb.rootDir.di_status & 0x01) != 0x01 ||
+               (qnxSb.inode.di_status   & 0x01) != 0x01 ||
+               (qnxSb.boot.di_status    & 0x01) != 0x01)
+                return false;
 
             // All hail filesystems without identification marks
             return true;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
-            if(sector.Length < 512) return;
+
+            if(sector.Length < 512)
+                return;
 
             QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
@@ -174,14 +186,13 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                      = "QNX4 filesystem",
-                Clusters                  = partition.Length,
-                ClusterSize               = 512,
+                Type                      = "QNX4 filesystem", Clusters = partition.Length, ClusterSize = 512,
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),
                 ModificationDateSpecified = true
             };
+
             XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 

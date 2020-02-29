@@ -39,9 +39,9 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DartHeader
         {
-            public byte  srcCmp;
-            public byte  srcType;
-            public short srcSize;
+            public readonly byte  srcCmp;
+            public readonly byte  srcType;
+            public readonly short srcSize;
         }
     }
 }

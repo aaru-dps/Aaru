@@ -46,20 +46,27 @@ namespace Aaru.DiscImages
         public string Name   => "Apple ][ Interleaved Disk Image";
         public Guid   Id     => new Guid("A5828AC0-62C9-4304-81D4-EFD4AAE47360");
         public string Author => "Natalia Portillo";
-        public string Format =>
-            extension == ".po"
-                ? "Apple ][ Interleaved Disk Image (ProDOS order)"
-                : "Apple ][ Interleaved Disk Image (DOS order)";
+        public string Format => extension == ".po" ? "Apple ][ Interleaved Disk Image (ProDOS order)"
+                                    : "Apple ][ Interleaved Disk Image (DOS order)";
 
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Apple33SS};
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.Apple33SS
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".do", ".po"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".do", ".po"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

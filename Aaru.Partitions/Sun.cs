@@ -64,12 +64,12 @@ namespace Aaru.Partitions
         /// <summary>Length of v_volume</summary>
         const int LEN_DKL_VVOL = 8;
         /// <summary>Size of padding in SunOS disk label</summary>
-        const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
+        const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + (NDKMAP * 8) + (14 * 2));
         /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
-        const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136    + // sizeof(dk_vtoc8)
-                                                  NDKMAP * 8    + 14 * 2 + 2 * 2);
-        const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456   + // sizeof(dk_vtoc16)
-                                                   4 * 4 + 12 * 2 + 2 * 2);
+        const int LEN_DKL_PAD8 = DK_LABEL_SIZE - (LEN_DKL_ASCII + 136      + // sizeof(dk_vtoc8)
+                                                  (NDKMAP * 8)  + (14 * 2) + (2 * 2));
+        const int LEN_DKL_PAD16 = DK_LABEL_SIZE - (456     + // sizeof(dk_vtoc16)
+                                                   (4 * 4) + (12 * 2) + (2 * 2));
 
         public string Name   => "Sun Disklabel";
         public Guid   Id     => new Guid("50F35CC4-8375-4445-8DCB-1BA550C931A3");
@@ -79,9 +79,11 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
-            if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
+            if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
+                return false;
 
             bool useDkl = false, useDkl8 = false, useDkl16 = false;
 
@@ -91,17 +93,24 @@ namespace Aaru.Partitions
             dk_label8  dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
             dk_label16 dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
-            AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}",           dkl.dkl_magic);
-            AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}",  dkl8.dkl_vtoc.v_sanity);
+            AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}", dkl.dkl_magic);
+            AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}", dkl8.dkl_vtoc.v_sanity);
             AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
 
-            if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-                if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
-                    useDkl16                                                                                = true;
-                else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
-                else useDkl                                                                                 = true;
+            if(dkl.dkl_magic == DKL_MAGIC ||
+               dkl.dkl_magic == DKL_CIGAM)
+                if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
+                   dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                    useDkl16 = true;
+                else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
+                        dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
+                    useDkl8 = true;
+                else
+                    useDkl = true;
 
-            if(!useDkl && !useDkl8 && !useDkl16)
+            if(!useDkl  &&
+               !useDkl8 &&
+               !useDkl16)
             {
                 sunSector = imagePlugin.ReadSector(sectorOffset + 1);
 
@@ -109,43 +118,57 @@ namespace Aaru.Partitions
                 dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
                 dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
-                if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
-                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
-                        useDkl16                                                                                = true;
-                    else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE || dkl8.dkl_vtoc.v_sanity == VTOC_ENAS) useDkl8 = true;
-                    else useDkl                                                                                 = true;
+                if(dkl.dkl_magic == DKL_MAGIC ||
+                   dkl.dkl_magic == DKL_CIGAM)
+                    if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE ||
+                       dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
+                        useDkl16 = true;
+                    else if(dkl8.dkl_vtoc.v_sanity == VTOC_SANE ||
+                            dkl8.dkl_vtoc.v_sanity == VTOC_ENAS)
+                        useDkl8 = true;
+                    else
+                        useDkl = true;
             }
 
-            if(!useDkl && !useDkl8 && !useDkl16) return false;
+            if(!useDkl  &&
+               !useDkl8 &&
+               !useDkl16)
+                return false;
 
-            if(useDkl16     && dkl16.dkl_magic == DKL_CIGAM) dkl16 = SwapDiskLabel(dkl16);
-            else if(useDkl8 && dkl8.dkl_magic  == DKL_CIGAM) dkl8  = SwapDiskLabel(dkl8);
-            else if(useDkl  && dkl.dkl_magic   == DKL_CIGAM) dkl   = SwapDiskLabel(dkl);
+            if(useDkl16 && dkl16.dkl_magic == DKL_CIGAM)
+                dkl16 = SwapDiskLabel(dkl16);
+            else if(useDkl8 && dkl8.dkl_magic == DKL_CIGAM)
+                dkl8 = SwapDiskLabel(dkl8);
+            else if(useDkl && dkl.dkl_magic == DKL_CIGAM)
+                dkl = SwapDiskLabel(dkl);
 
             if(useDkl)
             {
                 ulong sectorsPerCylinder = (ulong)(dkl.dkl_nsect * dkl.dkl_nhead);
 
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_asciilabel = \"{0}\"",
-                                          StringHandlers.CToString(dkl.dkl_asciilabel));
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_rpm = {0}",    dkl.dkl_rpm);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_pcyl = {0}",   dkl.dkl_pcyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_apc = {0}",    dkl.dkl_apc);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap1 = {0}",   dkl.dkl_gap1);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap2 = {0}",   dkl.dkl_gap2);
+                                           StringHandlers.CToString(dkl.dkl_asciilabel));
+
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_rpm = {0}", dkl.dkl_rpm);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_pcyl = {0}", dkl.dkl_pcyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_apc = {0}", dkl.dkl_apc);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap1 = {0}", dkl.dkl_gap1);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_gap2 = {0}", dkl.dkl_gap2);
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_intrlv = {0}", dkl.dkl_intrlv);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ncyl = {0}",   dkl.dkl_ncyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_acyl = {0}",   dkl.dkl_acyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nhead = {0}",  dkl.dkl_nhead);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nsect = {0}",  dkl.dkl_nsect);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_bhead = {0}",  dkl.dkl_bhead);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ppart = {0}",  dkl.dkl_ppart);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ncyl = {0}", dkl.dkl_ncyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_acyl = {0}", dkl.dkl_acyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nhead = {0}", dkl.dkl_nhead);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_nsect = {0}", dkl.dkl_nsect);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_bhead = {0}", dkl.dkl_bhead);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_ppart = {0}", dkl.dkl_ppart);
+
                 for(int i = 0; i < NDKMAP; i++)
                 {
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_map[{0}].dkl_cylno = {1}", i,
-                                              dkl.dkl_map[i].dkl_cylno);
+                                               dkl.dkl_map[i].dkl_cylno);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_map[{0}].dkl_nblk = {1}", i,
-                                              dkl.dkl_map[i].dkl_nblk);
+                                               dkl.dkl_map[i].dkl_nblk);
                 }
 
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}", dkl.dkl_magic);
@@ -153,22 +176,24 @@ namespace Aaru.Partitions
                 AaruConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}", sectorsPerCylinder);
 
                 for(int i = 0; i < NDKMAP; i++)
-                    if(dkl.dkl_map[i].dkl_cylno > 0 && dkl.dkl_map[i].dkl_nblk > 0)
+                    if(dkl.dkl_map[i].dkl_cylno > 0 &&
+                       dkl.dkl_map[i].dkl_nblk  > 0)
                     {
-                        Partition part = new Partition
+                        var part = new Partition
                         {
                             Size     = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                            Length   = (ulong)((dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
-                            Offset =
-                                ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                DK_LABEL_SIZE,
-                            Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                    DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
+                            Offset = (((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                     DK_LABEL_SIZE,
+                            Start = ((((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                     DK_LABEL_SIZE) / imagePlugin.Info.SectorSize,
                             Type   = "SunOS partition",
                             Scheme = Name
                         };
-                        if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
+
+                        if(part.Start < imagePlugin.Info.Sectors &&
+                           part.End   <= imagePlugin.Info.Sectors)
                             partitions.Add(part);
                     }
             }
@@ -177,138 +202,163 @@ namespace Aaru.Partitions
                 ulong sectorsPerCylinder = (ulong)(dkl8.dkl_nsect * dkl8.dkl_nhead);
 
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_asciilabel = \"{0}\"",
-                                          StringHandlers.CToString(dkl8.dkl_asciilabel));
+                                           StringHandlers.CToString(dkl8.dkl_asciilabel));
+
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_version = {0}", dkl8.dkl_vtoc.v_version);
+
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_volume = \"{0}\"",
-                                          StringHandlers.CToString(dkl8.dkl_vtoc.v_volume));
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_nparts = {0}",      dkl8.dkl_vtoc.v_nparts);
+                                           StringHandlers.CToString(dkl8.dkl_vtoc.v_volume));
+
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_nparts = {0}", dkl8.dkl_vtoc.v_nparts);
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}", dkl8.dkl_vtoc.v_sanity);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_write_reinstruct = {0}",   dkl8.dkl_write_reinstruct);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_read_reinstruct = {0}",    dkl8.dkl_read_reinstruct);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_rpm = {0}",                dkl8.dkl_rpm);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_pcyl = {0}",               dkl8.dkl_pcyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_apc = {0}",                dkl8.dkl_apc);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs1 = {0}",               dkl8.dkl_obs1);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs2 = {0}",               dkl8.dkl_obs2);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_intrlv = {0}",             dkl8.dkl_intrlv);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_ncyl = {0}",               dkl8.dkl_ncyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_acyl = {0}",               dkl8.dkl_acyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nhead = {0}",              dkl8.dkl_nhead);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nsect = {0}",              dkl8.dkl_nsect);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs3 = {0}",               dkl8.dkl_obs3);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs4 = {0}",               dkl8.dkl_obs4);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_write_reinstruct = {0}", dkl8.dkl_write_reinstruct);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_read_reinstruct = {0}", dkl8.dkl_read_reinstruct);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_rpm = {0}", dkl8.dkl_rpm);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_pcyl = {0}", dkl8.dkl_pcyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_apc = {0}", dkl8.dkl_apc);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs1 = {0}", dkl8.dkl_obs1);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs2 = {0}", dkl8.dkl_obs2);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_intrlv = {0}", dkl8.dkl_intrlv);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_ncyl = {0}", dkl8.dkl_ncyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_acyl = {0}", dkl8.dkl_acyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nhead = {0}", dkl8.dkl_nhead);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_nsect = {0}", dkl8.dkl_nsect);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs3 = {0}", dkl8.dkl_obs3);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_obs4 = {0}", dkl8.dkl_obs4);
+
                 for(int i = 0; i < NDKMAP; i++)
                 {
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_map[{0}].dkl_cylno = {1}", i,
-                                              dkl8.dkl_map[i].dkl_cylno);
+                                               dkl8.dkl_map[i].dkl_cylno);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_map[{0}].dkl_nblk = {1}", i,
-                                              dkl8.dkl_map[i].dkl_nblk);
+                                               dkl8.dkl_map[i].dkl_nblk);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})", i,
-                                              dkl8.dkl_vtoc.v_part[i].p_tag, (ushort)dkl8.dkl_vtoc.v_part[i].p_tag);
+                                               dkl8.dkl_vtoc.v_part[i].p_tag, (ushort)dkl8.dkl_vtoc.v_part[i].p_tag);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
-                                              dkl8.dkl_vtoc.v_part[i].p_flag, (ushort)dkl8.dkl_vtoc.v_part[i].p_flag);
+                                               dkl8.dkl_vtoc.v_part[i].p_flag, (ushort)dkl8.dkl_vtoc.v_part[i].p_flag);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_timestamp[{0}] = {1}", i,
-                                              DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
+                                               DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
                 }
 
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_magic = 0x{0:X4}", dkl8.dkl_magic);
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_cksum = 0x{0:X4}", dkl8.dkl_cksum);
-                AaruConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}",  sectorsPerCylinder);
+                AaruConsole.DebugWriteLine("Sun plugin", "sectorsPerCylinder = {0}", sectorsPerCylinder);
 
-                if(dkl8.dkl_vtoc.v_nparts > NDKMAP) return false;
+                if(dkl8.dkl_vtoc.v_nparts > NDKMAP)
+                    return false;
 
                 for(int i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
-                    if(dkl8.dkl_map[i].dkl_nblk      > 0 && dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
+                    if(dkl8.dkl_map[i].dkl_nblk      > 0                &&
+                       dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
                        dkl8.dkl_vtoc.v_part[i].p_tag != SunTag.SunWholeDisk)
                     {
-                        Partition part = new Partition
+                        var part = new Partition
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
                             Size        = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
                             Length =
-                                (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                                (ulong)((dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
-                            Offset =
-                                ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                DK_LABEL_SIZE,
-                            Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
-                                    DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
-                            Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
-                            Scheme = Name
+                            Offset = (((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                     DK_LABEL_SIZE,
+                            Start = ((((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
+                                     DK_LABEL_SIZE) / imagePlugin.Info.SectorSize,
+                            Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag), Scheme = Name
                         };
+
                         if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
                             part.Description +=
                                 $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i])}";
 
-                        if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
+                        if(part.Start < imagePlugin.Info.Sectors &&
+                           part.End   <= imagePlugin.Info.Sectors)
                             partitions.Add(part);
                     }
             }
             else
             {
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_version = {0}",     dkl16.dkl_vtoc.v_version);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_version = {0}", dkl16.dkl_vtoc.v_version);
+
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_volume = \"{0}\"",
-                                          StringHandlers.CToString(dkl16.dkl_vtoc.v_volume));
+                                           StringHandlers.CToString(dkl16.dkl_vtoc.v_volume));
+
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_sectorsz = {0}", dkl16.dkl_vtoc.v_sectorsz);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_nparts = {0}",   dkl16.dkl_vtoc.v_nparts);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_nparts = {0}", dkl16.dkl_vtoc.v_nparts);
+
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_asciilabel = \"{0}\"",
-                                          StringHandlers.CToString(dkl16.dkl_vtoc.v_asciilabel));
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_pcyl = {0}",             dkl16.dkl_pcyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_ncyl = {0}",             dkl16.dkl_ncyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_acyl = {0}",             dkl16.dkl_acyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_bcyl = {0}",             dkl16.dkl_bcyl);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nhead = {0}",            dkl16.dkl_nhead);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nsect = {0}",            dkl16.dkl_nsect);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_intrlv = {0}",           dkl16.dkl_intrlv);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_skew = {0}",             dkl16.dkl_skew);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_apc = {0}",              dkl16.dkl_apc);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_rpm = {0}",              dkl16.dkl_rpm);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_write_reinstruct = {0}", dkl16.dkl_write_reinstruct);
-                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_read_reinstruct = {0}",  dkl16.dkl_read_reinstruct);
+                                           StringHandlers.CToString(dkl16.dkl_vtoc.v_asciilabel));
+
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_pcyl = {0}", dkl16.dkl_pcyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_ncyl = {0}", dkl16.dkl_ncyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_acyl = {0}", dkl16.dkl_acyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_bcyl = {0}", dkl16.dkl_bcyl);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nhead = {0}", dkl16.dkl_nhead);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_nsect = {0}", dkl16.dkl_nsect);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_intrlv = {0}", dkl16.dkl_intrlv);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_skew = {0}", dkl16.dkl_skew);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_apc = {0}", dkl16.dkl_apc);
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_rpm = {0}", dkl16.dkl_rpm);
+
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_write_reinstruct = {0}",
+                                           dkl16.dkl_write_reinstruct);
+
+                AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_read_reinstruct = {0}", dkl16.dkl_read_reinstruct);
+
                 for(int i = 0; i < NDKMAP16; i++)
                 {
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_start = {1}", i,
-                                              dkl16.dkl_vtoc.v_part[i].p_start);
+                                               dkl16.dkl_vtoc.v_part[i].p_start);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_size = {1}", i,
-                                              dkl16.dkl_vtoc.v_part[i].p_size);
+                                               dkl16.dkl_vtoc.v_part[i].p_size);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})", i,
-                                              dkl16.dkl_vtoc.v_part[i].p_tag, (ushort)dkl16.dkl_vtoc.v_part[i].p_tag);
+                                               dkl16.dkl_vtoc.v_part[i].p_tag, (ushort)dkl16.dkl_vtoc.v_part[i].p_tag);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
-                                              dkl16.dkl_vtoc.v_part[i].p_flag, (ushort)dkl16.dkl_vtoc.v_part[i].p_flag);
+                                               dkl16.dkl_vtoc.v_part[i].p_flag,
+                                               (ushort)dkl16.dkl_vtoc.v_part[i].p_flag);
+
                     AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_vtoc.v_timestamp[{0}] = {1}", i,
-                                              DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
+                                               DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
                 }
 
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_magic = 0x{0:X4}", dkl16.dkl_magic);
                 AaruConsole.DebugWriteLine("Sun plugin", "dkl16.dkl_cksum = 0x{0:X4}", dkl16.dkl_cksum);
 
-                if(dkl16.dkl_vtoc.v_nparts > NDKMAP16) return false;
+                if(dkl16.dkl_vtoc.v_nparts > NDKMAP16)
+                    return false;
 
                 for(int i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
-                    if(dkl16.dkl_vtoc.v_part[i].p_size > 0 && dkl16.dkl_vtoc.v_part[i].p_tag != SunTag.SunEmpty &&
+                    if(dkl16.dkl_vtoc.v_part[i].p_size > 0                &&
+                       dkl16.dkl_vtoc.v_part[i].p_tag  != SunTag.SunEmpty &&
                        dkl16.dkl_vtoc.v_part[i].p_tag  != SunTag.SunWholeDisk)
                     {
-                        Partition part = new Partition
+                        var part = new Partition
                         {
                             Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                             Size        = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
-                            Length =
-                                (ulong)(dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz /
-                                        imagePlugin.Info.SectorSize),
+                            Length = (ulong)((dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz) /
+                                             imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
-                            Offset =
-                                ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
-                                dkl16.dkl_vtoc.v_sectorsz,
-                            Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
-                                    dkl16.dkl_vtoc.v_sectorsz / imagePlugin.Info.SectorSize,
-                            Type   = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
-                            Scheme = Name
+                            Offset = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
+                                     dkl16.dkl_vtoc.v_sectorsz,
+                            Start = (((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
+                                     dkl16.dkl_vtoc.v_sectorsz) / imagePlugin.Info.SectorSize,
+                            Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag), Scheme = Name
                         };
+
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)
                             part.Description +=
                                 $"\nPartition timestamped on {DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i])}";
-                        if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
+
+                        if(part.Start < imagePlugin.Info.Sectors &&
+                           part.End   <= imagePlugin.Info.Sectors)
                             partitions.Add(part);
                     }
             }
@@ -320,6 +370,7 @@ namespace Aaru.Partitions
         {
             AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
             label = (dk_label)Marshal.SwapStructureMembersEndian(label);
+
             for(int i = 0; i < label.dkl_map.Length; i++)
                 label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
@@ -330,11 +381,13 @@ namespace Aaru.Partitions
         {
             AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
             label = (dk_label8)Marshal.SwapStructureMembersEndian(label);
+
             for(int i = 0; i < label.dkl_map.Length; i++)
                 label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
+
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
                 label.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
@@ -343,6 +396,7 @@ namespace Aaru.Partitions
 
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
                 label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
+
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
                 label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
@@ -353,8 +407,10 @@ namespace Aaru.Partitions
         {
             AaruConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
             label = (dk_label16)Marshal.SwapStructureMembersEndian(label);
+
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
+
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
                 label.dkl_vtoc.v_part[i].p_flag  = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
@@ -365,6 +421,7 @@ namespace Aaru.Partitions
 
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
                 label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
+
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
                 label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
@@ -373,9 +430,14 @@ namespace Aaru.Partitions
 
         static string SunFlagsToString(SunFlags flags)
         {
-            StringBuilder sb = new StringBuilder();
-            if(flags.HasFlag(SunFlags.NoMount)) sb.AppendLine("Unmountable");
-            if(flags.HasFlag(SunFlags.ReadOnly)) sb.AppendLine("Read-only");
+            var sb = new StringBuilder();
+
+            if(flags.HasFlag(SunFlags.NoMount))
+                sb.AppendLine("Unmountable");
+
+            if(flags.HasFlag(SunFlags.ReadOnly))
+                sb.AppendLine("Read-only");
+
             return sb.ToString();
         }
 
@@ -413,37 +475,20 @@ namespace Aaru.Partitions
 
         enum SunTag : ushort
         {
-            SunEmpty       = 0x0000,
-            SunBoot        = 0x0001,
-            SunRoot        = 0x0002,
-            SunSwap        = 0x0003,
-            SunUsr         = 0x0004,
-            SunWholeDisk   = 0x0005,
-            SunStand       = 0x0006,
-            SunVar         = 0x0007,
-            SunHome        = 0x0008,
-            SunAlt         = 0x0009,
-            SunCache       = 0x000A,
-            SunReserved    = 0x000B,
-            VxVmPublic     = 0x000E,
-            VxVmPrivate    = 0x000F,
-            LinuxSwap      = 0x0082,
-            Linux          = 0x0083,
-            LVM            = 0x008E,
-            LinuxRaid      = 0x00FD,
-            NetBSD         = 0x00FF,
-            FreeBSD_Swap   = 0x0901,
-            FreeBSD_UFS    = 0x0902,
-            FreeBSD_Vinum  = 0x0903,
-            FreeBSD_ZFS    = 0x0904,
-            FreeBSD_NANDFS = 0x0905
+            SunEmpty      = 0x0000, SunBoot      = 0x0001, SunRoot        = 0x0002,
+            SunSwap       = 0x0003, SunUsr       = 0x0004, SunWholeDisk   = 0x0005,
+            SunStand      = 0x0006, SunVar       = 0x0007, SunHome        = 0x0008,
+            SunAlt        = 0x0009, SunCache     = 0x000A, SunReserved    = 0x000B,
+            VxVmPublic    = 0x000E, VxVmPrivate  = 0x000F, LinuxSwap      = 0x0082,
+            Linux         = 0x0083, LVM          = 0x008E, LinuxRaid      = 0x00FD,
+            NetBSD        = 0x00FF, FreeBSD_Swap = 0x0901, FreeBSD_UFS    = 0x0902,
+            FreeBSD_Vinum = 0x0903, FreeBSD_ZFS  = 0x0904, FreeBSD_NANDFS = 0x0905
         }
 
         [Flags]
         enum SunFlags : ushort
         {
-            NoMount  = 0x0001,
-            ReadOnly = 0x0010
+            NoMount = 0x0001, ReadOnly = 0x0010
         }
 
         /// <summary>SunOS logical partitions</summary>
@@ -451,9 +496,9 @@ namespace Aaru.Partitions
         struct dk_map
         {
             /// <summary>starting cylinder</summary>
-            public int dkl_cylno;
+            public readonly int dkl_cylno;
             /// <summary>number of blocks</summary>
-            public int dkl_nblk;
+            public readonly int dkl_nblk;
         }
 
         /// <summary>SunOS disk label</summary>
@@ -462,41 +507,41 @@ namespace Aaru.Partitions
         {
             /// <summary>Informative string</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
-            public byte[] dkl_asciilabel;
+            public readonly byte[] dkl_asciilabel;
             /// <summary>Padding</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD)]
-            public byte[] dkl_pad;
+            public readonly byte[] dkl_pad;
             /// <summary>rotations per minute</summary>
-            public ushort dkl_rpm;
+            public readonly ushort dkl_rpm;
             /// <summary># physical cylinders</summary>
-            public ushort dkl_pcyl;
+            public readonly ushort dkl_pcyl;
             /// <summary>alternates per cylinder</summary>
-            public ushort dkl_apc;
+            public readonly ushort dkl_apc;
             /// <summary>size of gap 1</summary>
-            public ushort dkl_gap1;
+            public readonly ushort dkl_gap1;
             /// <summary>size of gap 2</summary>
-            public ushort dkl_gap2;
+            public readonly ushort dkl_gap2;
             /// <summary>interleave factor</summary>
-            public ushort dkl_intrlv;
+            public readonly ushort dkl_intrlv;
             /// <summary># of data cylinders</summary>
-            public ushort dkl_ncyl;
+            public readonly ushort dkl_ncyl;
             /// <summary># of alternate cylinders</summary>
-            public ushort dkl_acyl;
+            public readonly ushort dkl_acyl;
             /// <summary># of heads in this partition</summary>
-            public ushort dkl_nhead;
+            public readonly ushort dkl_nhead;
             /// <summary># of 512 byte sectors per track</summary>
-            public ushort dkl_nsect;
+            public readonly ushort dkl_nsect;
             /// <summary>identifies proper label location</summary>
-            public ushort dkl_bhead;
+            public readonly ushort dkl_bhead;
             /// <summary>physical partition #</summary>
-            public ushort dkl_ppart;
+            public readonly ushort dkl_ppart;
             /// <summary>Logical partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
-            public dk_map[] dkl_map;
+            public readonly dk_map[] dkl_map;
             /// <summary>identifies this label format</summary>
-            public ushort dkl_magic;
+            public readonly ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>
-            public ushort dkl_cksum;
+            public readonly ushort dkl_cksum;
         }
 
         /// <summary>Solaris logical partition for small disk label</summary>
@@ -527,28 +572,28 @@ namespace Aaru.Partitions
         struct dk_vtoc8
         {
             /// <summary> layout version</summary>
-            public uint v_version;
+            public readonly uint v_version;
             /// <summary> volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)]
-            public byte[] v_volume;
+            public readonly byte[] v_volume;
             /// <summary> number of partitions </summary>
-            public ushort v_nparts;
+            public readonly ushort v_nparts;
             /// <summary> partition hdrs, sec 2</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
-            public dk_map2[] v_part;
+            public readonly dk_map2[] v_part;
             /// <summary>Alignment</summary>
-            public ushort padding;
+            public readonly ushort padding;
             /// <summary> info needed by mboot</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] v_bootinfo;
+            public readonly uint[] v_bootinfo;
             /// <summary> to verify vtoc sanity</summary>
-            public uint v_sanity;
+            public readonly uint v_sanity;
             /// <summary> free space</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public uint[] v_reserved;
+            public readonly uint[] v_reserved;
             /// <summary> partition timestamp</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
-            public int[] v_timestamp;
+            public readonly int[] v_timestamp;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -556,30 +601,30 @@ namespace Aaru.Partitions
         {
             /// <summary>info needed by mboot</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] v_bootinfo;
+            public readonly uint[] v_bootinfo;
             /// <summary>to verify vtoc sanity</summary>
-            public uint v_sanity;
+            public readonly uint v_sanity;
             /// <summary>layout version</summary>
-            public uint v_version;
+            public readonly uint v_version;
             /// <summary>volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_VVOL)]
-            public byte[] v_volume;
+            public readonly byte[] v_volume;
             /// <summary>sector size in bytes</summary>
-            public ushort v_sectorsz;
+            public readonly ushort v_sectorsz;
             /// <summary>number of partitions</summary>
-            public ushort v_nparts;
+            public readonly ushort v_nparts;
             /// <summary>free space</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public uint[] v_reserved;
+            public readonly uint[] v_reserved;
             /// <summary>partition headers</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)]
-            public dkl_partition[] v_part;
+            public readonly dkl_partition[] v_part;
             /// <summary>partition timestamp</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP16)]
-            public int[] v_timestamp;
+            public readonly int[] v_timestamp;
             /// <summary>for compatibility</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
-            public byte[] v_asciilabel;
+            public readonly byte[] v_asciilabel;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -587,88 +632,88 @@ namespace Aaru.Partitions
         {
             /// <summary>for compatibility</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_ASCII)]
-            public byte[] dkl_asciilabel;
+            public readonly byte[] dkl_asciilabel;
             /// <summary>vtoc inclusions from AT&amp;T SVr4</summary>
-            public dk_vtoc8 dkl_vtoc;
+            public readonly dk_vtoc8 dkl_vtoc;
             /// <summary># sectors to skip, writes</summary>
-            public ushort dkl_write_reinstruct;
+            public readonly ushort dkl_write_reinstruct;
             /// <summary># sectors to skip, reads</summary>
-            public ushort dkl_read_reinstruct;
+            public readonly ushort dkl_read_reinstruct;
             /// <summary>unused part of 512 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD8)]
-            public byte[] dkl_pad;
+            public readonly byte[] dkl_pad;
             /// <summary>rotations per minute</summary>
-            public ushort dkl_rpm;
+            public readonly ushort dkl_rpm;
             /// <summary># physical cylinders</summary>
-            public ushort dkl_pcyl;
+            public readonly ushort dkl_pcyl;
             /// <summary>alternates per cylinder</summary>
-            public ushort dkl_apc;
+            public readonly ushort dkl_apc;
             /// <summary>obsolete</summary>
-            public ushort dkl_obs1;
+            public readonly ushort dkl_obs1;
             /// <summary>obsolete</summary>
-            public ushort dkl_obs2;
+            public readonly ushort dkl_obs2;
             /// <summary>interleave factor</summary>
-            public ushort dkl_intrlv;
+            public readonly ushort dkl_intrlv;
             /// <summary># of data cylinders</summary>
-            public ushort dkl_ncyl;
+            public readonly ushort dkl_ncyl;
             /// <summary># of alternate cylinders</summary>
-            public ushort dkl_acyl;
+            public readonly ushort dkl_acyl;
             /// <summary># of heads in this partition</summary>
-            public ushort dkl_nhead;
+            public readonly ushort dkl_nhead;
             /// <summary># of 512 byte sectors per track</summary>
-            public ushort dkl_nsect;
+            public readonly ushort dkl_nsect;
             /// <summary>obsolete</summary>
-            public ushort dkl_obs3;
+            public readonly ushort dkl_obs3;
             /// <summary>obsolete</summary>
-            public ushort dkl_obs4;
+            public readonly ushort dkl_obs4;
             /// <summary>logical partition headers</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NDKMAP)]
-            public dk_map[] dkl_map;
+            public readonly dk_map[] dkl_map;
             /// <summary>identifies this label format</summary>
-            public ushort dkl_magic;
+            public readonly ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>
-            public ushort dkl_cksum;
+            public readonly ushort dkl_cksum;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct dk_label16
         {
             /// <summary>vtoc inclusions from AT&amp;T SVr4</summary>
-            public dk_vtoc16 dkl_vtoc;
+            public readonly dk_vtoc16 dkl_vtoc;
             /// <summary># of physical cylinders</summary>
-            public uint dkl_pcyl;
+            public readonly uint dkl_pcyl;
             /// <summary># of data cylinders</summary>
-            public uint dkl_ncyl;
+            public readonly uint dkl_ncyl;
             /// <summary># of alternate cylinders</summary>
-            public ushort dkl_acyl;
+            public readonly ushort dkl_acyl;
             /// <summary>cyl offset (for fixed head area)</summary>
-            public ushort dkl_bcyl;
+            public readonly ushort dkl_bcyl;
             /// <summary># of heads</summary>
-            public uint dkl_nhead;
+            public readonly uint dkl_nhead;
             /// <summary># of data sectors per track</summary>
-            public uint dkl_nsect;
+            public readonly uint dkl_nsect;
             /// <summary>interleave factor</summary>
-            public ushort dkl_intrlv;
+            public readonly ushort dkl_intrlv;
             /// <summary>skew factor</summary>
-            public ushort dkl_skew;
+            public readonly ushort dkl_skew;
             /// <summary>alternates per cyl (SCSI only)  </summary>
-            public ushort dkl_apc;
+            public readonly ushort dkl_apc;
             /// <summary>revolutions per minute</summary>
-            public ushort dkl_rpm;
+            public readonly ushort dkl_rpm;
             /// <summary># sectors to skip, writes</summary>
-            public ushort dkl_write_reinstruct;
+            public readonly ushort dkl_write_reinstruct;
             /// <summary># sectors to skip, reads </summary>
-            public ushort dkl_read_reinstruct;
+            public readonly ushort dkl_read_reinstruct;
             /// <summary>for compatible expansion</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public ushort[] dkl_extra;
+            public readonly ushort[] dkl_extra;
             /// <summary>unused part of 512 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD16)]
-            public byte[] dkl_pad;
+            public readonly byte[] dkl_pad;
             /// <summary>identifies this label format</summary>
-            public ushort dkl_magic;
+            public readonly ushort dkl_magic;
             /// <summary>xor checksum of sector</summary>
-            public ushort dkl_cksum;
+            public readonly ushort dkl_cksum;
         }
     }
 }

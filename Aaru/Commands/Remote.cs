@@ -80,7 +80,7 @@ namespace Aaru.Commands
                 AaruConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
 
                 AaruConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
-                                     remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+                                      remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
 
                 AaruConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
                 remote.Disconnect();
@@ -89,10 +89,10 @@ namespace Aaru.Commands
             {
                 AaruConsole.ErrorWriteLine("Error connecting to host.");
 
-                return(int)ErrorNumber.CannotOpenDevice;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

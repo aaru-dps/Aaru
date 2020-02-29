@@ -41,10 +41,9 @@ namespace Aaru.DiscImages
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Supports Connectix/Microsoft Virtual PC hard disk image format
-    ///     Until Virtual PC 5 there existed no format, and the hard disk image was
-    ///     merely a sector by sector (RAW) image with a resource fork giving
-    ///     information to Virtual PC itself.
+    ///     Supports Connectix/Microsoft Virtual PC hard disk image format Until Virtual PC 5 there existed no format, and
+    ///     the hard disk image was merely a sector by sector (RAW) image with a resource fork giving information to Virtual PC
+    ///     itself.
     /// </summary>
     public partial class Vhd : IWritableImage
     {
@@ -60,31 +59,18 @@ namespace Aaru.DiscImages
         HardDiskFooter    thisFooter;
         FileStream        writingStream;
 
-        public Vhd()
+        public Vhd() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Version               = null,
-                Application           = null,
-                ApplicationVersion    = null,
-                Creator               = null,
-                Comments              = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = false, HasSessions                           = false, Version = null,
+            Application        = null,
+            ApplicationVersion = null, Creator = null, Comments = null,
+            MediaManufacturer  = null,
+            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
+            MediaPartNumber    = null,
+            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
+            DriveModel         = null,
+            DriveSerialNumber  = null, DriveFirmwareRevision = null
+        };
     }
 }

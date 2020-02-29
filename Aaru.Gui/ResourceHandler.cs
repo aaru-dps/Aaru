@@ -35,7 +35,7 @@ using System.Reflection;
 
 namespace Aaru.Gui
 {
-    static class ResourceHandler
+    internal static class ResourceHandler
     {
         internal static Stream GetResourceStream(string resourcePath) =>
             Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);

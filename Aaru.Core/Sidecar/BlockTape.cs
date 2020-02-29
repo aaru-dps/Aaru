@@ -38,9 +38,7 @@ namespace Aaru.Core
 {
     public partial class Sidecar
     {
-        /// <summary>
-        ///     Creates a metadata sidecar for a block tape (e.g. scsi streaming)
-        /// </summary>
+        /// <summary>Creates a metadata sidecar for a block tape (e.g. scsi streaming)</summary>
         /// <param name="files">List of files</param>
         /// <param name="folderName">Dump path</param>
         /// <param name="blockSize">Expected block size in bytes</param>
@@ -52,24 +50,21 @@ namespace Aaru.Core
                 {
                     new BlockMediaType
                     {
-                        Image =
-                            new ImageType
-                            {
-                                format = "Directory", offsetSpecified = false, Value = folderName
-                            },
-                        Sequence =
-                            new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
-                        PhysicalBlockSize = blockSize,
-                        LogicalBlockSize  = blockSize,
-                        TapeInformation = new[]
+                        Image = new ImageType
+                        {
+                            format = "Directory", offsetSpecified = false, Value = folderName
+                        },
+                        Sequence = new SequenceType
+                        {
+                            MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1
+                        },
+                        PhysicalBlockSize = blockSize, LogicalBlockSize = blockSize, TapeInformation = new[]
                         {
                             new TapePartitionType
                             {
                                 Image = new ImageType
                                 {
-                                    format          = "Directory",
-                                    offsetSpecified = false,
-                                    Value           = folderName
+                                    format = "Directory", offsetSpecified = false, Value = folderName
                                 }
                             }
                         }
@@ -77,32 +72,32 @@ namespace Aaru.Core
                 }
             };
 
-            if(aborted) return sidecar;
+            if(aborted)
+                return sidecar;
 
             ulong              currentBlock = 0;
             ulong              totalSize    = 0;
-            Checksum           tapeWorker   = new Checksum();
+            var                tapeWorker   = new Checksum();
             List<TapeFileType> tapeFiles    = new List<TapeFileType>();
 
             UpdateStatus("Hashing files...");
+
             for(int i = 0; i < files.Count; i++)
             {
-                if(aborted) return sidecar;
+                if(aborted)
+                    return sidecar;
 
                 fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
-                Checksum fileWorker = new Checksum();
-                TapeFileType tapeFile = new TapeFileType
+                var fileWorker = new Checksum();
+
+                var tapeFile = new TapeFileType
                 {
                     Image = new ImageType
                     {
-                        format = "Raw disk image (sector by sector copy)",
-                        offset = 0,
+                        format = "Raw disk image (sector by sector copy)", offset = 0,
                         Value  = Path.GetFileName(files[i])
                     },
-                    Size       = (ulong)fs.Length,
-                    BlockSize  = blockSize,
-                    StartBlock = currentBlock,
-                    Sequence   = (ulong)i
+                    Size = (ulong)fs.Length, BlockSize = blockSize, StartBlock = currentBlock, Sequence = (ulong)i
                 };
 
                 const uint SECTORS_TO_READ = 512;
@@ -110,11 +105,13 @@ namespace Aaru.Core
                 ulong      doneSectors     = 0;
 
                 InitProgress2();
+
                 while(doneSectors < sectors)
                 {
                     if(aborted)
                     {
                         EndProgress2();
+
                         return sidecar;
                     }
 
@@ -124,16 +121,20 @@ namespace Aaru.Core
                     {
                         sector = new byte[SECTORS_TO_READ * blockSize];
                         fs.Read(sector, 0, sector.Length);
+
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         (long)doneSectors, (long)sectors);
+
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
                         sector = new byte[(uint)(sectors - doneSectors) * blockSize];
                         fs.Read(sector, 0, sector.Length);
+
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
                                         (long)doneSectors, (long)sectors);
+
                         doneSectors += sectors - doneSectors;
                     }
 
@@ -141,7 +142,7 @@ namespace Aaru.Core
                     tapeWorker.Update(sector);
                 }
 
-                tapeFile.EndBlock  =  tapeFile.StartBlock + sectors - 1;
+                tapeFile.EndBlock  =  (tapeFile.StartBlock + sectors) - 1;
                 currentBlock       += sectors;
                 totalSize          += (ulong)fs.Length;
                 tapeFile.Checksums =  fileWorker.End().ToArray();
@@ -165,19 +166,32 @@ namespace Aaru.Core
             {
                 sidecar.BlockMedia[0].DiskType = "Quarter-inch cartridge";
 
-                if(totalSize      <= 20         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-11";
-                else if(totalSize <= 40         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-40";
-                else if(totalSize <= 60         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-24";
-                else if(totalSize <= 80         * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-80";
-                else if(totalSize <= 120        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-120";
-                else if(totalSize <= 150        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-150";
-                else if(totalSize <= 320        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-320";
-                else if(totalSize <= 340        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
-                else if(totalSize <= 525        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-525";
-                else if(totalSize <= 670        * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
-                else if(totalSize <= 1200       * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
-                else if(totalSize <= 1350       * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
-                else if(totalSize <= (long)4000 * 1048576) sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
+                if(totalSize <= 20 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-11";
+                else if(totalSize <= 40 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-40";
+                else if(totalSize <= 60 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-24";
+                else if(totalSize <= 80 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-80";
+                else if(totalSize <= 120 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-120";
+                else if(totalSize <= 150 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-150";
+                else if(totalSize <= 320 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-320";
+                else if(totalSize <= 340 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-3010";
+                else if(totalSize <= 525 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-525";
+                else if(totalSize <= 670 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-3020";
+                else if(totalSize <= 1200 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-3080";
+                else if(totalSize <= 1350 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-1350";
+                else if(totalSize <= (long)4000 * 1048576)
+                    sidecar.BlockMedia[0].DiskSubType = "QIC-3095";
                 else
                 {
                     sidecar.BlockMedia[0].DiskType    = "Unknown tape";

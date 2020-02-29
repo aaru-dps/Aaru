@@ -51,15 +51,30 @@ namespace Aaru.Tests.Filesystems
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {720, 2400, 1440, 2880};
+        readonly ulong[] sectors =
+        {
+            720, 2400, 1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {360, 1200, 720, 1440};
+        readonly long[] clusters =
+        {
+            360, 1200, 720, 1440
+        };
 
-        readonly int[] clustersize = {1024, 1024, 1024, 1024};
+        readonly int[] clustersize =
+        {
+            1024, 1024, 1024, 1024
+        };
 
-        readonly string[] types = {"Minix 3 v1", "Minix 3 v1", "Minix 3 v1", "Minix 3 v1"};
+        readonly string[] types =
+        {
+            "Minix 3 v1", "Minix 3 v1", "Minix 3 v1", "Minix 3 v1"
+        };
 
         [Test]
         public void Test()
@@ -70,22 +85,23 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new MinixFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -93,17 +109,35 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class MinixV1Mbr
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "minix_3.1.2a.vdi.lz", "linux_4.19_minix1_flashdrive.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz", "minix_3.1.2a.vdi.lz", "linux_4.19_minix1_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {262144, 102400, 131072};
+        readonly ulong[] sectors =
+        {
+            262144, 102400, 131072
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512
+        };
 
-        readonly long[] clusters = {65535, 50399, 64512};
+        readonly long[] clusters =
+        {
+            65535, 50399, 64512
+        };
 
-        readonly int[] clustersize = {1024, 1024, 1024};
+        readonly int[] clustersize =
+        {
+            1024, 1024, 1024
+        };
 
-        readonly string[] types = {"Minix v1", "Minix 3 v1", "Minix v1"};
+        readonly string[] types =
+        {
+            "Minix v1", "Minix 3 v1", "Minix v1"
+        };
 
         [Test]
         public void Test()
@@ -114,25 +148,29 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new MinixFS();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x80" || partitions[j].Type == "0x81" || partitions[j].Type == "MINIX")
+                    if(partitions[j].Type == "0x80" ||
+                       partitions[j].Type == "0x81" ||
+                       partitions[j].Type == "MINIX")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -151,15 +189,30 @@ namespace Aaru.Tests.Filesystems
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {720, 2400, 1440, 2880};
+        readonly ulong[] sectors =
+        {
+            720, 2400, 1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {360, 1200, 720, 1440};
+        readonly long[] clusters =
+        {
+            360, 1200, 720, 1440
+        };
 
-        readonly int[] clustersize = {1024, 1024, 1024, 1024};
+        readonly int[] clustersize =
+        {
+            1024, 1024, 1024, 1024
+        };
 
-        readonly string[] types = {"Minix 3 v2", "Minix 3 v2", "Minix 3 v2", "Minix 3 v2"};
+        readonly string[] types =
+        {
+            "Minix 3 v2", "Minix 3 v2", "Minix 3 v2", "Minix 3 v2"
+        };
 
         [Test]
         public void Test()
@@ -170,22 +223,23 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new MinixFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -193,17 +247,35 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class MinixV2Mbr
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz", "linux_4.19_minix2_flashdrive.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "minix_3.1.2a.vdi.lz", "linux_4.19_minix2_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {1024000, 1024000};
+        readonly ulong[] sectors =
+        {
+            1024000, 1024000
+        };
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512
+        };
 
-        readonly long[] clusters = {511055, 510976};
+        readonly long[] clusters =
+        {
+            511055, 510976
+        };
 
-        readonly int[] clustersize = {1024, 1024};
+        readonly int[] clustersize =
+        {
+            1024, 1024
+        };
 
-        readonly string[] types = {"Minix 3 v2", "Minix v2"};
+        readonly string[] types =
+        {
+            "Minix 3 v2", "Minix v2"
+        };
 
         [Test]
         public void Test()
@@ -214,25 +286,28 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new MinixFS();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x81" || partitions[j].Type == "MINIX")
+                    if(partitions[j].Type == "0x81" ||
+                       partitions[j].Type == "MINIX")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -251,15 +326,30 @@ namespace Aaru.Tests.Filesystems
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {720, 2400, 1440, 2880};
+        readonly ulong[] sectors =
+        {
+            720, 2400, 1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {90, 300, 180, 360};
+        readonly long[] clusters =
+        {
+            90, 300, 180, 360
+        };
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096};
+        readonly int[] clustersize =
+        {
+            4096, 4096, 4096, 4096
+        };
 
-        readonly string[] types = {"Minix v3", "Minix v3", "Minix v3", "Minix v3"};
+        readonly string[] types =
+        {
+            "Minix v3", "Minix v3", "Minix v3", "Minix v3"
+        };
 
         [Test]
         public void Test()
@@ -270,22 +360,23 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new MinixFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -293,17 +384,35 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class MinixV3Mbr
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz", "linux_4.19_minix3_flashdrive.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "minix_3.1.2a.vdi.lz", "linux_4.19_minix3_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {4194304, 1024000};
+        readonly ulong[] sectors =
+        {
+            4194304, 1024000
+        };
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512
+        };
 
-        readonly long[] clusters = {523151, 510976};
+        readonly long[] clusters =
+        {
+            523151, 510976
+        };
 
-        readonly int[] clustersize = {4096, 1024};
+        readonly int[] clustersize =
+        {
+            4096, 1024
+        };
 
-        readonly string[] types = {"Minix v3", "Minix v3"};
+        readonly string[] types =
+        {
+            "Minix v3", "Minix v3"
+        };
 
         [Test]
         public void Test()
@@ -314,25 +423,28 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new MinixFS();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x81" || partitions[j].Type == "MINIX")
+                    if(partitions[j].Type == "0x81" ||
+                       partitions[j].Type == "MINIX")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],    fs.XmlFsType.Clusters,    testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
                 Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(types[i],       fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(types[i], fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }

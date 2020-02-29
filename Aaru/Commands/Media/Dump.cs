@@ -216,7 +216,7 @@ namespace Aaru.Commands.Media
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
 
-            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -236,31 +236,31 @@ namespace Aaru.Commands.Media
                 {
                     AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
-                    return(int)ErrorNumber.EncodingUnknown;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             DumpSubchannel wantedSubchannel = DumpSubchannel.Any;
 
             switch(subchannel?.ToLowerInvariant())
             {
-                case"any":
+                case "any":
                 case null:
                     wantedSubchannel = DumpSubchannel.Any;
 
                     break;
-                case"rw":
+                case "rw":
                     wantedSubchannel = DumpSubchannel.Rw;
 
                     break;
-                case"rw-or-pq":
+                case "rw-or-pq":
                     wantedSubchannel = DumpSubchannel.RwOrPq;
 
                     break;
-                case"pq":
+                case "pq":
                     wantedSubchannel = DumpSubchannel.Pq;
 
                     break;
-                case"none":
+                case "none":
                     wantedSubchannel = DumpSubchannel.None;
 
                     break;
@@ -276,11 +276,11 @@ namespace Aaru.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Aaru.Devices.Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Aaru.Devices.Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -290,14 +290,14 @@ namespace Aaru.Commands.Media
                 {
                     AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
-                    return(int)ErrorNumber.CannotOpenDevice;
+                    return (int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
                 AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
-                return(int)ErrorNumber.CannotOpenDevice;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -319,7 +319,7 @@ namespace Aaru.Commands.Media
                 {
                     AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
 
-                    return(int)ErrorNumber.InvalidResume;
+                    return (int)ErrorNumber.InvalidResume;
                 }
 
             if(resumeClass                 != null                 &&
@@ -329,7 +329,7 @@ namespace Aaru.Commands.Media
             {
                 AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
 
-                return(int)ErrorNumber.AlreadyDumped;
+                return (int)ErrorNumber.AlreadyDumped;
             }
 
             CICMMetadataType sidecar   = null;
@@ -348,14 +348,14 @@ namespace Aaru.Commands.Media
                     {
                         AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
 
-                        return(int)ErrorNumber.InvalidSidecar;
+                        return (int)ErrorNumber.InvalidSidecar;
                     }
                 }
                 else
                 {
                     AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
 
-                    return(int)ErrorNumber.FileNotFound;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             PluginBase           plugins    = GetPluginBase.Instance;
@@ -381,14 +381,14 @@ namespace Aaru.Commands.Media
             {
                 AaruConsole.WriteLine("No plugin supports requested extension.");
 
-                return(int)ErrorNumber.FormatNotFound;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
                 AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
-                return(int)ErrorNumber.TooManyFormats;
+                return (int)ErrorNumber.TooManyFormats;
             }
 
             IWritableImage outputFormat = candidates[0];
@@ -432,7 +432,7 @@ namespace Aaru.Commands.Media
 
             dev.Close();
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

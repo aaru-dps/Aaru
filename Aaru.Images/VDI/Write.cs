@@ -46,71 +46,83 @@ namespace Aaru.DiscImages
     public partial class Vdi
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            if(sectors * sectorSize / DEFAULT_BLOCK_SIZE > uint.MaxValue)
+            if((sectors * sectorSize) / DEFAULT_BLOCK_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
-            uint ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
-            if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0) ibmEntries++;
+            uint ibmEntries = (uint)((sectors * sectorSize) / DEFAULT_BLOCK_SIZE);
 
-            uint headerSectors = 1 + ibmEntries * 4 / sectorSize;
-            if(ibmEntries * 4 % sectorSize != 0) headerSectors++;
+            if((sectors * sectorSize) % DEFAULT_BLOCK_SIZE > 0)
+                ibmEntries++;
+
+            uint headerSectors = 1 + ((ibmEntries * 4) / sectorSize);
+
+            if((ibmEntries * 4) % sectorSize != 0)
+                headerSectors++;
+
             ibm                    = new uint[ibmEntries];
             currentWritingPosition = headerSectors * sectorSize;
 
             vHdr = new VdiHeader
             {
-                creator      = DIC_AARU,
-                magic        = VDI_MAGIC,
-                majorVersion = 1,
+                creator      = DIC_AARU, magic = VDI_MAGIC, majorVersion = 1,
                 minorVersion = 1,
-                headerSize   = Marshal.SizeOf<VdiHeader>() - 72,
-                imageType    = VdiImageType.Normal,
-                offsetBlocks = sectorSize,
-                offsetData   = currentWritingPosition,
+                headerSize   = Marshal.SizeOf<VdiHeader>() - 72, imageType = VdiImageType.Normal,
+                offsetBlocks = sectorSize, offsetData                      = currentWritingPosition,
                 sectorSize   = sectorSize,
-                size         = sectors * sectorSize,
-                blockSize    = DEFAULT_BLOCK_SIZE,
-                blocks       = ibmEntries,
-                uuid         = Guid.NewGuid(),
+                size         = sectors * sectorSize, blockSize = DEFAULT_BLOCK_SIZE,
+                blocks       = ibmEntries, uuid                = Guid.NewGuid(),
                 snapshotUuid = Guid.NewGuid()
             };
 
-            for(uint i = 0; i < ibmEntries; i++) ibm[i] = VDI_EMPTY;
+            for(uint i = 0; i < ibmEntries; i++)
+                ibm[i] = VDI_EMPTY;
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -119,26 +131,30 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
-            ulong index  = sectorAddress * vHdr.sectorSize / vHdr.blockSize;
-            ulong secOff = sectorAddress * vHdr.sectorSize % vHdr.blockSize;
+            ulong index  = (sectorAddress * vHdr.sectorSize) / vHdr.blockSize;
+            ulong secOff = (sectorAddress * vHdr.sectorSize) % vHdr.blockSize;
 
             uint ibmOff = ibm[index];
 
@@ -150,13 +166,14 @@ namespace Aaru.DiscImages
                 vHdr.allocatedBlocks++;
             }
 
-            ulong imageOff = vHdr.offsetData + ibmOff * vHdr.blockSize;
+            ulong imageOff = vHdr.offsetData + (ibmOff * vHdr.blockSize);
 
             writingStream.Seek((long)imageOff, SeekOrigin.Begin);
-            writingStream.Seek((long)secOff,   SeekOrigin.Current);
+            writingStream.Seek((long)secOff, SeekOrigin.Current);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -166,44 +183,53 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
             for(uint i = 0; i < length; i++)
             {
                 byte[] tmp = new byte[imageInfo.SectorSize];
                 Array.Copy(data, i * imageInfo.SectorSize, tmp, 0, imageInfo.SectorSize);
-                if(!WriteSector(tmp, sectorAddress + i)) return false;
+
+                if(!WriteSector(tmp, sectorAddress + i))
+                    return false;
             }
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -212,12 +238,12 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                vHdr.comments = imageInfo.Comments.Length > 255
-                                    ? imageInfo.Comments.Substring(0, 255)
+                vHdr.comments = imageInfo.Comments.Length > 255 ? imageInfo.Comments.Substring(0, 255)
                                     : imageInfo.Comments;
 
             if(vHdr.cylinders == 0)
@@ -238,7 +264,10 @@ namespace Aaru.DiscImages
 
                     vHdr.cylinders = (uint)(imageInfo.Sectors / vHdr.heads / vHdr.spt);
 
-                    if(vHdr.cylinders == 0 && vHdr.heads == 0 && vHdr.spt == 0) break;
+                    if(vHdr.cylinders == 0 &&
+                       vHdr.heads     == 0 &&
+                       vHdr.spt       == 0)
+                        break;
                 }
             }
 
@@ -259,12 +288,14 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
         public bool SetMetadata(ImageInfo metadata)
         {
             imageInfo.Comments = metadata.Comments;
+
             return true;
         }
 
@@ -273,18 +304,21 @@ namespace Aaru.DiscImages
             vHdr.cylinders = cylinders;
             vHdr.heads     = heads;
             vHdr.spt       = sectorsPerTrack;
+
             return true;
         }
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 

@@ -37,18 +37,21 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        public bool GetNativeMaxAddressExt(out ulong  lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
+        public bool GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
                                            out double duration)
         {
             lba = 0;
             byte[] buffer = new byte[0];
-            AtaRegistersLba48 registers =
-                new AtaRegistersLba48 {Command = (byte)AtaCommands.NativeMaxAddress, Feature = 0x0000};
 
-            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
-                                       out duration,
+            var registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.NativeMaxAddress, Feature = 0x0000
+            };
+
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             if((statusRegisters.Status & 0x23) == 0)
@@ -64,24 +67,23 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool ReadDma(out byte[] buffer,  out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
-                            uint       timeout, out double                 duration)
+        public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                            uint timeout, out double duration)
         {
             buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48
+
+            var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadDmaExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command = (byte)AtaCommands.ReadDmaExt, SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid  = (ushort)((lba & 0xFFFF0000)     / 0x10000), LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
             };
 
             registers.DeviceHead += 0x40;
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma,
-                                       AtaTransferRegister.SectorCount,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                        ref buffer, timeout, true, out duration, out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "READ DMA EXT took {0} ms.", duration);
@@ -89,25 +91,23 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool ReadLog(out byte[] buffer,     out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
-                            ushort     pageNumber, ushort                     count,           uint timeout,
-                            out double duration)
+        public bool ReadLog(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
+                            ushort pageNumber, ushort count, uint timeout, out double duration)
         {
             buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48
+
+            var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadLogExt,
-                SectorCount = count,
-                LbaLow      = (ushort)((pageNumber & 0xFF)   * 0x100),
-                LbaHigh     = (ushort)((pageNumber & 0xFF00) / 0x100)
+                Command = (byte)AtaCommands.ReadLogExt, SectorCount      = count,
+                LbaLow  = (ushort)((pageNumber & 0xFF) * 0x100), LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100)
             };
 
             registers.LbaLow += logAddress;
 
-            LastError = SendAtaCommand(registers,                       out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.SectorCount, ref buffer,          timeout, true,
-                                       out duration,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "READ LOG EXT took {0} ms.", duration);
@@ -115,24 +115,22 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool ReadLogDma(out byte[] buffer,     out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
-                               ushort     pageNumber, ushort                     count,           uint timeout,
-                               out double duration)
+        public bool ReadLogDma(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, byte logAddress,
+                               ushort pageNumber, ushort count, uint timeout, out double duration)
         {
             buffer = new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48
+
+            var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadLogDmaExt,
-                SectorCount = count,
-                LbaLow      = (ushort)((pageNumber & 0xFF)   * 0x100),
-                LbaHigh     = (ushort)((pageNumber & 0xFF00) / 0x100)
+                Command = (byte)AtaCommands.ReadLogDmaExt, SectorCount   = count,
+                LbaLow  = (ushort)((pageNumber & 0xFF) * 0x100), LbaHigh = (ushort)((pageNumber & 0xFF00) / 0x100)
             };
 
             registers.LbaLow += logAddress;
 
-            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma,
-                                       AtaTransferRegister.SectorCount,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
                                        ref buffer, timeout, true, out duration, out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "READ LOG DMA EXT took {0} ms.", duration);
@@ -140,26 +138,24 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba,
-                                 ushort     count,
-                                 uint       timeout, out double duration)
+        public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                                 uint timeout, out double duration)
         {
             buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48
+
+            var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadMultipleExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command = (byte)AtaCommands.ReadMultipleExt, SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid  = (ushort)((lba & 0xFFFF0000)     / 0x10000), LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
             };
 
             registers.DeviceHead += 0x40;
 
-            LastError = SendAtaCommand(registers,                       out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.SectorCount, ref buffer,          timeout, true,
-                                       out duration,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "READ MULTIPLE EXT took {0} ms.", duration);
@@ -167,19 +163,23 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool ReadNativeMaxAddress(out ulong  lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
+        public bool ReadNativeMaxAddress(out ulong lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
                                          out double duration)
         {
             lba = 0;
-            byte[]            buffer    = new byte[0];
-            AtaRegistersLba48 registers = new AtaRegistersLba48 {Command = (byte)AtaCommands.ReadNativeMaxAddressExt};
+            byte[] buffer = new byte[0];
+
+            var registers = new AtaRegistersLba48
+            {
+                Command = (byte)AtaCommands.ReadNativeMaxAddressExt
+            };
 
             registers.DeviceHead += 0x40;
 
-            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
-                                       out duration,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             if((statusRegisters.Status & 0x23) == 0)
@@ -195,25 +195,24 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool Read(out byte[] buffer,  out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
-                         uint       timeout, out double                 duration)
+        public bool Read(out byte[] buffer, out AtaErrorRegistersLba48 statusRegisters, ulong lba, ushort count,
+                         uint timeout, out double duration)
         {
             buffer = count == 0 ? new byte[512 * 65536] : new byte[512 * count];
-            AtaRegistersLba48 registers = new AtaRegistersLba48
+
+            var registers = new AtaRegistersLba48
             {
-                Command     = (byte)AtaCommands.ReadExt,
-                SectorCount = count,
-                LbaHigh     = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
-                LbaMid      = (ushort)((lba & 0xFFFF0000)     / 0x10000),
-                LbaLow      = (ushort)((lba & 0xFFFF)         / 0x1)
+                Command = (byte)AtaCommands.ReadExt, SectorCount = count,
+                LbaHigh = (ushort)((lba & 0xFFFF00000000) / 0x100000000),
+                LbaMid  = (ushort)((lba & 0xFFFF0000)     / 0x10000), LbaLow = (ushort)((lba & 0xFFFF) / 0x1)
             };
 
             registers.DeviceHead += 0x40;
 
-            LastError = SendAtaCommand(registers,                       out statusRegisters, AtaProtocol.PioIn,
-                                       AtaTransferRegister.SectorCount, ref buffer,          timeout, true,
-                                       out duration,
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
+                                       AtaTransferRegister.SectorCount, ref buffer, timeout, true, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "READ SECTORS EXT took {0} ms.", duration);

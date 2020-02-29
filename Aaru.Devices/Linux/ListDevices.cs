@@ -36,18 +36,16 @@ using System.Text;
 
 namespace Aaru.Devices.Linux
 {
-    static class ListDevices
+    internal static class ListDevices
     {
         const string PATH_SYS_DEVBLOCK = "/sys/block/";
 
-        /// <summary>
-        ///     Gets a list of all known storage devices on Linux
-        /// </summary>
+        /// <summary>Gets a list of all known storage devices on Linux</summary>
         /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()
         {
-            string[] sysdevs =
-                Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
+            string[] sysdevs = Directory.GetFileSystemEntries(PATH_SYS_DEVBLOCK, "*", SearchOption.TopDirectoryOnly);
+
             DeviceInfo[] devices = new DeviceInfo[sysdevs.Length];
             bool         hasUdev;
 
@@ -58,27 +56,41 @@ namespace Aaru.Devices.Linux
                 udev    = Extern.udev_new();
                 hasUdev = udev != IntPtr.Zero;
             }
-            catch { hasUdev = false; }
+            catch
+            {
+                hasUdev = false;
+            }
 
             for(int i = 0; i < sysdevs.Length; i++)
             {
-                devices[i] = new DeviceInfo {Path = "/dev/" + Path.GetFileName(sysdevs[i])};
+                devices[i] = new DeviceInfo
+                {
+                    Path = "/dev/" + Path.GetFileName(sysdevs[i])
+                };
 
                 if(hasUdev)
                 {
                     IntPtr udevDev =
                         Extern.udev_device_new_from_subsystem_sysname(udev, "block", Path.GetFileName(sysdevs[i]));
+
                     devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                     devices[i].Model  = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
-                    if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');
+
+                    if(!string.IsNullOrEmpty(devices[i].Model))
+                        devices[i].Model = devices[i].Model.Replace('_', ' ');
+
                     devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
+
                     if(string.IsNullOrEmpty(devices[i].Serial))
                         devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SERIAL_SHORT");
+
                     devices[i].Bus = Extern.udev_device_get_property_value(udevDev, "ID_BUS");
                 }
 
                 StreamReader sr;
-                if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].Vendor))
+
+                if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) &&
+                   string.IsNullOrEmpty(devices[i].Vendor))
                 {
                     sr                = new StreamReader(Path.Combine(sysdevs[i], "device/vendor"), Encoding.ASCII);
                     devices[i].Vendor = sr.ReadLine()?.Trim();
@@ -95,16 +107,19 @@ namespace Aaru.Devices.Linux
                 else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                     devices[i].Model = "Linux";
 
-                if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].Serial))
+                if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) &&
+                   string.IsNullOrEmpty(devices[i].Serial))
                 {
                     sr                = new StreamReader(Path.Combine(sysdevs[i], "device/serial"), Encoding.ASCII);
                     devices[i].Serial = sr.ReadLine()?.Trim();
                 }
 
-                if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")
+                if(string.IsNullOrEmpty(devices[i].Vendor) ||
+                   devices[i].Vendor == "ATA")
                     if(devices[i].Model != null)
                     {
                         string[] pieces = devices[i].Model.Split(' ');
+
                         if(pieces.Length > 1)
                         {
                             devices[i].Vendor = pieces[0];
@@ -122,7 +137,8 @@ namespace Aaru.Devices.Linux
                     else if(devices[i].Path.StartsWith("/dev/mmc", StringComparison.CurrentCulture))
                         devices[i].Bus = "MMC/SD";
                 }
-                else devices[i].Bus = devices[i].Bus.ToUpper();
+                else
+                    devices[i].Bus = devices[i].Bus.ToUpper();
 
                 switch(devices[i].Bus)
                 {
@@ -134,6 +150,7 @@ namespace Aaru.Devices.Linux
                     case "FireWire":
                     case "MMC/SD":
                         devices[i].Supported = true;
+
                         break;
                 }
             }

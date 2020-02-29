@@ -44,8 +44,8 @@ namespace Aaru.Gui.Forms
 {
     public class frmImageVerify : Form
     {
-        bool        cancel;
-        IMediaImage inputFormat;
+        readonly IMediaImage inputFormat;
+        bool                 cancel;
 
         public frmImageVerify(IMediaImage inputFormat)
         {
@@ -81,11 +81,17 @@ namespace Aaru.Gui.Forms
             long  unknownSectors = 0;
             bool  formatHasTracks;
 
-            IOpticalMediaImage      inputOptical           = inputFormat as IOpticalMediaImage;
-            IVerifiableSectorsImage verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
+            var inputOptical           = inputFormat as IOpticalMediaImage;
+            var verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
 
-            try { formatHasTracks = inputOptical?.Tracks?.Count > 0; }
-            catch { formatHasTracks = false; }
+            try
+            {
+                formatHasTracks = inputOptical?.Tracks?.Count > 0;
+            }
+            catch
+            {
+                formatHasTracks = false;
+            }
 
             // Setup progress bars
             Application.Instance.Invoke(() =>
@@ -93,9 +99,12 @@ namespace Aaru.Gui.Forms
                 stkProgress.Visible  = true;
                 prgProgress.MaxValue = 0;
 
-                if(chkVerifyImage.Checked == true || chkVerifySectors.Checked == true) prgProgress.MaxValue = 1;
+                if(chkVerifyImage.Checked   == true ||
+                   chkVerifySectors.Checked == true)
+                    prgProgress.MaxValue = 1;
 
-                if(formatHasTracks && inputOptical != null) prgProgress.MaxValue += inputOptical.Tracks.Count;
+                if(formatHasTracks && inputOptical != null)
+                    prgProgress.MaxValue += inputOptical.Tracks.Count;
                 else
                 {
                     if(chkVerifySectors.Checked == true)
@@ -127,8 +136,11 @@ namespace Aaru.Gui.Forms
                     Application.Instance.Invoke(() =>
                     {
                         lblProgress.Text = "Checking media image...";
-                        if(chkVerifySectors.Checked == true) prgProgress.Value = 1;
-                        else prgProgress.Indeterminate                         = true;
+
+                        if(chkVerifySectors.Checked == true)
+                            prgProgress.Value = 1;
+                        else
+                            prgProgress.Indeterminate = true;
 
                         prgProgress2.Indeterminate = true;
                     });
@@ -142,23 +154,28 @@ namespace Aaru.Gui.Forms
                     Application.Instance.Invoke(() =>
                     {
                         lblImageResult.Visible = true;
+
                         switch(discCheckStatus)
                         {
                             case true:
                                 lblImageResult.Text = "Disc image checksums are correct";
+
                                 break;
                             case false:
                                 lblImageResult.Text = "Disc image checksums are incorrect";
+
                                 break;
                             case null:
                                 lblImageResult.Text = "Disc image does not contain checksums";
+
                                 break;
                         }
                     });
 
                     correctDisc = discCheckStatus;
+
                     AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds",
-                                                checkTime.TotalSeconds);
+                                                 checkTime.TotalSeconds);
                 }
             }
 
@@ -183,12 +200,14 @@ namespace Aaru.Gui.Forms
                     ulong       currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
+
                     foreach(Track currentTrack in inputOptical.Tracks)
                     {
                         Application.Instance.Invoke(() =>
                         {
                             lblProgress.Text =
                                 $"Verifying track {currentTrack.TrackSequence} of {inputOptical?.Tracks.Count}";
+
                             prgProgress.Value++;
                         });
 
@@ -205,13 +224,16 @@ namespace Aaru.Gui.Forms
                                     btnStart.Visible = false;
                                     btnStop.Visible  = false;
                                 });
+
                                 return;
                             }
 
                             ulong all = currentSectorAll;
+
                             Application.Instance.Invoke(() =>
                             {
                                 prgProgress2.Value = (int)(all / 512);
+
                                 lblProgress2.Text =
                                     $"Checking sector {all} of {inputFormat.Info.Sectors}, on track {currentTrack.TrackSequence}";
                             });
@@ -254,6 +276,7 @@ namespace Aaru.Gui.Forms
                     ulong currentSector    = 0;
 
                     startCheck = DateTime.UtcNow;
+
                     while(remainingSectors > 0)
                     {
                         if(cancel)
@@ -264,10 +287,12 @@ namespace Aaru.Gui.Forms
                                 btnStart.Visible = false;
                                 btnStop.Visible  = false;
                             });
+
                             return;
                         }
 
                         ulong sector = currentSector;
+
                         Application.Instance.Invoke(() =>
                         {
                             prgProgress2.Value = (int)(sector / 512);
@@ -321,7 +346,7 @@ namespace Aaru.Gui.Forms
                             grpSectorErrors.Text    = "LBAs with error:";
                             grpSectorErrors.Visible = true;
 
-                            TreeGridItemCollection errorList = new TreeGridItemCollection();
+                            var errorList = new TreeGridItemCollection();
 
                             treeSectorErrors.Columns.Add(new GridColumn
                             {
@@ -332,7 +357,14 @@ namespace Aaru.Gui.Forms
                             treeSectorErrors.ShowHeader             = false;
                             treeSectorErrors.DataStore              = errorList;
 
-                            foreach(ulong t in failingLbas) errorList.Add(new TreeGridItem {Values = new object[] {t}});
+                            foreach(ulong t in failingLbas)
+                                errorList.Add(new TreeGridItem
+                                {
+                                    Values = new object[]
+                                    {
+                                        t
+                                    }
+                                });
                         }
                     }
 
@@ -348,7 +380,7 @@ namespace Aaru.Gui.Forms
                             grpSectorsUnknowns.Text    = "LBAs with error:";
                             grpSectorsUnknowns.Visible = true;
 
-                            TreeGridItemCollection unknownList = new TreeGridItemCollection();
+                            var unknownList = new TreeGridItemCollection();
 
                             treeSectorsUnknowns.Columns.Add(new GridColumn
                             {
@@ -360,7 +392,13 @@ namespace Aaru.Gui.Forms
                             treeSectorsUnknowns.DataStore              = unknownList;
 
                             foreach(ulong t in unknownLbas)
-                                unknownList.Add(new TreeGridItem {Values = new object[] {t}});
+                                unknownList.Add(new TreeGridItem
+                                {
+                                    Values = new object[]
+                                    {
+                                        t
+                                    }
+                                });
                         }
                     }
 
@@ -368,6 +406,7 @@ namespace Aaru.Gui.Forms
                     lblTotalSectors.Text        = $"Total sectors........... {inputFormat.Info.Sectors}";
                     lblTotalSectorErrors.Text   = $"Total errors............ {failingLbas.Count}";
                     lblTotalSectorUnknowns.Text = $"Total unknowns.......... {unknownLbas.Count}";
+
                     lblTotalSectorErrorsUnknowns.Text =
                         $"Total errors+unknowns... {failingLbas.Count + unknownLbas.Count}";
                 });
@@ -391,10 +430,7 @@ namespace Aaru.Gui.Forms
             });
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         protected void OnBtnStop(object sender, EventArgs e)
         {

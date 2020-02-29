@@ -40,17 +40,20 @@ namespace Aaru.Filesystems.ISO9660
     {
         PathTableEntryInternal[] DecodePathTable(byte[] data)
         {
-            if(data is null) return null;
+            if(data is null)
+                return null;
 
             List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
 
             int off = 0;
+
             while(off < data.Length)
             {
                 PathTableEntry entry =
                     Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
-                if(entry.name_len == 0) break;
+                if(entry.name_len == 0)
+                    break;
 
                 off += Marshal.SizeOf<PathTableEntry>();
 
@@ -58,15 +61,13 @@ namespace Aaru.Filesystems.ISO9660
 
                 table.Add(new PathTableEntryInternal
                 {
-                    Extent      = entry.start_lbn,
-                    Name        = name,
-                    Parent      = entry.parent_dirno,
-                    XattrLength = entry.xattr_len
+                    Extent = entry.start_lbn, Name = name, Parent = entry.parent_dirno, XattrLength = entry.xattr_len
                 });
 
                 off += entry.name_len;
 
-                if(entry.name_len % 2 != 0) off++;
+                if(entry.name_len % 2 != 0)
+                    off++;
             }
 
             return table.ToArray();
@@ -74,20 +75,23 @@ namespace Aaru.Filesystems.ISO9660
 
         PathTableEntryInternal[] DecodeHighSierraPathTable(byte[] data)
         {
-            if(data is null) return null;
+            if(data is null)
+                return null;
 
             List<PathTableEntryInternal> table = new List<PathTableEntryInternal>();
 
             int off = 0;
+
             while(off < data.Length)
             {
                 HighSierraPathTableEntry entry =
                     Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                                                                                    Marshal
-                                                                                       .SizeOf<HighSierraPathTableEntry
+                                                                                    Marshal.
+                                                                                        SizeOf<HighSierraPathTableEntry
                                                                                         >());
 
-                if(entry.name_len == 0) break;
+                if(entry.name_len == 0)
+                    break;
 
                 off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
@@ -95,15 +99,13 @@ namespace Aaru.Filesystems.ISO9660
 
                 table.Add(new PathTableEntryInternal
                 {
-                    Extent      = entry.start_lbn,
-                    Name        = name,
-                    Parent      = entry.parent_dirno,
-                    XattrLength = entry.xattr_len
+                    Extent = entry.start_lbn, Name = name, Parent = entry.parent_dirno, XattrLength = entry.xattr_len
                 });
 
                 off += entry.name_len;
 
-                if(entry.name_len % 2 != 0) off++;
+                if(entry.name_len % 2 != 0)
+                    off++;
             }
 
             return table.ToArray();

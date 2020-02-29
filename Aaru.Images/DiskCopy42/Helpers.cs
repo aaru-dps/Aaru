@@ -37,7 +37,9 @@ namespace Aaru.DiscImages
         static uint DC42CheckSum(byte[] buffer)
         {
             uint dc42Chk = 0;
-            if((buffer.Length & 0x01) == 0x01) return 0xFFFFFFFF;
+
+            if((buffer.Length & 0x01) == 0x01)
+                return 0xFFFFFFFF;
 
             for(uint i = 0; i < buffer.Length; i += 2)
             {

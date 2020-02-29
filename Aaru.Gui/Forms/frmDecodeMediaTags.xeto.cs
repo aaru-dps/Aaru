@@ -58,9 +58,9 @@ namespace Aaru.Gui.Forms
     // TODO: Panel with string representation of contents
     public class frmDecodeMediaTags : Form
     {
-        const int                              HEX_COLUMNS = 32;
-        IMediaImage                            inputFormat;
-        ObservableCollection<MediaTagWithData> lstTags;
+        const    int                                    HEX_COLUMNS = 32;
+        readonly IMediaImage                            inputFormat;
+        readonly ObservableCollection<MediaTagWithData> lstTags;
 
         public frmDecodeMediaTags(IMediaImage inputFormat)
         {
@@ -82,7 +82,11 @@ namespace Aaru.Gui.Forms
                 try
                 {
                     byte[] data = inputFormat.ReadDiskTag(tag);
-                    lstTags.Add(new MediaTagWithData {Tag = tag, Data = data});
+
+                    lstTags.Add(new MediaTagWithData
+                    {
+                        Tag = tag, Data = data
+                    });
                 }
                 catch
                 {
@@ -93,99 +97,128 @@ namespace Aaru.Gui.Forms
         // TODO: More graphically aware decoders
         void OnCmbTagSelectedIndexChanged(object sender, EventArgs e)
         {
-            if(!(cmbTag.SelectedValue is MediaTagWithData tagWithData)) return;
+            if(!(cmbTag.SelectedValue is MediaTagWithData tagWithData))
+                return;
 
             // TODO: Decoders should be able to handle tags with/without length header
             txtPrintHex.Text   = PrintHex.ByteArrayToHexArrayString(tagWithData.Data, HEX_COLUMNS);
             tabDecoded.Visible = true;
+
             switch(tagWithData.Tag)
             {
                 case MediaTagType.CD_TOC:
                     txtDecoded.Text = TOC.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_SessionInfo:
                     txtDecoded.Text = Session.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_FullTOC:
                     txtDecoded.Text = FullTOC.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_PMA:
                     txtDecoded.Text = PMA.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_ATIP:
                     txtDecoded.Text = ATIP.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_TEXT:
                     txtDecoded.Text = CDTextOnLeadIn.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.CD_MCN:
                     txtDecoded.Text = Encoding.ASCII.GetString(tagWithData.Data);
+
                     break;
                 case MediaTagType.DVD_PFI:
                     txtDecoded.Text = PFI.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.DVD_CMI:
                     txtDecoded.Text = CSS_CPRM.PrettifyLeadInCopyright(tagWithData.Data);
+
                     break;
                 case MediaTagType.DVDRAM_DDS:
                     txtDecoded.Text = DDS.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.DVDRAM_SpareArea:
                     txtDecoded.Text = Spare.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.DVDR_PFI:
                     txtDecoded.Text = PFI.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.HDDVD_MediumStatus:
                     txtDecoded.Text = PFI.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.BD_DI:
                     txtDecoded.Text = DI.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.BD_BCA:
                     txtDecoded.Text = BCA.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.BD_DDS:
                     txtDecoded.Text = Decoders.Bluray.DDS.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.BD_CartridgeStatus:
                     txtDecoded.Text = Cartridge.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.BD_SpareArea:
                     txtDecoded.Text = Decoders.Bluray.Spare.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.MMC_WriteProtection:
                     txtDecoded.Text = WriteProtect.PrettifyWriteProtectionStatus(tagWithData.Data);
+
                     break;
                 case MediaTagType.MMC_DiscInformation:
                     txtDecoded.Text = DiscInformation.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.SCSI_INQUIRY:
                     txtDecoded.Text = Inquiry.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.SCSI_MODEPAGE_2A:
                     txtDecoded.Text = Modes.PrettifyModePage_2A(tagWithData.Data);
+
                     break;
                 case MediaTagType.ATA_IDENTIFY:
                 case MediaTagType.ATAPI_IDENTIFY:
                     txtDecoded.Text = Identify.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.Xbox_SecuritySector:
                     txtDecoded.Text = SS.Prettify(tagWithData.Data);
+
                     break;
                 case MediaTagType.SCSI_MODESENSE_6:
                     txtDecoded.Text = Modes.PrettifyModeHeader6(tagWithData.Data, PeripheralDeviceTypes.DirectAccess);
+
                     break;
                 case MediaTagType.SCSI_MODESENSE_10:
                     txtDecoded.Text = Modes.PrettifyModeHeader10(tagWithData.Data, PeripheralDeviceTypes.DirectAccess);
+
                     break;
                 case MediaTagType.Xbox_DMI:
-                    txtDecoded.Text = DMI.IsXbox360(tagWithData.Data)
-                                          ? DMI.PrettifyXbox360(tagWithData.Data)
+                    txtDecoded.Text = DMI.IsXbox360(tagWithData.Data) ? DMI.PrettifyXbox360(tagWithData.Data)
                                           : DMI.PrettifyXbox(tagWithData.Data);
+
                     break;
                 default:
                     tabDecoded.Visible = false;
+
                     break;
             }
         }

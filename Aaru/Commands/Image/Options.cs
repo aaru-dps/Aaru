@@ -45,8 +45,7 @@ namespace Aaru.Commands.Image
 {
     internal class ListOptionsCommand : Command
     {
-        public ListOptionsCommand() : base("options",
-                                           "Lists all options supported by writable media images.") =>
+        public ListOptionsCommand() : base("options", "Lists all options supported by writable media images.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
         public static int Invoke(bool debug, bool verbose)
@@ -81,37 +80,37 @@ namespace Aaru.Commands.Image
                 foreach((string name, Type type, string description, object @default) option in
                     options.OrderBy(t => t.name))
                     AaruConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", option.name, TypeToString(option.type),
-                                         option.@default, option.description);
+                                          option.@default, option.description);
 
                 AaruConsole.WriteLine();
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
 
         static string TypeToString(Type type)
         {
             if(type == typeof(bool))
-                return"boolean";
+                return "boolean";
 
             if(type == typeof(sbyte) ||
                type == typeof(short) ||
                type == typeof(int)   ||
                type == typeof(long))
-                return"signed number";
+                return "signed number";
 
             if(type == typeof(byte)   ||
                type == typeof(ushort) ||
                type == typeof(uint)   ||
                type == typeof(ulong))
-                return"number";
+                return "number";
 
             if(type == typeof(float) ||
                type == typeof(double))
-                return"float number";
+                return "float number";
 
             if(type == typeof(Guid))
-                return"uuid";
+                return "uuid";
 
             return type == typeof(string) ? "string" : type.ToString();
         }

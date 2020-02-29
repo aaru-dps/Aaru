@@ -39,25 +39,15 @@ namespace Aaru.Filesystems.FAT
         const uint FSINFO_SIGNATURE1 = 0x41615252;
         const uint FSINFO_SIGNATURE2 = 0x61417272;
         const uint FSINFO_SIGNATURE3 = 0xAA550000;
-        /// <summary>
-        ///     Directory finishes
-        /// </summary>
+        /// <summary>Directory finishes</summary>
         const byte DIRENT_FINISHED = 0x00;
-        /// <summary>
-        ///     Deleted directory entry
-        /// </summary>
+        /// <summary>Deleted directory entry</summary>
         const byte DIRENT_DELETED = 0xE5;
-        /// <summary>
-        ///     Minimum allowed value in name/extension
-        /// </summary>
+        /// <summary>Minimum allowed value in name/extension</summary>
         const byte DIRENT_MIN = 0x20;
-        /// <summary>
-        ///     Value used instead of <see cref="DIRENT_FINISHED" /> for first name character
-        /// </summary>
+        /// <summary>Value used instead of <see cref="DIRENT_FINISHED" /> for first name character</summary>
         const byte DIRENT_E5 = 0x05;
-        /// <summary>
-        ///     Entry points to self or parent directory
-        /// </summary>
+        /// <summary>Entry points to self or parent directory</summary>
         const byte DIRENT_SUBDIR = 0x2E;
         const uint   FAT32_MASK      = 0x0FFFFFFF;
         const uint   FAT32_END_MASK  = 0xFFFFFF8;
@@ -184,81 +174,47 @@ namespace Aaru.Filesystems.FAT
         [Flags]
         enum FatAttributes : byte
         {
-            ReadOnly     = 0x01,
-            Hidden       = 0x02,
-            System       = 0x04,
-            VolumeLabel  = 0x08,
-            Subdirectory = 0x10,
-            Archive      = 0x20,
-            Device       = 0x40,
-            Reserved     = 0x80,
-            LFN          = 0x0F
+            ReadOnly    = 0x01, Hidden       = 0x02, System  = 0x04,
+            VolumeLabel = 0x08, Subdirectory = 0x10, Archive = 0x20,
+            Device      = 0x40, Reserved     = 0x80, LFN     = 0x0F
         }
 
         enum BpbKind
         {
-            None,
-            Hardcoded,
-            Atari,
-            Msx,
-            Dos2,
-            Dos3,
-            Dos32,
-            Dos33,
-            ShortExtended,
-            Extended,
-            ShortFat32,
-            LongFat32,
-            Andos,
-            Apricot,
-            DecRainbow,
+            None, Hardcoded, Atari,
+            Msx, Dos2, Dos3,
+            Dos32, Dos33, ShortExtended,
+            Extended, ShortFat32, LongFat32,
+            Andos, Apricot, DecRainbow,
             Human
         }
 
         enum Namespace
         {
-            Dos,
-            Nt,
-            Lfn,
-            Os2,
-            Ecs,
-            Human
+            Dos, Nt, Lfn,
+            Os2, Ecs, Human
         }
 
         [Flags]
         enum EaFlags : uint
         {
-            Normal   = 0,
-            Critical = 1
+            Normal = 0, Critical = 1
         }
 
         [Flags]
         enum CaseInfo : byte
         {
-            /// <summary>
-            ///     FASTFAT.SYS indicator that basename is lowercase
-            /// </summary>
+            /// <summary>FASTFAT.SYS indicator that basename is lowercase</summary>
             LowerCaseBasename = 0x08,
-            /// <summary>
-            ///     FASTFAT.SYS indicator that extension is lowercase
-            /// </summary>
-            LowerCaseExtension = 0x10,
-            AllLowerCase = 0x18,
-            /// <summary>
-            ///     FAT32.IFS &lt; 0.97 indicator for normal EAs present
-            /// </summary>
+            /// <summary>FASTFAT.SYS indicator that extension is lowercase</summary>
+            LowerCaseExtension = 0x10, AllLowerCase = 0x18,
+            /// <summary>FAT32.IFS &lt; 0.97 indicator for normal EAs present</summary>
             NormalEaOld = 0xEA,
-            /// <summary>
-            ///     FAT32.IFS &lt; 0.97 indicator for critical EAs present
-            /// </summary>
+            /// <summary>FAT32.IFS &lt; 0.97 indicator for critical EAs present</summary>
             CriticalEaOld = 0xEC,
-            /// <summary>
-            ///     FAT32.IFS &gt;= 0.97 indicator for normal EAs present
-            /// </summary>
+            /// <summary>FAT32.IFS &gt;= 0.97 indicator for normal EAs present</summary>
             NormalEa = 0x40,
-            /// <summary>
-            ///     FAT32.IFS &gt;= 0.97 indicator for critical EAs present
-            /// </summary>
+            /// <summary>FAT32.IFS &gt;= 0.97 indicator for critical EAs present</summary>
             CriticalEa = 0x80
         }
     }

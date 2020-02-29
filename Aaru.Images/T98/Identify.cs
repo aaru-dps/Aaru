@@ -44,7 +44,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length % 256 != 0) return false;
+            if(stream.Length % 256 != 0)
+                return false;
 
             byte[] hdrB = new byte[256];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -59,7 +60,7 @@ namespace Aaru.DiscImages
 
             // This format is expanding, so length can be smaller
             // Just grow it, I won't risk false positives...
-            return stream.Length == cylinders * 8 * 33 * 256 + 256;
+            return stream.Length == (cylinders * 8 * 33 * 256) + 256;
         }
     }
 }

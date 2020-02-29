@@ -41,20 +41,24 @@ namespace Aaru.DiscImages
         public bool Identify(IFilter imageFilter)
         {
             // Check if file is not multiple of 512
-            if(imageFilter.GetDataForkLength() % 512 == 0) return true;
+            if(imageFilter.GetDataForkLength() % 512 == 0)
+                return true;
 
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            if(extension == ".hdf" && imageFilter.GetDataForkLength() % 256 == 0) return true;
+            if(extension                             == ".hdf" &&
+               imageFilter.GetDataForkLength() % 256 == 0)
+                return true;
 
             // Only for single track data CDs
-            if(imageFilter.GetDataForkLength() % 2352 == 0 && imageFilter.GetDataForkLength() <= 846720000 ||
-               imageFilter.GetDataForkLength() % 2448 == 0 && imageFilter.GetDataForkLength() <= 881280000)
+            if((imageFilter.GetDataForkLength() % 2352 == 0 && imageFilter.GetDataForkLength() <= 846720000) ||
+               (imageFilter.GetDataForkLength() % 2448 == 0 && imageFilter.GetDataForkLength() <= 881280000))
             {
                 byte[] sync   = new byte[12];
                 Stream stream = imageFilter.GetDataForkStream();
                 stream.Position = 0;
                 stream.Read(sync, 0, 12);
+
                 return cdSync.SequenceEqual(sync);
             }
 

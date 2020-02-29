@@ -49,21 +49,29 @@ namespace Aaru.DiscImages
                 byte[] testArray = new byte[512];
                 imageFilter.GetDataForkStream().Read(testArray, 0, 512);
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+
                 // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
                 bool twoConsecutiveNulls = false;
+
                 for(int i = 0; i < 512; i++)
                 {
-                    if(i >= imageFilter.GetDataForkStream().Length) break;
+                    if(i >= imageFilter.GetDataForkStream().Length)
+                        break;
 
                     if(testArray[i] == 0)
                     {
-                        if(twoConsecutiveNulls) return false;
+                        if(twoConsecutiveNulls)
+                            return false;
 
                         twoConsecutiveNulls = true;
                     }
-                    else twoConsecutiveNulls = false;
+                    else
+                        twoConsecutiveNulls = false;
 
-                    if(testArray[i] < 0x20 && testArray[i] != 0x0A && testArray[i] != 0x0D && testArray[i] != 0x00)
+                    if(testArray[i] < 0x20  &&
+                       testArray[i] != 0x0A &&
+                       testArray[i] != 0x0D &&
+                       testArray[i] != 0x00)
                         return false;
                 }
 
@@ -79,29 +87,33 @@ namespace Aaru.DiscImages
 
                     if(lineNumber == 1)
                     {
-                        if(!int.TryParse(line, out tracks)) return false;
+                        if(!int.TryParse(line, out tracks))
+                            return false;
                     }
                     else
                     {
-                        Regex regexTrack = new Regex(REGEX_TRACK);
+                        var regexTrack = new Regex(REGEX_TRACK);
 
                         Match trackMatch = regexTrack.Match(line ?? throw new InvalidOperationException());
 
-                        if(!trackMatch.Success) return false;
+                        if(!trackMatch.Success)
+                            return false;
 
                         tracksFound++;
                     }
                 }
 
-                if(tracks == 0) return false;
+                if(tracks == 0)
+                    return false;
 
                 return tracks == tracksFound;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
-                AaruConsole.ErrorWriteLine("Exception: {0}",                              ex.Message);
-                AaruConsole.ErrorWriteLine("Stack trace: {0}",                            ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+
                 return false;
             }
         }

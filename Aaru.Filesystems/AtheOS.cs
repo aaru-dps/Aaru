@@ -46,6 +46,7 @@ namespace Aaru.Filesystems
         const uint AFS_MAGIC1 = 0x41465331;
         const uint AFS_MAGIC2 = 0xDD121031;
         const uint AFS_MAGIC3 = 0x15B6830E;
+
         // Common constants
         const uint AFS_SUPERBLOCK_SIZE = 1024;
         const uint AFS_BOOTBLOCK_SIZE  = AFS_SUPERBLOCK_SIZE;
@@ -65,12 +66,14 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
                 run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
-            if(sector + partition.Start >= partition.End) return false;
+            if(sector + partition.Start >= partition.End)
+                return false;
 
             byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
 
-            if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length) return false;
+            if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length)
+                return false;
 
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
@@ -80,12 +83,12 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             ulong sector = AFS_BOOTBLOCK_SIZE / imagePlugin.Info.SectorSize;
             uint  offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
@@ -102,35 +105,47 @@ namespace Aaru.Filesystems
 
             sb.AppendLine("Atheos filesystem");
 
-            if(afsSb.flags == 1) sb.AppendLine("Filesystem is read-only");
+            if(afsSb.flags == 1)
+                sb.AppendLine("Filesystem is read-only");
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(afsSb.name, Encoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", afsSb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size)
-              .AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size)
-              .AppendLine();
+
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size).
+               AppendLine();
+
+            sb.AppendFormat("{0} used blocks ({1} bytes)", afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size).
+               AppendLine();
+
             sb.AppendFormat("{0} bytes per i-node", afsSb.inode_size).AppendLine();
+
             sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", afsSb.blocks_per_ag,
                             afsSb.blocks_per_ag * afsSb.block_size).AppendLine();
+
             sb.AppendFormat("{0} allocation groups in volume", afsSb.num_ags).AppendLine();
+
             sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                             afsSb.log_blocks_start, afsSb.log_blocks_ag, afsSb.log_blocks_len,
                             afsSb.log_blocks_len * afsSb.block_size).AppendLine();
+
             sb.AppendFormat("Journal starts in byte {0} and has {1} bytes in {2} blocks", afsSb.log_start,
                             afsSb.log_size, afsSb.log_valid_blocks).AppendLine();
-            sb
-               .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+
+            sb.
+                AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                              afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
                              afsSb.root_dir_len * afsSb.block_size).AppendLine();
-            sb
-               .AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+
+            sb.
+                AppendFormat("Directory containing files scheduled for deletion's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                              afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
                              afsSb.deleted_len * afsSb.block_size).AppendLine();
-            sb
-               .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+
+            sb.
+                AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                              afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
                              afsSb.indices_len * afsSb.block_size).AppendLine();
+
             sb.AppendFormat("{0} blocks for bootloader ({1} bytes)", afsSb.boot_size,
                             afsSb.boot_size * afsSb.block_size).AppendLine();
 
@@ -138,19 +153,15 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters              = (ulong)afsSb.num_blocks,
-                ClusterSize           = afsSb.block_size,
-                Dirty                 = false,
-                FreeClusters          = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
-                FreeClustersSpecified = true,
-                Type                  = "AtheOS filesystem",
-                VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
+                Clusters     = (ulong)afsSb.num_blocks, ClusterSize = afsSb.block_size,
+                Dirty        = false,
+                FreeClusters = (ulong)(afsSb.num_blocks - afsSb.used_blocks), FreeClustersSpecified = true,
+                Type         = "AtheOS filesystem",
+                VolumeName   = StringHandlers.CToString(afsSb.name, Encoding)
             };
         }
 
-        /// <summary>
-        ///     Be superblock
-        /// </summary>
+        /// <summary>Be superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AtheosSuperBlock
         {

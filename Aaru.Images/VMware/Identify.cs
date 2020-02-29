@@ -56,6 +56,7 @@ namespace Aaru.DiscImages
                 stream.Read(ddfMagic, 0, 0x15);
 
                 vmCHdr = new VMwareCowHeader();
+
                 if(stream.Length <= Marshal.SizeOf<VMwareCowHeader>())
                     return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                            vmCHdr.magic                                          == VMWARE_COW_MAGIC;

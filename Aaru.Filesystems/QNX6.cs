@@ -57,11 +57,14 @@ namespace Aaru.Filesystems
             uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
             uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
 
-            if(partition.Start + bootSectors + sectors >= partition.End) return false;
+            if(partition.Start + bootSectors + sectors >= partition.End)
+                return false;
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.Start,               sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
-            if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return false;
+
+            if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
+                return false;
 
             QNX6_AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
@@ -71,17 +74,19 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            StringBuilder sb          = new StringBuilder();
-            uint          sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
-            uint          bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
+            var  sb          = new StringBuilder();
+            uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
+            uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
 
-            byte[] audiSector = imagePlugin.ReadSectors(partition.Start,               sectors);
+            byte[] audiSector = imagePlugin.ReadSectors(partition.Start, sectors);
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
-            if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return;
+
+            if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
+                return;
 
             QNX6_AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
@@ -96,25 +101,25 @@ namespace Aaru.Filesystems
                 sb.AppendFormat("Serial: 0x{0:X16}", audiSb.checksum).AppendLine();
                 sb.AppendFormat("{0} bytes per block", audiSb.blockSize).AppendLine();
                 sb.AppendFormat("{0} inodes free of {1}", audiSb.freeInodes, audiSb.numInodes).AppendLine();
+
                 sb.AppendFormat("{0} blocks ({1} bytes) free of {2} ({3} bytes)", audiSb.freeBlocks,
                                 audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
                                 audiSb.numBlocks  * audiSb.blockSize).AppendLine();
 
                 XmlFsType = new FileSystemType
                 {
-                    Type                  = "QNX6 (Audi) filesystem",
-                    Clusters              = audiSb.numBlocks,
-                    ClusterSize           = audiSb.blockSize,
-                    Bootable              = true,
-                    Files                 = audiSb.numInodes - audiSb.freeInodes,
-                    FilesSpecified        = true,
-                    FreeClusters          = audiSb.freeBlocks,
-                    FreeClustersSpecified = true,
-                    VolumeSerial          = $"{audiSb.serial:X16}"
+                    Type           = "QNX6 (Audi) filesystem", Clusters = audiSb.numBlocks,
+                    ClusterSize    = audiSb.blockSize,
+                    Bootable       = true, Files = audiSb.numInodes - audiSb.freeInodes,
+                    FilesSpecified = true,
+                    FreeClusters   = audiSb.freeBlocks, FreeClustersSpecified = true,
+                    VolumeSerial   = $"{audiSb.serial:X16}"
                 };
+
                 //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
 
                 information = sb.ToString();
+
                 return;
             }
 
@@ -126,22 +131,22 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Flags: 0x{0:X8}", qnxSb.flags).AppendLine();
             sb.AppendFormat("Version1: 0x{0:X4}", qnxSb.version1).AppendLine();
             sb.AppendFormat("Version2: 0x{0:X4}", qnxSb.version2).AppendLine();
+
             //sb.AppendFormat("Volume ID: \"{0}\"", CurrentEncoding.GetString(qnxSb.volumeid)).AppendLine();
             sb.AppendFormat("{0} bytes per block", qnxSb.blockSize).AppendLine();
             sb.AppendFormat("{0} inodes free of {1}", qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
+
             sb.AppendFormat("{0} blocks ({1} bytes) free of {2} ({3} bytes)", qnxSb.freeBlocks,
-                            qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize)
-              .AppendLine();
+                            qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize).
+               AppendLine();
 
             XmlFsType = new FileSystemType
             {
                 Type                      = "QNX6 filesystem",
                 Clusters                  = qnxSb.numBlocks,
-                ClusterSize               = qnxSb.blockSize,
-                Bootable                  = true,
+                ClusterSize               = qnxSb.blockSize, Bootable = true,
                 Files                     = qnxSb.numInodes - qnxSb.freeInodes,
-                FilesSpecified            = true,
-                FreeClusters              = qnxSb.freeBlocks,
+                FilesSpecified            = true, FreeClusters = qnxSb.freeBlocks,
                 FreeClustersSpecified     = true,
                 VolumeSerial              = $"{qnxSb.serial:X16}",
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime),
@@ -149,6 +154,7 @@ namespace Aaru.Filesystems
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(qnxSb.atime),
                 ModificationDateSpecified = true
             };
+
             //xmlFSType.VolumeName = CurrentEncoding.GetString(qnxSb.volumeid);
 
             information = sb.ToString();

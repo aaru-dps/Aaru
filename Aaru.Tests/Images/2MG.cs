@@ -44,9 +44,15 @@ namespace Aaru.Tests.Images
             "prodos1440.2mg.lz"
         };
 
-        readonly ulong[] sectors = {560, 415, 560, 560, 560, 2880};
+        readonly ulong[] sectors =
+        {
+            560, 415, 560, 560, 560, 2880
+        };
 
-        readonly uint[] sectorsize = {256, 256, 256, 256, 256, 512};
+        readonly uint[] sectorsize =
+        {
+            256, 256, 256, 256, 256, 512
+        };
 
         readonly MediaType[] mediatypes =
         {
@@ -56,9 +62,8 @@ namespace Aaru.Tests.Images
 
         readonly string[] md5S =
         {
-            "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8",
-            "86bc7879bb477917aab3976057a6a7b2", "32b8f8163238d4f3ea2a3db95ad1a812",
-            "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da"
+            "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8", "86bc7879bb477917aab3976057a6a7b2",
+            "32b8f8163238d4f3ea2a3db95ad1a812", "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da"
         };
 
         [Test]
@@ -70,16 +75,16 @@ namespace Aaru.Tests.Images
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.Apple2Mg();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
                 const uint SECTORS_TO_READ = 256;
                 ulong      doneSectors     = 0;
 
-                Md5Context ctx = new Md5Context();
+                var ctx = new Md5Context();
 
                 while(doneSectors < image.Info.Sectors)
                 {

@@ -50,7 +50,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(2 + partition.Start >= partition.End) return false;
+            if(2 + partition.Start >= partition.End)
+                return false;
 
             byte[] bpb = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -64,25 +65,22 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb        = new StringBuilder();
-            byte[]        bpbSector = imagePlugin.ReadSector(0 + partition.Start);
+            var    sb        = new StringBuilder();
+            byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            SolarOSParameterBlock bpb = new SolarOSParameterBlock
+            var bpb = new SolarOSParameterBlock
             {
-                bps       = BitConverter.ToUInt16(bpbSector, 0x0B),
-                root_ent  = BitConverter.ToUInt16(bpbSector, 0x10),
-                sectors   = BitConverter.ToUInt16(bpbSector, 0x12),
-                media     = bpbSector[0x14],
-                spfat     = BitConverter.ToUInt16(bpbSector, 0x15),
-                sptrk     = BitConverter.ToUInt16(bpbSector, 0x17),
-                heads     = BitConverter.ToUInt16(bpbSector, 0x19),
-                signature = bpbSector[0x25]
+                bps     = BitConverter.ToUInt16(bpbSector, 0x0B), root_ent  = BitConverter.ToUInt16(bpbSector, 0x10),
+                sectors = BitConverter.ToUInt16(bpbSector, 0x12), media     = bpbSector[0x14],
+                spfat   = BitConverter.ToUInt16(bpbSector, 0x15), sptrk     = BitConverter.ToUInt16(bpbSector, 0x17),
+                heads   = BitConverter.ToUInt16(bpbSector, 0x19), signature = bpbSector[0x25]
             };
+
             byte[] bpbStrings = new byte[8];
             Array.Copy(bpbSector, 0x03, bpbStrings, 0, 8);
             bpb.OEMName = StringHandlers.CToString(bpbStrings);
@@ -102,46 +100,53 @@ namespace Aaru.Filesystems
             bpb.unk4 = BitConverter.ToUInt32(bpbSector, 0x26);
 
             AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
-                                      bpb.x86_jump[1], bpb.x86_jump[2]);
+                                       bpb.x86_jump[1], bpb.x86_jump[2]);
+
             AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", bpb.OEMName);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}",         bpb.bps);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}",   bpb.unk1);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}",   bpb.unk2);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}",    bpb.root_ent);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}",     bpb.sectors);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}",  bpb.media);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}",       bpb.spfat);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}",       bpb.sptrk);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}",       bpb.heads);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}", bpb.bps);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}", bpb.unk1);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}", bpb.unk2);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}", bpb.root_ent);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}", bpb.sectors);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}", bpb.media);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}", bpb.spfat);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}", bpb.sptrk);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}", bpb.heads);
+
             AaruConsole.DebugWriteLine("SolarFS plugin",
-                                      "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
-                                      bpb.unk3[0], bpb.unk3[1], bpb.unk3[2], bpb.unk3[3], bpb.unk3[4], bpb.unk3[5],
-                                      bpb.unk3[6], bpb.unk3[7], bpb.unk3[8], bpb.unk3[9]);
+                                       "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
+                                       bpb.unk3[0], bpb.unk3[1], bpb.unk3[2], bpb.unk3[3], bpb.unk3[4], bpb.unk3[5],
+                                       bpb.unk3[6], bpb.unk3[7], bpb.unk3[8], bpb.unk3[9]);
+
             AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", bpb.signature);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}",      bpb.unk4);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"",   bpb.vol_name);
-            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"",    bpb.fs_type);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}", bpb.unk4);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"", bpb.vol_name);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"", bpb.fs_type);
 
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
             sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
-            if(imagePlugin.Info.SectorSize == 2336 || imagePlugin.Info.SectorSize == 2352 ||
+
+            if(imagePlugin.Info.SectorSize == 2336 ||
+               imagePlugin.Info.SectorSize == 2352 ||
                imagePlugin.Info.SectorSize == 2448)
             {
                 if(bpb.bps != imagePlugin.Info.SectorSize)
-                    sb
-                       .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                    sb.
+                        AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                      bpb.bps, 2048).AppendLine();
             }
             else if(bpb.bps != imagePlugin.Info.SectorSize)
-                sb
-                   .AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
+                sb.
+                    AppendFormat("WARNING: Filesystem describes a {0} bytes/sector, while device describes a {1} bytes/sector",
                                  bpb.bps, imagePlugin.Info.SectorSize).AppendLine();
 
             sb.AppendFormat("{0} sectors on volume ({1} bytes)", bpb.sectors, bpb.sectors * bpb.bps).AppendLine();
+
             if(bpb.sectors > imagePlugin.Info.Sectors)
                 sb.AppendFormat("WARNING: Filesystem describes a {0} sectors volume, bigger than device ({1} sectors)",
                                 bpb.sectors, imagePlugin.Info.Sectors);
+
             sb.AppendFormat("{0} heads", bpb.heads).AppendLine();
             sb.AppendFormat("{0} sectors per track", bpb.sptrk).AppendLine();
             sb.AppendFormat("Volume name: {0}", bpb.vol_name).AppendLine();

@@ -38,6 +38,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Schemas;
+
 // UNICOS is ILP64 so let's think everything is 64-bit
 using blkno_t = System.Int64;
 using daddr_t = System.Int64;
@@ -65,43 +66,58 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>()) return false;
+
+            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>())
+                return false;
 
             UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             AaruConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
-                                      UNICOS_MAGIC);
+                                       UNICOS_MAGIC);
 
             return unicosSb.s_magic == UNICOS_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
+
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
 
             uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>()) return;
+
+            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>())
+                return;
 
             UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
-            if(unicosSb.s_magic != UNICOS_MAGIC) return;
+            if(unicosSb.s_magic != UNICOS_MAGIC)
+                return;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("UNICOS filesystem");
-            if(unicosSb.s_secure == UNICOS_SECURE) sb.AppendLine("Volume is secure");
+
+            if(unicosSb.s_secure == UNICOS_SECURE)
+                sb.AppendLine("Volume is secure");
+
             sb.AppendFormat("Volume contains {0} partitions", unicosSb.s_npart).AppendLine();
             sb.AppendFormat("{0} bytes per sector", unicosSb.s_iounit).AppendLine();
             sb.AppendLine("4096 bytes per block");
@@ -109,26 +125,25 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Root resides on inode {0}", unicosSb.s_root).AppendLine();
             sb.AppendFormat("{0} inodes in volume", unicosSb.s_isize).AppendLine();
             sb.AppendFormat("Volume last updated on {0}", DateHandlers.UnixToDateTime(unicosSb.s_time)).AppendLine();
+
             if(unicosSb.s_error > 0)
                 sb.AppendFormat("Volume is dirty, error code = 0x{0:X16}", unicosSb.s_error).AppendLine();
+
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(unicosSb.s_fname, Encoding)).AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Type                      = "UNICOS filesystem",
-                ClusterSize               = 4096,
-                Clusters                  = (ulong)unicosSb.s_fsize,
-                VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),
-                ModificationDate          = DateHandlers.UnixToDateTime(unicosSb.s_time),
-                ModificationDateSpecified = true
+                Type             = "UNICOS filesystem", ClusterSize = 4096, Clusters = (ulong)unicosSb.s_fsize,
+                VolumeName       = StringHandlers.CToString(unicosSb.s_fname, Encoding),
+                ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time), ModificationDateSpecified = true
             };
+
             XmlFsType.Dirty |= unicosSb.s_error > 0;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
         struct nc1ireg_sb
         {
             public readonly ushort i_unused; /* reserved */
@@ -136,8 +151,7 @@ namespace Aaru.Filesystems
             public readonly uint   i_sblk;   /* start block number */
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
         struct nc1fdev_sb
         {
             public readonly long fd_name; /* Physical device name */
@@ -147,9 +161,8 @@ namespace Aaru.Filesystems
             public readonly nc1ireg_sb[] fd_ireg; /* Inode regions */
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming"),
+         SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
         struct UNICOS_Superblock
         {
             public readonly ulong s_magic; /* magic number to indicate file system type */

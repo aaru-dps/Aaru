@@ -61,8 +61,12 @@ namespace Aaru.Filesystems
         {
             int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
-            if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
-            if(sbSizeInSectors + partition.Start           >= partition.End) return false;
+
+            if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
+                sbSizeInSectors++;
+
+            if(sbSizeInSectors + partition.Start >= partition.End)
+                return false;
 
             byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
             XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
@@ -71,51 +75,58 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
-            if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
+
+            if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
+                sbSizeInSectors++;
 
             byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
             XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
 
             sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
-            sb.AppendFormat("{0} zones in volume ({1} bytes)", supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size)
-              .AppendLine();
+
+            sb.AppendFormat("{0} zones in volume ({1} bytes)", supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size).
+               AppendLine();
+
             sb.AppendFormat("{0} inodes", supblk.s_ninodes).AppendLine();
-            sb.AppendFormat("{0} data zones ({1} bytes)", supblk.s_ndatazones, supblk.s_ndatazones * supblk.s_zone_size)
-              .AppendLine();
-            sb.AppendFormat("{0} imap zones ({1} bytes)", supblk.s_imap_zones, supblk.s_imap_zones * supblk.s_zone_size)
-              .AppendLine();
-            sb.AppendFormat("{0} zmap zones ({1} bytes)", supblk.s_zmap_zones, supblk.s_zmap_zones * supblk.s_zone_size)
-              .AppendLine();
+
+            sb.AppendFormat("{0} data zones ({1} bytes)", supblk.s_ndatazones,
+                            supblk.s_ndatazones * supblk.s_zone_size).AppendLine();
+
+            sb.AppendFormat("{0} imap zones ({1} bytes)", supblk.s_imap_zones,
+                            supblk.s_imap_zones * supblk.s_zone_size).AppendLine();
+
+            sb.AppendFormat("{0} zmap zones ({1} bytes)", supblk.s_zmap_zones,
+                            supblk.s_zmap_zones * supblk.s_zone_size).AppendLine();
+
             sb.AppendFormat("First data zone: {0}", supblk.s_firstdatazone).AppendLine();
-            sb.AppendFormat("Maximum filesize is {0} bytes ({1} MiB)", supblk.s_max_size, supblk.s_max_size / 1048576)
-              .AppendLine();
+
+            sb.AppendFormat("Maximum filesize is {0} bytes ({1} MiB)", supblk.s_max_size, supblk.s_max_size / 1048576).
+               AppendLine();
+
             sb.AppendFormat("{0} zones reserved for kernel images ({1} bytes)", supblk.s_kernzones,
                             supblk.s_kernzones * supblk.s_zone_size).AppendLine();
+
             sb.AppendFormat("First kernel zone: {0}", supblk.s_firstkernzone).AppendLine();
 
             XmlFsType = new FileSystemType
             {
-                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
-                Clusters    = supblk.s_nzones,
-                ClusterSize = supblk.s_zone_size,
-                Type        = "Xia filesystem"
+                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment), Clusters = supblk.s_nzones,
+                ClusterSize = supblk.s_zone_size, Type                                          = "Xia filesystem"
             };
 
             information = sb.ToString();
         }
 
-        /// <summary>
-        ///     Xia superblock
-        /// </summary>
+        /// <summary>Xia superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaSuperBlock
         {
@@ -156,9 +167,7 @@ namespace Aaru.Filesystems
             public readonly uint s_magic;
         }
 
-        /// <summary>
-        ///     Xia directory entry
-        /// </summary>
+        /// <summary>Xia directory entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaDirect
         {
@@ -169,9 +178,7 @@ namespace Aaru.Filesystems
             public readonly byte[] d_name;
         }
 
-        /// <summary>
-        ///     Xia inode
-        /// </summary>
+        /// <summary>Xia inode</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaInode
         {

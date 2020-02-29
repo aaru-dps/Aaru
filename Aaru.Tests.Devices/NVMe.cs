@@ -31,11 +31,11 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void NVMe(string devPath, Device dev)
         {
-            DicConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
+            AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
             System.Console.ReadKey();
         }
     }

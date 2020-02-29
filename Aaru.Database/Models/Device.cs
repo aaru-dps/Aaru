@@ -38,10 +38,7 @@ namespace Aaru.Database.Models
 {
     public class Device : DeviceReportV2
     {
-        public Device()
-        {
-            LastSynchronized = DateTime.UtcNow;
-        }
+        public Device() => LastSynchronized = DateTime.UtcNow;
 
         public Device(DeviceReportV2 report)
         {

@@ -32,38 +32,43 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices.ATA
 {
-    static class Mcpt
+    internal static class Mcpt
     {
         internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send a Media Card Pass Through command to the device:");
-                DicConsole.WriteLine("1.- Send CHECK MEDIA CARD TYPE command.");
-                DicConsole.WriteLine("0.- Return to ATA commands menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send a Media Card Pass Through command to the device:");
+                AaruConsole.WriteLine("1.- Send CHECK MEDIA CARD TYPE command.");
+                AaruConsole.WriteLine("0.- Return to ATA commands menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to ATA commands menu...");
+                        AaruConsole.WriteLine("Returning to ATA commands menu...");
+
                         return;
                     case 1:
                         CheckMediaCardType(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }
@@ -76,37 +81,42 @@ namespace Aaru.Tests.Devices.ATA
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for CHECK MEDIA CARD TYPE command:");
-                DicConsole.WriteLine("Feature: {0}", feature);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for CHECK MEDIA CARD TYPE command:");
+                AaruConsole.WriteLine("Feature: {0}", feature);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+                        AaruConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("Feature?: ");
+                        AaruConsole.Write("Feature?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out feature))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             feature = 0;
                             System.Console.ReadKey();
                         }
@@ -118,43 +128,48 @@ namespace Aaru.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
+
             bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersChs errorRegisters, dev.Timeout,
                                                 out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("CHECK MEDIA CARD TYPE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("2.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending CHECK MEDIA CARD TYPE to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("CHECK MEDIA CARD TYPE status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("2.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+                    AaruConsole.WriteLine("Returning to Media Card Pass Through commands menu...");
+
                     return;
                 case 1: goto start;
                 case 2: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }

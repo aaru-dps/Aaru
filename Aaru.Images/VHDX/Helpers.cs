@@ -43,7 +43,8 @@ namespace Aaru.DiscImages
             int  shift = (int)(sectorAddress  % 8);
             byte val   = (byte)(1 << shift);
 
-            if(index > sectorBitmap.LongLength) return false;
+            if(index > sectorBitmap.LongLength)
+                return false;
 
             return (sectorBitmap[index] & val) == val;
         }

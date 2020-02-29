@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Aaru.Core.Logging;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Core.Logging;
 using Aaru.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -124,7 +124,7 @@ namespace Aaru.Core.Devices.Dumping
 
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
-                                             Aaru.Database.Models.Device dbDev, out bool inexactPositioning)
+                                             Database.Models.Device dbDev, out bool inexactPositioning)
         {
             bool                  sense  = true; // Sense indicator
             byte[]                subBuf = null;
@@ -154,10 +154,10 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             AaruConsole.DebugWriteLine("Pregap calculator", bcd == true
-                                                               ? "Subchannel is BCD"
-                                                               : bcd == false
-                                                                   ? "Subchannel is not BCD"
-                                                                   : "Could not detect drive subchannel BCD");
+                                                                ? "Subchannel is BCD"
+                                                                : bcd == false
+                                                                    ? "Subchannel is not BCD"
+                                                                    : "Could not detect drive subchannel BCD");
 
             if(bcd is null)
             {
@@ -209,8 +209,8 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(sense)
                     {
-                        AaruConsole.DebugWriteLine("Pregap calculator", "LBA: {0}, Try {1}, Sense {2}", lba, retries + 1,
-                                                  sense);
+                        AaruConsole.DebugWriteLine("Pregap calculator", "LBA: {0}, Try {1}, Sense {2}", lba,
+                                                   retries + 1, sense);
 
                         continue;
                     }
@@ -221,10 +221,10 @@ namespace Aaru.Core.Devices.Dumping
                     CRC16CCITTContext.Data(subBuf, 10, out crc);
 
                     AaruConsole.DebugWriteLine("Pregap calculator",
-                                              "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
-                                              lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
-                                              subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
-                                              subBuf[10], subBuf[11], crc[0], crc[1]);
+                                               "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                               lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
+                                               subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
+                                               subBuf[10], subBuf[11], crc[0], crc[1]);
 
                     crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
@@ -262,10 +262,10 @@ namespace Aaru.Core.Devices.Dumping
                         if(crcOk)
                         {
                             AaruConsole.DebugWriteLine("Pregap calculator",
-                                                      "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
-                                                      lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
-                                                      subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8],
-                                                      subBuf[9], subBuf[10], subBuf[11], crc[0], crc[1]);
+                                                       "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                       lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
+                                                       subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8],
+                                                       subBuf[9], subBuf[10], subBuf[11], crc[0], crc[1]);
                         }
                         else
                             continue;
@@ -317,10 +317,10 @@ namespace Aaru.Core.Devices.Dumping
                         CRC16CCITTContext.Data(subBuf, 10, out crc);
 
                         AaruConsole.DebugWriteLine("Pregap calculator",
-                                                  "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
-                                                  lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
-                                                  subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
-                                                  subBuf[10], subBuf[11], crc[0], crc[1]);
+                                                   "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                   lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
+                                                   subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
+                                                   subBuf[10], subBuf[11], crc[0], crc[1]);
 
                         crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
@@ -358,10 +358,11 @@ namespace Aaru.Core.Devices.Dumping
                             if(crcOk)
                             {
                                 AaruConsole.DebugWriteLine("Pregap calculator",
-                                                          "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
-                                                          lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
-                                                          subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7],
-                                                          subBuf[8], subBuf[9], subBuf[10], subBuf[11], crc[0], crc[1]);
+                                                           "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                           lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
+                                                           subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7],
+                                                           subBuf[8], subBuf[9], subBuf[10], subBuf[11], crc[0],
+                                                           crc[1]);
 
                                 break;
                             }
@@ -387,18 +388,18 @@ namespace Aaru.Core.Devices.Dumping
                                         track.TrackType         == TrackType.Audio))
                                     {
                                         dumpLog?.
-                                            WriteLine($"Could not read subchannel for this track, supposing 150 sectors.");
+                                            WriteLine("Could not read subchannel for this track, supposing 150 sectors.");
 
                                         updateStatus?.
-                                            Invoke($"Could not read subchannel for this track, supposing 150 sectors.");
+                                            Invoke("Could not read subchannel for this track, supposing 150 sectors.");
                                     }
                                     else
                                     {
                                         dumpLog?.
-                                            WriteLine($"Could not read subchannel for this track, supposing 0 sectors.");
+                                            WriteLine("Could not read subchannel for this track, supposing 0 sectors.");
 
                                         updateStatus?.
-                                            Invoke($"Could not read subchannel for this track, supposing 0 sectors.");
+                                            Invoke("Could not read subchannel for this track, supposing 0 sectors.");
                                     }
                                 }
                                 else
@@ -501,7 +502,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(diff != 0)
                     {
                         AaruConsole.DebugWriteLine("Pregap calculator", "Invalid Q position for LBA {0}, got {1}", lba,
-                                                  posQ);
+                                                   posQ);
 
                         inexactPositioning = true;
                     }
@@ -513,7 +514,7 @@ namespace Aaru.Core.Devices.Dumping
                         if(crcOk || pregapQ - pregaps[track.TrackSequence] < 10)
                         {
                             AaruConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}",
-                                                      track.TrackSequence, pregapQ);
+                                                       track.TrackSequence, pregapQ);
 
                             pregaps[track.TrackSequence] = pregapQ;
                         }
@@ -546,7 +547,7 @@ namespace Aaru.Core.Devices.Dumping
             }
         }
 
-        static bool GetSectorForPregapRaw(Device dev, uint lba, Aaru.Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
         {
             byte[] cmdBuf;
             bool   sense;
@@ -601,7 +602,7 @@ namespace Aaru.Core.Devices.Dumping
             return sense;
         }
 
-        static bool GetSectorForPregapQ16(Device dev, uint lba, Aaru.Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
         {
             byte[] cmdBuf;
             bool   sense;

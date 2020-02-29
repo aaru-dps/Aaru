@@ -36,52 +36,32 @@ namespace Aaru.DiscImages
 {
     public partial class PartClone
     {
-        /// <summary>
-        ///     PartClone disk image header, little-endian
-        /// </summary>
+        /// <summary>PartClone disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PartCloneHeader
         {
-            /// <summary>
-            ///     Magic, <see cref="PartClone.partCloneMagic" />
-            /// </summary>
+            /// <summary>Magic, <see cref="PartClone.partCloneMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-            public byte[] magic;
-            /// <summary>
-            ///     Source filesystem
-            /// </summary>
+            public readonly byte[] magic;
+            /// <summary>Source filesystem</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-            public byte[] filesystem;
-            /// <summary>
-            ///     Version
-            /// </summary>
+            public readonly byte[] filesystem;
+            /// <summary>Version</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] version;
-            /// <summary>
-            ///     Padding
-            /// </summary>
-            public ushort padding;
-            /// <summary>
-            ///     Block (sector) size
-            /// </summary>
-            public uint blockSize;
-            /// <summary>
-            ///     Size of device containing the cloned partition
-            /// </summary>
-            public ulong deviceSize;
-            /// <summary>
-            ///     Total blocks in cloned partition
-            /// </summary>
-            public ulong totalBlocks;
-            /// <summary>
-            ///     Used blocks in cloned partition
-            /// </summary>
-            public ulong usedBlocks;
-            /// <summary>
-            ///     Empty space
-            /// </summary>
+            public readonly byte[] version;
+            /// <summary>Padding</summary>
+            public readonly ushort padding;
+            /// <summary>Block (sector) size</summary>
+            public readonly uint blockSize;
+            /// <summary>Size of device containing the cloned partition</summary>
+            public readonly ulong deviceSize;
+            /// <summary>Total blocks in cloned partition</summary>
+            public readonly ulong totalBlocks;
+            /// <summary>Used blocks in cloned partition</summary>
+            public readonly ulong usedBlocks;
+            /// <summary>Empty space</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
-            public byte[] buffer;
+            public readonly byte[] buffer;
         }
     }
 }

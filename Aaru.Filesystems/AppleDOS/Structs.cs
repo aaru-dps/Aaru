@@ -39,72 +39,72 @@ namespace Aaru.Filesystems.AppleDOS
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Vtoc
         {
-            public byte unused1;
-            public byte catalogTrack;
-            public byte catalogSector;
-            public byte dosRelease;
+            public readonly byte unused1;
+            public readonly byte catalogTrack;
+            public readonly byte catalogSector;
+            public readonly byte dosRelease;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused2;
-            public byte volumeNumber;
+            public readonly byte[] unused2;
+            public readonly byte volumeNumber;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] unused3;
-            public byte maxTrackSectorPairsPerSector;
+            public readonly byte[] unused3;
+            public readonly byte maxTrackSectorPairsPerSector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] unused4;
-            public byte  lastAllocatedSector;
-            public sbyte allocationDirection;
+            public readonly byte[] unused4;
+            public readonly byte  lastAllocatedSector;
+            public readonly sbyte allocationDirection;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused5;
-            public byte   tracks;
-            public byte   sectorsPerTrack;
-            public ushort bytesPerSector;
+            public readonly byte[] unused5;
+            public readonly byte   tracks;
+            public readonly byte   sectorsPerTrack;
+            public readonly ushort bytesPerSector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 200)]
-            public byte[] bitmap;
+            public readonly byte[] bitmap;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CatalogSector
         {
-            public byte unused1;
-            public byte trackOfNext;
-            public byte sectorOfNext;
+            public readonly byte unused1;
+            public readonly byte trackOfNext;
+            public readonly byte sectorOfNext;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] unused2;
+            public readonly byte[] unused2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-            public FileEntry[] entries;
+            public readonly FileEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FileEntry
         {
-            public byte extentTrack;
-            public byte extentSector;
-            public byte typeAndFlags;
+            public readonly byte extentTrack;
+            public readonly byte extentSector;
+            public readonly byte typeAndFlags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-            public byte[] filename;
-            public ushort length;
+            public readonly byte[] filename;
+            public readonly ushort length;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TrackSectorList
         {
-            public byte unused1;
-            public byte nextListTrack;
-            public byte nextListSector;
+            public readonly byte unused1;
+            public readonly byte nextListTrack;
+            public readonly byte nextListSector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused2;
-            public ushort sectorOffset;
+            public readonly byte[] unused2;
+            public readonly ushort sectorOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] unused3;
+            public readonly byte[] unused3;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 122)]
-            public TrackSectorListEntry[] entries;
+            public readonly TrackSectorListEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TrackSectorListEntry
         {
-            public byte track;
-            public byte sector;
+            public readonly byte track;
+            public readonly byte sector;
         }
     }
 }

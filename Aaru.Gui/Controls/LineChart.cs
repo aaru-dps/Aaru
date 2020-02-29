@@ -5,9 +5,7 @@ using Eto.Forms;
 
 namespace Aaru.Gui.Controls
 {
-    /// <summary>
-    ///     Draws a line chart
-    /// </summary>
+    /// <summary>Draws a line chart</summary>
     public class LineChart : Drawable
     {
         bool       absoluteMargins;
@@ -58,24 +56,21 @@ namespace Aaru.Gui.Controls
             previousPoint            =  new PointF(0, 0);
         }
 
-        /// <summary>
-        ///     If set the margins would be in absolute pixels, otherwise in relative points
-        /// </summary>
+        /// <summary>If set the margins would be in absolute pixels, otherwise in relative points</summary>
         public bool AbsoluteMargins
         {
             get => absoluteMargins;
             set
             {
-                if(absoluteMargins == value) return;
+                if(absoluteMargins == value)
+                    return;
 
                 absoluteMargins = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Margin between the leftmost border and the Y axis
-        /// </summary>
+        /// <summary>Margin between the leftmost border and the Y axis</summary>
         public float MarginX
         {
             get => marginX;
@@ -86,9 +81,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Margin between the bottommost border and the X axis
-        /// </summary>
+        /// <summary>Margin between the bottommost border and the X axis</summary>
         public float MarginY
         {
             get => marginY;
@@ -99,44 +92,38 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Contains the relative poitns to be drawn
-        /// </summary>
+        /// <summary>Contains the relative poitns to be drawn</summary>
         public ObservableCollection<PointF> Values { get; }
 
-        /// <summary>
-        ///     If axes borders should be drawn
-        /// </summary>
+        /// <summary>If axes borders should be drawn</summary>
         public bool DrawAxes
         {
             get => drawAxes;
             set
             {
-                if(drawAxes == value) return;
+                if(drawAxes == value)
+                    return;
 
                 drawAxes = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     If a grid should be drawn every X step
-        /// </summary>
+        /// <summary>If a grid should be drawn every X step</summary>
         public bool ShowStepsX
         {
             get => showStepsX;
             set
             {
-                if(showStepsX == value) return;
+                if(showStepsX == value)
+                    return;
 
                 showStepsX = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Separation between X grid lines
-        /// </summary>
+        /// <summary>Separation between X grid lines</summary>
         public float StepsX
         {
             get => stepsX;
@@ -147,24 +134,21 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     If a grid should be drawn every Y step
-        /// </summary>
+        /// <summary>If a grid should be drawn every Y step</summary>
         public bool ShowStepsY
         {
             get => showStepsY;
             set
             {
-                if(showStepsY == value) return;
+                if(showStepsY == value)
+                    return;
 
                 showStepsY = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Separation between X grid lines
-        /// </summary>
+        /// <summary>Separation between X grid lines</summary>
         public float StepsY
         {
             get => stepsY;
@@ -175,9 +159,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Relative point that is equal to start of X
-        /// </summary>
+        /// <summary>Relative point that is equal to start of X</summary>
         public float MinX
         {
             get => minX;
@@ -188,9 +170,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Relative point that is equal to start of Y
-        /// </summary>
+        /// <summary>Relative point that is equal to start of Y</summary>
         public float MinY
         {
             get => minY;
@@ -201,9 +181,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Relative point that is equal to end of X
-        /// </summary>
+        /// <summary>Relative point that is equal to end of X</summary>
         public float MaxX
         {
             get => maxX;
@@ -214,9 +192,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Relative point that is equal to end of Y
-        /// </summary>
+        /// <summary>Relative point that is equal to end of Y</summary>
         public float MaxY
         {
             get => maxY;
@@ -227,75 +203,70 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        /// <summary>
-        ///     Color for background
-        /// </summary>
+        /// <summary>Color for background</summary>
         public new Color BackgroundColor
         {
             get => backgroundColor;
             set
             {
-                if(backgroundColor == value) return;
+                if(backgroundColor == value)
+                    return;
 
                 backgroundColor = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Color to draw the axes borders
-        /// </summary>
+        /// <summary>Color to draw the axes borders</summary>
         public Color AxesColor
         {
             get => axesColor;
             set
             {
-                if(axesColor == value) return;
+                if(axesColor == value)
+                    return;
 
                 axesColor = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Color to draw the X grid
-        /// </summary>
+        /// <summary>Color to draw the X grid</summary>
         public Color ColorX
         {
             get => colorX;
             set
             {
-                if(colorX == value) return;
+                if(colorX == value)
+                    return;
 
                 colorX = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Color to draw the Y grid
-        /// </summary>
+        /// <summary>Color to draw the Y grid</summary>
         public Color ColorY
         {
             get => colorY;
             set
             {
-                if(colorY == value) return;
+                if(colorY == value)
+                    return;
 
                 colorY = value;
                 Invalidate();
             }
         }
 
-        /// <summary>
-        ///     Color to draw the line between points
-        /// </summary>
+        /// <summary>Color to draw the line between points</summary>
         public Color LineColor
         {
             get => lineColor;
             set
             {
-                if(lineColor == value) return;
+                if(lineColor == value)
+                    return;
 
                 lineColor = value;
                 Invalidate();
@@ -305,13 +276,20 @@ namespace Aaru.Gui.Controls
         void OnValuesChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             // If we do not support to drawn on the graphics we will need to redraw it, slowly
-            if(!SupportsCreateGraphics) Invalidate();
+            if(!SupportsCreateGraphics)
+                Invalidate();
 
             Graphics g;
 
             // If the control is not visible (hidden in another tab) this raises an exception
-            try { g = CreateGraphics(); }
-            catch { return; }
+            try
+            {
+                g = CreateGraphics();
+            }
+            catch
+            {
+                return;
+            }
 
             switch(args.Action)
             {
@@ -319,7 +297,8 @@ namespace Aaru.Gui.Controls
                 case NotifyCollectionChangedAction.Add:
                     foreach(object item in args.NewItems)
                     {
-                        if(!(item is PointF nextPoint)) continue;
+                        if(!(item is PointF nextPoint))
+                            continue;
 
                         float prevXrated = previousPoint.X * ratioX;
                         float prevYrated = previousPoint.Y * ratioY;
@@ -327,7 +306,8 @@ namespace Aaru.Gui.Controls
                         float nextXrated = nextPoint.X * ratioX;
                         float nextYrated = nextPoint.Y * ratioY;
 
-                        if(prevYrated <= 0) prevYrated = nextYrated;
+                        if(prevYrated <= 0)
+                            prevYrated = nextYrated;
 
                         g.DrawLine(lineColor, marginXrated + prevXrated, rect.Height - marginYrated - prevYrated,
                                    marginXrated            + nextXrated, rect.Height - marginYrated - nextYrated);
@@ -336,9 +316,11 @@ namespace Aaru.Gui.Controls
                     }
 
                     break;
+
                 // Need to redraw all points
                 default:
                     Invalidate();
+
                     break;
             }
 
@@ -363,13 +345,13 @@ namespace Aaru.Gui.Controls
             if(drawAxes)
             {
                 g.DrawLine(axesColor, marginXrated, 0, marginXrated, rect.Height);
-                g.DrawLine(axesColor, 0, rect.Height - marginYrated, rect.Width,
-                           rect.Height               - marginYrated);
+                g.DrawLine(axesColor, 0, rect.Height - marginYrated, rect.Width, rect.Height - marginYrated);
             }
 
             if(showStepsX)
             {
                 float stepsXraged = stepsX * ratioX;
+
                 for(float x = marginXrated + stepsXraged; x < rect.Width;
                     x += stepsXraged)
                     g.DrawLine(colorX, x, 0, x, rect.Height - marginYrated - 1);
@@ -378,11 +360,13 @@ namespace Aaru.Gui.Controls
             if(showStepsY)
             {
                 float stepsYraged = stepsY * ratioY;
+
                 for(float y = rect.Height - marginYrated - stepsYraged; y > 0; y -= stepsYraged)
                     g.DrawLine(colorY, marginXrated      + 1, y, rect.Width, y);
             }
 
             previousPoint = new PointF(0, 0);
+
             foreach(Point nextPoint in Values)
             {
                 float prevXrated = previousPoint.X * ratioX;

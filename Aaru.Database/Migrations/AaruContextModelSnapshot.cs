@@ -1337,8 +1337,7 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors").
-                  HasForeignKey("ScsiModeId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors").HasForeignKey("ScsiModeId");
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode", b =>
@@ -1349,14 +1348,12 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().
-                  HasForeignKey("FeaturesId");
+                b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().HasForeignKey("FeaturesId");
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany().
-                  HasForeignKey("ModeSenseId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany().HasForeignKey("ModeSenseId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Mmc", "MultiMediaDevice").WithMany().
                   HasForeignKey("MultiMediaDeviceId");
@@ -1372,14 +1369,12 @@ namespace Aaru.Database.Migrations
             {
                 b.HasOne("Aaru.CommonTypes.Metadata.Scsi").WithMany("EVPDPages").HasForeignKey("ScsiId");
 
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("ModePages").
-                  HasForeignKey("ScsiModeId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("ModePages").HasForeignKey("ScsiModeId");
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes").
-                  HasForeignKey("SscId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes").HasForeignKey("SscId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedMediaTypes").
                   HasForeignKey("TestedSequentialMediaId");
@@ -1387,8 +1382,7 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SupportedDensity", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities").
-                  HasForeignKey("SscId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities").HasForeignKey("SscId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedDensities").
                   HasForeignKey("TestedSequentialMediaId");
@@ -1400,8 +1394,7 @@ namespace Aaru.Database.Migrations
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CHS").WithMany().HasForeignKey("CHSId");
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany().
-                  HasForeignKey("CurrentCHSId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany().HasForeignKey("CurrentCHSId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Mmc").WithMany("TestedMedia").HasForeignKey("MmcId");
 
@@ -1419,8 +1412,7 @@ namespace Aaru.Database.Migrations
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
 
-                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().
-                  HasForeignKey("FireWireId");
+                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
                   HasForeignKey("MultiMediaCardId");
@@ -1441,8 +1433,7 @@ namespace Aaru.Database.Migrations
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
 
-                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().
-                  HasForeignKey("FireWireId");
+                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
                   HasForeignKey("MultiMediaCardId");
@@ -1459,8 +1450,8 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.UsbProduct", b =>
             {
-                b.HasOne("Aaru.Database.Models.UsbVendor", "Vendor").WithMany("Products").
-                  HasForeignKey("VendorId").OnDelete(DeleteBehavior.Cascade);
+                b.HasOne("Aaru.Database.Models.UsbVendor", "Vendor").WithMany("Products").HasForeignKey("VendorId").
+                  OnDelete(DeleteBehavior.Cascade);
             });
             #pragma warning restore 612, 618
         }

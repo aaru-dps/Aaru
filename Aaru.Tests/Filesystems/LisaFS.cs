@@ -43,9 +43,8 @@ namespace Aaru.Tests.Filesystems
         readonly string[] testfiles =
         {
             "166files.dc42.lz", "222files.dc42.lz", "blank2.0.dc42.lz", "blank-disk.dc42.lz",
-            "file-with-a-password.dc42.lz", "tfwdndrc-has-been-erased.dc42.lz",
-            "tfwdndrc-has-been-restored.dc42.lz", "three-empty-folders.dc42.lz",
-            "three-folders-with-differently-named-docs.dc42.lz",
+            "file-with-a-password.dc42.lz", "tfwdndrc-has-been-erased.dc42.lz", "tfwdndrc-has-been-restored.dc42.lz",
+            "three-empty-folders.dc42.lz", "three-folders-with-differently-named-docs.dc42.lz",
             "three-folders-with-differently-named-docs-root-alphabetical.dc42.lz",
             "three-folders-with-differently-named-docs-root-chronological.dc42.lz",
             "three-folders-with-identically-named-docs.dc42.lz", "lisafs1.dc42.lz", "lisafs2.dc42.lz",
@@ -60,13 +59,25 @@ namespace Aaru.Tests.Filesystems
             MediaType.AppleFileWare, MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonySS
         };
 
-        readonly ulong[] sectors = {800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 1702, 800, 800, 800};
+        readonly ulong[] sectors =
+        {
+            800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 1702, 800, 800, 800
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {800, 800, 792, 800, 800, 800, 800, 800, 800, 800, 800, 800, 1684, 792, 800, 800};
+        readonly long[] clusters =
+        {
+            800, 800, 792, 800, 800, 800, 800, 800, 800, 800, 800, 800, 1684, 792, 800, 800
+        };
 
-        readonly int[] clustersize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
+        readonly int[] clustersize =
+        {
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
+        };
 
         readonly string[] volumename =
         {
@@ -97,32 +108,30 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiskCopy42();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new LisaFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("LisaFS",        fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("LisaFS", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
 
         [Test]
-        public void TestContents()
-        {
-            throw new NotImplementedException();
-        }
+        public void TestContents() => throw new NotImplementedException();
     }
 }

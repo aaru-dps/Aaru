@@ -37,7 +37,7 @@ namespace Aaru.Database.Models
 {
     public class CdOffset : CommonTypes.Metadata.CdOffset
     {
-        public CdOffset() { }
+        public CdOffset() {}
 
         public CdOffset(string manufacturer, string model, short offset, int submissions, float agreement)
         {

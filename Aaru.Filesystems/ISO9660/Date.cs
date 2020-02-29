@@ -52,8 +52,8 @@ namespace Aaru.Filesystems.ISO9660
         {
             try
             {
-                DateTime date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
-                                             timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
+                var date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
+                                        timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
 
                 date = date.AddMinutes(timestamp.GmtOffset * 15);
 
@@ -70,8 +70,8 @@ namespace Aaru.Filesystems.ISO9660
         {
             try
             {
-                DateTime date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
-                                             timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
+                var date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
+                                        timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
 
                 return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
             }

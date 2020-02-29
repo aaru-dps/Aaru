@@ -38,6 +38,7 @@ namespace Aaru.DiscImages
         {
             extents.GetStart(sectorAddress, out ulong extentStart);
             extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+
             return extentStartingOffset + (sectorAddress - extentStart);
         }
     }

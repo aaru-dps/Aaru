@@ -38,27 +38,21 @@ namespace Aaru.Devices
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device
     {
-        /// <summary>
-        ///     Parks the load arm in preparation for transport
-        /// </summary>
+        /// <summary>Parks the load arm in preparation for transport</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool CertancePark(out byte[] senseBuffer, uint timeout, out double duration) =>
             CertanceParkUnpark(out senseBuffer, true, timeout, out duration);
 
-        /// <summary>
-        ///     Unparks the load arm prior to operation
-        /// </summary>
+        /// <summary>Unparks the load arm prior to operation</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool CertanceUnpark(out byte[] senseBuffer, uint timeout, out double duration) =>
             CertanceParkUnpark(out senseBuffer, false, timeout, out duration);
 
-        /// <summary>
-        ///     Parks the load arm in preparation for transport or unparks it prior to operation
-        /// </summary>
+        /// <summary>Parks the load arm in preparation for transport or unparks it prior to operation</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="park">If set to <c>true</c>, parks the load arm</param>
         /// <param name="timeout">Timeout.</param>
@@ -70,10 +64,13 @@ namespace Aaru.Devices
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
-            if(park) cdb[4] = 1;
+
+            if(park)
+                cdb[4] = 1;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);

@@ -43,7 +43,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < 8) return false;
+            if(stream.Length < 8)
+                return false;
 
             byte[] buffer = new byte[8];
             stream.Seek(0, SeekOrigin.Begin);
@@ -51,13 +52,15 @@ namespace Aaru.DiscImages
 
             HdkHeader tmpHeader = Marshal.ByteArrayToStructureLittleEndian<HdkHeader>(buffer);
 
-            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}",        tmpHeader.unknown);
-            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}",       tmpHeader.diskType);
-            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}",          tmpHeader.heads);
-            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}",      tmpHeader.cylinders);
+            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmpHeader.unknown);
+            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmpHeader.diskType);
+            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}", tmpHeader.heads);
+            AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmpHeader.cylinders);
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
+
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}",
-                                      tmpHeader.sectorsPerTrack);
+                                       tmpHeader.sectorsPerTrack);
+
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
 
@@ -67,16 +70,20 @@ namespace Aaru.DiscImages
             //    return false;
 
             // Only floppies supported
-            if(tmpHeader.heads == 0 || tmpHeader.heads > 2) return false;
+            if(tmpHeader.heads == 0 ||
+               tmpHeader.heads > 2)
+                return false;
 
             // No floppies with more than this?
-            if(tmpHeader.cylinders > 90) return false;
+            if(tmpHeader.cylinders > 90)
+                return false;
 
             // Maximum supported bps is 16384
-            if(tmpHeader.bytesPerSector > 7) return false;
+            if(tmpHeader.bytesPerSector > 7)
+                return false;
 
-            int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                                   (128 << tmpHeader.bytesPerSector) + 8;
+            int expectedFileSize = (tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
+                                    (128 << tmpHeader.bytesPerSector)) + 8;
 
             return expectedFileSize == stream.Length;
         }

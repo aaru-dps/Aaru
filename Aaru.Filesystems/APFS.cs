@@ -53,38 +53,54 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End) return false;
+            if(partition.Start >= partition.End)
+                return false;
 
             byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
-            try { nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector); }
-            catch { return false; }
+            try
+            {
+                nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
+            }
+            catch
+            {
+                return false;
+            }
 
             return nxSb.magic == APFS_CONTAINER_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = Encoding.UTF8;
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
             XmlFsType   = new FileSystemType();
             information = "";
 
-            if(partition.Start >= partition.End) return;
+            if(partition.Start >= partition.End)
+                return;
 
             byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
-            try { nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector); }
-            catch { return; }
+            try
+            {
+                nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
+            }
+            catch
+            {
+                return;
+            }
 
-            if(nxSb.magic != APFS_CONTAINER_MAGIC) return;
+            if(nxSb.magic != APFS_CONTAINER_MAGIC)
+                return;
 
             sbInformation.AppendLine("Apple File System");
             sbInformation.AppendLine();
             sbInformation.AppendFormat("{0} bytes per block", nxSb.blockSize).AppendLine();
+
             sbInformation.AppendFormat("Container has {0} bytes in {1} blocks", nxSb.containerBlocks * nxSb.blockSize,
                                        nxSb.containerBlocks).AppendLine();
 
@@ -92,10 +108,8 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Bootable    = false,
-                Clusters    = nxSb.containerBlocks,
-                ClusterSize = nxSb.blockSize,
-                Type        = "Apple File System"
+                Bootable = false, Clusters = nxSb.containerBlocks, ClusterSize = nxSb.blockSize,
+                Type     = "Apple File System"
             };
         }
 

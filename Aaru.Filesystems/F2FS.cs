@@ -57,19 +57,27 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR || imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
+            if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR ||
+               imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
                 return false;
 
-            uint sbAddr            = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-            if(partition.Start + sbAddr >= partition.End) return false;
+            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
+
+            if(partition.Start + sbAddr >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>()) return false;
+
+            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>())
+                return false;
 
             F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
 
@@ -77,32 +85,44 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = Encoding.Unicode;
             information = "";
-            if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR || imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR) return;
 
-            uint sbAddr            = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            if(imagePlugin.Info.SectorSize < F2FS_MIN_SECTOR ||
+               imagePlugin.Info.SectorSize > F2FS_MAX_SECTOR)
+                return;
+
+            uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>()) return;
+
+            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>())
+                return;
 
             F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
 
-            if(f2fsSb.magic != F2FS_MAGIC) return;
+            if(f2fsSb.magic != F2FS_MAGIC)
+                return;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("F2FS filesystem");
             sb.AppendFormat("Version {0}.{1}", f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
             sb.AppendFormat("{0} bytes per sector", 1 << (int)f2fsSb.log_sectorsize).AppendLine();
+
             sb.AppendFormat("{0} sectors ({1} bytes) per block", 1 << (int)f2fsSb.log_sectors_per_block,
                             1                                      << (int)f2fsSb.log_blocksize).AppendLine();
+
             sb.AppendFormat("{0} blocks per segment", f2fsSb.log_blocks_per_seg).AppendLine();
             sb.AppendFormat("{0} blocks in volume", f2fsSb.block_count).AppendLine();
             sb.AppendFormat("{0} segments per section", f2fsSb.segs_per_sec).AppendLine();
@@ -111,29 +131,29 @@ namespace Aaru.Filesystems
             sb.AppendFormat("{0} segments", f2fsSb.segment_count).AppendLine();
             sb.AppendFormat("Root directory resides on inode {0}", f2fsSb.root_ino).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", f2fsSb.uuid).AppendLine();
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true))
-              .AppendLine();
-            sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version))
-              .AppendLine();
-            sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version))
-              .AppendLine();
+
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).
+               AppendLine();
+
+            sb.AppendFormat("Volume last mounted on kernel version: {0}", StringHandlers.CToString(f2fsSb.version)).
+               AppendLine();
+
+            sb.AppendFormat("Volume created on kernel version: {0}", StringHandlers.CToString(f2fsSb.init_version)).
+               AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Type                   = "F2FS filesystem",
-                SystemIdentifier       = Encoding.ASCII.GetString(f2fsSb.version),
-                Clusters               = f2fsSb.block_count,
-                ClusterSize            = (uint)(1 << (int)f2fsSb.log_blocksize),
+                Type                   = "F2FS filesystem", SystemIdentifier = Encoding.ASCII.GetString(f2fsSb.version),
+                Clusters               = f2fsSb.block_count, ClusterSize     = (uint)(1 << (int)f2fsSb.log_blocksize),
                 DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version),
                 VolumeName             = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true),
                 VolumeSerial           = f2fsSb.uuid.ToString()
             };
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
         struct F2FS_Superblock
         {
             public readonly uint   magic;

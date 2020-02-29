@@ -42,18 +42,19 @@ namespace Aaru.Gui.Forms
 {
     public class frmImageEntropy : Form
     {
-        EntropyResults   entropy;
-        IMediaImage      inputFormat;
-        EntropyResults[] tracksEntropy;
+        readonly IMediaImage inputFormat;
+        EntropyResults       entropy;
+        EntropyResults[]     tracksEntropy;
 
         public frmImageEntropy(IMediaImage inputFormat)
         {
             this.inputFormat = inputFormat;
             XamlReader.Load(this);
 
-            IOpticalMediaImage inputOptical = inputFormat as IOpticalMediaImage;
+            var inputOptical = inputFormat as IOpticalMediaImage;
 
-            if(inputOptical?.Tracks != null && inputOptical?.Tracks.Count > 0)
+            if(inputOptical?.Tracks       != null &&
+               inputOptical?.Tracks.Count > 0)
             {
                 chkSeparatedTracks.Visible = true;
                 chkWholeDisc.Visible       = true;
@@ -67,7 +68,7 @@ namespace Aaru.Gui.Forms
 
         protected void OnBtnStart(object sender, EventArgs e)
         {
-            Entropy entropyCalculator = new Entropy(false, false, inputFormat);
+            var entropyCalculator = new Entropy(false, false, inputFormat);
             entropyCalculator.InitProgressEvent    += InitProgress;
             entropyCalculator.InitProgress2Event   += InitProgress2;
             entropyCalculator.UpdateProgressEvent  += UpdateProgress;
@@ -82,23 +83,26 @@ namespace Aaru.Gui.Forms
             btnStop.Visible                        =  false;
             stkProgress.Visible                    =  true;
 
-            Thread thread = new Thread(() =>
+            var thread = new Thread(() =>
             {
                 if(chkSeparatedTracks.Checked == true)
                 {
                     tracksEntropy = entropyCalculator.CalculateTracksEntropy(chkDuplicatedSectors.Checked == true);
+
                     foreach(EntropyResults trackEntropy in tracksEntropy)
                     {
                         AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
-                                             trackEntropy.Entropy);
+                                              trackEntropy.Entropy);
+
                         if(trackEntropy.UniqueSectors != null)
                             AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
-                                                 trackEntropy.UniqueSectors,
-                                                 (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
+                                                  trackEntropy.UniqueSectors,
+                                                  (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                     }
                 }
 
-                if(chkWholeDisc.Checked != true) return;
+                if(chkWholeDisc.Checked != true)
+                    return;
 
                 entropy = entropyCalculator.CalculateMediaEntropy(chkDuplicatedSectors.Checked == true);
 
@@ -119,10 +123,18 @@ namespace Aaru.Gui.Forms
 
             if(chkSeparatedTracks.Checked == true)
             {
-                TreeGridItemCollection entropyList = new TreeGridItemCollection();
+                var entropyList = new TreeGridItemCollection();
 
-                treeTrackEntropy.Columns.Add(new GridColumn {HeaderText = "Track", DataCell   = new TextBoxCell(0)});
-                treeTrackEntropy.Columns.Add(new GridColumn {HeaderText = "Entropy", DataCell = new TextBoxCell(1)});
+                treeTrackEntropy.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Track", DataCell = new TextBoxCell(0)
+                });
+
+                treeTrackEntropy.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Entropy", DataCell = new TextBoxCell(1)
+                });
+
                 if(chkDuplicatedSectors.Checked == true)
                     treeTrackEntropy.Columns.Add(new GridColumn
                     {
@@ -146,60 +158,40 @@ namespace Aaru.Gui.Forms
                 grpTrackEntropy.Visible = true;
             }
 
-            if(chkWholeDisc.Checked != true) return;
+            if(chkWholeDisc.Checked != true)
+                return;
 
             lblMediaEntropy.Text    = $"Entropy for disk is {entropy.Entropy:F4}.";
             lblMediaEntropy.Visible = true;
 
-            if(entropy.UniqueSectors == null) return;
+            if(entropy.UniqueSectors == null)
+                return;
 
             lblMediaUniqueSectors.Text =
                 $"Disk has {entropy.UniqueSectors} unique sectors ({(double)entropy.UniqueSectors / (double)entropy.Sectors:P3})";
+
             lblMediaUniqueSectors.Visible = true;
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
-        protected void OnBtnStop(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+        protected void OnBtnStop(object sender, EventArgs e) => throw new NotImplementedException();
 
-        void InitProgress()
-        {
-            stkProgress1.Visible = true;
-        }
+        void InitProgress() => stkProgress1.Visible = true;
 
-        void EndProgress()
-        {
-            stkProgress1.Visible = false;
-        }
+        void EndProgress() => stkProgress1.Visible = false;
 
-        void InitProgress2()
-        {
-            stkProgress2.Visible = true;
-        }
+        void InitProgress2() => stkProgress2.Visible = true;
 
-        void EndProgress2()
-        {
-            stkProgress2.Visible = false;
-        }
+        void EndProgress2() => stkProgress2.Visible = false;
 
-        void UpdateProgress(string text, long current, long maximum)
-        {
+        void UpdateProgress(string text, long current, long maximum) =>
             UpdateProgress(text, current, maximum, lblProgress, prgProgress);
-        }
 
-        void UpdateProgress2(string text, long current, long maximum)
-        {
+        void UpdateProgress2(string text, long current, long maximum) =>
             UpdateProgress(text, current, maximum, lblProgress2, prgProgress2);
-        }
 
-        void UpdateProgress(string text, long current, long maximum, Label label, ProgressBar progressBar)
-        {
+        void UpdateProgress(string text, long current, long maximum, Label label, ProgressBar progressBar) =>
             Application.Instance.Invoke(() =>
             {
                 label.Text = text;
@@ -207,12 +199,15 @@ namespace Aaru.Gui.Forms
                 if(maximum == 0)
                 {
                     progressBar.Indeterminate = true;
+
                     return;
                 }
 
-                if(progressBar.Indeterminate) progressBar.Indeterminate = false;
+                if(progressBar.Indeterminate)
+                    progressBar.Indeterminate = false;
 
-                if(maximum > int.MaxValue || current > int.MaxValue)
+                if(maximum > int.MaxValue ||
+                   current > int.MaxValue)
                 {
                     progressBar.MaxValue = (int)(maximum / int.MaxValue);
                     progressBar.Value    = (int)(current / int.MaxValue);
@@ -223,7 +218,6 @@ namespace Aaru.Gui.Forms
                     progressBar.Value    = (int)current;
                 }
             });
-        }
 
         #region XAML IDs
         StackLayout  stkOptions;

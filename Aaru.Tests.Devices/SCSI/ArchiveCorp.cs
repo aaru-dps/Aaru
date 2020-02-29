@@ -32,42 +32,48 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices.SCSI
 {
-    static class ArchiveCorp
+    internal static class ArchiveCorp
     {
         internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send an Archive vendor command to the device:");
-                DicConsole.WriteLine("1.- Send REQUEST BLOCK ADDRESS command.");
-                DicConsole.WriteLine("2.- Send SEEK BLOCK command.");
-                DicConsole.WriteLine("0.- Return to SCSI commands menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send an Archive vendor command to the device:");
+                AaruConsole.WriteLine("1.- Send REQUEST BLOCK ADDRESS command.");
+                AaruConsole.WriteLine("2.- Send SEEK BLOCK command.");
+                AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SCSI commands menu...");
+                        AaruConsole.WriteLine("Returning to SCSI commands menu...");
+
                         return;
                     case 1:
                         RequestBlockAddress(devPath, dev);
+
                         continue;
                     case 2:
                         SeekBlock(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }
@@ -80,37 +86,42 @@ namespace Aaru.Tests.Devices.SCSI
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for REQUEST BLOCK ADDRESS command:");
-                DicConsole.WriteLine("LBA: {0}", lba);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to Archive vendor commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for REQUEST BLOCK ADDRESS command:");
+                AaruConsole.WriteLine("LBA: {0}", lba);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to Archive vendor commands menu...");
+                        AaruConsole.WriteLine("Returning to Archive vendor commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("LBA?: ");
+                        AaruConsole.Write("LBA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out lba))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             lba = 0;
                             System.Console.ReadKey();
                         }
@@ -122,78 +133,92 @@ namespace Aaru.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
+
             bool sense = dev.ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, lba, dev.Timeout,
                                                             out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending REQUEST BLOCK ADDRESS to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",               duration);
-            DicConsole.WriteLine("Sense is {0}.",                      sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Print sense buffer.");
-            DicConsole.WriteLine("3.- Decode sense buffer.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to Archive vendor commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending REQUEST BLOCK ADDRESS to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Print sense buffer.");
+            AaruConsole.WriteLine("3.- Decode sense buffer.");
+            AaruConsole.WriteLine("4.- Send command again.");
+            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to Archive vendor commands menu...");
+                    AaruConsole.WriteLine("Returning to Archive vendor commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("REQUEST BLOCK ADDRESS response:");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("REQUEST BLOCK ADDRESS response:");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("REQUEST BLOCK ADDRESS sense:");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("REQUEST BLOCK ADDRESS sense:");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("REQUEST BLOCK ADDRESS decoded sense:");
-                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("REQUEST BLOCK ADDRESS decoded sense:");
+                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 case 5: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -206,48 +231,55 @@ namespace Aaru.Tests.Devices.SCSI
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for SEEK BLOCK command:");
-                DicConsole.WriteLine("Immediate?: {0}", immediate);
-                DicConsole.WriteLine("LBA: {0}",        lba);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to Archive vendor commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for SEEK BLOCK command:");
+                AaruConsole.WriteLine("Immediate?: {0}", immediate);
+                AaruConsole.WriteLine("LBA: {0}", lba);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to Archive vendor commands menu...");
+                        AaruConsole.WriteLine("Returning to Archive vendor commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("Immediate?: ");
+                        AaruConsole.Write("Immediate?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!bool.TryParse(strDev, out immediate))
                         {
-                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                             immediate = false;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("LBA?: ");
+                        AaruConsole.Write("LBA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out lba))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             lba = 0;
                             System.Console.ReadKey();
                         }
@@ -259,56 +291,65 @@ namespace Aaru.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
+
             bool sense =
                 dev.ArchiveCorpSeekBlock(out byte[] senseBuffer, immediate, lba, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending SEEK BLOCK to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",               duration);
-            DicConsole.WriteLine("Sense is {0}.",                      sense);
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine("SEEK BLOCK decoded sense:");
-            DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print sense buffer.");
-            DicConsole.WriteLine("2.- Send command again.");
-            DicConsole.WriteLine("3.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to Archive vendor commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending SEEK BLOCK to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine("SEEK BLOCK decoded sense:");
+            AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print sense buffer.");
+            AaruConsole.WriteLine("2.- Send command again.");
+            AaruConsole.WriteLine("3.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to Archive vendor commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to Archive vendor commands menu...");
+                    AaruConsole.WriteLine("Returning to Archive vendor commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("SEEK BLOCK sense:");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("SEEK BLOCK sense:");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2: goto start;
                 case 3: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }

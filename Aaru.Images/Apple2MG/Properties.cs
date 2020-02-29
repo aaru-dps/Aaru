@@ -51,20 +51,25 @@ namespace Aaru.DiscImages
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
 
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS,
-                MediaType.DOS_35_HD, MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive,
-                MediaType.CompactFlash, MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII,
-                MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
-            };
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.Apple32SS, MediaType.Apple33SS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
+            MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+            MediaType.PCCardTypeIV
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".2mg"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".2mg"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

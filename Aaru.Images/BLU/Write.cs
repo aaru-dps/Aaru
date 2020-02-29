@@ -47,43 +47,55 @@ namespace Aaru.DiscImages
     public partial class Blu
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(sectors > 0xFFFFFF)
             {
                 ErrorMessage = "Too many sectors";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -94,25 +106,29 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != 512)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
+            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -123,25 +139,29 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % 512 != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
+            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -150,12 +170,14 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -171,50 +193,65 @@ namespace Aaru.DiscImages
                     oldTag = new byte[12];
                     Array.Copy(data, 512, oldTag, 0, 12);
                     newTag = LisaTag.DecodeSonyTag(oldTag)?.ToProfile().GetBytes();
+
                     break;
+
                 // Sony tag, convert to Priam
                 case 12 when longSectorSize == 536:
                     oldTag = new byte[12];
                     Array.Copy(data, 512, oldTag, 0, 12);
                     newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
+
                     break;
+
                 // Profile tag, copy to Profile
                 case 20 when longSectorSize == 532:
                     newTag = new byte[20];
                     Array.Copy(data, 512, newTag, 0, 20);
+
                     break;
+
                 // Profile tag, convert to Priam
                 case 20 when longSectorSize == 536:
                     oldTag = new byte[20];
                     Array.Copy(data, 512, oldTag, 0, 20);
                     newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
+
                     break;
+
                 // Priam tag, convert to Profile
                 case 24 when longSectorSize == 532:
                     oldTag = new byte[24];
                     Array.Copy(data, 512, oldTag, 0, 24);
                     newTag = LisaTag.DecodePriamTag(oldTag)?.ToProfile().GetBytes();
+
                     break;
+
                 // Priam tag, copy to Priam
                 case 12 when longSectorSize == 536:
                     newTag = new byte[24];
                     Array.Copy(data, 512, newTag, 0, 24);
+
                     break;
                 case 0:
                     newTag = null;
+
                     break;
                 default:
                     ErrorMessage = "Incorrect data size";
+
                     return false;
             }
 
-            if(newTag == null) newTag = new byte[longSectorSize - 512];
+            if(newTag == null)
+                newTag = new byte[longSectorSize - 512];
 
-            writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
-            writingStream.Write(data,   0, 512);
+            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+            writingStream.Write(data, 0, 512);
             writingStream.Write(newTag, 0, newTag.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -223,12 +260,14 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -243,6 +282,7 @@ namespace Aaru.DiscImages
                 case 512: break;
                 default:
                     ErrorMessage = "Incorrect data size";
+
                     return false;
             }
 
@@ -256,53 +296,68 @@ namespace Aaru.DiscImages
                     // Sony tag, convert to Profile
                     case 12 when longSectorSize == 532:
                         oldTag = new byte[12];
-                        Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 12);
+                        Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 12);
                         newTag = LisaTag.DecodeSonyTag(oldTag)?.ToProfile().GetBytes();
+
                         break;
+
                     // Sony tag, convert to Priam
                     case 12 when longSectorSize == 536:
                         oldTag = new byte[12];
-                        Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 12);
+                        Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 12);
                         newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
+
                         break;
+
                     // Profile tag, copy to Profile
                     case 20 when longSectorSize == 532:
                         newTag = new byte[20];
-                        Array.Copy(data, givenSectorSize * i + 512, newTag, 0, 20);
+                        Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 20);
+
                         break;
+
                     // Profile tag, convert to Priam
                     case 20 when longSectorSize == 536:
                         oldTag = new byte[20];
-                        Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 20);
+                        Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 20);
                         newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
+
                         break;
+
                     // Priam tag, convert to Profile
                     case 24 when longSectorSize == 532:
                         oldTag = new byte[24];
-                        Array.Copy(data, givenSectorSize * i + 512, oldTag, 0, 24);
+                        Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 24);
                         newTag = LisaTag.DecodePriamTag(oldTag)?.ToProfile().GetBytes();
+
                         break;
+
                     // Priam tag, copy to Priam
                     case 12 when longSectorSize == 536:
                         newTag = new byte[24];
-                        Array.Copy(data, givenSectorSize * i + 512, newTag, 0, 24);
+                        Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 24);
+
                         break;
                     case 0:
                         newTag = null;
+
                         break;
                     default:
                         ErrorMessage = "Incorrect data size";
+
                         return false;
                 }
 
-                if(newTag == null) newTag = new byte[longSectorSize - 512];
+                if(newTag == null)
+                    newTag = new byte[longSectorSize - 512];
 
-                writingStream.Seek(longSectorSize + (long)sectorAddress * longSectorSize, SeekOrigin.Begin);
-                writingStream.Write(data,   (int)(givenSectorSize * i), 512);
-                writingStream.Write(newTag, 0,                          newTag.Length);
+                writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+                writingStream.Write(data, (int)(givenSectorSize          * i), 512);
+                writingStream.Write(newTag, 0, newTag.Length);
             }
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -311,6 +366,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -325,17 +381,21 @@ namespace Aaru.DiscImages
             {
                 case MediaType.AppleProfile when imageInfo.Sectors == 0x4C00:
                     driveName = Encoding.ASCII.GetBytes(PROFILE10_NAME);
+
                     break;
                 case MediaType.AppleWidget when imageInfo.Sectors == 0x4C00:
                     driveType[1] = 0x01;
                     driveName    = Encoding.ASCII.GetBytes(PROFILE10_NAME);
+
                     break;
                 case MediaType.PriamDataTower when imageInfo.Sectors == 0x22C7C:
                     driveType[1] = 0xFF;
                     driveName    = Encoding.ASCII.GetBytes(PRIAM_NAME);
+
                     break;
                 default:
                     driveName = Encoding.ASCII.GetBytes(PROFILE_NAME);
+
                     break;
             }
 
@@ -348,6 +408,7 @@ namespace Aaru.DiscImages
             writingStream.Seek(0x15, SeekOrigin.Begin);
             writingStream.Write(blockSize, 1, 2);
             writingStream.Seek(512, SeekOrigin.Begin);
+
             writingStream.Write(markerTag, 0,
                                 markerTag.Length >= longSectorSize - 512 ? longSectorSize - 512 : markerTag.Length);
 
@@ -356,6 +417,7 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -366,12 +428,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 

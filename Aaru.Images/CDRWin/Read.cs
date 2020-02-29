@@ -213,9 +213,9 @@ namespace Aaru.DiscImages
                         if(matchTruripTrackCrc32.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
-                                                      lineNumber,
-                                                      matchTruripTrackCrc32.Groups[1].Value == "Trk" ? "track" : "gap",
-                                                      matchTruripTrackCrc32.Groups[2].Value);
+                                                       lineNumber,
+                                                       matchTruripTrackCrc32.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                       matchTruripTrackCrc32.Groups[2].Value);
 
                             continue;
                         }
@@ -223,9 +223,9 @@ namespace Aaru.DiscImages
                         if(matchTruripTrackMd5.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
-                                                      lineNumber,
-                                                      matchTruripTrackMd5.Groups[1].Value == "Trk" ? "track" : "gap",
-                                                      matchTruripTrackMd5.Groups[2].Value);
+                                                       lineNumber,
+                                                       matchTruripTrackMd5.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                       matchTruripTrackMd5.Groups[2].Value);
 
                             continue;
                         }
@@ -233,9 +233,9 @@ namespace Aaru.DiscImages
                         if(matchTruripTrackSha1.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
-                                                      lineNumber,
-                                                      matchTruripTrackSha1.Groups[1].Value == "Trk" ? "track" : "gap",
-                                                      matchTruripTrackSha1.Groups[2].Value);
+                                                       lineNumber,
+                                                       matchTruripTrackSha1.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                       matchTruripTrackSha1.Groups[2].Value);
 
                             continue;
                         }
@@ -243,10 +243,10 @@ namespace Aaru.DiscImages
                         if(matchTruripTrackUnknownHash.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRWin plugin",
-                                                      "Found unknown hash for {1} {2} at line {0}. Please report this disc image.",
-                                                      lineNumber,
-                                                      matchTruripTrackUnknownHash.Groups[1].Value == "Trk" ? "track"
-                                                          : "gap", matchTruripTrackUnknownHash.Groups[2].Value);
+                                                       "Found unknown hash for {1} {2} at line {0}. Please report this disc image.",
+                                                       lineNumber,
+                                                       matchTruripTrackUnknownHash.Groups[1].Value == "Trk" ? "track"
+                                                           : "gap", matchTruripTrackUnknownHash.Groups[2].Value);
 
                             continue;
                         }
@@ -261,7 +261,7 @@ namespace Aaru.DiscImages
                        ulong.TryParse(matchDumpExtent.Groups["end"].Value, out ulong extentEnd))
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DUMP EXTENT at line {0}",
-                                                  lineNumber);
+                                                   lineNumber);
 
                         if(DumpHardware is null)
                             DumpHardware = new List<DumpHardwareType>();
@@ -317,7 +317,7 @@ namespace Aaru.DiscImages
                             !inTrack)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DIC MEDIA-TYPE at line {0}",
-                                                  lineNumber);
+                                                   lineNumber);
 
                         _discImage.AaruMediaType = matchDicMediaType.Groups[1].Value;
                     }
@@ -325,7 +325,7 @@ namespace Aaru.DiscImages
                             !inTrack)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA AARU MEDIA-TYPE at line {0}",
-                                                  lineNumber);
+                                                   lineNumber);
 
                         _discImage.AaruMediaType = matchAaruMediaType.Groups[1].Value;
                     }
@@ -333,7 +333,7 @@ namespace Aaru.DiscImages
                             !inTrack)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}",
-                                                  lineNumber);
+                                                   lineNumber);
 
                         _discImage.OriginalMediaType = matchDiskType.Groups[1].Value;
                     }
@@ -357,7 +357,7 @@ namespace Aaru.DiscImages
                             !inTrack)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool Version at line {0}",
-                                                  lineNumber);
+                                                   lineNumber);
 
                         _imageInfo.ApplicationVersion = matchApplicationVersion.Groups[1].Value;
                     }
@@ -369,9 +369,9 @@ namespace Aaru.DiscImages
                     else if(matchTruripTrack.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin",
-                                                  "Found REM Gap Append Method: {1} [{2}] HASHES at line {0}",
-                                                  lineNumber, matchTruripTrack.Groups[1].Value,
-                                                  matchTruripTrack.Groups[2].Value);
+                                                   "Found REM Gap Append Method: {1} [{2}] HASHES at line {0}",
+                                                   lineNumber, matchTruripTrack.Groups[1].Value,
+                                                   matchTruripTrack.Groups[2].Value);
 
                         inTruripTrackHash   = true;
                         _discImage.IsTrurip = true;
@@ -554,7 +554,7 @@ namespace Aaru.DiscImages
 
                             // File does exist, process it
                             AaruConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found",
-                                                      currentFile.DataFilter.GetFilename());
+                                                       currentFile.DataFilter.GetFilename());
 
                             switch(currentFile.FileType)
                             {
@@ -623,22 +623,22 @@ namespace Aaru.DiscImages
                                         cueTracks[currentTrack.Sequence - 2].Bps;
 
                                     AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
-                                                              currentFile.Offset);
+                                                               currentFile.Offset);
 
                                     AaruConsole.DebugWriteLine("CDRWin plugin",
-                                                              "cueTracks[currentTrack.sequence-2].sectors = {0}",
-                                                              cueTracks[currentTrack.Sequence - 2].Sectors);
+                                                               "cueTracks[currentTrack.sequence-2].sectors = {0}",
+                                                               cueTracks[currentTrack.Sequence - 2].Sectors);
 
                                     AaruConsole.DebugWriteLine("CDRWin plugin",
-                                                              "cueTracks[currentTrack.sequence-2].bps = {0}",
-                                                              cueTracks[currentTrack.Sequence - 2].Bps);
+                                                               "cueTracks[currentTrack.sequence-2].bps = {0}",
+                                                               cueTracks[currentTrack.Sequence - 2].Bps);
                                 }
 
                             if((index == 0 || (index == 1 && !currentTrack.Indexes.ContainsKey(0))) &&
                                currentTrack.Sequence == 1)
                             {
                                 AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
-                                                          offset * currentTrack.Bps);
+                                                           offset * currentTrack.Bps);
 
                                 currentFile.Offset = offset * currentTrack.Bps;
                             }
@@ -738,7 +738,7 @@ namespace Aaru.DiscImages
                             };
 
                             AaruConsole.DebugWriteLine("CDRWin plugin", "Setting currentTrack.sequence to {0}",
-                                                      currentTrack.Sequence);
+                                                       currentTrack.Sequence);
 
                             currentFile.Sequence   = currentTrack.Sequence;
                             currentTrack.Bps       = CdrWinTrackTypeToBytesPerSector(matchTrack.Groups[2].Value);
@@ -747,7 +747,7 @@ namespace Aaru.DiscImages
                             inTrack                = true;
                         }
                         else if(line == "") // Empty line, ignore it
-                        { }
+                        {}
                         else // Non-empty unknown field
                             throw new
                                 FeatureUnsupportedImageException($"Found unknown field defined at line {lineNumber}: \"{line}\"");
@@ -923,7 +923,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type not set.");
                 else
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type: {0}",
-                                              _discImage.OriginalMediaType);
+                                               _discImage.OriginalMediaType);
 
                 AaruConsole.DebugWriteLine("CDRWin plugin", "\tGuessed disk type: {0}", _discImage.MediaType);
 
@@ -955,16 +955,16 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}",
-                                              _discImage.Sessions[i].StartTrack);
+                                               _discImage.Sessions[i].StartTrack);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting sector: {0}",
-                                              _discImage.Sessions[i].StartSector);
+                                               _discImage.Sessions[i].StartSector);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding track: {0}",
-                                              _discImage.Sessions[i].EndTrack);
+                                               _discImage.Sessions[i].EndTrack);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding sector: {0}",
-                                              _discImage.Sessions[i].EndSector);
+                                               _discImage.Sessions[i].EndSector);
                 }
 
                 AaruConsole.DebugWriteLine("CDRWin plugin", "Track information:");
@@ -973,14 +973,14 @@ namespace Aaru.DiscImages
                 for(int i = 0; i < _discImage.Tracks.Count; i++)
                 {
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:",
-                                              _discImage.Tracks[i].Sequence);
+                                               _discImage.Tracks[i].Sequence);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", _discImage.Tracks[i].Sectors);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors",
-                                              _discImage.Tracks[i].Postgap);
+                                               _discImage.Tracks[i].Postgap);
 
                     if(_discImage.Tracks[i].Flag4ch)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
@@ -995,16 +995,16 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
 
                     AaruConsole.DebugWriteLine("CDRWin plugin",
-                                              "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                              _discImage.Tracks[i].TrackFile.DataFilter.GetFilename(),
-                                              _discImage.Tracks[i].TrackFile.FileType,
-                                              _discImage.Tracks[i].TrackFile.Offset);
+                                               "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
+                                               _discImage.Tracks[i].TrackFile.DataFilter.GetFilename(),
+                                               _discImage.Tracks[i].TrackFile.FileType,
+                                               _discImage.Tracks[i].TrackFile.Offset);
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
 
                     foreach(KeyValuePair<int, ulong> kvp in _discImage.Tracks[i].Indexes)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
-                                                  kvp.Value);
+                                                   kvp.Value);
 
                     if(_discImage.Tracks[i].Isrc == null)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC is not set.");
@@ -1030,13 +1030,13 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer is not set.");
                     else
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}",
-                                                  _discImage.Tracks[i].Performer);
+                                                   _discImage.Tracks[i].Performer);
 
                     if(_discImage.Tracks[i].Songwriter == null)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter is not set.");
                     else
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}",
-                                                  _discImage.Tracks[i].Songwriter);
+                                                   _discImage.Tracks[i].Songwriter);
 
                     if(_discImage.Tracks[i].Title == null)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle is not set.");

@@ -45,14 +45,15 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
             CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
-                                      StringHandlers.CToString(header.magic));
+                                       StringHandlers.CToString(header.magic));
 
             return cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) || edskId.SequenceEqual(header.magic) ||
                    du54Id.SequenceEqual(header.magic);

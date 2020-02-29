@@ -315,9 +315,7 @@ namespace Aaru.DiscImages
             public uint length;
         }
 
-        /// <summary>
-        ///     Tape file block, contains a list of all files in a tape
-        /// </summary>
+        /// <summary>Tape file block, contains a list of all files in a tape</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TapeFileHeader
         {
@@ -331,33 +329,21 @@ namespace Aaru.DiscImages
             public ulong crc64;
         }
 
-        /// <summary>
-        ///     Tape file entry
-        /// </summary>
+        /// <summary>Tape file entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TapeFileEntry
         {
-            /// <summary>
-            ///     File number
-            /// </summary>
+            /// <summary>File number</summary>
             public uint File;
-            /// <summary>
-            ///     Partition number
-            /// </summary>
+            /// <summary>Partition number</summary>
             public readonly byte Partition;
-            /// <summary>
-            ///     First block, inclusive, of the file
-            /// </summary>
+            /// <summary>First block, inclusive, of the file</summary>
             public ulong FirstBlock;
-            /// <summary>
-            ///     Last block, inclusive, of the file
-            /// </summary>
+            /// <summary>Last block, inclusive, of the file</summary>
             public ulong LastBlock;
         }
 
-        /// <summary>
-        ///     Tape partition block, contains a list of all partitions in a tape
-        /// </summary>
+        /// <summary>Tape partition block, contains a list of all partitions in a tape</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TapePartitionHeader
         {
@@ -371,23 +357,15 @@ namespace Aaru.DiscImages
             public ulong crc64;
         }
 
-        /// <summary>
-        ///     Tape partition entry
-        /// </summary>
+        /// <summary>Tape partition entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct TapePartitionEntry
         {
-            /// <summary>
-            ///     Partition number
-            /// </summary>
+            /// <summary>Partition number</summary>
             public byte Number;
-            /// <summary>
-            ///     First block, inclusive, of the partition
-            /// </summary>
+            /// <summary>First block, inclusive, of the partition</summary>
             public ulong FirstBlock;
-            /// <summary>
-            ///     Last block, inclusive, of the partition
-            /// </summary>
+            /// <summary>Last block, inclusive, of the partition</summary>
             public ulong LastBlock;
         }
     }

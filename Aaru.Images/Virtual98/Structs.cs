@@ -43,13 +43,13 @@ namespace Aaru.DiscImages
             public byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public byte[] comment;
-            public uint   padding;
-            public ushort mbsize;
-            public ushort sectorsize;
-            public byte   sectors;
-            public byte   surfaces;
-            public ushort cylinders;
-            public uint   totals;
+            public readonly uint   padding;
+            public readonly ushort mbsize;
+            public          ushort sectorsize;
+            public          byte   sectors;
+            public          byte   surfaces;
+            public          ushort cylinders;
+            public          uint   totals;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x44)]
             public byte[] padding2;
         }

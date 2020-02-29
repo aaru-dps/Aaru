@@ -43,12 +43,9 @@ namespace Aaru.Gui.Tabs
     {
         byte[] xboxSecuritySector;
 
-        public tabXboxInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabXboxInfo() => XamlReader.Load(this);
 
-        internal void LoadData(XgdInfo            xgdInfo, byte[] dmi, byte[] securitySector,
+        internal void LoadData(XgdInfo xgdInfo, byte[] dmi, byte[] securitySector,
                                SS.SecuritySector? decodedSecuritySector)
         {
             xboxSecuritySector = securitySector;
@@ -85,28 +82,35 @@ namespace Aaru.Gui.Tabs
             }
 
             btnSaveXboxSs.Visible = securitySector != null;
-            Visible = stkXboxInformation.Visible || grpXboxDmi.Visible || grpXboxSs.Visible ||
-                                    btnSaveXboxSs.Visible;
+
+            Visible = stkXboxInformation.Visible || grpXboxDmi.Visible || grpXboxSs.Visible || btnSaveXboxSs.Visible;
         }
 
         void SaveElement(byte[] data)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(data, 0, data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveXboxSsClick(object sender, EventArgs e)
-        {
-            SaveElement(xboxSecuritySector);
-        }
+        protected void OnBtnSaveXboxSsClick(object sender, EventArgs e) => SaveElement(xboxSecuritySector);
 
         #region XAML controls
         #pragma warning disable 169

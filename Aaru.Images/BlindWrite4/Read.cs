@@ -126,7 +126,7 @@ namespace Aaru.DiscImages
             header.Unknown4 = tmpArray;
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.signature = {0}",
-                                      StringHandlers.CToString(header.Signature));
+                                       StringHandlers.CToString(header.Signature));
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown1 = {0}", header.Unknown1);
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.timestamp = {0}", header.Timestamp);
@@ -142,7 +142,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", header.DataFile);
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFileLength = {0}",
-                                      header.SubchannelFileLength);
+                                       header.SubchannelFileLength);
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", header.SubchannelFilter);
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", header.SubchannelFile);
@@ -323,8 +323,8 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.subchannel = {0}", track.subchannel);
 
                 for(int j = 0; j < track.unknown1.Length; j++)
-                    AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown1[{1}] = 0x{0:X8}", track.unknown1[j],
-                                              j);
+                    AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown1[{1}] = 0x{0:X8}",
+                                               track.unknown1[j], j);
 
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown2 = {0}", track.unknown2);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown3 = {0}", track.unknown3);
@@ -347,7 +347,7 @@ namespace Aaru.DiscImages
 
                 for(int j = 0; j < track.unknown13.Length; j++)
                     AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown13[{1}] = 0x{0:X8}",
-                                              track.unknown13[j], j);
+                                               track.unknown13[j], j);
 
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.titleLen = {0}", track.titleLen);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.title = {0}", track.title);

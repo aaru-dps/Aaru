@@ -39,19 +39,40 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Zfs
     {
-        readonly string[] testfiles = {"netbsd_7.1.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "netbsd_7.1.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {33554432};
+        readonly ulong[] sectors =
+        {
+            33554432
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {0};
+        readonly long[] clusters =
+        {
+            0
+        };
 
-        readonly int[] clustersize = {0};
+        readonly int[] clustersize =
+        {
+            0
+        };
 
-        readonly string[] volumename = {"NetBSD 7.1"};
+        readonly string[] volumename =
+        {
+            "NetBSD 7.1"
+        };
 
-        readonly string[] volumeserial = {"2639895335654686206"};
+        readonly string[] volumeserial =
+        {
+            "2639895335654686206"
+        };
 
         [Test]
         public void Test()
@@ -62,23 +83,24 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new ZFS();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],      fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],   fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual("ZFS filesystem", fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],    fs.XmlFsType.VolumeName,   testfiles[i]);
-                Assert.AreEqual(volumeserial[i],  fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("ZFS filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
     }

@@ -41,7 +41,8 @@ namespace Aaru.DiscImages.CopyTape
     {
         public bool Identify(IFilter imageFilter)
         {
-            if(imageFilter.GetDataForkLength() <= 16) return false;
+            if(imageFilter.GetDataForkLength() <= 16)
+                return false;
 
             byte[] header = new byte[16];
 
@@ -51,18 +52,23 @@ namespace Aaru.DiscImages.CopyTape
 
             string mark = Encoding.ASCII.GetString(header);
 
-            Regex blockRx = new Regex(BlockRegex);
+            var   blockRx = new Regex(BlockRegex);
             Match blockMt = blockRx.Match(mark);
 
-            if(!blockMt.Success) return false;
+            if(!blockMt.Success)
+                return false;
 
             string blkSize = blockMt.Groups["blockSize"].Value;
 
-            if(string.IsNullOrWhiteSpace(blkSize)) return false;
+            if(string.IsNullOrWhiteSpace(blkSize))
+                return false;
 
-            if(!uint.TryParse(blkSize, out uint blockSize)) return false;
+            if(!uint.TryParse(blkSize, out uint blockSize))
+                return false;
 
-            if(blockSize == 0 || blockSize + 17 >= imageFilter.GetDataForkLength()) return false;
+            if(blockSize      == 0 ||
+               blockSize + 17 >= imageFilter.GetDataForkLength())
+                return false;
 
             strm.Position += blockSize;
 

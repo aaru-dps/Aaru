@@ -41,7 +41,7 @@ namespace Aaru.Filesystems.ISO9660
     {
         static DecodedVolumeDescriptor DecodeVolumeDescriptor(HighSierraPrimaryVolumeDescriptor pvd)
         {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
+            var decodedVD = new DecodedVolumeDescriptor
             {
                 SystemIdentifier       = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0'),
                 VolumeIdentifier       = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0'),
@@ -51,12 +51,14 @@ namespace Aaru.Filesystems.ISO9660
                 ApplicationIdentifier  = Encoding.ASCII.GetString(pvd.application_data).TrimEnd().Trim('\0')
             };
 
-            if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00) decodedVD.CreationTime = DateTime.MinValue;
+            if(pvd.creation_date[0] == '0' ||
+               pvd.creation_date[0] == 0x00)
+                decodedVD.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime =
-                    DateHandlers.HighSierraToDateTime(pvd.creation_date);
+                decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
-            if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
+            if(pvd.modification_date[0] == '0' ||
+               pvd.modification_date[0] == 0x00)
                 decodedVD.HasModificationTime = false;
             else
             {
@@ -64,14 +66,18 @@ namespace Aaru.Filesystems.ISO9660
                 decodedVD.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
             }
 
-            if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00) decodedVD.HasExpirationTime = false;
+            if(pvd.expiration_date[0] == '0' ||
+               pvd.expiration_date[0] == 0x00)
+                decodedVD.HasExpirationTime = false;
             else
             {
                 decodedVD.HasExpirationTime = true;
                 decodedVD.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
             }
 
-            if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00) decodedVD.HasEffectiveTime = false;
+            if(pvd.effective_date[0] == '0' ||
+               pvd.effective_date[0] == 0x00)
+                decodedVD.HasEffectiveTime = false;
             else
             {
                 decodedVD.HasEffectiveTime = true;
@@ -93,6 +99,7 @@ namespace Aaru.Filesystems.ISO9660
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public readonly byte[] id;
             public readonly byte version;
+
             // Only used in SVDs
             public readonly byte flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
@@ -167,6 +174,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly ushort              volume_sequence_number;
             public readonly ushort              volume_sequence_number_be;
             public readonly byte                name_len;
+
             // Followed by name[name_len] and then system area until length arrives
         }
 
@@ -189,6 +197,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte   xattr_len;
             public readonly byte   name_len;
             public readonly ushort parent_dirno;
+
             // Followed by name[name_len]
         }
     }

@@ -39,14 +39,14 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Anex86Header
         {
-            public int unknown;
-            public int hddtype;
-            public int hdrSize;
-            public int dskSize;
-            public int bps;
-            public int spt;
-            public int heads;
-            public int cylinders;
+            public readonly int unknown;
+            public readonly int hddtype;
+            public          int hdrSize;
+            public          int dskSize;
+            public          int bps;
+            public          int spt;
+            public          int heads;
+            public          int cylinders;
         }
     }
 }

@@ -35,21 +35,29 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems.CPM
 {
-    partial class CPM
+    internal partial class CPM
     {
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
-            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
 
             if(string.IsNullOrEmpty(pathElements[0]) ||
                string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 attributes = new FileAttributes();
                 attributes = FileAttributes.Directory;
+
                 return Errno.NoError;
             }
 
@@ -57,6 +65,7 @@ namespace Aaru.Filesystems.CPM
                 return Errno.NoSuchFile;
 
             attributes = fInfo.Attributes;
+
             return Errno.NoError;
         }
 
@@ -64,57 +73,86 @@ namespace Aaru.Filesystems.CPM
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
             deviceBlock = 0;
+
             return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             if(size == 0)
             {
                 buf = new byte[0];
+
                 return Errno.NoError;
             }
 
-            if(offset < 0) return Errno.InvalidArgument;
+            if(offset < 0)
+                return Errno.InvalidArgument;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
-            if(!fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file)) return Errno.NoSuchFile;
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
 
-            if(offset >= file.Length) return Errno.EINVAL;
+            if(!fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
+                return Errno.NoSuchFile;
 
-            if(size + offset >= file.Length) size = file.Length - offset;
+            if(offset >= file.Length)
+                return Errno.EINVAL;
+
+            if(size + offset >= file.Length)
+                size = file.Length - offset;
 
             buf = new byte[size];
             Array.Copy(file, offset, buf, 0, size);
+
             return Errno.NoError;
         }
 
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
+
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            if(!mounted)
+                return Errno.AccessDenied;
 
-            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat)
-                           ? Errno.NoError
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
+
+            if(!string.IsNullOrEmpty(path) &&
+               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+                return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? Errno.NoError
                            : Errno.NoSuchFile;
 
-            stat = new FileEntryInfo {Attributes = FileAttributes.Directory, BlockSize = XmlFsType.ClusterSize};
-            if(labelCreationDate != null) stat.CreationTime     = DateHandlers.CpmToDateTime(labelCreationDate);
-            if(labelUpdateDate   != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
+            stat = new FileEntryInfo
+            {
+                Attributes = FileAttributes.Directory, BlockSize = XmlFsType.ClusterSize
+            };
+
+            if(labelCreationDate != null)
+                stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
+
+            if(labelUpdateDate != null)
+                stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
+
             return Errno.NoError;
         }
     }

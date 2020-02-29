@@ -233,7 +233,7 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
             AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
-            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(outputOptions);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(outputOptions);
             AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -243,7 +243,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
 
-                return(int)ErrorNumber.InvalidArgument;
+                return (int)ErrorNumber.InvalidArgument;
             }
 
             Resume           resume  = null;
@@ -265,13 +265,13 @@ namespace Aaru.Commands.Image
                         AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
                         AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
-                        return(int)ErrorNumber.InvalidSidecar;
+                        return (int)ErrorNumber.InvalidSidecar;
                     }
                 else
                 {
                     AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
 
-                    return(int)ErrorNumber.FileNotFound;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             xs = new XmlSerializer(typeof(Resume));
@@ -289,13 +289,13 @@ namespace Aaru.Commands.Image
                         AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
                         AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
-                        return(int)ErrorNumber.InvalidResume;
+                        return (int)ErrorNumber.InvalidResume;
                     }
                 else
                 {
                     AaruConsole.ErrorWriteLine("Could not find resume file, not continuing...");
 
-                    return(int)ErrorNumber.FileNotFound;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             var     filtersList = new FiltersList();
@@ -305,14 +305,14 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             if(File.Exists(outputPath))
             {
                 AaruConsole.ErrorWriteLine("Output file already exists, not continuing.");
 
-                return(int)ErrorNumber.DestinationExists;
+                return (int)ErrorNumber.DestinationExists;
             }
 
             PluginBase  plugins     = GetPluginBase.Instance;
@@ -322,12 +322,12 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.WriteLine("Input image format not identified, not proceeding with conversion.");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("Input image format identified by {0} ({1}).", inputFormat.Name,
-                                            inputFormat.Id);
+                                             inputFormat.Id);
             else
                 AaruConsole.WriteLine("Input image format identified by {0}.", inputFormat.Name);
 
@@ -338,7 +338,7 @@ namespace Aaru.Commands.Image
                     AaruConsole.WriteLine("Unable to open image format");
                     AaruConsole.WriteLine("No error given");
 
-                    return(int)ErrorNumber.CannotOpenFormat;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
                 mediaType = inputFormat.Info.MediaType;
@@ -365,7 +365,7 @@ namespace Aaru.Commands.Image
                 AaruConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
 
                 AaruConsole.DebugWriteLine("Convert-image command", "Image without headers is {0} bytes.",
-                                          inputFormat.Info.ImageSize);
+                                           inputFormat.Info.ImageSize);
 
                 AaruConsole.DebugWriteLine("Convert-image command", "Image has {0} sectors.", inputFormat.Info.Sectors);
 
@@ -381,7 +381,7 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
                 AaruConsole.DebugWriteLine("Convert-image command", "Stack trace: {0}", ex.StackTrace);
 
-                return(int)ErrorNumber.CannotOpenFormat;
+                return (int)ErrorNumber.CannotOpenFormat;
             }
 
             List<IWritableImage> candidates = new List<IWritableImage>();
@@ -406,14 +406,14 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.WriteLine("No plugin supports requested extension.");
 
-                return(int)ErrorNumber.FormatNotFound;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
                 AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
-                return(int)ErrorNumber.TooManyFormats;
+                return (int)ErrorNumber.TooManyFormats;
             }
 
             IWritableImage outputFormat = candidates[0];
@@ -427,7 +427,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
 
-                return(int)ErrorNumber.UnsupportedMedia;
+                return (int)ErrorNumber.UnsupportedMedia;
             }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
@@ -438,7 +438,7 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
                 AaruConsole.ErrorWriteLine("If you don't care, use force option.");
 
-                return(int)ErrorNumber.DataWillBeLost;
+                return (int)ErrorNumber.DataWillBeLost;
             }
 
             bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
@@ -463,7 +463,7 @@ namespace Aaru.Commands.Image
                 AaruConsole.
                     ErrorWriteLine("If you don't care, use force option. This will skip all sector tags converting only user data.");
 
-                return(int)ErrorNumber.DataWillBeLost;
+                return (int)ErrorNumber.DataWillBeLost;
             }
 
             if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
@@ -471,7 +471,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
-                return(int)ErrorNumber.CannotCreateFormat;
+                return (int)ErrorNumber.CannotCreateFormat;
             }
 
             var metadata = new ImageInfo
@@ -502,7 +502,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("not continuing...");
 
-                    return(int)ErrorNumber.WriteError;
+                    return (int)ErrorNumber.WriteError;
                 }
 
                 AaruConsole.ErrorWriteLine("continuing...");
@@ -527,9 +527,9 @@ namespace Aaru.Commands.Image
                 else
                 {
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
 
-                    return(int)ErrorNumber.WriteError;
+                    return (int)ErrorNumber.WriteError;
                 }
             }
 
@@ -543,9 +543,9 @@ namespace Aaru.Commands.Image
                 if(!outputOptical.SetTracks(inputOptical.Tracks))
                 {
                     AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
 
-                    return(int)ErrorNumber.WriteError;
+                    return (int)ErrorNumber.WriteError;
                 }
 
                 foreach(Track track in inputOptical.Tracks)
@@ -565,10 +565,10 @@ namespace Aaru.Commands.Image
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
                         AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                         doneSectors               + track.TrackStartSector,
-                                         doneSectors + sectorsToDo + track.TrackStartSector,
-                                         (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
-                                         track.TrackSequence);
+                                          doneSectors               + track.TrackStartSector,
+                                          doneSectors + sectorsToDo + track.TrackStartSector,
+                                          (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
+                                          track.TrackSequence);
 
                         bool result;
 
@@ -604,21 +604,21 @@ namespace Aaru.Commands.Image
                         if(!result)
                             if(force)
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
 
-                                return(int)ErrorNumber.WriteError;
+                                return (int)ErrorNumber.WriteError;
                             }
 
                         doneSectors += sectorsToDo;
                     }
                 }
 
-                AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", inputFormat.Info.Sectors,
-                                 inputFormat.Info.Sectors, 1.0, inputOptical.Tracks.Count);
+                AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
+                                  inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, inputOptical.Tracks.Count);
 
                 AaruConsole.WriteLine();
 
@@ -656,8 +656,8 @@ namespace Aaru.Commands.Image
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
                                 AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
-                                                 track.TrackSequence,
-                                                 track.TrackSequence / (double)inputOptical.Tracks.Count);
+                                                  track.TrackSequence,
+                                                  track.TrackSequence / (double)inputOptical.Tracks.Count);
 
                                 sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
                                 result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
@@ -665,13 +665,13 @@ namespace Aaru.Commands.Image
                                 if(!result)
                                     if(force)
                                         AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                  outputFormat.ErrorMessage);
+                                                                   outputFormat.ErrorMessage);
                                     else
                                     {
                                         AaruConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
-                                                                  outputFormat.ErrorMessage);
+                                                                   outputFormat.ErrorMessage);
 
-                                        return(int)ErrorNumber.WriteError;
+                                        return (int)ErrorNumber.WriteError;
                                     }
 
                                 continue;
@@ -687,10 +687,10 @@ namespace Aaru.Commands.Image
                                 sectorsToDo = (uint)(trackSectors - doneSectors);
 
                             AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                             doneSectors               + track.TrackStartSector,
-                                             doneSectors + sectorsToDo + track.TrackStartSector,
-                                             (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
-                                             track.TrackSequence, tag);
+                                              doneSectors               + track.TrackStartSector,
+                                              doneSectors + sectorsToDo + track.TrackStartSector,
+                                              (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
+                                              track.TrackSequence, tag);
 
                             if(sectorsToDo == 1)
                             {
@@ -709,13 +709,14 @@ namespace Aaru.Commands.Image
                             if(!result)
                                 if(force)
                                     AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
-                                                              outputFormat.ErrorMessage, doneSectors);
+                                                               outputFormat.ErrorMessage, doneSectors);
                                 else
                                 {
-                                    AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
-                                                              outputFormat.ErrorMessage, doneSectors);
+                                    AaruConsole.
+                                        ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
+                                                       outputFormat.ErrorMessage, doneSectors);
 
-                                    return(int)ErrorNumber.WriteError;
+                                    return (int)ErrorNumber.WriteError;
                                 }
 
                             doneSectors += sectorsToDo;
@@ -727,13 +728,13 @@ namespace Aaru.Commands.Image
                         case SectorTagType.CdTrackFlags:
                         case SectorTagType.CdTrackIsrc:
                             AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
-                                             inputOptical.Tracks.Count, 1.0);
+                                              inputOptical.Tracks.Count, 1.0);
 
                             break;
                         default:
                             AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                             inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0,
-                                             inputOptical.Tracks.Count, tag);
+                                              inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0,
+                                              inputOptical.Tracks.Count, tag);
 
                             break;
                     }
@@ -744,13 +745,13 @@ namespace Aaru.Commands.Image
             else
             {
                 AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
-                                     inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                     inputFormat.Info.SectorsPerTrack);
+                                      inputFormat.Info.Cylinders, inputFormat.Info.Heads,
+                                      inputFormat.Info.SectorsPerTrack);
 
                 if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
                                              inputFormat.Info.SectorsPerTrack))
                     AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
 
                 while(doneSectors < inputFormat.Info.Sectors)
                 {
@@ -764,7 +765,7 @@ namespace Aaru.Commands.Image
                         sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
                     AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
-                                     doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
+                                      doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
 
                     bool result;
 
@@ -796,20 +797,20 @@ namespace Aaru.Commands.Image
                     if(!result)
                         if(force)
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                      outputFormat.ErrorMessage, doneSectors);
+                                                       outputFormat.ErrorMessage, doneSectors);
                         else
                         {
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                      outputFormat.ErrorMessage, doneSectors);
+                                                       outputFormat.ErrorMessage, doneSectors);
 
-                            return(int)ErrorNumber.WriteError;
+                            return (int)ErrorNumber.WriteError;
                         }
 
                     doneSectors += sectorsToDo;
                 }
 
                 AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
-                                 inputFormat.Info.Sectors, 1.0);
+                                  inputFormat.Info.Sectors, 1.0);
 
                 AaruConsole.WriteLine();
 
@@ -849,8 +850,8 @@ namespace Aaru.Commands.Image
                             sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
                         AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
-                                         doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
-                                         tag);
+                                          doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
+                                          tag);
 
                         bool result;
 
@@ -868,20 +869,20 @@ namespace Aaru.Commands.Image
                         if(!result)
                             if(force)
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
 
-                                return(int)ErrorNumber.WriteError;
+                                return (int)ErrorNumber.WriteError;
                             }
 
                         doneSectors += sectorsToDo;
                     }
 
                     AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)",
-                                     inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, tag);
+                                      inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, tag);
 
                     AaruConsole.WriteLine();
                 }
@@ -919,12 +920,12 @@ namespace Aaru.Commands.Image
 
             if(!outputFormat.Close())
                 AaruConsole.ErrorWriteLine("Error {0} closing output image... Contents are not correct.",
-                                          outputFormat.ErrorMessage);
+                                           outputFormat.ErrorMessage);
 
             AaruConsole.WriteLine();
             AaruConsole.WriteLine("Conversion done.");
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

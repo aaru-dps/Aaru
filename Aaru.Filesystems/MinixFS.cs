@@ -54,6 +54,7 @@ namespace Aaru.Filesystems
         const ushort MINIX2_MAGIC2 = 0x2478;
         /// <summary>Minix v3, 60 char filenames</summary>
         const ushort MINIX3_MAGIC = 0x4D5A;
+
         // Byteswapped
         /// <summary>Minix v1, 14 char filenames</summary>
         const ushort MINIX_CIGAM = 0x7F13;
@@ -83,7 +84,8 @@ namespace Aaru.Filesystems
                 offset = 0x400;
             }
 
-            if(sector + partition.Start >= partition.End) return false;
+            if(sector + partition.Start >= partition.End)
+                return false;
 
             byte[] minixSbSector = imagePlugin.ReadSector(sector + partition.Start);
 
@@ -97,9 +99,15 @@ namespace Aaru.Filesystems
 
             ushort magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
-            if(magic == MINIX_MAGIC || magic == MINIX_MAGIC2 || magic == MINIX2_MAGIC || magic == MINIX2_MAGIC2 ||
-               magic == MINIX_CIGAM || magic == MINIX_CIGAM2 || magic == MINIX2_CIGAM ||
-               magic == MINIX2_CIGAM2) return true;
+            if(magic == MINIX_MAGIC   ||
+               magic == MINIX_MAGIC2  ||
+               magic == MINIX2_MAGIC  ||
+               magic == MINIX2_MAGIC2 ||
+               magic == MINIX_CIGAM   ||
+               magic == MINIX_CIGAM2  ||
+               magic == MINIX2_CIGAM  ||
+               magic == MINIX2_CIGAM2)
+                return true;
 
             magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
 
@@ -108,12 +116,12 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             uint sector = 2;
             uint offset = 0;
@@ -143,8 +151,12 @@ namespace Aaru.Filesystems
 
             bool littleEndian;
 
-            if(magic == MINIX3_MAGIC || magic == MINIX3_CIGAM || magic == MINIX2_MAGIC || magic == MINIX2_CIGAM ||
-               magic == MINIX_MAGIC  || magic == MINIX_CIGAM)
+            if(magic == MINIX3_MAGIC ||
+               magic == MINIX3_CIGAM ||
+               magic == MINIX2_MAGIC ||
+               magic == MINIX2_CIGAM ||
+               magic == MINIX_MAGIC  ||
+               magic == MINIX_CIGAM)
             {
                 filenamesize = 60;
                 littleEndian = magic != MINIX3_CIGAM || magic == MINIX2_CIGAM || magic == MINIX_CIGAM;
@@ -155,15 +167,18 @@ namespace Aaru.Filesystems
                     case MINIX3_CIGAM:
                         minixVersion   = "Minix v3 filesystem";
                         XmlFsType.Type = "Minix v3";
+
                         break;
                     case MINIX2_MAGIC:
                     case MINIX2_CIGAM:
                         minixVersion   = "Minix 3 v2 filesystem";
                         XmlFsType.Type = "Minix 3 v2";
+
                         break;
                     default:
                         minixVersion   = "Minix 3 v1 filesystem";
                         XmlFsType.Type = "Minix 3 v1";
+
                         break;
                 }
 
@@ -180,48 +195,56 @@ namespace Aaru.Filesystems
                         minixVersion   = "Minix v1 filesystem";
                         littleEndian   = true;
                         XmlFsType.Type = "Minix v1";
+
                         break;
                     case MINIX_MAGIC2:
                         filenamesize   = 30;
                         minixVersion   = "Minix v1 filesystem";
                         littleEndian   = true;
                         XmlFsType.Type = "Minix v1";
+
                         break;
                     case MINIX2_MAGIC:
                         filenamesize   = 14;
                         minixVersion   = "Minix v2 filesystem";
                         littleEndian   = true;
                         XmlFsType.Type = "Minix v2";
+
                         break;
                     case MINIX2_MAGIC2:
                         filenamesize   = 30;
                         minixVersion   = "Minix v2 filesystem";
                         littleEndian   = true;
                         XmlFsType.Type = "Minix v2";
+
                         break;
                     case MINIX_CIGAM:
                         filenamesize   = 14;
                         minixVersion   = "Minix v1 filesystem";
                         littleEndian   = false;
                         XmlFsType.Type = "Minix v1";
+
                         break;
                     case MINIX_CIGAM2:
                         filenamesize   = 30;
                         minixVersion   = "Minix v1 filesystem";
                         littleEndian   = false;
                         XmlFsType.Type = "Minix v1";
+
                         break;
                     case MINIX2_CIGAM:
                         filenamesize   = 14;
                         minixVersion   = "Minix v2 filesystem";
                         littleEndian   = false;
                         XmlFsType.Type = "Minix v2";
+
                         break;
                     case MINIX2_CIGAM2:
                         filenamesize   = 30;
                         minixVersion   = "Minix v2 filesystem";
                         littleEndian   = false;
                         XmlFsType.Type = "Minix v2";
+
                         break;
                     default: return;
                 }
@@ -231,26 +254,36 @@ namespace Aaru.Filesystems
             {
                 Minix3SuperBlock mnxSb;
 
-                if(littleEndian) mnxSb = Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
-                else mnxSb             = Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
+                if(littleEndian)
+                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
+                else
+                    mnxSb = Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
 
-                if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnxSb.s_blocksize = 1024;
+                if(magic != MINIX3_MAGIC &&
+                   magic != MINIX3_CIGAM)
+                    mnxSb.s_blocksize = 1024;
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
+
                 if(mnxSb.s_zones > 0) // On V2
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024)
-                      .AppendLine();
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).
+                       AppendLine();
                 else
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024)
-                      .AppendLine();
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).
+                       AppendLine();
+
                 sb.AppendFormat("{0} bytes/block", mnxSb.s_blocksize).AppendLine();
                 sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
+
                 sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks,
                                 mnxSb.s_imap_blocks * mnxSb.s_blocksize).AppendLine();
+
                 sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks,
                                 mnxSb.s_zmap_blocks * mnxSb.s_blocksize).AppendLine();
+
                 sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
+
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("On-disk filesystem version: {0}", mnxSb.s_disk_version).AppendLine();
@@ -262,23 +295,31 @@ namespace Aaru.Filesystems
             {
                 MinixSuperBlock mnxSb;
 
-                if(littleEndian) mnxSb = Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);
-                else mnxSb             = Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
+                if(littleEndian)
+                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);
+                else
+                    mnxSb = Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
+
                 if(mnxSb.s_zones > 0) // On V2
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024)
-                      .AppendLine();
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_zones, mnxSb.s_zones * 1024).
+                       AppendLine();
                 else
-                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024)
-                      .AppendLine();
+                    sb.AppendFormat("{0} zones on volume ({1} bytes)", mnxSb.s_nzones, mnxSb.s_nzones * 1024).
+                       AppendLine();
+
                 sb.AppendFormat("{0} inodes on volume", mnxSb.s_ninodes).AppendLine();
-                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks, mnxSb.s_imap_blocks * 1024)
-                  .AppendLine();
-                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024)
-                  .AppendLine();
+
+                sb.AppendFormat("{0} blocks on inode map ({1} bytes)", mnxSb.s_imap_blocks, mnxSb.s_imap_blocks * 1024).
+                   AppendLine();
+
+                sb.AppendFormat("{0} blocks on zone map ({1} bytes)", mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024).
+                   AppendLine();
+
                 sb.AppendFormat("First data zone: {0}", mnxSb.s_firstdatazone).AppendLine();
+
                 //sb.AppendFormat("log2 of blocks/zone: {0}", mnx_sb.s_log_zone_size).AppendLine(); // Apparently 0
                 sb.AppendFormat("{0} bytes maximum per file", mnxSb.s_max_size).AppendLine();
                 sb.AppendFormat("Filesystem state: {0:X4}", mnxSb.s_state).AppendLine();
@@ -289,66 +330,62 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
-        /// <summary>
-        ///     Superblock for Minix v1 and V2 filesystems
-        /// </summary>
+        /// <summary>Superblock for Minix v1 and V2 filesystems</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct MinixSuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
-            public ushort s_ninodes;
+            public readonly ushort s_ninodes;
             /// <summary>0x02, zones on volume</summary>
-            public ushort s_nzones;
+            public readonly ushort s_nzones;
             /// <summary>0x04, blocks on inode map</summary>
-            public short s_imap_blocks;
+            public readonly short s_imap_blocks;
             /// <summary>0x06, blocks on zone map</summary>
-            public short s_zmap_blocks;
+            public readonly short s_zmap_blocks;
             /// <summary>0x08, first data zone</summary>
-            public ushort s_firstdatazone;
+            public readonly ushort s_firstdatazone;
             /// <summary>0x0A, log2 of blocks/zone</summary>
-            public short s_log_zone_size;
+            public readonly short s_log_zone_size;
             /// <summary>0x0C, max file size</summary>
-            public uint s_max_size;
+            public readonly uint s_max_size;
             /// <summary>0x10, magic</summary>
-            public ushort s_magic;
+            public readonly ushort s_magic;
             /// <summary>0x12, filesystem state</summary>
-            public ushort s_state;
+            public readonly ushort s_state;
             /// <summary>0x14, number of zones</summary>
-            public uint s_zones;
+            public readonly uint s_zones;
         }
 
-        /// <summary>
-        ///     Superblock for Minix v3 filesystems
-        /// </summary>
+        /// <summary>Superblock for Minix v3 filesystems</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Minix3SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
-            public uint s_ninodes;
+            public readonly uint s_ninodes;
             /// <summary>0x02, old zones on volume</summary>
-            public ushort s_nzones;
+            public readonly ushort s_nzones;
             /// <summary>0x06, blocks on inode map</summary>
-            public ushort s_imap_blocks;
+            public readonly ushort s_imap_blocks;
             /// <summary>0x08, blocks on zone map</summary>
-            public ushort s_zmap_blocks;
+            public readonly ushort s_zmap_blocks;
             /// <summary>0x0A, first data zone</summary>
-            public ushort s_firstdatazone;
+            public readonly ushort s_firstdatazone;
             /// <summary>0x0C, log2 of blocks/zone</summary>
-            public ushort s_log_zone_size;
+            public readonly ushort s_log_zone_size;
             /// <summary>0x0E, padding</summary>
-            public ushort s_pad1;
+            public readonly ushort s_pad1;
             /// <summary>0x10, max file size</summary>
-            public uint s_max_size;
+            public readonly uint s_max_size;
             /// <summary>0x14, number of zones</summary>
-            public uint s_zones;
+            public readonly uint s_zones;
             /// <summary>0x18, magic</summary>
-            public ushort s_magic;
+            public readonly ushort s_magic;
             /// <summary>0x1A, padding</summary>
-            public ushort s_pad2;
+            public readonly ushort s_pad2;
             /// <summary>0x1C, bytes in a block</summary>
             public ushort s_blocksize;
             /// <summary>0x1E, on-disk structures version</summary>
-            public byte s_disk_version;
+            public readonly byte s_disk_version;
         }
     }
 }

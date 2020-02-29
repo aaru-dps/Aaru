@@ -476,19 +476,19 @@ namespace Aaru.Core
                     case CommonTypes.Enums.TrackType.Data:
                         switch(sidecar.OpticalDisc[0].DiscType)
                         {
-                            case"BD":
+                            case "BD":
                                 xmlTrk.TrackType1 = TrackTypeTrackType.bluray;
 
                                 break;
-                            case"DDCD":
+                            case "DDCD":
                                 xmlTrk.TrackType1 = TrackTypeTrackType.ddcd;
 
                                 break;
-                            case"DVD":
+                            case "DVD":
                                 xmlTrk.TrackType1 = TrackTypeTrackType.dvd;
 
                                 break;
-                            case"HD DVD":
+                            case "HD DVD":
                                 xmlTrk.TrackType1 = TrackTypeTrackType.hddvd;
 
                                 break;
@@ -516,13 +516,13 @@ namespace Aaru.Core
 
                 switch(sidecar.OpticalDisc[0].DiscType)
                 {
-                    case"CD":
-                    case"GD":
+                    case "CD":
+                    case "GD":
                         xmlTrk.StartMSF = LbaToMsf((long)xmlTrk.StartSector);
                         xmlTrk.EndMSF   = LbaToMsf((long)xmlTrk.EndSector);
 
                         break;
-                    case"DDCD":
+                    case "DDCD":
                         xmlTrk.StartMSF = DdcdLbaToMsf((long)xmlTrk.StartSector);
                         xmlTrk.EndMSF   = DdcdLbaToMsf((long)xmlTrk.EndSector);
 
@@ -540,11 +540,12 @@ namespace Aaru.Core
                     xmlTrk.Image.offsetSpecified = true;
                 }
 
-                xmlTrk.Size           = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * (ulong)trk.TrackRawBytesPerSector;
+                xmlTrk.Size = ((xmlTrk.EndSector - xmlTrk.StartSector) + 1) * (ulong)trk.TrackRawBytesPerSector;
+
                 xmlTrk.BytesPerSector = (uint)trk.TrackBytesPerSector;
 
                 uint  sectorsToRead = 512;
-                ulong sectors       = xmlTrk.EndSector - xmlTrk.StartSector + 1;
+                ulong sectors       = (xmlTrk.EndSector - xmlTrk.StartSector) + 1;
                 ulong doneSectors   = 0;
 
                 // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
@@ -584,7 +585,7 @@ namespace Aaru.Core
                             sector = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber);
 
                             UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectorsToRead;
                         }
@@ -594,7 +595,7 @@ namespace Aaru.Core
                                                            xmlTrk.Sequence.TrackNumber);
 
                             UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -619,7 +620,7 @@ namespace Aaru.Core
                         },
 
                         // TODO: Packed subchannel has different size?
-                        Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * 96
+                        Size = ((xmlTrk.EndSector - xmlTrk.StartSector) + 1) * 96
                     };
 
                     switch(trk.TrackSubchannelType)
@@ -649,7 +650,7 @@ namespace Aaru.Core
 
                     var subChkWorker = new Checksum();
 
-                    sectors     = xmlTrk.EndSector - xmlTrk.StartSector + 1;
+                    sectors     = (xmlTrk.EndSector - xmlTrk.StartSector) + 1;
                     doneSectors = 0;
 
                     InitProgress2();
@@ -672,7 +673,7 @@ namespace Aaru.Core
                                                           SectorTagType.CdSectorSubchannel);
 
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectorsToRead;
                         }
@@ -683,7 +684,7 @@ namespace Aaru.Core
                                                           SectorTagType.CdSectorSubchannel);
 
                             UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
-                                            (long)(trk.TrackEndSector - trk.TrackStartSector + 1));
+                                            (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -741,19 +742,19 @@ namespace Aaru.Core
 
                                 switch(plugin.XmlFsType.Type)
                                 {
-                                    case"Opera":
+                                    case "Opera":
                                         dskType = MediaType.ThreeDO;
 
                                         break;
-                                    case"PC Engine filesystem":
+                                    case "PC Engine filesystem":
                                         dskType = MediaType.SuperCDROM2;
 
                                         break;
-                                    case"Nintendo Wii filesystem":
+                                    case "Nintendo Wii filesystem":
                                         dskType = MediaType.WOD;
 
                                         break;
-                                    case"Nintendo Gamecube filesystem":
+                                    case "Nintendo Gamecube filesystem":
                                         dskType = MediaType.GOD;
 
                                         break;
@@ -781,7 +782,7 @@ namespace Aaru.Core
 
                     var xmlPart = new Partition
                     {
-                        Start = xmlTrk.StartSector, Length         = xmlTrk.EndSector - xmlTrk.StartSector + 1,
+                        Start = xmlTrk.StartSector, Length         = (xmlTrk.EndSector - xmlTrk.StartSector) + 1,
                         Type  = xmlTrk.TrackType1.ToString(), Size = xmlTrk.Size, Sequence = xmlTrk.Sequence.TrackNumber
                     };
 
@@ -804,19 +805,19 @@ namespace Aaru.Core
 
                             switch(plugin.XmlFsType.Type)
                             {
-                                case"Opera":
+                                case "Opera":
                                     dskType = MediaType.ThreeDO;
 
                                     break;
-                                case"PC Engine filesystem":
+                                case "PC Engine filesystem":
                                     dskType = MediaType.SuperCDROM2;
 
                                     break;
-                                case"Nintendo Wii filesystem":
+                                case "Nintendo Wii filesystem":
                                     dskType = MediaType.WOD;
 
                                     break;
-                                case"Nintendo Gamecube filesystem":
+                                case "Nintendo Gamecube filesystem":
                                     dskType = MediaType.GOD;
 
                                     break;
@@ -845,8 +846,8 @@ namespace Aaru.Core
             if(dskType                             == MediaType.XGD2 &&
                sidecar.OpticalDisc[0].Track.Length == 1)
             {
-                ulong blocks = sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector +
-                               1;
+                ulong blocks =
+                    (sidecar.OpticalDisc[0].Track[0].EndSector - sidecar.OpticalDisc[0].Track[0].StartSector) + 1;
 
                 if(blocks == 25063   || // Locked (or non compatible drive)
                    blocks == 4229664 || // Xtreme unlock

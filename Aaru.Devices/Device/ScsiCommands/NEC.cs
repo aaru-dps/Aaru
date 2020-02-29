@@ -36,9 +36,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Sends the NEC READ CD-DA command
-        /// </summary>
+        /// <summary>Sends the NEC READ CD-DA command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the NEC READ CD-DA response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -64,6 +62,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);

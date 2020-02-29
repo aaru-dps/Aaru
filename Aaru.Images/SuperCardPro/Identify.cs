@@ -44,7 +44,9 @@ namespace Aaru.DiscImages
             Header = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf<ScpHeader>()) return false;
+
+            if(stream.Length < Marshal.SizeOf<ScpHeader>())
+                return false;
 
             byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
             stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());

@@ -42,9 +42,7 @@ namespace Aaru.Filesystems
 {
     public class Squash : IFilesystem
     {
-        /// <summary>
-        ///     Identifier for Squash
-        /// </summary>
+        /// <summary>Identifier for Squash</summary>
         const uint SQUASH_MAGIC = 0x73717368;
         const uint SQUASH_CIGAM = 0x68737173;
 
@@ -56,7 +54,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End) return false;
+            if(partition.Start >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -66,59 +65,71 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            SquashSuperBlock sqSb         = new SquashSuperBlock();
-            bool             littleEndian = true;
+            var  sqSb         = new SquashSuperBlock();
+            bool littleEndian = true;
 
             switch(magic)
             {
                 case SQUASH_MAGIC:
                     sqSb = Marshal.ByteArrayToStructureLittleEndian<SquashSuperBlock>(sector);
+
                     break;
                 case SQUASH_CIGAM:
                     sqSb         = Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
                     littleEndian = false;
+
                     break;
             }
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Squash file system");
             sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
             sbInformation.AppendFormat("Volume version {0}.{1}", sqSb.s_major, sqSb.s_minor).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes", sqSb.bytes_used).AppendLine();
             sbInformation.AppendFormat("Volume has {0} bytes per block", sqSb.block_size).AppendLine();
-            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time))
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time)).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume has {0} inodes", sqSb.inodes).AppendLine();
+
             switch(sqSb.compression)
             {
                 case (ushort)SquashCompression.Lz4:
                     sbInformation.AppendLine("Volume is compressed using LZ4");
+
                     break;
                 case (ushort)SquashCompression.Lzo:
                     sbInformation.AppendLine("Volume is compressed using LZO");
+
                     break;
                 case (ushort)SquashCompression.Lzma:
                     sbInformation.AppendLine("Volume is compressed using LZMA");
+
                     break;
                 case (ushort)SquashCompression.Xz:
                     sbInformation.AppendLine("Volume is compressed using XZ");
+
                     break;
                 case (ushort)SquashCompression.Zlib:
                     sbInformation.AppendLine("Volume is compressed using GZIP");
+
                     break;
                 case (ushort)SquashCompression.Zstd:
                     sbInformation.AppendLine("Volume is compressed using Zstandard");
+
                     break;
                 default:
-                    sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression)
-                                 .AppendLine();
+                    sbInformation.AppendFormat("Volume is compressed using unknown algorithm {0}", sqSb.compression).
+                                  AppendLine();
+
                     break;
             }
 
@@ -129,24 +140,17 @@ namespace Aaru.Filesystems
                 Type                  = "Squash file system",
                 CreationDate          = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
-                Clusters =
-                    (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size,
-                ClusterSize           = sqSb.block_size,
-                Files                 = sqSb.inodes,
-                FilesSpecified        = true,
-                FreeClusters          = 0,
+                Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
+                                        sqSb.block_size,
+                ClusterSize           = sqSb.block_size, Files = sqSb.inodes, FilesSpecified = true, FreeClusters = 0,
                 FreeClustersSpecified = true
             };
         }
 
         enum SquashCompression : ushort
         {
-            Zlib = 1,
-            Lzma = 2,
-            Lzo  = 3,
-            Xz   = 4,
-            Lz4  = 5,
-            Zstd = 6
+            Zlib = 1, Lzma = 2, Lzo  = 3,
+            Xz   = 4, Lz4  = 5, Zstd = 6
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

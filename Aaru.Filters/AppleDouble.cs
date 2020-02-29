@@ -39,9 +39,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decodes AppleDouble files
-    /// </summary>
+    /// <summary>Decodes AppleDouble files</summary>
     public class AppleDouble : IFilter
     {
         const uint AppleDoubleMagic    = 0x00051607;
@@ -86,10 +84,7 @@ namespace Aaru.Filters
         public Guid   Id     => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
         public string Author => "Natalia Portillo";
 
-        public void Close()
-        {
-            opened = false;
-        }
+        public void Close() => opened = false;
 
         public string GetBasePath() => basePath;
 
@@ -113,10 +108,11 @@ namespace Aaru.Filters
 
         public Stream GetResourceForkStream()
         {
-            if(rsrcFork.length == 0) return null;
+            if(rsrcFork.length == 0)
+                return null;
 
             return new OffsetStream(headerPath, FileMode.Open, FileAccess.Read, rsrcFork.offset,
-                                    rsrcFork.offset + rsrcFork.length - 1);
+                                    (rsrcFork.offset + rsrcFork.length) - 1);
         }
 
         public bool HasResourceFork() => rsrcFork.length > 0;
@@ -132,157 +128,186 @@ namespace Aaru.Filters
             string parentFolder  = Path.GetDirectoryName(path);
 
             parentFolder = parentFolder ?? "";
-            if(filename is null || filenameNoExt is null) return false;
+
+            if(filename is null ||
+               filenameNoExt is null)
+                return false;
 
             // Prepend data fork name with "R."
             string ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
+
             // Change file extension to ADF
             string DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+
             // Store AppleDouble header file in ".AppleDouble" folder with same name
             string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+
             // Prepend data fork name with "._"
             string OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+
             // Adds ".rsrc" extension
             string UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))
             {
-                FileStream prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
+                var prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(prodosStream.Length > 26)
                 {
                     byte[] prodos_b = new byte[26];
                     prodosStream.Read(prodos_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodos_b);
                     prodosStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by A/UX in UFS filesystem
             if(File.Exists(UNIXAppleDouble))
             {
-                FileStream unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
+                var unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(unixStream.Length > 26)
                 {
                     byte[] unix_b = new byte[26];
                     unixStream.Read(unix_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unix_b);
                     unixStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by A/UX in FAT filesystem
             if(File.Exists(DOSAppleDouble))
             {
-                FileStream dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
+                var dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(dosStream.Length > 26)
                 {
                     byte[] dos_b = new byte[26];
                     dosStream.Read(dos_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dos_b);
                     dosStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by A/UX in case preserving FAT filesystem
             if(File.Exists(DOSAppleDoubleLower))
             {
-                FileStream doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
+                var doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
+
                 if(doslStream.Length > 26)
                 {
                     byte[] dosl_b = new byte[26];
                     doslStream.Read(dosl_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosl_b);
                     doslStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by Netatalk
             if(File.Exists(NetatalkAppleDouble))
             {
-                FileStream netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
+                var netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(netatalkStream.Length > 26)
                 {
                     byte[] netatalk_b = new byte[26];
                     netatalkStream.Read(netatalk_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalk_b);
                     netatalkStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by DAVE
             if(File.Exists(DAVEAppleDouble))
             {
-                FileStream daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
+                var daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(daveStream.Length > 26)
                 {
                     byte[] dave_b = new byte[26];
                     daveStream.Read(dave_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dave_b);
                     daveStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by Mac OS X
             if(File.Exists(OSXAppleDouble))
             {
-                FileStream osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
+                var osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(osxStream.Length > 26)
                 {
                     byte[] osx_b = new byte[26];
                     osxStream.Read(osx_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osx_b);
                     osxStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
-                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2)) return true;
+                       (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
+                        return true;
                 }
             }
 
             // Check AppleDouble created by UnAr (from The Unarchiver)
-            if(!File.Exists(UnArAppleDouble)) return false;
+            if(!File.Exists(UnArAppleDouble))
+                return false;
 
-            FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
-            if(unarStream.Length <= 26) return false;
+            var unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+
+            if(unarStream.Length <= 26)
+                return false;
 
             byte[] unar_b = new byte[26];
             unarStream.Read(unar_b, 0, 26);
             header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
             unarStream.Close();
+
             return header.magic == AppleDoubleMagic &&
                    (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2);
         }
 
         public bool IsOpened() => opened;
 
-        public void Open(byte[] buffer)
-        {
-            // Now way to have two files in a single byte array
-            throw new NotSupportedException();
-        }
+        // Now way to have two files in a single byte array
+        public void Open(byte[] buffer) => throw new NotSupportedException();
 
-        public void Open(Stream stream)
-        {
-            // Now way to have two files in a single stream
-            throw new NotSupportedException();
-        }
+        // Now way to have two files in a single stream
+        public void Open(Stream stream) => throw new NotSupportedException();
 
         public void Open(string path)
         {
@@ -291,35 +316,47 @@ namespace Aaru.Filters
             string parentFolder  = Path.GetDirectoryName(path);
 
             parentFolder = parentFolder ?? "";
-            if(filename is null || filenameNoExt is null) throw new ArgumentNullException(nameof(path));
+
+            if(filename is null ||
+               filenameNoExt is null)
+                throw new ArgumentNullException(nameof(path));
 
             // Prepend data fork name with "R."
             string ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
+
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
+
             // Change file extension to ADF
             string DOSAppleDouble = Path.Combine(parentFolder, filenameNoExt + ".ADF");
+
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
+
             // Store AppleDouble header file in ".AppleDouble" folder with same name
             string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
+
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
+
             // Prepend data fork name with "._"
             string OSXAppleDouble = Path.Combine(parentFolder, "._" + filename);
+
             // Adds ".rsrc" extension
             string UnArAppleDouble = Path.Combine(parentFolder, filename + ".rsrc");
 
             // Check AppleDouble created by A/UX in ProDOS filesystem
             if(File.Exists(ProDosAppleDouble))
             {
-                FileStream prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
+                var prodosStream = new FileStream(ProDosAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(prodosStream.Length > 26)
                 {
                     byte[] prodos_b = new byte[26];
                     prodosStream.Read(prodos_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodos_b);
                     prodosStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = ProDosAppleDouble;
@@ -329,13 +366,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by A/UX in UFS filesystem
             if(File.Exists(UNIXAppleDouble))
             {
-                FileStream unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
+                var unixStream = new FileStream(UNIXAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(unixStream.Length > 26)
                 {
                     byte[] unix_b = new byte[26];
                     unixStream.Read(unix_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unix_b);
                     unixStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = UNIXAppleDouble;
@@ -345,13 +384,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by A/UX in FAT filesystem
             if(File.Exists(DOSAppleDouble))
             {
-                FileStream dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
+                var dosStream = new FileStream(DOSAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(dosStream.Length > 26)
                 {
                     byte[] dos_b = new byte[26];
                     dosStream.Read(dos_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dos_b);
                     dosStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DOSAppleDouble;
@@ -361,13 +402,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by A/UX in case preserving FAT filesystem
             if(File.Exists(DOSAppleDoubleLower))
             {
-                FileStream doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
+                var doslStream = new FileStream(DOSAppleDoubleLower, FileMode.Open, FileAccess.Read);
+
                 if(doslStream.Length > 26)
                 {
                     byte[] dosl_b = new byte[26];
                     doslStream.Read(dosl_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosl_b);
                     doslStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DOSAppleDoubleLower;
@@ -377,13 +420,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by Netatalk
             if(File.Exists(NetatalkAppleDouble))
             {
-                FileStream netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
+                var netatalkStream = new FileStream(NetatalkAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(netatalkStream.Length > 26)
                 {
                     byte[] netatalk_b = new byte[26];
                     netatalkStream.Read(netatalk_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalk_b);
                     netatalkStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = NetatalkAppleDouble;
@@ -393,13 +438,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by DAVE
             if(File.Exists(DAVEAppleDouble))
             {
-                FileStream daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
+                var daveStream = new FileStream(DAVEAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(daveStream.Length > 26)
                 {
                     byte[] dave_b = new byte[26];
                     daveStream.Read(dave_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dave_b);
                     daveStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = DAVEAppleDouble;
@@ -409,13 +456,15 @@ namespace Aaru.Filters
             // Check AppleDouble created by Mac OS X
             if(File.Exists(OSXAppleDouble))
             {
-                FileStream osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
+                var osxStream = new FileStream(OSXAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(osxStream.Length > 26)
                 {
                     byte[] osx_b = new byte[26];
                     osxStream.Read(osx_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osx_b);
                     osxStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = OSXAppleDouble;
@@ -425,20 +474,22 @@ namespace Aaru.Filters
             // Check AppleDouble created by UnAr (from The Unarchiver)
             if(File.Exists(UnArAppleDouble))
             {
-                FileStream unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+                var unarStream = new FileStream(UnArAppleDouble, FileMode.Open, FileAccess.Read);
+
                 if(unarStream.Length > 26)
                 {
                     byte[] unar_b = new byte[26];
                     unarStream.Read(unar_b, 0, 26);
                     header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unar_b);
                     unarStream.Close();
+
                     if(header.magic == AppleDoubleMagic &&
                        (header.version == AppleDoubleVersion || header.version == AppleDoubleVersion2))
                         headerPath = UnArAppleDouble;
                 }
             }
 
-            FileStream fs = new FileStream(headerPath, FileMode.Open, FileAccess.Read);
+            var fs = new FileStream(headerPath, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
 
             byte[] hdr_b = new byte[26];
@@ -446,6 +497,7 @@ namespace Aaru.Filters
             header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(hdr_b);
 
             AppleDoubleEntry[] entries = new AppleDoubleEntry[header.entries];
+
             for(int i = 0; i < header.entries; i++)
             {
                 byte[] entry = new byte[12];
@@ -455,6 +507,7 @@ namespace Aaru.Filters
 
             creationTime  = DateTime.UtcNow;
             lastWriteTime = creationTime;
+
             foreach(AppleDoubleEntry entry in entries)
                 switch((AppleDoubleEntryID)entry.id)
                 {
@@ -465,19 +518,24 @@ namespace Aaru.Filters
                         fs.Seek(entry.offset, SeekOrigin.Begin);
                         byte[] dates_b = new byte[16];
                         fs.Read(dates_b, 0, 16);
+
                         AppleDoubleFileDates dates =
                             Marshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(dates_b);
+
                         creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
+
                         break;
                     case AppleDoubleEntryID.FileInfo:
                         fs.Seek(entry.offset, SeekOrigin.Begin);
                         byte[] finfo = new byte[entry.length];
                         fs.Read(finfo, 0, finfo.Length);
+
                         if(MacintoshHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleDoubleMacFileInfo macinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleDoubleMacFileInfo>(finfo);
+
                             creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
@@ -485,6 +543,7 @@ namespace Aaru.Filters
                         {
                             AppleDoubleProDOSFileInfo prodosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleDoubleProDOSFileInfo>(finfo);
+
                             creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
@@ -492,6 +551,7 @@ namespace Aaru.Filters
                         {
                             AppleDoubleUNIXFileInfo unixinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleDoubleUNIXFileInfo>(finfo);
+
                             creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
@@ -499,6 +559,7 @@ namespace Aaru.Filters
                         {
                             AppleDoubleDOSFileInfo dosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleDoubleDOSFileInfo>(finfo);
+
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
@@ -506,13 +567,18 @@ namespace Aaru.Filters
                         break;
                     case AppleDoubleEntryID.ResourceFork:
                         rsrcFork = entry;
+
                         break;
                 }
 
-            dataFork = new AppleDoubleEntry {id = (uint)AppleDoubleEntryID.DataFork};
+            dataFork = new AppleDoubleEntry
+            {
+                id = (uint)AppleDoubleEntryID.DataFork
+            };
+
             if(File.Exists(path))
             {
-                FileStream dataFs = new FileStream(path, FileMode.Open, FileAccess.Read);
+                var dataFs = new FileStream(path, FileMode.Open, FileAccess.Read);
                 dataFork.length = (uint)dataFs.Length;
                 dataFs.Close();
             }
@@ -524,22 +590,12 @@ namespace Aaru.Filters
 
         enum AppleDoubleEntryID : uint
         {
-            Invalid        = 0,
-            DataFork       = 1,
-            ResourceFork   = 2,
-            RealName       = 3,
-            Comment        = 4,
-            Icon           = 5,
-            ColorIcon      = 6,
-            FileInfo       = 7,
-            FileDates      = 8,
-            FinderInfo     = 9,
-            MacFileInfo    = 10,
-            ProDOSFileInfo = 11,
-            DOSFileInfo    = 12,
-            ShortName      = 13,
-            AFPFileInfo    = 14,
-            DirectoryID    = 15
+            Invalid     = 0, DataFork    = 1, ResourceFork    = 2,
+            RealName    = 3, Comment     = 4, Icon            = 5,
+            ColorIcon   = 6, FileInfo    = 7, FileDates       = 8,
+            FinderInfo  = 9, MacFileInfo = 10, ProDOSFileInfo = 11,
+            DOSFileInfo = 12, ShortName  = 13, AFPFileInfo    = 14,
+            DirectoryID = 15
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

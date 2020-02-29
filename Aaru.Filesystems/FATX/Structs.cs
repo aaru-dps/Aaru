@@ -39,30 +39,31 @@ namespace Aaru.Filesystems.FATX
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Superblock
         {
-            public uint magic;
-            public uint id;
-            public uint sectorsPerCluster;
-            public uint rootDirectoryCluster;
+            public readonly uint magic;
+            public readonly uint id;
+            public readonly uint sectorsPerCluster;
+            public readonly uint rootDirectoryCluster;
+
             // TODO: Undetermined size
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volumeLabel;
+            public readonly byte[] volumeLabel;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryEntry
         {
-            public byte       filenameSize;
-            public Attributes attributes;
+            public readonly byte       filenameSize;
+            public readonly Attributes attributes;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_FILENAME)]
-            public byte[] filename;
-            public uint   firstCluster;
-            public uint   length;
-            public ushort lastWrittenTime;
-            public ushort lastWrittenDate;
-            public ushort creationTime;
-            public ushort creationDate;
-            public ushort lastAccessTime;
-            public ushort lastAccessDate;
+            public readonly byte[] filename;
+            public readonly uint   firstCluster;
+            public readonly uint   length;
+            public readonly ushort lastWrittenTime;
+            public readonly ushort lastWrittenDate;
+            public readonly ushort creationTime;
+            public readonly ushort creationDate;
+            public readonly ushort lastAccessTime;
+            public readonly ushort lastAccessDate;
         }
     }
 }

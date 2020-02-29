@@ -59,7 +59,7 @@ namespace Aaru.Core
                         {
                             if(page.Subpage != 0)
                                 AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h",
-                                                     page.Page, page.Subpage);
+                                                      page.Page, page.Subpage);
                             else
                                 AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
                         }
@@ -70,8 +70,8 @@ namespace Aaru.Core
                     {
                         if(page.Subpage == 0)
                             AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
-                                                     ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
-                                                     : Modes.PrettifyModePage_01(page.PageResponse));
+                                                      ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
+                                                      : Modes.PrettifyModePage_01(page.PageResponse));
                         else
                             goto default;
 
@@ -126,8 +126,8 @@ namespace Aaru.Core
                     {
                         if(page.Subpage == 0)
                             AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
-                                                     ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
-                                                     : Modes.PrettifyModePage_07(page.PageResponse));
+                                                      ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
+                                                      : Modes.PrettifyModePage_07(page.PageResponse));
                         else
                             goto default;
 
@@ -193,8 +193,8 @@ namespace Aaru.Core
                     {
                         if(page.Subpage == 0)
                             AaruConsole.WriteLine(devType == PeripheralDeviceTypes.SequentialAccess
-                                                     ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
-                                                     : Modes.PrettifyModePage_10(page.PageResponse));
+                                                      ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
+                                                      : Modes.PrettifyModePage_10(page.PageResponse));
                         else
                             goto default;
 
@@ -244,8 +244,8 @@ namespace Aaru.Core
                     {
                         if(page.Subpage == 0)
                             AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
-                                                     ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
-                                                     : Modes.PrettifyModePage_1C(page.PageResponse));
+                                                      ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
+                                                      : Modes.PrettifyModePage_1C(page.PageResponse));
                         else if(page.Subpage == 1)
                             AaruConsole.WriteLine(Modes.PrettifyModePage_1C_S01(page.PageResponse));
                         else
@@ -360,7 +360,7 @@ namespace Aaru.Core
                     {
                         if(page.Subpage != 0)
                             AaruConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h", page.Page,
-                                                 page.Subpage);
+                                                  page.Subpage);
                         else
                             AaruConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
 

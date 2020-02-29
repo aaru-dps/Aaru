@@ -36,9 +36,7 @@ namespace Aaru.DiscImages
 {
     public partial class Qed
     {
-        /// <summary>
-        ///     QED header, big-endian
-        /// </summary>
+        /// <summary>QED header, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QedHeader
         {
@@ -46,46 +44,26 @@ namespace Aaru.DiscImages
             ///     <see cref="Qed.QED_MAGIC" />
             /// </summary>
             public uint magic;
-            /// <summary>
-            ///     Cluster size in bytes
-            /// </summary>
+            /// <summary>Cluster size in bytes</summary>
             public uint cluster_size;
-            /// <summary>
-            ///     L1 and L2 table size in cluster
-            /// </summary>
+            /// <summary>L1 and L2 table size in cluster</summary>
             public uint table_size;
-            /// <summary>
-            ///     Header size in clusters
-            /// </summary>
+            /// <summary>Header size in clusters</summary>
             public uint header_size;
-            /// <summary>
-            ///     Incompatible features
-            /// </summary>
-            public ulong features;
-            /// <summary>
-            ///     Compatible features
-            /// </summary>
-            public ulong compat_features;
-            /// <summary>
-            ///     Self-resetting features
-            /// </summary>
-            public ulong autoclear_features;
-            /// <summary>
-            ///     Offset to L1 table
-            /// </summary>
+            /// <summary>Incompatible features</summary>
+            public readonly ulong features;
+            /// <summary>Compatible features</summary>
+            public readonly ulong compat_features;
+            /// <summary>Self-resetting features</summary>
+            public readonly ulong autoclear_features;
+            /// <summary>Offset to L1 table</summary>
             public ulong l1_table_offset;
-            /// <summary>
-            ///     Image size
-            /// </summary>
+            /// <summary>Image size</summary>
             public ulong image_size;
-            /// <summary>
-            ///     Offset inside file to string containing backing file
-            /// </summary>
-            public ulong backing_file_offset;
-            /// <summary>
-            ///     Size of <see cref="backing_file_offset" />
-            /// </summary>
-            public uint backing_file_size;
+            /// <summary>Offset inside file to string containing backing file</summary>
+            public readonly ulong backing_file_offset;
+            /// <summary>Size of <see cref="backing_file_offset" /></summary>
+            public readonly uint backing_file_size;
         }
     }
 }

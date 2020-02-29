@@ -41,26 +41,31 @@ namespace Aaru.DiscImages
 {
     public partial class Virtual98
     {
-        public ImageInfo                  Info                => imageInfo;
-        public string                     Name                => "Virtual98 Disk Image";
-        public Guid                       Id                  => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
-        public string                     Author              => "Natalia Portillo";
-        public string                     Format              => "Virtual98 disk image";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
-                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-                MediaType.PCCardTypeIV
-            };
+        public ImageInfo              Info         => imageInfo;
+        public string                 Name         => "Virtual98 Disk Image";
+        public Guid                   Id           => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "Virtual98 disk image";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+            MediaType.PCCardTypeIV
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".v98"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".v98"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

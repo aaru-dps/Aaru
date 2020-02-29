@@ -63,9 +63,11 @@ namespace Aaru.Filesystems
         {
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
+                run++;
 
-            if(run + partition.Start >= partition.End) return false;
+            if(run + partition.Start >= partition.End)
+                return false;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
@@ -75,32 +77,36 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             HammerSuperBlock hammerSb;
 
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
+            if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
+                run++;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, run);
 
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
             if(magic == HAMMER_FSBUF_VOLUME)
-                hammerSb  = Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
-            else hammerSb = Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
+                hammerSb = Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
+            else
+                hammerSb = Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 
             sb.AppendFormat("Volume version: {0}", hammerSb.vol_version).AppendLine();
-            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count)
-              .AppendLine();
+
+            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count).
+               AppendLine();
+
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, Encoding)).AppendLine();
             sb.AppendFormat("Volume serial: {0}", hammerSb.vol_fsid).AppendLine();
             sb.AppendFormat("Filesystem type: {0}", hammerSb.vol_fstype).AppendLine();
@@ -111,9 +117,7 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
-                ClusterSize  = HAMMER_BIGBLOCK_SIZE,
-                Dirty        = false,
+                Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE, ClusterSize = HAMMER_BIGBLOCK_SIZE, Dirty = false,
                 Type         = "HAMMER",
                 VolumeName   = StringHandlers.CToString(hammerSb.vol_label, Encoding),
                 VolumeSerial = hammerSb.vol_fsid.ToString()
@@ -123,8 +127,10 @@ namespace Aaru.Filesystems
             {
                 sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammerSb.vol0_stat_bigblocks,
                                 hammerSb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+
                 sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammerSb.vol0_stat_freebigblocks,
                                 hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+
                 sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
                 XmlFsType.Clusters              = (ulong)hammerSb.vol0_stat_bigblocks;
@@ -133,17 +139,15 @@ namespace Aaru.Filesystems
                 XmlFsType.Files                 = (ulong)hammerSb.vol0_stat_inodes;
                 XmlFsType.FilesSpecified        = true;
             }
+
             // 0 ?
             //sb.AppendFormat("Volume header CRC: 0x{0:X8}", afs_sb.vol_crc).AppendLine();
 
             information = sb.ToString();
         }
 
-        /// <summary>
-        ///     Hammer superblock
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        /// <summary>Hammer superblock</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
         struct HammerSuperBlock
         {
             /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
@@ -218,8 +222,7 @@ namespace Aaru.Filesystems
             public readonly hammer_off_t[] vol0_undo_array;
         }
 
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
+        [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
         struct HammerBlockMap
         {
             /// <summary>zone-2 offset only used by zone-4</summary>

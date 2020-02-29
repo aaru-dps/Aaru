@@ -10,8 +10,8 @@ namespace Aaru.Devices.Remote
         public uint remote_id;
         public uint packet_id;
 
-        public uint len;
-        public byte version;
+        public uint           len;
+        public byte           version;
         public AaruPacketType packetType;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
@@ -54,14 +54,14 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResponseListDevices
     {
         public readonly AaruPacketHeader hdr;
-        public readonly ushort devices;
+        public readonly ushort           devices;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketNop
     {
         public AaruPacketHeader hdr;
-        public AaruNopReason reasonCode;
+        public AaruNopReason    reasonCode;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly byte[] spare;
@@ -85,32 +85,33 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketCmdScsi
     {
         public AaruPacketHeader hdr;
-        public uint cdb_len;
-        public uint buf_len;
-        public int direction;
-        public uint timeout;
+        public uint             cdb_len;
+        public uint             buf_len;
+        public int              direction;
+        public uint             timeout;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketResScsi
     {
         public AaruPacketHeader hdr;
-        public uint sense_len;
-        public uint buf_len;
-        public uint duration;
-        public uint sense;
-        public uint error_no;
+        public uint             sense_len;
+        public uint             buf_len;
+        public uint             duration;
+        public uint             sense;
+        public uint             error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketCmdAtaChs
     {
         public AaruPacketHeader hdr;
-        public uint buf_len;
-        public AtaRegistersChs registers;
-        public byte protocol;
-        public byte transferRegister;
-        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
+        public uint             buf_len;
+        public AtaRegistersChs  registers;
+        public byte             protocol;
+        public byte             transferRegister;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
@@ -118,24 +119,24 @@ namespace Aaru.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketResAtaChs
     {
-        public AaruPacketHeader hdr;
-        public uint buf_len;
+        public AaruPacketHeader     hdr;
+        public uint                 buf_len;
         public AtaErrorRegistersChs registers;
-        public uint duration;
-        public uint sense;
-        public uint error_no;
+        public uint                 duration;
+        public uint                 sense;
+        public uint                 error_no;
     }
-
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketCmdAtaLba28
     {
-        public AaruPacketHeader hdr;
-        public uint buf_len;
+        public AaruPacketHeader  hdr;
+        public uint              buf_len;
         public AtaRegistersLba28 registers;
-        public byte protocol;
-        public byte transferRegister;
-        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
+        public byte              protocol;
+        public byte              transferRegister;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
@@ -143,23 +144,24 @@ namespace Aaru.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketResAtaLba28
     {
-        public AaruPacketHeader hdr;
-        public uint buf_len;
+        public AaruPacketHeader       hdr;
+        public uint                   buf_len;
         public AtaErrorRegistersLba28 registers;
-        public uint duration;
-        public uint sense;
-        public uint error_no;
+        public uint                   duration;
+        public uint                   sense;
+        public uint                   error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketCmdAtaLba48
     {
-        public AaruPacketHeader hdr;
-        public uint buf_len;
+        public AaruPacketHeader  hdr;
+        public uint              buf_len;
         public AtaRegistersLba48 registers;
-        public byte protocol;
-        public byte transferRegister;
-        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
+        public byte              protocol;
+        public byte              transferRegister;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
@@ -167,34 +169,36 @@ namespace Aaru.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketResAtaLba48
     {
-        public AaruPacketHeader hdr;
-        public uint buf_len;
+        public AaruPacketHeader       hdr;
+        public uint                   buf_len;
         public AtaErrorRegistersLba48 registers;
-        public uint duration;
-        public uint sense;
-        public uint error_no;
+        public uint                   duration;
+        public uint                   sense;
+        public uint                   error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketCmdSdhci
     {
         public AaruPacketHeader hdr;
-        public MmcCommands command;
-        [MarshalAs(UnmanagedType.U1)] public bool write;
-        [MarshalAs(UnmanagedType.U1)] public bool application;
+        public MmcCommands      command;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool write;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool application;
         public MmcFlags flags;
-        public uint argument;
-        public uint block_size;
-        public uint blocks;
-        public uint buf_len;
-        public uint timeout;
+        public uint     argument;
+        public uint     block_size;
+        public uint     blocks;
+        public uint     buf_len;
+        public uint     timeout;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AaruPacketResSdhci
     {
         public AaruPacketHeader hdr;
-        public uint buf_len;
+        public uint             buf_len;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public uint[] response;
@@ -214,7 +218,7 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResGetDeviceType
     {
         public AaruPacketHeader hdr;
-        public DeviceType device_type;
+        public DeviceType       device_type;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -227,7 +231,8 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResGetSdhciRegisters
     {
         public AaruPacketHeader hdr;
-        [MarshalAs(UnmanagedType.U1)] public bool isSdhci;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool isSdhci;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] csd;
@@ -257,7 +262,8 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResGetUsbData
     {
         public AaruPacketHeader hdr;
-        [MarshalAs(UnmanagedType.U1)] public bool isUsb;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool isUsb;
         public ushort descLen;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 65536)]
@@ -286,9 +292,10 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResGetFireWireData
     {
         public AaruPacketHeader hdr;
-        [MarshalAs(UnmanagedType.U1)] public bool isFireWire;
-        public uint idModel;
-        public uint idVendor;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool isFireWire;
+        public uint  idModel;
+        public uint  idVendor;
         public ulong guid;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
@@ -308,7 +315,8 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResGetPcmciaData
     {
         public AaruPacketHeader hdr;
-        [MarshalAs(UnmanagedType.U1)] public bool isPcmcia;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool isPcmcia;
         public ushort cis_len;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 65536)]
@@ -331,6 +339,6 @@ namespace Aaru.Devices.Remote
     public struct AaruPacketResAmIRoot
     {
         public AaruPacketHeader hdr;
-        public uint am_i_root;
+        public uint             am_i_root;
     }
 }

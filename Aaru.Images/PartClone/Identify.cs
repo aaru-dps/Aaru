@@ -44,13 +44,15 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<PartCloneHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<PartCloneHeader>());
             pHdr = Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
 
-            if(stream.Position + (long)pHdr.totalBlocks > stream.Length) return false;
+            if(stream.Position + (long)pHdr.totalBlocks > stream.Length)
+                return false;
 
             stream.Seek((long)pHdr.totalBlocks, SeekOrigin.Current);
 

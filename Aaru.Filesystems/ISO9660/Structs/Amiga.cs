@@ -44,6 +44,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte       length;
             public readonly byte       version;
             public readonly AmigaFlags flags;
+
             // Followed by AmigaProtection if present
             // Followed by length-prefixed string for comment if present
         }

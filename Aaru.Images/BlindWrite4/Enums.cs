@@ -36,9 +36,7 @@ namespace Aaru.DiscImages
     {
         enum Bw4TrackType : byte
         {
-            Audio = 0,
-            Mode1 = 1,
-            Mode2 = 2
+            Audio = 0, Mode1 = 1, Mode2 = 2
         }
     }
 }

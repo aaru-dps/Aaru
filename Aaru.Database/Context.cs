@@ -37,7 +37,7 @@ namespace Aaru.Database
 {
     public sealed class AaruContext : DbContext
     {
-        public AaruContext(DbContextOptions options) : base(options) { }
+        public AaruContext(DbContextOptions options) : base(options) {}
 
         public DbSet<Device>                Devices                { get; set; }
         public DbSet<Report>                Reports                { get; set; }

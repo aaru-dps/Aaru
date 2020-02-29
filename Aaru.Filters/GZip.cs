@@ -37,9 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decompress gzip files while reading
-    /// </summary>
+    /// <summary>Decompress gzip files while reading</summary>
     public class GZip : IFilter
     {
         string   basePath;
@@ -87,10 +85,11 @@ namespace Aaru.Filters
 
         public bool Identify(string path)
         {
-            if(!File.Exists(path)) return false;
+            if(!File.Exists(path))
+                return false;
 
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[]     buffer = new byte[3];
+            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[3];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 3);
@@ -119,8 +118,9 @@ namespace Aaru.Filters
             decompressedSize = isize;
             creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
             lastWriteTime    = creationTime;
-            zStream =
-                new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
+            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
             opened = true;
         }
 
@@ -144,8 +144,9 @@ namespace Aaru.Filters
             decompressedSize = isize;
             creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
             lastWriteTime    = creationTime;
-            zStream =
-                new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
+            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
             opened = true;
         }
 
@@ -167,7 +168,7 @@ namespace Aaru.Filters
             uint isize = BitConverter.ToUInt32(isize_b, 0);
 
             decompressedSize = isize;
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
             creationTime  = fi.CreationTimeUtc;
             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
             zStream       = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
@@ -190,8 +191,7 @@ namespace Aaru.Filters
                 return basePath.Substring(0, basePath.Length - 3);
 
             return basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 5)
-                       : basePath;
+                       ? basePath.Substring(0, basePath.Length - 5) : basePath;
         }
 
         public string GetParentFolder() => Path.GetDirectoryName(basePath);

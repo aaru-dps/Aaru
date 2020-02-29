@@ -36,9 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     No filter for reading files not recognized by any filter
-    /// </summary>
+    /// <summary>No filter for reading files not recognized by any filter</summary>
     public class ZZZNoFilter : IFilter
     {
         string   basePath;
@@ -97,7 +95,7 @@ namespace Aaru.Filters
         {
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath   = Path.GetFullPath(path);
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
             creationTime  = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
             opened        = true;

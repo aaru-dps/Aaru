@@ -41,38 +41,7 @@ namespace Aaru.Tests.Filters
         const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
 
-        public MacBinary1()
-        {
-            location = Path.Combine(Consts.TestFilesRoot, "filters", "macbinary", "macbinary1.bin");
-        }
-
-        [Test]
-        public void CheckCorrectFile()
-        {
-            string result = Md5Context.File(location, out _);
-            Assert.AreEqual(EXPECTED_FILE, result);
-        }
-
-        [Test]
-        public void CheckFilterId()
-        {
-            IFilter filter = new Aaru.Filters.AppleSingle();
-            Assert.AreEqual(true, filter.Identify(location));
-        }
-
-        [Test]
-        public void Test()
-        {
-            IFilter filter = new Aaru.Filters.AppleSingle();
-            filter.Open(location);
-            Assert.AreEqual(true,   filter.IsOpened());
-            Assert.AreEqual(737280, filter.GetDataForkLength());
-            Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(286, filter.GetResourceForkLength());
-            Assert.AreNotEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(true, filter.HasResourceFork());
-            filter.Close();
-        }
+        public MacBinary1() => location = Path.Combine(Consts.TestFilesRoot, "filters", "macbinary", "macbinary1.bin");
 
         [Test]
         public void CheckContents()
@@ -90,6 +59,20 @@ namespace Aaru.Tests.Filters
         }
 
         [Test]
+        public void CheckCorrectFile()
+        {
+            string result = Md5Context.File(location, out _);
+            Assert.AreEqual(EXPECTED_FILE, result);
+        }
+
+        [Test]
+        public void CheckFilterId()
+        {
+            IFilter filter = new Aaru.Filters.AppleSingle();
+            Assert.AreEqual(true, filter.Identify(location));
+        }
+
+        [Test]
         public void CheckResource()
         {
             IFilter filter = new Aaru.Filters.AppleSingle();
@@ -102,6 +85,20 @@ namespace Aaru.Tests.Filters
             filter.Close();
             string result = Md5Context.Data(data, out _);
             Assert.AreEqual(EXPECTED_RESOURCE, result);
+        }
+
+        [Test]
+        public void Test()
+        {
+            IFilter filter = new Aaru.Filters.AppleSingle();
+            filter.Open(location);
+            Assert.AreEqual(true, filter.IsOpened());
+            Assert.AreEqual(737280, filter.GetDataForkLength());
+            Assert.AreNotEqual(null, filter.GetDataForkStream());
+            Assert.AreEqual(286, filter.GetResourceForkLength());
+            Assert.AreNotEqual(null, filter.GetResourceForkStream());
+            Assert.AreEqual(true, filter.HasResourceFork());
+            filter.Close();
         }
     }
 }

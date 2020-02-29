@@ -46,7 +46,10 @@ namespace Aaru.Filesystems
     {
         readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
-        readonly byte[] signature = {0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20};
+        readonly byte[] signature =
+        {
+            0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20
+        };
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
@@ -56,10 +59,13 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(12 + partition.Start >= partition.End) return false;
+            if(12 + partition.Start >= partition.End)
+                return false;
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            if(vbrSector.Length < 512) return false;
+
+            if(vbrSector.Length < 512)
+                return false;
 
             VolumeBootRecord vbr = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
@@ -67,18 +73,19 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             XmlFsType = new FileSystemType();
 
             byte[]           vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             VolumeBootRecord vbr       = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
+
             OemParameterTable parametersTable =
                 Marshal.ByteArrayToStructureLittleEndian<OemParameterTable>(parametersSector);
 
@@ -87,25 +94,40 @@ namespace Aaru.Filesystems
 
             sb.AppendLine("Microsoft exFAT");
             sb.AppendFormat("Partition offset: {0}", vbr.offset).AppendLine();
+
             sb.AppendFormat("Volume has {0} sectors of {1} bytes each for a total of {2} bytes", vbr.sectors,
                             1 << vbr.sectorShift, vbr.sectors * (ulong)(1 << vbr.sectorShift)).AppendLine();
+
             sb.AppendFormat("Volume uses clusters of {0} sectors ({1} bytes) each", 1 << vbr.clusterShift,
                             (1 << vbr.sectorShift) * (1 << vbr.clusterShift)).AppendLine();
-            sb.AppendFormat("First FAT starts at sector {0} and runs for {1} sectors", vbr.fatOffset, vbr.fatLength)
-              .AppendLine();
+
+            sb.AppendFormat("First FAT starts at sector {0} and runs for {1} sectors", vbr.fatOffset, vbr.fatLength).
+               AppendLine();
+
             sb.AppendFormat("Volume uses {0} FATs", vbr.fats).AppendLine();
+
             sb.AppendFormat("Cluster heap starts at sector {0}, contains {1} clusters and is {2}% used",
                             vbr.clusterHeapOffset, vbr.clusterHeapLength, vbr.heapUsage).AppendLine();
+
             sb.AppendFormat("Root directory starts at cluster {0}", vbr.rootDirectoryCluster).AppendLine();
-            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, vbr.revision & 0xFF)
-              .AppendLine();
+
+            sb.AppendFormat("Filesystem revision is {0}.{1:D2}", (vbr.revision & 0xFF00) >> 8, vbr.revision & 0xFF).
+               AppendLine();
+
             sb.AppendFormat("Volume serial number: {0:X8}", vbr.volumeSerial).AppendLine();
             sb.AppendFormat("BIOS drive is {0:X2}h", vbr.drive).AppendLine();
-            if(vbr.flags.HasFlag(VolumeFlags.SecondFatActive)) sb.AppendLine("2nd FAT is in use");
-            if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty)) sb.AppendLine("Volume is dirty");
-            if(vbr.flags.HasFlag(VolumeFlags.MediaFailure)) sb.AppendLine("Underlying media presented errors");
+
+            if(vbr.flags.HasFlag(VolumeFlags.SecondFatActive))
+                sb.AppendLine("2nd FAT is in use");
+
+            if(vbr.flags.HasFlag(VolumeFlags.VolumeDirty))
+                sb.AppendLine("Volume is dirty");
+
+            if(vbr.flags.HasFlag(VolumeFlags.MediaFailure))
+                sb.AppendLine("Underlying media presented errors");
 
             int count = 1;
+
             foreach(OemParameter parameter in parametersTable.parameters)
             {
                 if(parameter.OemParameterType == OEM_FLASH_PARAMETER_GUID)
@@ -139,9 +161,7 @@ namespace Aaru.Filesystems
         [Flags]
         enum VolumeFlags : ushort
         {
-            SecondFatActive = 1,
-            VolumeDirty     = 2,
-            MediaFailure    = 4,
+            SecondFatActive = 1, VolumeDirty = 2, MediaFailure = 4,
             ClearToZero     = 8
         }
 

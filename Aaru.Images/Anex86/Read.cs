@@ -47,7 +47,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<Anex86Header>()) return false;
+            if(stream.Length < Marshal.SizeOf<Anex86Header>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -57,7 +58,9 @@ namespace Aaru.DiscImages
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
                                                          (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,
                                                          false));
-            if(imageInfo.MediaType == MediaType.Unknown) imageInfo.MediaType = MediaType.GENERIC_HDD;
+
+            if(imageInfo.MediaType == MediaType.Unknown)
+                imageInfo.MediaType = MediaType.GENERIC_HDD;
 
             AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
 
@@ -91,7 +94,7 @@ namespace Aaru.DiscImages
 
             Stream stream = anexImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)fdihdr.hdrSize + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)fdihdr.hdrSize + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 

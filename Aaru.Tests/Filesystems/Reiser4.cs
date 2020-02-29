@@ -39,19 +39,40 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Reiser4
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {262144};
+        readonly ulong[] sectors =
+        {
+            262144
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {32511};
+        readonly long[] clusters =
+        {
+            32511
+        };
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize =
+        {
+            4096
+        };
 
-        readonly string[] volumename = {"Volume label"};
+        readonly string[] volumename =
+        {
+            "Volume label"
+        };
 
-        readonly string[] volumeserial = {"b0c1924e-6f10-8c42-b6c5-66a457896460"};
+        readonly string[] volumeserial =
+        {
+            "b0c1924e-6f10-8c42-b6c5-66a457896460"
+        };
 
         [Test]
         public void Test()
@@ -62,27 +83,29 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new Aaru.Filesystems.Reiser4();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],           fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],        fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual("Reiser 4 filesystem", fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],         fs.XmlFsType.VolumeName,   testfiles[i]);
-                Assert.AreEqual(volumeserial[i],       fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Reiser 4 filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
     }

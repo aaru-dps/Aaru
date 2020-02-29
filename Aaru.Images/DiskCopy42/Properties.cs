@@ -41,26 +41,33 @@ namespace Aaru.DiscImages
 {
     public partial class DiskCopy42
     {
-        public ImageInfo                  Info                => imageInfo;
-        public string                     Name                => "Apple DiskCopy 4.2";
-        public Guid                       Id                  => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        public string                     Author              => "Natalia Portillo";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public string                     Format              => "Apple DiskCopy 4.2";
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new[] {SectorTagType.AppleSectorTag};
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.AppleFileWare, MediaType.AppleHD20, MediaType.AppleProfile, MediaType.AppleSonyDS,
-                MediaType.AppleSonySS, MediaType.AppleWidget, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
-                MediaType.DMF
-            };
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new[] {("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)};
-        public IEnumerable<string> KnownExtensions => new[] {".dc42", ".diskcopy42", ".image"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+        public ImageInfo              Info         => imageInfo;
+        public string                 Name         => "Apple DiskCopy 4.2";
+        public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string                 Author       => "Natalia Portillo";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public string                 Format       => "Apple DiskCopy 4.2";
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+        {
+            SectorTagType.AppleSectorTag
+        };
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.AppleFileWare, MediaType.AppleHD20, MediaType.AppleProfile, MediaType.AppleSonyDS,
+            MediaType.AppleSonySS, MediaType.AppleWidget, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DMF
+        };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
+        {
+            ("macosx", typeof(bool), "Use Mac OS X format byte", (object)false)
+        };
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".dc42", ".diskcopy42", ".image"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
         public bool? VerifySector(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
     }

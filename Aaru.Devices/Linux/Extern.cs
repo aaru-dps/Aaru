@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Devices.Linux
 {
-    static class Extern
+    internal static class Extern
     {
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern int open(string pathname, [MarshalAs(UnmanagedType.U4)] FileFlags flags);

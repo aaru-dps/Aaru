@@ -40,58 +40,59 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VMwareExtentHeader
         {
-            public uint  magic;
-            public uint  version;
-            public uint  flags;
-            public ulong capacity;
-            public ulong grainSize;
-            public ulong descriptorOffset;
-            public ulong descriptorSize;
-            public uint  GTEsPerGT;
-            public ulong rgdOffset;
-            public ulong gdOffset;
-            public ulong overhead;
+            public readonly uint  magic;
+            public readonly uint  version;
+            public readonly uint  flags;
+            public readonly ulong capacity;
+            public readonly ulong grainSize;
+            public readonly ulong descriptorOffset;
+            public readonly ulong descriptorSize;
+            public readonly uint  GTEsPerGT;
+            public readonly ulong rgdOffset;
+            public readonly ulong gdOffset;
+            public readonly ulong overhead;
             [MarshalAs(UnmanagedType.U1)]
-            public bool uncleanShutdown;
-            public byte   singleEndLineChar;
-            public byte   nonEndLineChar;
-            public byte   doubleEndLineChar1;
-            public byte   doubleEndLineChar2;
-            public ushort compression;
+            public readonly bool uncleanShutdown;
+            public readonly byte   singleEndLineChar;
+            public readonly byte   nonEndLineChar;
+            public readonly byte   doubleEndLineChar1;
+            public readonly byte   doubleEndLineChar2;
+            public readonly ushort compression;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)]
-            public byte[] padding;
+            public readonly byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VMwareCowHeader
         {
-            public uint magic;
-            public uint version;
-            public uint flags;
-            public uint sectors;
-            public uint grainSize;
-            public uint gdOffset;
-            public uint numGDEntries;
-            public uint freeSector;
-            public uint cylinders;
-            public uint heads;
-            public uint spt;
+            public readonly uint magic;
+            public readonly uint version;
+            public readonly uint flags;
+            public readonly uint sectors;
+            public readonly uint grainSize;
+            public readonly uint gdOffset;
+            public readonly uint numGDEntries;
+            public readonly uint freeSector;
+            public readonly uint cylinders;
+            public readonly uint heads;
+            public readonly uint spt;
+
             // It stats on cylinders, above, but, don't care
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024 - 12)]
-            public byte[] parentFileName;
-            public uint parentGeneration;
-            public uint generation;
+            public readonly byte[] parentFileName;
+            public readonly uint parentGeneration;
+            public readonly uint generation;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-            public byte[] name;
+            public readonly byte[] name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] description;
-            public uint savedGeneration;
+            public readonly byte[] description;
+            public readonly uint savedGeneration;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
             [MarshalAs(UnmanagedType.U1)]
-            public bool uncleanShutdown;
+            public readonly bool uncleanShutdown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 396)]
-            public byte[] padding;
+            public readonly byte[] padding;
         }
 
         struct VMwareExtent

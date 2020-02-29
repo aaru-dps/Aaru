@@ -95,7 +95,7 @@ namespace Aaru.Filesystems.ISO9660
 
             switch(xattr)
             {
-                case"org.iso.9660.ea":
+                case "org.iso.9660.ea":
                     if(entry.XattrLength == 0)
                         return Errno.NoSuchExtendedAttribute;
 
@@ -113,7 +113,7 @@ namespace Aaru.Filesystems.ISO9660
                     Array.Copy(ea, 0, buf, 0, buf.LongLength);
 
                     return Errno.NoError;
-                case"org.iso.9660.AssociatedFile":
+                case "org.iso.9660.AssociatedFile":
                     if(entry.AssociatedFile is null)
                         return Errno.NoSuchExtendedAttribute;
 
@@ -143,7 +143,7 @@ namespace Aaru.Filesystems.ISO9660
                         buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents);
 
                     return Errno.NoError;
-                case"com.apple.dos.type":
+                case "com.apple.dos.type":
                     if(entry.AppleDosType is null)
                         return Errno.NoSuchExtendedAttribute;
 
@@ -151,14 +151,14 @@ namespace Aaru.Filesystems.ISO9660
                     buf[0] = entry.AppleDosType.Value;
 
                     return Errno.NoError;
-                case"com.apple.prodos.type":
+                case "com.apple.prodos.type":
                     if(entry.AppleProDosType is null)
                         return Errno.NoSuchExtendedAttribute;
 
                     buf = BitConverter.GetBytes(entry.AppleProDosType.Value);
 
                     return Errno.NoError;
-                case"com.apple.ResourceFork":
+                case "com.apple.ResourceFork":
                     if(entry.ResourceFork is null)
                         return Errno.NoSuchExtendedAttribute;
 
@@ -188,14 +188,14 @@ namespace Aaru.Filesystems.ISO9660
                         buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents);
 
                     return Errno.NoError;
-                case"com.apple.FinderInfo":
+                case "com.apple.FinderInfo":
                     if(entry.FinderInfo is null)
                         return Errno.NoSuchExtendedAttribute;
 
                     buf = Marshal.StructureToByteArrayBigEndian(entry.FinderInfo.Value);
 
                     return Errno.NoError;
-                case"com.apple.Macintosh.Icon":
+                case "com.apple.Macintosh.Icon":
                     if(entry.AppleIcon is null)
                         return Errno.NoSuchExtendedAttribute;
 
@@ -203,7 +203,7 @@ namespace Aaru.Filesystems.ISO9660
                     Array.Copy(entry.AppleIcon, 0, buf, 0, entry.AppleIcon.Length);
 
                     return Errno.NoError;
-                case"com.amiga.comments":
+                case "com.amiga.comments":
                     if(entry.AmigaComment is null)
                         return Errno.NoSuchExtendedAttribute;
 

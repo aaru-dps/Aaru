@@ -226,7 +226,7 @@ namespace Aaru.Gui.Forms
             foreach((string name, Type type, string description, object @default) option in plugin.SupportedOptions)
                 switch(option.type.ToString())
                 {
-                    case"System.Boolean":
+                    case "System.Boolean":
                         var optBoolean = new CheckBox();
                         optBoolean.ID      = "opt" + option.name;
                         optBoolean.Text    = option.description;
@@ -234,10 +234,10 @@ namespace Aaru.Gui.Forms
                         stkOptions.Items.Add(optBoolean);
 
                         break;
-                    case"System.SByte":
-                    case"System.Int16":
-                    case"System.Int32":
-                    case"System.Int64":
+                    case "System.SByte":
+                    case "System.Int16":
+                    case "System.Int32":
+                    case "System.Int64":
                         var stkNumber = new StackLayout();
                         stkNumber.Orientation = Orientation.Horizontal;
                         var optNumber = new NumericStepper();
@@ -250,10 +250,10 @@ namespace Aaru.Gui.Forms
                         stkOptions.Items.Add(stkNumber);
 
                         break;
-                    case"System.Byte":
-                    case"System.UInt16":
-                    case"System.UInt32":
-                    case"System.UInt64":
+                    case "System.Byte":
+                    case "System.UInt16":
+                    case "System.UInt32":
+                    case "System.UInt64":
                         var stkUnsigned = new StackLayout();
                         stkUnsigned.Orientation = Orientation.Horizontal;
                         var optUnsigned = new NumericStepper();
@@ -267,8 +267,8 @@ namespace Aaru.Gui.Forms
                         stkOptions.Items.Add(stkUnsigned);
 
                         break;
-                    case"System.Single":
-                    case"System.Double":
+                    case "System.Single":
+                    case "System.Double":
                         var stkFloat = new StackLayout();
                         stkFloat.Orientation = Orientation.Horizontal;
                         var optFloat = new NumericStepper();
@@ -282,10 +282,10 @@ namespace Aaru.Gui.Forms
                         stkOptions.Items.Add(stkFloat);
 
                         break;
-                    case"System.Guid":
+                    case "System.Guid":
                         // TODO
                         break;
-                    case"System.String":
+                    case "System.String":
                         var stkString = new StackLayout();
                         stkString.Orientation = Orientation.Horizontal;
                         var lblString = new Label();

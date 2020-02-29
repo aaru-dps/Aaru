@@ -46,53 +46,60 @@ namespace Aaru.DiscImages
     public partial class RayDim
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(sectors > 255 * 255 * 255)
             {
                 ErrorMessage = "Too many sectors";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
+
             imageInfo = new ImageInfo
             {
-                MediaType       = mediaType,
-                SectorSize      = sectorSize,
-                Sectors         = sectors,
-                Cylinders       = geometry.cylinders,
-                Heads           = geometry.heads,
-                SectorsPerTrack = geometry.sectorsPerTrack
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors,
+                Cylinders = geometry.cylinders,
+                Heads     = geometry.heads, SectorsPerTrack = geometry.sectorsPerTrack
             };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -101,26 +108,31 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != 512)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * imageInfo.SectorSize)),
                                SeekOrigin.Begin);
+
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -129,38 +141,45 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % 512 != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * imageInfo.SectorSize)),
                                SeekOrigin.Begin);
+
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -169,12 +188,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
@@ -187,19 +208,20 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
             string headerSignature =
                 $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved. Aaru ";
-            RayHdr header = new RayHdr
+
+            var header = new RayHdr
             {
-                signature       = Encoding.ASCII.GetBytes(headerSignature),
-                cylinders       = (byte)imageInfo.Cylinders,
-                diskType        = RayDiskTypes.Mf2ed,
-                heads           = (byte)imageInfo.Heads,
+                signature       = Encoding.ASCII.GetBytes(headerSignature), cylinders = (byte)imageInfo.Cylinders,
+                diskType        = RayDiskTypes.Mf2ed, heads                           = (byte)imageInfo.Heads,
                 sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
             };
+
             header.signature[0x4A] = 0x00;
 
             byte[] hdr    = new byte[Marshal.SizeOf<RayHdr>()];
@@ -216,6 +238,7 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 

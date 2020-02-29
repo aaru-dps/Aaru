@@ -74,19 +74,19 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ScpFooter
         {
-            public uint manufacturerOffset;
-            public uint modelOffset;
-            public uint serialOffset;
-            public uint creatorOffset;
-            public uint applicationOffset;
-            public uint commentsOffset;
-            public long creationTime;
-            public long modificationTime;
-            public byte applicationVersion;
-            public byte hardwareVersion;
-            public byte firmwareVersion;
-            public byte imageVersion;
-            public uint signature;
+            public readonly uint manufacturerOffset;
+            public readonly uint modelOffset;
+            public readonly uint serialOffset;
+            public readonly uint creatorOffset;
+            public readonly uint applicationOffset;
+            public readonly uint commentsOffset;
+            public readonly long creationTime;
+            public readonly long modificationTime;
+            public readonly byte applicationVersion;
+            public readonly byte hardwareVersion;
+            public readonly byte firmwareVersion;
+            public readonly byte imageVersion;
+            public readonly uint signature;
         }
     }
 }

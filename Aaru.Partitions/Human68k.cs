@@ -58,21 +58,25 @@ namespace Aaru.Partitions
 
             AaruConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
-            if(sectorOffset + 4 >= imagePlugin.Info.Sectors) return false;
+            if(sectorOffset + 4 >= imagePlugin.Info.Sectors)
+                return false;
 
             switch(imagePlugin.Info.SectorSize)
             {
                 case 256:
                     sector       = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 1;
+
                     break;
                 case 512:
                     sector       = imagePlugin.ReadSector(4 + sectorOffset);
                     sectsPerUnit = 2;
+
                     break;
                 case 1024:
                     sector       = imagePlugin.ReadSector(2 + sectorOffset);
                     sectsPerUnit = 1;
+
                     break;
                 default: return false;
             }
@@ -81,13 +85,14 @@ namespace Aaru.Partitions
 
             AaruConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
-            if(table.magic != X68K_MAGIC) return false;
+            if(table.magic != X68K_MAGIC)
+                return false;
 
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = (X68kEntry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
-            AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}",    table.size);
-            AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}",   table.size2);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
             AaruConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
 
             ulong counter = 0;
@@ -95,23 +100,27 @@ namespace Aaru.Partitions
             foreach(X68kEntry entry in table.entries)
             {
                 AaruConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
-                                          StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
-                AaruConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
-                AaruConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}",     entry.length);
-                AaruConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
-                                          imagePlugin.Info.SectorSize);
+                                           StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
 
-                Partition part = new Partition
+                AaruConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
+                AaruConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
+
+                AaruConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
+                                           imagePlugin.Info.SectorSize);
+
+                var part = new Partition
                 {
-                    Start    = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
-                    Length   = entry.length                  * sectsPerUnit,
-                    Type     = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)),
-                    Sequence = counter,
-                    Scheme   = Name
+                    Start  = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
+                    Length = entry.length                  * sectsPerUnit,
+                    Type   = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)), Sequence = counter,
+                    Scheme = Name
                 };
+
                 part.Offset = part.Start  * (ulong)sector.Length;
                 part.Size   = part.Length * (ulong)sector.Length;
-                if(entry.length <= 0) continue;
+
+                if(entry.length <= 0)
+                    continue;
 
                 partitions.Add(part);
                 counter++;
@@ -123,21 +132,21 @@ namespace Aaru.Partitions
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct X68kTable
         {
-            public uint magic;
-            public uint size;
-            public uint size2;
-            public uint unknown;
+            public readonly uint magic;
+            public readonly uint size;
+            public readonly uint size2;
+            public readonly uint unknown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public X68kEntry[] entries;
+            public readonly X68kEntry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct X68kEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] name;
-            public uint stateStart;
-            public uint length;
+            public readonly byte[] name;
+            public readonly uint stateStart;
+            public readonly uint length;
         }
     }
 }

@@ -41,8 +41,8 @@ namespace Aaru.Gui.Forms
     // TODO: Panel with string representation of contents
     public class frmPrintHex : Form
     {
-        const int   HEX_COLUMNS = 32;
-        IMediaImage inputFormat;
+        const    int         HEX_COLUMNS = 32;
+        readonly IMediaImage inputFormat;
 
         public frmPrintHex(IMediaImage inputFormat)
         {
@@ -59,20 +59,20 @@ namespace Aaru.Gui.Forms
                 inputFormat.ReadSectorLong(0);
                 chkLongSector.Checked = true;
             }
-            catch { chkLongSector.Visible = false; }
+            catch
+            {
+                chkLongSector.Visible = false;
+            }
 
             lblSectors.Text = $"of {inputFormat.Info.Sectors}";
             nmuSector.Value = 0;
             OnNmuSectorValueChanged(nmuSector, e);
         }
 
-        void OnNmuSectorValueChanged(object sender, EventArgs e)
-        {
-            txtPrintHex.Text =
-                PrintHex
-                   .ByteArrayToHexArrayString(chkLongSector.Checked == true ? inputFormat.ReadSectorLong((ulong)nmuSector.Value) : inputFormat.ReadSector((ulong)nmuSector.Value),
-                                              HEX_COLUMNS);
-        }
+        void OnNmuSectorValueChanged(object sender, EventArgs e) => txtPrintHex.Text =
+                                                                        PrintHex.
+                                                                            ByteArrayToHexArrayString(chkLongSector.Checked == true ? inputFormat.ReadSectorLong((ulong)nmuSector.Value) : inputFormat.ReadSector((ulong)nmuSector.Value),
+                                                                                                      HEX_COLUMNS);
 
         #region XAML IDs
         Label          lblSector;

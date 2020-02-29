@@ -43,25 +43,30 @@ namespace Aaru.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string                     Name                => "Apple Universal Disk Image Format";
-        public Guid                       Id                  => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
-        public string                     Author              => "Natalia Portillo";
-        public string                     Format              => "Apple Universal Disk Image Format";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
-                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-                MediaType.PCCardTypeIV
-            };
+        public string                 Name         => "Apple Universal Disk Image Format";
+        public Guid                   Id           => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "Apple Universal Disk Image Format";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.Unknown, MediaType.GENERIC_HDD, MediaType.FlashDrive, MediaType.CompactFlash,
+            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+            MediaType.PCCardTypeIV
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".dmg"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".dmg"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

@@ -48,20 +48,28 @@ namespace Aaru.DiscImages.CopyTape
         Dictionary<ulong, ulong> writtenBlockPositions;
 
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
@@ -72,12 +80,14 @@ namespace Aaru.DiscImages.CopyTape
             ErrorMessage          = null;
             lastWrittenBlock      = 0;
             writtenBlockPositions = new Dictionary<ulong, ulong>();
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
@@ -85,27 +95,36 @@ namespace Aaru.DiscImages.CopyTape
         {
             if(!writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
             {
-                if(dataStream.Length != 0 && lastWrittenBlock >= sectorAddress)
+                if(dataStream.Length != 0 &&
+                   lastWrittenBlock  >= sectorAddress)
                 {
                     ErrorMessage = "Cannot write unwritten blocks";
+
                     return false;
                 }
 
-                if(lastWrittenBlock + 1 != sectorAddress && sectorAddress != 0 && lastWrittenBlock != 0)
+                if(lastWrittenBlock + 1 != sectorAddress &&
+                   sectorAddress        != 0             &&
+                   lastWrittenBlock     != 0)
                 {
                     ErrorMessage = "Cannot skip blocks";
+
                     return false;
                 }
             }
-            else dataStream.Position = (long)position;
+            else
+                dataStream.Position = (long)position;
 
             byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:D6}\n");
 
             writtenBlockPositions[sectorAddress] = (ulong)dataStream.Position;
             dataStream.Write(header, 0, header.Length);
-            dataStream.Write(data,   0, data.Length);
+            dataStream.Write(data, 0, data.Length);
             dataStream.WriteByte(0x0A);
-            if(sectorAddress > lastWrittenBlock) lastWrittenBlock = sectorAddress;
+
+            if(sectorAddress > lastWrittenBlock)
+                lastWrittenBlock = sectorAddress;
+
             dataStream.Seek(0, SeekOrigin.End);
 
             return true;
@@ -116,7 +135,9 @@ namespace Aaru.DiscImages.CopyTape
             for(uint i = 0; i < length; i++)
             {
                 bool ret = WriteSector(data, sectorAddress + i);
-                if(!ret) return false;
+
+                if(!ret)
+                    return false;
             }
 
             return true;
@@ -125,12 +146,14 @@ namespace Aaru.DiscImages.CopyTape
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
@@ -139,6 +162,7 @@ namespace Aaru.DiscImages.CopyTape
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -149,6 +173,7 @@ namespace Aaru.DiscImages.CopyTape
             dataStream.Close();
 
             IsWriting = false;
+
             return true;
         }
 
@@ -157,18 +182,21 @@ namespace Aaru.DiscImages.CopyTape
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
@@ -181,6 +209,7 @@ namespace Aaru.DiscImages.CopyTape
             if(file.Partition != 0)
             {
                 ErrorMessage = "Unsupported feature";
+
                 return false;
             }
 
@@ -193,15 +222,18 @@ namespace Aaru.DiscImages.CopyTape
 
         public bool AddPartition(TapePartition partition)
         {
-            if(partition.Number == 0) return true;
+            if(partition.Number == 0)
+                return true;
 
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool SetTape()
         {
             IsTape = true;
+
             return true;
         }
     }

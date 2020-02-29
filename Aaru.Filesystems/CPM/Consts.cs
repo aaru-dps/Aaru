@@ -32,52 +32,30 @@
 
 namespace Aaru.Filesystems.CPM
 {
-    partial class CPM
+    internal partial class CPM
     {
-        /// <summary>
-        ///     Enumerates the format identification byte used by CP/M-86
-        /// </summary>
+        /// <summary>Enumerates the format identification byte used by CP/M-86</summary>
         enum FormatByte : byte
         {
-            /// <summary>
-            ///     5.25" double-density single-side 8 sectors/track
-            /// </summary>
+            /// <summary>5.25" double-density single-side 8 sectors/track</summary>
             k160 = 0,
-            /// <summary>
-            ///     5.25" double-density double-side 8 sectors/track
-            /// </summary>
+            /// <summary>5.25" double-density double-side 8 sectors/track</summary>
             k320 = 1,
-            /// <summary>
-            ///     5.25" double-density double-side 9 sectors/track
-            /// </summary>
+            /// <summary>5.25" double-density double-side 9 sectors/track</summary>
             k360 = 0x10,
-            /// <summary>
-            ///     5.25" double-density double-side 9 sectors/track
-            /// </summary>
+            /// <summary>5.25" double-density double-side 9 sectors/track</summary>
             k360Alt = 0x40,
-            /// <summary>
-            ///     3.5" double-density double-side 9 sectors/track
-            /// </summary>
+            /// <summary>3.5" double-density double-side 9 sectors/track</summary>
             k720 = 0x11,
-            /// <summary>
-            ///     3.5" double-density double-side 9 sectors/track using FEAT144
-            /// </summary>
+            /// <summary>3.5" double-density double-side 9 sectors/track using FEAT144</summary>
             f720 = 0x48,
-            /// <summary>
-            ///     5.25" high-density double-side 15 sectors/track using FEAT144
-            /// </summary>
+            /// <summary>5.25" high-density double-side 15 sectors/track using FEAT144</summary>
             f1200 = 0x0C,
-            /// <summary>
-            ///     3.5" high-density double-side 18 sectors/track using FEAT144
-            /// </summary>
+            /// <summary>3.5" high-density double-side 18 sectors/track using FEAT144</summary>
             f1440 = 0x90,
-            /// <summary>
-            ///     5.25" double-density double-side 9 sectors/track
-            /// </summary>
+            /// <summary>5.25" double-density double-side 9 sectors/track</summary>
             k360Alt2 = 0x26,
-            /// <summary>
-            ///     3.5" double-density double-side 9 sectors/track
-            /// </summary>
+            /// <summary>3.5" double-density double-side 9 sectors/track</summary>
             k720Alt = 0x94
         }
     }

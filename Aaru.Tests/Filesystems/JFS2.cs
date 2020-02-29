@@ -42,19 +42,34 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "linux_caseinsensitive.vdi.lz", "ecs20_fstester.vdi.lz",
-            "linux_4.19_jfs_flashdrive.vdi.lz", "linux_4.19_jfs_os2_flashdrive.vdi.lz"
+            "linux.vdi.lz", "linux_caseinsensitive.vdi.lz", "ecs20_fstester.vdi.lz", "linux_4.19_jfs_flashdrive.vdi.lz",
+            "linux_4.19_jfs_os2_flashdrive.vdi.lz"
         };
 
-        readonly ulong[] sectors = {262144, 262144, 1024000, 1024000, 1024000};
+        readonly ulong[] sectors =
+        {
+            262144, 262144, 1024000, 1024000, 1024000
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {257632, 257632, 1017512, 1017416, 1017416};
+        readonly long[] clusters =
+        {
+            257632, 257632, 1017512, 1017416, 1017416
+        };
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096};
+        readonly int[] clustersize =
+        {
+            4096, 4096, 4096, 4096, 4096
+        };
 
-        readonly string[] volumename = {"Volume labe", "Volume labe", "Volume labe", "DicSetter", "DicSetter"};
+        readonly string[] volumename =
+        {
+            "Volume labe", "Volume labe", "Volume labe", "DicSetter", "DicSetter"
+        };
 
         readonly string[] volumeserial =
         {
@@ -72,27 +87,30 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new JFS();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
-                    if(partitions[j].Type == "0x83" || partitions[j].Type == "0x07")
+                    if(partitions[j].Type == "0x83" ||
+                       partitions[j].Type == "0x07")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],      fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],   fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual("JFS filesystem", fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],    fs.XmlFsType.VolumeName,   testfiles[i]);
-                Assert.AreEqual(volumeserial[i],  fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("JFS filesystem", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }
     }

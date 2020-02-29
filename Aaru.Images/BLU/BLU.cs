@@ -46,32 +46,19 @@ namespace Aaru.DiscImages
         ImageInfo  imageInfo;
         FileStream writingStream;
 
-        public Blu()
+        public Blu() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Version               = null,
-                Application           = null,
-                ApplicationVersion    = null,
-                Creator               = null,
-                Comments              = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = false, HasSessions                           = false, Version = null,
+            Application        = null,
+            ApplicationVersion = null, Creator = null, Comments = null,
+            MediaManufacturer  = null,
+            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
+            MediaPartNumber    = null,
+            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
+            DriveModel         = null,
+            DriveSerialNumber  = null, DriveFirmwareRevision = null
+        };
 
         struct BluHeader
         {

@@ -67,7 +67,7 @@ namespace Aaru.Commands
         public int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
         {
             if(_masterDbUpdate)
-                return(int)ErrorNumber.NoError;
+                return (int)ErrorNumber.NoError;
 
             MainClass.PrintCopyright();
 
@@ -84,9 +84,9 @@ namespace Aaru.Commands
             {
                 try
                 {
-                    File.Delete(Aaru.Settings.Settings.LocalDbPath);
+                    File.Delete(Settings.Settings.LocalDbPath);
 
-                    var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+                    var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                     ctx.Database.Migrate();
                     ctx.SaveChanges();
                 }
@@ -97,7 +97,7 @@ namespace Aaru.Commands
 
                     AaruConsole.ErrorWriteLine("Could not remove local database.");
 
-                    return(int)ErrorNumber.CannotRemoveDatabase;
+                    return (int)ErrorNumber.CannotRemoveDatabase;
                 }
             }
 
@@ -105,7 +105,7 @@ namespace Aaru.Commands
             {
                 try
                 {
-                    File.Delete(Aaru.Settings.Settings.MasterDbPath);
+                    File.Delete(Settings.Settings.MasterDbPath);
                 }
                 catch(Exception e)
                 {
@@ -114,13 +114,13 @@ namespace Aaru.Commands
 
                     AaruConsole.ErrorWriteLine("Could not remove master database.");
 
-                    return(int)ErrorNumber.CannotRemoveDatabase;
+                    return (int)ErrorNumber.CannotRemoveDatabase;
                 }
             }
 
             DoUpdate(clear || clearAll);
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
 
         internal static void DoUpdate(bool create)

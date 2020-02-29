@@ -36,9 +36,7 @@ namespace Aaru.DiscImages
 {
     public partial class Qcow2
     {
-        /// <summary>
-        ///     QCOW header, big-endian
-        /// </summary>
+        /// <summary>QCOW header, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QCow2Header
         {
@@ -46,61 +44,37 @@ namespace Aaru.DiscImages
             ///     <see cref="Qcow2.QCOW_MAGIC" />
             /// </summary>
             public uint magic;
-            /// <summary>
-            ///     Must be 1
-            /// </summary>
+            /// <summary>Must be 1</summary>
             public uint version;
-            /// <summary>
-            ///     Offset inside file to string containing backing file
-            /// </summary>
-            public ulong backing_file_offset;
-            /// <summary>
-            ///     Size of <see cref="backing_file_offset" />
-            /// </summary>
-            public uint backing_file_size;
-            /// <summary>
-            ///     Cluster bits
-            /// </summary>
+            /// <summary>Offset inside file to string containing backing file</summary>
+            public readonly ulong backing_file_offset;
+            /// <summary>Size of <see cref="backing_file_offset" /></summary>
+            public readonly uint backing_file_size;
+            /// <summary>Cluster bits</summary>
             public uint cluster_bits;
-            /// <summary>
-            ///     Size in bytes
-            /// </summary>
+            /// <summary>Size in bytes</summary>
             public ulong size;
-            /// <summary>
-            ///     Encryption method
-            /// </summary>
-            public uint crypt_method;
-            /// <summary>
-            ///     Size of L1 table
-            /// </summary>
+            /// <summary>Encryption method</summary>
+            public readonly uint crypt_method;
+            /// <summary>Size of L1 table</summary>
             public uint l1_size;
-            /// <summary>
-            ///     Offset to L1 table
-            /// </summary>
+            /// <summary>Offset to L1 table</summary>
             public ulong l1_table_offset;
-            /// <summary>
-            ///     Offset to reference count table
-            /// </summary>
+            /// <summary>Offset to reference count table</summary>
             public ulong refcount_table_offset;
-            /// <summary>
-            ///     How many clusters does the refcount table span
-            /// </summary>
+            /// <summary>How many clusters does the refcount table span</summary>
             public uint refcount_table_clusters;
-            /// <summary>
-            ///     Number of snapshots
-            /// </summary>
-            public uint nb_snapshots;
-            /// <summary>
-            ///     Offset to QCowSnapshotHeader
-            /// </summary>
-            public ulong snapshots_offset;
+            /// <summary>Number of snapshots</summary>
+            public readonly uint nb_snapshots;
+            /// <summary>Offset to QCowSnapshotHeader</summary>
+            public readonly ulong snapshots_offset;
 
             // Added in version 3
-            public ulong features;
-            public ulong compat_features;
-            public ulong autoclear_features;
-            public uint  refcount_order;
-            public uint  header_length;
+            public readonly ulong features;
+            public readonly ulong compat_features;
+            public readonly ulong autoclear_features;
+            public readonly uint  refcount_order;
+            public          uint  header_length;
         }
     }
 }

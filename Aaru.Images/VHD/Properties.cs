@@ -46,6 +46,7 @@ namespace Aaru.DiscImages
         public string Name   => "VirtualPC";
         public Guid   Id     => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
         public string Author => "Natalia Portillo";
+
         public string Format
         {
             get
@@ -59,22 +60,29 @@ namespace Aaru.DiscImages
                 }
             }
         }
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
-                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-                MediaType.PCCardTypeIV
-            };
+
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+            MediaType.PCCardTypeIV
+        };
+
         // TODO: Support dynamic images
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".vhd"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".vhd"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

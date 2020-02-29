@@ -59,12 +59,17 @@ namespace Aaru.Filesystems.AppleDOS
         public string         Author    => "Natalia Portillo";
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+                {};
 
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
 
         #region Caches
         /// <summary>Caches track/sector lists</summary>

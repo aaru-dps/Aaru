@@ -44,8 +44,10 @@ namespace Aaru.DiscImages
             byte[] headerCookieBytes = new byte[8];
             byte[] footerCookieBytes = new byte[8];
 
-            if(imageStream.Length % 2 == 0) imageStream.Seek(-512, SeekOrigin.End);
-            else imageStream.Seek(-511,                            SeekOrigin.End);
+            if(imageStream.Length % 2 == 0)
+                imageStream.Seek(-512, SeekOrigin.End);
+            else
+                imageStream.Seek(-511, SeekOrigin.End);
 
             imageStream.Read(footerCookieBytes, 0, 8);
             imageStream.Seek(0, SeekOrigin.Begin);

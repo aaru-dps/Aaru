@@ -58,6 +58,7 @@ namespace Aaru.Filesystems
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
+
             return Errno.NotSupported;
         }
 
@@ -66,15 +67,21 @@ namespace Aaru.Filesystems
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
+
             return Errno.NotSupported;
         }
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+                {};
 
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
     }
 }

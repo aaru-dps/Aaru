@@ -46,49 +46,60 @@ namespace Aaru.DiscImages
     {
         // TODO: Support extended
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            if(sectors * sectorSize / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
+            if((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
             {
                 ErrorMessage = "Too many sectors for selected cluster size";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
-            uint batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
-            if(sectors * sectorSize % DEFAULT_CLUSTER_SIZE > 0) batEntries++;
-            uint headerSectors = (uint)Marshal.SizeOf<ParallelsHeader>() + batEntries * 4;
-            if((uint)Marshal.SizeOf<ParallelsHeader>() + batEntries % 4 > 0) headerSectors++;
+            uint batEntries = (uint)((sectors * sectorSize) / DEFAULT_CLUSTER_SIZE);
+
+            if((sectors * sectorSize) % DEFAULT_CLUSTER_SIZE > 0)
+                batEntries++;
+
+            uint headerSectors = (uint)Marshal.SizeOf<ParallelsHeader>() + (batEntries * 4);
+
+            if((uint)Marshal.SizeOf<ParallelsHeader>() + (batEntries % 4) > 0)
+                headerSectors++;
 
             pHdr = new ParallelsHeader
             {
-                magic        = parallelsMagic,
-                version      = PARALLELS_VERSION,
-                sectors      = sectors,
-                in_use       = PARALLELS_CLOSED,
-                bat_entries  = batEntries,
-                data_off     = headerSectors,
-                cluster_size = DEFAULT_CLUSTER_SIZE / 512
+                magic       = parallelsMagic, version = PARALLELS_VERSION, sectors = sectors,
+                in_use      = PARALLELS_CLOSED,
+                bat_entries = batEntries, data_off = headerSectors, cluster_size = DEFAULT_CLUSTER_SIZE / 512
             };
 
             bat                    = new uint[batEntries];
@@ -96,12 +107,14 @@ namespace Aaru.DiscImages
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -110,23 +123,27 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != 512)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
             ulong index  = sectorAddress / pHdr.cluster_size;
             ulong secOff = sectorAddress % pHdr.cluster_size;
@@ -142,11 +159,12 @@ namespace Aaru.DiscImages
 
             ulong imageOff = batOff * 512;
 
-            writingStream.Seek((long)imageOff,     SeekOrigin.Begin);
+            writingStream.Seek((long)imageOff, SeekOrigin.Begin);
             writingStream.Seek((long)secOff * 512, SeekOrigin.Current);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -156,44 +174,53 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % 512 != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
             // Ignore empty sectors
-            if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
+            if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+                return true;
 
             for(uint i = 0; i < length; i++)
             {
                 byte[] tmp = new byte[512];
                 Array.Copy(data, i * 512, tmp, 0, 512);
-                if(!WriteSector(tmp, sectorAddress + i)) return false;
+
+                if(!WriteSector(tmp, sectorAddress + i))
+                    return false;
             }
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -202,6 +229,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -223,7 +251,10 @@ namespace Aaru.DiscImages
 
                     pHdr.cylinders = (uint)(imageInfo.Sectors / pHdr.heads / imageInfo.SectorsPerTrack);
 
-                    if(pHdr.cylinders == 0 && pHdr.heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                    if(pHdr.cylinders            == 0 &&
+                       pHdr.heads                == 0 &&
+                       imageInfo.SectorsPerTrack == 0)
+                        break;
                 }
             }
 
@@ -236,13 +267,15 @@ namespace Aaru.DiscImages
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);
 
-            for(long i = 0; i < bat.LongLength; i++) writingStream.Write(BitConverter.GetBytes(bat[i]), 0, 4);
+            for(long i = 0; i < bat.LongLength; i++)
+                writingStream.Write(BitConverter.GetBytes(bat[i]), 0, 4);
 
             writingStream.Flush();
             writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -252,18 +285,21 @@ namespace Aaru.DiscImages
         {
             pHdr.cylinders = cylinders;
             pHdr.heads     = heads;
+
             return true;
         }
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 

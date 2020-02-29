@@ -35,12 +35,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
@@ -95,7 +95,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(!sense)
                     {
-                        ExtendedCSD ecsdDecoded = Aaru.Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
+                        ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
                         blocksToRead = ecsdDecoded.OptimalReadSize;
                         blocks       = ecsdDecoded.SectorCount;
                         blockSize    = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
@@ -120,7 +120,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         if(blocks == 0)
                         {
-                            CSD csdDecoded = Aaru.Decoders.MMC.Decoders.DecodeCSD(csd);
+                            CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
                             blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
                             blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
                         }
@@ -150,7 +150,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(!sense)
                     {
-                        Aaru.Decoders.SecureDigital.CSD csdDecoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(csd);
+                        Decoders.SecureDigital.CSD csdDecoded = Decoders.SecureDigital.Decoders.DecodeCSD(csd);
 
                         blocks = (ulong)(csdDecoded.Structure == 0
                                              ? (csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2)

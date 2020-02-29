@@ -56,39 +56,39 @@ namespace Aaru.DiscImages
             /// <summary>A drive code that corresponds (but it not equal to) CMOS drive types</summary>
             public DriDriveCodes driveCode;
             /// <summary>Unknown seems to be always 2</summary>
-            public ushort unknown;
+            public readonly ushort unknown;
             /// <summary>Cylinders</summary>
             public ushort cylinders;
             /// <summary>Seems to always be 0</summary>
-            public byte unknown2;
+            public readonly byte unknown2;
             /// <summary>Bytes per sector</summary>
             public ushort bps;
             /// <summary>Sectors per cluster</summary>
-            public byte spc;
+            public readonly byte spc;
             /// <summary>Sectors between BPB and FAT</summary>
-            public ushort rsectors;
+            public readonly ushort rsectors;
             /// <summary>How many FATs</summary>
-            public byte fats_no;
+            public readonly byte fats_no;
             /// <summary>Entries in root directory</summary>
-            public ushort root_entries;
+            public readonly ushort root_entries;
             /// <summary>Total sectors</summary>
             public ushort sectors;
             /// <summary>Media descriptor</summary>
-            public byte media_descriptor;
+            public readonly byte media_descriptor;
             /// <summary>Sectors per FAT</summary>
-            public ushort spfat;
+            public readonly ushort spfat;
             /// <summary>Sectors per track</summary>
             public ushort sptrack;
             /// <summary>Heads</summary>
             public ushort heads;
             /// <summary>Hidden sectors before BPB</summary>
-            public uint hsectors;
+            public readonly uint hsectors;
             /// <summary>Drive number</summary>
-            public byte drive_no;
+            public readonly byte drive_no;
             /// <summary>Seems to be 0</summary>
-            public ulong unknown3;
+            public readonly ulong unknown3;
             /// <summary>Seems to be 0</summary>
-            public byte unknown4;
+            public readonly byte unknown4;
             /// <summary>Sectors per track (again?)</summary>
             public ushort sptrack2;
             /// <summary>Seems to be 0</summary>

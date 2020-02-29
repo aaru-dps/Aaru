@@ -69,7 +69,8 @@ namespace Aaru.DiscImages
                     // Deleted record, just skip it
                     case RecordType.Deleted:
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Found deleted record at {0}", stream.Position);
-                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
+                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+
                         break;
                     case RecordType.Comment:
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
@@ -78,6 +79,7 @@ namespace Aaru.DiscImages
                         stream.Read(commentB, 0, commentB.Length);
                         imageInfo.Comments = StringHandlers.CToString(commentB);
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", imageInfo.Comments);
+
                         break;
                     case RecordType.Creator:
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
@@ -86,6 +88,7 @@ namespace Aaru.DiscImages
                         stream.Read(creatorB, 0, creatorB.Length);
                         imageInfo.Creator = StringHandlers.CToString(creatorB);
                         AaruConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", imageInfo.Creator);
+
                         break;
                     case RecordType.Sector:
                         if(record.compression != CompressType.Compressed &&
@@ -94,17 +97,22 @@ namespace Aaru.DiscImages
                                 ImageNotSupportedException($"Found record with unknown compression type 0x{(ushort)record.compression:X4} at {stream.Position}");
 
                         AaruConsole.DebugWriteLine("Apridisk plugin",
-                                                  "Found {4} sector record at {0} for cylinder {1} head {2} sector {3}",
-                                                  stream.Position, record.cylinder, record.head, record.sector,
-                                                  record.compression == CompressType.Compressed
-                                                      ? "compressed"
-                                                      : "uncompressed");
+                                                   "Found {4} sector record at {0} for cylinder {1} head {2} sector {3}",
+                                                   stream.Position, record.cylinder, record.head, record.sector,
+                                                   record.compression == CompressType.Compressed ? "compressed"
+                                                       : "uncompressed");
 
-                        if(record.cylinder > totalCylinders) totalCylinders = record.cylinder;
-                        if(record.head     > totalHeads) totalHeads         = record.head;
-                        if(record.sector   > maxSector) maxSector           = record.sector;
+                        if(record.cylinder > totalCylinders)
+                            totalCylinders = record.cylinder;
 
-                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
+                        if(record.head > totalHeads)
+                            totalHeads = record.head;
+
+                        if(record.sector > maxSector)
+                            maxSector = record.sector;
+
+                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
+
                         break;
                     default:
                         throw new
@@ -115,10 +123,12 @@ namespace Aaru.DiscImages
             totalCylinders++;
             totalHeads++;
 
-            if(totalCylinders <= 0 || totalHeads <= 0)
+            if(totalCylinders <= 0 ||
+               totalHeads     <= 0)
                 throw new ImageNotSupportedException("No cylinders or heads found");
 
             sectorsData = new byte[totalCylinders][][][];
+
             // Total sectors per track
             uint[][] spts = new uint[totalCylinders][];
 
@@ -126,8 +136,8 @@ namespace Aaru.DiscImages
             imageInfo.Heads     = (byte)totalHeads;
 
             AaruConsole.DebugWriteLine("Apridisk plugin",
-                                      "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
-                                      totalCylinders, totalHeads, maxSector);
+                                       "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
+                                       totalCylinders, totalHeads, maxSector);
 
             // Create heads
             for(int i = 0; i < totalCylinders; i++)
@@ -135,7 +145,8 @@ namespace Aaru.DiscImages
                 sectorsData[i] = new byte[totalHeads][][];
                 spts[i]        = new uint[totalHeads];
 
-                for(int j = 0; j < totalHeads; j++) sectorsData[i][j] = new byte[maxSector + 1][];
+                for(int j = 0; j < totalHeads; j++)
+                    sectorsData[i][j] = new byte[maxSector + 1][];
             }
 
             imageInfo.SectorSize = uint.MaxValue;
@@ -144,6 +155,7 @@ namespace Aaru.DiscImages
 
             // Read sectors
             stream.Seek(signature.Length, SeekOrigin.Begin);
+
             while(stream.Position < stream.Length)
             {
                 byte[] recB = new byte[recordSize];
@@ -157,8 +169,9 @@ namespace Aaru.DiscImages
                     case RecordType.Deleted:
                     case RecordType.Comment:
                     case RecordType.Creator:
-                        stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
+                        stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
                         headersizes += record.headerSize + record.dataSize;
+
                         break;
                     case RecordType.Sector:
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
@@ -170,11 +183,12 @@ namespace Aaru.DiscImages
                         uint realLength = record.dataSize;
 
                         if(record.compression == CompressType.Compressed)
-                            realLength =
-                                Decompress(data, out sectorsData[record.cylinder][record.head][record.sector]);
-                        else sectorsData[record.cylinder][record.head][record.sector] = data;
+                            realLength = Decompress(data, out sectorsData[record.cylinder][record.head][record.sector]);
+                        else
+                            sectorsData[record.cylinder][record.head][record.sector] = data;
 
-                        if(realLength < imageInfo.SectorSize) imageInfo.SectorSize = realLength;
+                        if(realLength < imageInfo.SectorSize)
+                            imageInfo.SectorSize = realLength;
 
                         headersizes += record.headerSize + record.dataSize;
 
@@ -183,10 +197,11 @@ namespace Aaru.DiscImages
             }
 
             AaruConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} bytes per sector",
-                                      imageInfo.SectorSize);
+                                       imageInfo.SectorSize);
 
             // Count sectors per track
             uint spt = uint.MaxValue;
+
             for(ushort cyl = 0; cyl < imageInfo.Cylinders; cyl++)
             {
                 for(ushort head = 0; head < imageInfo.Heads; head++)
@@ -197,7 +212,7 @@ namespace Aaru.DiscImages
             imageInfo.SectorsPerTrack = spt;
 
             AaruConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track",
-                                      imageInfo.SectorsPerTrack);
+                                       imageInfo.SectorsPerTrack);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
                                                          (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
@@ -237,7 +252,8 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream buffer = new MemoryStream();
+            var buffer = new MemoryStream();
+
             for(uint i = 0; i < length; i++)
             {
                 byte[] sector = ReadSector(sectorAddress + i);

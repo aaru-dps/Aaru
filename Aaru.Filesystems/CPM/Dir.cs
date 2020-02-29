@@ -38,14 +38,17 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems.CPM
 {
-    partial class CPM
+    internal partial class CPM
     {
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(!string.IsNullOrEmpty(path) &&
+               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
             contents = new List<string>(dirList);
@@ -54,10 +57,9 @@ namespace Aaru.Filesystems.CPM
         }
 
         /// <summary>
-        ///     Checks that the given directory blocks follow the CP/M filesystem directory specification
-        ///     Corrupted directories will fail.
-        ///     FAT firectories will false positive if all files start with 0x05, and do not use full extentions, for example:
-        ///     "σAFILE.GZ" (using code page 437)
+        ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
+        ///     directories will fail. FAT firectories will false positive if all files start with 0x05, and do not use full
+        ///     extentions, for example: "σAFILE.GZ" (using code page 437)
         /// </summary>
         /// <returns>False if the directory does not follow the directory specification</returns>
         /// <param name="directory">Directory blocks.</param>
@@ -65,7 +67,8 @@ namespace Aaru.Filesystems.CPM
         {
             try
             {
-                if(directory == null) return false;
+                if(directory == null)
+                    return false;
 
                 int fileCount = 0;
 
@@ -76,30 +79,35 @@ namespace Aaru.Filesystems.CPM
                     if((entry.statusUser & 0x7F) < 0x20)
                     {
                         for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                            if(entry.filename[f] < 0x20 &&
+                               entry.filename[f] != 0x00)
                                 return false;
 
                         for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                            if(entry.extension[e] < 0x20 &&
+                               entry.extension[e] != 0x00)
                                 return false;
 
-                        if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
+                        if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
+                            fileCount++;
                     }
                     else if(entry.statusUser == 0x20)
                     {
                         for(int f = 0; f < 8; f++)
-                            if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                            if(entry.filename[f] < 0x20 &&
+                               entry.filename[f] != 0x00)
                                 return false;
 
                         for(int e = 0; e < 3; e++)
-                            if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                            if(entry.extension[e] < 0x20 &&
+                               entry.extension[e] != 0x00)
                                 return false;
 
                         label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
                         labelCreationDate = new byte[4];
                         labelUpdateDate   = new byte[4];
                         Array.Copy(directory, off + 24, labelCreationDate, 0, 4);
-                        Array.Copy(directory, off + 28, labelUpdateDate,   0, 4);
+                        Array.Copy(directory, off + 28, labelUpdateDate, 0, 4);
                     }
                     else if(entry.statusUser == 0x21)
                         if(directory[off + 1] == 0x00)
@@ -110,7 +118,10 @@ namespace Aaru.Filesystems.CPM
 
                 return fileCount > 0;
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

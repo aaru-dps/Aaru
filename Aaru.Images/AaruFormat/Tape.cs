@@ -51,6 +51,7 @@ namespace Aaru.DiscImages
             }
 
             Files.Add(file);
+
             return true;
         }
 
@@ -63,6 +64,7 @@ namespace Aaru.DiscImages
             }
 
             TapePartitions.Add(partition);
+
             return true;
         }
 
@@ -70,6 +72,7 @@ namespace Aaru.DiscImages
         {
             Files          = new List<TapeFile>();
             TapePartitions = new List<TapePartition>();
+
             return IsTape = true;
         }
     }

@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using Claunia.Encoding;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
+using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
@@ -44,31 +44,33 @@ namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        /// <summary>
-        ///     Mounts an Apple DOS filesystem
-        /// </summary>
-        public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options,     string    @namespace)
+        /// <summary>Mounts an Apple DOS filesystem</summary>
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                           Dictionary<string, string> options, string @namespace)
         {
             device   = imagePlugin;
             start    = partition.Start;
             Encoding = encoding ?? new Apple2();
 
-            if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
+            if(device.Info.Sectors != 455 &&
+               device.Info.Sectors != 560)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
+
                 return Errno.InOutError;
             }
 
             if(start > 0)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
+
                 return Errno.InOutError;
             }
 
             if(device.Info.SectorSize != 256)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
+
                 return Errno.InOutError;
             }
 
@@ -83,41 +85,46 @@ namespace Aaru.Filesystems.AppleDOS
             usedSectors       = 1;
 
             Errno error = ReadCatalog();
+
             if(error != Errno.NoError)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
+
                 return error;
             }
 
             error = CacheAllFiles();
+
             if(error != Errno.NoError)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
+
                 return error;
             }
 
             // Create XML metadata for mounted filesystem
             XmlFsType = new FileSystemType
             {
-                Bootable              = true,
-                Clusters              = device.Info.Sectors,
-                ClusterSize           = vtoc.bytesPerSector,
-                Files                 = (ulong)catalogCache.Count,
-                FilesSpecified        = true,
-                FreeClustersSpecified = true,
-                Type                  = "Apple DOS"
+                Bootable    = true, Clusters = device.Info.Sectors,
+                ClusterSize = vtoc.bytesPerSector,
+                Files       = (ulong)catalogCache.Count, FilesSpecified = true, FreeClustersSpecified = true,
+                Type        = "Apple DOS"
             };
+
             XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
 
-            if(options == null) options = GetDefaultOptions();
-            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
+            if(options == null)
+                options = GetDefaultOptions();
+
+            if(options.TryGetValue("debug", out string debugString))
+                bool.TryParse(debugString, out debug);
+
             mounted = true;
+
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Umounts this DOS filesystem
-        /// </summary>
+        /// <summary>Umounts this DOS filesystem</summary>
         public Errno Unmount()
         {
             mounted       = false;
@@ -129,20 +136,16 @@ namespace Aaru.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Gets information about the mounted volume.
-        /// </summary>
+        /// <summary>Gets information about the mounted volume.</summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = new FileSystemInfo
             {
-                Blocks         = device.Info.Sectors,
-                FilenameLength = 30,
-                Files          = (ulong)catalogCache.Count,
-                PluginId       = Id,
-                Type           = "Apple DOS"
+                Blocks = device.Info.Sectors, FilenameLength = 30, Files = (ulong)catalogCache.Count, PluginId = Id,
+                Type   = "Apple DOS"
             };
+
             stat.FreeFiles  = totalFileEntries - stat.Files;
             stat.FreeBlocks = stat.Blocks      - usedSectors;
 

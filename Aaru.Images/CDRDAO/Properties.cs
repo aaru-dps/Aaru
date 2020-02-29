@@ -57,36 +57,36 @@ namespace Aaru.DiscImages
 
                 foreach(CdrdaoTrack cdrTrack in discimage.Tracks)
                 {
-                    Track aaruTrack = new Track
+                    var aaruTrack = new Track
                     {
-                        Indexes                = cdrTrack.Indexes,
-                        TrackDescription       = cdrTrack.Title,
-                        TrackStartSector       = cdrTrack.StartSector,
-                        TrackPregap            = cdrTrack.Pregap,
-                        TrackSession           = 1,
+                        Indexes                = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
+                        TrackStartSector       = cdrTrack.StartSector, TrackPregap  = cdrTrack.Pregap, TrackSession = 1,
                         TrackSequence          = cdrTrack.Sequence,
                         TrackType              = CdrdaoTrackTypeToTrackType(cdrTrack.Tracktype),
                         TrackFilter            = cdrTrack.Trackfile.Datafilter,
                         TrackFile              = cdrTrack.Trackfile.Datafilter.GetFilename(),
-                        TrackFileOffset        = cdrTrack.Trackfile.Offset,
-                        TrackFileType          = cdrTrack.Trackfile.Filetype,
+                        TrackFileOffset        = cdrTrack.Trackfile.Offset, TrackFileType = cdrTrack.Trackfile.Filetype,
                         TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector    = CdrdaoTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
                     };
 
-                    aaruTrack.TrackEndSector = aaruTrack.TrackStartSector + cdrTrack.Sectors - 1;
+                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
+
                     if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
                         cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);
+
                     if(cdrTrack.Subchannel)
                     {
                         aaruTrack.TrackSubchannelType = cdrTrack.Packedsubchannel
-                                                           ? TrackSubchannelType.PackedInterleaved
-                                                           : TrackSubchannelType.RawInterleaved;
+                                                            ? TrackSubchannelType.PackedInterleaved
+                                                            : TrackSubchannelType.RawInterleaved;
+
                         aaruTrack.TrackSubchannelFilter = cdrTrack.Trackfile.Datafilter;
                         aaruTrack.TrackSubchannelFile   = cdrTrack.Trackfile.Datafilter.GetFilename();
                         aaruTrack.TrackSubchannelOffset = cdrTrack.Trackfile.Offset;
                     }
-                    else aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
+                    else
+                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                     tracks.Add(aaruTrack);
                 }
@@ -94,34 +94,41 @@ namespace Aaru.DiscImages
                 return tracks;
             }
         }
+
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
+
         // TODO: Decode CD-Text to text
-        public IEnumerable<MediaTagType> SupportedMediaTags => new[] {MediaTagType.CD_MCN};
-        public IEnumerable<SectorTagType> SupportedSectorTags =>
-            new[]
-            {
-                SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-                SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel,
-                SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags,
-                SectorTagType.CdTrackIsrc
-            };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
-                MediaType.CDRW, MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.MEGACD,
-                MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD,
-                MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX,
-                MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
-                MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor,
-                MediaType.VideoNowXp
-            };
-        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new[] {("separate", typeof(bool), "Write each track to a separate file.", (object)false)};
-        public IEnumerable<string> KnownExtensions => new[] {".toc"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+        public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+        {
+            MediaTagType.CD_MCN
+        };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+        {
+            SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
+            SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel,
+            SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags,
+            SectorTagType.CdTrackIsrc
+        };
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+            MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+            MediaType.CDV, MediaType.DDCD, MediaType.DDCDR, MediaType.DDCDRW, MediaType.MEGACD, MediaType.PS1CD,
+            MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD, MediaType.ThreeDO,
+            MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32,
+            MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
+            MediaType.VideoNowColor, MediaType.VideoNowXp
+        };
+        public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
+        {
+            ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
+        };
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".toc"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

@@ -46,9 +46,21 @@ namespace Aaru.Tests.Filters
         };
         readonly string location;
 
-        public BZip2()
+        public BZip2() => location = Path.Combine(Consts.TestFilesRoot, "filters", "bzip2.bz2");
+
+        [Test]
+        public void CheckContents()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "filters", "bzip2.bz2");
+            IFilter filter = new Aaru.Filters.BZip2();
+            filter.Open(location);
+            Stream str  = filter.GetDataForkStream();
+            byte[] data = new byte[1048576];
+            str.Read(data, 0, 1048576);
+            str.Close();
+            str.Dispose();
+            filter.Close();
+            Md5Context.Data(data, out byte[] result);
+            Assert.AreEqual(ExpectedContents, result);
         }
 
         [Test]
@@ -70,28 +82,13 @@ namespace Aaru.Tests.Filters
         {
             IFilter filter = new Aaru.Filters.BZip2();
             filter.Open(location);
-            Assert.AreEqual(true,    filter.IsOpened());
+            Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(1048576, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(0,     filter.GetResourceForkLength());
-            Assert.AreEqual(null,  filter.GetResourceForkStream());
+            Assert.AreEqual(0, filter.GetResourceForkLength());
+            Assert.AreEqual(null, filter.GetResourceForkStream());
             Assert.AreEqual(false, filter.HasResourceFork());
             filter.Close();
-        }
-
-        [Test]
-        public void CheckContents()
-        {
-            IFilter filter = new Aaru.Filters.BZip2();
-            filter.Open(location);
-            Stream str  = filter.GetDataForkStream();
-            byte[] data = new byte[1048576];
-            str.Read(data, 0, 1048576);
-            str.Close();
-            str.Dispose();
-            filter.Close();
-            Md5Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedContents, result);
         }
     }
 }

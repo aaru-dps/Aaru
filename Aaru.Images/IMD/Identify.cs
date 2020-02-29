@@ -43,12 +43,14 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < 31) return false;
+
+            if(stream.Length < 31)
+                return false;
 
             byte[] hdr = new byte[31];
             stream.Read(hdr, 0, 31);
 
-            Regex hr = new Regex(REGEX_HEADER);
+            var   hr = new Regex(REGEX_HEADER);
             Match hm = hr.Match(Encoding.ASCII.GetString(hdr));
 
             return hm.Success;

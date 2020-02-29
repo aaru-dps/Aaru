@@ -48,6 +48,7 @@ namespace Aaru.DiscImages
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -56,25 +57,29 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)(512 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Seek((long)(512 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -83,37 +88,43 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)(512 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            writingStream.Seek((long)(512 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -122,6 +133,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -130,9 +142,9 @@ namespace Aaru.DiscImages
                 byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(imageInfo.Comments);
                 header.commentOffset = (ushort)Marshal.SizeOf<SaveDskFHeader>();
                 writingStream.Seek(header.commentOffset, SeekOrigin.Begin);
+
                 writingStream.Write(commentsBytes, 0,
-                                    commentsBytes.Length >= 512 - header.commentOffset
-                                        ? 512 - header.commentOffset
+                                    commentsBytes.Length >= 512 - header.commentOffset ? 512 - header.commentOffset
                                         : commentsBytes.Length);
             }
 
@@ -149,12 +161,14 @@ namespace Aaru.DiscImages
             writingStream.Seek(0, SeekOrigin.Begin);
 
             int b;
+
             do
             {
                 b = writingStream.ReadByte();
-                if(b >= 0) header.checksum += (uint)b;
-            }
-            while(b >= 0);
+
+                if(b >= 0)
+                    header.checksum += (uint)b;
+            } while(b >= 0);
 
             hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
             hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
@@ -170,42 +184,54 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
         public bool SetMetadata(ImageInfo metadata)
         {
             imageInfo.Comments = metadata.Comments;
+
             return true;
         }
 
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize == 0)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(sectors > ushort.MaxValue)
             {
                 ErrorMessage = "Too many sectors";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
@@ -214,17 +240,14 @@ namespace Aaru.DiscImages
 
             header = new SaveDskFHeader
             {
-                cylinders       = geometry.cylinders,
-                dataOffset      = 512,
-                heads           = geometry.heads,
-                magic           = SDF_MAGIC,
-                sectorsCopied   = (ushort)sectors,
-                sectorsPerTrack = geometry.sectorsPerTrack,
-                sectorSize      = (ushort)sectorSize
+                cylinders     = geometry.cylinders, dataOffset   = 512, heads = geometry.heads, magic = SDF_MAGIC,
+                sectorsCopied = (ushort)sectors, sectorsPerTrack = geometry.sectorsPerTrack,
+                sectorSize    = (ushort)sectorSize
             };
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
@@ -233,12 +256,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 

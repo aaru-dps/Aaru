@@ -69,7 +69,7 @@ namespace Aaru.Filesystems.AppleMFS
         // TODO: Implement Finder namespace (requires decoding Desktop database)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
-                { };
+                {};
 
         public Dictionary<string, string> Namespaces => null;
 

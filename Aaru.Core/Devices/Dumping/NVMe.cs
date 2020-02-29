@@ -30,17 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable InconsistentNaming
 
 namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {
-        public void NVMe()
-        {
-            StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
-        }
+        public void NVMe() => StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
     }
 }

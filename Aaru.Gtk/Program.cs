@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aaru.Gtk
 {
-    class Program
+    internal class Program
     {
         internal static bool                                  Verbose;
         internal static bool                                  Debug;
@@ -25,26 +25,30 @@ namespace Aaru.Gtk
             object[] attributes = typeof(Program).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
             AssemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
             attributes    = typeof(Program).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+
             AssemblyVersion =
                 Attribute.GetCustomAttribute(typeof(Program).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
+
             AssemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
             Settings.Settings.LoadSettings();
 
-            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
             // TODO: Update database on GUI
 
-            DicContext mctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            var mctx = AaruContext.Create(Settings.Settings.MasterDbPath);
             mctx.Database.Migrate();
             mctx.SaveChanges();
 
             Statistics.LoadStats();
-            if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
-                Task.Run(() => { Statistics.SubmitStats(); });
+
+            if(Settings.Settings.Current.Stats != null &&
+               Settings.Settings.Current.Stats.ShareStats)
+                Task.Run(Statistics.SubmitStats);
 
             foreach(string arg in args)
                 switch(arg.ToLowerInvariant())
@@ -52,10 +56,12 @@ namespace Aaru.Gtk
                     case "-v":
                     case "--verbose":
                         Verbose = true;
+
                         break;
                     case "-d":
                     case "--debug":
                         Debug = true;
+
                         break;
                 }
 

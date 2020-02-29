@@ -45,7 +45,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length % 256 != 0) return false;
+            if(stream.Length % 256 != 0)
+                return false;
 
             byte[] hdrB = new byte[256];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -62,7 +63,7 @@ namespace Aaru.DiscImages
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)(stream.Length / 256 - 1);
+            imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
             imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             imageInfo.SectorSize           = 256;
             imageInfo.Cylinders            = (uint)cylinders;
@@ -88,7 +89,7 @@ namespace Aaru.DiscImages
 
             Stream stream = t98ImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(256 + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(256 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 

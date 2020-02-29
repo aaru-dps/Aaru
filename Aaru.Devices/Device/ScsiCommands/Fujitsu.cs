@@ -38,8 +38,8 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash,   FujitsuDisplayModes mode, string firstHalf,
-                                   string     secondHalf,  uint timeout, out double          duration)
+        public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
+                                   string secondHalf, uint timeout, out double duration)
         {
             byte[] tmp;
             byte[] firstHalfBytes  = new byte[8];
@@ -66,15 +66,23 @@ namespace Aaru.Devices
                    !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                     displayLen = true;
                 else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
-                        ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes)) halfMsg = true;
+                        ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
+                    halfMsg = true;
 
             buffer[0] = (byte)((byte)mode << 5);
-            if(displayLen) buffer[0] += 0x10;
-            if(flash) buffer[0]      += 0x08;
-            if(halfMsg) buffer[0]    += 0x04;
+
+            if(displayLen)
+                buffer[0] += 0x10;
+
+            if(flash)
+                buffer[0] += 0x08;
+
+            if(halfMsg)
+                buffer[0] += 0x04;
+
             buffer[0] += 0x01; // Always ASCII
 
-            Array.Copy(firstHalfBytes,  0, buffer, 1, 8);
+            Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
             Array.Copy(secondHalfBytes, 0, buffer, 9, 8);
 
             cdb[0] = (byte)ScsiCommands.FujitsuDisplay;
@@ -82,6 +90,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);

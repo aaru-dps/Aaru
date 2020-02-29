@@ -183,8 +183,8 @@ namespace Aaru.Core.Devices.Report
                                                 readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadSectorsData = readBuf;
 
@@ -195,8 +195,8 @@ namespace Aaru.Core.Devices.Report
                                               readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadSectorsRetryData = readBuf;
 
@@ -207,8 +207,8 @@ namespace Aaru.Core.Devices.Report
                                             readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaData = readBuf;
 
@@ -219,8 +219,8 @@ namespace Aaru.Core.Devices.Report
                                                  readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaRetryData = readBuf;
 
@@ -229,7 +229,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
                 AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                          errorChs.Status, errorChs.Error);
+                                           errorChs.Status, errorChs.Error);
 
                 AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
@@ -238,8 +238,8 @@ namespace Aaru.Core.Devices.Report
                                             readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLbaData = readBuf;
 
@@ -250,8 +250,8 @@ namespace Aaru.Core.Devices.Report
                                                  readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadRetryLbaData = readBuf;
 
@@ -262,8 +262,8 @@ namespace Aaru.Core.Devices.Report
                                                readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaLbaData = readBuf;
 
@@ -274,8 +274,8 @@ namespace Aaru.Core.Devices.Report
                                                     readBuf.Length                     > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaRetryLbaData = readBuf;
 
@@ -284,7 +284,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
                 AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                          errorChs.Status, errorChs.Error);
+                                           errorChs.Status, errorChs.Error);
 
                 AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
@@ -293,8 +293,8 @@ namespace Aaru.Core.Devices.Report
                                               readBuf.Length                       > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLba48Data = readBuf;
 
@@ -305,8 +305,8 @@ namespace Aaru.Core.Devices.Report
                                                  errorLba48.Error                     == 0    && readBuf.Length > 0;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaLba48Data = readBuf;
 
@@ -340,8 +340,8 @@ namespace Aaru.Core.Devices.Report
                                              BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongData = readBuf;
 
@@ -356,8 +356,8 @@ namespace Aaru.Core.Devices.Report
                                                   checkCorrectRead;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongRetryData = readBuf;
 
@@ -371,8 +371,8 @@ namespace Aaru.Core.Devices.Report
                                                 BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongLbaData = readBuf;
 
@@ -386,8 +386,8 @@ namespace Aaru.Core.Devices.Report
                                                      BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
                 AaruConsole.DebugWriteLine("ATA Report",
-                                          "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
-                                          errorChs.Status, errorChs.Error, readBuf.Length);
+                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
+                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongRetryLbaData = readBuf;
             }
@@ -523,7 +523,7 @@ namespace Aaru.Core.Devices.Report
                                                readBuf.Length                     > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadSectorsData = readBuf;
 
@@ -534,7 +534,7 @@ namespace Aaru.Core.Devices.Report
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadSectorsRetryData = readBuf;
 
@@ -545,7 +545,7 @@ namespace Aaru.Core.Devices.Report
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadDmaData = readBuf;
 
@@ -556,7 +556,7 @@ namespace Aaru.Core.Devices.Report
                                                 readBuf.Length                     > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadDmaRetryData = readBuf;
 
@@ -565,7 +565,7 @@ namespace Aaru.Core.Devices.Report
             capabilities.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                      errorChs.Status, errorChs.Error);
+                                       errorChs.Status, errorChs.Error);
 
             AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
             sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
@@ -574,7 +574,7 @@ namespace Aaru.Core.Devices.Report
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLbaData = readBuf;
 
@@ -585,7 +585,7 @@ namespace Aaru.Core.Devices.Report
                                                 readBuf.Length                     > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadRetryLbaData = readBuf;
 
@@ -596,7 +596,7 @@ namespace Aaru.Core.Devices.Report
                                               readBuf.Length                     > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadDmaLbaData = readBuf;
 
@@ -607,7 +607,7 @@ namespace Aaru.Core.Devices.Report
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadDmaRetryLbaData = readBuf;
 
@@ -616,7 +616,7 @@ namespace Aaru.Core.Devices.Report
             capabilities.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                      errorLba.Status, errorLba.Error);
+                                       errorLba.Status, errorLba.Error);
 
             AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
             sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
@@ -625,7 +625,7 @@ namespace Aaru.Core.Devices.Report
                                              readBuf.Length                       > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
+                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
 
             capabilities.ReadLba48Data = readBuf;
 
@@ -636,7 +636,7 @@ namespace Aaru.Core.Devices.Report
                                                 readBuf.Length                       > 0;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
+                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
 
             capabilities.ReadDmaLba48Data = readBuf;
 
@@ -671,7 +671,7 @@ namespace Aaru.Core.Devices.Report
                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadLongData = readBuf;
 
@@ -686,7 +686,7 @@ namespace Aaru.Core.Devices.Report
                                                  checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorChs.Status, errorChs.Error, readBuf.Length);
+                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadLongRetryData = readBuf;
 
@@ -700,7 +700,7 @@ namespace Aaru.Core.Devices.Report
                                                BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLongLbaData = readBuf;
 
@@ -715,7 +715,7 @@ namespace Aaru.Core.Devices.Report
                                                     checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                      sense, errorLba.Status, errorLba.Error, readBuf.Length);
+                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLongRetryLbaData = readBuf;
 

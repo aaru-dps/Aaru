@@ -50,14 +50,11 @@ namespace Aaru.Gui.Tabs
         byte[] SpareAreaInformation;
         byte[] TrackResources;
 
-        public tabBlurayInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabBlurayInfo() => XamlReader.Load(this);
 
         internal void LoadData(byte[] blurayDiscInformation, byte[] blurayBurstCuttingArea, byte[] blurayDds,
                                byte[] blurayCartridgeStatus, byte[] bluraySpareAreaInformation,
-                               byte[] blurayPowResources,    byte[] blurayTrackResources, byte[] blurayRawDfl,
+                               byte[] blurayPowResources, byte[] blurayTrackResources, byte[] blurayRawDfl,
                                byte[] blurayPac)
         {
             DiscInformation      = blurayDiscInformation;
@@ -132,62 +129,47 @@ namespace Aaru.Gui.Tabs
 
         void SaveElement(byte[] data)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(data, 0, data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveBlurayDiscInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(DiscInformation);
-        }
+        protected void OnBtnSaveBlurayDiscInformationClick(object sender, EventArgs e) => SaveElement(DiscInformation);
 
-        protected void OnBtnSaveBlurayBurstCuttingAreaClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveBlurayBurstCuttingAreaClick(object sender, EventArgs e) =>
             SaveElement(BurstCuttingArea);
-        }
 
-        protected void OnBtnSaveBlurayDdsClick(object sender, EventArgs e)
-        {
-            SaveElement(Dds);
-        }
+        protected void OnBtnSaveBlurayDdsClick(object sender, EventArgs e) => SaveElement(Dds);
 
-        protected void OnBtnSaveBlurayCartridgeStatusClick(object sender, EventArgs e)
-        {
-            SaveElement(CartridgeStatus);
-        }
+        protected void OnBtnSaveBlurayCartridgeStatusClick(object sender, EventArgs e) => SaveElement(CartridgeStatus);
 
-        protected void OnBtnSaveBluraySpareAreaInformationClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveBluraySpareAreaInformationClick(object sender, EventArgs e) =>
             SaveElement(SpareAreaInformation);
-        }
 
-        protected void OnBtnSaveBlurayPowResourcesClick(object sender, EventArgs e)
-        {
-            SaveElement(PowResources);
-        }
+        protected void OnBtnSaveBlurayPowResourcesClick(object sender, EventArgs e) => SaveElement(PowResources);
 
-        protected void OnBtnSaveBlurayTrackResourcesClick(object sender, EventArgs e)
-        {
-            SaveElement(TrackResources);
-        }
+        protected void OnBtnSaveBlurayTrackResourcesClick(object sender, EventArgs e) => SaveElement(TrackResources);
 
-        protected void OnBtnSaveBlurayRawDflClick(object sender, EventArgs e)
-        {
-            SaveElement(RawDfl);
-        }
+        protected void OnBtnSaveBlurayRawDflClick(object sender, EventArgs e) => SaveElement(RawDfl);
 
-        protected void OnBtnSaveBlurayPacClick(object sender, EventArgs e)
-        {
-            SaveElement(Pac);
-        }
+        protected void OnBtnSaveBlurayPacClick(object sender, EventArgs e) => SaveElement(Pac);
 
         #region XAML controls
         #pragma warning disable 169

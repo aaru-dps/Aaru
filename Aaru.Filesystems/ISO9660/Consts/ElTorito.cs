@@ -42,37 +42,27 @@ namespace Aaru.Filesystems.ISO9660
 
         enum ElToritoIndicator : byte
         {
-            Header      = 1,
-            Extension   = 0x44,
-            Bootable    = 0x88,
-            MoreHeaders = 0x90,
-            LastHeader  = 0x91
+            Header      = 1, Extension     = 0x44, Bootable = 0x88,
+            MoreHeaders = 0x90, LastHeader = 0x91
         }
 
         enum ElToritoPlatform : byte
         {
-            x86       = 0,
-            PowerPC   = 1,
-            Macintosh = 2,
-            EFI       = 0xef
+            x86 = 0, PowerPC = 1, Macintosh = 2,
+            EFI = 0xef
         }
 
         enum ElToritoEmulation : byte
         {
-            None  = 0,
-            Md2hd = 1,
-            Mf2hd = 2,
-            Mf2ed = 3,
-            Hdd   = 4
+            None  = 0, Md2hd = 1, Mf2hd = 2,
+            Mf2ed = 3, Hdd   = 4
         }
 
         [Flags]
         enum ElToritoFlags : byte
         {
-            Reserved  = 0x10,
-            Continued = 0x20,
-            ATAPI     = 0x40,
-            SCSI      = 0x08
+            Reserved = 0x10, Continued = 0x20, ATAPI = 0x40,
+            SCSI     = 0x08
         }
     }
 }

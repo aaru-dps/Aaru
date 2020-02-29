@@ -36,9 +36,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Sends the SyQuest READ (6) command
-        /// </summary>
+        /// <summary>Sends the SyQuest READ (6) command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -50,9 +48,7 @@ namespace Aaru.Devices
                                  out double duration) =>
             SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, false, timeout, out duration);
 
-        /// <summary>
-        ///     Sends the SyQuest READ LONG (6) command
-        /// </summary>
+        /// <summary>Sends the SyQuest READ LONG (6) command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -64,9 +60,7 @@ namespace Aaru.Devices
                                      out double duration) =>
             SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
 
-        /// <summary>
-        ///     Sends the SyQuest READ (6) command
-        /// </summary>
+        /// <summary>Sends the SyQuest READ (6) command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -77,9 +71,8 @@ namespace Aaru.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead6(out byte[] buffer,         out byte[] senseBuffer, uint lba,      uint blockSize,
-                                 byte       transferLength, bool       inhibitDma,  bool readLong, uint timeout,
-                                 out double duration)
+        public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                 byte transferLength, bool inhibitDma, bool readLong, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[6];
@@ -90,17 +83,23 @@ namespace Aaru.Devices
             cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
             cdb[4] = transferLength;
-            if(inhibitDma) cdb[5] += 0x80;
-            if(readLong) cdb[5]   += 0x40;
 
-            if(!inhibitDma && !readLong)
+            if(inhibitDma)
+                cdb[5] += 0x80;
+
+            if(readLong)
+                cdb[5] += 0x40;
+
+            if(!inhibitDma &&
+               !readLong)
                 buffer = transferLength == 0 ? new byte[256 * blockSize] : new byte[transferLength * blockSize];
             else if(readLong)
             {
                 buffer = new byte[blockSize];
                 cdb[4] = 1;
             }
-            else buffer = new byte[0];
+            else
+                buffer = new byte[0];
 
             if(!inhibitDma)
                 LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -116,9 +115,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Requests the usage, seek and error counters, and resets them
-        /// </summary>
+        /// <summary>Requests the usage, seek and error counters, and resets them</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -127,9 +124,7 @@ namespace Aaru.Devices
                                             out double duration) =>
             AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
 
-        /// <summary>
-        ///     Sends the SyQuest READ LONG (10) command
-        /// </summary>
+        /// <summary>Sends the SyQuest READ LONG (10) command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -141,9 +136,7 @@ namespace Aaru.Devices
                                       out double duration) =>
             SyQuestRead10(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
 
-        /// <summary>
-        ///     Sends the SyQuest READ (10) command
-        /// </summary>
+        /// <summary>Sends the SyQuest READ (10) command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -154,8 +147,8 @@ namespace Aaru.Devices
         /// <param name="readLong">If set to <c>true</c> drive will return ECC bytes and disable error detection.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool SyQuestRead10(out byte[] buffer,         out byte[] senseBuffer, uint lba,      uint blockSize,
-                                  ushort     transferLength, bool       inhibitDma,  bool readLong, uint timeout,
+        public bool SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                  ushort transferLength, bool inhibitDma, bool readLong, uint timeout,
                                   out double duration)
         {
             senseBuffer = new byte[32];
@@ -169,16 +162,23 @@ namespace Aaru.Devices
             cdb[5] = (byte)(lba & 0xFF);
             cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
             cdb[8] = (byte)(transferLength & 0xFF);
-            if(inhibitDma) cdb[9] += 0x80;
-            if(readLong) cdb[9]   += 0x40;
 
-            if(!inhibitDma && !readLong) buffer = new byte[transferLength * blockSize];
+            if(inhibitDma)
+                cdb[9] += 0x80;
+
+            if(readLong)
+                cdb[9] += 0x40;
+
+            if(!inhibitDma &&
+               !readLong)
+                buffer = new byte[transferLength * blockSize];
             else if(readLong)
             {
                 buffer = new byte[blockSize];
                 cdb[4] = 1;
             }
-            else buffer = new byte[0];
+            else
+                buffer = new byte[0];
 
             if(!inhibitDma)
                 LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
@@ -186,6 +186,7 @@ namespace Aaru.Devices
             else
                 LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                             out sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (10) took {0} ms.", duration);

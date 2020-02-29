@@ -41,26 +41,32 @@ namespace Aaru.DiscImages
 {
     public partial class CisCopy
     {
-        public string                     Name                => "CisCopy Disk Image (DC-File)";
-        public Guid                       Id                  => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
-        public string                     Format              => "CisCopy";
-        public string                     Author              => "Natalia Portillo";
-        public ImageInfo                  Info                => imageInfo;
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
+        public string                 Name         => "CisCopy Disk Image (DC-File)";
+        public Guid                   Id           => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
+        public string                 Format       => "CisCopy";
+        public string                 Author       => "Natalia Portillo";
+        public ImageInfo              Info         => imageInfo;
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+
         // TODO: Test with real hardware to see real supported media
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
-                MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
-            };
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_9,
+            MediaType.DOS_525_HD, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".dcf"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".dcf"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

@@ -49,24 +49,24 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
             pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}",
-                                      StringHandlers.CToString(pHdr.magic));
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}",      pHdr.version);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}",        pHdr.heads);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}",    pHdr.cylinders);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", pHdr.version);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}", pHdr.heads);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}", pHdr.cylinders);
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", pHdr.cluster_size);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}",  pHdr.bat_entries);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}",      pHdr.sectors);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}",  pHdr.in_use);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}",     pHdr.data_off);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}",        pHdr.flags);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}",      pHdr.ext_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}", pHdr.bat_entries);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}", pHdr.sectors);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}", pHdr.in_use);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}", pHdr.data_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", pHdr.flags);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", pHdr.ext_off);
 
             extended = parallelsExtMagic.SequenceEqual(pHdr.magic);
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
@@ -75,13 +75,16 @@ namespace Aaru.DiscImages
             bat = new uint[pHdr.bat_entries];
             byte[] batB = new byte[pHdr.bat_entries * 4];
             stream.Read(batB, 0, batB.Length);
-            for(int i = 0; i < bat.Length; i++) bat[i] = BitConverter.ToUInt32(batB, i * 4);
+
+            for(int i = 0; i < bat.Length; i++)
+                bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
             clusterBytes = pHdr.cluster_size * 512;
-            if(pHdr.data_off > 0) dataOffset = pHdr.data_off * 512;
+
+            if(pHdr.data_off > 0)
+                dataOffset = pHdr.data_off * 512;
             else
-                dataOffset =
-                    (stream.Position / clusterBytes + stream.Position % clusterBytes) * clusterBytes;
+                dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -109,9 +112,11 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(empty) return new byte[512];
+            if(empty)
+                return new byte[512];
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+                return sector;
 
             ulong index  = sectorAddress / pHdr.cluster_size;
             ulong secOff = sectorAddress % pHdr.cluster_size;
@@ -119,10 +124,13 @@ namespace Aaru.DiscImages
             uint  batOff = bat[index];
             ulong imageOff;
 
-            if(batOff == 0) return new byte[512];
+            if(batOff == 0)
+                return new byte[512];
 
-            if(extended) imageOff = batOff * clusterBytes;
-            else imageOff         = batOff * 512;
+            if(extended)
+                imageOff = batOff * clusterBytes;
+            else
+                imageOff = batOff * 512;
 
             byte[] cluster = new byte[clusterBytes];
             imageStream.Seek((long)imageOff, SeekOrigin.Begin);
@@ -130,7 +138,8 @@ namespace Aaru.DiscImages
             sector = new byte[512];
             Array.Copy(cluster, (int)(secOff * 512), sector, 0, 512);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS)
+                sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -146,9 +155,10 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            if(empty) return new byte[512 * length];
+            if(empty)
+                return new byte[512 * length];
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {

@@ -50,42 +50,57 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<D88Header>()) return false;
+            // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+            var shiftjis = Encoding.GetEncoding("shift_jis");
+
+            if(stream.Length < Marshal.SizeOf<D88Header>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<D88Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
             D88Header d88Hdr = Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                      StringHandlers.CToString(d88Hdr.name, shiftjis));
+                                       StringHandlers.CToString(d88Hdr.name, shiftjis));
+
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                      d88Hdr.reserved.SequenceEqual(reservedEmpty));
+                                       d88Hdr.reserved.SequenceEqual(reservedEmpty));
+
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
+
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
-                                      (byte)d88Hdr.disk_type);
+                                       (byte)d88Hdr.disk_type);
+
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
 
-            if(d88Hdr.disk_size != stream.Length) return false;
+            if(d88Hdr.disk_size != stream.Length)
+                return false;
 
-            if(d88Hdr.disk_type != DiskType.D2 && d88Hdr.disk_type != DiskType.Dd2 &&
-               d88Hdr.disk_type != DiskType.Hd2) return false;
+            if(d88Hdr.disk_type != DiskType.D2  &&
+               d88Hdr.disk_type != DiskType.Dd2 &&
+               d88Hdr.disk_type != DiskType.Hd2)
+                return false;
 
-            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty)) return false;
+            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty))
+                return false;
 
             int trkCounter = 0;
+
             foreach(int t in d88Hdr.track_table)
             {
-                if(t > 0) trkCounter++;
+                if(t > 0)
+                    trkCounter++;
 
-                if(t < 0 || t > stream.Length) return false;
+                if(t < 0 ||
+                   t > stream.Length)
+                    return false;
             }
 
             AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
 
-            if(trkCounter == 0) return false;
+            if(trkCounter == 0)
+                return false;
 
             hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
             stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
@@ -93,14 +108,14 @@ namespace Aaru.DiscImages
 
             SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}",            sechdr.r);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}",            sechdr.n);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}",          sechdr.spt);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}",      sechdr.density);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}", sechdr.c);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}", sechdr.h);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}", sechdr.r);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}", sechdr.n);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}", sechdr.spt);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}", sechdr.density);
             AaruConsole.DebugWriteLine("D88 plugin", "sechdr.deleted_mark = {0}", sechdr.deleted_mark);
-            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}",       sechdr.status);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}", sechdr.status);
             AaruConsole.DebugWriteLine("D88 plugin", "sechdr.size_of_data = {0}", sechdr.size_of_data);
 
             short             spt      = sechdr.spt;
@@ -116,16 +131,19 @@ namespace Aaru.DiscImages
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-                if(sechdr.spt != spt || sechdr.n != bps)
+                if(sechdr.spt != spt ||
+                   sechdr.n   != bps)
                 {
                     AaruConsole.DebugWriteLine("D88 plugin",
-                                              "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
-                                              sechdr.spt, spt, sechdr.n, bps, i, 0);
+                                               "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
+                                               sechdr.spt, spt, sechdr.n, bps, i, 0);
+
                     allEqual = false;
                 }
 
                 short  maxJ = sechdr.spt;
                 byte[] secB;
+
                 for(short j = 1; j < maxJ; j++)
                 {
                     secB = new byte[sechdr.size_of_data];
@@ -135,11 +153,14 @@ namespace Aaru.DiscImages
 
                     sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-                    if(sechdr.spt == spt && sechdr.n == bps) continue;
+                    if(sechdr.spt == spt &&
+                       sechdr.n   == bps)
+                        continue;
 
                     AaruConsole.DebugWriteLine("D88 plugin",
-                                              "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
-                                              sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
+                                               "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
+                                               sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
+
                     allEqual = false;
                 }
 
@@ -147,29 +168,38 @@ namespace Aaru.DiscImages
                 stream.Read(secB, 0, secB.Length);
                 sectors.Add(sechdr.r, secB);
 
-                foreach(KeyValuePair<byte, byte[]> kvp in sectors) sectorsData.Add(kvp.Value);
+                foreach(KeyValuePair<byte, byte[]> kvp in sectors)
+                    sectorsData.Add(kvp.Value);
             }
 
             AaruConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
 
             imageInfo.MediaType = MediaType.Unknown;
+
             if(allEqual)
-                if(trkCounter == 154 && spt == 26 && bps == IBMSectorSizeCode.EighthKilo)
+                if(trkCounter == 154 &&
+                   spt        == 26  &&
+                   bps        == IBMSectorSizeCode.EighthKilo)
                     imageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
                     switch(trkCounter)
                     {
                         case 80 when spt == 16:
                             imageInfo.MediaType = MediaType.NEC_525_SS;
+
                             break;
                         case 154 when spt == 26:
                             imageInfo.MediaType = MediaType.NEC_8_DD;
+
                             break;
                         case 160 when spt == 16:
                             imageInfo.MediaType = MediaType.NEC_525_DS;
+
                             break;
                     }
-                else if(trkCounter == 154 && spt == 8 && bps == IBMSectorSizeCode.Kilo)
+                else if(trkCounter == 154 &&
+                        spt        == 8   &&
+                        bps        == IBMSectorSizeCode.Kilo)
                     imageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
                     switch(d88Hdr.track_table.Length)
@@ -180,9 +210,11 @@ namespace Aaru.DiscImages
                             {
                                 case 8:
                                     imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+
                                     break;
                                 case 9:
                                     imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+
                                     break;
                             }
                         }
@@ -194,9 +226,11 @@ namespace Aaru.DiscImages
                             {
                                 case 8:
                                     imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+
                                     break;
                                 case 9:
                                     imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+
                                     break;
                             }
                         }
@@ -208,22 +242,28 @@ namespace Aaru.DiscImages
                             {
                                 case 15:
                                     imageInfo.MediaType = MediaType.NEC_35_HD_15;
+
                                     break;
                                 case 9:
                                     imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+
                                     break;
                                 case 18:
                                     imageInfo.MediaType = MediaType.DOS_35_HD;
+
                                     break;
                                 case 36:
                                     imageInfo.MediaType = MediaType.DOS_35_ED;
+
                                     break;
                             }
                         }
 
                             break;
                         case 480:
-                            if(spt == 38) imageInfo.MediaType = MediaType.NEC_35_TD;
+                            if(spt == 38)
+                                imageInfo.MediaType = MediaType.NEC_35_TD;
+
                             break;
                     }
 
@@ -244,67 +284,80 @@ namespace Aaru.DiscImages
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case MediaType.NEC_8_SD:
                 case MediaType.NEC_8_DD:
                     imageInfo.Cylinders       = 77;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 26;
+
                     break;
                 case MediaType.NEC_525_DS:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case MediaType.NEC_525_HD:
                     imageInfo.Cylinders       = 77;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 8;
+
                     break;
                 case MediaType.DOS_525_SS_DD_8:
                     imageInfo.Cylinders       = 40;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 8;
+
                     break;
                 case MediaType.DOS_525_SS_DD_9:
                     imageInfo.Cylinders       = 40;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case MediaType.DOS_525_DS_DD_8:
                     imageInfo.Cylinders       = 40;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 8;
+
                     break;
                 case MediaType.DOS_525_DS_DD_9:
                     imageInfo.Cylinders       = 40;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case MediaType.NEC_35_HD_15:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 15;
+
                     break;
                 case MediaType.DOS_35_DS_DD_9:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case MediaType.DOS_35_HD:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
+
                     break;
                 case MediaType.DOS_35_ED:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 36;
+
                     break;
                 case MediaType.NEC_35_TD:
                     imageInfo.Cylinders       = 240;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 38;
+
                     break;
             }
 
@@ -321,7 +374,8 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream buffer = new MemoryStream();
+            var buffer = new MemoryStream();
+
             for(int i = 0; i < length; i++)
                 buffer.Write(sectorsData[(int)sectorAddress + i], 0, sectorsData[(int)sectorAddress + i].Length);
 

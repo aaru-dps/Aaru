@@ -78,7 +78,7 @@ namespace Aaru.Commands
                 AaruConsole.WriteLine();
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

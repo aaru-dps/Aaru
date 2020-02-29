@@ -55,7 +55,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End) return false;
+            if(partition.Start >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -65,45 +66,56 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[]    rootBlockSector = imagePlugin.ReadSector(partition.Start);
             RootBlock rootBlock       = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("SmartFileSystem");
 
             sbInformation.AppendFormat("Volume version {0}", rootBlock.version).AppendLine();
+
             sbInformation.AppendFormat("Volume starts on device byte {0} and ends on byte {1}", rootBlock.firstbyte,
                                        rootBlock.lastbyte).AppendLine();
-            sbInformation
-               .AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize)
-               .AppendLine();
+
+            sbInformation.
+                AppendFormat("Volume has {0} blocks of {1} bytes each", rootBlock.totalblocks, rootBlock.blocksize).
+                AppendLine();
+
             sbInformation.AppendFormat("Volume created on {0}",
-                                       DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
-                         .AppendLine();
+                                       DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).
+                          AppendLine();
+
             sbInformation.AppendFormat("Bitmap starts in block {0}", rootBlock.bitmapbase).AppendLine();
-            sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer)
-                         .AppendLine();
-            sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer)
-                         .AppendLine();
-            sbInformation.AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot)
-                         .AppendLine();
-            sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot)
-                         .AppendLine();
-            if(rootBlock.bits.HasFlag(SFSFlags.CaseSensitive)) sbInformation.AppendLine("Volume is case sensitive");
+
+            sbInformation.AppendFormat("Admin space container starts in block {0}", rootBlock.adminspacecontainer).
+                          AppendLine();
+
+            sbInformation.AppendFormat("Root object container starts in block {0}", rootBlock.rootobjectcontainer).
+                          AppendLine();
+
+            sbInformation.
+                AppendFormat("Root node of the extent B-tree resides in block {0}", rootBlock.extentbnoderoot).
+                AppendLine();
+
+            sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot).
+                          AppendLine();
+
+            if(rootBlock.bits.HasFlag(SFSFlags.CaseSensitive))
+                sbInformation.AppendLine("Volume is case sensitive");
+
             if(rootBlock.bits.HasFlag(SFSFlags.RecyledFolder))
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
+
             information = sbInformation.ToString();
 
             XmlFsType = new FileSystemType
             {
                 CreationDate          = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
-                CreationDateSpecified = true,
-                Clusters              = rootBlock.totalblocks,
-                ClusterSize           = rootBlock.blocksize,
+                CreationDateSpecified = true, Clusters = rootBlock.totalblocks, ClusterSize = rootBlock.blocksize,
                 Type                  = "SmartFileSystem"
             };
         }
@@ -111,8 +123,7 @@ namespace Aaru.Filesystems
         [Flags]
         enum SFSFlags : byte
         {
-            RecyledFolder = 64,
-            CaseSensitive = 128
+            RecyledFolder = 64, CaseSensitive = 128
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -73,7 +73,7 @@ namespace Aaru.DiscImages
             {
                 identify = new byte[512];
                 Array.Copy(hdr.identify, 0, identify, 0, hdr.identify.Length);
-                Identify.IdentifyDevice? ataId = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
+                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
 
                 if(ataId.HasValue)
                 {

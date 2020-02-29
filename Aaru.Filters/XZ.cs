@@ -37,9 +37,7 @@ using SharpCompress.Compressors.Xz;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decompress xz files while reading
-    /// </summary>
+    /// <summary>Decompress xz files while reading</summary>
     public class XZ : IFilter
     {
         string   basePath;
@@ -72,10 +70,11 @@ namespace Aaru.Filters
 
         public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer) =>
-            buffer[0] == 0xFD && buffer[1]                 == 0x37 && buffer[2] == 0x7A &&
-            buffer[3] == 0x58 && buffer[4]                 == 0x5A &&
-            buffer[5] == 0x00 && buffer[buffer.Length - 2] == 0x59 && buffer[buffer.Length - 1] == 0x5A;
+        public bool Identify(byte[] buffer) => buffer[0]                 == 0xFD && buffer[1] == 0x37 &&
+                                               buffer[2]                 == 0x7A &&
+                                               buffer[3]                 == 0x58 && buffer[4] == 0x5A &&
+                                               buffer[5]                 == 0x00 &&
+                                               buffer[buffer.Length - 2] == 0x59 && buffer[buffer.Length - 1] == 0x5A;
 
         public bool Identify(Stream stream)
         {
@@ -94,15 +93,16 @@ namespace Aaru.Filters
 
         public bool Identify(string path)
         {
-            if(!File.Exists(path)) return false;
+            if(!File.Exists(path))
+                return false;
 
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[]     buffer = new byte[6];
-            byte[]     footer = new byte[2];
+            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[6];
+            byte[] footer = new byte[2];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 6);
-            stream.Seek(0,  SeekOrigin.Begin);
+            stream.Seek(0, SeekOrigin.Begin);
             stream.Seek(-2, SeekOrigin.End);
             stream.Read(footer, 0, 2);
             stream.Seek(0, SeekOrigin.Begin);
@@ -138,7 +138,7 @@ namespace Aaru.Filters
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath   = Path.GetFullPath(path);
 
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
             creationTime  = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
             GuessSize();
@@ -162,8 +162,7 @@ namespace Aaru.Filters
                 return basePath.Substring(0, basePath.Length - 3);
 
             return basePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 5)
-                       : basePath;
+                       ? basePath.Substring(0, basePath.Length - 5) : basePath;
         }
 
         public string GetParentFolder() => Path.GetDirectoryName(basePath);
@@ -173,11 +172,13 @@ namespace Aaru.Filters
         void GuessSize()
         {
             decompressedSize = 0;
+
             // Seek to footer backwards size field
             dataStream.Seek(-8, SeekOrigin.End);
             byte[] tmp = new byte[4];
             dataStream.Read(tmp, 0, 4);
             uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
+
             // Seek to first indexed record
             dataStream.Seek(-12 - (backwardSize - 2), SeekOrigin.End);
 
@@ -199,16 +200,20 @@ namespace Aaru.Filters
 
         int Decode(byte[] buf, int sizeMax, ref ulong num)
         {
-            if(sizeMax == 0) return 0;
+            if(sizeMax == 0)
+                return 0;
 
-            if(sizeMax > 9) sizeMax = 9;
+            if(sizeMax > 9)
+                sizeMax = 9;
 
             num = (ulong)(buf[0] & 0x7F);
             int i = 0;
 
             while((buf[i++] & 0x80) == 0x80)
             {
-                if(i >= sizeMax || buf[i] == 0x00) return 0;
+                if(i      >= sizeMax ||
+                   buf[i] == 0x00)
+                    return 0;
 
                 num |= (ulong)(buf[i] & 0x7F) << (i * 7);
             }

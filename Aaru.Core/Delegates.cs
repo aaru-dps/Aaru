@@ -32,88 +32,56 @@
 
 namespace Aaru.Core
 {
-    /// <summary>
-    ///     Initializates a progress indicator (e.g. makes a progress bar visible)
-    /// </summary>
+    /// <summary>Initializates a progress indicator (e.g. makes a progress bar visible)</summary>
     public delegate void InitProgressHandler();
 
-    /// <summary>
-    ///     Updates a progress indicator with text
-    /// </summary>
+    /// <summary>Updates a progress indicator with text</summary>
     public delegate void UpdateProgressHandler(string text, long current, long maximum);
 
-    /// <summary>
-    ///     Pulses a progress indicator with indeterminate boundaries
-    /// </summary>
+    /// <summary>Pulses a progress indicator with indeterminate boundaries</summary>
     public delegate void PulseProgressHandler(string text);
 
-    /// <summary>
-    ///     Uninitializates a progress indicator (e.g. adds a newline to the console)
-    /// </summary>
+    /// <summary>Uninitializates a progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndProgressHandler();
 
-    /// <summary>
-    ///     Initializates a secondary progress indicator (e.g. makes a progress bar visible)
-    /// </summary>
+    /// <summary>Initializates a secondary progress indicator (e.g. makes a progress bar visible)</summary>
     public delegate void InitProgressHandler2();
 
-    /// <summary>
-    ///     Updates a secondary progress indicator with text
-    /// </summary>
+    /// <summary>Updates a secondary progress indicator with text</summary>
     public delegate void UpdateProgressHandler2(string text, long current, long maximum);
 
-    /// <summary>
-    ///     Pulses a secondary progress indicator with indeterminate boundaries
-    /// </summary>
+    /// <summary>Pulses a secondary progress indicator with indeterminate boundaries</summary>
     public delegate void PulseProgressHandler2(string text);
 
-    /// <summary>
-    ///     Uninitializates a secondary progress indicator (e.g. adds a newline to the console)
-    /// </summary>
+    /// <summary>Uninitializates a secondary progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndProgressHandler2();
 
-    /// <summary>
-    ///     Initializates two progress indicators (e.g. makes a progress bar visible)
-    /// </summary>
+    /// <summary>Initializates two progress indicators (e.g. makes a progress bar visible)</summary>
     public delegate void InitTwoProgressHandler();
 
-    /// <summary>
-    ///     Updates two progress indicators with text
-    /// </summary>
+    /// <summary>Updates two progress indicators with text</summary>
     public delegate void UpdateTwoProgressHandler(string text, long current, long maximum, string text2, long current2,
-                                                  long   maximum2);
+                                                  long maximum2);
 
-    /// <summary>
-    ///     Pulses a progress indicator with indeterminate boundaries
-    /// </summary>
+    /// <summary>Pulses a progress indicator with indeterminate boundaries</summary>
     public delegate void PulseTwoProgressHandler(string text, string text2);
 
-    /// <summary>
-    ///     Uninitializates a progress indicator (e.g. adds a newline to the console)
-    /// </summary>
+    /// <summary>Uninitializates a progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndTwoProgressHandler();
 
-    /// <summary>
-    ///     Updates a status indicator
-    /// </summary>
+    /// <summary>Updates a status indicator</summary>
     public delegate void UpdateStatusHandler(string text);
 
-    /// <summary>
-    ///     Shows an error message
-    /// </summary>
+    /// <summary>Shows an error message</summary>
     public delegate void ErrorMessageHandler(string text);
 
     public delegate void InitBlockMapHandler(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile);
 
-    /// <summary>
-    ///     Updates lists of time taken on scanning from the specified sector
-    /// </summary>
+    /// <summary>Updates lists of time taken on scanning from the specified sector</summary>
     /// <param name="duration">Time in milliseconds</param>
     public delegate void ScanTimeHandler(ulong sector, double duration);
 
-    /// <summary>
-    ///     Specified a number of blocks could not be read on scan
-    /// </summary>
+    /// <summary>Specified a number of blocks could not be read on scan</summary>
     public delegate void ScanUnreadableHandler(ulong sector);
 
     public delegate void ScanSpeedHandler(ulong sector, double currentSpeed);

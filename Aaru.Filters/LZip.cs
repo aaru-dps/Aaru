@@ -38,9 +38,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decompress lzip files while reading
-    /// </summary>
+    /// <summary>Decompress lzip files while reading</summary>
     public class LZip : IFilter
     {
         string   basePath;
@@ -73,8 +71,8 @@ namespace Aaru.Filters
 
         public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer) =>
-            buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 && buffer[3] == 0x50 && buffer[4] == 0x01;
+        public bool Identify(byte[] buffer) => buffer[0] == 0x4C && buffer[1] == 0x5A && buffer[2] == 0x49 &&
+                                               buffer[3] == 0x50 && buffer[4] == 0x01;
 
         public bool Identify(Stream stream)
         {
@@ -90,10 +88,11 @@ namespace Aaru.Filters
 
         public bool Identify(string path)
         {
-            if(!File.Exists(path)) return false;
+            if(!File.Exists(path))
+                return false;
 
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[]     buffer = new byte[5];
+            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[5];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 5);
@@ -110,8 +109,9 @@ namespace Aaru.Filters
             creationTime     = DateTime.UtcNow;
             lastWriteTime    = creationTime;
             decompressedSize = BitConverter.ToInt64(buffer, buffer.Length - 16);
-            innerStream =
-                new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+
             opened = true;
         }
 
@@ -135,7 +135,7 @@ namespace Aaru.Filters
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath   = Path.GetFullPath(path);
 
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
             creationTime  = fi.CreationTimeUtc;
             lastWriteTime = fi.LastWriteTimeUtc;
             byte[] tmp = new byte[8];
@@ -163,8 +163,7 @@ namespace Aaru.Filters
                 return basePath.Substring(0, basePath.Length - 3);
 
             return basePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 5)
-                       : basePath;
+                       ? basePath.Substring(0, basePath.Length - 5) : basePath;
         }
 
         public string GetParentFolder() => Path.GetDirectoryName(basePath);

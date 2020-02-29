@@ -46,9 +46,10 @@ namespace Aaru.Core
             bool                       inValue = false;
             string                     name    = null;
             string                     value;
-            StringBuilder              sb = new StringBuilder();
+            var                        sb = new StringBuilder();
 
-            if(options == null) return parsed;
+            if(options == null)
+                return parsed;
 
             for(int index = 0; index < options.Length; index++)
             {
@@ -58,31 +59,40 @@ namespace Aaru.Core
                 {
                     case '\\' when !escaped:
                         escaped = true;
+
                         break;
                     case '"' when !escaped:
                         quoted = !quoted;
+
                         break;
                     case '=' when quoted:
                         sb.Append(c);
+
                         break;
                     case '=':
                         name    = sb.ToString().ToLower(CultureInfo.CurrentCulture);
                         sb      = new StringBuilder();
                         inValue = true;
+
                         break;
                     case ',' when quoted:
                         sb.Append(c);
+
                         break;
                     case ',' when inValue:
                         value   = sb.ToString();
                         sb      = new StringBuilder();
                         inValue = false;
 
-                        if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) continue;
+                        if(string.IsNullOrEmpty(name) ||
+                           string.IsNullOrEmpty(value))
+                            continue;
 
-                        if(parsed.ContainsKey(name)) parsed.Remove(name);
+                        if(parsed.ContainsKey(name))
+                            parsed.Remove(name);
 
                         parsed.Add(name, value);
+
                         break;
                     default:
                         if(escaped)
@@ -91,76 +101,96 @@ namespace Aaru.Core
                                 case 'a':
                                     sb.Append('\a');
                                     escaped = false;
+
                                     break;
                                 case 'b':
                                     sb.Append('\b');
                                     escaped = false;
+
                                     break;
                                 case 'f':
                                     sb.Append('\f');
                                     escaped = false;
+
                                     break;
                                 case 'n':
                                     sb.Append('\n');
                                     escaped = false;
+
                                     break;
                                 case 'r':
                                     sb.Append('\r');
                                     escaped = false;
+
                                     break;
                                 case 't':
                                     sb.Append('\t');
                                     escaped = false;
+
                                     break;
                                 case 'v':
                                     sb.Append('\v');
                                     escaped = false;
+
                                     break;
                                 case '\\':
                                     sb.Append('\\');
                                     escaped = false;
+
                                     break;
                                 case '\'':
                                     sb.Append('\'');
                                     escaped = false;
+
                                     break;
                                 case '"':
                                     sb.Append('"');
                                     escaped = false;
+
                                     break;
                                 case '0':
                                     sb.Append('\0');
                                     escaped = false;
+
                                     break;
                                 case 'u':
                                     string unicode = options.Substring(index + 1, 4);
                                     sb.Append((char)int.Parse(unicode, NumberStyles.HexNumber));
                                     escaped =  false;
                                     index   += 4;
+
                                     break;
                                 case 'U':
                                     string longUnicode = options.Substring(index + 1, 8);
                                     sb.Append((char)int.Parse(longUnicode, NumberStyles.HexNumber));
                                     escaped =  false;
                                     index   += 8;
+
                                     break;
                                 default:
                                     sb.Append(c);
                                     escaped = false;
+
                                     break;
                             }
-                        else sb.Append(c);
+                        else
+                            sb.Append(c);
+
                         break;
                 }
             }
 
-            if(!inValue) return parsed;
+            if(!inValue)
+                return parsed;
 
             value = sb.ToString();
 
-            if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) return parsed;
+            if(string.IsNullOrEmpty(name) ||
+               string.IsNullOrEmpty(value))
+                return parsed;
 
-            if(parsed.ContainsKey(name)) parsed.Remove(name);
+            if(parsed.ContainsKey(name))
+                parsed.Remove(name);
 
             parsed.Add(name, value);
 

@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using Claunia.RsrcFork;
 using Aaru.CommonTypes.Interfaces;
+using Claunia.RsrcFork;
 
 namespace Aaru.DiscImages
 {
@@ -40,18 +40,26 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            if(!imageFilter.HasResourceFork() || imageFilter.GetResourceForkLength() == 0) return false;
+            if(!imageFilter.HasResourceFork() ||
+               imageFilter.GetResourceForkLength() == 0)
+                return false;
 
             try
             {
-                ResourceFork rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
-                if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return false;
+                var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+
+                if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
+                    return false;
 
                 Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
-                if(rsrc.ContainsId(NDIF_RESOURCEID)) return true;
+                if(rsrc.ContainsId(NDIF_RESOURCEID))
+                    return true;
             }
-            catch(InvalidCastException) { return false; }
+            catch(InvalidCastException)
+            {
+                return false;
+            }
 
             return false;
         }

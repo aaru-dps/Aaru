@@ -191,7 +191,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -200,7 +200,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
@@ -274,9 +274,9 @@ namespace Aaru.Commands.Image
                                 }
 
                             AaruConsole.DebugWriteLine("Checksum command",
-                                                      "Track {0} starts at sector {1} and ends at sector {2}",
-                                                      currentTrack.TrackSequence, currentTrack.TrackStartSector,
-                                                      currentTrack.TrackEndSector);
+                                                       "Track {0} starts at sector {1} and ends at sector {2}",
+                                                       currentTrack.TrackSequence, currentTrack.TrackStartSector,
+                                                       currentTrack.TrackEndSector);
 
                             if(separatedTracks)
                                 trackChecksum = new Checksum(enabledChecksums);
@@ -295,7 +295,7 @@ namespace Aaru.Commands.Image
                                                                       currentTrack.TrackSequence);
 
                                     AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
-                                                     currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+                                                      currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
 
                                     doneSectors += SECTORS_TO_READ;
                                 }
@@ -305,7 +305,8 @@ namespace Aaru.Commands.Image
                                                                       currentTrack.TrackSequence);
 
                                     AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
-                                                     currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
+                                                      currentTrack.TrackSequence,
+                                                      doneSectors + (sectors - doneSectors));
 
                                     doneSectors += sectors - doneSectors;
                                 }
@@ -323,7 +324,7 @@ namespace Aaru.Commands.Image
                                 if(trackChecksum != null)
                                     foreach(ChecksumType chk in trackChecksum.End())
                                         AaruConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
-                                                             chk.type, chk.Value);
+                                                              chk.type, chk.Value);
 
                             previousTrackEnd = currentTrack.TrackEndSector;
                         }
@@ -374,8 +375,8 @@ namespace Aaru.Commands.Image
                             }
 
                         AaruConsole.DebugWriteLine("Checksum command",
-                                                  "Track {0} starts at sector {1} and ends at block {2}",
-                                                  currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
+                                                   "Track {0} starts at sector {1} and ends at block {2}",
+                                                   currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
 
                         if(separatedTracks)
                             trackChecksum = new Checksum(enabledChecksums);
@@ -393,7 +394,7 @@ namespace Aaru.Commands.Image
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
 
                                 AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
-                                                 currentFile.File, doneSectors + SECTORS_TO_READ);
+                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
 
                                 doneSectors += SECTORS_TO_READ;
                             }
@@ -403,7 +404,7 @@ namespace Aaru.Commands.Image
                                                                (uint)(sectors - doneSectors));
 
                                 AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
-                                                 currentFile.File, doneSectors + (sectors - doneSectors));
+                                                  currentFile.File, doneSectors + (sectors - doneSectors));
 
                                 doneSectors += sectors - doneSectors;
                             }
@@ -459,7 +460,7 @@ namespace Aaru.Commands.Image
                             sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
 
                             AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
-                                             doneSectors + SECTORS_TO_READ);
+                                              doneSectors + SECTORS_TO_READ);
 
                             doneSectors += SECTORS_TO_READ;
                         }
@@ -468,7 +469,7 @@ namespace Aaru.Commands.Image
                             sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
 
                             AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
-                                             doneSectors + (sectors - doneSectors));
+                                              doneSectors + (sectors - doneSectors));
 
                             doneSectors += sectors - doneSectors;
                         }
@@ -485,7 +486,7 @@ namespace Aaru.Commands.Image
                 }
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

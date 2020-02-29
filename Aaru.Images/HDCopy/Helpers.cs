@@ -60,14 +60,17 @@ namespace Aaru.DiscImages
             // decompress the data
             int sIndex = 0; // source buffer position
             int dIndex = 0; // destination buffer position
+
             while(sIndex < compressedLength)
                 if(cBuffer[sIndex] == escapeByte)
                 {
                     sIndex++; // skip over escape byte
                     byte fillByte  = cBuffer[sIndex++];
                     byte fillCount = cBuffer[sIndex++];
+
                     // fill destination buffer
-                    for(int i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
+                    for(int i = 0; i < fillCount; i++)
+                        trackData[dIndex++] = fillByte;
                 }
                 else
                     trackData[dIndex++] = cBuffer[sIndex++];

@@ -39,9 +39,9 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OobBlock
         {
-            public BlockIds blockId;
-            public OobTypes blockType;
-            public ushort   length;
+            public readonly BlockIds blockId;
+            public readonly OobTypes blockType;
+            public readonly ushort   length;
         }
     }
 }

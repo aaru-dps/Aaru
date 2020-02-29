@@ -121,7 +121,7 @@ namespace Aaru.Commands.Filesystem
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
-            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -133,7 +133,7 @@ namespace Aaru.Commands.Filesystem
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             Encoding encodingClass = null;
@@ -150,7 +150,7 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
-                    return(int)ErrorNumber.EncodingUnknown;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -163,12 +163,12 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
-                    return(int)ErrorNumber.UnrecognizedFormat;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
                     AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                imageFormat.Id);
+                                                 imageFormat.Id);
                 else
                     AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
@@ -176,7 +176,7 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.WriteLine("Output directory missing.");
 
-                    return(int)ErrorNumber.MissingArgument;
+                    return (int)ErrorNumber.MissingArgument;
                 }
 
                 if(Directory.Exists(outputDir) ||
@@ -184,7 +184,7 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.ErrorWriteLine("Destination exists, aborting.");
 
-                    return(int)ErrorNumber.DestinationExists;
+                    return (int)ErrorNumber.DestinationExists;
                 }
 
                 Directory.CreateDirectory(outputDir);
@@ -196,19 +196,19 @@ namespace Aaru.Commands.Filesystem
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
 
-                        return(int)ErrorNumber.CannotOpenFormat;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     AaruConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
 
                     AaruConsole.DebugWriteLine("Extract-Files command", "Image without headers is {0} bytes.",
-                                              imageFormat.Info.ImageSize);
+                                               imageFormat.Info.ImageSize);
 
                     AaruConsole.DebugWriteLine("Extract-Files command", "Image has {0} sectors.",
-                                              imageFormat.Info.Sectors);
+                                               imageFormat.Info.Sectors);
 
                     AaruConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
-                                              imageFormat.Info.MediaType);
+                                               imageFormat.Info.MediaType);
 
                     Statistics.AddMediaFormat(imageFormat.Format);
                     Statistics.AddMedia(imageFormat.Info.MediaType, false);
@@ -219,11 +219,11 @@ namespace Aaru.Commands.Filesystem
                     AaruConsole.ErrorWriteLine("Unable to open image format");
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
 
-                    return(int)ErrorNumber.CannotOpenFormat;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
-                List<Partition> partitions = Aaru.Core.Partitions.GetAll(imageFormat);
-                Aaru.Core.Partitions.AddSchemesToStats(partitions);
+                List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                Core.Partitions.AddSchemesToStats(partitions);
 
                 List<string>        idPlugins;
                 IReadOnlyFilesystem plugin;
@@ -242,7 +242,7 @@ namespace Aaru.Commands.Filesystem
 
                         AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                        Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
 
                         if(idPlugins.Count == 0)
                             AaruConsole.WriteLine("Filesystem not identified");
@@ -258,7 +258,7 @@ namespace Aaru.Commands.Filesystem
                                     var fs = (IReadOnlyFilesystem)plugin.
                                                                   GetType().GetConstructor(Type.EmptyTypes)?.
                                                                   Invoke(new object[]
-                                                                             { });
+                                                                             {});
 
                                     error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
                                                      @namespace);
@@ -275,7 +275,7 @@ namespace Aaru.Commands.Filesystem
                                     }
                                     else
                                         AaruConsole.ErrorWriteLine("Unable to mount device, error {0}",
-                                                                  error.ToString());
+                                                                   error.ToString());
                                 }
                         }
                         else
@@ -285,7 +285,7 @@ namespace Aaru.Commands.Filesystem
 
                             var fs = (IReadOnlyFilesystem)plugin.
                                                           GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                { });
+                                                                                                                {});
 
                             error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
 
@@ -310,7 +310,7 @@ namespace Aaru.Commands.Filesystem
                     Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                 if(idPlugins.Count == 0)
                     AaruConsole.WriteLine("Filesystem not identified");
@@ -325,7 +325,7 @@ namespace Aaru.Commands.Filesystem
 
                             var fs = (IReadOnlyFilesystem)plugin.
                                                           GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                { });
+                                                                                                                {});
 
                             error = fs.Mount(imageFormat, wholePart, encodingClass, parsedOptions, @namespace);
 
@@ -348,7 +348,7 @@ namespace Aaru.Commands.Filesystem
                     AaruConsole.WriteLine($"Identified by {plugin.Name}.");
 
                     var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                               { });
+                                                                                                               {});
 
                     error = fs.Mount(imageFormat, wholePart, encodingClass, parsedOptions, @namespace);
 
@@ -370,10 +370,10 @@ namespace Aaru.Commands.Filesystem
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 AaruConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
 
-                return(int)ErrorNumber.UnexpectedException;
+                return (int)ErrorNumber.UnexpectedException;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
 
         static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, string volumeName, string outputDir,
@@ -509,11 +509,11 @@ namespace Aaru.Commands.Filesystem
                                     }
                                     #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                                     AaruConsole.WriteLine("Written {0} bytes of xattr {1} from file {2} to {3}",
-                                                         xattrBuf.Length, xattr, entry, outputPath);
+                                                          xattrBuf.Length, xattr, entry, outputPath);
                                 }
                                 else
                                     AaruConsole.ErrorWriteLine("Cannot write xattr {0} for {1}, output exists", xattr,
-                                                              entry);
+                                                               entry);
                             }
                     }
 
@@ -567,7 +567,7 @@ namespace Aaru.Commands.Filesystem
                             }
                             #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                             AaruConsole.WriteLine("Written {0} bytes of file {1} to {2}", outBuf.Length, entry,
-                                                 outputPath);
+                                                  outputPath);
                         }
                         else
                             AaruConsole.ErrorWriteLine("Error {0} reading file {1}", error, entry);

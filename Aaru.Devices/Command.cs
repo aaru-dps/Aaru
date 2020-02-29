@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System;
-using Aaru.Devices.FreeBSD;
-using Aaru.Devices.Windows;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
+using Aaru.Devices.FreeBSD;
+using Aaru.Devices.Windows;
 using Microsoft.Win32.SafeHandles;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
@@ -42,9 +42,7 @@ namespace Aaru.Devices
 {
     internal static class Command
     {
-        /// <summary>
-        ///     Sends a SCSI command
-        /// </summary>
+        /// <summary>Sends a SCSI command</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="cdb">SCSI CDB</param>
@@ -58,20 +56,16 @@ namespace Aaru.Devices
         ///     sense
         /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer,
-            out byte[] senseBuffer,
-            uint timeout, ScsiDirection direction, out double duration,
-            out bool sense)
+        internal static int SendScsiCommand(object fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                            uint timeout, ScsiDirection direction, out double duration, out bool sense)
         {
-            var ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
             return SendScsiCommand(ptId, fd, cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
-                out sense);
+                                   out sense);
         }
 
-        /// <summary>
-        ///     Sends a SCSI command
-        /// </summary>
+        /// <summary>Sends a SCSI command</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
@@ -86,92 +80,101 @@ namespace Aaru.Devices
         ///     sense
         /// </param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb,
-            ref byte[] buffer,
-            out byte[] senseBuffer, uint timeout, ScsiDirection direction,
-            out double duration, out bool sense)
+        internal static int SendScsiCommand(PlatformID ptId, object fd, byte[] cdb, ref byte[] buffer,
+                                            out byte[] senseBuffer, uint timeout, ScsiDirection direction,
+                                            out double duration, out bool sense)
         {
-            switch (ptId)
+            switch(ptId)
             {
                 case PlatformID.Win32NT:
                 {
                     ScsiIoctlDirection dir;
 
-                    switch (direction)
+                    switch(direction)
                     {
                         case ScsiDirection.In:
                             dir = ScsiIoctlDirection.In;
+
                             break;
                         case ScsiDirection.Out:
                             dir = ScsiIoctlDirection.Out;
+
                             break;
                         default:
                             dir = ScsiIoctlDirection.Unspecified;
+
                             break;
                     }
 
-                    return Windows.Command.SendScsiCommand((SafeFileHandle) fd, cdb, ref buffer, out senseBuffer,
-                        timeout, dir, out duration, out sense);
+                    return Windows.Command.SendScsiCommand((SafeFileHandle)fd, cdb, ref buffer, out senseBuffer,
+                                                           timeout, dir, out duration, out sense);
                 }
                 case PlatformID.Linux:
                 {
                     Linux.ScsiIoctlDirection dir;
 
-                    switch (direction)
+                    switch(direction)
                     {
                         case ScsiDirection.In:
                             dir = Linux.ScsiIoctlDirection.In;
+
                             break;
                         case ScsiDirection.Out:
                             dir = Linux.ScsiIoctlDirection.Out;
+
                             break;
                         case ScsiDirection.Bidirectional:
                             dir = Linux.ScsiIoctlDirection.Unspecified;
+
                             break;
                         case ScsiDirection.None:
                             dir = Linux.ScsiIoctlDirection.None;
+
                             break;
                         default:
                             dir = Linux.ScsiIoctlDirection.Unknown;
+
                             break;
                     }
 
-                    return Linux.Command.SendScsiCommand((int) fd, cdb, ref buffer, out senseBuffer, timeout, dir,
-                        out duration, out sense);
+                    return Linux.Command.SendScsiCommand((int)fd, cdb, ref buffer, out senseBuffer, timeout, dir,
+                                                         out duration, out sense);
                 }
                 case PlatformID.FreeBSD:
                 {
                     CcbFlags flags = 0;
 
-                    switch (direction)
+                    switch(direction)
                     {
                         case ScsiDirection.In:
                             flags = CcbFlags.CamDirIn;
+
                             break;
                         case ScsiDirection.Out:
                             flags = CcbFlags.CamDirOut;
+
                             break;
                         case ScsiDirection.Bidirectional:
                             flags = CcbFlags.CamDirBoth;
+
                             break;
                         case ScsiDirection.None:
                             flags = CcbFlags.CamDirNone;
+
                             break;
                     }
 
                     return IntPtr.Size == 8
-                        ? FreeBSD.Command.SendScsiCommand64((IntPtr) fd, cdb, ref buffer, out senseBuffer,
-                            timeout, flags, out duration, out sense)
-                        : FreeBSD.Command.SendScsiCommand((IntPtr) fd, cdb, ref buffer, out senseBuffer, timeout,
-                            flags, out duration, out sense);
+                               ? FreeBSD.Command.SendScsiCommand64((IntPtr)fd, cdb, ref buffer, out senseBuffer,
+                                                                   timeout, flags, out duration, out sense)
+                               : FreeBSD.Command.SendScsiCommand((IntPtr)fd, cdb, ref buffer, out senseBuffer, timeout,
+                                                                 flags, out duration, out sense);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
-        /// <summary>
-        ///     Sends an ATA command in CHS format
-        /// </summary>
+        /// <summary>Sends an ATA command in CHS format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -185,22 +188,17 @@ namespace Aaru.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersChs registers,
-            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            var ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
-                ref buffer,
-                timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA command in CHS format
-        /// </summary>
+        /// <summary>Sends an ATA command in CHS format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
@@ -214,49 +212,44 @@ namespace Aaru.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd,
-            AtaRegistersChs registers,
-            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptId)
+            switch(ptId)
             {
                 case PlatformID.Win32NT:
                 {
-                    if (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                    if((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                         (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                         Environment.OSVersion.ServicePack == "") ||
-                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
+                         Environment.OSVersion.ServicePack == "")) ||
+                       (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0))
                         throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But Aaru cannot run there (or can it?)
-                    if (Environment.OSVersion.Version.Major <= 4)
+                    if(Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
 
-                    return Windows.Command.SendAtaCommand((SafeFileHandle) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 case PlatformID.Linux:
                 {
-                    return Linux.Command.SendAtaCommand((int) fd, registers, out errorRegisters, protocol,
-                        transferRegister, ref buffer, timeout, transferBlocks,
-                        out duration, out sense);
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
                 }
                 case PlatformID.FreeBSD:
                 {
-                    return FreeBSD.Command.SendAtaCommand((IntPtr) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
-        /// <summary>
-        ///     Sends an ATA command in CHS format
-        /// </summary>
+        /// <summary>Sends an ATA command in CHS format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -270,22 +263,17 @@ namespace Aaru.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba28 registers,
-            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            var ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
-                ref buffer,
-                timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 28-bit LBA format
-        /// </summary>
+        /// <summary>Sends an ATA command in 28-bit LBA format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
@@ -299,49 +287,44 @@ namespace Aaru.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd,
-            AtaRegistersLba28 registers,
-            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptId)
+            switch(ptId)
             {
                 case PlatformID.Win32NT:
                 {
-                    if (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
+                    if((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 1 &&
                         (Environment.OSVersion.ServicePack == "Service Pack 1" ||
-                         Environment.OSVersion.ServicePack == "") ||
-                        Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
+                         Environment.OSVersion.ServicePack == "")) ||
+                       (Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0))
                         throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
                     // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But Aaru cannot run there (or can it?)
-                    if (Environment.OSVersion.Version.Major <= 4)
+                    if(Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
 
-                    return Windows.Command.SendAtaCommand((SafeFileHandle) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 case PlatformID.Linux:
                 {
-                    return Linux.Command.SendAtaCommand((int) fd, registers, out errorRegisters, protocol,
-                        transferRegister, ref buffer, timeout, transferBlocks,
-                        out duration, out sense);
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
                 }
                 case PlatformID.FreeBSD:
                 {
-                    return FreeBSD.Command.SendAtaCommand((IntPtr) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 48-bit LBA format
-        /// </summary>
+        /// <summary>Sends an ATA command in 48-bit LBA format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -355,22 +338,17 @@ namespace Aaru.Devices
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
         internal static int SendAtaCommand(object fd, AtaRegistersLba48 registers,
-            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            var ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister,
-                ref buffer,
-                timeout, transferBlocks, out duration, out sense);
+            return SendAtaCommand(ptId, fd, registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                  timeout, transferBlocks, out duration, out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 48-bit format
-        /// </summary>
+        /// <summary>Sends an ATA command in 48-bit format</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
@@ -384,40 +362,35 @@ namespace Aaru.Devices
         /// <param name="transferRegister">What register contains the transfer length</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer length is in block, otherwise it is in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendAtaCommand(PlatformID ptId, object fd,
-            AtaRegistersLba48 registers,
-            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
-            AtaTransferRegister transferRegister, ref byte[] buffer,
-            uint timeout,
-            bool transferBlocks, out double duration,
-            out bool sense)
+        internal static int SendAtaCommand(PlatformID ptId, object fd, AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
-            switch (ptId)
+            switch(ptId)
             {
                 case PlatformID.Win32NT:
                 {
                     // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
-                    return Windows.Command.SendAtaCommand((SafeFileHandle) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 case PlatformID.Linux:
                 {
-                    return Linux.Command.SendAtaCommand((int) fd, registers, out errorRegisters, protocol,
-                        transferRegister, ref buffer, timeout, transferBlocks,
-                        out duration, out sense);
+                    return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
+                                                        transferRegister, ref buffer, timeout, transferBlocks,
+                                                        out duration, out sense);
                 }
                 case PlatformID.FreeBSD:
                 {
-                    return FreeBSD.Command.SendAtaCommand((IntPtr) fd, registers, out errorRegisters, protocol,
-                        ref buffer, timeout, out duration, out sense);
+                    return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
+                                                          ref buffer, timeout, out duration, out sense);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
 
-        /// <summary>
-        ///     Sends a MMC/SD command
-        /// </summary>
+        /// <summary>Sends a MMC/SD command</summary>
         /// <returns>The result of the command.</returns>
         /// <param name="fd">File handle</param>
         /// <param name="command">MMC/SD opcode</param>
@@ -433,24 +406,18 @@ namespace Aaru.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendMmcCommand(object fd, MmcCommands command, bool write,
-            bool isApplication,
-            MmcFlags flags, uint argument, uint blockSize,
-            uint blocks,
-            ref byte[] buffer, out uint[] response, out double duration,
-            out bool sense,
-            uint timeout = 0)
+        internal static int SendMmcCommand(object fd, MmcCommands command, bool write, bool isApplication,
+                                           MmcFlags flags, uint argument, uint blockSize, uint blocks,
+                                           ref byte[] buffer, out uint[] response, out double duration, out bool sense,
+                                           uint timeout = 0)
         {
-            var ptId = DetectOS.GetRealPlatformID();
+            PlatformID ptId = DetectOS.GetRealPlatformID();
 
-            return SendMmcCommand(ptId, (int) fd, command, write, isApplication, flags, argument,
-                blockSize, blocks,
-                ref buffer, out response, out duration, out sense, timeout);
+            return SendMmcCommand(ptId, (int)fd, command, write, isApplication, flags, argument, blockSize, blocks,
+                                  ref buffer, out response, out duration, out sense, timeout);
         }
 
-        /// <summary>
-        ///     Sends a MMC/SD command
-        /// </summary>
+        /// <summary>Sends a MMC/SD command</summary>
         /// <returns>The result of the command.</returns>
         /// <param name="ptId">Platform ID for executing the command</param>
         /// <param name="fd">File handle</param>
@@ -467,27 +434,24 @@ namespace Aaru.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         /// <exception cref="InvalidOperationException">If the specified platform is not supported</exception>
-        internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command,
-            bool write,
-            bool isApplication, MmcFlags flags, uint argument,
-            uint blockSize,
-            uint blocks, ref byte[] buffer, out uint[] response,
-            out double duration,
-            out bool sense, uint timeout = 0)
+        internal static int SendMmcCommand(PlatformID ptId, object fd, MmcCommands command, bool write,
+                                           bool isApplication, MmcFlags flags, uint argument, uint blockSize,
+                                           uint blocks, ref byte[] buffer, out uint[] response, out double duration,
+                                           out bool sense, uint timeout = 0)
         {
-            switch (ptId)
+            switch(ptId)
             {
                 case PlatformID.Win32NT:
                 {
-                    return Windows.Command.SendMmcCommand((SafeFileHandle) fd, command, write, isApplication, flags,
-                        argument, blockSize, blocks, ref buffer, out response,
-                        out duration, out sense, timeout);
+                    return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags,
+                                                          argument, blockSize, blocks, ref buffer, out response,
+                                                          out duration, out sense, timeout);
                 }
                 case PlatformID.Linux:
                 {
-                    return Linux.Command.SendMmcCommand((int) fd, command, write, isApplication, flags, argument,
-                        blockSize, blocks, ref buffer, out response, out duration,
-                        out sense, timeout);
+                    return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument,
+                                                        blockSize, blocks, ref buffer, out response, out duration,
+                                                        out sense, timeout);
                 }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }

@@ -32,21 +32,23 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void Main()
         {
-            DicConsole.WriteLineEvent        += System.Console.WriteLine;
-            DicConsole.WriteEvent            += System.Console.Write;
-            DicConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
-            DicConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
-            DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            AaruConsole.WriteLineEvent        += System.Console.WriteLine;
+            AaruConsole.WriteEvent            += System.Console.Write;
+            AaruConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
+            AaruConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
+            AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
 
-            if(devices == null || devices.Length == 0)
+            if(devices        == null ||
+               devices.Length == 0)
             {
-                DicConsole.WriteLine("No known devices attached.");
+                AaruConsole.WriteLine("No known devices attached.");
+
                 return;
             }
 
@@ -56,37 +58,43 @@ namespace Aaru.Tests.Devices
             {
                 System.Console.Clear();
 
-                DicConsole.WriteLine("DiscImageChef device handling tests");
+                AaruConsole.WriteLine("DiscImageChef device handling tests");
 
-                DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
-                                     "Model", "Serial", "Bus", "Supported?", "Number");
-                DicConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                     "----------------", "------------------------", "------------------------",
-                                     "----------", "----------", "--------");
+                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor",
+                                      "Model", "Serial", "Bus", "Supported?", "Number");
+
+                AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                                      "----------------------", "----------------", "------------------------",
+                                      "------------------------", "----------", "----------", "--------");
+
                 for(int i = 0; i < devices.Length; i++)
-                    DicConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
-                                         devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
-                                         devices[i].Supported, i + 1);
+                    AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
+                                          devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
+                                          devices[i].Supported, i + 1);
 
-                DicConsole.Write("Please choose which drive to test (0 to exit): ");
+                AaruConsole.Write("Please choose which drive to test (0 to exit): ");
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 if(item == 0)
                 {
-                    DicConsole.WriteLine("Exiting...");
+                    AaruConsole.WriteLine("Exiting...");
+
                     return;
                 }
 
                 if(item > devices.Length)
                 {
-                    DicConsole.WriteLine("No such device. Press any key to continue...");
+                    AaruConsole.WriteLine("No such device. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 

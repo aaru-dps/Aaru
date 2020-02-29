@@ -37,47 +37,33 @@ namespace Aaru.DiscImages
 {
     public partial class HdCopy
     {
-        /// <summary>
-        ///     The global header of a HDCP image file
-        /// </summary>
+        /// <summary>The global header of a HDCP image file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HdcpFileHeader
         {
-            /// <summary>
-            ///     Last cylinder (zero-based)
-            /// </summary>
-            public byte lastCylinder;
+            /// <summary>Last cylinder (zero-based)</summary>
+            public readonly byte lastCylinder;
+
+            /// <summary>Sectors per track</summary>
+            public readonly byte sectorsPerTrack;
 
             /// <summary>
-            ///     Sectors per track
-            /// </summary>
-            public byte sectorsPerTrack;
-
-            /// <summary>
-            ///     The track map. It contains one byte for each track.
-            ///     Up to 82 tracks (41 tracks * 2 sides) are supported.
-            ///     0 means track is not present, 1 means it is present.
-            ///     The first 2 tracks are always present.
+            ///     The track map. It contains one byte for each track. Up to 82 tracks (41 tracks * 2 sides) are supported. 0
+            ///     means track is not present, 1 means it is present. The first 2 tracks are always present.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2 * 82)]
-            public byte[] trackMap;
+            public readonly byte[] trackMap;
         }
 
-        /// <summary>
-        ///     The header for a RLE-compressed block
-        /// </summary>
+        /// <summary>The header for a RLE-compressed block</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HdcpBlockHeader
         {
-            /// <summary>
-            ///     The length of the compressed block, in bytes. Little-endian.
-            /// </summary>
-            public ushort length;
+            /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
+            public readonly ushort length;
 
-            /// <summary>
-            ///     The byte value used as RLE escape sequence
-            /// </summary>
-            public byte escape;
+            /// <summary>The byte value used as RLE escape sequence</summary>
+            public readonly byte escape;
         }
     }
 }

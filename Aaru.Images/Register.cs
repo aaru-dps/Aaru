@@ -52,34 +52,30 @@ namespace Aaru.DiscImages
 
         public List<Type> GetAllFilterPlugins() => null;
 
-        public List<Type> GetAllFloppyImagePlugins()
-        {
-            return Assembly.GetExecutingAssembly().GetTypes()
-                           .Where(t => t.GetInterfaces().Contains(typeof(IFloppyImage))).Where(t => t.IsClass).ToList();
-        }
+        public List<Type> GetAllFloppyImagePlugins() => Assembly.
+                                                        GetExecutingAssembly().GetTypes().
+                                                        Where(t => t.GetInterfaces().Contains(typeof(IFloppyImage))).
+                                                        Where(t => t.IsClass).ToList();
 
-        public List<Type> GetAllMediaImagePlugins()
-        {
-            return Assembly.GetExecutingAssembly().GetTypes()
-                           .Where(t => t.GetInterfaces().Contains(typeof(IMediaImage))).Where(t => t.IsClass).ToList();
-        }
+        public List<Type> GetAllMediaImagePlugins() => Assembly.
+                                                       GetExecutingAssembly().GetTypes().
+                                                       Where(t => t.GetInterfaces().Contains(typeof(IMediaImage))).
+                                                       Where(t => t.IsClass).ToList();
 
         public List<Type> GetAllPartitionPlugins() => null;
 
         public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 
-        public List<Type> GetAllWritableFloppyImagePlugins()
-        {
-            return Assembly.GetExecutingAssembly().GetTypes()
-                           .Where(t => t.GetInterfaces().Contains(typeof(IWritableFloppyImage))).Where(t => t.IsClass)
-                           .ToList();
-        }
+        public List<Type> GetAllWritableFloppyImagePlugins() => Assembly.
+                                                                GetExecutingAssembly().GetTypes().
+                                                                Where(t => t.GetInterfaces().
+                                                                             Contains(typeof(IWritableFloppyImage))).
+                                                                Where(t => t.IsClass).ToList();
 
-        public List<Type> GetAllWritableImagePlugins()
-        {
-            return Assembly.GetExecutingAssembly().GetTypes()
-                           .Where(t => t.GetInterfaces().Contains(typeof(IWritableImage))).Where(t => t.IsClass)
-                           .ToList();
-        }
+        public List<Type> GetAllWritableImagePlugins() => Assembly.
+                                                          GetExecutingAssembly().GetTypes().
+                                                          Where(t => t.GetInterfaces().
+                                                                       Contains(typeof(IWritableImage))).
+                                                          Where(t => t.IsClass).ToList();
     }
 }

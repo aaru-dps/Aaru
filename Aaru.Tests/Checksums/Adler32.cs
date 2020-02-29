@@ -36,8 +36,29 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Adler32
     {
-        static readonly byte[] ExpectedEmpty  = {0x00, 0xf0, 0x00, 0x01};
-        static readonly byte[] ExpectedRandom = {0x37, 0x28, 0xd1, 0x86};
+        static readonly byte[] ExpectedEmpty =
+        {
+            0x00, 0xf0, 0x00, 0x01
+        };
+        static readonly byte[] ExpectedRandom =
+        {
+            0x37, 0x28, 0xd1, 0x86
+        };
+
+        [Test]
+        public void Adler32EmptyData()
+        {
+            byte[] data = new byte[1048576];
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
+            fs.Read(data, 0, 1048576);
+            fs.Close();
+            fs.Dispose();
+            Adler32Context.Data(data, out byte[] result);
+            Assert.AreEqual(ExpectedEmpty, result);
+        }
 
         [Test]
         public void Adler32EmptyFile()
@@ -47,24 +68,13 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void Adler32EmptyData()
-        {
-            byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
-            fs.Read(data, 0, 1048576);
-            fs.Close();
-            fs.Dispose();
-            Adler32Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedEmpty, result);
-        }
-
-        [Test]
         public void Adler32EmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -75,18 +85,13 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
-        public void Adler32RandomFile()
-        {
-            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
-        }
-
-        [Test]
         public void Adler32RandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -95,11 +100,20 @@ namespace Aaru.Tests.Checksums
         }
 
         [Test]
+        public void Adler32RandomFile()
+        {
+            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "checksums", "random"));
+            Assert.AreEqual(ExpectedRandom, result);
+        }
+
+        [Test]
         public void Adler32RandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

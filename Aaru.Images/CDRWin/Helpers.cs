@@ -144,7 +144,7 @@ namespace Aaru.DiscImages
             }
         }
 
-        static(byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
+        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
             ((byte)(sector / 75 / 60), (byte)((sector / 75) % 60), (byte)(sector % 75));
 
         static string GetTrackMode(Track track)
@@ -235,7 +235,7 @@ namespace Aaru.DiscImages
                 case MediaType.HDDVDROM:  return CDRWIN_DISK_TYPE_HDDVD;
                 case MediaType.HDDVDRW:   return CDRWIN_DISK_TYPE_HDDVDRW;
                 case MediaType.HDDVDRWDL: return CDRWIN_DISK_TYPE_HDDVDRWDL;
-                default:                  return"";
+                default:                  return "";
             }
         }
     }

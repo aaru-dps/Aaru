@@ -51,9 +51,10 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
             uint dataChk = DC42CheckSum(data);
             AaruConsole.DebugWriteLine("DC42 plugin", "Calculated data checksum = 0x{0:X8}", dataChk);
-            AaruConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}",     header.DataChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}", header.DataChecksum);
 
-            if(header.TagSize <= 0) return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
+            if(header.TagSize <= 0)
+                return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
 
             AaruConsole.DebugWriteLine("DC42 plugin", "Reading tags");
             Stream tagstream = dc42ImageFilter.GetDataForkStream();
@@ -63,7 +64,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
             tagsChk = DC42CheckSum(tags);
             AaruConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
-            AaruConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}",     header.TagChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}", header.TagChecksum);
 
             return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
         }

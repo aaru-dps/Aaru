@@ -40,35 +40,37 @@ namespace Aaru.Devices
     public partial class Device
     {
         /// <summary>
-        ///     Releases unmanaged resources and performs other cleanup operations before the
-        ///     <see cref="Device" /> is reclaimed by garbage collection.
+        ///     Releases unmanaged resources and performs other cleanup operations before the <see cref="Device" /> is
+        ///     reclaimed by garbage collection.
         /// </summary>
-        ~Device()
-        {
-            Close();
-        }
+        ~Device() => Close();
 
         public void Close()
         {
-            if (_remote != null)
+            if(_remote != null)
             {
                 _remote.Close();
                 _remote.Disconnect();
+
                 return;
             }
 
-            if (FileHandle == null) return;
+            if(FileHandle == null)
+                return;
 
-            switch (PlatformId)
+            switch(PlatformId)
             {
                 case PlatformID.Win32NT:
                     (FileHandle as SafeFileHandle)?.Close();
+
                     break;
                 case PlatformID.Linux:
-                    Extern.close((int) FileHandle);
+                    Extern.close((int)FileHandle);
+
                     break;
                 case PlatformID.FreeBSD:
-                    FreeBSD.Extern.cam_close_device((IntPtr) FileHandle);
+                    FreeBSD.Extern.cam_close_device((IntPtr)FileHandle);
+
                     break;
             }
 

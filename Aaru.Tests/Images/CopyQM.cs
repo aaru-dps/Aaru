@@ -40,13 +40,19 @@ namespace Aaru.Tests.Images
     {
         readonly string[] testfiles =
         {
-            "mf2dd.cqm.lz", "mf2dd_fdformat_800.cqm.lz", "mf2dd_freedos.cqm.lz", "mf2hd_blind.cqm.lz",
-            "mf2hd.cqm.lz", "mf2hd_fdformat_168.cqm.lz", "mf2hd_freedos.cqm.lz"
+            "mf2dd.cqm.lz", "mf2dd_fdformat_800.cqm.lz", "mf2dd_freedos.cqm.lz", "mf2hd_blind.cqm.lz", "mf2hd.cqm.lz",
+            "mf2hd_fdformat_168.cqm.lz", "mf2hd_freedos.cqm.lz"
         };
 
-        readonly ulong[] sectors = {1440, 1600, 1600, 2880, 2880, 3360, 3360};
+        readonly ulong[] sectors =
+        {
+            1440, 1600, 1600, 2880, 2880, 3360, 3360
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512, 512, 512
+        };
 
         // TODO: Add "unknown" media types
         readonly MediaType[] mediatypes =
@@ -57,9 +63,8 @@ namespace Aaru.Tests.Images
 
         readonly string[] md5S =
         {
-            "de3f85896f771b7e5bc4c9e3926d64e4", "c533488a21098a62c85f1649abda2803",
-            "1ff7649b679ba22ff20d39ff717dbec8", "b4a602f67903c46eef62addb0780aa56",
-            "b4a602f67903c46eef62addb0780aa56", "03c2af6a8ebf4bd6f530335de34ae5dd",
+            "de3f85896f771b7e5bc4c9e3926d64e4", "c533488a21098a62c85f1649abda2803", "1ff7649b679ba22ff20d39ff717dbec8",
+            "b4a602f67903c46eef62addb0780aa56", "b4a602f67903c46eef62addb0780aa56", "03c2af6a8ebf4bd6f530335de34ae5dd",
             "1a9f2eeb3cbeeb057b9a9a5c6e9b0cc6"
         };
 
@@ -72,16 +77,16 @@ namespace Aaru.Tests.Images
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.CopyQm();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
                 const uint SECTORS_TO_READ = 256;
                 ulong      doneSectors     = 0;
 
-                Md5Context ctx = new Md5Context();
+                var ctx = new Md5Context();
 
                 while(doneSectors < image.Info.Sectors)
                 {

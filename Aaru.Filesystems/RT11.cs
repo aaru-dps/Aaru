@@ -33,9 +33,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Claunia.Encoding;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 using Marshal = Aaru.Helpers.Marshal;
@@ -54,12 +54,14 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(1 + partition.Start >= partition.End) return false;
+            if(1 + partition.Start >= partition.End)
+                return false;
 
             byte[] magicB   = new byte[12];
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            if(hbSector.Length < 512) return false;
+            if(hbSector.Length < 512)
+                return false;
 
             Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
             string magic = Encoding.ASCII.GetString(magicB);
@@ -68,12 +70,12 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = new Radix50();
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
@@ -88,13 +90,17 @@ namespace Aaru.Filesystems
              *      SOB R2, 10$
              *      MOV 1,@R0
              */
-            ushort check                          = 0;
-            for(int i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
+            ushort check = 0;
+
+            for(int i = 0; i < 512; i += 2)
+                check += BitConverter.ToUInt16(hbSector, i);
 
             sb.AppendFormat("Volume format is {0}",
                             StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).AppendLine();
-            sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512)
-              .AppendLine();
+
+            sb.AppendFormat("{0} sectors per cluster ({1} bytes)", homeblock.cluster, homeblock.cluster * 512).
+               AppendLine();
+
             sb.AppendFormat("First directory segment starts at block {0}", homeblock.rootBlock).AppendLine();
             sb.AppendFormat("Volume owner is \"{0}\"", Encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();
             sb.AppendFormat("Volume label: \"{0}\"", Encoding.GetString(homeblock.volname).TrimEnd()).AppendLine();
@@ -104,11 +110,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "RT-11",
-                ClusterSize = (uint)(homeblock.cluster * 512),
-                Clusters    = homeblock.cluster,
-                VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
-                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
+                Type       = "RT-11", ClusterSize = (uint)(homeblock.cluster * 512), Clusters = homeblock.cluster,
+                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
+                Bootable   = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
             };
 
             information = sb.ToString();

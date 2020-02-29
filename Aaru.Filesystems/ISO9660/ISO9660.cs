@@ -72,17 +72,30 @@ namespace Aaru.Filesystems.ISO9660
                  "If present, use Enhanced Volume Descriptor with specified encoding (overrides namespace)")
             };
 
-        public Dictionary<string, string> Namespaces =>
-            new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        {
             {
-                {"normal", "Primary Volume Descriptor, ignoring ;1 suffixes"},
-                {"vms", "Primary Volume Descriptor, showing version suffixes"},
-                {"joliet", "Joliet Volume Descriptor (default)"},
-                {"rrip", "Rock Ridge"},
-                {"romeo", "Primary Volume Descriptor using the specified encoding codepage"}
-            };
+                "normal", "Primary Volume Descriptor, ignoring ;1 suffixes"
+            },
+            {
+                "vms", "Primary Volume Descriptor, showing version suffixes"
+            },
+            {
+                "joliet", "Joliet Volume Descriptor (default)"
+            },
+            {
+                "rrip", "Rock Ridge"
+            },
+            {
+                "romeo", "Primary Volume Descriptor using the specified encoding codepage"
+            }
+        };
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
     }
 }

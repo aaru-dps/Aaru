@@ -26,48 +26,54 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Tests.Devices.SecureDigital;
 using Aaru.Console;
 using Aaru.Devices;
+using Aaru.Tests.Devices.SecureDigital;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void SecureDigital(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send an SecureDigital/MultiMediaCard command to the device:");
-                DicConsole.WriteLine("1.- Send a SecureDigital command to the device.");
-                DicConsole.WriteLine("2.- Send a MultiMediaCard command to the device.");
-                DicConsole.WriteLine("0.- Return to command class menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send an SecureDigital/MultiMediaCard command to the device:");
+                AaruConsole.WriteLine("1.- Send a SecureDigital command to the device.");
+                AaruConsole.WriteLine("2.- Send a MultiMediaCard command to the device.");
+                AaruConsole.WriteLine("0.- Return to command class menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to command class menu...");
+                        AaruConsole.WriteLine("Returning to command class menu...");
+
                         return;
                     case 1:
                         Devices.SecureDigital.SecureDigital.Menu(devPath, dev);
+
                         continue;
                     case 2:
                         MultiMediaCard.Menu(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }

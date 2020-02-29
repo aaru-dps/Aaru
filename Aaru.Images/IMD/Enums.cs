@@ -52,15 +52,9 @@ namespace Aaru.DiscImages
 
         enum SectorType : byte
         {
-            Unavailable            = 0,
-            Normal                 = 1,
-            Compressed             = 2,
-            Deleted                = 3,
-            CompressedDeleted      = 4,
-            Error                  = 5,
-            CompressedError        = 6,
-            DeletedError           = 7,
-            CompressedDeletedError = 8
+            Unavailable     = 0, Normal            = 1, Compressed             = 2,
+            Deleted         = 3, CompressedDeleted = 4, Error                  = 5,
+            CompressedError = 6, DeletedError      = 7, CompressedDeletedError = 8
         }
     }
 }

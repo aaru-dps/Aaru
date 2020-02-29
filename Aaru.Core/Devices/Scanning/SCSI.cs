@@ -33,9 +33,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;

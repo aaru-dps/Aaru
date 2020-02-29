@@ -36,9 +36,7 @@ namespace Aaru.DiscImages
 {
     public partial class DriDiskCopy
     {
-        /// <summary>
-        ///     Drive codes change according to CMOS stored valued
-        /// </summary>
+        /// <summary>Drive codes change according to CMOS stored valued</summary>
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum DriDriveCodes : byte
         {

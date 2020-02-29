@@ -40,9 +40,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decodes PCExchange files
-    /// </summary>
+    /// <summary>Decodes PCExchange files</summary>
     public class PCExchange : IFilter
     {
         const string FILE_ID     = "FILEID.DAT";
@@ -62,10 +60,7 @@ namespace Aaru.Filters
         public Guid   Id     => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
         public string Author => "Natalia Portillo";
 
-        public void Close()
-        {
-            opened = false;
-        }
+        public void Close() => opened = false;
 
         public string GetBasePath() => basePath;
 
@@ -101,36 +96,44 @@ namespace Aaru.Filters
 
             parentFolder = parentFolder ?? "";
 
-            if(!File.Exists(Path.Combine(parentFolder, FINDER_INFO))) return false;
+            if(!File.Exists(Path.Combine(parentFolder, FINDER_INFO)))
+                return false;
 
-            if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES))) return false;
+            if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES)))
+                return false;
 
             string baseFilename = Path.GetFileName(path);
 
             bool dataFound = false;
             bool rsrcFound = false;
 
-            FileStream finderDatStream =
+            var finderDatStream =
                 new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                PCExchangeEntry datEntry   = new PCExchangeEntry();
-                byte[]          datEntry_b = new byte[Marshal.SizeOf(datEntry)];
+                var    datEntry   = new PCExchangeEntry();
+                byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Aaru.Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+
                 // TODO: Add support for encoding on filters
-                string macName =
-                    StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
+                string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
+
                 byte[] tmpDosName_b = new byte[8];
                 byte[] tmpDosExt_b  = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
-                Array.Copy(datEntry.dosName, 8, tmpDosExt_b,  0, 3);
+                Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
+
                 string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim();
+
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-                if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
+                if(baseFilename != macName &&
+                   baseFilename != dosName &&
+                   baseFilename != dosNameLow)
+                    continue;
 
                 dataFound |=
                     File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
@@ -150,15 +153,9 @@ namespace Aaru.Filters
 
         public bool IsOpened() => opened;
 
-        public void Open(byte[] buffer)
-        {
-            throw new NotSupportedException();
-        }
+        public void Open(byte[] buffer) => throw new NotSupportedException();
 
-        public void Open(Stream stream)
-        {
-            throw new NotSupportedException();
-        }
+        public void Open(Stream stream) => throw new NotSupportedException();
 
         public void Open(string path)
         {
@@ -167,40 +164,48 @@ namespace Aaru.Filters
 
             parentFolder = parentFolder ?? "";
 
-            FileStream finderDatStream =
+            var finderDatStream =
                 new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                PCExchangeEntry datEntry   = new PCExchangeEntry();
-                byte[]          datEntry_b = new byte[Marshal.SizeOf(datEntry)];
+                var    datEntry   = new PCExchangeEntry();
+                byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Aaru.Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
-                string macName =
-                    StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+
+                string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
+
                 byte[] tmpDosName_b = new byte[8];
                 byte[] tmpDosExt_b  = new byte[3];
                 Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
-                Array.Copy(datEntry.dosName, 8, tmpDosExt_b,  0, 3);
+                Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
+
                 string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
                                  Encoding.ASCII.GetString(tmpDosExt_b).Trim();
+
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-                if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
+                if(baseFilename != macName &&
+                   baseFilename != dosName &&
+                   baseFilename != dosNameLow)
+                    continue;
 
                 if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
                     dataPath = Path.Combine(parentFolder, macName);
                 else if(File.Exists(Path.Combine(parentFolder, dosName)))
                     dataPath = Path.Combine(parentFolder, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
-                    dataPath  = Path.Combine(parentFolder, dosNameLow);
-                else dataPath = null;
+                    dataPath = Path.Combine(parentFolder, dosNameLow);
+                else
+                    dataPath = null;
 
                 if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)))
                     rsrcPath = Path.Combine(parentFolder, RESOURCES, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow)))
-                    rsrcPath  = Path.Combine(parentFolder, RESOURCES, dosNameLow);
-                else rsrcPath = null;
+                    rsrcPath = Path.Combine(parentFolder, RESOURCES, dosNameLow);
+                else
+                    rsrcPath = null;
 
                 lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
                 creationTime  = DateHandlers.MacToDateTime(datEntry.creationDate);
@@ -221,62 +226,36 @@ namespace Aaru.Filters
         struct PCExchangeEntry
         {
             /// <summary>
-            ///     Name in Macintosh. If PCExchange version supports FAT's LFN they are the same.
-            ///     Illegal characters for FAT get substituted with '_' both here and in FAT's LFN entry.
+            ///     Name in Macintosh. If PCExchange version supports FAT's LFN they are the same. Illegal characters for FAT get
+            ///     substituted with '_' both here and in FAT's LFN entry.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] macName;
-            /// <summary>
-            ///     File type
-            /// </summary>
+            /// <summary>File type</summary>
             public readonly uint type;
-            /// <summary>
-            ///     File creator
-            /// </summary>
+            /// <summary>File creator</summary>
             public readonly uint creator;
-            /// <summary>
-            ///     Finder flags
-            /// </summary>
+            /// <summary>Finder flags</summary>
             public readonly ushort fdFlags;
-            /// <summary>
-            ///     File's icon vertical position within its window
-            /// </summary>
+            /// <summary>File's icon vertical position within its window</summary>
             public readonly ushort verticalPosition;
-            /// <summary>
-            ///     File's icon horizontal position within its window
-            /// </summary>
+            /// <summary>File's icon horizontal position within its window</summary>
             public readonly ushort horizontalPosition;
-            /// <summary>
-            ///     Unknown, all bytes are empty but last, except in volume's label entry
-            /// </summary>
+            /// <summary>Unknown, all bytes are empty but last, except in volume's label entry</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
             public readonly byte[] unknown1;
-            /// <summary>
-            ///     File's creation date
-            /// </summary>
+            /// <summary>File's creation date</summary>
             public readonly uint creationDate;
-            /// <summary>
-            ///     File's modification date
-            /// </summary>
+            /// <summary>File's modification date</summary>
             public readonly uint modificationDate;
-            /// <summary>
-            ///     File's last backup date
-            /// </summary>
+            /// <summary>File's last backup date</summary>
             public readonly uint backupDate;
-            /// <summary>
-            ///     Unknown, but is unique, starts 0x7FFFFFFF and counts in reverse.
-            ///     Probably file ID for alias look up?
-            /// </summary>
+            /// <summary>Unknown, but is unique, starts 0x7FFFFFFF and counts in reverse. Probably file ID for alias look up?</summary>
             public readonly uint unknown2;
-            /// <summary>
-            ///     Name as in FAT entry (not LFN).
-            ///     Resource fork file is always using this name, never LFN.
-            /// </summary>
+            /// <summary>Name as in FAT entry (not LFN). Resource fork file is always using this name, never LFN.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public readonly byte[] dosName;
-            /// <summary>
-            ///     Unknown, flags?
-            /// </summary>
+            /// <summary>Unknown, flags?</summary>
             public readonly byte unknown3;
         }
     }

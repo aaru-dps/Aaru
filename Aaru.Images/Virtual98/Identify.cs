@@ -45,29 +45,34 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Virtual98Header>()) return false;
+            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+            var shiftjis = Encoding.GetEncoding("shift_jis");
+
+            if(stream.Length < Marshal.SizeOf<Virtual98Header>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
             v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
-            if(!v98Hdr.signature.SequenceEqual(signature)) return false;
+            if(!v98Hdr.signature.SequenceEqual(signature))
+                return false;
 
             AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
-                                      StringHandlers.CToString(v98Hdr.signature, shiftjis));
+                                       StringHandlers.CToString(v98Hdr.signature, shiftjis));
+
             AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
-                                      StringHandlers.CToString(v98Hdr.comment, shiftjis));
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}",    v98Hdr.padding);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}",     v98Hdr.mbsize);
+                                       StringHandlers.CToString(v98Hdr.comment, shiftjis));
+
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98Hdr.padding);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98Hdr.mbsize);
             AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}",    v98Hdr.sectors);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}",   v98Hdr.surfaces);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}",  v98Hdr.cylinders);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}",     v98Hdr.totals);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98Hdr.sectors);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98Hdr.surfaces);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98Hdr.cylinders);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98Hdr.totals);
 
             return true;
         }

@@ -39,8 +39,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using CUETools.Codecs;
-using CUETools.Codecs.FLAKE;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -48,6 +46,8 @@ using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
+using CUETools.Codecs;
+using CUETools.Codecs.FLAKE;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
@@ -209,8 +209,8 @@ namespace Aaru.DiscImages
                 shift++;
             }
 
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Got a shift of {0} for {1} sectors per block",
-                                      shift, oldSectorsPerBlock);
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Got a shift of {0} for {1} sectors per block", shift,
+                                       oldSectorsPerBlock);
 
             imageInfo = new ImageInfo
             {
@@ -236,7 +236,8 @@ namespace Aaru.DiscImages
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                 header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(structureBytes);
 
-                if(header.identifier != DIC_MAGIC && header.identifier != AARU_MAGIC)
+                if(header.identifier != DIC_MAGIC &&
+                   header.identifier != AARU_MAGIC)
                 {
                     ErrorMessage = "Cannot append to a non Aaru Format image";
 
@@ -298,7 +299,7 @@ namespace Aaru.DiscImages
                 }
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
-                                          header.indexOffset, idxHeader.entries);
+                                           header.indexOffset, idxHeader.entries);
 
                 for(ushort i = 0; i < idxHeader.entries; i++)
                 {
@@ -307,8 +308,8 @@ namespace Aaru.DiscImages
                     IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                              "Block type {0} with data type {1} is indexed to be at {2}",
-                                              entry.blockType, entry.dataType, entry.offset);
+                                               "Block type {0} with data type {1} is indexed to be at {2}",
+                                               entry.blockType, entry.dataType, entry.offset);
 
                     index.Add(entry);
                 }
@@ -346,8 +347,8 @@ namespace Aaru.DiscImages
                             if(blockHeader.identifier != entry.blockType)
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Incorrect identifier for data block at position {0}",
-                                                          entry.offset);
+                                                           "Incorrect identifier for data block at position {0}",
+                                                           entry.offset);
 
                                 break;
                             }
@@ -355,8 +356,8 @@ namespace Aaru.DiscImages
                             if(blockHeader.type != entry.dataType)
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Expected block with data type {0} at position {1} but found data type {2}",
-                                                          entry.dataType, entry.offset, blockHeader.type);
+                                                           "Expected block with data type {0} at position {1} but found data type {2}",
+                                                           entry.dataType, entry.offset, blockHeader.type);
 
                                 break;
                             }
@@ -364,8 +365,8 @@ namespace Aaru.DiscImages
                             byte[] data;
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Found data block type {0} at position {1}", entry.dataType,
-                                                      entry.offset);
+                                                       "Found data block type {0} at position {1}", entry.dataType,
+                                                       entry.offset);
 
                             if(blockHeader.compression == CompressionType.Lzma)
                             {
@@ -388,8 +389,8 @@ namespace Aaru.DiscImages
                             else
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Found unknown compression type {0}, continuing...",
-                                                          (ushort)blockHeader.compression);
+                                                           "Found unknown compression type {0}, continuing...",
+                                                           (ushort)blockHeader.compression);
 
                                 break;
                             }
@@ -400,8 +401,8 @@ namespace Aaru.DiscImages
                             if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
-                                                          BitConverter.ToUInt64(blockCrc, 0), blockHeader.crc64);
+                                                           "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                           BitConverter.ToUInt64(blockCrc, 0), blockHeader.crc64);
 
                                 break;
                             }
@@ -463,8 +464,7 @@ namespace Aaru.DiscImages
                                 switch(ddtHeader.compression)
                                 {
                                     case CompressionType.Lzma:
-                                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                                  "Decompressing DDT...");
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
 
                                         DateTime ddtStart = DateTime.UtcNow;
 
@@ -484,8 +484,8 @@ namespace Aaru.DiscImages
                                         inMemoryDdt = true;
 
                                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                                  "Took {0} seconds to decompress DDT",
-                                                                  (ddtEnd - ddtStart).TotalSeconds);
+                                                                   "Took {0} seconds to decompress DDT",
+                                                                   (ddtEnd - ddtStart).TotalSeconds);
 
                                         break;
                                     case CompressionType.None:
@@ -535,8 +535,7 @@ namespace Aaru.DiscImages
                                 switch(ddtHeader.compression)
                                 {
                                     case CompressionType.Lzma:
-                                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                                  "Decompressing DDT...");
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
 
                                         DateTime ddtStart = DateTime.UtcNow;
 
@@ -553,8 +552,8 @@ namespace Aaru.DiscImages
                                         DateTime ddtEnd = DateTime.UtcNow;
 
                                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                                  "Took {0} seconds to decompress DDT",
-                                                                  (ddtEnd - ddtStart).TotalSeconds);
+                                                                   "Took {0} seconds to decompress DDT",
+                                                                   (ddtEnd - ddtStart).TotalSeconds);
 
                                         break;
                                     case CompressionType.None:
@@ -595,7 +594,7 @@ namespace Aaru.DiscImages
                                 break;
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Found CICM XML metadata block at position {0}", entry.offset);
+                                                       "Found CICM XML metadata block at position {0}", entry.offset);
 
                             byte[] cicmBytes = new byte[cicmBlock.length];
                             imageStream.Read(cicmBytes, 0, cicmBytes.Length);
@@ -611,8 +610,8 @@ namespace Aaru.DiscImages
                             catch(XmlException ex)
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Exception {0} processing CICM XML metadata block",
-                                                          ex.Message);
+                                                           "Exception {0} processing CICM XML metadata block",
+                                                           ex.Message);
 
                                 CicmMetadata = null;
                             }
@@ -631,7 +630,7 @@ namespace Aaru.DiscImages
                                 break;
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Found dump hardware block at position {0}", entry.offset);
+                                                       "Found dump hardware block at position {0}", entry.offset);
 
                             structureBytes = new byte[dumpBlock.length];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
@@ -640,8 +639,8 @@ namespace Aaru.DiscImages
                             if(BitConverter.ToUInt64(dumpCrc, 0) != dumpBlock.crc64)
                             {
                                 AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                          "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
-                                                          BitConverter.ToUInt64(dumpCrc, 0), dumpBlock.crc64);
+                                                           "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                           BitConverter.ToUInt64(dumpCrc, 0), dumpBlock.crc64);
 
                                 break;
                             }
@@ -764,7 +763,7 @@ namespace Aaru.DiscImages
                                 break;
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Found tape partition block at position {0}", entry.offset);
+                                                       "Found tape partition block at position {0}", entry.offset);
 
                             byte[] tapePartitionBytes = new byte[partitionHeader.length];
                             imageStream.Read(tapePartitionBytes, 0, tapePartitionBytes.Length);
@@ -796,8 +795,8 @@ namespace Aaru.DiscImages
                             if(fileHeader.identifier != BlockType.TapeFileBlock)
                                 break;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Found tape file block at position {0}", entry.offset);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Found tape file block at position {0}",
+                                                       entry.offset);
 
                             byte[] tapeFileBytes = new byte[fileHeader.length];
                             imageStream.Read(tapeFileBytes, 0, tapeFileBytes.Length);
@@ -1873,9 +1872,9 @@ namespace Aaru.DiscImages
             }
 
             if(deduplicate)
-                AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                          "Of {0} sectors written, {1} are unique ({2:P})", writtenSectors,
-                                          deduplicationTable.Count, (double)deduplicationTable.Count / writtenSectors);
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Of {0} sectors written, {1} are unique ({2:P})",
+                                           writtenSectors, deduplicationTable.Count,
+                                           (double)deduplicationTable.Count / writtenSectors);
 
             IndexEntry idxEntry;
 
@@ -1896,8 +1895,8 @@ namespace Aaru.DiscImages
                     blockType = BlockType.DataBlock, dataType = dataType, offset = (ulong)imageStream.Position
                 };
 
-                AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tag type {0} to position {1}",
-                                          mediaTag.Key, idxEntry.offset);
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tag type {0} to position {1}", mediaTag.Key,
+                                           idxEntry.offset);
 
                 Crc64Context.Data(mediaTag.Value, out byte[] tagCrc);
 
@@ -1961,7 +1960,7 @@ namespace Aaru.DiscImages
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing geometry block to position {0}",
-                                          idxEntry.offset);
+                                           idxEntry.offset);
 
                 structureBytes = new byte[Marshal.SizeOf<GeometryBlock>()];
                 MemoryMarshal.Write(structureBytes, ref geometryBlock);
@@ -2094,7 +2093,7 @@ namespace Aaru.DiscImages
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing dump hardware block to position {0}",
-                                          idxEntry.offset);
+                                           idxEntry.offset);
 
                 Crc64Context.Data(dumpMs.ToArray(), out byte[] dumpCrc);
 
@@ -2127,7 +2126,7 @@ namespace Aaru.DiscImages
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing CICM XML block to position {0}",
-                                          idxEntry.offset);
+                                           idxEntry.offset);
 
                 var cicmBlock = new CicmMetadataBlock
                 {
@@ -2232,7 +2231,7 @@ namespace Aaru.DiscImages
                     };
 
                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing checksum block to position {0}",
-                                              idxEntry.offset);
+                                               idxEntry.offset);
 
                     structureBytes = new byte[Marshal.SizeOf<ChecksumHeader>()];
                     MemoryMarshal.Write(structureBytes, ref chkHeader);
@@ -2264,7 +2263,7 @@ namespace Aaru.DiscImages
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tape partitions to position {0}",
-                                          idxEntry.offset);
+                                           idxEntry.offset);
 
                 TapePartitionEntry[] tapePartitionEntries = new TapePartitionEntry[TapePartitions.Count];
 
@@ -2303,8 +2302,7 @@ namespace Aaru.DiscImages
                     offset    = (ulong)imageStream.Position
                 };
 
-                AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tape files to position {0}",
-                                          idxEntry.offset);
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tape files to position {0}", idxEntry.offset);
 
                 TapeFileEntry[] tapeFileEntries = new TapeFileEntry[Files.Count];
 
@@ -2346,7 +2344,7 @@ namespace Aaru.DiscImages
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing user data DDT to position {0}",
-                                          idxEntry.offset);
+                                           idxEntry.offset);
 
                 var ddtHeader = new DdtHeader
                 {
@@ -2405,7 +2403,7 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD sector prefix block to position {0}", idxEntry.offset);
+                                                   "Writing CD sector prefix block to position {0}", idxEntry.offset);
 
                         Crc64Context.Data(sectorPrefix, out byte[] blockCrc);
 
@@ -2443,9 +2441,8 @@ namespace Aaru.DiscImages
 
                             endCompress = DateTime.Now;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress prefix",
-                                                      (endCompress - startCompress).TotalSeconds);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress prefix",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -2471,7 +2468,7 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD sector suffix block to position {0}", idxEntry.offset);
+                                                   "Writing CD sector suffix block to position {0}", idxEntry.offset);
 
                         Crc64Context.Data(sectorSuffix, out blockCrc);
 
@@ -2507,9 +2504,8 @@ namespace Aaru.DiscImages
 
                             endCompress = DateTime.Now;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress suffix",
-                                                      (endCompress - startCompress).TotalSeconds);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress suffix",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -2567,22 +2563,22 @@ namespace Aaru.DiscImages
                                 writtenSuffixes++;
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "{0} ({1:P}% prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image",
-                                                  correctPrefixes, correctPrefixes     / imageInfo.Sectors,
-                                                  notDumpedPrefixes, notDumpedPrefixes / imageInfo.Sectors,
-                                                  writtenPrefixes, writtenPrefixes     / imageInfo.Sectors);
+                                                   "{0} ({1:P}% prefixes are correct, {2} ({3:P}%) prefixes have not been dumped, {4} ({5:P}%) prefixes have been written to image",
+                                                   correctPrefixes, correctPrefixes     / imageInfo.Sectors,
+                                                   notDumpedPrefixes, notDumpedPrefixes / imageInfo.Sectors,
+                                                   writtenPrefixes, writtenPrefixes     / imageInfo.Sectors);
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "{0} ({1:P}% suffixes are correct, {2} ({3:P}%) suffixes have not been dumped, {4} ({5:P}%) suffixes have been written to image",
-                                                  correctSuffixes, correctSuffixes     / imageInfo.Sectors,
-                                                  notDumpedSuffixes, notDumpedSuffixes / imageInfo.Sectors,
-                                                  writtenSuffixes, writtenSuffixes     / imageInfo.Sectors);
+                                                   "{0} ({1:P}% suffixes are correct, {2} ({3:P}%) suffixes have not been dumped, {4} ({5:P}%) suffixes have been written to image",
+                                                   correctSuffixes, correctSuffixes     / imageInfo.Sectors,
+                                                   notDumpedSuffixes, notDumpedSuffixes / imageInfo.Sectors,
+                                                   writtenSuffixes, writtenSuffixes     / imageInfo.Sectors);
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "{0} ({1:P}% MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC",
-                                                  correctMode2Form1, correctMode2Form1 / imageInfo.Sectors,
-                                                  correctMode2Form2, correctMode2Form2 / imageInfo.Sectors,
-                                                  emptyMode2Form1, emptyMode2Form1     / imageInfo.Sectors);
+                                                   "{0} ({1:P}% MODE 2 Form 1 are correct, {2} ({3:P}%) MODE 2 Form 2 are correct, {4} ({5:P}%) MODE 2 Form 2 have empty CRC",
+                                                   correctMode2Form1, correctMode2Form1 / imageInfo.Sectors,
+                                                   correctMode2Form2, correctMode2Form2 / imageInfo.Sectors,
+                                                   emptyMode2Form1, emptyMode2Form1     / imageInfo.Sectors);
                     #endif
 
                         idxEntry = new IndexEntry
@@ -2592,8 +2588,8 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CompactDisc sector prefix DDT to position {0}",
-                                                  idxEntry.offset);
+                                                   "Writing CompactDisc sector prefix DDT to position {0}",
+                                                   idxEntry.offset);
 
                         var ddtHeader = new DdtHeader
                         {
@@ -2641,8 +2637,8 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CompactDisc sector suffix DDT to position {0}",
-                                                  idxEntry.offset);
+                                                   "Writing CompactDisc sector suffix DDT to position {0}",
+                                                   idxEntry.offset);
 
                         ddtHeader = new DdtHeader
                         {
@@ -2689,8 +2685,8 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD sector corrected prefix block to position {0}",
-                                                  idxEntry.offset);
+                                                   "Writing CD sector corrected prefix block to position {0}",
+                                                   idxEntry.offset);
 
                         Crc64Context.Data(sectorPrefixMs.GetBuffer(), (uint)sectorPrefixMs.Length, out byte[] blockCrc);
 
@@ -2729,9 +2725,8 @@ namespace Aaru.DiscImages
 
                             endCompress = DateTime.Now;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress prefix",
-                                                      (endCompress - startCompress).TotalSeconds);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress prefix",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -2757,8 +2752,8 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD sector corrected suffix block to position {0}",
-                                                  idxEntry.offset);
+                                                   "Writing CD sector corrected suffix block to position {0}",
+                                                   idxEntry.offset);
 
                         Crc64Context.Data(sectorSuffixMs.GetBuffer(), (uint)sectorSuffixMs.Length, out blockCrc);
 
@@ -2797,9 +2792,8 @@ namespace Aaru.DiscImages
 
                             endCompress = DateTime.Now;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress suffix",
-                                                      (endCompress - startCompress).TotalSeconds);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress suffix",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -2828,7 +2822,8 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD MODE2 subheaders block to position {0}", idxEntry.offset);
+                                                   "Writing CD MODE2 subheaders block to position {0}",
+                                                   idxEntry.offset);
 
                         Crc64Context.Data(mode2Subheaders, out byte[] blockCrc);
 
@@ -2868,8 +2863,8 @@ namespace Aaru.DiscImages
                             endCompress = DateTime.Now;
 
                             AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress MODE2 subheaders",
-                                                      (endCompress - startCompress).TotalSeconds);
+                                                       "Took {0} seconds to compress MODE2 subheaders",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -2897,8 +2892,8 @@ namespace Aaru.DiscImages
                             offset    = (ulong)imageStream.Position
                         };
 
-                        AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing CD subchannel block to position {0}", idxEntry.offset);
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing CD subchannel block to position {0}",
+                                                   idxEntry.offset);
 
                         Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
 
@@ -2938,9 +2933,8 @@ namespace Aaru.DiscImages
 
                             endCompress = DateTime.Now;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                      "Took {0} seconds to compress subchannel",
-                                                      (endCompress - startCompress).TotalSeconds);
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress subchannel",
+                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -3010,7 +3004,7 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tracks to position {0}",
-                                                  imageStream.Position);
+                                                   imageStream.Position);
 
                         index.RemoveAll(t => t.blockType == BlockType.TracksBlock && t.dataType == DataType.NoData);
 
@@ -3065,7 +3059,7 @@ namespace Aaru.DiscImages
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                  "Writing apple sector tag block to position {0}", idxEntry.offset);
+                                                   "Writing apple sector tag block to position {0}", idxEntry.offset);
 
                         Crc64Context.Data(sectorSubchannel, out byte[] blockCrc);
 
@@ -3326,7 +3320,7 @@ namespace Aaru.DiscImages
             if(metadataBlock.identifier == BlockType.MetadataBlock)
             {
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing metadata to position {0}",
-                                          imageStream.Position);
+                                           imageStream.Position);
 
                 metadataBlock.blockSize = (uint)blockStream.Length;
                 structureBytes          = new byte[Marshal.SizeOf<MetadataBlock>()];
@@ -3348,8 +3342,7 @@ namespace Aaru.DiscImages
 
             header.indexOffset = (ulong)imageStream.Position;
 
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing index to position {0}",
-                                      header.indexOffset);
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing index to position {0}", header.indexOffset);
 
             blockStream = new MemoryStream();
 

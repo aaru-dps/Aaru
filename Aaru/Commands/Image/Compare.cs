@@ -90,14 +90,14 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open input file 1");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             if(inputFilter2 == null)
             {
                 AaruConsole.ErrorWriteLine("Cannot open input file 2");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage input1Format = ImageFormat.Detect(inputFilter1);
@@ -107,12 +107,12 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
-                                            input1Format.Id);
+                                             input1Format.Id);
             else
                 AaruConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
 
@@ -120,12 +120,12 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
-                                            input2Format.Id);
+                                             input2Format.Id);
             else
                 AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
@@ -361,7 +361,7 @@ namespace Aaru.Commands.Image
 
             AaruConsole.WriteLine(sb.ToString());
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

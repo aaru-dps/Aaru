@@ -55,7 +55,8 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
+            if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
+                return false;
 
             byte[]    hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
             GptHeader hdr;
@@ -71,6 +72,7 @@ namespace Aaru.Partitions
                     hdrBytes  = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
                     AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
+
                     if(signature == GPT_MAGIC)
                     {
                         AaruConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
@@ -79,31 +81,40 @@ namespace Aaru.Partitions
                         hdrBytes   = real;
                         misaligned = true;
                     }
-                    else return false;
+                    else
+                        return false;
                 }
                 else
                     return false;
 
-            try { hdr = Marshal.ByteArrayToStructureLittleEndian<GptHeader>(hdrBytes); }
-            catch { return false; }
+            try
+            {
+                hdr = Marshal.ByteArrayToStructureLittleEndian<GptHeader>(hdrBytes);
+            }
+            catch
+            {
+                return false;
+            }
 
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}",   hdr.revision);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}",      hdr.headerSize);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}",  hdr.headerCrc);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}",   hdr.reserved);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}",           hdr.myLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}",    hdr.alternateLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}",  hdr.firstUsableLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}",   hdr.lastUsableLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}",        hdr.diskGuid);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}",        hdr.entryLBA);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}",         hdr.entries);
-            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}",     hdr.entriesSize);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}", hdr.revision);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}", hdr.headerSize);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}", hdr.headerCrc);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}", hdr.reserved);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}", hdr.myLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}", hdr.alternateLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}", hdr.firstUsableLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}", hdr.lastUsableLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}", hdr.diskGuid);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}", hdr.entryLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}", hdr.entries);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}", hdr.entriesSize);
             AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
-            if(hdr.signature != GPT_MAGIC) return false;
+            if(hdr.signature != GPT_MAGIC)
+                return false;
 
-            if(hdr.myLBA != 1 + sectorOffset) return false;
+            if(hdr.myLBA != 1 + sectorOffset)
+                return false;
 
             uint divisor, modulo, sectorSize;
 
@@ -120,11 +131,13 @@ namespace Aaru.Partitions
                 sectorSize = imagePlugin.Info.SectorSize;
             }
 
-            uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
-            if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
+            uint totalEntriesSectors = (hdr.entries * hdr.entriesSize) / imagePlugin.Info.SectorSize;
+
+            if((hdr.entries * hdr.entriesSize) % imagePlugin.Info.SectorSize > 0)
+                totalEntriesSectors++;
 
             byte[] temp         = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
-            byte[] entriesBytes = new byte[temp.Length - modulo * 512];
+            byte[] entriesBytes = new byte[temp.Length - (modulo       * 512)];
             Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
             List<GptEntry> entries = new List<GptEntry>();
 
@@ -144,35 +157,36 @@ namespace Aaru.Partitions
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
-            if(entries.Count == 0) return false;
+            if(entries.Count == 0)
+                return false;
 
             ulong pseq = 0;
 
             foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
                                                              entry.partitionId   != Guid.Empty))
             {
-                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}",    entry.partitionType);
-                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}",      entry.partitionId);
-                AaruConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}",         entry.startLBA);
-                AaruConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}",           entry.endLBA);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}", entry.startLBA);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}", entry.endLBA);
                 AaruConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
-                AaruConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}",             entry.name);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}", entry.name);
 
                 if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
-                   entry.endLBA   / divisor > imagePlugin.Info.Sectors) return false;
+                   entry.endLBA   / divisor > imagePlugin.Info.Sectors)
+                    return false;
 
-                Partition part = new Partition
+                var part = new Partition
                 {
-                    Description = $"ID: {entry.partitionId}",
-                    Size        = (entry.endLBA - entry.startLBA + 1) * sectorSize,
-                    Name        = entry.name,
-                    Length      = (entry.endLBA - entry.startLBA + 1) / divisor,
+                    Description = $"ID: {entry.partitionId}", Size = ((entry.endLBA - entry.startLBA) + 1) * sectorSize,
+                    Name        = entry.name, Length               = ((entry.endLBA - entry.startLBA) + 1) / divisor,
                     Sequence    = pseq++,
                     Offset      = entry.startLBA * sectorSize,
                     Start       = entry.startLBA / divisor,
                     Type        = GetGuidTypeName(entry.partitionType),
                     Scheme      = Name
                 };
+
                 AaruConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
                 partitions.Add(part);
             }
@@ -183,6 +197,7 @@ namespace Aaru.Partitions
         static string GetGuidTypeName(Guid type)
         {
             string strType = type.ToString().ToUpperInvariant();
+
             switch(strType)
             {
                 case "024DEE41-33E7-11D3-9D69-0008C781F39F": return "MBR scheme";
@@ -291,32 +306,32 @@ namespace Aaru.Partitions
         [StructLayout(LayoutKind.Sequential)]
         struct GptHeader
         {
-            public ulong signature;
-            public uint  revision;
-            public uint  headerSize;
-            public uint  headerCrc;
-            public uint  reserved;
-            public ulong myLBA;
-            public ulong alternateLBA;
-            public ulong firstUsableLBA;
-            public ulong lastUsableLBA;
-            public Guid  diskGuid;
-            public ulong entryLBA;
-            public uint  entries;
-            public uint  entriesSize;
-            public uint  entriesCrc;
+            public readonly ulong signature;
+            public readonly uint  revision;
+            public readonly uint  headerSize;
+            public readonly uint  headerCrc;
+            public readonly uint  reserved;
+            public readonly ulong myLBA;
+            public readonly ulong alternateLBA;
+            public readonly ulong firstUsableLBA;
+            public readonly ulong lastUsableLBA;
+            public readonly Guid  diskGuid;
+            public readonly ulong entryLBA;
+            public readonly uint  entries;
+            public readonly uint  entriesSize;
+            public readonly uint  entriesCrc;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         struct GptEntry
         {
-            public Guid  partitionType;
-            public Guid  partitionId;
-            public ulong startLBA;
-            public ulong endLBA;
-            public ulong attributes;
+            public readonly Guid  partitionType;
+            public readonly Guid  partitionId;
+            public readonly ulong startLBA;
+            public readonly ulong endLBA;
+            public readonly ulong attributes;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 36)]
-            public string name;
+            public readonly string name;
         }
     }
 }

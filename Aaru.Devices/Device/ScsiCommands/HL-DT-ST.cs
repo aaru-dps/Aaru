@@ -36,9 +36,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Reads a "raw" sector from DVD on HL-DT-ST drives.
-        /// </summary>
+        /// <summary>Reads a "raw" sector from DVD on HL-DT-ST drives.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the HL-DT-ST READ DVD (RAW) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -46,8 +44,8 @@ namespace Aaru.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool HlDtStReadRawDvd(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint transferLength,
-                                     uint       timeout, out double duration)
+        public bool HlDtStReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
+                                     uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[12];
@@ -67,6 +65,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);

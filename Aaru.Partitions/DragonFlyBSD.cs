@@ -51,39 +51,47 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
             uint nSectors = 2048 / imagePlugin.Info.SectorSize;
-            if(2048 % imagePlugin.Info.SectorSize > 0) nSectors++;
 
-            if(sectorOffset + nSectors >= imagePlugin.Info.Sectors) return false;
+            if(2048 % imagePlugin.Info.SectorSize > 0)
+                nSectors++;
+
+            if(sectorOffset + nSectors >= imagePlugin.Info.Sectors)
+                return false;
 
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
-            if(sectors.Length < 2048) return false;
+
+            if(sectors.Length < 2048)
+                return false;
 
             Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);
 
-            if(disklabel.d_magic != 0xC4464C59) return false;
+            if(disklabel.d_magic != 0xC4464C59)
+                return false;
 
             ulong counter = 0;
 
             foreach(Partition64 entry in disklabel.d_partitions)
             {
-                Partition part = new Partition
+                var part = new Partition
                 {
-                    Start = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
+                    Start = (entry.p_boffset / imagePlugin.Info.SectorSize) + sectorOffset,
                     Offset = entry.p_boffset +
-                               sectorOffset * imagePlugin.Info.SectorSize,
+                               (sectorOffset * imagePlugin.Info.SectorSize),
                     Size     = entry.p_bsize,
                     Length   = entry.p_bsize / imagePlugin.Info.SectorSize,
                     Name     = entry.p_stor_uuid.ToString(),
                     Sequence = counter,
                     Scheme   = Name,
-                    Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other
-                               ? entry.p_type_uuid.ToString()
+                    Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other ? entry.p_type_uuid.ToString()
                                : BSD.fsTypeToString((BSD.fsType)entry.p_fstype)
                 };
 
-                if(entry.p_bsize % imagePlugin.Info.SectorSize > 0) part.Length++;
+                if(entry.p_bsize % imagePlugin.Info.SectorSize > 0)
+                    part.Length++;
 
-                if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
+                if(entry.p_bsize   <= 0 ||
+                   entry.p_boffset <= 0)
+                    continue;
 
                 partitions.Add(part);
                 counter++;
@@ -96,39 +104,39 @@ namespace Aaru.Partitions
         struct Disklabel64
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] d_reserved0;
-            public uint  d_magic;
-            public uint  d_crc;
-            public uint  d_align;
-            public uint  d_npartitions;
-            public Guid  d_stor_uuid;
-            public ulong d_total_size;
-            public ulong d_bbase;
-            public ulong d_pbase;
-            public ulong d_pstop;
-            public ulong d_abase;
+            public readonly byte[] d_reserved0;
+            public readonly uint  d_magic;
+            public readonly uint  d_crc;
+            public readonly uint  d_align;
+            public readonly uint  d_npartitions;
+            public readonly Guid  d_stor_uuid;
+            public readonly ulong d_total_size;
+            public readonly ulong d_bbase;
+            public readonly ulong d_pbase;
+            public readonly ulong d_pstop;
+            public readonly ulong d_abase;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] d_packname;
+            public readonly byte[] d_packname;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] d_reserved;
+            public readonly byte[] d_reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public Partition64[] d_partitions;
+            public readonly Partition64[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Partition64
         {
-            public ulong p_boffset;
-            public ulong p_bsize;
-            public byte  p_fstype;
-            public byte  p_unused01;
-            public byte  p_unused02;
-            public byte  p_unused03;
-            public uint  p_unused04;
-            public uint  p_unused05;
-            public uint  p_unused06;
-            public Guid  p_type_uuid;
-            public Guid  p_stor_uuid;
+            public readonly ulong p_boffset;
+            public readonly ulong p_bsize;
+            public readonly byte  p_fstype;
+            public readonly byte  p_unused01;
+            public readonly byte  p_unused02;
+            public readonly byte  p_unused03;
+            public readonly uint  p_unused04;
+            public readonly uint  p_unused05;
+            public readonly uint  p_unused06;
+            public readonly Guid  p_type_uuid;
+            public readonly Guid  p_stor_uuid;
         }
     }
 }

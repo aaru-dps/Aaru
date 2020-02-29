@@ -44,7 +44,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < Marshal.SizeOf<RayHdr>()) return false;
+            if(stream.Length < Marshal.SizeOf<RayHdr>())
+                return false;
 
             byte[] buffer = new byte[Marshal.SizeOf<RayHdr>()];
             stream.Seek(0, SeekOrigin.Begin);
@@ -55,17 +56,20 @@ namespace Aaru.DiscImages
             string signature = StringHandlers.CToString(header.signature);
 
             AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature = {0}", signature);
-            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}",  header.diskType);
-            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}",     header.heads);
-            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}", header.cylinders);
-            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
-                                      header.sectorsPerTrack);
+            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.diskType = {0}", header.diskType);
+            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.heads = {0}", header.heads);
 
-            Regex sx = new Regex(REGEX_SIGNATURE);
+            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.cylinders = {0}",
+                                       header.cylinders);
+
+            AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.sectorsPerTrack = {0}",
+                                       header.sectorsPerTrack);
+
+            var   sx = new Regex(REGEX_SIGNATURE);
             Match sm = sx.Match(signature);
 
             AaruConsole.DebugWriteLine("Ray Arachelian's Disk IMage plugin", "header.signature matches? = {0}",
-                                      sm.Success);
+                                       sm.Success);
 
             return sm.Success;
         }

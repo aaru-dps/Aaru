@@ -34,26 +34,45 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Ocfs2
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {104857600};
+        readonly ulong[] sectors =
+        {
+            104857600
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {104856192};
+        readonly long[] clusters =
+        {
+            104856192
+        };
 
-        readonly int[] clustersize = {512};
+        readonly int[] clustersize =
+        {
+            512
+        };
 
-        readonly string[] volumename = {"Volume label"};
+        readonly string[] volumename =
+        {
+            "Volume label"
+        };
 
-        readonly string[] volumeserial = {"UNKNOWN"};
+        readonly string[] volumeserial =
+        {
+            "UNKNOWN"
+        };
 
         [Test]
-        public void Test()
-        {
-            throw new NotImplementedException("OCFS2 filesystem is not yet implemented");
+        public void Test() => throw new NotImplementedException("OCFS2 filesystem is not yet implemented");
 
-            /*
+        /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ocfs2", testfiles[i]);
@@ -83,6 +102,5 @@ namespace Aaru.Tests.Filesystems
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }*/
-        }
     }
 }

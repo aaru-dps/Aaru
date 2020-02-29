@@ -37,9 +37,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Prepares the medium for reading
-        /// </summary>
+        /// <summary>Prepares the medium for reading</summary>
         /// <returns><c>true</c>, if load was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -47,9 +45,7 @@ namespace Aaru.Devices
         public bool Load(out byte[] senseBuffer, uint timeout, out double duration) =>
             LoadUnload(out senseBuffer, false, true, false, false, false, timeout, out duration);
 
-        /// <summary>
-        ///     Prepares the medium for ejection
-        /// </summary>
+        /// <summary>Prepares the medium for ejection</summary>
         /// <returns><c>true</c>, if unload was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -57,9 +53,7 @@ namespace Aaru.Devices
         public bool Unload(out byte[] senseBuffer, uint timeout, out double duration) =>
             LoadUnload(out senseBuffer, false, false, false, false, false, timeout, out duration);
 
-        /// <summary>
-        ///     Prepares the medium for reading or ejection
-        /// </summary>
+        /// <summary>Prepares the medium for reading or ejection</summary>
         /// <returns><c>true</c>, if load/unload was successful, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
@@ -72,22 +66,33 @@ namespace Aaru.Devices
         /// </param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool LoadUnload(out byte[] senseBuffer, bool immediate, bool       load, bool retense, bool endOfTape,
-                               bool       hold,        uint timeout,   out double duration)
+        public bool LoadUnload(out byte[] senseBuffer, bool immediate, bool load, bool retense, bool endOfTape,
+                               bool hold, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb    = new byte[6];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.LoadUnload;
-            if(immediate) cdb[1] =  0x01;
-            if(load) cdb[4]      += 0x01;
-            if(retense) cdb[4]   += 0x02;
-            if(endOfTape) cdb[4] += 0x04;
-            if(hold) cdb[4]      += 0x08;
+
+            if(immediate)
+                cdb[1] = 0x01;
+
+            if(load)
+                cdb[4] += 0x01;
+
+            if(retense)
+                cdb[4] += 0x02;
+
+            if(endOfTape)
+                cdb[4] += 0x04;
+
+            if(hold)
+                cdb[4] += 0x08;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "LOAD UNLOAD (6) took {0} ms.", duration);
@@ -95,9 +100,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the current partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
@@ -105,9 +108,7 @@ namespace Aaru.Devices
         public bool Locate(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
             Locate(out senseBuffer, false, false, false, 0, lba, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the specified partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the specified partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to position to.</param>
         /// <param name="lba">Logical block address.</param>
@@ -116,9 +117,7 @@ namespace Aaru.Devices
         public bool Locate(out byte[] senseBuffer, byte partition, uint lba, uint timeout, out double duration) =>
             Locate(out senseBuffer, false, false, false, partition, lba, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the current partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="lba">Logical block address.</param>
@@ -127,9 +126,7 @@ namespace Aaru.Devices
         public bool Locate(out byte[] senseBuffer, bool immediate, uint lba, uint timeout, out double duration) =>
             Locate(out senseBuffer, immediate, false, false, 0, lba, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the specified partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the specified partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="partition">Partition to position to.</param>
@@ -137,12 +134,10 @@ namespace Aaru.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, bool immediate, byte partition, uint lba, uint timeout,
-                           out double duration) =>
-            Locate(out senseBuffer, immediate, false, false, partition, lba, timeout, out duration);
+                           out double duration) => Locate(out senseBuffer, immediate, false, false, partition, lba,
+                                                          timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified object identifier
-        /// </summary>
+        /// <summary>Positions the medium to the specified object identifier</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="blockType">If set to <c>true</c> object identifier is vendor specified.</param>
@@ -151,18 +146,24 @@ namespace Aaru.Devices
         /// <param name="objectId">Object identifier.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate(out byte[] senseBuffer, bool immediate, bool blockType, bool changePartition,
-                           byte       partition,
-                           uint       objectId, uint timeout, out double duration)
+        public bool Locate(out byte[] senseBuffer, bool immediate, bool blockType, bool changePartition, byte partition,
+                           uint objectId, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb    = new byte[10];
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.Locate;
-            if(immediate) cdb[1]       += 0x01;
-            if(changePartition) cdb[1] += 0x02;
-            if(blockType) cdb[1]       += 0x04;
+
+            if(immediate)
+                cdb[1] += 0x01;
+
+            if(changePartition)
+                cdb[1] += 0x02;
+
+            if(blockType)
+                cdb[1] += 0x04;
+
             cdb[3] = (byte)((objectId & 0xFF000000) >> 24);
             cdb[4] = (byte)((objectId & 0xFF0000)   >> 16);
             cdb[5] = (byte)((objectId & 0xFF00)     >> 8);
@@ -171,6 +172,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "LOCATE (10) took {0} ms.", duration);
@@ -178,9 +180,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the current partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
@@ -188,9 +188,7 @@ namespace Aaru.Devices
         public bool Locate16(out byte[] senseBuffer, ulong lba, uint timeout, out double duration) =>
             Locate16(out senseBuffer, false, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the specified partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the specified partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to position to.</param>
         /// <param name="lba">Logical block address.</param>
@@ -200,9 +198,7 @@ namespace Aaru.Devices
             Locate16(out senseBuffer, false, false, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
                      out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the current partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="lba">Logical block address.</param>
@@ -212,9 +208,7 @@ namespace Aaru.Devices
             Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout,
                      out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified block in the specified partition
-        /// </summary>
+        /// <summary>Positions the medium to the specified block in the specified partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="partition">Partition to position to.</param>
@@ -222,13 +216,11 @@ namespace Aaru.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate16(out byte[] senseBuffer, bool immediate, byte partition, ulong lba, uint timeout,
-                             out double duration) =>
-            Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
-                     out duration);
+                             out double duration) => Locate16(out senseBuffer, immediate, false,
+                                                              SscLogicalIdTypes.ObjectId, false, partition, lba,
+                                                              timeout, out duration);
 
-        /// <summary>
-        ///     Positions the medium to the specified object identifier
-        /// </summary>
+        /// <summary>Positions the medium to the specified object identifier</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="changePartition">If set to <c>true</c> change partition.</param>
@@ -238,9 +230,8 @@ namespace Aaru.Devices
         /// <param name="identifier">Destination identifier.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate16(out byte[] senseBuffer, bool immediate, bool  changePartition, SscLogicalIdTypes destType,
-                             bool       bam,         byte partition, ulong identifier,      uint              timeout,
-                             out double duration)
+        public bool Locate16(out byte[] senseBuffer, bool immediate, bool changePartition, SscLogicalIdTypes destType,
+                             bool bam, byte partition, ulong identifier, uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb     = new byte[16];
@@ -249,9 +240,16 @@ namespace Aaru.Devices
 
             cdb[0] = (byte)ScsiCommands.Locate16;
             cdb[1] = (byte)((byte)destType << 3);
-            if(immediate) cdb[1]       += 0x01;
-            if(changePartition) cdb[1] += 0x02;
-            if(bam) cdb[2]             =  0x01;
+
+            if(immediate)
+                cdb[1] += 0x01;
+
+            if(changePartition)
+                cdb[1] += 0x02;
+
+            if(bam)
+                cdb[2] = 0x01;
+
             cdb[3] = partition;
 
             cdb[4]  = idBytes[7];
@@ -265,6 +263,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "LOCATE (16) took {0} ms.", duration);
@@ -286,9 +285,7 @@ namespace Aaru.Devices
             return Read6(out buffer, out senseBuffer, false, true, blocks, blockSize, timeout, out duration);
         }*/
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the medium
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the medium</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -296,13 +293,11 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read6(out byte[] buffer,  out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
-                          uint       timeout, out double duration) =>
-            Read6(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout, out duration);
+        public bool Read6(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
+                          uint timeout, out double duration) => Read6(out buffer, out senseBuffer, sili, false,
+                                                                      transferLen, blockSize, timeout, out duration);
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the medium
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the medium</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">
@@ -317,23 +312,28 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read6(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen,
-                          uint       transferLen,
-                          uint       blockSize, uint timeout, out double duration)
+        public bool Read6(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen, uint transferLen,
+                          uint blockSize, uint timeout, out double duration)
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.Read6;
-            if(fixedLen) cdb[1] += 0x01;
-            if(sili) cdb[1]     += 0x02;
+
+            if(fixedLen)
+                cdb[1] += 0x01;
+
+            if(sili)
+                cdb[1] += 0x02;
+
             cdb[2] = (byte)((transferLen & 0xFF0000) >> 16);
             cdb[3] = (byte)((transferLen & 0xFF00)   >> 8);
             cdb[4] = (byte)(transferLen & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ (6) took {0} ms.", duration);
@@ -341,9 +341,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified object
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified object</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -352,13 +350,11 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read16(out byte[] buffer,    out byte[] senseBuffer, bool       sili, ulong objectId, uint blocks,
-                           uint       blockSize, uint       timeout,     out double duration) =>
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId, uint blocks,
+                           uint blockSize, uint timeout, out double duration) =>
             Read16(out buffer, out senseBuffer, sili, false, 0, objectId, blocks, blockSize, timeout, out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -368,15 +364,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition,
-                           ulong      objectId,
-                           uint       blocks, uint blockSize, uint timeout, out double duration) =>
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition, ulong objectId,
+                           uint blocks, uint blockSize, uint timeout, out double duration) =>
             Read16(out buffer, out senseBuffer, sili, false, partition, objectId, blocks, blockSize, timeout,
                    out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified object
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified object</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="objectId">Object identifier.</param>
@@ -384,13 +377,11 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read16(out byte[] buffer,  out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
-                           uint       timeout, out double duration) =>
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
+                           uint timeout, out double duration) =>
             Read16(out buffer, out senseBuffer, false, true, 0, objectId, blocks, blockSize, timeout, out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to read object from.</param>
@@ -399,15 +390,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId,
-                           uint       blocks,
-                           uint       blockSize, uint timeout, out double duration) =>
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId, uint blocks,
+                           uint blockSize, uint timeout, out double duration) =>
             Read16(out buffer, out senseBuffer, false, true, partition, objectId, blocks, blockSize, timeout,
                    out duration);
 
-        /// <summary>
-        ///     Reads a number of bytes or objects starting at specified object from the specified partition
-        /// </summary>
+        /// <summary>Reads a number of bytes or objects starting at specified object from the specified partition</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">
@@ -424,10 +412,8 @@ namespace Aaru.Devices
         /// <param name="objectSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen,
-                           byte       partition,
-                           ulong      objectId, uint transferLen, uint objectSize, uint timeout,
-                           out double duration)
+        public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen, byte partition,
+                           ulong objectId, uint transferLen, uint objectSize, uint timeout, out double duration)
         {
             buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
@@ -435,8 +421,13 @@ namespace Aaru.Devices
             byte[] idBytes = BitConverter.GetBytes(objectId);
 
             cdb[0] = (byte)ScsiCommands.Read16;
-            if(fixedLen) cdb[1] += 0x01;
-            if(sili) cdb[1]     += 0x02;
+
+            if(fixedLen)
+                cdb[1] += 0x01;
+
+            if(sili)
+                cdb[1] += 0x02;
+
             cdb[3]  = partition;
             cdb[4]  = idBytes[7];
             cdb[5]  = idBytes[6];
@@ -452,6 +443,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ (16) took {0} ms.", duration);
@@ -459,9 +451,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Requests the drive the maximum and minimum block size
-        /// </summary>
+        /// <summary>Requests the drive the maximum and minimum block size</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -476,6 +466,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ BLOCK LIMITS took {0} ms.", duration);
@@ -483,9 +474,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reports current reading/writing elements position on the medium
-        /// </summary>
+        /// <summary>Reports current reading/writing elements position on the medium</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -493,9 +482,7 @@ namespace Aaru.Devices
         public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
             ReadPosition(out buffer, out senseBuffer, SscPositionForms.Short, timeout, out duration);
 
-        /// <summary>
-        ///     Reports current reading/writing elements position on the medium using 32 bytes response
-        /// </summary>
+        /// <summary>Reports current reading/writing elements position on the medium using 32 bytes response</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -503,9 +490,7 @@ namespace Aaru.Devices
         public bool ReadPositionLong(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
             ReadPosition(out buffer, out senseBuffer, SscPositionForms.Long, timeout, out duration);
 
-        /// <summary>
-        ///     Reports current reading/writing elements position on the medium
-        /// </summary>
+        /// <summary>Reports current reading/writing elements position on the medium</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="vendorType">Requests the position to be given in vendor-specified meaning.</param>
@@ -513,20 +498,24 @@ namespace Aaru.Devices
         /// <param name="totalPosition">Requests current logical position.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadPosition(out byte[] buffer,        out byte[] senseBuffer, bool       vendorType, bool longForm,
-                                 bool       totalPosition, uint       timeout,     out double duration)
+        public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, bool vendorType, bool longForm,
+                                 bool totalPosition, uint timeout, out double duration)
         {
-            byte responseForm              = 0;
-            if(vendorType) responseForm    += 0x01;
-            if(longForm) responseForm      += 0x02;
-            if(totalPosition) responseForm += 0x04;
+            byte responseForm = 0;
+
+            if(vendorType)
+                responseForm += 0x01;
+
+            if(longForm)
+                responseForm += 0x02;
+
+            if(totalPosition)
+                responseForm += 0x04;
 
             return ReadPosition(out buffer, out senseBuffer, (SscPositionForms)responseForm, timeout, out duration);
         }
 
-        /// <summary>
-        ///     Reports current reading/writing elements position on the medium
-        /// </summary>
+        /// <summary>Reports current reading/writing elements position on the medium</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="responseForm">Response form.</param>
@@ -543,15 +532,18 @@ namespace Aaru.Devices
                 case SscPositionForms.OldLongVendor:
                 case SscPositionForms.Extended:
                     buffer = new byte[32];
+
                     break;
                 case SscPositionForms.OldTclp:
                 case SscPositionForms.OldTclpVendor:
                 case SscPositionForms.Short:
                 case SscPositionForms.VendorShort:
                     buffer = new byte[20];
+
                     break;
                 default:
                     buffer = new byte[32]; // Invalid
+
                     break;
             }
 
@@ -560,6 +552,7 @@ namespace Aaru.Devices
 
             cdb[0] = (byte)ScsiCommands.ReadPosition;
             cdb[1] = (byte)((byte)responseForm & 0x1F);
+
             if(responseForm == SscPositionForms.Extended)
             {
                 cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
@@ -568,6 +561,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ POSITION took {0} ms.", duration);
@@ -575,9 +569,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads the specified number of blocks from the medium, backwards
-        /// </summary>
+        /// <summary>Reads the specified number of blocks from the medium, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="blocks">How many blocks to read.</param>
@@ -588,9 +580,7 @@ namespace Aaru.Devices
                                  out double duration) =>
             ReadReverse6(out buffer, out senseBuffer, false, false, true, blocks, blockSize, timeout, out duration);
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the medium, backwards
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the medium, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -598,15 +588,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen,
-                                 uint       blockSize,
-                                 uint       timeout, out double duration) =>
+        public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
+                                 uint timeout, out double duration) =>
             ReadReverse6(out buffer, out senseBuffer, false, sili, false, transferLen, blockSize, timeout,
                          out duration);
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the medium, backwards
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the medium, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="byteOrder">If set to <c>true</c> drive should un-reverse the blocks and bytes</param>
@@ -622,24 +609,31 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili,
-                                 bool       fixedLen,
-                                 uint       transferLen, uint blockSize, uint timeout, out double duration)
+        public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
+                                 uint transferLen, uint blockSize, uint timeout, out double duration)
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.ReadReverse;
-            if(fixedLen) cdb[1]  += 0x01;
-            if(sili) cdb[1]      += 0x02;
-            if(byteOrder) cdb[1] += 0x04;
+
+            if(fixedLen)
+                cdb[1] += 0x01;
+
+            if(sili)
+                cdb[1] += 0x02;
+
+            if(byteOrder)
+                cdb[1] += 0x04;
+
             cdb[2] = (byte)((transferLen & 0xFF0000) >> 16);
             cdb[3] = (byte)((transferLen & 0xFF00)   >> 8);
             cdb[4] = (byte)(transferLen & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ REVERSE (6) took {0} ms.", duration);
@@ -647,9 +641,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified object, backwards
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified object, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -658,15 +650,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId,
-                                  uint       blocks,
-                                  uint       blockSize, uint timeout, out double duration) =>
+        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId, uint blocks,
+                                  uint blockSize, uint timeout, out double duration) =>
             ReadReverse16(out buffer, out senseBuffer, false, sili, false, 0, objectId, blocks, blockSize, timeout,
                           out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -676,15 +665,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition,
-                                  ulong      objectId,
-                                  uint       blocks, uint blockSize, uint timeout, out double duration) =>
+        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition, ulong objectId,
+                                  uint blocks, uint blockSize, uint timeout, out double duration) =>
             ReadReverse16(out buffer, out senseBuffer, false, sili, false, partition, objectId, blocks, blockSize,
-                          timeout,    out duration);
+                          timeout, out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified object, backwards
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified object, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="objectId">Object identifier.</param>
@@ -692,14 +678,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse16(out byte[] buffer,    out byte[] senseBuffer, ulong      objectId, uint blocks,
-                                  uint       blockSize, uint       timeout,     out double duration) =>
+        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, ulong objectId, uint blocks,
+                                  uint blockSize, uint timeout, out double duration) =>
             ReadReverse16(out buffer, out senseBuffer, false, false, true, 0, objectId, blocks, blockSize, timeout,
                           out duration);
 
-        /// <summary>
-        ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
-        /// </summary>
+        /// <summary>Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="partition">Partition to read object from.</param>
@@ -708,14 +692,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong      objectId,
-                                  uint       blocks, uint       blockSize,   uint timeout,   out double duration) =>
+        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId,
+                                  uint blocks, uint blockSize, uint timeout, out double duration) =>
             ReadReverse16(out buffer, out senseBuffer, false, false, true, partition, objectId, blocks, blockSize,
-                          timeout,    out duration);
+                          timeout, out duration);
 
-        /// <summary>
-        ///     Reads a number of bytes or objects starting at specified object from the specified partition, backwards
-        /// </summary>
+        /// <summary>Reads a number of bytes or objects starting at specified object from the specified partition, backwards</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="byteOrder">If set to <c>true</c> drive should un-reverse the blocks and bytes</param>
@@ -733,10 +715,8 @@ namespace Aaru.Devices
         /// <param name="objectSize">Object size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili,
-                                  bool       fixedLen,
-                                  byte       partition, ulong objectId, uint transferLen, uint objectSize,
-                                  uint       timeout,
+        public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool byteOrder, bool sili, bool fixedLen,
+                                  byte partition, ulong objectId, uint transferLen, uint objectSize, uint timeout,
                                   out double duration)
         {
             buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
@@ -745,9 +725,16 @@ namespace Aaru.Devices
             byte[] idBytes = BitConverter.GetBytes(objectId);
 
             cdb[0] = (byte)ScsiCommands.Read16;
-            if(fixedLen) cdb[1]  += 0x01;
-            if(sili) cdb[1]      += 0x02;
-            if(byteOrder) cdb[1] += 0x04;
+
+            if(fixedLen)
+                cdb[1] += 0x01;
+
+            if(sili)
+                cdb[1] += 0x02;
+
+            if(byteOrder)
+                cdb[1] += 0x04;
+
             cdb[3]  = partition;
             cdb[4]  = idBytes[7];
             cdb[5]  = idBytes[6];
@@ -763,6 +750,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "READ REVERSE (16) took {0} ms.", duration);
@@ -770,22 +758,18 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads the specified number of blocks from the device's buffer
-        /// </summary>
+        /// <summary>Reads the specified number of blocks from the device's buffer</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="blocks">How many blocks to read.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool RecoverBufferedData(out byte[] buffer,  out byte[] senseBuffer, uint blocks, uint blockSize,
-                                        uint       timeout, out double duration) =>
+        public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, uint blocks, uint blockSize,
+                                        uint timeout, out double duration) =>
             RecoverBufferedData(out buffer, out senseBuffer, false, true, blocks, blockSize, timeout, out duration);
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the device's buffer
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the device's buffer</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">If set to <c>true</c> suppress the incorrect-length indication.</param>
@@ -793,14 +777,12 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool RecoverBufferedData(out byte[] buffer,    out byte[] senseBuffer, bool       sili, uint transferLen,
-                                        uint       blockSize, uint       timeout,     out double duration) =>
+        public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen,
+                                        uint blockSize, uint timeout, out double duration) =>
             RecoverBufferedData(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout,
                                 out duration);
 
-        /// <summary>
-        ///     Reads the specified number of bytes or of blocks from the device's buffer
-        /// </summary>
+        /// <summary>Reads the specified number of bytes or of blocks from the device's buffer</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="sili">
@@ -815,24 +797,28 @@ namespace Aaru.Devices
         /// <param name="blockSize">Block size in bytes.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, bool sili,
-                                        bool       fixedLen,
-                                        uint       transferLen, uint blockSize, uint timeout,
-                                        out double duration)
+        public bool RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, bool sili, bool fixedLen,
+                                        uint transferLen, uint blockSize, uint timeout, out double duration)
         {
             buffer = fixedLen ? new byte[blockSize * transferLen] : new byte[transferLen];
             byte[] cdb = new byte[6];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.RecoverBufferedData;
-            if(fixedLen) cdb[1] += 0x01;
-            if(sili) cdb[1]     += 0x02;
+
+            if(fixedLen)
+                cdb[1] += 0x01;
+
+            if(sili)
+                cdb[1] += 0x02;
+
             cdb[2] = (byte)((transferLen & 0xFF0000) >> 16);
             cdb[3] = (byte)((transferLen & 0xFF00)   >> 8);
             cdb[4] = (byte)(transferLen & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "RECOVER BUFFERED DATA took {0} ms.", duration);
@@ -840,9 +826,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Requests the device to return descriptors for supported densities or medium types
-        /// </summary>
+        /// <summary>Requests the device to return descriptors for supported densities or medium types</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
@@ -851,9 +835,7 @@ namespace Aaru.Devices
             ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
             ReportDensitySupport(out buffer, out senseBuffer, false, false, timeout, out duration);
 
-        /// <summary>
-        ///     Requests the device to return descriptors for supported densities or medium types
-        /// </summary>
+        /// <summary>Requests the device to return descriptors for supported densities or medium types</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="currentMedia">If set to <c>true</c> descriptors should apply to currently inserted media.</param>
@@ -863,33 +845,38 @@ namespace Aaru.Devices
                                          out double duration) =>
             ReportDensitySupport(out buffer, out senseBuffer, false, currentMedia, timeout, out duration);
 
-        /// <summary>
-        ///     Requests the device to return descriptors for supported densities or medium types
-        /// </summary>
+        /// <summary>Requests the device to return descriptors for supported densities or medium types</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="mediumType">If set to <c>true</c> descriptors should be about medium types.</param>
         /// <param name="currentMedia">If set to <c>true</c> descriptors should apply to currently inserted media.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReportDensitySupport(out byte[] buffer,  out byte[] senseBuffer, bool mediumType, bool currentMedia,
-                                         uint       timeout, out double duration)
+        public bool ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, bool mediumType, bool currentMedia,
+                                         uint timeout, out double duration)
         {
             buffer = new byte[256];
             byte[] cdb = new byte[10];
             senseBuffer = new byte[32];
 
             cdb[0] = (byte)ScsiCommands.ReportDensitySupport;
-            if(currentMedia) cdb[1] += 0x01;
-            if(mediumType) cdb[1]   += 0x02;
+
+            if(currentMedia)
+                cdb[1] += 0x01;
+
+            if(mediumType)
+                cdb[1] += 0x02;
+
             cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
             cdb[8] = (byte)(buffer.Length & 0xFF);
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
-            if(sense) return true;
+            if(sense)
+                return true;
 
             ushort availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
             buffer      = new byte[availableLength];
@@ -899,6 +886,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "REPORT DENSITY SUPPORT took {0} ms.", duration);
@@ -906,18 +894,14 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Positions the reading/writing element to the beginning of current partition
-        /// </summary>
+        /// <summary>Positions the reading/writing element to the beginning of current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Rewind(out byte[] senseBuffer, uint timeout, out double duration) =>
             Rewind(out senseBuffer, false, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the reading/writing element to the beginning of current partition
-        /// </summary>
+        /// <summary>Positions the reading/writing element to the beginning of current partition</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c> return from the command immediately.</param>
         /// <param name="timeout">Timeout.</param>
@@ -929,10 +913,13 @@ namespace Aaru.Devices
             byte[] buffer = new byte[0];
 
             cdb[0] = (byte)ScsiCommands.Rewind;
-            if(immediate) cdb[1] += 0x01;
+
+            if(immediate)
+                cdb[1] += 0x01;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "REWIND took {0} ms.", duration);
@@ -940,9 +927,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Selects the specified track
-        /// </summary>
+        /// <summary>Selects the specified track</summary>
         /// <returns><c>true</c>, if select was tracked, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="track">Track.</param>
@@ -959,6 +944,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "TRACK SELECT took {0} ms.", duration);
@@ -981,6 +967,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "SPACE took {0} ms.", duration);

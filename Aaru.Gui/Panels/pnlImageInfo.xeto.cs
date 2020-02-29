@@ -34,9 +34,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Aaru.Gui.Controls;
-using Aaru.Gui.Forms;
-using Aaru.Gui.Tabs;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -45,11 +42,14 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
+using Aaru.Gui.Controls;
+using Aaru.Gui.Forms;
+using Aaru.Gui.Tabs;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
-using Inquiry = Aaru.Decoders.SCSI.Inquiry;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Gui.Panels
@@ -57,6 +57,8 @@ namespace Aaru.Gui.Panels
     public class pnlImageInfo : Panel
     {
         readonly IFilter     filter;
+        readonly IMediaImage imageFormat;
+        readonly string      imagePath;
         frmDecodeMediaTags   frmDecodeMediaTags;
         frmImageChecksum     frmImageChecksum;
         frmImageConvert      frmImageConvert;
@@ -64,8 +66,6 @@ namespace Aaru.Gui.Panels
         frmImageSidecar      frmImageSidecar;
         frmImageVerify       frmImageVerify;
         frmPrintHex          frmPrintHex;
-        readonly IMediaImage imageFormat;
-        readonly string      imagePath;
 
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
@@ -75,8 +75,8 @@ namespace Aaru.Gui.Panels
             XamlReader.Load(this);
 
             Stream logo =
-                ResourceHandler
-                   .GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
+                ResourceHandler.GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
+
             /*            if(logo != null)
                         {
                             svgMediaLogo.SvgStream = logo;
@@ -84,33 +84,39 @@ namespace Aaru.Gui.Panels
                         }
                         else
                         {*/
-            logo =
-                ResourceHandler
-                   .GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+            logo = ResourceHandler.GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+
             if(logo != null)
             {
                 imgMediaLogo.Image   = new Bitmap(logo);
                 imgMediaLogo.Visible = true;
             }
+
             //}
 
             lblImagePath.Text   = $"Path: {imagePath}";
             lblFilter.Text      = $"Filter: {filter.Name}";
             lblImageFormat.Text = $"Image format identified by {imageFormat.Name} ({imageFormat.Id}).";
+
             lblImageFormat.Text = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
                                       ? $"Format: {imageFormat.Format} version {imageFormat.Info.Version}"
                                       : $"Format: {imageFormat.Format}";
+
             lblImageSize.Text = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
+
             lblSectors.Text =
                 $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
+
             lblMediaType.Text =
                 $"Contains a media of type {imageFormat.Info.MediaType} and XML type {imageFormat.Info.XmlMediaType}";
+
             lblHasPartitions.Text = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
             lblHasSessions.Text   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
             {
                 lblApplication.Visible = true;
+
                 lblApplication.Text = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
                                           ? $"Was created with {imageFormat.Info.Application} version {imageFormat.Info.ApplicationVersion}"
                                           : $"Was created with {imageFormat.Info.Application}";
@@ -140,9 +146,11 @@ namespace Aaru.Gui.Panels
                 txtComments.Text    = imageFormat.Info.Comments;
             }
 
-            if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
+            if(imageFormat.Info.MediaSequence     != 0 &&
+               imageFormat.Info.LastMediaSequence != 0)
             {
                 lblMediaSequence.Visible = true;
+
                 lblMediaSequence.Text =
                     $"Media is number {imageFormat.Info.MediaSequence} on a set of {imageFormat.Info.LastMediaSequence} medias";
             }
@@ -207,12 +215,14 @@ namespace Aaru.Gui.Panels
                 lblDriveFirmwareRevision.Text    = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
             }
 
-            if(imageFormat.Info.Cylinders       > 0                         && imageFormat.Info.Heads > 0 &&
+            if(imageFormat.Info.Cylinders       > 0                         &&
+               imageFormat.Info.Heads           > 0                         &&
                imageFormat.Info.SectorsPerTrack > 0                         &&
                imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
                (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
             {
                 lblMediaGeometry.Visible = true;
+
                 lblMediaGeometry.Text =
                     $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
             }
@@ -222,45 +232,66 @@ namespace Aaru.Gui.Panels
                                    lblMediaModel.Visible        || lblMediaSerialNumber.Visible ||
                                    lblMediaBarcode.Visible      ||
                                    lblMediaPartNumber.Visible;
+
             grpDriveInfo.Visible = lblDriveManufacturer.Visible || lblDriveModel.Visible            ||
                                    lblDriveSerialNumber.Visible || lblDriveFirmwareRevision.Visible ||
                                    lblMediaGeometry.Visible;
 
-            if(imageFormat.Info.ReadableMediaTags != null && imageFormat.Info.ReadableMediaTags.Count > 0)
+            if(imageFormat.Info.ReadableMediaTags       != null &&
+               imageFormat.Info.ReadableMediaTags.Count > 0)
             {
-                TreeGridItemCollection mediaTagList = new TreeGridItemCollection();
+                var mediaTagList = new TreeGridItemCollection();
 
-                treeMediaTags.Columns.Add(new GridColumn {HeaderText = "Tag", DataCell = new TextBoxCell(0)});
+                treeMediaTags.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Tag", DataCell = new TextBoxCell(0)
+                });
 
                 treeMediaTags.AllowMultipleSelection = false;
                 treeMediaTags.ShowHeader             = false;
                 treeMediaTags.DataStore              = mediaTagList;
 
                 foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
-                    mediaTagList.Add(new TreeGridItem {Values = new object[] {tag.ToString()}});
+                    mediaTagList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            tag.ToString()
+                        }
+                    });
 
                 grpMediaTags.Visible = true;
             }
 
-            if(imageFormat.Info.ReadableSectorTags != null && imageFormat.Info.ReadableSectorTags.Count > 0)
+            if(imageFormat.Info.ReadableSectorTags       != null &&
+               imageFormat.Info.ReadableSectorTags.Count > 0)
             {
-                TreeGridItemCollection sectorTagList = new TreeGridItemCollection();
+                var sectorTagList = new TreeGridItemCollection();
 
-                treeSectorTags.Columns.Add(new GridColumn {HeaderText = "Tag", DataCell = new TextBoxCell(0)});
+                treeSectorTags.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Tag", DataCell = new TextBoxCell(0)
+                });
 
                 treeSectorTags.AllowMultipleSelection = false;
                 treeSectorTags.ShowHeader             = false;
                 treeSectorTags.DataStore              = sectorTagList;
 
                 foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
-                    sectorTagList.Add(new TreeGridItem {Values = new object[] {tag.ToString()}});
+                    sectorTagList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            tag.ToString()
+                        }
+                    });
 
                 grpSectorTags.Visible = true;
             }
 
             PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiInquiryData = null;
-            CommonTypes.Structs.Devices.SCSI.Inquiry?  scsiInquiry     = null;
+            Inquiry?              scsiInquiry     = null;
             Modes.DecodedMode?    scsiMode        = null;
             byte[]                scsiModeSense6  = null;
             byte[]                scsiModeSense10 = null;
@@ -272,7 +303,7 @@ namespace Aaru.Gui.Panels
 
                 scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
 
-                scsiInquiry = CommonTypes.Structs.Devices.SCSI.Inquiry.Decode(scsiInquiryData);
+                scsiInquiry = Inquiry.Decode(scsiInquiryData);
             }
 
             if(imageFormat.Info.ReadableMediaTags != null &&
@@ -289,9 +320,11 @@ namespace Aaru.Gui.Panels
                 scsiMode        = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
             }
 
-            tabScsiInfo tabScsiInfo = new tabScsiInfo();
+            var tabScsiInfo = new tabScsiInfo();
+
             tabScsiInfo.LoadData(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType, scsiModeSense6,
                                  scsiModeSense10, null);
+
             tabInfos.Pages.Add(tabScsiInfo);
 
             byte[] ataIdentify   = null;
@@ -305,7 +338,7 @@ namespace Aaru.Gui.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
                 atapiIdentify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
-            tabAtaInfo tabAtaInfo = new tabAtaInfo();
+            var tabAtaInfo = new tabAtaInfo();
             tabAtaInfo.LoadData(ataIdentify, atapiIdentify, null);
             tabInfos.Pages.Add(tabAtaInfo);
 
@@ -328,6 +361,7 @@ namespace Aaru.Gui.Panels
                 if(toc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
+
                     if(dataLen + 2 != toc.Length)
                     {
                         byte[] tmp = new byte[toc.Length + 2];
@@ -349,6 +383,7 @@ namespace Aaru.Gui.Panels
                 if(fullToc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(fullToc, 0));
+
                     if(dataLen + 2 != fullToc.Length)
                     {
                         byte[] tmp = new byte[fullToc.Length + 2];
@@ -370,6 +405,7 @@ namespace Aaru.Gui.Panels
                 if(pma.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
+
                     if(dataLen + 2 != pma.Length)
                     {
                         byte[] tmp = new byte[pma.Length + 2];
@@ -387,6 +423,7 @@ namespace Aaru.Gui.Panels
                 atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
 
                 uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
+
                 if(dataLen + 4 != atip.Length)
                 {
                     byte[] tmp = new byte[atip.Length + 4];
@@ -407,6 +444,7 @@ namespace Aaru.Gui.Panels
                 cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
 
                 uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
+
                 if(dataLen + 4 != cdtext.Length)
                 {
                     byte[] tmp = new byte[cdtext.Length + 4];
@@ -429,9 +467,11 @@ namespace Aaru.Gui.Panels
                 mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
             }
 
-            tabCompactDiscInfo tabCompactDiscInfo = new tabCompactDiscInfo();
+            var tabCompactDiscInfo = new tabCompactDiscInfo();
+
             tabCompactDiscInfo.LoadData(toc, atip, null, null, fullToc, pma, cdtext, decodedToc, decodedAtip, null,
                                         decodedFullToc, decodedCdText, null, mediaCatalogueNumber, null);
+
             tabInfos.Pages.Add(tabCompactDiscInfo);
 
             byte[]                         dvdPfi                    = null;
@@ -464,9 +504,11 @@ namespace Aaru.Gui.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_BCA))
                 dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
 
-            tabDvdInfo tabDvdInfo = new tabDvdInfo();
+            var tabDvdInfo = new tabDvdInfo();
+
             tabDvdInfo.LoadData(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca,
                                 null, decodedPfi);
+
             tabInfos.Pages.Add(tabDvdInfo);
 
             byte[] dvdRamDds                     = null;
@@ -540,12 +582,14 @@ namespace Aaru.Gui.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DCB))
                 dvdPlusDcb = imageFormat.ReadDiskTag(MediaTagType.DCB);
 
-            tabDvdWritableInfo tabDvdWritableInfo = new tabDvdWritableInfo();
+            var tabDvdWritableInfo = new tabDvdWritableInfo();
+
             tabDvdWritableInfo.LoadData(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus, dvdRamSpareArea,
                                         lastBorderOutRmd, dvdPreRecordedInfo, dvdrMediaIdentifier,
                                         dvdrPhysicalInformation, hddvdrMediumStatus, null, dvdrLayerCapacity,
                                         dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba,
                                         null, dvdPlusAdip, dvdPlusDcb);
+
             tabInfos.Pages.Add(tabDvdWritableInfo);
 
             byte[] blurayBurstCuttingArea     = null;
@@ -584,9 +628,11 @@ namespace Aaru.Gui.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_TrackResourcesInformation))
                 bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.MMC_TrackResourcesInformation);
 
-            tabBlurayInfo tabBlurayInfo = new tabBlurayInfo();
+            var tabBlurayInfo = new tabBlurayInfo();
+
             tabBlurayInfo.LoadData(blurayDiscInformation, blurayBurstCuttingArea, blurayDds, blurayCartridgeStatus,
                                    bluraySpareAreaInformation, blurayPowResources, blurayTrackResources, null, null);
+
             tabInfos.Pages.Add(tabBlurayInfo);
 
             byte[]             xboxDmi                   = null;
@@ -604,7 +650,7 @@ namespace Aaru.Gui.Panels
                 decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
             }
 
-            tabXboxInfo tabXboxInfo = new tabXboxInfo();
+            var tabXboxInfo = new tabXboxInfo();
             tabXboxInfo.LoadData(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector);
             tabInfos.Pages.Add(tabXboxInfo);
 
@@ -614,7 +660,7 @@ namespace Aaru.Gui.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
                 pcmciaCis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
 
-            tabPcmciaInfo tabPcmciaInfo = new tabPcmciaInfo();
+            var tabPcmciaInfo = new tabPcmciaInfo();
             tabPcmciaInfo.LoadData(pcmciaCis);
             tabInfos.Pages.Add(tabPcmciaInfo);
 
@@ -681,7 +727,7 @@ namespace Aaru.Gui.Panels
                 deviceType  = DeviceType.MMC;
             }
 
-            tabSdMmcInfo tabSdMmcInfo = new tabSdMmcInfo();
+            var tabSdMmcInfo = new tabSdMmcInfo();
             tabSdMmcInfo.LoadData(deviceType, cid, csd, ocr, extendedCsd, scr);
             tabInfos.Pages.Add(tabSdMmcInfo);
 
@@ -689,24 +735,35 @@ namespace Aaru.Gui.Panels
             {
                 try
                 {
-                    if(opticalMediaImage.Sessions != null && opticalMediaImage.Sessions.Count > 0)
+                    if(opticalMediaImage.Sessions       != null &&
+                       opticalMediaImage.Sessions.Count > 0)
                     {
-                        TreeGridItemCollection sessionList = new TreeGridItemCollection();
+                        var sessionList = new TreeGridItemCollection();
 
                         treeSessions.Columns.Add(new GridColumn
                         {
                             HeaderText = "Session", DataCell = new TextBoxCell(0)
                         });
+
                         treeSessions.Columns.Add(new GridColumn
                         {
                             HeaderText = "First track", DataCell = new TextBoxCell(1)
                         });
+
                         treeSessions.Columns.Add(new GridColumn
                         {
                             HeaderText = "Last track", DataCell = new TextBoxCell(2)
                         });
-                        treeSessions.Columns.Add(new GridColumn {HeaderText = "Start", DataCell = new TextBoxCell(3)});
-                        treeSessions.Columns.Add(new GridColumn {HeaderText = "End", DataCell   = new TextBoxCell(4)});
+
+                        treeSessions.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Start", DataCell = new TextBoxCell(3)
+                        });
+
+                        treeSessions.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "End", DataCell = new TextBoxCell(4)
+                        });
 
                         treeSessions.AllowMultipleSelection = false;
                         treeSessions.ShowHeader             = true;
@@ -717,8 +774,8 @@ namespace Aaru.Gui.Panels
                             {
                                 Values = new object[]
                                 {
-                                    session.SessionSequence, session.StartTrack,
-                                    session.EndTrack, session.StartSector, session.EndSector
+                                    session.SessionSequence, session.StartTrack, session.EndTrack, session.StartSector,
+                                    session.EndSector
                                 }
                             });
 
@@ -732,21 +789,50 @@ namespace Aaru.Gui.Panels
 
                 try
                 {
-                    if(opticalMediaImage.Tracks != null && opticalMediaImage.Tracks.Count > 0)
+                    if(opticalMediaImage.Tracks       != null &&
+                       opticalMediaImage.Tracks.Count > 0)
                     {
-                        TreeGridItemCollection tracksList = new TreeGridItemCollection();
+                        var tracksList = new TreeGridItemCollection();
 
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Track", DataCell   = new TextBoxCell(0)});
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Type", DataCell    = new TextBoxCell(1)});
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Bps", DataCell     = new TextBoxCell(2)});
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Raw bps", DataCell = new TextBoxCell(3)});
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Track", DataCell = new TextBoxCell(0)
+                        });
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Type", DataCell = new TextBoxCell(1)
+                        });
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Bps", DataCell = new TextBoxCell(2)
+                        });
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Raw bps", DataCell = new TextBoxCell(3)
+                        });
+
                         treeTracks.Columns.Add(new GridColumn
                         {
                             HeaderText = "Subchannel", DataCell = new TextBoxCell(4)
                         });
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Pregap", DataCell = new TextBoxCell(5)});
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "Start", DataCell  = new TextBoxCell(6)});
-                        treeTracks.Columns.Add(new GridColumn {HeaderText = "End", DataCell    = new TextBoxCell(7)});
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Pregap", DataCell = new TextBoxCell(5)
+                        });
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "Start", DataCell = new TextBoxCell(6)
+                        });
+
+                        treeTracks.Columns.Add(new GridColumn
+                        {
+                            HeaderText = "End", DataCell = new TextBoxCell(7)
+                        });
 
                         treeTracks.AllowMultipleSelection = false;
                         treeTracks.ShowHeader             = true;
@@ -757,9 +843,8 @@ namespace Aaru.Gui.Panels
                             {
                                 Values = new object[]
                                 {
-                                    track.TrackSequence, track.TrackType,
-                                    track.TrackBytesPerSector, track.TrackRawBytesPerSector,
-                                    track.TrackSubchannelType, track.TrackPregap,
+                                    track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
+                                    track.TrackRawBytesPerSector, track.TrackSubchannelType, track.TrackPregap,
                                     track.TrackStartSector, track.TrackEndSector
                                 }
                             });
@@ -773,21 +858,50 @@ namespace Aaru.Gui.Panels
                 }
             }
 
-            if(imageFormat.DumpHardware == null) return;
+            if(imageFormat.DumpHardware == null)
+                return;
 
-            TreeGridItemCollection dumpHardwareList = new TreeGridItemCollection();
+            var dumpHardwareList = new TreeGridItemCollection();
 
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Manufacturer", DataCell = new TextBoxCell(0)});
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Model", DataCell        = new TextBoxCell(1)});
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Serial", DataCell       = new TextBoxCell(2)});
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Software", DataCell     = new TextBoxCell(3)});
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Version", DataCell      = new TextBoxCell(4)});
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Manufacturer", DataCell = new TextBoxCell(0)
+            });
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Model", DataCell = new TextBoxCell(1)
+            });
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Serial", DataCell = new TextBoxCell(2)
+            });
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Software", DataCell = new TextBoxCell(3)
+            });
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Version", DataCell = new TextBoxCell(4)
+            });
+
             treeDumpHardware.Columns.Add(new GridColumn
             {
                 HeaderText = "Operating system", DataCell = new TextBoxCell(5)
             });
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "Start", DataCell = new TextBoxCell(6)});
-            treeDumpHardware.Columns.Add(new GridColumn {HeaderText = "End", DataCell   = new TextBoxCell(7)});
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "Start", DataCell = new TextBoxCell(6)
+            });
+
+            treeDumpHardware.Columns.Add(new GridColumn
+            {
+                HeaderText = "End", DataCell = new TextBoxCell(7)
+            });
 
             treeDumpHardware.AllowMultipleSelection = false;
             treeDumpHardware.ShowHeader             = true;
@@ -800,9 +914,8 @@ namespace Aaru.Gui.Panels
                     {
                         Values = new object[]
                         {
-                            dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name,
-                            dump.Software.Version, dump.Software.OperatingSystem,
-                            extent.Start, extent.End
+                            dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name, dump.Software.Version,
+                            dump.Software.OperatingSystem, extent.Start, extent.End
                         }
                     });
             }
@@ -815,11 +928,17 @@ namespace Aaru.Gui.Panels
             if(frmImageEntropy != null)
             {
                 frmImageEntropy.Show();
+
                 return;
             }
 
-            frmImageEntropy        =  new frmImageEntropy(imageFormat);
-            frmImageEntropy.Closed += (s, ea) => { frmImageEntropy = null; };
+            frmImageEntropy = new frmImageEntropy(imageFormat);
+
+            frmImageEntropy.Closed += (s, ea) =>
+            {
+                frmImageEntropy = null;
+            };
+
             frmImageEntropy.Show();
         }
 
@@ -828,11 +947,17 @@ namespace Aaru.Gui.Panels
             if(frmImageVerify != null)
             {
                 frmImageVerify.Show();
+
                 return;
             }
 
-            frmImageVerify        =  new frmImageVerify(imageFormat);
-            frmImageVerify.Closed += (s, ea) => { frmImageVerify = null; };
+            frmImageVerify = new frmImageVerify(imageFormat);
+
+            frmImageVerify.Closed += (s, ea) =>
+            {
+                frmImageVerify = null;
+            };
+
             frmImageVerify.Show();
         }
 
@@ -841,11 +966,17 @@ namespace Aaru.Gui.Panels
             if(frmImageChecksum != null)
             {
                 frmImageChecksum.Show();
+
                 return;
             }
 
-            frmImageChecksum        =  new frmImageChecksum(imageFormat);
-            frmImageChecksum.Closed += (s, ea) => { frmImageChecksum = null; };
+            frmImageChecksum = new frmImageChecksum(imageFormat);
+
+            frmImageChecksum.Closed += (s, ea) =>
+            {
+                frmImageChecksum = null;
+            };
+
             frmImageChecksum.Show();
         }
 
@@ -854,11 +985,17 @@ namespace Aaru.Gui.Panels
             if(frmImageConvert != null)
             {
                 frmImageConvert.Show();
+
                 return;
             }
 
-            frmImageConvert        =  new frmImageConvert(imageFormat, imagePath);
-            frmImageConvert.Closed += (s, ea) => { frmImageConvert = null; };
+            frmImageConvert = new frmImageConvert(imageFormat, imagePath);
+
+            frmImageConvert.Closed += (s, ea) =>
+            {
+                frmImageConvert = null;
+            };
+
             frmImageConvert.Show();
         }
 
@@ -867,12 +1004,18 @@ namespace Aaru.Gui.Panels
             if(frmImageSidecar != null)
             {
                 frmImageSidecar.Show();
+
                 return;
             }
 
             // TODO: Pass thru chosen default encoding
-            frmImageSidecar        =  new frmImageSidecar(imageFormat, imagePath, filter.Id, null);
-            frmImageSidecar.Closed += (s, ea) => { frmImageSidecar = null; };
+            frmImageSidecar = new frmImageSidecar(imageFormat, imagePath, filter.Id, null);
+
+            frmImageSidecar.Closed += (s, ea) =>
+            {
+                frmImageSidecar = null;
+            };
+
             frmImageSidecar.Show();
         }
 
@@ -881,11 +1024,17 @@ namespace Aaru.Gui.Panels
             if(frmPrintHex != null)
             {
                 frmPrintHex.Show();
+
                 return;
             }
 
-            frmPrintHex        =  new frmPrintHex(imageFormat);
-            frmPrintHex.Closed += (s, ea) => { frmPrintHex = null; };
+            frmPrintHex = new frmPrintHex(imageFormat);
+
+            frmPrintHex.Closed += (s, ea) =>
+            {
+                frmPrintHex = null;
+            };
+
             frmPrintHex.Show();
         }
 
@@ -894,11 +1043,17 @@ namespace Aaru.Gui.Panels
             if(frmDecodeMediaTags != null)
             {
                 frmDecodeMediaTags.Show();
+
                 return;
             }
 
-            frmDecodeMediaTags        =  new frmDecodeMediaTags(imageFormat);
-            frmDecodeMediaTags.Closed += (s, ea) => { frmDecodeMediaTags = null; };
+            frmDecodeMediaTags = new frmDecodeMediaTags(imageFormat);
+
+            frmDecodeMediaTags.Closed += (s, ea) =>
+            {
+                frmDecodeMediaTags = null;
+            };
+
             frmDecodeMediaTags.Show();
         }
 

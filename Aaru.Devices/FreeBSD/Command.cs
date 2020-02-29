@@ -41,13 +41,11 @@ using static Aaru.Devices.FreeBSD.Extern;
 namespace Aaru.Devices.FreeBSD
 {
     [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
-    static class Command
+    internal static class Command
     {
         const int CAM_MAX_CDBLEN = 16;
 
-        /// <summary>
-        ///     Sends a SCSI command (64-bit arch)
-        /// </summary>
+        /// <summary>Sends a SCSI command (64-bit arch)</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
         /// <param name="cdb">SCSI CDB</param>
@@ -60,15 +58,15 @@ namespace Aaru.Devices.FreeBSD
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
-        internal static int SendScsiCommand64(IntPtr     dev, byte[] cdb, ref byte[] buffer,
-                                              out byte[] senseBuffer,
-                                              uint       timeout, CcbFlags direction, out double duration, out bool sense)
+        internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                              uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration    = 0;
             sense       = false;
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
             IntPtr cdbPtr = IntPtr.Zero;
@@ -76,10 +74,11 @@ namespace Aaru.Devices.FreeBSD
             if(ccbPtr.ToInt64() == 0)
             {
                 sense = true;
+
                 return Marshal.GetLastWin32Error();
             }
 
-            CcbScsiio64 csio = (CcbScsiio64)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio64));
+            var csio = (CcbScsiio64)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio64));
             csio.ccb_h.func_code   = XptOpcode.XptScsiIo;
             csio.ccb_h.flags       = direction;
             csio.ccb_h.xflags      = 0;
@@ -90,10 +89,13 @@ namespace Aaru.Devices.FreeBSD
             csio.dxfer_len         = (uint)buffer.Length;
             csio.sense_len         = 32;
             csio.cdb_len           = (byte)cdb.Length;
+
             // TODO: Create enum?
             csio.tag_action = 0x20;
             csio.cdb_bytes  = new byte[CAM_MAX_CDBLEN];
-            if(cdb.Length <= CAM_MAX_CDBLEN) Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
+
+            if(cdb.Length <= CAM_MAX_CDBLEN)
+                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
@@ -111,7 +113,8 @@ namespace Aaru.Devices.FreeBSD
             int      error = cam_send_ccb(dev, ccbPtr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             csio = (CcbScsiio64)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio64));
 
@@ -143,21 +146,24 @@ namespace Aaru.Devices.FreeBSD
             cdb    = new byte[csio.cdb_len];
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
+
             if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt64(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
-            else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+            else
+                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer)) Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
+                Marshal.FreeHGlobal(cdbPtr);
+
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
             return error;
         }
 
-        /// <summary>
-        ///     Sends a SCSI command (32-bit arch)
-        /// </summary>
+        /// <summary>Sends a SCSI command (32-bit arch)</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
         /// <param name="cdb">SCSI CDB</param>
@@ -170,15 +176,15 @@ namespace Aaru.Devices.FreeBSD
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
-        internal static int SendScsiCommand(IntPtr     dev, byte[] cdb, ref byte[] buffer,
-                                            out byte[] senseBuffer,
-                                            uint       timeout, CcbFlags direction, out double duration, out bool sense)
+        internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
+                                            uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration    = 0;
             sense       = false;
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
             IntPtr cdbPtr = IntPtr.Zero;
@@ -186,10 +192,11 @@ namespace Aaru.Devices.FreeBSD
             if(ccbPtr.ToInt32() == 0)
             {
                 sense = true;
+
                 return Marshal.GetLastWin32Error();
             }
 
-            CcbScsiio csio = (CcbScsiio)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio));
+            var csio = (CcbScsiio)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio));
             csio.ccb_h.func_code   = XptOpcode.XptScsiIo;
             csio.ccb_h.flags       = direction;
             csio.ccb_h.xflags      = 0;
@@ -200,10 +207,13 @@ namespace Aaru.Devices.FreeBSD
             csio.dxfer_len         = (uint)buffer.Length;
             csio.sense_len         = 32;
             csio.cdb_len           = (byte)cdb.Length;
+
             // TODO: Create enum?
             csio.tag_action = 0x20;
             csio.cdb_bytes  = new byte[CAM_MAX_CDBLEN];
-            if(cdb.Length <= CAM_MAX_CDBLEN) Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
+
+            if(cdb.Length <= CAM_MAX_CDBLEN)
+                Array.Copy(cdb, 0, csio.cdb_bytes, 0, cdb.Length);
             else
             {
                 cdbPtr = Marshal.AllocHGlobal(cdb.Length);
@@ -221,7 +231,8 @@ namespace Aaru.Devices.FreeBSD
             int      error = cam_send_ccb(dev, ccbPtr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             csio = (CcbScsiio)Marshal.PtrToStructure(ccbPtr, typeof(CcbScsiio));
 
@@ -253,21 +264,24 @@ namespace Aaru.Devices.FreeBSD
             cdb    = new byte[csio.cdb_len];
 
             Marshal.Copy(csio.data_ptr, buffer, 0, buffer.Length);
+
             if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
                 Marshal.Copy(new IntPtr(BitConverter.ToInt32(csio.cdb_bytes, 0)), cdb, 0, cdb.Length);
-            else Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+            else
+                Array.Copy(csio.cdb_bytes, 0, cdb, 0, cdb.Length);
+
             duration = (end - start).TotalMilliseconds;
 
-            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer)) Marshal.FreeHGlobal(cdbPtr);
+            if(csio.ccb_h.flags.HasFlag(CcbFlags.CamCdbPointer))
+                Marshal.FreeHGlobal(cdbPtr);
+
             Marshal.FreeHGlobal(csio.data_ptr);
             cam_freeccb(ccbPtr);
 
             return error;
         }
 
-        /// <summary>
-        ///     Converts ATA protocol to CAM flags
-        /// </summary>
+        /// <summary>Converts ATA protocol to CAM flags</summary>
         /// <param name="protocol">ATA protocol</param>
         /// <returns>CAM flags</returns>
         static CcbFlags AtaProtocolToCamFlags(AtaProtocol protocol)
@@ -288,9 +302,7 @@ namespace Aaru.Devices.FreeBSD
             }
         }
 
-        /// <summary>
-        ///     Sends an ATA command in CHS mode
-        /// </summary>
+        /// <summary>Sends an ATA command in CHS mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -300,20 +312,20 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(IntPtr                   dev,            AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol     protocol,
-                                           ref byte[]               buffer,         uint            timeout,
-                                           out double               duration,       out bool        sense)
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersChs registers,
+                                           out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersChs();
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            var ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
             ataio.ccb_h.func_code   =  XptOpcode.XptAtaIo;
             ataio.ccb_h.flags       =  AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags      =  0;
@@ -324,6 +336,7 @@ namespace Aaru.Devices.FreeBSD
             ataio.dxfer_len         =  (uint)buffer.Length;
             ataio.ccb_h.flags       |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags         =  CamAtaIoFlags.NeedResult;
+
             switch(protocol)
             {
                 case AtaProtocol.Dma:
@@ -331,9 +344,11 @@ namespace Aaru.Devices.FreeBSD
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
                     ataio.cmd.flags |= CamAtaIoFlags.Dma;
+
                     break;
                 case AtaProtocol.FpDma:
                     ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
+
                     break;
             }
 
@@ -352,7 +367,8 @@ namespace Aaru.Devices.FreeBSD
             int      error = cam_send_ccb(dev, ccbPtr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
@@ -364,7 +380,8 @@ namespace Aaru.Devices.FreeBSD
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError)
+                sense = true;
 
             errorRegisters.CylinderHigh = ataio.res.lba_high;
             errorRegisters.CylinderLow  = ataio.res.lba_mid;
@@ -387,9 +404,7 @@ namespace Aaru.Devices.FreeBSD
             return error;
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 28-bit LBA mode
-        /// </summary>
+        /// <summary>Sends an ATA command in 28-bit LBA mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -399,20 +414,20 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(IntPtr                     dev,            AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol       protocol,
-                                           ref byte[]                 buffer,         uint              timeout,
-                                           out double                 duration,       out bool          sense)
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersLba28();
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            var ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
             ataio.ccb_h.func_code   =  XptOpcode.XptAtaIo;
             ataio.ccb_h.flags       =  AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags      =  0;
@@ -423,6 +438,7 @@ namespace Aaru.Devices.FreeBSD
             ataio.dxfer_len         =  (uint)buffer.Length;
             ataio.ccb_h.flags       |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags         =  CamAtaIoFlags.NeedResult;
+
             switch(protocol)
             {
                 case AtaProtocol.Dma:
@@ -430,9 +446,11 @@ namespace Aaru.Devices.FreeBSD
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
                     ataio.cmd.flags |= CamAtaIoFlags.Dma;
+
                     break;
                 case AtaProtocol.FpDma:
                     ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
+
                     break;
             }
 
@@ -451,7 +469,8 @@ namespace Aaru.Devices.FreeBSD
             int      error = cam_send_ccb(dev, ccbPtr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
@@ -463,7 +482,8 @@ namespace Aaru.Devices.FreeBSD
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError)
+                sense = true;
 
             errorRegisters.LbaHigh     = ataio.res.lba_high;
             errorRegisters.LbaMid      = ataio.res.lba_mid;
@@ -486,9 +506,7 @@ namespace Aaru.Devices.FreeBSD
             return error;
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 48-bit mode
-        /// </summary>
+        /// <summary>Sends an ATA command in 48-bit mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="dev">CAM device</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -498,24 +516,25 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
-        internal static int SendAtaCommand(IntPtr                     dev,            AtaRegistersLba48 registers,
-                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol       protocol,
-                                           ref byte[]                 buffer,         uint              timeout,
-                                           out double                 duration,       out bool          sense)
+        internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           ref byte[] buffer, uint timeout, out double duration, out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersLba48();
 
             // 48-bit ATA CAM commands can crash FreeBSD < 9.2-RELEASE
-            if(Environment.Version.Major == 9 && Environment.Version.Minor < 2 ||
-               Environment.Version.Major < 9) return -1;
+            if((Environment.Version.Major == 9 && Environment.Version.Minor < 2) ||
+               Environment.Version.Major < 9)
+                return -1;
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             IntPtr ccbPtr = cam_getccb(dev);
 
-            CcbAtaio ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
+            var ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
             ataio.ccb_h.func_code   =  XptOpcode.XptAtaIo;
             ataio.ccb_h.flags       =  AtaProtocolToCamFlags(protocol);
             ataio.ccb_h.xflags      =  0;
@@ -526,6 +545,7 @@ namespace Aaru.Devices.FreeBSD
             ataio.dxfer_len         =  (uint)buffer.Length;
             ataio.ccb_h.flags       |= CcbFlags.CamDevQfrzdis;
             ataio.cmd.flags         =  CamAtaIoFlags.NeedResult | CamAtaIoFlags.ExtendedCommand;
+
             switch(protocol)
             {
                 case AtaProtocol.Dma:
@@ -533,9 +553,11 @@ namespace Aaru.Devices.FreeBSD
                 case AtaProtocol.UDmaIn:
                 case AtaProtocol.UDmaOut:
                     ataio.cmd.flags |= CamAtaIoFlags.Dma;
+
                     break;
                 case AtaProtocol.FpDma:
                     ataio.cmd.flags |= CamAtaIoFlags.Fpdma;
+
                     break;
             }
 
@@ -559,7 +581,8 @@ namespace Aaru.Devices.FreeBSD
             int      error = cam_send_ccb(dev, ccbPtr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
@@ -571,7 +594,8 @@ namespace Aaru.Devices.FreeBSD
                 sense = true;
             }
 
-            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError) sense = true;
+            if((ataio.ccb_h.status & CamStatus.CamStatusMask) == CamStatus.CamAtaStatusError)
+                sense = true;
 
             errorRegisters.SectorCount = (ushort)((ataio.res.sector_count_exp << 8) + ataio.res.sector_count);
             errorRegisters.LbaLow      = (ushort)((ataio.res.lba_low_exp      << 8) + ataio.res.lba_low);

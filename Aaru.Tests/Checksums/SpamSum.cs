@@ -43,8 +43,10 @@ namespace Aaru.Tests.Checksums
         public void SpamSumEmptyData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -56,8 +58,10 @@ namespace Aaru.Tests.Checksums
         public void SpamSumEmptyInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "empty"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -71,8 +75,10 @@ namespace Aaru.Tests.Checksums
         public void SpamSumRandomData()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
@@ -84,8 +90,10 @@ namespace Aaru.Tests.Checksums
         public void SpamSumRandomInstance()
         {
             byte[] data = new byte[1048576];
-            FileStream fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
-                                           FileAccess.Read);
+
+            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "checksums", "random"), FileMode.Open,
+                                    FileAccess.Read);
+
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();

@@ -40,21 +40,45 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class ReFsMbr
     {
-        readonly string[] testfiles = {"win10.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "win10.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {67108864};
+        readonly ulong[] sectors =
+        {
+            67108864
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {8372224};
+        readonly long[] clusters =
+        {
+            8372224
+        };
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize =
+        {
+            4096
+        };
 
-        readonly string[] volumename = {null};
+        readonly string[] volumename =
+        {
+            null
+        };
 
-        readonly string[] volumeserial = {null};
+        readonly string[] volumeserial =
+        {
+            null
+        };
 
-        readonly string[] oemid = {null};
+        readonly string[] oemid =
+        {
+            null
+        };
 
         [Test]
         public void Test()
@@ -65,15 +89,17 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x07")
                     {
                         part = j;
+
                         break;
                     }
 
@@ -81,12 +107,12 @@ namespace Aaru.Tests.Filesystems
                 IFilesystem fs = new ReFS();
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],             fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],          fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("Resilient File System", fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],           fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i],         fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],                fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Resilient File System", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }

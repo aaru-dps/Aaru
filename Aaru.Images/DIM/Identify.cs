@@ -43,7 +43,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < DATA_OFFSET) return false;
+            if(stream.Length < DATA_OFFSET)
+                return false;
 
             comment = new byte[60];
             hdrId   = new byte[13];

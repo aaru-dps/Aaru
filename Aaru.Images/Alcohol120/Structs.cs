@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
             public ushort            sessions;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public ushort[] unknown1;
-            public ushort bcaLength;
+            public readonly ushort bcaLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public uint[] unknown2;
             public uint bcaOffset;
@@ -56,22 +56,22 @@ namespace Aaru.DiscImages
             public uint structuresOffset;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public uint[] unknown4;
-            public uint sessionOffset;
-            public uint dpmOffset;
+            public          uint sessionOffset;
+            public readonly uint dpmOffset;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AlcoholSession
         {
-            public int    sessionStart;
-            public int    sessionEnd;
-            public ushort sessionSequence;
-            public byte   allBlocks;
-            public byte   nonTrackBlocks;
-            public ushort firstTrack;
-            public ushort lastTrack;
-            public uint   unknown;
-            public uint   trackOffset;
+            public          int    sessionStart;
+            public          int    sessionEnd;
+            public          ushort sessionSequence;
+            public          byte   allBlocks;
+            public          byte   nonTrackBlocks;
+            public          ushort firstTrack;
+            public          ushort lastTrack;
+            public readonly uint   unknown;
+            public          uint   trackOffset;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -111,10 +111,10 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AlcoholFooter
         {
-            public uint filenameOffset;
-            public uint widechar;
-            public uint unknown1;
-            public uint unknown2;
+            public          uint filenameOffset;
+            public          uint widechar;
+            public readonly uint unknown1;
+            public readonly uint unknown2;
         }
     }
 }

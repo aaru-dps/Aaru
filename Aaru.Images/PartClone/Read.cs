@@ -51,21 +51,25 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] pHdrB = new byte[Marshal.SizeOf<PartCloneHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<PartCloneHeader>());
             pHdr = Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
 
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
+
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
-                                      StringHandlers.CToString(pHdr.filesystem));
+                                       StringHandlers.CToString(pHdr.filesystem));
+
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
-                                      StringHandlers.CToString(pHdr.version));
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}",   pHdr.blockSize);
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}",  pHdr.deviceSize);
+                                       StringHandlers.CToString(pHdr.version));
+
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}", pHdr.blockSize);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}", pHdr.deviceSize);
             AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", pHdr.totalBlocks);
-            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}",  pHdr.usedBlocks);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}", pHdr.usedBlocks);
 
             byteMap = new byte[pHdr.totalBlocks];
             AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", byteMap.Length);
@@ -107,14 +111,16 @@ namespace Aaru.DiscImages
                         extentsOff.TryGetValue(extentStart, out _);
                     }
 
-                if(next && current) blockOff++;
+                if(next && current)
+                    blockOff++;
 
                 current = next;
             }
 
             DateTime end = DateTime.Now;
+
             AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
-                                      (end - start).TotalSeconds);
+                                       (end - start).TotalSeconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -137,9 +143,11 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(byteMap[sectorAddress] == 0) return new byte[pHdr.blockSize];
+            if(byteMap[sectorAddress] == 0)
+                return new byte[pHdr.blockSize];
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector)) return sector;
+            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+                return sector;
 
             long imageOff = dataOff + (long)(BlockOffset(sectorAddress) * (pHdr.blockSize + CRC_SIZE));
 
@@ -147,7 +155,8 @@ namespace Aaru.DiscImages
             imageStream.Seek(imageOff, SeekOrigin.Begin);
             imageStream.Read(sector, 0, (int)pHdr.blockSize);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS) sectorCache.Clear();
+            if(sectorCache.Count > MAX_CACHED_SECTORS)
+                sectorCache.Clear();
 
             sectorCache.Add(sectorAddress, sector);
 
@@ -163,17 +172,20 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             bool allEmpty = true;
+
             for(uint i = 0; i < length; i++)
                 if(byteMap[sectorAddress + i] != 0)
                 {
                     allEmpty = false;
+
                     break;
                 }
 
-            if(allEmpty) return new byte[pHdr.blockSize * length];
+            if(allEmpty)
+                return new byte[pHdr.blockSize * length];
 
             for(uint i = 0; i < length; i++)
             {

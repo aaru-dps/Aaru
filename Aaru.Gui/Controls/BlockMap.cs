@@ -38,7 +38,9 @@ namespace Aaru.Gui.Controls
             {
                 sectorsToRead = value;
                 blocksToRead  = (uint)(sectorsToRead / SectorsPerBlock);
-                if(sectorsToRead % SectorsPerBlock > 0) blocksToRead++;
+
+                if(sectorsToRead % SectorsPerBlock > 0)
+                    blocksToRead++;
             }
         }
 
@@ -51,10 +53,11 @@ namespace Aaru.Gui.Controls
                 case NotifyCollectionChangedAction.Add:
                     foreach(object item in args.NewItems)
                     {
-                        if(!(item is ColoredBlock block)) continue;
+                        if(!(item is ColoredBlock block))
+                            continue;
 
                         for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Add(new ColoredBlock(block.Block / SectorsPerBlock + i, block.Color));
+                            ColoredBlocks.Add(new ColoredBlock((block.Block / SectorsPerBlock) + i, block.Color));
                     }
 
                     break;
@@ -62,35 +65,39 @@ namespace Aaru.Gui.Controls
                 case NotifyCollectionChangedAction.Remove:
                     foreach(object item in args.OldItems)
                     {
-                        if(!(item is ColoredBlock block)) continue;
+                        if(!(item is ColoredBlock block))
+                            continue;
 
                         for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == block.Block /
-                                                                                   SectorsPerBlock + i));
+                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == (block.Block /
+                                                                                               SectorsPerBlock) + i));
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Replace:
                     foreach(object item in args.OldItems)
                     {
-                        if(!(item is ColoredBlock block)) continue;
+                        if(!(item is ColoredBlock block))
+                            continue;
 
                         for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == block.Block /
-                                                                                   SectorsPerBlock + i));
+                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == (block.Block /
+                                                                                               SectorsPerBlock) + i));
                     }
 
                     foreach(object item in args.NewItems)
                     {
-                        if(!(item is ColoredBlock block)) continue;
+                        if(!(item is ColoredBlock block))
+                            continue;
 
                         for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Add(new ColoredBlock(block.Block / SectorsPerBlock + i, block.Color));
+                            ColoredBlocks.Add(new ColoredBlock((block.Block / SectorsPerBlock) + i, block.Color));
                     }
 
                     break;
                 case NotifyCollectionChangedAction.Reset:
                     ColoredBlocks.Clear();
+
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -101,15 +108,15 @@ namespace Aaru.Gui.Controls
             SectorsPerBlock = Blocks == 0 ? 0 : _sectors / Blocks;
             ColoredBlocks.Clear();
 
-            if(SectorsPerBlock > 0) return;
+            if(SectorsPerBlock > 0)
+                return;
 
             SectorsPerBlock = 1;
-            for(ulong i = Sectors; i < Blocks; i++) ColoredBlocks.Add(new ColoredBlock(i, GridColor));
+
+            for(ulong i = Sectors; i < Blocks; i++)
+                ColoredBlocks.Add(new ColoredBlock(i, GridColor));
         }
 
-        public void Clear()
-        {
-            ColoredSectors.Clear();
-        }
+        public void Clear() => ColoredSectors.Clear();
     }
 }

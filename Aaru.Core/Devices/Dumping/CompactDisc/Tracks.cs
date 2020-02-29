@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 

@@ -54,17 +54,18 @@ namespace Aaru.Filesystems
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start           >= partition.End ||
-               imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc) return false;
+               imagePlugin.Info.XmlMediaType != XmlMediaType.OpticalDisc)
+                return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, 2);
 
-            Encoding encoding = Encoding.GetEncoding("shift_jis");
+            var encoding = Encoding.GetEncoding("shift_jis");
 
             return encoding.GetString(sector, 0, 16) == IDENTIFIER;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             // Always Shift-JIS
             Encoding    = Encoding.GetEncoding("shift_jis");
@@ -84,9 +85,12 @@ namespace Aaru.Filesystems
                 int day   = int.Parse(date.Substring(6, 2));
                 dateTime = new DateTime(year, month, day);
             }
-            catch { date = null; }
+            catch
+            {
+                date = null;
+            }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine("PC-FX executable:");
             sb.AppendFormat("Identifier: {0}", StringHandlers.CToString(header.signature, Encoding)).AppendLine();
             sb.AppendFormat("Copyright: {0}", StringHandlers.CToString(header.copyright, Encoding)).AppendLine();
@@ -96,24 +100,24 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Volume number: {0}", header.volumeNumber).AppendLine();
             sb.AppendFormat("Country code: {0}", header.country).AppendLine();
             sb.AppendFormat("Version: {0}.{1}", header.minorVersion, header.majorVersion).AppendLine();
-            if(date != null) sb.AppendFormat("Dated {0}", dateTime).AppendLine();
+
+            if(date != null)
+                sb.AppendFormat("Dated {0}", dateTime).AppendLine();
+
             sb.AppendFormat("Load {0} sectors from sector {1}", header.loadCount, header.loadOffset).AppendLine();
-            sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint)
-              .AppendLine();
+
+            sb.AppendFormat("Load at 0x{0:X8} and jump to 0x{1:X8}", header.loadAddress, header.entryPoint).
+               AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "PC-FX",
-                Clusters              = partition.Length,
-                ClusterSize           = 2048,
-                Bootable              = true,
-                CreationDate          = dateTime,
-                CreationDateSpecified = date != null,
-                PublisherIdentifier   = StringHandlers.CToString(header.makerName, Encoding),
-                VolumeName            = StringHandlers.CToString(header.title,     Encoding),
-                SystemIdentifier      = "PC-FX"
+                Type                = "PC-FX", Clusters = partition.Length, ClusterSize = 2048,
+                Bootable            = true,
+                CreationDate        = dateTime, CreationDateSpecified = date != null,
+                PublisherIdentifier = StringHandlers.CToString(header.makerName, Encoding),
+                VolumeName          = StringHandlers.CToString(header.title, Encoding), SystemIdentifier = "PC-FX"
             };
         }
 

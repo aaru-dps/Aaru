@@ -183,19 +183,20 @@ namespace Aaru.DiscImages
                             Match discCatMatch  = discCatRegex.Match(line);
 
                             if(discEntMatch.Success)
-                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}",
+                                                           lineNumber);
                             else if(discSessMatch.Success)
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found Sessions at line {0}", lineNumber);
                             else if(discScrMatch.Success)
                             {
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found DataTracksScrambled at line {0}",
-                                                          lineNumber);
+                                                           lineNumber);
 
                                 scrambled |= discScrMatch.Groups["value"].Value == "1";
                             }
                             else if(cdtLenMatch.Success)
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}",
-                                                          lineNumber);
+                                                           lineNumber);
                             else if(discCatMatch.Success)
                             {
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", lineNumber);
@@ -211,11 +212,11 @@ namespace Aaru.DiscImages
 
                             if(cdtEntsMatch.Success)
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entries at line {0}",
-                                                          lineNumber);
+                                                           lineNumber);
                             else if(cdtEntMatch.Success)
                             {
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}",
-                                                          lineNumber);
+                                                           lineNumber);
 
                                 string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[]
                                 {
@@ -234,9 +235,11 @@ namespace Aaru.DiscImages
                             Match sessSubcMatch = sessSubcRegex.Match(line);
 
                             if(sessPregMatch.Success)
-                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}",
+                                                           lineNumber);
                             else if(sessSubcMatch.Success)
-                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}",
+                                                           lineNumber);
                         }
                         else if(inEntry)
                         {
@@ -645,7 +648,7 @@ namespace Aaru.DiscImages
 
                                         if(imageInfo.MediaManufacturer != "")
                                             AaruConsole.DebugWriteLine("CloneCD plugin", "Disc manufactured by: {0}",
-                                                                      imageInfo.MediaManufacturer);
+                                                                       imageInfo.MediaManufacturer);
                                     }
 
                                     break;
@@ -656,7 +659,7 @@ namespace Aaru.DiscImages
                         {
                             uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                             AaruConsole.DebugWriteLine("CloneCD plugin", "Disc ID: {0:X6}", id & 0x00FFFFFF);
-                            imageInfo.MediaSerialNumber = $"{id                               & 0x00FFFFFF:X6}";
+                            imageInfo.MediaSerialNumber = $"{id                                & 0x00FFFFFF:X6}";
 
                             break;
                         }
@@ -978,7 +981,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    return!trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
+                    return !trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
                     {
                         flags
                     } : new byte[1];

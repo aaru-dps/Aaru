@@ -43,18 +43,17 @@ namespace Aaru.Tests.Filesystems
         // Missing Darwin 1.4.1
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_1.3.1.vdi.lz",
-            "darwin_1.3.1_wrapped.vdi.lz", "darwin_1.4.1_wrapped.vdi.lz", "darwin_6.0.2.vdi.lz",
-            "darwin_6.0.2_wrapped.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz",
-            "darwin_8.0.1_wrapped.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz", "macos_9.1.vdi.lz",
-            "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz", "macosx_10.2.vdi.lz", "macosx_10.3_journal.vdi.lz",
-            "macosx_10.3.vdi.lz", "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.3.1_wrapped.vdi.lz",
+            "darwin_1.4.1_wrapped.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_6.0.2_wrapped.vdi.lz",
+            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "darwin_8.0.1_wrapped.vdi.lz", "macos_8.1.vdi.lz",
+            "macos_9.0.4.vdi.lz", "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz", "macosx_10.2.vdi.lz",
+            "macosx_10.3_journal.vdi.lz", "macosx_10.3.vdi.lz", "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
         };
 
         readonly ulong[] sectors =
         {
-            409600, 614400, 819200, 614400, 614400, 819200, 614400, 1228800, 819200, 614400, 4194304, 4194304,
-            4194304, 4194304, 4194304, 4194304, 2097152, 4194304, 2097152, 4194304
+            409600, 614400, 819200, 614400, 614400, 819200, 614400, 1228800, 819200, 614400, 4194304, 4194304, 4194304,
+            4194304, 4194304, 4194304, 2097152, 4194304, 2097152, 4194304
         };
 
         readonly uint[] sectorsize =
@@ -64,20 +63,20 @@ namespace Aaru.Tests.Filesystems
 
         readonly long[] clusters =
         {
-            51190, 76790, 102392, 76774, 76774, 102392, 76774, 153592, 102392, 76774, 524152, 524088, 524088,
-            524088, 524088, 524008, 261884, 491240, 261884, 491240
+            51190, 76790, 102392, 76774, 76774, 102392, 76774, 153592, 102392, 76774, 524152, 524088, 524088, 524088,
+            524088, 524008, 261884, 491240, 261884, 491240
         };
 
         readonly int[] clustersize =
         {
-            4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
-            4096, 4096, 4096
+            4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
+            4096, 4096
         };
 
         readonly string[] volumename =
         {
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null
         };
 
         readonly string[] volumeserial =
@@ -102,28 +101,30 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new AppleHFSPlus();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Apple_HFS")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("HFS+",          fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HFS+", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
@@ -131,21 +132,45 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class HfsPlusGpt
     {
-        readonly string[] testfiles = {"macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {409600, 614400};
+        readonly ulong[] sectors =
+        {
+            409600, 614400
+        };
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512
+        };
 
-        readonly long[] clusters = {51190, 76790};
+        readonly long[] clusters =
+        {
+            51190, 76790
+        };
 
-        readonly int[] clustersize = {4096, 4096};
+        readonly int[] clustersize =
+        {
+            4096, 4096
+        };
 
-        readonly string[] volumename = {null, null};
+        readonly string[] volumename =
+        {
+            null, null
+        };
 
-        readonly string[] volumeserial = {"D8C68470046E67BE", "FD3CB598F3C6294A"};
+        readonly string[] volumeserial =
+        {
+            "D8C68470046E67BE", "FD3CB598F3C6294A"
+        };
 
-        readonly string[] oemid = {"10.0", "HFSJ"};
+        readonly string[] oemid =
+        {
+            "10.0", "HFSJ"
+        };
 
         [Test]
         public void Test()
@@ -156,28 +181,30 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new AppleHFSPlus();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "Apple HFS")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("HFS+",          fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HFS+", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }
@@ -189,9 +216,9 @@ namespace Aaru.Tests.Filesystems
         readonly string[] testfiles =
         {
             "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
-            "darwin_1.3.1.vdi.lz", "darwin_1.3.1_wrapped.vdi.lz", "darwin_1.4.1.vdi.lz",
-            "darwin_1.4.1_wrapped.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_8.0.1_journal.vdi.lz",
-            "darwin_8.0.1.vdi.lz", "darwin_8.0.1_wrapped.vdi.lz", "linux_4.19_hfs+_flashdrive.vdi.lz"
+            "darwin_1.3.1.vdi.lz", "darwin_1.3.1_wrapped.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_1.4.1_wrapped.vdi.lz",
+            "darwin_6.0.2.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "darwin_8.0.1_wrapped.vdi.lz",
+            "linux_4.19_hfs+_flashdrive.vdi.lz"
         };
 
         readonly ulong[] sectors =
@@ -199,16 +226,25 @@ namespace Aaru.Tests.Filesystems
             303104, 352256, 262144, 262144, 819200, 614400, 819200, 614400, 819200, 1228800, 819200, 614400, 1024000
         };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
+        };
 
         readonly long[] clusters =
         {
             37878, 44021, 32512, 32512, 102178, 76708, 102178, 76708, 102178, 153592, 102392, 76774, 127744
         };
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096};
+        readonly int[] clustersize =
+        {
+            4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096
+        };
 
-        readonly string[] volumename = {null, null, null, null, null, null, null, null, null, null, null, null, null};
+        readonly string[] volumename =
+        {
+            null, null, null, null, null, null, null, null, null, null, null, null, null
+        };
 
         readonly string[] volumeserial =
         {
@@ -230,28 +266,30 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new AppleHFSPlus();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0xAF")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
-                Assert.AreEqual("HFS+",          fs.XmlFsType.Type,             testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
-                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("HFS+", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
             }
         }
     }

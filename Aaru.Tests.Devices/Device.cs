@@ -31,95 +31,110 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void Device(string devPath)
         {
-            DicConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
+            AaruConsole.WriteLine("Going to open {0}. Press any key to continue...", devPath);
             System.Console.ReadKey();
 
-            Device dev = new Device(devPath);
+            var dev = new Device(devPath);
 
             while(true)
             {
-                DicConsole.WriteLine("dev.PlatformID = {0}",        dev.PlatformId);
-                DicConsole.WriteLine("dev.FileHandle = {0}",        dev.FileHandle);
-                DicConsole.WriteLine("dev.Timeout = {0}",           dev.Timeout);
-                DicConsole.WriteLine("dev.Error = {0}",             dev.Error);
-                DicConsole.WriteLine("dev.LastError = {0}",         dev.LastError);
-                DicConsole.WriteLine("dev.Type = {0}",              dev.Type);
-                DicConsole.WriteLine("dev.Manufacturer = \"{0}\"",  dev.Manufacturer);
-                DicConsole.WriteLine("dev.Model = \"{0}\"",         dev.Model);
-                DicConsole.WriteLine("dev.Revision = \"{0}\"",      dev.FirmwareRevision);
-                DicConsole.WriteLine("dev.Serial = \"{0}\"",        dev.Serial);
-                DicConsole.WriteLine("dev.SCSIType = {0}",          dev.ScsiType);
-                DicConsole.WriteLine("dev.IsRemovable = {0}",       dev.IsRemovable);
-                DicConsole.WriteLine("dev.IsUSB = {0}",             dev.IsUsb);
-                DicConsole.WriteLine("dev.USBVendorID = 0x{0:X4}",  dev.UsbVendorId);
-                DicConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
-                DicConsole.WriteLine("dev.USBDescriptors.Length = {0}",
-                                     dev.UsbDescriptors?.Length.ToString() ?? "null");
-                DicConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
-                DicConsole.WriteLine("dev.USBProductString = \"{0}\"",      dev.UsbProductString);
-                DicConsole.WriteLine("dev.USBSerialString = \"{0}\"",       dev.UsbSerialString);
-                DicConsole.WriteLine("dev.IsFireWire = {0}",                dev.IsFireWire);
-                DicConsole.WriteLine("dev.FireWireGUID = {0:X16}",          dev.FireWireGuid);
-                DicConsole.WriteLine("dev.FireWireModel = 0x{0:X8}",        dev.FireWireModel);
-                DicConsole.WriteLine("dev.FireWireModelName = \"{0}\"",     dev.FireWireModelName);
-                DicConsole.WriteLine("dev.FireWireVendor = 0x{0:X8}",       dev.FireWireVendor);
-                DicConsole.WriteLine("dev.FireWireVendorName = \"{0}\"",    dev.FireWireVendorName);
-                DicConsole.WriteLine("dev.IsCompactFlash = {0}",            dev.IsCompactFlash);
-                DicConsole.WriteLine("dev.IsPCMCIA = {0}",                  dev.IsPcmcia);
-                DicConsole.WriteLine("dev.CIS.Length = {0}",                dev.Cis?.Length.ToString() ?? "null");
+                AaruConsole.WriteLine("dev.PlatformID = {0}", dev.PlatformId);
+                AaruConsole.WriteLine("dev.FileHandle = {0}", dev.FileHandle);
+                AaruConsole.WriteLine("dev.Timeout = {0}", dev.Timeout);
+                AaruConsole.WriteLine("dev.Error = {0}", dev.Error);
+                AaruConsole.WriteLine("dev.LastError = {0}", dev.LastError);
+                AaruConsole.WriteLine("dev.Type = {0}", dev.Type);
+                AaruConsole.WriteLine("dev.Manufacturer = \"{0}\"", dev.Manufacturer);
+                AaruConsole.WriteLine("dev.Model = \"{0}\"", dev.Model);
+                AaruConsole.WriteLine("dev.Revision = \"{0}\"", dev.FirmwareRevision);
+                AaruConsole.WriteLine("dev.Serial = \"{0}\"", dev.Serial);
+                AaruConsole.WriteLine("dev.SCSIType = {0}", dev.ScsiType);
+                AaruConsole.WriteLine("dev.IsRemovable = {0}", dev.IsRemovable);
+                AaruConsole.WriteLine("dev.IsUSB = {0}", dev.IsUsb);
+                AaruConsole.WriteLine("dev.USBVendorID = 0x{0:X4}", dev.UsbVendorId);
+                AaruConsole.WriteLine("dev.USBProductID = 0x{0:X4}", dev.UsbProductId);
 
-                DicConsole.WriteLine("Press any key to continue...", devPath);
+                AaruConsole.WriteLine("dev.USBDescriptors.Length = {0}",
+                                      dev.UsbDescriptors?.Length.ToString() ?? "null");
+
+                AaruConsole.WriteLine("dev.USBManufacturerString = \"{0}\"", dev.UsbManufacturerString);
+                AaruConsole.WriteLine("dev.USBProductString = \"{0}\"", dev.UsbProductString);
+                AaruConsole.WriteLine("dev.USBSerialString = \"{0}\"", dev.UsbSerialString);
+                AaruConsole.WriteLine("dev.IsFireWire = {0}", dev.IsFireWire);
+                AaruConsole.WriteLine("dev.FireWireGUID = {0:X16}", dev.FireWireGuid);
+                AaruConsole.WriteLine("dev.FireWireModel = 0x{0:X8}", dev.FireWireModel);
+                AaruConsole.WriteLine("dev.FireWireModelName = \"{0}\"", dev.FireWireModelName);
+                AaruConsole.WriteLine("dev.FireWireVendor = 0x{0:X8}", dev.FireWireVendor);
+                AaruConsole.WriteLine("dev.FireWireVendorName = \"{0}\"", dev.FireWireVendorName);
+                AaruConsole.WriteLine("dev.IsCompactFlash = {0}", dev.IsCompactFlash);
+                AaruConsole.WriteLine("dev.IsPCMCIA = {0}", dev.IsPcmcia);
+                AaruConsole.WriteLine("dev.CIS.Length = {0}", dev.Cis?.Length.ToString() ?? "null");
+
+                AaruConsole.WriteLine("Press any key to continue...", devPath);
                 System.Console.ReadKey();
 
                 menu:
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Options:");
-                DicConsole.WriteLine("1.- Print USB descriptors.");
-                DicConsole.WriteLine("2.- Print PCMCIA CIS.");
-                DicConsole.WriteLine("3.- Send a command to the device.");
-                DicConsole.WriteLine("0.- Return to device selection.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Options:");
+                AaruConsole.WriteLine("1.- Print USB descriptors.");
+                AaruConsole.WriteLine("2.- Print PCMCIA CIS.");
+                AaruConsole.WriteLine("3.- Send a command to the device.");
+                AaruConsole.WriteLine("0.- Return to device selection.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     goto menu;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to device selection...");
+                        AaruConsole.WriteLine("Returning to device selection...");
+
                         return;
                     case 1:
                         System.Console.Clear();
-                        DicConsole.WriteLine("Device: {0}", devPath);
-                        DicConsole.WriteLine("USB descriptors:");
-                        if(dev.UsbDescriptors != null) PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
-                        DicConsole.WriteLine("Press any key to continue...");
+                        AaruConsole.WriteLine("Device: {0}", devPath);
+                        AaruConsole.WriteLine("USB descriptors:");
+
+                        if(dev.UsbDescriptors != null)
+                            PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
+
+                        AaruConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
+
                         goto menu;
                     case 2:
                         System.Console.Clear();
-                        DicConsole.WriteLine("Device: {0}", devPath);
-                        DicConsole.WriteLine("PCMCIA CIS:");
-                        if(dev.Cis != null) PrintHex.PrintHexArray(dev.Cis, 64);
-                        DicConsole.WriteLine("Press any key to continue...");
+                        AaruConsole.WriteLine("Device: {0}", devPath);
+                        AaruConsole.WriteLine("PCMCIA CIS:");
+
+                        if(dev.Cis != null)
+                            PrintHex.PrintHexArray(dev.Cis, 64);
+
+                        AaruConsole.WriteLine("Press any key to continue...");
                         System.Console.ReadKey();
+
                         goto menu;
                     case 3:
                         Command(devPath, dev);
+
                         goto menu;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         goto menu;
                 }
             }

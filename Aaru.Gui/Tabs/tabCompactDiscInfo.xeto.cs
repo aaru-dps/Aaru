@@ -50,19 +50,14 @@ namespace Aaru.Gui.Tabs
         byte[] sessionData;
         byte[] tocData;
 
-        public tabCompactDiscInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabCompactDiscInfo() => XamlReader.Load(this);
 
-        internal void LoadData(byte[]                                   toc,                    byte[]             atip,
-                               byte[]                                   compactDiscInformation, byte[]             session, byte[] rawToc,
-                               byte[]                                   pma,                    byte[]             cdTextLeadIn,
-                               TOC.CDTOC?                               decodedToc,             ATIP.CDATIP?       decodedAtip,
-                               Session.CDSessionInfo?                   decodedSession,         FullTOC.CDFullTOC? fullToc,
-                               CDTextOnLeadIn.CDText?                   decodedCdTextLeadIn,
+        internal void LoadData(byte[] toc, byte[] atip, byte[] compactDiscInformation, byte[] session, byte[] rawToc,
+                               byte[] pma, byte[] cdTextLeadIn, TOC.CDTOC? decodedToc, ATIP.CDATIP? decodedAtip,
+                               Session.CDSessionInfo? decodedSession, FullTOC.CDFullTOC? fullToc,
+                               CDTextOnLeadIn.CDText? decodedCdTextLeadIn,
                                DiscInformation.StandardDiscInformation? decodedCompactDiscInformation, string mcn,
-                               Dictionary<byte, string>                 isrcs)
+                               Dictionary<byte, string> isrcs)
         {
             tocData                    = toc;
             atipData                   = atip;
@@ -120,21 +115,35 @@ namespace Aaru.Gui.Tabs
                 txtMcn.Text    = mcn;
             }
 
-            if(isrcs != null && isrcs.Count > 0)
+            if(isrcs       != null &&
+               isrcs.Count > 0)
             {
                 grpIsrcs.Visible = true;
 
-                TreeGridItemCollection isrcsItems = new TreeGridItemCollection();
+                var isrcsItems = new TreeGridItemCollection();
 
-                grdIsrcs.Columns.Add(new GridColumn {HeaderText = "ISRC", DataCell  = new TextBoxCell(0)});
-                grdIsrcs.Columns.Add(new GridColumn {HeaderText = "Track", DataCell = new TextBoxCell(0)});
+                grdIsrcs.Columns.Add(new GridColumn
+                {
+                    HeaderText = "ISRC", DataCell = new TextBoxCell(0)
+                });
+
+                grdIsrcs.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Track", DataCell = new TextBoxCell(0)
+                });
 
                 grdIsrcs.AllowMultipleSelection = false;
                 grdIsrcs.ShowHeader             = true;
                 grdIsrcs.DataStore              = isrcsItems;
 
                 foreach(KeyValuePair<byte, string> isrc in isrcs)
-                    isrcsItems.Add(new TreeGridItem {Values = new object[] {isrc.Key.ToString(), isrc.Value}});
+                    isrcsItems.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            isrc.Key.ToString(), isrc.Value
+                        }
+                    });
             }
 
             btnCdPma.Visible = pma != null;
@@ -148,52 +157,41 @@ namespace Aaru.Gui.Tabs
 
         void SaveElement(byte[] data)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(data, 0, data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnCdInformationClick(object sender, EventArgs e)
-        {
-            SaveElement(compactDiscInformationData);
-        }
+        protected void OnBtnCdInformationClick(object sender, EventArgs e) => SaveElement(compactDiscInformationData);
 
-        protected void OnBtnCdTocClick(object sender, EventArgs e)
-        {
-            SaveElement(tocData);
-        }
+        protected void OnBtnCdTocClick(object sender, EventArgs e) => SaveElement(tocData);
 
-        protected void OnBtnCdFullTocClick(object sender, EventArgs e)
-        {
-            SaveElement(rawTocData);
-        }
+        protected void OnBtnCdFullTocClick(object sender, EventArgs e) => SaveElement(rawTocData);
 
-        protected void OnBtnCdSessionClick(object sender, EventArgs e)
-        {
-            SaveElement(sessionData);
-        }
+        protected void OnBtnCdSessionClick(object sender, EventArgs e) => SaveElement(sessionData);
 
-        protected void OnBtnCdTextClick(object sender, EventArgs e)
-        {
-            SaveElement(cdTextLeadInData);
-        }
+        protected void OnBtnCdTextClick(object sender, EventArgs e) => SaveElement(cdTextLeadInData);
 
-        protected void OnBtnCdAtipClick(object sender, EventArgs e)
-        {
-            SaveElement(atipData);
-        }
+        protected void OnBtnCdAtipClick(object sender, EventArgs e) => SaveElement(atipData);
 
-        protected void OnBtnCdPmaClick(object sender, EventArgs e)
-        {
-            SaveElement(pmaData);
-        }
+        protected void OnBtnCdPmaClick(object sender, EventArgs e) => SaveElement(pmaData);
 
         #region XAML controls
         #pragma warning disable 169

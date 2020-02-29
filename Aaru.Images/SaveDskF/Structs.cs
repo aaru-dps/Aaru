@@ -42,27 +42,27 @@ namespace Aaru.DiscImages
             /// <summary>0x00 magic number</summary>
             public ushort magic;
             /// <summary>0x02 media type from FAT</summary>
-            public ushort mediaType;
+            public readonly ushort mediaType;
             /// <summary>0x04 bytes per sector</summary>
             public ushort sectorSize;
             /// <summary>0x06 sectors per cluster - 1</summary>
-            public byte clusterMask;
+            public readonly byte clusterMask;
             /// <summary>0x07 log2(cluster / sector)</summary>
-            public byte clusterShift;
+            public readonly byte clusterShift;
             /// <summary>0x08 reserved sectors</summary>
-            public ushort reservedSectors;
+            public readonly ushort reservedSectors;
             /// <summary>0x0A copies of FAT</summary>
-            public byte fatCopies;
+            public readonly byte fatCopies;
             /// <summary>0x0B entries in root directory</summary>
-            public ushort rootEntries;
+            public readonly ushort rootEntries;
             /// <summary>0x0D first cluster</summary>
-            public ushort firstCluster;
+            public readonly ushort firstCluster;
             /// <summary>0x0F clusters present in image</summary>
-            public ushort clustersCopied;
+            public readonly ushort clustersCopied;
             /// <summary>0x11 sectors per FAT</summary>
-            public byte sectorsPerFat;
+            public readonly byte sectorsPerFat;
             /// <summary>0x12 sector number of root directory</summary>
-            public ushort rootDirectorySector;
+            public readonly ushort rootDirectorySector;
             /// <summary>0x14 sum of all image bytes</summary>
             public uint checksum;
             /// <summary>0x18 cylinders</summary>
@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             /// <summary>0x1C sectors per track</summary>
             public ushort sectorsPerTrack;
             /// <summary>0x1E always zero</summary>
-            public uint padding;
+            public readonly uint padding;
             /// <summary>0x22 sectors present in image</summary>
             public ushort sectorsCopied;
             /// <summary>0x24 offset to comment</summary>

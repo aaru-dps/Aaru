@@ -42,39 +42,21 @@ namespace Aaru.Core
         public event EndProgressHandler2    EndProgressEvent2;
         public event UpdateStatusHandler    UpdateStatusEvent;
 
-        public void InitProgress()
-        {
-            InitProgressEvent?.Invoke();
-        }
+        public void InitProgress() => InitProgressEvent?.Invoke();
 
-        public void UpdateProgress(string text, long current, long maximum)
-        {
+        public void UpdateProgress(string text, long current, long maximum) =>
             UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
-        }
 
-        public void EndProgress()
-        {
-            EndProgressEvent?.Invoke();
-        }
+        public void EndProgress() => EndProgressEvent?.Invoke();
 
-        public void InitProgress2()
-        {
-            InitProgressEvent2?.Invoke();
-        }
+        public void InitProgress2() => InitProgressEvent2?.Invoke();
 
-        public void UpdateProgress2(string text, long current, long maximum)
-        {
+        public void UpdateProgress2(string text, long current, long maximum) =>
             UpdateProgressEvent2?.Invoke(string.Format(text, current, maximum), current, maximum);
-        }
 
-        public void EndProgress2()
-        {
-            EndProgressEvent2?.Invoke();
-        }
+        public void EndProgress2() => EndProgressEvent2?.Invoke();
 
-        public void UpdateStatus(string text, params object[] args)
-        {
+        public void UpdateStatus(string text, params object[] args) =>
             UpdateStatusEvent?.Invoke(string.Format(text, args));
-        }
     }
 }

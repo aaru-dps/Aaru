@@ -44,27 +44,29 @@ namespace Aaru.Gui.Tabs
     {
         byte[] cis;
 
-        public tabPcmciaInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabPcmciaInfo() => XamlReader.Load(this);
 
         internal void LoadData(byte[] pcmciaCis)
         {
-            if(pcmciaCis == null) return;
+            if(pcmciaCis == null)
+                return;
 
             cis     = pcmciaCis;
             Visible = true;
 
-            TreeGridItemCollection cisList = new TreeGridItemCollection();
+            var cisList = new TreeGridItemCollection();
 
-            treePcmcia.Columns.Add(new GridColumn {HeaderText = "CIS", DataCell = new TextBoxCell(0)});
+            treePcmcia.Columns.Add(new GridColumn
+            {
+                HeaderText = "CIS", DataCell = new TextBoxCell(0)
+            });
 
             treePcmcia.AllowMultipleSelection = false;
             treePcmcia.ShowHeader             = false;
             treePcmcia.DataStore              = cisList;
 
             Tuple[] tuples = CIS.GetTuples(cis);
+
             if(tuples != null)
                 foreach(Tuple tuple in tuples)
                 {
@@ -79,14 +81,17 @@ namespace Aaru.Gui.Tabs
                         case TupleCodes.CISTPL_DEVICEGEO_A:
                             tupleCode        = "Device Geometry Tuples";
                             tupleDescription = CIS.PrettifyDeviceGeometryTuple(tuple);
+
                             break;
                         case TupleCodes.CISTPL_MANFID:
                             tupleCode        = "Manufacturer Identification Tuple";
                             tupleDescription = CIS.PrettifyManufacturerIdentificationTuple(tuple);
+
                             break;
                         case TupleCodes.CISTPL_VERS_1:
                             tupleCode        = "Level 1 Version / Product Information Tuple";
                             tupleDescription = CIS.PrettifyLevel1VersionTuple(tuple);
+
                             break;
                         case TupleCodes.CISTPL_ALTSTR:
                         case TupleCodes.CISTPL_BAR:
@@ -124,34 +129,54 @@ namespace Aaru.Gui.Tabs
                         case TupleCodes.CISTPL_VERS_2:
                             tupleCode        = $"Undecoded tuple ID {tuple.Code}";
                             tupleDescription = $"Undecoded tuple ID {tuple.Code}";
+
                             break;
                         default:
                             tupleCode        = $"0x{(byte)tuple.Code:X2}";
                             tupleDescription = $"Found unknown tuple ID 0x{(byte)tuple.Code:X2}";
+
                             break;
                     }
 
-                    cisList.Add(new TreeGridItem {Values = new object[] {tupleCode, tupleDescription}});
+                    cisList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            tupleCode, tupleDescription
+                        }
+                    });
                 }
-            else AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
+            else
+                AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
         }
 
         protected void OnTreePcmciaSelectedItemChanged(object sender, EventArgs e)
         {
-            if(!(treePcmcia.SelectedItem is TreeGridItem item)) return;
+            if(!(treePcmcia.SelectedItem is TreeGridItem item))
+                return;
 
             txtPcmciaCis.Text = item.Values[1] as string;
         }
 
         protected void OnBtnSavePcmciaCis(object sender, EventArgs e)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(cis, 0, cis.Length);
 
             saveFs.Close();

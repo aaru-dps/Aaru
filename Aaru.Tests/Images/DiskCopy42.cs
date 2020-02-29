@@ -42,10 +42,12 @@ namespace Aaru.Tests.Images
         {
             // Made with DiskCopy 4.2
             "dc42/mf1dd_hfs.img.lz", "dc42/mf1dd_mfs.img.lz", "dc42/mf2dd_hfs.img.lz", "dc42/mf2dd_mfs.img.lz",
+
             // Made with ShrinkWrap 3
             "shrinkwrap/DiskCopy 4/DC6_RW_HFS_1440.image.lz", "shrinkwrap/DiskCopy 4/DC6_RW_HFS_800.image.lz",
             "shrinkwrap/DiskCopy 4/DOS1440.image.lz", "shrinkwrap/DiskCopy 4/DOS720.image.lz",
             "shrinkwrap/DiskCopy 4/PD1440.image.lz", "shrinkwrap/DiskCopy 4/PD800.image.lz",
+
             // Made with DiskImages.framework
             "macosx/DC42/DOS_1440.img.lz", "macosx/DC42/DOS_720.img.lz", "macosx/DC42/HFS_1440.img.lz",
             "macosx/DC42/HFS_800.img.lz", "macosx/DC42/ProDOS_1440.img.lz", "macosx/DC42/ProDOS_800.img.lz",
@@ -54,8 +56,8 @@ namespace Aaru.Tests.Images
 
         readonly ulong[] sectors =
         {
-            800, 800, 1600, 1600, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1600, 2880,
-            1440, 1600
+            800, 800, 1600, 1600, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1440, 2880, 1600, 2880, 1600, 2880, 1440,
+            1600
         };
 
         readonly uint[] sectorsize =
@@ -68,21 +70,18 @@ namespace Aaru.Tests.Images
             MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.AppleSonyDS,
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
-            MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.AppleSonyDS,
-            MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS
+            MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD,
+            MediaType.DOS_35_DS_DD_9, MediaType.AppleSonyDS
         };
 
         readonly string[] md5S =
         {
-            "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec",
-            "a99744348a70b62b57bce2dec9132ced", "93e71b9ecdb39d3ec9245b4f451856d4",
-            "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa",
-            "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4",
-            "7975e8cf7579a6848d6fb4e546d1f682", "a72da7aedadbe194c22a3d71c62e4766",
-            "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4",
-            "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa",
-            "7975e8cf7579a6848d6fb4e546d1f682", "a72da7aedadbe194c22a3d71c62e4766",
-            "b37823c7a90d1917f719ba5927b23da8", "4942032f7bf1d115237ea1764424828b",
+            "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced",
+            "93e71b9ecdb39d3ec9245b4f451856d4", "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa",
+            "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4", "7975e8cf7579a6848d6fb4e546d1f682",
+            "a72da7aedadbe194c22a3d71c62e4766", "ff419213080574056ebd9adf7bab3d32", "c2be571406cf6353269faa59a4a8c0a4",
+            "3160038ca028ccf52ad7863790072145", "5e255c4bc0f6a26ecd27845b37e65aaa", "7975e8cf7579a6848d6fb4e546d1f682",
+            "a72da7aedadbe194c22a3d71c62e4766", "b37823c7a90d1917f719ba5927b23da8", "4942032f7bf1d115237ea1764424828b",
             "85574aebeef03eb355bf8541955d06ea"
         };
 
@@ -95,16 +94,16 @@ namespace Aaru.Tests.Images
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.DiskCopy42();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
 
                 // How many sectors to read at once
                 const uint SECTORS_TO_READ = 256;
                 ulong      doneSectors     = 0;
 
-                Md5Context ctx = new Md5Context();
+                var ctx = new Md5Context();
 
                 while(doneSectors < image.Info.Sectors)
                 {

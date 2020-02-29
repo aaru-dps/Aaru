@@ -52,7 +52,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(2 + partition.Start >= partition.End) return false;
+            if(2 + partition.Start >= partition.End)
+                return false;
 
             uint magic = BitConverter.ToUInt32(imagePlugin.ReadSector(0 + partition.Start), 0);
 
@@ -60,23 +61,20 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb          = new StringBuilder();
-            byte[]        bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
-            byte[]        sbStrings   = new byte[6];
+            var    sb          = new StringBuilder();
+            byte[] bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[] sbStrings   = new byte[6];
 
-            BFSSuperBlock bfsSb = new BFSSuperBlock
+            var bfsSb = new BFSSuperBlock
             {
-                s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00),
-                s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
-                s_end   = BitConverter.ToUInt32(bfsSbSector, 0x08),
-                s_from  = BitConverter.ToUInt32(bfsSbSector, 0x0C),
-                s_to    = BitConverter.ToUInt32(bfsSbSector, 0x10),
-                s_bfrom = BitConverter.ToInt32(bfsSbSector, 0x14),
+                s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00), s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
+                s_end   = BitConverter.ToUInt32(bfsSbSector, 0x08), s_from  = BitConverter.ToUInt32(bfsSbSector, 0x0C),
+                s_to    = BitConverter.ToUInt32(bfsSbSector, 0x10), s_bfrom = BitConverter.ToInt32(bfsSbSector, 0x14),
                 s_bto   = BitConverter.ToInt32(bfsSbSector, 0x18)
             };
 
@@ -87,26 +85,26 @@ namespace Aaru.Filesystems
 
             AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
             AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}",   bfsSb.s_end);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}",  bfsSb.s_from);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}",    bfsSb.s_to);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}", bfsSb.s_end);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}", bfsSb.s_from);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}", bfsSb.s_to);
             AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}",   bfsSb.s_bto);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}",   bfsSb.s_fsname);
-            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}",   bfsSb.s_volume);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}", bfsSb.s_bto);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}", bfsSb.s_fsname);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}", bfsSb.s_volume);
 
             sb.AppendLine("UNIX Boot filesystem");
+
             sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfsSb.s_start, bfsSb.s_end,
                             bfsSb.s_end - bfsSb.s_start).AppendLine();
+
             sb.AppendFormat("Filesystem name: {0}", bfsSb.s_fsname).AppendLine();
             sb.AppendFormat("Volume name: {0}", bfsSb.s_volume).AppendLine();
 
             XmlFsType = new FileSystemType
             {
-                Type        = "BFS",
-                VolumeName  = bfsSb.s_volume,
-                ClusterSize = imagePlugin.Info.SectorSize,
-                Clusters    = partition.End - partition.Start + 1
+                Type     = "BFS", VolumeName = bfsSb.s_volume, ClusterSize = imagePlugin.Info.SectorSize,
+                Clusters = (partition.End - partition.Start) + 1
             };
 
             information = sb.ToString();

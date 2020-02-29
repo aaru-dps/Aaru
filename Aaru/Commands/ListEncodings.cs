@@ -76,7 +76,7 @@ namespace Aaru.Commands
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
                 AaruConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
 
         struct CommonEncodingInfo

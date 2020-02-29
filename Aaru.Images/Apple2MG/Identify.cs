@@ -43,26 +43,35 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 65) return false;
+            if(stream.Length < 65)
+                return false;
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
             A2ImgHeader hdr = Marshal.SpanToStructureLittleEndian<A2ImgHeader>(header);
 
-            if(hdr.Magic != MAGIC) return false;
+            if(hdr.Magic != MAGIC)
+                return false;
 
-            if(hdr.DataOffset > stream.Length) return false;
+            if(hdr.DataOffset > stream.Length)
+                return false;
 
             // There seems to be incorrect endian in some images on the wild
-            if(hdr.DataSize                  == 0x00800C00) hdr.DataSize = 0x000C8000;
-            if(hdr.DataOffset + hdr.DataSize > stream.Length) return false;
+            if(hdr.DataSize == 0x00800C00)
+                hdr.DataSize = 0x000C8000;
 
-            if(hdr.CommentOffset > stream.Length) return false;
+            if(hdr.DataOffset + hdr.DataSize > stream.Length)
+                return false;
 
-            if(hdr.CommentOffset + hdr.CommentSize > stream.Length) return false;
+            if(hdr.CommentOffset > stream.Length)
+                return false;
 
-            if(hdr.CreatorSpecificOffset > stream.Length) return false;
+            if(hdr.CommentOffset + hdr.CommentSize > stream.Length)
+                return false;
+
+            if(hdr.CreatorSpecificOffset > stream.Length)
+                return false;
 
             return hdr.CreatorSpecificOffset + hdr.CreatorSpecificSize <= stream.Length;
         }

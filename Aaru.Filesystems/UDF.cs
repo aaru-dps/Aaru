@@ -47,8 +47,8 @@ namespace Aaru.Filesystems
     {
         readonly byte[] UDF_Magic =
         {
-            0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61,
-            0x6E, 0x74, 0x00, 0x00, 0x00, 0x00
+            0x2A, 0x4F, 0x53, 0x54, 0x41, 0x20, 0x55, 0x44, 0x46, 0x20, 0x43, 0x6F, 0x6D, 0x70, 0x6C, 0x69, 0x61, 0x6E,
+            0x74, 0x00, 0x00, 0x00, 0x00
         };
 
         public FileSystemType XmlFsType { get; private set; }
@@ -60,16 +60,23 @@ namespace Aaru.Filesystems
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             // UDF needs at least that
-            if(partition.End - partition.Start < 256) return false;
+            if(partition.End - partition.Start < 256)
+                return false;
 
             // UDF needs at least that
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
-            byte[]                        sector;
-            AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
+            byte[] sector;
+            var    anchor = new AnchorVolumeDescriptorPointer();
+
             // All positions where anchor may reside
-            ulong[] positions   = {256, 512, partition.End - 256, partition.End};
-            bool    anchorFound = false;
+            ulong[] positions =
+            {
+                256, 512, partition.End - 256, partition.End
+            };
+
+            bool anchorFound = false;
 
             foreach(ulong position in positions.Where(position => position + partition.Start < partition.End))
             {
@@ -77,37 +84,50 @@ namespace Aaru.Filesystems
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
-                                          anchor.tag.descriptorVersion);
+                                           anchor.tag.descriptorVersion);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
-                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}",         anchor.tag.reserved);
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}", anchor.tag.reserved);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}",
-                                          anchor.tag.tagSerialNumber);
+                                           anchor.tag.tagSerialNumber);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}",
-                                          anchor.tag.descriptorCrc);
+                                           anchor.tag.descriptorCrc);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
-                                          anchor.tag.descriptorCrcLength);
+                                           anchor.tag.descriptorCrcLength);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
-                                          anchor.mainVolumeDescriptorSequenceExtent.length);
+                                           anchor.mainVolumeDescriptorSequenceExtent.length);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
-                                          anchor.mainVolumeDescriptorSequenceExtent.location);
+                                           anchor.mainVolumeDescriptorSequenceExtent.location);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
-                                          anchor.reserveVolumeDescriptorSequenceExtent.length);
+                                           anchor.reserveVolumeDescriptorSequenceExtent.length);
+
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
-                                          anchor.reserveVolumeDescriptorSequenceExtent.location);
+                                           anchor.reserveVolumeDescriptorSequenceExtent.location);
 
                 if(anchor.tag.tagIdentifier !=
                    TagIdentifier.AnchorVolumeDescriptorPointer ||
                    anchor.tag.tagLocation !=
                    position ||
-                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End) continue;
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End)
+                    continue;
 
                 anchorFound = true;
+
                 break;
             }
 
-            if(!anchorFound) return false;
+            if(!anchorFound)
+                return false;
 
             ulong count = 0;
 
@@ -115,12 +135,14 @@ namespace Aaru.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
                                                 count);
-                TagIdentifier tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-                uint          location = BitConverter.ToUInt32(sector, 0x0C);
+
+                var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+                uint location = BitConverter.ToUInt32(sector, 0x0C);
 
                 if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
-                    if(tagId == TagIdentifier.TerminatingDescriptor) break;
+                    if(tagId == TagIdentifier.TerminatingDescriptor)
+                        break;
 
                     if(tagId == TagIdentifier.LogicalVolumeDescriptor)
                     {
@@ -130,7 +152,8 @@ namespace Aaru.Filesystems
                         return UDF_Magic.SequenceEqual(lvd.domainIdentifier.identifier);
                     }
                 }
-                else break;
+                else
+                    break;
 
                 count++;
             }
@@ -139,19 +162,23 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             // UDF is always UTF-8
             Encoding = Encoding.UTF8;
             byte[] sector;
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Universal Disk Format");
 
-            AnchorVolumeDescriptorPointer anchor = new AnchorVolumeDescriptorPointer();
+            var anchor = new AnchorVolumeDescriptorPointer();
+
             // All positions where anchor may reside
-            ulong[] positions = {256, 512, partition.End - 256, partition.End};
+            ulong[] positions =
+            {
+                256, 512, partition.End - 256, partition.End
+            };
 
             foreach(ulong position in positions)
             {
@@ -162,39 +189,44 @@ namespace Aaru.Filesystems
                    TagIdentifier.AnchorVolumeDescriptorPointer &&
                    anchor.tag.tagLocation ==
                    position &&
-                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End) break;
+                   anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End)
+                    break;
             }
 
             ulong count = 0;
 
-            PrimaryVolumeDescriptor          pvd  = new PrimaryVolumeDescriptor();
-            LogicalVolumeDescriptor          lvd  = new LogicalVolumeDescriptor();
-            LogicalVolumeIntegrityDescriptor lvid = new LogicalVolumeIntegrityDescriptor();
-            LogicalVolumeIntegrityDescriptorImplementationUse lvidiu =
-                new LogicalVolumeIntegrityDescriptorImplementationUse();
+            var pvd    = new PrimaryVolumeDescriptor();
+            var lvd    = new LogicalVolumeDescriptor();
+            var lvid   = new LogicalVolumeIntegrityDescriptor();
+            var lvidiu = new LogicalVolumeIntegrityDescriptorImplementationUse();
 
             while(count < 256)
             {
                 sector = imagePlugin.ReadSector(partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location +
                                                 count);
-                TagIdentifier tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
-                uint          location = BitConverter.ToUInt32(sector, 0x0C);
+
+                var  tagId    = (TagIdentifier)BitConverter.ToUInt16(sector, 0);
+                uint location = BitConverter.ToUInt32(sector, 0x0C);
 
                 if(location == partition.Start + anchor.mainVolumeDescriptorSequenceExtent.location + count)
                 {
-                    if(tagId == TagIdentifier.TerminatingDescriptor) break;
+                    if(tagId == TagIdentifier.TerminatingDescriptor)
+                        break;
 
                     switch(tagId)
                     {
                         case TagIdentifier.LogicalVolumeDescriptor:
                             lvd = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
+
                             break;
                         case TagIdentifier.PrimaryVolumeDescriptor:
                             pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(sector);
+
                             break;
                     }
                 }
-                else break;
+                else
+                    break;
 
                 count++;
             }
@@ -207,46 +239,58 @@ namespace Aaru.Filesystems
                 lvidiu =
                     Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
                                                                                                                 (int)
-                                                                                                                (lvid
-                                                                                                                    .numberOfPartitions *
-                                                                                                                 8 +
+                                                                                                                ((lvid.
+                                                                                                                      numberOfPartitions *
+                                                                                                                  8) +
                                                                                                                  80),
-                                                                                                                System
-                                                                                                                   .Runtime
-                                                                                                                   .InteropServices
-                                                                                                                   .Marshal
-                                                                                                                   .SizeOf(lvidiu));
-            else lvid = new LogicalVolumeIntegrityDescriptor();
+                                                                                                                System.
+                                                                                                                    Runtime.
+                                                                                                                    InteropServices.
+                                                                                                                    Marshal.
+                                                                                                                    SizeOf(lvidiu));
+            else
+                lvid = new LogicalVolumeIntegrityDescriptor();
 
             sbInformation.AppendFormat("Volume is number {0} of {1}", pvd.volumeSequenceNumber,
                                        pvd.maximumVolumeSequenceNumber).AppendLine();
+
             sbInformation.AppendFormat("Volume set identifier: {0}",
                                        StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier)).AppendLine();
-            sbInformation
-               .AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier))
-               .AppendLine();
+
+            sbInformation.
+                AppendFormat("Volume name: {0}", StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier)).
+                AppendLine();
+
             sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
-            sbInformation.AppendFormat("Volume was las written in {0}", EcmaToDateTime(lvid.recordingDateTime))
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Volume was las written in {0}", EcmaToDateTime(lvid.recordingDateTime)).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
-            sbInformation
-               .AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories)
-               .AppendLine();
+
+            sbInformation.
+                AppendFormat("Volume contains {0} files and {1} directories", lvidiu.files, lvidiu.directories).
+                AppendLine();
+
             sbInformation.AppendFormat("Volume conforms to {0}",
-                                       Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000'))
-                         .AppendLine();
+                                       Encoding.GetString(lvd.domainIdentifier.identifier).TrimEnd('\u0000')).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume was last written by: {0}",
-                                       Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'))
-                         .AppendLine();
+                                       Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be read",
                                        Convert.ToInt32($"{(lvidiu.minimumReadUDF & 0xFF00) >> 8}", 10),
-                                       Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}",          10)).AppendLine();
+                                       Convert.ToInt32($"{lvidiu.minimumReadUDF & 0xFF}", 10)).AppendLine();
+
             sbInformation.AppendFormat("Volume requires UDF version {0}.{1:X2} to be written to",
                                        Convert.ToInt32($"{(lvidiu.minimumWriteUDF & 0xFF00) >> 8}", 10),
-                                       Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}",          10)).AppendLine();
+                                       Convert.ToInt32($"{lvidiu.minimumWriteUDF & 0xFF}", 10)).AppendLine();
+
             sbInformation.AppendFormat("Volume cannot be written by any UDF version higher than {0}.{1:X2}",
                                        Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10),
-                                       Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}",          10)).AppendLine();
+                                       Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10)).AppendLine();
 
             XmlFsType = new FileSystemType
             {
@@ -256,47 +300,47 @@ namespace Aaru.Filesystems
                     Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
                 ClusterSize               = lvd.logicalBlockSize,
                 ModificationDate          = EcmaToDateTime(lvid.recordingDateTime),
-                ModificationDateSpecified = true,
-                Files                     = lvidiu.files,
+                ModificationDateSpecified = true, Files = lvidiu.files,
                 FilesSpecified            = true,
                 VolumeName                = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
                 VolumeSetIdentifier       = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
                 SystemIdentifier =
                     Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
-            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+
+            XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
                                  XmlFsType.ClusterSize;
 
             information = sbInformation.ToString();
         }
 
-        static DateTime EcmaToDateTime(Timestamp timestamp) =>
-            DateHandlers.EcmaToDateTime(timestamp.typeAndZone, timestamp.year, timestamp.month, timestamp.day,
-                                        timestamp.hour, timestamp.minute, timestamp.second, timestamp.centiseconds,
-                                        timestamp.hundredsMicroseconds, timestamp.microseconds);
+        static DateTime EcmaToDateTime(Timestamp timestamp) => DateHandlers.EcmaToDateTime(timestamp.typeAndZone,
+                                                                                           timestamp.year,
+                                                                                           timestamp.month,
+                                                                                           timestamp.day,
+                                                                                           timestamp.hour,
+                                                                                           timestamp.minute,
+                                                                                           timestamp.second,
+                                                                                           timestamp.centiseconds,
+                                                                                           timestamp.
+                                                                                               hundredsMicroseconds,
+                                                                                           timestamp.microseconds);
 
         [Flags]
         enum EntityFlags : byte
         {
-            Dirty     = 0x01,
-            Protected = 0x02
+            Dirty = 0x01, Protected = 0x02
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct EntityIdentifier
         {
-            /// <summary>
-            ///     Entity flags
-            /// </summary>
+            /// <summary>Entity flags</summary>
             public readonly EntityFlags flags;
-            /// <summary>
-            ///     Structure identifier
-            /// </summary>
+            /// <summary>Structure identifier</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
             public readonly byte[] identifier;
-            /// <summary>
-            ///     Structure data
-            /// </summary>
+            /// <summary>Structure data</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] identifierSuffix;
         }
@@ -318,14 +362,11 @@ namespace Aaru.Filesystems
 
         enum TagIdentifier : ushort
         {
-            PrimaryVolumeDescriptor           = 1,
-            AnchorVolumeDescriptorPointer     = 2,
+            PrimaryVolumeDescriptor           = 1, AnchorVolumeDescriptorPointer = 2,
             VolumeDescriptorPointer           = 3,
-            ImplementationUseVolumeDescriptor = 4,
-            PartitionDescriptor               = 5,
+            ImplementationUseVolumeDescriptor = 4, PartitionDescriptor = 5,
             LogicalVolumeDescriptor           = 6,
-            UnallocatedSpaceDescriptor        = 7,
-            TerminatingDescriptor             = 8,
+            UnallocatedSpaceDescriptor        = 7, TerminatingDescriptor = 8,
             LogicalVolumeIntegrityDescriptor  = 9
         }
 
@@ -429,6 +470,7 @@ namespace Aaru.Filesystems
             public readonly byte[] logicalVolumeContentsUse;
             public readonly uint numberOfPartitions;
             public readonly uint lengthOfImplementationUse;
+
             // Follows uint[numberOfPartitions] freeSpaceTable;
             // Follows uint[numberOfPartitions] sizeTable;
             // Follows byte[lengthOfImplementationUse] implementationUse;

@@ -45,12 +45,8 @@ namespace Aaru.DiscImages
         [Flags]
         enum SectorFlags : byte
         {
-            CrcOk128  = 0x01,
-            CrcOk256  = 0x02,
-            CrcOk512  = 0x04,
-            CrcOk1024 = 0x08,
-            CrcOk2048 = 0x10,
-            CrcOk4096 = 0x20,
+            CrcOk128  = 0x01, CrcOk256  = 0x02, CrcOk512  = 0x04,
+            CrcOk1024 = 0x08, CrcOk2048 = 0x10, CrcOk4096 = 0x20,
             Deleted   = 0x80
         }
     }

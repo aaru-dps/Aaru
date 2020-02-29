@@ -46,32 +46,42 @@ namespace Aaru.DiscImages
     public partial class DriDiskCopy
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(sectorSize == 0)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(sectors > ushort.MaxValue)
             {
                 ErrorMessage = "Too many sectors";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
@@ -81,32 +91,31 @@ namespace Aaru.DiscImages
 
             footer = new DriFooter
             {
-                signature = new byte[51],
-                bpb = new DriBpb
+                signature = new byte[51], bpb = new DriBpb
                 {
-                    five      = 5,
-                    driveCode = DriDriveCodes.mf2ed,
+                    five      = 5, driveCode = DriDriveCodes.mf2ed,
                     cylinders = geometry.cylinders,
-                    bps       = (ushort)imageInfo.SectorSize,
-                    sectors   = (ushort)imageInfo.Sectors,
-                    sptrack   = (ushort)imageInfo.SectorsPerTrack,
-                    heads     = (ushort)imageInfo.Heads,
-                    sptrack2  = (ushort)imageInfo.SectorsPerTrack,
-                    unknown5  = new byte[144]
+                    bps       = (ushort)imageInfo.SectorSize, sectors       = (ushort)imageInfo.Sectors,
+                    sptrack   = (ushort)imageInfo.SectorsPerTrack, heads    = (ushort)imageInfo.Heads,
+                    sptrack2  = (ushort)imageInfo.SectorsPerTrack, unknown5 = new byte[144]
                 }
             };
+
             Array.Copy(Encoding.ASCII.GetBytes("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"), 0,
                        footer.signature, 0, 49);
+
             footer.bpbcopy = footer.bpb;
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -115,18 +124,21 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -134,6 +146,7 @@ namespace Aaru.DiscImages
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -142,18 +155,21 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -161,18 +177,21 @@ namespace Aaru.DiscImages
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -181,6 +200,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -198,6 +218,7 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -208,12 +229,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 

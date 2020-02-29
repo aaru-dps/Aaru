@@ -40,18 +40,13 @@ namespace Aaru.Filesystems.ISO9660
 
         enum AppleId : byte
         {
-            ProDOS = 1,
-            HFS    = 2
+            ProDOS = 1, HFS = 2
         }
 
         enum AppleOldId : byte
         {
-            ProDOS                = 1,
-            TypeCreator           = 2,
-            TypeCreatorBundle     = 3,
-            TypeCreatorIcon       = 4,
-            TypeCreatorIconBundle = 5,
-            HFS                   = 6
+            ProDOS          = 1, TypeCreator           = 2, TypeCreatorBundle = 3,
+            TypeCreatorIcon = 4, TypeCreatorIconBundle = 5, HFS               = 6
         }
     }
 }

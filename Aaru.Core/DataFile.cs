@@ -36,98 +36,63 @@ using Aaru.Console;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    ///     Abstracts a datafile with a block based interface
-    /// </summary>
+    /// <summary>Abstracts a datafile with a block based interface</summary>
     [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
     public class DataFile
     {
-        FileStream dataFs;
+        readonly FileStream dataFs;
 
-        /// <summary>
-        ///     Opens, or create, a new file
-        /// </summary>
+        /// <summary>Opens, or create, a new file</summary>
         /// <param name="outputFile">File</param>
-        public DataFile(string outputFile)
-        {
+        public DataFile(string outputFile) =>
             dataFs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-        }
 
-        /// <summary>
-        ///     Closes the file
-        /// </summary>
-        public void Close()
-        {
-            dataFs?.Close();
-        }
+        /// <summary>Closes the file</summary>
+        public void Close() => dataFs?.Close();
 
-        /// <summary>
-        ///     Reads bytes at current position
-        /// </summary>
+        /// <summary>Reads bytes at current position</summary>
         /// <param name="array">Array to place read data within</param>
         /// <param name="offset">Offset of <see cref="array" /> where data will be read</param>
         /// <param name="count">How many bytes to read</param>
         /// <returns>How many bytes were read</returns>
         public int Read(byte[] array, int offset, int count) => dataFs.Read(array, offset, count);
 
-        /// <summary>
-        ///     Seeks to the specified block
-        /// </summary>
+        /// <summary>Seeks to the specified block</summary>
         /// <param name="block">Block to seek to</param>
         /// <param name="blockSize">Block size in bytes</param>
         /// <returns>Position</returns>
         public long Seek(ulong block, ulong blockSize) => dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
 
-        /// <summary>
-        ///     Seeks to specified byte position
-        /// </summary>
+        /// <summary>Seeks to specified byte position</summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
         public long Seek(ulong offset, SeekOrigin origin) => dataFs.Seek((long)offset, origin);
 
-        /// <summary>
-        ///     Seeks to specified byte position
-        /// </summary>
+        /// <summary>Seeks to specified byte position</summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
         public long Seek(long offset, SeekOrigin origin) => dataFs.Seek(offset, origin);
 
-        /// <summary>
-        ///     Writes data at current position
-        /// </summary>
+        /// <summary>Writes data at current position</summary>
         /// <param name="data">Data</param>
-        public void Write(byte[] data)
-        {
-            Write(data, 0, data.Length);
-        }
+        public void Write(byte[] data) => Write(data, 0, data.Length);
 
-        /// <summary>
-        ///     Writes data at current position
-        /// </summary>
+        /// <summary>Writes data at current position</summary>
         /// <param name="data">Data</param>
         /// <param name="offset">Offset of data from where to start taking data to write</param>
         /// <param name="count">How many bytes to write</param>
-        public void Write(byte[] data, int offset, int count)
-        {
-            dataFs.Write(data, offset, count);
-        }
+        public void Write(byte[] data, int offset, int count) => dataFs.Write(data, offset, count);
 
-        /// <summary>
-        ///     Writes data at specified block
-        /// </summary>
+        /// <summary>Writes data at specified block</summary>
         /// <param name="data">Data</param>
         /// <param name="block">Block</param>
         /// <param name="blockSize">Bytes per block</param>
-        public void WriteAt(byte[] data, ulong block, uint blockSize)
-        {
+        public void WriteAt(byte[] data, ulong block, uint blockSize) =>
             WriteAt(data, block, blockSize, 0, data.Length);
-        }
 
-        /// <summary>
-        ///     Writes data at specified block
-        /// </summary>
+        /// <summary>Writes data at specified block</summary>
         /// <param name="data">Data</param>
         /// <param name="block">Block</param>
         /// <param name="blockSize">Bytes per block</param>
@@ -139,14 +104,10 @@ namespace Aaru.Core
             dataFs.Write(data, offset, count);
         }
 
-        /// <summary>
-        ///     Current file position
-        /// </summary>
+        /// <summary>Current file position</summary>
         public long Position => dataFs.Position;
 
-        /// <summary>
-        ///     Writes data to a newly created file
-        /// </summary>
+        /// <summary>Writes data to a newly created file</summary>
         /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>
         /// <param name="data">Data to write</param>
         /// <param name="outputPrefix">First part of the file name</param>
@@ -155,22 +116,22 @@ namespace Aaru.Core
         public static void WriteTo(string who, string outputPrefix, string outputSuffix, string whatWriting,
                                    byte[] data)
         {
-            if(!string.IsNullOrEmpty(outputPrefix) && !string.IsNullOrEmpty(outputSuffix))
+            if(!string.IsNullOrEmpty(outputPrefix) &&
+               !string.IsNullOrEmpty(outputSuffix))
                 WriteTo(who, outputPrefix + outputSuffix, data, whatWriting);
         }
 
-        /// <summary>
-        ///     Writes data to a newly created file
-        /// </summary>
+        /// <summary>Writes data to a newly created file</summary>
         /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>
         /// <param name="filename">Filename to create</param>
         /// <param name="data">Data to write</param>
         /// <param name="whatWriting">What is the data about?</param>
         /// <param name="overwrite">If set to <c>true</c> overwrites the file, does nothing otherwise</param>
         public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null,
-                                   bool   overwrite = false)
+                                   bool overwrite = false)
         {
-            if(string.IsNullOrEmpty(filename)) return;
+            if(string.IsNullOrEmpty(filename))
+                return;
 
             if(File.Exists(filename))
                 if(overwrite)
@@ -178,17 +139,21 @@ namespace Aaru.Core
                 else
                 {
                     AaruConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+
                     return;
                 }
 
             try
             {
                 AaruConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
-                FileStream outputFs = new FileStream(filename, FileMode.CreateNew);
+                var outputFs = new FileStream(filename, FileMode.CreateNew);
                 outputFs.Write(data, 0, data.Length);
                 outputFs.Close();
             }
-            catch { AaruConsole.ErrorWriteLine("Unable to write file {0}", filename); }
+            catch
+            {
+                AaruConsole.ErrorWriteLine("Unable to write file {0}", filename);
+            }
         }
     }
 }

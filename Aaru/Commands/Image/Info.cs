@@ -77,7 +77,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             try
@@ -88,7 +88,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.WriteLine("Image format not identified.");
 
-                    return(int)ErrorNumber.UnrecognizedFormat;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
@@ -101,7 +101,7 @@ namespace Aaru.Commands.Image
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
 
-                        return(int)ErrorNumber.CannotOpenFormat;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     ImageInfo.PrintImageInfo(imageFormat);
@@ -116,7 +116,7 @@ namespace Aaru.Commands.Image
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
 
-                    return(int)ErrorNumber.CannotOpenFormat;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
             }
             catch(Exception ex)
@@ -124,10 +124,10 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
 
-                return(int)ErrorNumber.UnexpectedException;
+                return (int)ErrorNumber.UnexpectedException;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

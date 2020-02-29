@@ -42,7 +42,8 @@ namespace Aaru.Filesystems.FATX
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -52,11 +53,13 @@ namespace Aaru.Filesystems.FATX
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = Encoding.UTF8;
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
+
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
 
             bool bigEndian = true;
 
@@ -70,18 +73,22 @@ namespace Aaru.Filesystems.FATX
                 bigEndian = false;
             }
 
-            if(fatxSb.magic != FATX_MAGIC) return;
+            if(fatxSb.magic != FATX_MAGIC)
+                return;
 
             int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && !bigEndian ? 8 : 1;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("FATX filesystem");
+
             sb.AppendFormat("{0} logical sectors ({1} bytes) per physical sector", logicalSectorsPerPhysicalSectors,
                             logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
+
             sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
-                            fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
-              .AppendLine();
+                            fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
+               AppendLine();
+
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
             string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
@@ -96,13 +103,12 @@ namespace Aaru.Filesystems.FATX
             XmlFsType = new FileSystemType
             {
                 Type = "FATX filesystem",
-                ClusterSize =
-                    (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
-                           imagePlugin.Info.SectorSize),
-                VolumeName   = volumeLabel,
-                VolumeSerial = $"{fatxSb.id:X8}"
+                ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+                                     imagePlugin.Info.SectorSize),
+                VolumeName = volumeLabel, VolumeSerial = $"{fatxSb.id:X8}"
             };
-            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+
+            XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
                                  XmlFsType.ClusterSize;
         }
     }

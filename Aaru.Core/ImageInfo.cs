@@ -68,15 +68,16 @@ namespace Aaru.Core
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application) &&
                !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion))
                 AaruConsole.WriteLine("Was created with {0} version {1}", imageFormat.Info.Application,
-                                     imageFormat.Info.ApplicationVersion);
+                                      imageFormat.Info.ApplicationVersion);
             else if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
                 AaruConsole.WriteLine("Was created with {0}", imageFormat.Info.Application);
 
             AaruConsole.WriteLine("Image without headers is {0} bytes long", imageFormat.Info.ImageSize);
 
-            AaruConsole.WriteLine("Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes)",
-                                 imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
-                                 imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
+            AaruConsole.
+                WriteLine("Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes)",
+                          imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
+                          imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
                 AaruConsole.WriteLine("Created by: {0}", imageFormat.Info.Creator);
@@ -88,7 +89,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine("Last modified on {0}", imageFormat.Info.LastModificationTime);
 
             AaruConsole.WriteLine("Contains a media of type {0} and XML type {1}", imageFormat.Info.MediaType,
-                                 imageFormat.Info.XmlMediaType);
+                                  imageFormat.Info.XmlMediaType);
 
             AaruConsole.WriteLine("{0} partitions", imageFormat.Info.HasPartitions ? "Has" : "Doesn't have");
             AaruConsole.WriteLine("{0} sessions", imageFormat.Info.HasSessions ? "Has" : "Doesn't have");
@@ -99,7 +100,7 @@ namespace Aaru.Core
             if(imageFormat.Info.MediaSequence     != 0 &&
                imageFormat.Info.LastMediaSequence != 0)
                 AaruConsole.WriteLine("Media is number {0} on a set of {1} medias", imageFormat.Info.MediaSequence,
-                                     imageFormat.Info.LastMediaSequence);
+                                      imageFormat.Info.LastMediaSequence);
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
                 AaruConsole.WriteLine("Media title: {0}", imageFormat.Info.MediaTitle);
@@ -137,8 +138,8 @@ namespace Aaru.Core
                imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
                (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
                 AaruConsole.WriteLine("Media geometry: {0} cylinders, {1} heads, {2} sectors per track",
-                                     imageFormat.Info.Cylinders, imageFormat.Info.Heads,
-                                     imageFormat.Info.SectorsPerTrack);
+                                      imageFormat.Info.Cylinders, imageFormat.Info.Heads,
+                                      imageFormat.Info.SectorsPerTrack);
 
             if(imageFormat.Info.ReadableMediaTags       != null &&
                imageFormat.Info.ReadableMediaTags.Count > 0)
@@ -339,7 +340,7 @@ namespace Aaru.Core
                 byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
 
                 AaruConsole.WriteLine("CompactDisc Media Catalogue Number contained in image: {0}",
-                                     Encoding.UTF8.GetString(mcn));
+                                      Encoding.UTF8.GetString(mcn));
 
                 AaruConsole.WriteLine();
             }
@@ -390,7 +391,7 @@ namespace Aaru.Core
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
 
                 AaruConsole.WriteLine("Bluray Disc Definition Structure contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.Bluray.DDS.Prettify(dds));
+                AaruConsole.Write("{0}", Decoders.Bluray.DDS.Prettify(dds));
                 AaruConsole.WriteLine();
             }
 
@@ -456,12 +457,12 @@ namespace Aaru.Core
                             case TupleCodes.CISTPL_SWIL:
                             case TupleCodes.CISTPL_VERS_2:
                                 AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}",
-                                                          tuple.Code);
+                                                           tuple.Code);
 
                                 break;
                             default:
                                 AaruConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}",
-                                                          (byte)tuple.Code);
+                                                           (byte)tuple.Code);
 
                                 break;
                         }
@@ -475,7 +476,7 @@ namespace Aaru.Core
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
 
                 AaruConsole.WriteLine("SecureDigital CID contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(cid));
+                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(cid));
                 AaruConsole.WriteLine();
             }
 
@@ -485,7 +486,7 @@ namespace Aaru.Core
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
 
                 AaruConsole.WriteLine("SecureDigital CSD contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
+                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
                 AaruConsole.WriteLine();
             }
 
@@ -495,7 +496,7 @@ namespace Aaru.Core
                 byte[] scr = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
 
                 AaruConsole.WriteLine("SecureDigital SCR contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(scr));
+                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(scr));
                 AaruConsole.WriteLine();
             }
 
@@ -505,7 +506,7 @@ namespace Aaru.Core
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
 
                 AaruConsole.WriteLine("SecureDigital OCR contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
+                AaruConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
                 AaruConsole.WriteLine();
             }
 
@@ -515,7 +516,7 @@ namespace Aaru.Core
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
 
                 AaruConsole.WriteLine("MultiMediaCard CID contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCID(cid));
+                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCID(cid));
                 AaruConsole.WriteLine();
             }
 
@@ -525,7 +526,7 @@ namespace Aaru.Core
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
 
                 AaruConsole.WriteLine("MultiMediaCard CSD contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCSD(csd));
+                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCSD(csd));
                 AaruConsole.WriteLine();
             }
 
@@ -535,7 +536,7 @@ namespace Aaru.Core
                 byte[] ecsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
 
                 AaruConsole.WriteLine("MultiMediaCard ExtendedCSD contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
+                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
                 AaruConsole.WriteLine();
             }
 
@@ -545,7 +546,7 @@ namespace Aaru.Core
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
 
                 AaruConsole.WriteLine("MultiMediaCard OCR contained in image:");
-                AaruConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyOCR(ocr));
+                AaruConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyOCR(ocr));
                 AaruConsole.WriteLine();
             }
 
@@ -609,14 +610,14 @@ namespace Aaru.Core
                         AaruConsole.WriteLine("Image sessions:");
 
                         AaruConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track",
-                                             "Last track", "Start", "End");
+                                              "Last track", "Start", "End");
 
                         AaruConsole.WriteLine("=========================================================");
 
                         foreach(Session session in opticalImage.Sessions)
                             AaruConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence,
-                                                 session.StartTrack, session.EndTrack, session.StartSector,
-                                                 session.EndSector);
+                                                  session.StartTrack, session.EndTrack, session.StartSector,
+                                                  session.EndSector);
 
                         AaruConsole.WriteLine();
                     }
@@ -634,16 +635,16 @@ namespace Aaru.Core
                         AaruConsole.WriteLine("Image tracks:");
 
                         AaruConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type",
-                                             "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
+                                              "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
 
                         AaruConsole.
                             WriteLine("=================================================================================");
 
                         foreach(Track track in opticalImage.Tracks)
                             AaruConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}",
-                                                 track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
-                                                 track.TrackRawBytesPerSector, track.TrackSubchannelType,
-                                                 track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
+                                                  track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
+                                                  track.TrackRawBytesPerSector, track.TrackSubchannelType,
+                                                  track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
 
                         AaruConsole.WriteLine();
                     }
@@ -724,7 +725,7 @@ namespace Aaru.Core
             AaruConsole.WriteLine("Dump hardware information:");
 
             AaruConsole.WriteLine(format, MANUFACTURER_STRING, MODEL_STRING, SERIAL_STRING, SOFTWARE_STRING,
-                                 VERSION_STRING, OS_STRING, START_STRING, END_STRING);
+                                  VERSION_STRING, OS_STRING, START_STRING, END_STRING);
 
             AaruConsole.WriteLine(new string(separator));
 
@@ -732,8 +733,8 @@ namespace Aaru.Core
             {
                 foreach(ExtentType extent in dump.Extents)
                     AaruConsole.WriteLine(format, dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name,
-                                         dump.Software.Version, dump.Software.OperatingSystem, extent.Start,
-                                         extent.End);
+                                          dump.Software.Version, dump.Software.OperatingSystem, extent.Start,
+                                          extent.End);
             }
 
             AaruConsole.WriteLine();

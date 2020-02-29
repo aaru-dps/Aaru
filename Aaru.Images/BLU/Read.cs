@@ -47,7 +47,10 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            imageHeader = new BluHeader {DeviceName = new byte[0x0D]};
+            imageHeader = new BluHeader
+            {
+                DeviceName = new byte[0x0D]
+            };
 
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
@@ -57,16 +60,18 @@ namespace Aaru.DiscImages
             imageHeader.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
             AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
-                                      StringHandlers.CToString(imageHeader.DeviceName));
-            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}",    imageHeader.DeviceType);
-            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}",   imageHeader.DeviceBlocks);
+                                       StringHandlers.CToString(imageHeader.DeviceName));
+
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", imageHeader.DeviceType);
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", imageHeader.DeviceBlocks);
             AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
 
             for(int i = 0; i < 0xD; i++)
                 if(imageHeader.DeviceName[i] < 0x20)
                     return false;
 
-            if((imageHeader.BytesPerBlock & 0xFE00) != 0x200) return false;
+            if((imageHeader.BytesPerBlock & 0xFE00) != 0x200)
+                return false;
 
             stream.Seek(0, SeekOrigin.Begin);
             header = new byte[imageHeader.BytesPerBlock];
@@ -83,39 +88,45 @@ namespace Aaru.DiscImages
             switch(StringHandlers.CToString(imageHeader.DeviceName))
             {
                 case PROFILE_NAME:
-                    imageInfo.MediaType =
-                        imageInfo.Sectors == 0x2600 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
+                    imageInfo.MediaType = imageInfo.Sectors == 0x2600 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
+
                     imageInfo.Cylinders       = 152;
                     imageInfo.Heads           = 4;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case PROFILE10_NAME:
-                    imageInfo.MediaType =
-                        imageInfo.Sectors == 0x4C00 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
+                    imageInfo.MediaType = imageInfo.Sectors == 0x4C00 ? MediaType.AppleProfile : MediaType.GENERIC_HDD;
+
                     imageInfo.Cylinders       = 304;
                     imageInfo.Heads           = 4;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case WIDGET_NAME:
-                    imageInfo.MediaType =
-                        imageInfo.Sectors == 0x4C00 ? MediaType.AppleWidget : MediaType.GENERIC_HDD;
+                    imageInfo.MediaType = imageInfo.Sectors == 0x4C00 ? MediaType.AppleWidget : MediaType.GENERIC_HDD;
+
                     imageInfo.Cylinders       = 304;
                     imageInfo.Heads           = 4;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
                 case PRIAM_NAME:
                     imageInfo.MediaType =
                         imageInfo.Sectors == 0x022C7C ? MediaType.PriamDataTower : MediaType.GENERIC_HDD;
+
                     // This values are invented...
                     imageInfo.Cylinders       = 419;
                     imageInfo.Heads           = 4;
                     imageInfo.SectorsPerTrack = 85;
+
                     break;
                 default:
                     imageInfo.MediaType       = MediaType.GENERIC_HDD;
                     imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
                     imageInfo.Heads           = 16;
                     imageInfo.SectorsPerTrack = 63;
+
                     break;
             }
 
@@ -129,7 +140,8 @@ namespace Aaru.DiscImages
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            if(bptag > 0) imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+            if(bptag > 0)
+                imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
             AaruConsole.VerboseWriteLine("BLU image contains a disk of type {0}", imageInfo.MediaType);
 
@@ -148,10 +160,10 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream buffer = new MemoryStream();
-            int          seek   = 0;
-            int          read   = 0x200;
-            int          skip   = bptag;
+            var buffer = new MemoryStream();
+            int seek   = 0;
+            int read   = 0x200;
+            int skip   = bptag;
 
             Stream stream = bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * imageHeader.BytesPerBlock), SeekOrigin.Begin);
@@ -173,7 +185,8 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(bptag == 0) throw new FeatureNotPresentImageException("Disk image does not have tags");
+            if(bptag == 0)
+                throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -181,10 +194,10 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream buffer = new MemoryStream();
-            int          seek   = 0x200;
-            int          read   = bptag;
-            int          skip   = 0;
+            var buffer = new MemoryStream();
+            int seek   = 0x200;
+            int read   = bptag;
+            int skip   = 0;
 
             Stream stream = bluImageFilter.GetDataForkStream();
             stream.Seek((long)((sectorAddress + 1) * imageHeader.BytesPerBlock), SeekOrigin.Begin);

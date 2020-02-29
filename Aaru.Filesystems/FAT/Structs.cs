@@ -38,9 +38,7 @@ namespace Aaru.Filesystems.FAT
     {
         const int UMSDOS_MAXNAME = 220;
 
-        /// <summary>
-        ///     BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.
-        /// </summary>
+        /// <summary>BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AtariParameterBlock
         {
@@ -106,9 +104,7 @@ namespace Aaru.Filesystems.FAT
             public readonly ushort checksum;
         }
 
-        /// <summary>
-        ///     BIOS Parameter Block as used by MSX-DOS 2.
-        /// </summary>
+        /// <summary>BIOS Parameter Block as used by MSX-DOS 2.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct MsxParameterBlock
         {
@@ -913,50 +909,30 @@ namespace Aaru.Filesystems.FAT
             public readonly ushort zero;
         }
 
-        /// <summary>
-        ///     This structure is 256 bytes large, depending on the name, only part of it is written to disk
-        /// </summary>
+        /// <summary>This structure is 256 bytes large, depending on the name, only part of it is written to disk</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct UmsdosDirectoryEntry
         {
             /// <summary>if == 0, then this entry is not used</summary>
             public readonly byte name_len;
-            /// <summary>
-            ///     UMSDOS_xxxx
-            /// </summary>
+            /// <summary>UMSDOS_xxxx</summary>
             public readonly UmsdosFlags flags;
-            /// <summary>
-            ///     How many hard links point to this entry
-            /// </summary>
+            /// <summary>How many hard links point to this entry</summary>
             public readonly ushort nlink;
-            /// <summary>
-            ///     Owner user id
-            /// </summary>
+            /// <summary>Owner user id</summary>
             public readonly int uid;
-            /// <summary>
-            ///     Group id
-            /// </summary>
+            /// <summary>Group id</summary>
             public readonly int gid;
-            /// <summary>
-            ///     Access time
-            /// </summary>
+            /// <summary>Access time</summary>
             public readonly int atime;
-            /// <summary>
-            ///     Last modification time
-            /// </summary>
+            /// <summary>Last modification time</summary>
             public readonly int mtime;
-            /// <summary>
-            ///     Creation time
-            /// </summary>
+            /// <summary>Creation time</summary>
             public readonly int ctime;
-            /// <summary>
-            ///     major and minor number of a device
-            /// </summary>
+            /// <summary>major and minor number of a device</summary>
             public readonly uint rdev;
             /*  */
-            /// <summary>
-            ///     Standard UNIX permissions bits + type of
-            /// </summary>
+            /// <summary>Standard UNIX permissions bits + type of</summary>
             public readonly ushort mode;
             /// <summary>unused bytes for future extensions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
@@ -992,13 +968,16 @@ namespace Aaru.Filesystems.FAT
             public override string ToString()
             {
                 // This ensures UMSDOS takes preference when present
-                if(!string.IsNullOrEmpty(LinuxName)) return LinuxName;
+                if(!string.IsNullOrEmpty(LinuxName))
+                    return LinuxName;
 
                 // This ensures LFN takes preference when eCS is in use
-                if(!string.IsNullOrEmpty(Lfn)) return Lfn;
+                if(!string.IsNullOrEmpty(Lfn))
+                    return Lfn;
 
                 // This ensures Humans takes preference when present
-                if(!string.IsNullOrEmpty(HumanName)) return HumanName;
+                if(!string.IsNullOrEmpty(HumanName))
+                    return HumanName;
 
                 return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
             }

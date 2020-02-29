@@ -26,68 +26,79 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.Tests.Devices.ATA;
 using Aaru.Console;
 using Aaru.Devices;
+using Aaru.Tests.Devices.ATA;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void Ata(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send an ATA command to the device:");
-                DicConsole.WriteLine("1.- Send a CHS ATA command to the device.");
-                DicConsole.WriteLine("2.- Send a 28-bit ATA command to the device.");
-                DicConsole.WriteLine("3.- Send a 48-bit ATA command to the device.");
-                DicConsole.WriteLine("4.- Send an ATAPI command to the device.");
-                DicConsole.WriteLine("5.- Send a CompactFlash command to the device.");
-                DicConsole.WriteLine("6.- Send a Media Card Pass Through command to the device.");
-                DicConsole.WriteLine("7.- Send a S.M.A.R.T. command to the device.");
-                DicConsole.WriteLine("0.- Return to command class menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send an ATA command to the device:");
+                AaruConsole.WriteLine("1.- Send a CHS ATA command to the device.");
+                AaruConsole.WriteLine("2.- Send a 28-bit ATA command to the device.");
+                AaruConsole.WriteLine("3.- Send a 48-bit ATA command to the device.");
+                AaruConsole.WriteLine("4.- Send an ATAPI command to the device.");
+                AaruConsole.WriteLine("5.- Send a CompactFlash command to the device.");
+                AaruConsole.WriteLine("6.- Send a Media Card Pass Through command to the device.");
+                AaruConsole.WriteLine("7.- Send a S.M.A.R.T. command to the device.");
+                AaruConsole.WriteLine("0.- Return to command class menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to command class menu...");
+                        AaruConsole.WriteLine("Returning to command class menu...");
+
                         return;
                     case 1:
                         AtaChs.Menu(devPath, dev);
+
                         continue;
                     case 2:
                         Ata28.Menu(devPath, dev);
+
                         continue;
                     case 3:
                         Ata48.Menu(devPath, dev);
+
                         continue;
                     case 4:
                         Atapi.Menu(devPath, dev);
+
                         continue;
                     case 5:
                         Cfa.Menu(devPath, dev);
+
                         continue;
                     case 6:
                         Mcpt.Menu(devPath, dev);
+
                         continue;
                     case 7:
                         Smart.Menu(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }

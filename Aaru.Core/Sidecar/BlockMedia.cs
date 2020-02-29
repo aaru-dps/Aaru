@@ -40,14 +40,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Console;
-using Aaru.Decoders.ATA;
 using Aaru.Decoders.PCMCIA;
 using Aaru.DiscImages;
 using Aaru.Filters;
-using Aaru.CommonTypes.Structs.Devices.ATA;
 using Schemas;
-using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 using MediaType = Aaru.CommonTypes.Metadata.MediaType;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
@@ -152,8 +150,7 @@ namespace Aaru.Core
 
                                         if(manfid != null)
                                         {
-                                            sidecar.BlockMedia[0].PCMCIA.ManufacturerCode =
-                                                manfid.ManufacturerID;
+                                            sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
 
                                             sidecar.BlockMedia[0].PCMCIA.CardCode                  = manfid.CardID;
                                             sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
@@ -417,7 +414,7 @@ namespace Aaru.Core
                         //goto skipImageChecksum;
 
                         uint  sectorsToRead = 64;
-                        ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
+                        ulong sectors       = (tapePartition.LastBlock - tapePartition.FirstBlock) + 1;
                         ulong doneSectors   = 0;
 
                         InitProgress2();
@@ -492,7 +489,7 @@ namespace Aaru.Core
                             //goto skipImageChecksum;
 
                             uint  sectorsToRead = 64;
-                            ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
+                            ulong sectors       = (tapeFile.LastBlock - tapeFile.FirstBlock) + 1;
                             ulong doneSectors   = 0;
 
                             InitProgress2();
@@ -861,10 +858,10 @@ namespace Aaru.Core
                     {
                         scpImage.Open(scpFilter);
                     }
-                    catch(NotImplementedException) { }
+                    catch(NotImplementedException) {}
 
-                    if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
-                       image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2))
+                    if((image.Info.Heads == 2 && scpImage.Header.heads == 0) ||
+                       (image.Info.Heads == 1 && (scpImage.Header.heads == 1 || scpImage.Header.heads == 2)))
                         if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                         {
                             List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
@@ -899,8 +896,9 @@ namespace Aaru.Core
                                 if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                                 {
                                     byte[] trackContents =
-                                        new byte[scpTrack.Entries.Last().dataOffset +
-                                                 scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] + 1];
+                                        new byte[((scpTrack.Entries.Last().dataOffset +
+                                                   scpTrack.Entries.Last().trackLength) - scpImage.Header.offsets[t]) +
+                                                 1];
 
                                     scpStream.Position = scpImage.Header.offsets[t];
                                     scpStream.Read(trackContents, 0, trackContents.Length);
@@ -967,7 +965,7 @@ namespace Aaru.Core
                     {
                         kfImage.Open(kfFilter);
                     }
-                    catch(NotImplementedException) { }
+                    catch(NotImplementedException) {}
 
                     if(kfImage.Info.Heads == image.Info.Heads)
                         if(kfImage.Info.Cylinders >= image.Info.Cylinders)
@@ -1051,7 +1049,7 @@ namespace Aaru.Core
             {
                 dfiImage.Open(dfiFilter);
             }
-            catch(NotImplementedException) { }
+            catch(NotImplementedException) {}
 
             UpdateStatus("Hashing DiscFerret image...");
 

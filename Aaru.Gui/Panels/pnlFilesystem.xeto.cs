@@ -55,10 +55,13 @@ namespace Aaru.Gui.Panels
             lblModificationDate.Text       = $"Volume last modified on {xmlFsType.ModificationDate:F}";
             lblExpirationDate.Text         = $"Volume expired on {xmlFsType.ExpirationDate:F}";
             lblBackupDate.Text             = $"Volume last backed up on {xmlFsType.BackupDate:F}";
+
             lblClusters.Text =
                 $"Volume has {xmlFsType.Clusters} clusters of {xmlFsType.ClusterSize} bytes each (total of {xmlFsType.Clusters * xmlFsType.ClusterSize} bytes)";
+
             lblFreeClusters.Text =
                 $"Volume has {xmlFsType.FreeClusters} {xmlFsType.FreeClusters / xmlFsType.Clusters:P}";
+
             lblFiles.Text       = $"Volume contains {xmlFsType.Files} files";
             chkBootable.Checked = xmlFsType.Bootable;
             chkDirty.Checked    = xmlFsType.Dirty;

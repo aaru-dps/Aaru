@@ -50,8 +50,7 @@ namespace Aaru.Core
         {
             PluginBase plugins = GetPluginBase.Instance;
 
-            idPlugins = (from plugin in plugins.PluginsList.Values
-                         where plugin.Identify(imagePlugin, partition)
+            idPlugins = (from plugin in plugins.PluginsList.Values where plugin.Identify(imagePlugin, partition)
                          select plugin.Name.ToLower()).ToList();
         }
     }

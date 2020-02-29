@@ -243,22 +243,22 @@ namespace Aaru.DiscImages
                 var ataId = new Identify.IdentifyDevice
                 {
                     GeneralConfiguration =
-                        global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
-                        global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
-                        global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
-                        global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
                     Cylinders       = (ushort)imageInfo.Cylinders, Heads              = (ushort)imageInfo.Heads,
                     SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack, VendorWord47 = 0x80,
-                    Capabilities = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
-                                   global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
-                                   global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
+                    Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
+                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
+                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
                     ExtendedIdentify =
-                        global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
+                        CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
                     CurrentCylinders       = (ushort)imageInfo.Cylinders, CurrentHeads = (ushort)imageInfo.Heads,
                     CurrentSectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
                     CurrentSectors         = (uint)imageInfo.Sectors, LBASectors = (uint)imageInfo.Sectors,
-                    DMASupported           = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
-                    DMAActive              = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
+                    DMASupported           = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
+                    DMAActive              = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
                 };
 
                 if(string.IsNullOrEmpty(imageInfo.DriveManufacturer))

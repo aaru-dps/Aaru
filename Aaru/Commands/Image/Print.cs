@@ -112,7 +112,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -121,7 +121,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
@@ -148,13 +148,12 @@ namespace Aaru.Commands.Image
                     }
                 }
 
-                byte[] sector = longSectors ? inputFormat.ReadSectorLong(start + i)
-                                    : inputFormat.ReadSector(start             + i);
+                byte[] sector = longSectors ? inputFormat.ReadSectorLong(start + i) : inputFormat.ReadSector(start + i);
 
                 PrintHex.PrintHexArray(sector, width);
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

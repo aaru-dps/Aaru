@@ -40,7 +40,10 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Sun
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "parted.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz", "parted.vdi.lz"
+        };
 
         readonly Partition[][] wanted =
         {
@@ -49,97 +52,58 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 204800,
-                    Sequence    = 0,
-                    Start       = 0
+                    Description = null, Name = null, Type = "Linux", Length = 204800,
+                    Sequence    = 0, Start   = 0
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun boot",
-                    Length      = 102400,
-                    Sequence    = 1,
-                    Start       = 208845
+                    Description = null, Name = null, Type = "Sun boot", Length = 102400,
+                    Sequence    = 1, Start   = 208845
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /",
-                    Length      = 102400,
-                    Sequence    = 2,
-                    Start       = 321300
+                    Description = null, Name = null, Type = "Sun /", Length = 102400,
+                    Sequence    = 2, Start   = 321300
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /home",
-                    Length      = 102400,
-                    Sequence    = 3,
-                    Start       = 433755
+                    Description = null, Name = null, Type = "Sun /home", Length = 102400,
+                    Sequence    = 3, Start   = 433755
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun swap",
-                    Length      = 153600,
-                    Sequence    = 4,
-                    Start       = 546210
+                    Description = null, Name = null, Type = "Sun swap", Length = 153600,
+                    Sequence    = 4, Start   = 546210
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Sun /usr",
-                    Length      = 208845,
-                    Sequence    = 5,
-                    Start       = 706860
+                    Description = null, Name = null, Type = "Sun /usr", Length = 208845,
+                    Sequence    = 5, Start   = 706860
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux swap",
-                    Length      = 96390,
-                    Sequence    = 6,
-                    Start       = 915705
+                    Description = null, Name = null, Type = "Linux swap", Length = 96390,
+                    Sequence    = 6, Start   = 915705
                 }
             },
+
             // GNU Parted
             new[]
             {
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 49152,
-                    Sequence    = 0,
-                    Start       = 0
+                    Description = null, Name = null, Type = "Linux", Length = 49152,
+                    Sequence    = 0, Start   = 0
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 80325,
-                    Sequence    = 1,
-                    Start       = 64260
+                    Description = null, Name = null, Type = "Linux", Length = 80325,
+                    Sequence    = 1, Start   = 64260
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "Linux",
-                    Length      = 96390,
-                    Sequence    = 2,
-                    Start       = 144585
+                    Description = null, Name = null, Type = "Linux", Length = 96390,
+                    Sequence    = 2, Start   = 144585
                 }
             }
         };
@@ -156,17 +120,19 @@ namespace Aaru.Tests.Partitions
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
+
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Length * 512, partitions[j].Size, testfiles[i]);
+
                     //                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Type,        partitions[j].Type,     testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset,   testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Length,      partitions[j].Length,   testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Sequence,    partitions[j].Sequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start,       partitions[j].Start,    testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
             }
         }

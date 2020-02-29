@@ -34,10 +34,10 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
-using Claunia.Encoding;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Claunia.Encoding;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
@@ -65,10 +65,7 @@ namespace Aaru.Gui.Forms
                                                Path.GetFileNameWithoutExtension(imageSource) + ".cicm.xml");
         }
 
-        protected void OnBtnStart(object sender, EventArgs e)
-        {
-            new Thread(DoWork).Start();
-        }
+        protected void OnBtnStart(object sender, EventArgs e) => new Thread(DoWork).Start();
 
         void DoWork()
         {
@@ -96,9 +93,9 @@ namespace Aaru.Gui.Forms
 
             AaruConsole.WriteLine("Writing metadata sidecar");
 
-            FileStream xmlFs = new FileStream(txtDestination.Text, FileMode.Create);
+            var xmlFs = new FileStream(txtDestination.Text, FileMode.Create);
 
-            XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+            var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
             xmlSer.Serialize(xmlFs, sidecar);
             xmlFs.Close();
 
@@ -113,75 +110,68 @@ namespace Aaru.Gui.Forms
             Statistics.AddCommand("create-sidecar");
         }
 
-        void EndProgress2()
+        void EndProgress2() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { stkProgress2.Visible = false; });
-        }
+            stkProgress2.Visible = false;
+        });
 
-        void UpdateProgress2(string text, long current, long maximum)
+        void UpdateProgress2(string text, long current, long maximum) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
+            lblProgress2.Text          = text;
+            prgProgress2.Indeterminate = false;
+            prgProgress2.MinValue      = 0;
+
+            if(maximum > int.MaxValue)
             {
-                lblProgress2.Text          = text;
-                prgProgress2.Indeterminate = false;
-                prgProgress2.MinValue      = 0;
-                if(maximum > int.MaxValue)
-                {
-                    prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
-                    prgProgress2.Value    = (int)(current / int.MaxValue);
-                }
-                else
-                {
-                    prgProgress2.MaxValue = (int)maximum;
-                    prgProgress2.Value    = (int)current;
-                }
-            });
-        }
-
-        void InitProgress2()
-        {
-            Application.Instance.Invoke(() => { stkProgress2.Visible = true; });
-        }
-
-        void EndProgress()
-        {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
-        }
-
-        void UpdateProgress(string text, long current, long maximum)
-        {
-            Application.Instance.Invoke(() =>
+                prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
+                prgProgress2.Value    = (int)(current / int.MaxValue);
+            }
+            else
             {
-                lblProgress.Text          = text;
-                prgProgress.Indeterminate = false;
-                prgProgress.MinValue      = 0;
-                if(maximum > int.MaxValue)
-                {
-                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
-                    prgProgress.Value    = (int)(current / int.MaxValue);
-                }
-                else
-                {
-                    prgProgress.MaxValue = (int)maximum;
-                    prgProgress.Value    = (int)current;
-                }
-            });
-        }
+                prgProgress2.MaxValue = (int)maximum;
+                prgProgress2.Value    = (int)current;
+            }
+        });
 
-        void InitProgress()
+        void InitProgress2() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
-        }
+            stkProgress2.Visible = true;
+        });
 
-        void UpdateStatus(string text)
+        void EndProgress() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { lblStatus.Text = text; });
-        }
+            stkProgress1.Visible = false;
+        });
 
-        protected void OnBtnClose(object sender, EventArgs e)
+        void UpdateProgress(string text, long current, long maximum) => Application.Instance.Invoke(() =>
         {
-            Close();
-        }
+            lblProgress.Text          = text;
+            prgProgress.Indeterminate = false;
+            prgProgress.MinValue      = 0;
+
+            if(maximum > int.MaxValue)
+            {
+                prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                prgProgress.Value    = (int)(current / int.MaxValue);
+            }
+            else
+            {
+                prgProgress.MaxValue = (int)maximum;
+                prgProgress.Value    = (int)current;
+            }
+        });
+
+        void InitProgress() => Application.Instance.Invoke(() =>
+        {
+            stkProgress1.Visible = true;
+        });
+
+        void UpdateStatus(string text) => Application.Instance.Invoke(() =>
+        {
+            lblStatus.Text = text;
+        });
+
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         protected void OnBtnStop(object sender, EventArgs e)
         {
@@ -192,7 +182,11 @@ namespace Aaru.Gui.Forms
 
         void OnBtnDestinationClick(object sender, EventArgs e)
         {
-            SaveFileDialog dlgDestination = new SaveFileDialog {Title = "Choose destination file"};
+            var dlgDestination = new SaveFileDialog
+            {
+                Title = "Choose destination file"
+            };
+
             dlgDestination.Filters.Add(new FileFilter("CICM XML metadata", "*.xml"));
 
             DialogResult result = dlgDestination.ShowDialog(this);
@@ -200,10 +194,12 @@ namespace Aaru.Gui.Forms
             if(result != DialogResult.Ok)
             {
                 txtDestination.Text = "";
+
                 return;
             }
 
-            if(string.IsNullOrEmpty(Path.GetExtension(dlgDestination.FileName))) dlgDestination.FileName += ".xml";
+            if(string.IsNullOrEmpty(Path.GetExtension(dlgDestination.FileName)))
+                dlgDestination.FileName += ".xml";
 
             txtDestination.Text = dlgDestination.FileName;
         }

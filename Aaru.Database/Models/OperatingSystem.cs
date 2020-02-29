@@ -32,5 +32,5 @@
 
 namespace Aaru.Database.Models
 {
-    public class OperatingSystem : BaseOperatingSystem { }
+    public class OperatingSystem : BaseOperatingSystem {}
 }

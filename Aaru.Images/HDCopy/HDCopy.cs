@@ -72,52 +72,30 @@ namespace Aaru.DiscImages
 {
     public partial class HdCopy : IMediaImage
     {
-        /// <summary>
-        ///     The HDCP file header after the image has been opened
-        /// </summary>
+        /// <summary>Every track that has been read is cached here</summary>
+        readonly Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
+
+        /// <summary>The offset in the file where each track starts, or -1 if the track is not present</summary>
+        readonly Dictionary<int, long> trackOffset = new Dictionary<int, long>();
+        /// <summary>The HDCP file header after the image has been opened</summary>
         HdcpFileHeader fileHeader;
 
-        /// <summary>
-        ///     The ImageFilter we're reading from, after the file has been opened
-        /// </summary>
+        /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
         IFilter hdcpImageFilter;
         ImageInfo imageInfo;
 
-        /// <summary>
-        ///     Every track that has been read is cached here
-        /// </summary>
-        Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
-
-        /// <summary>
-        ///     The offset in the file where each track starts, or -1 if the track is not present
-        /// </summary>
-        Dictionary<int, long> trackOffset = new Dictionary<int, long>();
-
-        public HdCopy()
+        public HdCopy() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Version               = null,
-                Application           = null,
-                ApplicationVersion    = null,
-                Creator               = null,
-                Comments              = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = false, HasSessions                           = false, Version = null,
+            Application        = null,
+            ApplicationVersion = null, Creator = null, Comments = null,
+            MediaManufacturer  = null,
+            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
+            MediaPartNumber    = null,
+            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
+            DriveModel         = null,
+            DriveSerialNumber  = null, DriveFirmwareRevision = null
+        };
     }
 }

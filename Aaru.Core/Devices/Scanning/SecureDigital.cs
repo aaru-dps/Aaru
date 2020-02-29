@@ -32,22 +32,20 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Enums;
+using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 
 namespace Aaru.Core.Devices.Scanning
 {
-    /// <summary>
-    ///     Implements scanning a SecureDigital or MultiMediaCard flash card
-    /// </summary>
+    /// <summary>Implements scanning a SecureDigital or MultiMediaCard flash card</summary>
     public partial class MediaScan
     {
         ScanResults SecureDigital()
         {
-            ScanResults results = new ScanResults();
-            byte[]      cmdBuf;
-            bool        sense;
+            var    results = new ScanResults();
+            byte[] cmdBuf;
+            bool   sense;
             results.Blocks = 0;
             const uint   TIMEOUT = 5;
             double       duration;
@@ -61,12 +59,14 @@ namespace Aaru.Core.Devices.Scanning
                 case DeviceType.MMC:
                 {
                     sense = dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
+
                     if(!sense)
                     {
-                        ExtendedCSD ecsd = Aaru.Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                        ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
                         blocksToRead   = ecsd.OptimalReadSize;
                         results.Blocks = ecsd.SectorCount;
                         blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+
                         // Supposing it's high-capacity MMC if it has Extended CSD...
                         byteAddressed = false;
                     }
@@ -74,9 +74,10 @@ namespace Aaru.Core.Devices.Scanning
                     if(sense || results.Blocks == 0)
                     {
                         sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+
                         if(!sense)
                         {
-                            CSD csd = Aaru.Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                            CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                             results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                             blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
                         }
@@ -88,13 +89,17 @@ namespace Aaru.Core.Devices.Scanning
                 case DeviceType.SecureDigital:
                 {
                     sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+
                     if(!sense)
                     {
-                        Aaru.Decoders.SecureDigital.CSD csd = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                        Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+
                         results.Blocks = (ulong)(csd.Structure == 0
                                                      ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
                                                      : (csd.Size + 1) * 1024);
+
                         blockSize = (uint)Math.Pow(2, csd.ReadBlockLength);
+
                         // Structure >=1 for SDHC/SDXC, so that's block addressed
                         byteAddressed = csd.Structure == 0;
                     }
@@ -106,6 +111,7 @@ namespace Aaru.Core.Devices.Scanning
             if(results.Blocks == 0)
             {
                 StoppingErrorMessage?.Invoke("Unable to get device size.");
+
                 return results;
             }
 
@@ -113,14 +119,18 @@ namespace Aaru.Core.Devices.Scanning
             {
                 sense = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
 
-                if(sense) blocksToRead /= 2;
+                if(sense)
+                    blocksToRead /= 2;
 
-                if(!sense || blocksToRead == 1) break;
+                if(!sense ||
+                   blocksToRead == 1)
+                    break;
             }
 
             if(sense)
             {
                 StoppingErrorMessage?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
+
                 return results;
             }
 
@@ -143,27 +153,35 @@ namespace Aaru.Core.Devices.Scanning
             results.SeekTotal         = 0;
             const int SEEK_TIMES = 1000;
 
-            Random rnd = new Random();
+            var rnd = new Random();
 
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, SD_PROFILE);
-            MhddLog mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
-            IbgLog  ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
+            var mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+            var ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
 
             start = DateTime.UtcNow;
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
             InitProgress?.Invoke();
+
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
             {
-                if(aborted) break;
+                if(aborted)
+                    break;
 
-                if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
+                if(results.Blocks - i < blocksToRead)
+                    blocksToRead = (byte)(results.Blocks - i);
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                if(currentSpeed > results.MaxSpeed && currentSpeed != 0) results.MaxSpeed = currentSpeed;
-                if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
+                if(currentSpeed > results.MaxSpeed &&
+                   currentSpeed != 0)
+                    results.MaxSpeed = currentSpeed;
+
+                if(currentSpeed < results.MinSpeed &&
+                   currentSpeed != 0)
+                    results.MinSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
@@ -174,12 +192,18 @@ namespace Aaru.Core.Devices.Scanning
 
                 if(!error)
                 {
-                    if(duration      >= 500) results.F += blocksToRead;
-                    else if(duration >= 150) results.E += blocksToRead;
-                    else if(duration >= 50) results.D  += blocksToRead;
-                    else if(duration >= 10) results.C  += blocksToRead;
-                    else if(duration >= 3) results.B   += blocksToRead;
-                    else results.A                     += blocksToRead;
+                    if(duration >= 500)
+                        results.F += blocksToRead;
+                    else if(duration >= 150)
+                        results.E += blocksToRead;
+                    else if(duration >= 50)
+                        results.D += blocksToRead;
+                    else if(duration >= 10)
+                        results.C += blocksToRead;
+                    else if(duration >= 3)
+                        results.B += blocksToRead;
+                    else
+                        results.A += blocksToRead;
 
                     ScanTime?.Invoke(i, duration);
                     mhddLog.Write(i, duration);
@@ -189,7 +213,9 @@ namespace Aaru.Core.Devices.Scanning
                 {
                     ScanUnreadable?.Invoke(i);
                     results.Errored += blocksToRead;
-                    for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
+
+                    for(ulong b = i; b < i + blocksToRead; b++)
+                        results.UnreadableSectors.Add(b);
 
                     mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
@@ -199,10 +225,12 @@ namespace Aaru.Core.Devices.Scanning
                 sectorSpeedStart += blocksToRead;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-                if(elapsed < 1) continue;
 
-                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
+                if(elapsed < 1)
+                    continue;
+
+                currentSpeed = (sectorSpeedStart  * blockSize) / (1048576 * elapsed);
+                ScanSpeed?.Invoke(i, currentSpeed * 1024);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -210,14 +238,18 @@ namespace Aaru.Core.Devices.Scanning
             end = DateTime.UtcNow;
             EndProgress?.Invoke();
             mhddLog.Close();
+
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize * (double)(results.Blocks + 1) / 1024 /
-                         (results.ProcessingTime / 1000), devicePath);
+                         (blockSize              * (double)(results.Blocks + 1)) / 1024 /
+                         (results.ProcessingTime / 1000),
+                         devicePath);
 
             InitProgress?.Invoke();
+
             for(int i = 0; i < SEEK_TIMES; i++)
             {
-                if(aborted) break;
+                if(aborted)
+                    break;
 
                 uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
@@ -227,8 +259,13 @@ namespace Aaru.Core.Devices.Scanning
                          out double seekCur);
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;
-                if(seekCur < results.SeekMin && seekCur != 0) results.SeekMin = seekCur;
+                if(seekCur > results.SeekMax &&
+                   seekCur != 0)
+                    results.SeekMax = seekCur;
+
+                if(seekCur < results.SeekMin &&
+                   seekCur != 0)
+                    results.SeekMin = seekCur;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 results.SeekTotal += seekCur;
@@ -239,7 +276,7 @@ namespace Aaru.Core.Devices.Scanning
 
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;
-            results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+            results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
             results.SeekTimes      =  SEEK_TIMES;
 
             return results;

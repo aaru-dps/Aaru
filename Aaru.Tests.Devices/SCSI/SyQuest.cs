@@ -32,54 +32,63 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices.SCSI
 {
-    static class SyQuest
+    internal static class SyQuest
     {
         internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send a SyQuest vendor command to the device:");
-                DicConsole.WriteLine("1.- Send READ (6) command.");
-                DicConsole.WriteLine("2.- Send READ (10) command.");
-                DicConsole.WriteLine("3.- Send READ LONG (6) command.");
-                DicConsole.WriteLine("4.- Send READ LONG (10) command.");
-                DicConsole.WriteLine("5.- Send READ/RESET USAGE COUNTER command.");
-                DicConsole.WriteLine("0.- Return to SCSI commands menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send a SyQuest vendor command to the device:");
+                AaruConsole.WriteLine("1.- Send READ (6) command.");
+                AaruConsole.WriteLine("2.- Send READ (10) command.");
+                AaruConsole.WriteLine("3.- Send READ LONG (6) command.");
+                AaruConsole.WriteLine("4.- Send READ LONG (10) command.");
+                AaruConsole.WriteLine("5.- Send READ/RESET USAGE COUNTER command.");
+                AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SCSI commands menu...");
+                        AaruConsole.WriteLine("Returning to SCSI commands menu...");
+
                         return;
                     case 1:
                         Read6(devPath, dev, false);
+
                         continue;
                     case 2:
                         Read10(devPath, dev, false);
+
                         continue;
                     case 3:
                         Read6(devPath, dev, true);
+
                         continue;
                     case 4:
                         Read10(devPath, dev, true);
+
                         continue;
                     case 5:
                         ReadResetUsageCounter(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }
@@ -95,76 +104,87 @@ namespace Aaru.Tests.Devices.SCSI
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}",                         devPath);
-                DicConsole.WriteLine("Parameters for READ {0}(6) command:", readlong ? "LONG " : "");
-                DicConsole.WriteLine("LBA: {0}",                            lba);
-                DicConsole.WriteLine("{0} blocks to read",                  count == 0 ? 256 : count);
-                DicConsole.WriteLine("{0} bytes expected per block",        blockSize);
-                DicConsole.WriteLine("Inhibit DMA?: {0}",                   noDma);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for READ {0}(6) command:", readlong ? "LONG " : "");
+                AaruConsole.WriteLine("LBA: {0}", lba);
+                AaruConsole.WriteLine("{0} blocks to read", count == 0 ? 256 : count);
+                AaruConsole.WriteLine("{0} bytes expected per block", blockSize);
+                AaruConsole.WriteLine("Inhibit DMA?: {0}", noDma);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+                        AaruConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("LBA?: ");
+                        AaruConsole.Write("LBA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out lba))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             lba = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
                         if(lba > 0x1FFFFF)
                         {
-                            DicConsole.WriteLine("Max LBA is {0}, setting to {0}", 0x1FFFFF);
+                            AaruConsole.WriteLine("Max LBA is {0}, setting to {0}", 0x1FFFFF);
                             lba = 0x1FFFFF;
                         }
 
-                        DicConsole.Write("Blocks to read (0 for 256 blocks)?: ");
+                        AaruConsole.Write("Blocks to read (0 for 256 blocks)?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out count))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 1;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("How many bytes to expect per block?: ");
+                        AaruConsole.Write("How many bytes to expect per block?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out blockSize))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 512;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Inhibit DMA?: ");
+                        AaruConsole.Write("Inhibit DMA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!bool.TryParse(strDev, out noDma))
                         {
-                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                             noDma = false;
                             System.Console.ReadKey();
                         }
@@ -176,78 +196,92 @@ namespace Aaru.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
+
             bool sense = dev.SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma,
                                           readlong, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}",                        devPath);
-            DicConsole.WriteLine("Sending READ {0}(6) to the device:", readlong ? "LONG " : "");
-            DicConsole.WriteLine("Command took {0} ms.",               duration);
-            DicConsole.WriteLine("Sense is {0}.",                      sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Print sense buffer.");
-            DicConsole.WriteLine("3.- Decode sense buffer.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ {0}(6) to the device:", readlong ? "LONG " : "");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Print sense buffer.");
+            AaruConsole.WriteLine("3.- Decode sense buffer.");
+            AaruConsole.WriteLine("4.- Send command again.");
+            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+                    AaruConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",           devPath);
-                    DicConsole.WriteLine("READ {0}(6) response:", readlong ? "LONG " : "");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(6) response:", readlong ? "LONG " : "");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",        devPath);
-                    DicConsole.WriteLine("READ {0}(6) sense:", readlong ? "LONG " : "");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(6) sense:", readlong ? "LONG " : "");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",                devPath);
-                    DicConsole.WriteLine("READ {0}(6) decoded sense:", readlong ? "LONG " : "");
-                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(6) decoded sense:", readlong ? "LONG " : "");
+                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 case 5: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -262,70 +296,81 @@ namespace Aaru.Tests.Devices.SCSI
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}",                          devPath);
-                DicConsole.WriteLine("Parameters for READ {0}(10) command:", readlong ? "LONG " : "");
-                DicConsole.WriteLine("LBA: {0}",                             lba);
-                DicConsole.WriteLine("{0} blocks to read",                   count == 0 ? 256 : count);
-                DicConsole.WriteLine("{0} bytes expected per block",         blockSize);
-                DicConsole.WriteLine("Inhibit DMA?: {0}",                    noDma);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for READ {0}(10) command:", readlong ? "LONG " : "");
+                AaruConsole.WriteLine("LBA: {0}", lba);
+                AaruConsole.WriteLine("{0} blocks to read", count == 0 ? 256 : count);
+                AaruConsole.WriteLine("{0} bytes expected per block", blockSize);
+                AaruConsole.WriteLine("Inhibit DMA?: {0}", noDma);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+                        AaruConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("LBA?: ");
+                        AaruConsole.Write("LBA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out lba))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             lba = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Blocks to read (0 for 256 blocks)?: ");
+                        AaruConsole.Write("Blocks to read (0 for 256 blocks)?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out count))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             count = 1;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("How many bytes to expect per block?: ");
+                        AaruConsole.Write("How many bytes to expect per block?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!uint.TryParse(strDev, out blockSize))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             blockSize = 512;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Inhibit DMA?: ");
+                        AaruConsole.Write("Inhibit DMA?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!bool.TryParse(strDev, out noDma))
                         {
-                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                             noDma = false;
                             System.Console.ReadKey();
                         }
@@ -337,78 +382,92 @@ namespace Aaru.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
+
             bool sense = dev.SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma,
                                            readlong, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}",                         devPath);
-            DicConsole.WriteLine("Sending READ {0}(10) to the device:", readlong ? "LONG " : "");
-            DicConsole.WriteLine("Command took {0} ms.",                duration);
-            DicConsole.WriteLine("Sense is {0}.",                       sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",                buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}",        ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",          senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}",  ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Print sense buffer.");
-            DicConsole.WriteLine("3.- Decode sense buffer.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ {0}(10) to the device:", readlong ? "LONG " : "");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Print sense buffer.");
+            AaruConsole.WriteLine("3.- Decode sense buffer.");
+            AaruConsole.WriteLine("4.- Send command again.");
+            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+                    AaruConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",            devPath);
-                    DicConsole.WriteLine("READ {0}(10) response:", readlong ? "LONG " : "");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(10) response:", readlong ? "LONG " : "");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",         devPath);
-                    DicConsole.WriteLine("READ {0}(10) sense:", readlong ? "LONG " : "");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(10) sense:", readlong ? "LONG " : "");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}",                 devPath);
-                    DicConsole.WriteLine("READ {0}(10) decoded sense:", readlong ? "LONG " : "");
-                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ {0}(10) decoded sense:", readlong ? "LONG " : "");
+                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 case 5: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -417,77 +476,91 @@ namespace Aaru.Tests.Devices.SCSI
         {
             start:
             System.Console.Clear();
+
             bool sense =
                 dev.SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
                                             out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending READ/RESET USAGE COUNTER to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",               duration);
-            DicConsole.WriteLine("Sense is {0}.",                      sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Print sense buffer.");
-            DicConsole.WriteLine("3.- Decode sense buffer.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ/RESET USAGE COUNTER to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Print sense buffer.");
+            AaruConsole.WriteLine("3.- Decode sense buffer.");
+            AaruConsole.WriteLine("4.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to SyQuest vendor commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+                    AaruConsole.WriteLine("Returning to SyQuest vendor commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ/RESET USAGE COUNTER response:");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ/RESET USAGE COUNTER response:");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ/RESET USAGE COUNTER sense:");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ/RESET USAGE COUNTER sense:");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ/RESET USAGE COUNTER decoded sense:");
-                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ/RESET USAGE COUNTER decoded sense:");
+                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }

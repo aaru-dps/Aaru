@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System.Text;
-using Claunia.Encoding;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
@@ -44,9 +44,13 @@ namespace Aaru.Filesystems.AppleDOS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560) return false;
+            if(imagePlugin.Info.Sectors != 455 &&
+               imagePlugin.Info.Sectors != 560)
+                return false;
 
-            if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256) return false;
+            if(partition.Start             > 0 ||
+               imagePlugin.Info.SectorSize != 256)
+                return false;
 
             int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
@@ -58,11 +62,11 @@ namespace Aaru.Filesystems.AppleDOS
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? new Apple2();
             information = "";
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             int spt;
             spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
@@ -72,25 +76,26 @@ namespace Aaru.Filesystems.AppleDOS
 
             sb.AppendLine("Apple DOS File System");
             sb.AppendLine();
-            sb.AppendFormat("Catalog starts at sector {0} of track {1}", vtoc.catalogSector, vtoc.catalogTrack)
-              .AppendLine();
+
+            sb.AppendFormat("Catalog starts at sector {0} of track {1}", vtoc.catalogSector, vtoc.catalogTrack).
+               AppendLine();
+
             sb.AppendFormat("File system initialized by DOS release {0}", vtoc.dosRelease).AppendLine();
             sb.AppendFormat("Disk volume number {0}", vtoc.volumeNumber).AppendLine();
             sb.AppendFormat("Sectors allocated at most in track {0}", vtoc.lastAllocatedSector).AppendLine();
             sb.AppendFormat("{0} tracks in volume", vtoc.tracks).AppendLine();
             sb.AppendFormat("{0} sectors per track", vtoc.sectorsPerTrack).AppendLine();
             sb.AppendFormat("{0} bytes per sector", vtoc.bytesPerSector).AppendLine();
-            sb.AppendFormat("Track allocation is {0}", vtoc.allocationDirection > 0 ? "forward" : "reverse")
-              .AppendLine();
+
+            sb.AppendFormat("Track allocation is {0}", vtoc.allocationDirection > 0 ? "forward" : "reverse").
+               AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Bootable    = true,
-                Clusters    = imagePlugin.Info.Sectors,
-                ClusterSize = imagePlugin.Info.SectorSize,
-                Type        = "Apple DOS"
+                Bootable = true, Clusters = imagePlugin.Info.Sectors, ClusterSize = imagePlugin.Info.SectorSize,
+                Type     = "Apple DOS"
             };
         }
     }

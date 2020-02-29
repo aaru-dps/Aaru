@@ -36,20 +36,18 @@ using System.IO;
 namespace Aaru.Filters
 {
     /// <summary>
-    ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams)
-    ///     by doing the slow and known trick of rewinding and forward reading until arriving the desired position.
+    ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
+    ///     slow and known trick of rewinding and forward reading until arriving the desired position.
     /// </summary>
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
-        const int  BUFFER_LEN = 1048576;
-        string     backFile;
-        FileStream backStream;
-        T          baseStream;
-        long       streamLength;
+        const    int        BUFFER_LEN = 1048576;
+        readonly string     backFile;
+        readonly FileStream backStream;
+        readonly T          baseStream;
+        long                streamLength;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
         /// <param name="length">The real (uncompressed) length of the stream.</param>
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(long length, params object[] args)
@@ -58,12 +56,12 @@ namespace Aaru.Filters
             baseStream   = (T)Activator.CreateInstance(typeof(T), args);
             backFile     = Path.GetTempFileName();
             backStream   = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            if(length == 0) CalculateLength();
+
+            if(length == 0)
+                CalculateLength();
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(params object[] args)
         {
@@ -89,21 +87,20 @@ namespace Aaru.Filters
         }
 
         /// <summary>
-        ///     Calculates the real (uncompressed) length of the stream.
-        ///     It basically reads (uncompresses) the whole stream to memory discarding its contents,
-        ///     so it should be used as a last resort.
+        ///     Calculates the real (uncompressed) length of the stream. It basically reads (uncompresses) the whole stream to
+        ///     memory discarding its contents, so it should be used as a last resort.
         /// </summary>
         /// <returns>The length.</returns>
         public void CalculateLength()
         {
             int read;
+
             do
             {
                 byte[] buffer = new byte[BUFFER_LEN];
                 read = baseStream.Read(buffer, 0, BUFFER_LEN);
                 backStream.Write(buffer, 0, read);
-            }
-            while(read == BUFFER_LEN);
+            } while(read == BUFFER_LEN);
 
             streamLength        = backStream.Length;
             backStream.Position = 0;
@@ -111,11 +108,13 @@ namespace Aaru.Filters
 
         void SetPosition(long position)
         {
-            if(position == backStream.Position) return;
+            if(position == backStream.Position)
+                return;
 
             if(position < backStream.Length)
             {
                 backStream.Position = position;
+
                 return;
             }
 
@@ -145,7 +144,8 @@ namespace Aaru.Filters
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(backStream.Position + count <= backStream.Length) return backStream.Read(buffer, offset, count);
+            if(backStream.Position + count <= backStream.Length)
+                return backStream.Read(buffer, offset, count);
 
             SetPosition(backStream.Position + count);
             SetPosition(backStream.Position - count);
@@ -155,7 +155,8 @@ namespace Aaru.Filters
 
         public override int ReadByte()
         {
-            if(backStream.Position + 1 <= backStream.Length) return backStream.ReadByte();
+            if(backStream.Position + 1 <= backStream.Length)
+                return backStream.ReadByte();
 
             SetPosition(backStream.Position + 1);
             SetPosition(backStream.Position - 1);
@@ -168,33 +169,34 @@ namespace Aaru.Filters
             switch(origin)
             {
                 case SeekOrigin.Begin:
-                    if(offset < 0) throw new IOException("Cannot seek before stream start.");
+                    if(offset < 0)
+                        throw new IOException("Cannot seek before stream start.");
 
                     SetPosition(offset);
+
                     break;
                 case SeekOrigin.End:
-                    if(offset > 0) throw new IOException("Cannot seek after stream end.");
+                    if(offset > 0)
+                        throw new IOException("Cannot seek after stream end.");
 
-                    if(streamLength == 0) CalculateLength();
+                    if(streamLength == 0)
+                        CalculateLength();
+
                     SetPosition(streamLength + offset);
+
                     break;
                 default:
                     SetPosition(backStream.Position + offset);
+
                     break;
             }
 
             return backStream.Position;
         }
 
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException();
-        }
+        public override void SetLength(long value) => throw new NotSupportedException();
 
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            throw new NotSupportedException();
-        }
+        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 
         public override void Close()
         {

@@ -81,8 +81,8 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.WriteLine("Read-only media image formats ({0}):",
-                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                        Contains(typeof(IWritableImage))));
+                                  plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                                         Contains(typeof(IWritableImage))));
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
@@ -112,8 +112,8 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.WriteLine("Supported filesystems for identification and information only ({0}):",
-                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                   Contains(typeof(IReadOnlyFilesystem))));
+                                  plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
+                                                                    Contains(typeof(IReadOnlyFilesystem))));
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
@@ -131,7 +131,7 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.WriteLine("Supported filesystems that can read their contents ({0}):",
-                                 plugins.ReadOnlyFilesystems.Count);
+                                  plugins.ReadOnlyFilesystems.Count);
 
             if(verbose)
                 AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
@@ -154,7 +154,7 @@ namespace Aaru.Commands
                 else
                     AaruConsole.WriteLine(kvp.Value.Name);
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

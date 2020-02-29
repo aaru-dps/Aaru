@@ -55,9 +55,11 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(1 + partition.Start >= partition.End) return false;
+            if(1 + partition.Start >= partition.End)
+                return false;
 
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -67,12 +69,12 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("koi8-r");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -80,19 +82,17 @@ namespace Aaru.Filesystems
 
             sb.AppendLine("MicroDOS filesystem");
             sb.AppendFormat("Volume has {0} blocks ({1} bytes)", block0.blocks, block0.blocks * 512).AppendLine();
-            sb.AppendFormat("Volume has {0} blocks used ({1} bytes)", block0.usedBlocks, block0.usedBlocks * 512)
-              .AppendLine();
+
+            sb.AppendFormat("Volume has {0} blocks used ({1} bytes)", block0.usedBlocks, block0.usedBlocks * 512).
+               AppendLine();
+
             sb.AppendFormat("Volume contains {0} files", block0.files).AppendLine();
             sb.AppendFormat("First used block is {0}", block0.firstUsedBlock).AppendLine();
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "MicroDOS",
-                ClusterSize           = 512,
-                Clusters              = block0.blocks,
-                Files                 = block0.files,
-                FilesSpecified        = true,
-                FreeClusters          = (ulong)(block0.blocks - block0.usedBlocks),
+                Type                  = "MicroDOS", ClusterSize = 512, Clusters = block0.blocks, Files = block0.files,
+                FilesSpecified        = true, FreeClusters      = (ulong)(block0.blocks - block0.usedBlocks),
                 FreeClustersSpecified = true
             };
 
@@ -121,9 +121,8 @@ namespace Aaru.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
             public readonly byte[] unknown2;
             /// <summary>
-            ///     Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that
-            ///     doesn't use two fixed values 40 or 80 tracks, but i.e. if you drive works with 76 tracks
-            ///     this field will contain an appropriate number of blocks
+            ///     Disk size in blocks (absolute value for the system unlike NORD, NORTON etc.) that doesn't use two fixed values
+            ///     40 or 80 tracks, but i.e. if you drive works with 76 tracks this field will contain an appropriate number of blocks
             /// </summary>
             public readonly ushort blocks;
             /// <summary> Number of the first file's block. Value is changable</summary>
@@ -155,11 +154,8 @@ namespace Aaru.Filesystems
 
         enum FileStatus : byte
         {
-            CommonFile  = 0,
-            Protected   = 1,
-            LogicalDisk = 2,
-            BadFile     = 0x80,
-            Deleted     = 0xFF
+            CommonFile = 0, Protected  = 1, LogicalDisk = 2,
+            BadFile    = 0x80, Deleted = 0xFF
         }
     }
 }

@@ -74,21 +74,21 @@ namespace Aaru
             AaruConsole.WriteEvent          += System.Console.Write;
             AaruConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
-            Aaru.Settings.Settings.LoadSettings();
+            Settings.Settings.LoadSettings();
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
             bool masterDbUpdate = false;
 
-            if(!File.Exists(Aaru.Settings.Settings.MasterDbPath))
+            if(!File.Exists(Settings.Settings.MasterDbPath))
             {
                 masterDbUpdate = true;
                 UpdateCommand.DoUpdate(true);
             }
 
-            var masterContext = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            var masterContext = AaruContext.Create(Settings.Settings.MasterDbPath);
 
             if(masterContext.Database.GetPendingMigrations().Any())
             {
@@ -96,25 +96,25 @@ namespace Aaru
 
                 try
                 {
-                    File.Delete(Aaru.Settings.Settings.MasterDbPath);
+                    File.Delete(Settings.Settings.MasterDbPath);
                 }
                 catch(Exception)
                 {
                     AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Aaru.Settings.Settings.MasterDbPath);
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MasterDbPath);
                 }
 
                 UpdateCommand.DoUpdate(true);
             }
 
             if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-               Aaru.Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new ConfigureCommand(true, true).Invoke(args);
 
             Statistics.LoadStats();
 
-            if(Aaru.Settings.Settings.Current.Stats != null &&
-               Aaru.Settings.Settings.Current.Stats.ShareStats)
+            if(Settings.Settings.Current.Stats != null &&
+               Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(Statistics.SubmitStats);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);

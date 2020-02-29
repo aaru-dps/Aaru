@@ -55,10 +55,10 @@ namespace Aaru.Gui.Forms
 {
     public class frmImageConvert : Form
     {
+        readonly IMediaImage   inputFormat;
         bool                   cancel;
         CICMMetadataType       cicmMetadata;
         List<DumpHardwareType> dumpHardware;
-        IMediaImage            inputFormat;
 
         public frmImageConvert(IMediaImage inputFormat, string imageSource)
         {
@@ -75,10 +75,12 @@ namespace Aaru.Gui.Forms
             btnMediaSerialNumber.Visible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaSerialNumber);
             btnMediaBarcode.Visible      = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaBarcode);
             btnMediaPartNumber.Visible   = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaPartNumber);
-            btnMediaSequence.Visible =
-                inputFormat.Info.MediaSequence != 0 && inputFormat.Info.LastMediaSequence != 0;
+
+            btnMediaSequence.Visible = inputFormat.Info.MediaSequence != 0 && inputFormat.Info.LastMediaSequence != 0;
+
             btnLastMediaSequence.Visible =
                 inputFormat.Info.MediaSequence != 0 && inputFormat.Info.LastMediaSequence != 0;
+
             btnDriveManufacturer.Visible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveManufacturer);
             btnDriveModel.Visible            = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveModel);
             btnDriveSerialNumber.Visible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
@@ -86,9 +88,11 @@ namespace Aaru.Gui.Forms
 
             ObservableCollection<IWritableImage> lstPlugins = new ObservableCollection<IWritableImage>();
             PluginBase                           plugins    = GetPluginBase.Instance;
+
             foreach(IWritableImage plugin in
                 plugins.WritableImages.Values.Where(p => p.SupportedMediaTypes.Contains(inputFormat.Info.MediaType)))
                 lstPlugins.Add(plugin);
+
             cmbFormat.ItemTextBinding = Binding.Property((IWritableImage p) => p.Name);
             cmbFormat.ItemKeyBinding  = Binding.Property((IWritableImage p) => p.Id.ToString());
             cmbFormat.DataStore       = lstPlugins;
@@ -96,8 +100,8 @@ namespace Aaru.Gui.Forms
             btnCicmXmlFromImage.Visible    = inputFormat.CicmMetadata != null;
             btnResumeFileFromImage.Visible = inputFormat.DumpHardware != null && inputFormat.DumpHardware.Any();
             cicmMetadata                   = inputFormat.CicmMetadata;
-            dumpHardware = inputFormat.DumpHardware != null && inputFormat.DumpHardware.Any()
-                               ? inputFormat.DumpHardware
+
+            dumpHardware = inputFormat.DumpHardware != null && inputFormat.DumpHardware.Any() ? inputFormat.DumpHardware
                                : null;
 
             txtCicmXml.Text    = cicmMetadata == null ? "" : "<From image>";
@@ -109,6 +113,7 @@ namespace Aaru.Gui.Forms
             if(!(cmbFormat.SelectedValue is IWritableImage plugin))
             {
                 MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
+
                 return;
             }
 
@@ -118,19 +123,27 @@ namespace Aaru.Gui.Forms
         void DoWork(object plugin)
         {
             bool warning = false;
+
             if(!(plugin is IWritableImage outputFormat))
             {
                 MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
+
                 return;
             }
 
-            IOpticalMediaImage    inputOptical  = inputFormat as IOpticalMediaImage;
-            IWritableOpticalImage outputOptical = outputFormat as IWritableOpticalImage;
+            var inputOptical  = inputFormat as IOpticalMediaImage;
+            var outputOptical = outputFormat as IWritableOpticalImage;
 
             List<Track> tracks;
 
-            try { tracks = inputOptical?.Tracks; }
-            catch(Exception) { tracks = null; }
+            try
+            {
+                tracks = inputOptical?.Tracks;
+            }
+            catch(Exception)
+            {
+                tracks = null;
+            }
 
             // Prepare UI
             Application.Instance.Invoke(() =>
@@ -148,7 +161,8 @@ namespace Aaru.Gui.Forms
                 prgProgress.MaxValue += inputFormat.Info.ReadableMediaTags.Count;
                 prgProgress.MaxValue++;
 
-                if(tracks != null) prgProgress.MaxValue++;
+                if(tracks != null)
+                    prgProgress.MaxValue++;
 
                 if(tracks == null)
                 {
@@ -170,7 +184,9 @@ namespace Aaru.Gui.Forms
                                 continue;
                         }
 
-                        if(chkForce.Checked == true && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                        if(chkForce.Checked == true &&
+                           !outputFormat.SupportedSectorTags.Contains(tag))
+                            continue;
 
                         prgProgress.MaxValue++;
                     }
@@ -195,27 +211,33 @@ namespace Aaru.Gui.Forms
                                 continue;
                         }
 
-                        if(chkForce.Checked == true && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                        if(chkForce.Checked == true &&
+                           !outputFormat.SupportedSectorTags.Contains(tag))
+                            continue;
 
                         prgProgress.MaxValue += tracks.Count;
                     }
                 }
 
-                if(dumpHardware != null) prgProgress.MaxValue++;
-                if(cicmMetadata != null) prgProgress.MaxValue++;
+                if(dumpHardware != null)
+                    prgProgress.MaxValue++;
+
+                if(cicmMetadata != null)
+                    prgProgress.MaxValue++;
 
                 prgProgress.MaxValue++;
             });
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(outputFormat.SupportedMediaTags.Contains(mediaTag) || chkForce.Checked == true) continue;
+                if(outputFormat.SupportedMediaTags.Contains(mediaTag) ||
+                   chkForce.Checked == true)
+                    continue;
 
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox
-                       .Show($"Converting image will lose media tag {mediaTag}, not continuing...",
-                             MessageBoxType.Error);
+                    MessageBox.Show($"Converting image will lose media tag {mediaTag}, not continuing...",
+                                    MessageBoxType.Error);
                 });
 
                 return;
@@ -225,21 +247,25 @@ namespace Aaru.Gui.Forms
 
             foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags)
             {
-                if(outputFormat.SupportedSectorTags.Contains(sectorTag)) continue;
+                if(outputFormat.SupportedSectorTags.Contains(sectorTag))
+                    continue;
 
                 if(chkForce.Checked == true)
                 {
-                    if(sectorTag != SectorTagType.CdTrackFlags && sectorTag != SectorTagType.CdTrackIsrc &&
-                       sectorTag != SectorTagType.CdSectorSubchannel) useLong = false;
+                    if(sectorTag != SectorTagType.CdTrackFlags &&
+                       sectorTag != SectorTagType.CdTrackIsrc  &&
+                       sectorTag != SectorTagType.CdSectorSubchannel)
+                        useLong = false;
+
                     continue;
                 }
 
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox
-                       .Show($"Converting image will lose sector tag {sectorTag}, not continuing...",
-                             MessageBoxType.Error);
+                    MessageBox.Show($"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                    MessageBoxType.Error);
                 });
+
                 return;
             }
 
@@ -248,7 +274,8 @@ namespace Aaru.Gui.Forms
             if(grpOptions.Content is StackLayout stkImageOptions)
                 foreach(Control option in stkImageOptions.Children)
                 {
-                    if(cancel) break;
+                    if(cancel)
+                        break;
 
                     string value;
 
@@ -256,12 +283,15 @@ namespace Aaru.Gui.Forms
                     {
                         case CheckBox optBoolean:
                             value = optBoolean.Checked?.ToString();
+
                             break;
                         case NumericStepper optNumber:
                             value = optNumber.Value.ToString(CultureInfo.CurrentCulture);
+
                             break;
                         case TextBox optString:
                             value = optString.Text;
+
                             break;
                         default: continue;
                     }
@@ -283,12 +313,11 @@ namespace Aaru.Gui.Forms
             {
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox
-                       .Show($"Error {outputFormat.ErrorMessage} creating output image.",
-                             MessageBoxType.Error);
+                    MessageBox.Show($"Error {outputFormat.ErrorMessage} creating output image.", MessageBoxType.Error);
                 });
 
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
+
                 return;
             }
 
@@ -300,40 +329,34 @@ namespace Aaru.Gui.Forms
                 prgProgress2.Indeterminate = true;
             });
 
-            ImageInfo metadata = new ImageInfo
+            var metadata = new ImageInfo
             {
-                Application           = "Aaru",
-                ApplicationVersion    = Version.GetVersion(),
-                Comments              = txtComments.Text,
-                Creator               = txtCreator.Text,
-                DriveFirmwareRevision = txtDriveFirmwareRevision.Text,
-                DriveManufacturer     = txtDriveManufacturer.Text,
-                DriveModel            = txtDriveModel.Text,
-                DriveSerialNumber     = txtDriveSerialNumber.Text,
-                LastMediaSequence     = (int)numLastMediaSequence.Value,
-                MediaBarcode          = txtMediaBarcode.Text,
-                MediaManufacturer     = txtMediaManufacturer.Text,
-                MediaModel            = txtMediaModel.Text,
-                MediaPartNumber       = txtMediaPartNumber.Text,
-                MediaSequence         = (int)numMediaSequence.Value,
-                MediaSerialNumber     = txtMediaSerialNumber.Text,
-                MediaTitle            = txtMediaTitle.Text
+                Application       = "Aaru", ApplicationVersion = Version.GetVersion(),
+                Comments          = txtComments.Text,
+                Creator           = txtCreator.Text, DriveFirmwareRevision         = txtDriveFirmwareRevision.Text,
+                DriveManufacturer = txtDriveManufacturer.Text, DriveModel          = txtDriveModel.Text,
+                DriveSerialNumber = txtDriveSerialNumber.Text, LastMediaSequence   = (int)numLastMediaSequence.Value,
+                MediaBarcode      = txtMediaBarcode.Text, MediaManufacturer        = txtMediaManufacturer.Text,
+                MediaModel        = txtMediaModel.Text, MediaPartNumber            = txtMediaPartNumber.Text,
+                MediaSequence     = (int)numMediaSequence.Value, MediaSerialNumber = txtMediaSerialNumber.Text,
+                MediaTitle        = txtMediaTitle.Text
             };
 
             if(!cancel)
                 if(!outputFormat.SetMetadata(metadata))
                 {
                     AaruConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
+
                     if(chkForce.Checked != true)
                     {
                         Application.Instance.Invoke(() =>
                         {
-                            MessageBox
-                               .Show($"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                     MessageBoxType.Error);
+                            MessageBox.Show($"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                            MessageBoxType.Error);
                         });
 
                         AaruConsole.ErrorWriteLine("not continuing...");
+
                         return;
                     }
 
@@ -341,7 +364,9 @@ namespace Aaru.Gui.Forms
                     AaruConsole.ErrorWriteLine("continuing...");
                 }
 
-            if(tracks != null && !cancel && outputOptical != null)
+            if(tracks != null &&
+               !cancel        &&
+               outputOptical != null)
             {
                 Application.Instance.Invoke(() =>
                 {
@@ -355,20 +380,21 @@ namespace Aaru.Gui.Forms
                 {
                     Application.Instance.Invoke(() =>
                     {
-                        MessageBox
-                           .Show($"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
-                                 MessageBoxType.Error);
+                        MessageBox.Show($"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                        MessageBoxType.Error);
                     });
 
                     AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
+
                     return;
                 }
             }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(cancel) break;
+                if(cancel)
+                    break;
 
                 Application.Instance.Invoke(() =>
                 {
@@ -378,10 +404,14 @@ namespace Aaru.Gui.Forms
                     prgProgress2.Indeterminate = true;
                 });
 
-                if(chkForce.Checked == true && !outputFormat.SupportedMediaTags.Contains(mediaTag)) continue;
+                if(chkForce.Checked == true &&
+                   !outputFormat.SupportedMediaTags.Contains(mediaTag))
+                    continue;
 
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
-                if(outputFormat.WriteMediaTag(tag, mediaTag)) continue;
+
+                if(outputFormat.WriteMediaTag(tag, mediaTag))
+                    continue;
 
                 if(chkForce.Checked == true)
                 {
@@ -392,25 +422,27 @@ namespace Aaru.Gui.Forms
                 {
                     Application.Instance.Invoke(() =>
                     {
-                        MessageBox
-                           .Show($"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
-                                 MessageBoxType.Error);
+                        MessageBox.Show($"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                        MessageBoxType.Error);
                     });
 
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
+
                     return;
                 }
             }
 
             ulong doneSectors = 0;
 
-            if(tracks == null && !cancel)
+            if(tracks == null &&
+               !cancel)
             {
                 Application.Instance.Invoke(() =>
                 {
                     lblProgress.Text =
                         $"Setting geometry to {inputFormat.Info.Cylinders} cylinders, {inputFormat.Info.Heads} heads and {inputFormat.Info.SectorsPerTrack} sectors per track";
+
                     prgProgress.Value++;
                     lblProgress2.Text          = "";
                     prgProgress2.Indeterminate = true;
@@ -420,8 +452,9 @@ namespace Aaru.Gui.Forms
                                              inputFormat.Info.SectorsPerTrack))
                 {
                     warning = true;
+
                     AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
-                                              outputFormat.ErrorMessage);
+                                               outputFormat.ErrorMessage);
                 }
 
                 Application.Instance.Invoke(() =>
@@ -435,25 +468,31 @@ namespace Aaru.Gui.Forms
 
                 while(doneSectors < inputFormat.Info.Sectors)
                 {
-                    if(cancel) break;
+                    if(cancel)
+                        break;
 
                     byte[] sector;
 
                     uint sectorsToDo;
+
                     if(inputFormat.Info.Sectors - doneSectors >= (ulong)numCount.Value)
-                        sectorsToDo  = (uint)numCount.Value;
-                    else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                        sectorsToDo = (uint)numCount.Value;
+                    else
+                        sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
                     ulong sectors = doneSectors;
+
                     Application.Instance.Invoke(() =>
                     {
                         lblProgress2.Text =
                             $"Converting sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)inputFormat.Info.Sectors:P2} done)";
+
                         ;
                         prgProgress2.Value = (int)(sectors / numCount.Value);
                     });
 
                     bool result;
+
                     if(useLong)
                         if(sectorsToDo == 1)
                         {
@@ -483,20 +522,22 @@ namespace Aaru.Gui.Forms
                         if(chkForce.Checked == true)
                         {
                             warning = true;
+
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                      outputFormat.ErrorMessage, doneSectors);
+                                                       outputFormat.ErrorMessage, doneSectors);
                         }
                         else
                         {
                             Application.Instance.Invoke(() =>
                             {
-                                MessageBox
-                                   .Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                MessageBox.
+                                    Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                          MessageBoxType.Error);
                             });
 
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                      outputFormat.ErrorMessage, doneSectors);
+                                                       outputFormat.ErrorMessage, doneSectors);
+
                             return;
                         }
 
@@ -507,13 +548,15 @@ namespace Aaru.Gui.Forms
                 {
                     lblProgress2.Text =
                         $"Converting sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} ({1.0:P2} done)";
+
                     ;
                     prgProgress2.Value = prgProgress2.MaxValue;
                 });
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
                 {
-                    if(!useLong || cancel) break;
+                    if(!useLong || cancel)
+                        break;
 
                     switch(tag)
                     {
@@ -529,7 +572,9 @@ namespace Aaru.Gui.Forms
                             continue;
                     }
 
-                    if(chkForce.Checked == true && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                    if(chkForce.Checked == true &&
+                       !outputFormat.SupportedSectorTags.Contains(tag))
+                        continue;
 
                     Application.Instance.Invoke(() =>
                     {
@@ -541,26 +586,33 @@ namespace Aaru.Gui.Forms
                     });
 
                     doneSectors = 0;
+
                     while(doneSectors < inputFormat.Info.Sectors)
                     {
-                        if(cancel) break;
+                        if(cancel)
+                            break;
 
                         byte[] sector;
 
                         uint sectorsToDo;
+
                         if(inputFormat.Info.Sectors - doneSectors >= (ulong)numCount.Value)
-                            sectorsToDo  = (uint)numCount.Value;
-                        else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                            sectorsToDo = (uint)numCount.Value;
+                        else
+                            sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
                         ulong sectors = doneSectors;
+
                         Application.Instance.Invoke(() =>
                         {
                             lblProgress2.Text =
                                 $"Converting tag {sectors / (double)inputFormat.Info.Sectors} for sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)inputFormat.Info.Sectors:P2} done)";
+
                             prgProgress2.Value = (int)(sectors / numCount.Value);
                         });
 
                         bool result;
+
                         if(sectorsToDo == 1)
                         {
                             sector = inputFormat.ReadSectorTag(doneSectors, tag);
@@ -576,20 +628,22 @@ namespace Aaru.Gui.Forms
                             if(chkForce.Checked == true)
                             {
                                 warning = true;
+
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
                             }
                             else
                             {
                                 Application.Instance.Invoke(() =>
                                 {
-                                    MessageBox
-                                       .Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                    MessageBox.
+                                        Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                              MessageBoxType.Error);
                                 });
 
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
+
                                 return;
                             }
 
@@ -600,6 +654,7 @@ namespace Aaru.Gui.Forms
                     {
                         lblProgress2.Text =
                             $"Converting tag {tag} for sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} ({1.0:P2} done)";
+
                         prgProgress2.Value = prgProgress2.MaxValue;
                     });
                 }
@@ -608,10 +663,11 @@ namespace Aaru.Gui.Forms
             {
                 foreach(Track track in tracks)
                 {
-                    if(cancel) break;
+                    if(cancel)
+                        break;
 
                     doneSectors = 0;
-                    ulong trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                    ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
 
                     Application.Instance.Invoke(() =>
                     {
@@ -624,25 +680,30 @@ namespace Aaru.Gui.Forms
 
                     while(doneSectors < trackSectors)
                     {
-                        if(cancel) break;
+                        if(cancel)
+                            break;
 
                         byte[] sector;
 
                         uint sectorsToDo;
-                        if(trackSectors - doneSectors >= (ulong)numCount.Value) sectorsToDo = (uint)numCount.Value;
+
+                        if(trackSectors - doneSectors >= (ulong)numCount.Value)
+                            sectorsToDo = (uint)numCount.Value;
                         else
-                            sectorsToDo =
-                                (uint)(trackSectors - doneSectors);
+                            sectorsToDo = (uint)(trackSectors - doneSectors);
 
                         ulong sectors = doneSectors;
+
                         Application.Instance.Invoke(() =>
                         {
                             lblProgress2.Text =
                                 $"Converting sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors:P2} done)";
+
                             prgProgress2.Value = (int)(sectors / numCount.Value);
                         });
 
                         bool result;
+
                         if(useLong)
                             if(sectorsToDo == 1)
                             {
@@ -652,6 +713,7 @@ namespace Aaru.Gui.Forms
                             else
                             {
                                 sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
+
                                 result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
                                                                        sectorsToDo);
                             }
@@ -665,6 +727,7 @@ namespace Aaru.Gui.Forms
                             else
                             {
                                 sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+
                                 result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
                                                                    sectorsToDo);
                             }
@@ -674,15 +737,16 @@ namespace Aaru.Gui.Forms
                             if(chkForce.Checked == true)
                             {
                                 warning = true;
+
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                          outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage, doneSectors);
                             }
                             else
                             {
                                 Application.Instance.Invoke(() =>
                                 {
-                                    MessageBox
-                                       .Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                    MessageBox.
+                                        Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                              MessageBoxType.Error);
                                 });
 
@@ -697,12 +761,14 @@ namespace Aaru.Gui.Forms
                 {
                     lblProgress2.Text =
                         $"Converting sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} in track {tracks.Count} ({1.0:P2} done)";
+
                     prgProgress2.Value = prgProgress2.MaxValue;
                 });
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 {
-                    if(!useLong || cancel) break;
+                    if(!useLong || cancel)
+                        break;
 
                     switch(tag)
                     {
@@ -718,14 +784,17 @@ namespace Aaru.Gui.Forms
                             continue;
                     }
 
-                    if(chkForce.Checked == true && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                    if(chkForce.Checked == true &&
+                       !outputFormat.SupportedSectorTags.Contains(tag))
+                        continue;
 
                     foreach(Track track in tracks)
                     {
-                        if(cancel) break;
+                        if(cancel)
+                            break;
 
                         doneSectors = 0;
-                        ulong  trackSectors = track.TrackEndSector - track.TrackStartSector + 1;
+                        ulong  trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
                         byte[] sector;
                         bool   result;
 
@@ -745,19 +814,21 @@ namespace Aaru.Gui.Forms
 
                                 sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
                                 result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
+
                                 if(!result)
                                     if(chkForce.Checked == true)
                                     {
                                         warning = true;
+
                                         AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
-                                                                  outputFormat.ErrorMessage);
+                                                                   outputFormat.ErrorMessage);
                                     }
                                     else
                                     {
                                         Application.Instance.Invoke(() =>
                                         {
-                                            MessageBox
-                                               .Show($"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
+                                            MessageBox.
+                                                Show($"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
                                                      MessageBoxType.Error);
                                         });
 
@@ -769,19 +840,23 @@ namespace Aaru.Gui.Forms
 
                         while(doneSectors < trackSectors)
                         {
-                            if(cancel) break;
+                            if(cancel)
+                                break;
 
                             uint sectorsToDo;
-                            if(trackSectors - doneSectors >= (ulong)numCount.Value) sectorsToDo = (uint)numCount.Value;
+
+                            if(trackSectors - doneSectors >= (ulong)numCount.Value)
+                                sectorsToDo = (uint)numCount.Value;
                             else
-                                sectorsToDo =
-                                    (uint)(trackSectors - doneSectors);
+                                sectorsToDo = (uint)(trackSectors - doneSectors);
 
                             ulong sectors = doneSectors;
+
                             Application.Instance.Invoke(() =>
                             {
                                 lblProgress2.Text =
                                     $"Converting tag {tag} for sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors:P2} done)";
+
                                 prgProgress2.Value = (int)(sectors / numCount.Value);
                             });
 
@@ -794,6 +869,7 @@ namespace Aaru.Gui.Forms
                             {
                                 sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
                                                                     tag);
+
                                 result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
                                                                       sectorsToDo, tag);
                             }
@@ -802,15 +878,16 @@ namespace Aaru.Gui.Forms
                                 if(chkForce.Checked == true)
                                 {
                                     warning = true;
+
                                     AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
-                                                              outputFormat.ErrorMessage, doneSectors);
+                                                               outputFormat.ErrorMessage, doneSectors);
                                 }
                                 else
                                 {
                                     Application.Instance.Invoke(() =>
                                     {
-                                        MessageBox
-                                           .Show($"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
+                                        MessageBox.
+                                            Show($"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
                                                  MessageBoxType.Error);
                                     });
 
@@ -830,7 +907,9 @@ namespace Aaru.Gui.Forms
             });
 
             bool ret = false;
-            if(dumpHardware != null && !cancel)
+
+            if(dumpHardware != null &&
+               !cancel)
             {
                 Application.Instance.Invoke(() =>
                 {
@@ -839,13 +918,16 @@ namespace Aaru.Gui.Forms
                 });
 
                 ret = outputFormat.SetDumpHardware(dumpHardware);
+
                 if(!ret)
                     AaruConsole.WriteLine("Error {0} writing dump hardware list to output image.",
-                                         outputFormat.ErrorMessage);
+                                          outputFormat.ErrorMessage);
             }
 
             ret = false;
-            if(cicmMetadata != null && !cancel)
+
+            if(cicmMetadata != null &&
+               !cancel)
             {
                 Application.Instance.Invoke(() =>
                 {
@@ -854,9 +936,10 @@ namespace Aaru.Gui.Forms
                 });
 
                 outputFormat.SetCicmMetadata(cicmMetadata);
+
                 if(!ret)
                     AaruConsole.WriteLine("Error {0} writing CICM XML metadata to output image.",
-                                         outputFormat.ErrorMessage);
+                                          outputFormat.ErrorMessage);
             }
 
             Application.Instance.Invoke(() =>
@@ -882,8 +965,8 @@ namespace Aaru.Gui.Forms
             {
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox
-                       .Show($"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
+                    MessageBox.
+                        Show($"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
                              MessageBoxType.Error);
                 });
 
@@ -904,10 +987,7 @@ namespace Aaru.Gui.Forms
             Statistics.AddCommand("convert-image");
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         protected void OnBtnStop(object sender, EventArgs e)
         {
@@ -923,6 +1003,7 @@ namespace Aaru.Gui.Forms
             {
                 grpOptions.Visible     = false;
                 btnDestination.Enabled = false;
+
                 return;
             }
 
@@ -932,101 +1013,115 @@ namespace Aaru.Gui.Forms
             {
                 grpOptions.Content = null;
                 grpOptions.Visible = false;
+
                 return;
             }
 
             chkForce.Visible = false;
+
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(plugin.SupportedMediaTags.Contains(mediaTag)) continue;
+                if(plugin.SupportedMediaTags.Contains(mediaTag))
+                    continue;
 
                 chkForce.Visible = true;
                 chkForce.Checked = true;
+
                 break;
             }
 
             foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags)
             {
-                if(plugin.SupportedSectorTags.Contains(sectorTag)) continue;
+                if(plugin.SupportedSectorTags.Contains(sectorTag))
+                    continue;
 
                 chkForce.Visible = true;
                 chkForce.Checked = true;
+
                 break;
             }
 
             grpOptions.Visible = true;
 
-            StackLayout stkImageOptions = new StackLayout {Orientation = Orientation.Vertical};
+            var stkImageOptions = new StackLayout
+            {
+                Orientation = Orientation.Vertical
+            };
 
             foreach((string name, Type type, string description, object @default) option in plugin.SupportedOptions)
                 switch(option.type.ToString())
                 {
                     case "System.Boolean":
-                        CheckBox optBoolean = new CheckBox();
+                        var optBoolean = new CheckBox();
                         optBoolean.ID      = "opt" + option.name;
                         optBoolean.Text    = option.description;
                         optBoolean.Checked = (bool)option.@default;
                         stkImageOptions.Items.Add(optBoolean);
+
                         break;
                     case "System.SByte":
                     case "System.Int16":
                     case "System.Int32":
                     case "System.Int64":
-                        StackLayout stkNumber = new StackLayout();
+                        var stkNumber = new StackLayout();
                         stkNumber.Orientation = Orientation.Horizontal;
-                        NumericStepper optNumber = new NumericStepper();
+                        var optNumber = new NumericStepper();
                         optNumber.ID    = "opt" + option.name;
                         optNumber.Value = Convert.ToDouble(option.@default);
                         stkNumber.Items.Add(optNumber);
-                        Label lblNumber = new Label();
+                        var lblNumber = new Label();
                         lblNumber.Text = option.description;
                         stkNumber.Items.Add(lblNumber);
                         stkImageOptions.Items.Add(stkNumber);
+
                         break;
                     case "System.Byte":
                     case "System.UInt16":
                     case "System.UInt32":
                     case "System.UInt64":
-                        StackLayout stkUnsigned = new StackLayout();
+                        var stkUnsigned = new StackLayout();
                         stkUnsigned.Orientation = Orientation.Horizontal;
-                        NumericStepper optUnsigned = new NumericStepper();
+                        var optUnsigned = new NumericStepper();
                         optUnsigned.ID       = "opt" + option.name;
                         optUnsigned.MinValue = 0;
                         optUnsigned.Value    = Convert.ToDouble(option.@default);
                         stkUnsigned.Items.Add(optUnsigned);
-                        Label lblUnsigned = new Label();
+                        var lblUnsigned = new Label();
                         lblUnsigned.Text = option.description;
                         stkUnsigned.Items.Add(lblUnsigned);
                         stkImageOptions.Items.Add(stkUnsigned);
+
                         break;
                     case "System.Single":
                     case "System.Double":
-                        StackLayout stkFloat = new StackLayout();
+                        var stkFloat = new StackLayout();
                         stkFloat.Orientation = Orientation.Horizontal;
-                        NumericStepper optFloat = new NumericStepper();
+                        var optFloat = new NumericStepper();
                         optFloat.ID            = "opt" + option.name;
                         optFloat.DecimalPlaces = 2;
                         optFloat.Value         = Convert.ToDouble(option.@default);
                         stkFloat.Items.Add(optFloat);
-                        Label lblFloat = new Label();
+                        var lblFloat = new Label();
                         lblFloat.Text = option.description;
                         stkFloat.Items.Add(lblFloat);
                         stkImageOptions.Items.Add(stkFloat);
+
                         break;
                     case "System.Guid":
                         // TODO
                         break;
                     case "System.String":
-                        StackLayout stkString = new StackLayout();
+                        var stkString = new StackLayout();
                         stkString.Orientation = Orientation.Horizontal;
-                        Label lblString = new Label();
+                        var lblString = new Label();
                         lblString.Text = option.description;
                         stkString.Items.Add(lblString);
-                        TextBox optString = new TextBox();
+                        var optString = new TextBox();
                         optString.ID   = "opt" + option.name;
                         optString.Text = (string)option.@default;
                         stkString.Items.Add(optString);
                         stkImageOptions.Items.Add(stkString);
+
                         break;
                 }
 
@@ -1035,9 +1130,14 @@ namespace Aaru.Gui.Forms
 
         void OnBtnDestinationClick(object sender, EventArgs e)
         {
-            if(!(cmbFormat.SelectedValue is IWritableImage plugin)) return;
+            if(!(cmbFormat.SelectedValue is IWritableImage plugin))
+                return;
 
-            SaveFileDialog dlgDestination = new SaveFileDialog {Title = "Choose destination file"};
+            var dlgDestination = new SaveFileDialog
+            {
+                Title = "Choose destination file"
+            };
+
             dlgDestination.Filters.Add(new FileFilter(plugin.Name, plugin.KnownExtensions.ToArray()));
 
             DialogResult result = dlgDestination.ShowDialog(this);
@@ -1045,6 +1145,7 @@ namespace Aaru.Gui.Forms
             if(result != DialogResult.Ok)
             {
                 txtDestination.Text = "";
+
                 return;
             }
 
@@ -1054,75 +1155,40 @@ namespace Aaru.Gui.Forms
             txtDestination.Text = dlgDestination.FileName;
         }
 
-        void OnBtnCreator(object sender, EventArgs e)
-        {
-            txtCreator.Text = inputFormat.Info.Creator;
-        }
+        void OnBtnCreator(object sender, EventArgs e) => txtCreator.Text = inputFormat.Info.Creator;
 
-        void OnBtnMediaTitle(object sender, EventArgs e)
-        {
-            txtMediaTitle.Text = inputFormat.Info.MediaTitle;
-        }
+        void OnBtnMediaTitle(object sender, EventArgs e) => txtMediaTitle.Text = inputFormat.Info.MediaTitle;
 
-        void OnBtnComments(object sender, EventArgs e)
-        {
-            txtComments.Text = inputFormat.Info.Comments;
-        }
+        void OnBtnComments(object sender, EventArgs e) => txtComments.Text = inputFormat.Info.Comments;
 
-        void OnBtnMediaManufacturer(object sender, EventArgs e)
-        {
+        void OnBtnMediaManufacturer(object sender, EventArgs e) =>
             txtMediaManufacturer.Text = inputFormat.Info.MediaManufacturer;
-        }
 
-        void OnBtnMediaModel(object sender, EventArgs e)
-        {
-            txtMediaModel.Text = inputFormat.Info.MediaModel;
-        }
+        void OnBtnMediaModel(object sender, EventArgs e) => txtMediaModel.Text = inputFormat.Info.MediaModel;
 
-        void OnBtnMediaSerialNumber(object sender, EventArgs e)
-        {
+        void OnBtnMediaSerialNumber(object sender, EventArgs e) =>
             txtMediaSerialNumber.Text = inputFormat.Info.MediaSerialNumber;
-        }
 
-        void OnBtnMediaBarcode(object sender, EventArgs e)
-        {
-            txtMediaBarcode.Text = inputFormat.Info.MediaBarcode;
-        }
+        void OnBtnMediaBarcode(object sender, EventArgs e) => txtMediaBarcode.Text = inputFormat.Info.MediaBarcode;
 
-        void OnBtnMediaPartNumber(object sender, EventArgs e)
-        {
+        void OnBtnMediaPartNumber(object sender, EventArgs e) =>
             txtMediaPartNumber.Text = inputFormat.Info.MediaPartNumber;
-        }
 
-        void OnBtnMediaSequence(object sender, EventArgs e)
-        {
-            numMediaSequence.Value = inputFormat.Info.MediaSequence;
-        }
+        void OnBtnMediaSequence(object sender, EventArgs e) => numMediaSequence.Value = inputFormat.Info.MediaSequence;
 
-        void OnBtnLastMediaSequence(object sender, EventArgs e)
-        {
+        void OnBtnLastMediaSequence(object sender, EventArgs e) =>
             numLastMediaSequence.Value = inputFormat.Info.LastMediaSequence;
-        }
 
-        void OnBtnDriveManufacturer(object sender, EventArgs e)
-        {
+        void OnBtnDriveManufacturer(object sender, EventArgs e) =>
             txtDriveManufacturer.Text = inputFormat.Info.DriveManufacturer;
-        }
 
-        void OnBtnDriveModel(object sender, EventArgs e)
-        {
-            txtDriveModel.Text = inputFormat.Info.DriveModel;
-        }
+        void OnBtnDriveModel(object sender, EventArgs e) => txtDriveModel.Text = inputFormat.Info.DriveModel;
 
-        void OnBtnDriveSerialNumber(object sender, EventArgs e)
-        {
+        void OnBtnDriveSerialNumber(object sender, EventArgs e) =>
             txtDriveSerialNumber.Text = inputFormat.Info.DriveSerialNumber;
-        }
 
-        void OnBtnDriveFirmwareRevision(object sender, EventArgs e)
-        {
+        void OnBtnDriveFirmwareRevision(object sender, EventArgs e) =>
             txtDriveFirmwareRevision.Text = inputFormat.Info.DriveFirmwareRevision;
-        }
 
         void OnBtnCicmXmlFromImageClick(object sender, EventArgs e)
         {
@@ -1134,23 +1200,32 @@ namespace Aaru.Gui.Forms
         {
             cicmMetadata    = null;
             txtCicmXml.Text = "";
-            OpenFileDialog dlgMetadata =
-                new OpenFileDialog {Title = "Choose existing metadata sidecar", CheckFileExists = true};
+
+            var dlgMetadata = new OpenFileDialog
+            {
+                Title = "Choose existing metadata sidecar", CheckFileExists = true
+            };
+
             dlgMetadata.Filters.Add(new FileFilter("CICM XML metadata", ".xml"));
 
             DialogResult result = dlgMetadata.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            XmlSerializer sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+
             try
             {
-                StreamReader sr = new StreamReader(dlgMetadata.FileName);
+                var sr = new StreamReader(dlgMetadata.FileName);
                 cicmMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
                 sr.Close();
                 txtCicmXml.Text = dlgMetadata.FileName;
             }
-            catch { MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error); }
+            catch
+            {
+                MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error);
+            }
         }
 
         void OnBtnResumeFileFromImageClick(object sender, EventArgs e)
@@ -1163,30 +1238,41 @@ namespace Aaru.Gui.Forms
         {
             dumpHardware       = null;
             txtResumeFile.Text = "";
-            OpenFileDialog dlgMetadata =
-                new OpenFileDialog {Title = "Choose existing resume file", CheckFileExists = true};
+
+            var dlgMetadata = new OpenFileDialog
+            {
+                Title = "Choose existing resume file", CheckFileExists = true
+            };
+
             dlgMetadata.Filters.Add(new FileFilter("CICM XML metadata", ".xml"));
 
             DialogResult result = dlgMetadata.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            XmlSerializer sidecarXs = new XmlSerializer(typeof(Resume));
+            var sidecarXs = new XmlSerializer(typeof(Resume));
+
             try
             {
-                StreamReader sr     = new StreamReader(dlgMetadata.FileName);
-                Resume       resume = (Resume)sidecarXs.Deserialize(sr);
+                var sr     = new StreamReader(dlgMetadata.FileName);
+                var resume = (Resume)sidecarXs.Deserialize(sr);
 
-                if(resume.Tries != null && !resume.Tries.Any())
+                if(resume.Tries != null &&
+                   !resume.Tries.Any())
                 {
                     dumpHardware       = resume.Tries;
                     txtResumeFile.Text = dlgMetadata.FileName;
                 }
-                else MessageBox.Show("Resume file does not contain dump hardware information...", MessageBoxType.Error);
+                else
+                    MessageBox.Show("Resume file does not contain dump hardware information...", MessageBoxType.Error);
 
                 sr.Close();
             }
-            catch { MessageBox.Show("Incorrect resume file...", MessageBoxType.Error); }
+            catch
+            {
+                MessageBox.Show("Incorrect resume file...", MessageBoxType.Error);
+            }
         }
 
         #region XAML IDs

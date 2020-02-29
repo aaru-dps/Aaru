@@ -34,14 +34,11 @@ using Aaru.Console;
 
 namespace Aaru
 {
-    static class Progress
+    internal static class Progress
     {
-        internal static void InitProgress() { }
+        internal static void InitProgress() {}
 
-        internal static void EndProgress()
-        {
-            AaruConsole.WriteLine();
-        }
+        internal static void EndProgress() => AaruConsole.WriteLine();
 
         internal static void UpdateProgress(string text, long current, long maximum)
         {
@@ -55,12 +52,9 @@ namespace Aaru
             AaruConsole.Write(text);
         }
 
-        internal static void InitProgress2() { }
+        internal static void InitProgress2() {}
 
-        internal static void EndProgress2()
-        {
-            AaruConsole.WriteLine();
-        }
+        internal static void EndProgress2() => AaruConsole.WriteLine();
 
         internal static void UpdateProgress2(string text, long current, long maximum)
         {
@@ -68,15 +62,12 @@ namespace Aaru
             AaruConsole.Write(text);
         }
 
-        internal static void InitTwoProgress() { }
+        internal static void InitTwoProgress() {}
 
-        internal static void EndTwoProgress()
-        {
-            AaruConsole.WriteLine();
-        }
+        internal static void EndTwoProgress() => AaruConsole.WriteLine();
 
         internal static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
-                                               long   maximum2)
+                                               long maximum2)
         {
             ClearCurrentConsoleLine();
             AaruConsole.Write(text + ": " + text2);
@@ -88,14 +79,9 @@ namespace Aaru
             AaruConsole.WriteLine(text);
         }
 
-        internal static void ErrorMessage(string text)
-        {
-            AaruConsole.ErrorWriteLine(text);
-        }
+        internal static void ErrorMessage(string text) => AaruConsole.ErrorWriteLine(text);
 
-        static void ClearCurrentConsoleLine()
-        {
+        static void ClearCurrentConsoleLine() =>
             System.Console.Write('\r' + new string(' ', System.Console.WindowWidth - 1) + '\r');
-        }
     }
 }

@@ -38,13 +38,25 @@ namespace Aaru.Tests.Devices
     [TestFixture]
     public class IomegaJaz
     {
-        readonly string[] testfiles = {"jaz1.bin.lz"};
+        readonly string[] testfiles =
+        {
+            "jaz1.bin.lz"
+        };
 
-        readonly MediaType[] mediatypes = {MediaType.Jaz};
+        readonly MediaType[] mediatypes =
+        {
+            MediaType.Jaz
+        };
 
-        readonly ulong[] sectors = {2091050};
+        readonly ulong[] sectors =
+        {
+            2091050
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
         [Test]
         public void Test()
@@ -55,9 +67,9 @@ namespace Aaru.Tests.Devices
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
             }
         }

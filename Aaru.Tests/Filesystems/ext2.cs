@@ -43,18 +43,30 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz",
-            "netbsd_7.1_r0.vdi.lz", "linux_4.19_ext2_flashdrive.vdi.lz", "linux_4.19_ext3_flashdrive.vdi.lz",
+            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz",
+            "linux_4.19_ext2_flashdrive.vdi.lz", "linux_4.19_ext3_flashdrive.vdi.lz",
             "linux_4.19_ext4_flashdrive.vdi.lz"
         };
 
-        readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152, 1024000, 1024000, 1024000};
+        readonly ulong[] sectors =
+        {
+            262144, 262144, 262144, 8388608, 2097152, 1024000, 1024000, 1024000
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512, 512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {130048, 130048, 130048, 1046567, 260135, 510976, 510976, 510976};
+        readonly long[] clusters =
+        {
+            130048, 130048, 130048, 1046567, 260135, 510976, 510976, 510976
+        };
 
-        readonly int[] clustersize = {1024, 1024, 1024, 4096, 4096, 1024, 1024, 1024};
+        readonly int[] clustersize =
+        {
+            1024, 1024, 1024, 4096, 4096, 1024, 1024, 1024
+        };
 
         readonly string[] volumename =
         {
@@ -70,7 +82,10 @@ namespace Aaru.Tests.Filesystems
             "a3914b55-260f-7245-8c72-7ccdf45436cb", "10413797-43d1-6545-8fbc-6ebc9d328be9"
         };
 
-        readonly string[] extversion = {"ext2", "ext3", "ext4", "ext2", "ext2", "ext2", "ext3", "ext4"};
+        readonly string[] extversion =
+        {
+            "ext2", "ext3", "ext4", "ext2", "ext2", "ext2", "ext3", "ext4"
+        };
 
         [Test]
         public void Test()
@@ -81,27 +96,29 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IPartition parts = new MBR();
                 Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), testfiles[i]);
                 IFilesystem fs   = new ext2FS();
                 int         part = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual(extversion[i],   fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual(extversion[i], fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }

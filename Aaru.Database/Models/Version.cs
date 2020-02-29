@@ -32,5 +32,5 @@
 
 namespace Aaru.Database.Models
 {
-    public class Version : NameCountModel<int> { }
+    public class Version : NameCountModel<int> {}
 }

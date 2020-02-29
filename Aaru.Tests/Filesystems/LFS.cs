@@ -34,26 +34,45 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class LfsMbr
     {
-        readonly string[] testfiles = {"netbsd_1.6.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "netbsd_1.6.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {409600};
+        readonly ulong[] sectors =
+        {
+            409600
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {409600};
+        readonly long[] clusters =
+        {
+            409600
+        };
 
-        readonly int[] clustersize = {512};
+        readonly int[] clustersize =
+        {
+            512
+        };
 
-        readonly string[] volumename = {null};
+        readonly string[] volumename =
+        {
+            null
+        };
 
-        readonly string[] volumeserial = {null};
+        readonly string[] volumeserial =
+        {
+            null
+        };
 
         [Test]
-        public void Test()
-        {
-            throw new NotImplementedException("LFS filesystem is not yet implemented");
+        public void Test() => throw new NotImplementedException("LFS filesystem is not yet implemented");
 
-            /*
+        /*
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hammer_mbr", testfiles[i]);
@@ -83,6 +102,5 @@ namespace Aaru.Tests.Filesystems
                 Assert.AreEqual(volumename[i], fs.XmlFSType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFSType.VolumeSerial, testfiles[i]);
             }*/
-        }
     }
 }

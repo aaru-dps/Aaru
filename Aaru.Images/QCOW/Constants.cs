@@ -34,9 +34,7 @@ namespace Aaru.DiscImages
 {
     public partial class Qcow
     {
-        /// <summary>
-        ///     Magic number: 'Q', 'F', 'I', 0xFB
-        /// </summary>
+        /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
         const uint QCOW_MAGIC = 0x514649FB;
         const uint  QCOW_VERSION         = 1;
         const uint  QCOW_ENCRYPTION_NONE = 0;

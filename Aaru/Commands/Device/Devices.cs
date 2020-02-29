@@ -67,11 +67,11 @@ namespace Aaru.Commands.Device
             AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
             AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
-            DeviceInfo[] devices = Aaru.Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                                   out string serverVersion,
-                                                                   out string serverOperatingSystem,
-                                                                   out string serverOperatingSystemVersion,
-                                                                   out string serverArchitecture, aaruRemoteHost);
+            DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
+                                                              out string serverVersion,
+                                                              out string serverOperatingSystem,
+                                                              out string serverOperatingSystemVersion,
+                                                              out string serverArchitecture, aaruRemoteHost);
 
             if(isRemote)
             {
@@ -91,33 +91,33 @@ namespace Aaru.Commands.Device
                 if(aaruRemoteHost is null)
                 {
                     AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                         "Serial", "Bus", "Supported?");
+                                          "Serial", "Bus", "Supported?");
 
                     AaruConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                         "----------------", "------------------------", "------------------------",
-                                         "----------", "----------");
+                                          "----------------", "------------------------", "------------------------",
+                                          "----------", "----------");
 
                     foreach(DeviceInfo dev in devices)
                         AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                                             dev.Model, dev.Serial, dev.Bus, dev.Supported);
+                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
                 }
                 else
                 {
                     AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                         "Serial", "Bus", "Supported?");
+                                          "Serial", "Bus", "Supported?");
 
                     AaruConsole.WriteLine("{0,-48}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
-                                         "------------------------------------------------", "----------------",
-                                         "------------------------", "------------------------", "----------",
-                                         "----------");
+                                          "------------------------------------------------", "----------------",
+                                          "------------------------", "------------------------", "----------",
+                                          "----------");
 
                     foreach(DeviceInfo dev in devices)
                         AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                                             dev.Model, dev.Serial, dev.Bus, dev.Supported);
+                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
                 }
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

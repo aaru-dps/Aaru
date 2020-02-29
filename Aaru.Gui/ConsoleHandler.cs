@@ -37,7 +37,7 @@ using Aaru.Console;
 
 namespace Aaru.Gui
 {
-    static class ConsoleHandler
+    internal static class ConsoleHandler
     {
         static bool _debug;
         static bool _verbose;
@@ -47,25 +47,32 @@ namespace Aaru.Gui
             get => _debug;
             set
             {
-                if(_debug == value) return;
+                if(_debug == value)
+                    return;
 
                 _debug = value;
 
-                if(_debug) AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
-                else AaruConsole.DebugWithModuleWriteLineEvent       -= OnDebugWriteHandler;
+                if(_debug)
+                    AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
+                else
+                    AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
             }
         }
+
         public static bool Verbose
         {
             get => _verbose;
             set
             {
-                if(_verbose == value) return;
+                if(_verbose == value)
+                    return;
 
                 _verbose = value;
 
-                if(_verbose) AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
-                else AaruConsole.VerboseWriteLineEvent         -= OnVerboseWriteHandler;
+                if(_verbose)
+                    AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
+                else
+                    AaruConsole.VerboseWriteLineEvent -= OnVerboseWriteHandler;
             }
         }
 
@@ -79,58 +86,54 @@ namespace Aaru.Gui
 
         static void OnWriteHandler(string format, params object[] arg)
         {
-            if(format == null || arg == null) return;
+            if(format == null ||
+               arg    == null)
+                return;
 
             Entries.Add(new LogEntry
             {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Info"
+                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Info"
             });
         }
 
         static void OnErrorWriteHandler(string format, params object[] arg)
         {
-            if(format == null || arg == null) return;
+            if(format == null ||
+               arg    == null)
+                return;
 
             Entries.Add(new LogEntry
             {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Error"
+                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Error"
             });
         }
 
         static void OnVerboseWriteHandler(string format, params object[] arg)
         {
-            if(format == null || arg == null) return;
+            if(format == null ||
+               arg    == null)
+                return;
 
             Entries.Add(new LogEntry
             {
-                Message   = string.Format(format, arg),
-                Module    = null,
-                Timestamp = DateTime.Now,
-                Type      = "Verbose"
+                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Verbose"
             });
         }
 
         static void OnDebugWriteHandler(string module, string format, params object[] arg)
         {
-            if(format == null || arg == null) return;
+            if(format == null ||
+               arg    == null)
+                return;
 
             Entries.Add(new LogEntry
             {
-                Message   = string.Format(format, arg),
-                Module    = module,
-                Timestamp = DateTime.Now,
-                Type      = "Debug"
+                Message = string.Format(format, arg), Module = module, Timestamp = DateTime.Now, Type = "Debug"
             });
         }
     }
 
-    class LogEntry
+    internal class LogEntry
     {
         public string   Message   { get; set; }
         public string   Module    { get; set; }

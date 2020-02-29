@@ -47,6 +47,7 @@ namespace Aaru.DiscImages
         public Guid      Id     => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
         public string    Format => "Compressed Hunks of Data";
         public string    Author => "Natalia Portillo";
+
         public List<Partition> Partitions
         {
             get
@@ -58,6 +59,7 @@ namespace Aaru.DiscImages
                 return partitions;
             }
         }
+
         public List<Track> Tracks
         {
             get
@@ -69,6 +71,7 @@ namespace Aaru.DiscImages
                 return tracks.Values.ToList();
             }
         }
+
         public List<Session> Sessions
         {
             get
@@ -80,6 +83,7 @@ namespace Aaru.DiscImages
                 throw new NotImplementedException();
             }
         }
+
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

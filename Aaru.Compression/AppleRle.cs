@@ -65,23 +65,29 @@ namespace Aaru.Compression
             if(repeatMode && count > 0)
             {
                 count--;
+
                 if(nextA)
                 {
                     nextA = false;
+
                     return repeatedbyteA;
                 }
 
                 nextA = true;
+
                 return repeatedbyteB;
             }
 
-            if(!repeatMode && count > 0)
+            if(!repeatMode &&
+               count > 0)
             {
                 count--;
+
                 return inStream.ReadByte();
             }
 
-            if(inStream.Position == inStream.Length) return -1;
+            if(inStream.Position == inStream.Length)
+                return -1;
 
             while(true)
             {
@@ -89,22 +95,28 @@ namespace Aaru.Compression
                 byte  b2 = (byte)inStream.ReadByte();
                 short s  = (short)((b1 << 8) | b2);
 
-                if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK) continue;
+                if(s == 0          ||
+                   s >= DART_CHUNK ||
+                   s <= -DART_CHUNK)
+                    continue;
 
                 if(s < 0)
                 {
                     repeatMode    = true;
                     repeatedbyteA = (byte)inStream.ReadByte();
                     repeatedbyteB = (byte)inStream.ReadByte();
-                    count         = -s * 2 - 1;
+                    count         = (-s * 2) - 1;
                     nextA         = false;
+
                     return repeatedbyteA;
                 }
 
-                if(s <= 0) continue;
+                if(s <= 0)
+                    continue;
 
                 repeatMode = false;
-                count      = s * 2 - 1;
+                count      = (s * 2) - 1;
+
                 return inStream.ReadByte();
             }
         }

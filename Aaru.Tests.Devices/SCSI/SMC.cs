@@ -33,38 +33,43 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices.SCSI
 {
-    static class Smc
+    internal static class Smc
     {
         internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send a SCSI Media Changer command to the device:");
-                DicConsole.WriteLine("1.- Send READ ATTRIBUTE command.");
-                DicConsole.WriteLine("0.- Return to SCSI commands menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send a SCSI Media Changer command to the device:");
+                AaruConsole.WriteLine("1.- Send READ ATTRIBUTE command.");
+                AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SCSI commands menu...");
+                        AaruConsole.WriteLine("Returning to SCSI commands menu...");
+
                         return;
                     case 1:
                         ReadAttribute(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }
@@ -83,108 +88,127 @@ namespace Aaru.Tests.Devices.SCSI
             int                 item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for READ ATTRIBUTE command:");
-                DicConsole.WriteLine("Action: {0}",          action);
-                DicConsole.WriteLine("Element: {0}",         element);
-                DicConsole.WriteLine("Element type: {0}",    elementType);
-                DicConsole.WriteLine("Volume: {0}",          volume);
-                DicConsole.WriteLine("Partition: {0}",       partition);
-                DicConsole.WriteLine("First attribute: {0}", firstAttribute);
-                DicConsole.WriteLine("Use cache?: {0}",      cache);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to SCSI Media Changer commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for READ ATTRIBUTE command:");
+                AaruConsole.WriteLine("Action: {0}", action);
+                AaruConsole.WriteLine("Element: {0}", element);
+                AaruConsole.WriteLine("Element type: {0}", elementType);
+                AaruConsole.WriteLine("Volume: {0}", volume);
+                AaruConsole.WriteLine("Partition: {0}", partition);
+                AaruConsole.WriteLine("First attribute: {0}", firstAttribute);
+                AaruConsole.WriteLine("Use cache?: {0}", cache);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to SCSI Media Changer commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to SCSI Media Changer commands menu...");
+                        AaruConsole.WriteLine("Returning to SCSI Media Changer commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.WriteLine("Attribute action");
-                        DicConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", ScsiAttributeAction.Values,
-                                             ScsiAttributeAction.List, ScsiAttributeAction.VolumeList,
-                                             ScsiAttributeAction.PartitionList, ScsiAttributeAction.ElementList,
-                                             ScsiAttributeAction.Supported);
-                        DicConsole.Write("Choose?: ");
+                        AaruConsole.WriteLine("Attribute action");
+
+                        AaruConsole.WriteLine("Available values: {0} {1} {2} {3} {4}", ScsiAttributeAction.Values,
+                                              ScsiAttributeAction.List, ScsiAttributeAction.VolumeList,
+                                              ScsiAttributeAction.PartitionList, ScsiAttributeAction.ElementList,
+                                              ScsiAttributeAction.Supported);
+
+                        AaruConsole.Write("Choose?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!Enum.TryParse(strDev, true, out action))
                         {
-                            DicConsole.WriteLine("Not a valid attribute action. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a valid attribute action. Press any key to continue...");
                             action = ScsiAttributeAction.Values;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Element?: ");
+                        AaruConsole.Write("Element?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!ushort.TryParse(strDev, out element))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             element = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Element type?: ");
+                        AaruConsole.Write("Element type?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out elementType))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             elementType = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Volume?: ");
+                        AaruConsole.Write("Volume?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out volume))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             volume = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Partition?: ");
+                        AaruConsole.Write("Partition?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out partition))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             partition = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("First attribute?: ");
+                        AaruConsole.Write("First attribute?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!ushort.TryParse(strDev, out firstAttribute))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             firstAttribute = 0;
                             System.Console.ReadKey();
+
                             continue;
                         }
 
-                        DicConsole.Write("Use cache?: ");
+                        AaruConsole.Write("Use cache?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!bool.TryParse(strDev, out cache))
                         {
-                            DicConsole.WriteLine("Not a boolean. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
                             cache = false;
                             System.Console.ReadKey();
                         }
@@ -196,78 +220,92 @@ namespace Aaru.Tests.Devices.SCSI
 
             start:
             System.Console.Clear();
+
             bool sense = dev.ReadAttribute(out byte[] buffer, out byte[] senseBuffer, action, element, elementType,
                                            volume, partition, firstAttribute, cache, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending READ ATTRIBUTE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",               duration);
-            DicConsole.WriteLine("Sense is {0}.",                      sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",               buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}",       ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine("Sense buffer is {0} bytes.",         senseBuffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Print sense buffer.");
-            DicConsole.WriteLine("3.- Decode sense buffer.");
-            DicConsole.WriteLine("4.- Send command again.");
-            DicConsole.WriteLine("5.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to SCSI Media Changer commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ ATTRIBUTE to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Print sense buffer.");
+            AaruConsole.WriteLine("3.- Decode sense buffer.");
+            AaruConsole.WriteLine("4.- Send command again.");
+            AaruConsole.WriteLine("5.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to SCSI Media Changer commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to SCSI Media Changer commands menu...");
+                    AaruConsole.WriteLine("Returning to SCSI Media Changer commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ ATTRIBUTE response:");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ ATTRIBUTE response:");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ ATTRIBUTE sense:");
-                    if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ ATTRIBUTE sense:");
+
+                    if(senseBuffer != null)
+                        PrintHex.PrintHexArray(senseBuffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ ATTRIBUTE decoded sense:");
-                    DicConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ ATTRIBUTE decoded sense:");
+                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 case 5: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }

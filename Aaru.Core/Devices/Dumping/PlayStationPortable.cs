@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -13,6 +12,7 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -622,8 +622,7 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application     = "Aaru", ApplicationVersion = Version.GetVersion(),
-                MediaPartNumber = mediaPartNumber
+                Application = "Aaru", ApplicationVersion = Version.GetVersion(), MediaPartNumber = mediaPartNumber
             };
 
             if(!_outputPlugin.SetMetadata(metadata))

@@ -50,7 +50,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 512) return false;
+            if(stream.Length < 512)
+                return false;
 
             byte[] buffer = new byte[stream.Length];
             stream.Read(buffer, 0, buffer.Length);
@@ -63,10 +64,12 @@ namespace Aaru.DiscImages
 
             int  spt            = 0;
             bool allTracksEqual = true;
+
             for(int i = 1; i < tracks.Count; i++)
                 allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
-            if(allTracksEqual) spt = tracks[0].sectors.Length;
+            if(allTracksEqual)
+                spt = tracks[0].sectors.Length;
 
             bool    skewed  = spt == 16;
             ulong[] skewing = proDosSkewing;
@@ -75,20 +78,26 @@ namespace Aaru.DiscImages
             if(skewed)
                 foreach(Apple2.RawSector sector in tracks[17].sectors)
                 {
-                    if(!sector.addressField.sector.SequenceEqual(new byte[] {170, 170})) continue;
+                    if(!sector.addressField.sector.SequenceEqual(new byte[]
+                    {
+                        170, 170
+                    }))
+                        continue;
 
                     byte[] sector0 = Apple2.DecodeSector(sector);
 
-                    if(sector0 == null) continue;
+                    if(sector0 == null)
+                        continue;
 
                     bool isDos = sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
                                  sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
                                  sector0[0x37] == 1;
 
-                    if(isDos) skewing = dosSkewing;
+                    if(isDos)
+                        skewing = dosSkewing;
 
                     AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
-                                              skewing.SequenceEqual(dosSkewing) ? "" : "Pro");
+                                               skewing.SequenceEqual(dosSkewing) ? "" : "Pro");
                 }
 
             for(int i = 0; i < tracks.Count; i++)
@@ -97,9 +106,11 @@ namespace Aaru.DiscImages
                     {
                         ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
                                                   (sector.addressField.sector[1] & 0x55)) & 0xFF);
+
                         AaruConsole.DebugWriteLine("Apple NIB Plugin",
-                                                  "Hardware sector {0} of track {1} goes to logical sector {2}",
-                                                  sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
+                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+
                         rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
                         imageInfo.Sectors++;
                     }
@@ -131,23 +142,31 @@ namespace Aaru.DiscImages
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            if(imageInfo.Sectors      == 455) imageInfo.MediaType = MediaType.Apple32SS;
-            else if(imageInfo.Sectors == 560) imageInfo.MediaType = MediaType.Apple33SS;
-            else imageInfo.MediaType                              = MediaType.Unknown;
+
+            if(imageInfo.Sectors == 455)
+                imageInfo.MediaType = MediaType.Apple32SS;
+            else if(imageInfo.Sectors == 560)
+                imageInfo.MediaType = MediaType.Apple33SS;
+            else
+                imageInfo.MediaType = MediaType.Unknown;
+
             imageInfo.SectorSize   = 256;
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
             imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+
             switch(imageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
                     imageInfo.Cylinders       = 35;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 13;
+
                     break;
                 case MediaType.Apple33SS:
                     imageInfo.Cylinders       = 35;
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 16;
+
                     break;
             }
 
@@ -161,6 +180,7 @@ namespace Aaru.DiscImages
                                                       $"Sector address {sectorAddress} not found");
 
             cookedSectors.TryGetValue(sectorAddress, out byte[] temp);
+
             return temp;
         }
 
@@ -173,7 +193,7 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
@@ -194,6 +214,7 @@ namespace Aaru.DiscImages
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
             addressFields.TryGetValue(sectorAddress, out byte[] temp);
+
             return temp;
         }
 
@@ -209,7 +230,7 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
@@ -227,6 +248,7 @@ namespace Aaru.DiscImages
                                                       $"Sector address {sectorAddress} not found");
 
             longSectors.TryGetValue(sectorAddress, out byte[] temp);
+
             return temp;
         }
 
@@ -239,7 +261,7 @@ namespace Aaru.DiscImages
             if(sectorAddress + length > imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {

@@ -41,28 +41,28 @@ namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
-        /// <summary>
-        ///     Solves a symbolic link.
-        /// </summary>
+        /// <summary>Solves a symbolic link.</summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
         public Errno ReadLink(string path, out string dest)
         {
             dest = null;
+
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
-        /// <summary>
-        ///     Lists contents from a directory.
-        /// </summary>
+        /// <summary>Lists contents from a directory.</summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(!string.IsNullOrEmpty(path) &&
+               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
             contents = catalogCache.Keys.ToList();
@@ -75,27 +75,32 @@ namespace Aaru.Filesystems.AppleDOS
             }
 
             contents.Sort();
+
             return Errno.NoError;
         }
 
         Errno ReadCatalog()
         {
-            MemoryStream catalogMs = new MemoryStream();
-            ulong        lba       = (ulong)(vtoc.catalogTrack * sectorsPerTrack + vtoc.catalogSector);
+            var   catalogMs = new MemoryStream();
+            ulong lba       = (ulong)((vtoc.catalogTrack * sectorsPerTrack) + vtoc.catalogSector);
             totalFileEntries = 0;
             catalogCache     = new Dictionary<string, ushort>();
             fileTypeCache    = new Dictionary<string, byte>();
             fileSizeCache    = new Dictionary<string, int>();
             lockedFiles      = new List<string>();
 
-            if(lba == 0 || lba > device.Info.Sectors) return Errno.InvalidArgument;
+            if(lba == 0 ||
+               lba > device.Info.Sectors)
+                return Errno.InvalidArgument;
 
             while(lba != 0)
             {
                 usedSectors++;
                 byte[] catSectorB = device.ReadSector(lba);
                 totalFileEntries += 7;
-                if(debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
+
+                if(debug)
+                    catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
                 CatalogSector catSector = Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
@@ -109,11 +114,13 @@ namespace Aaru.Filesystems.AppleDOS
                     ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
 
                     // Apple DOS has high byte set over ASCII.
-                    for(int i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
+                    for(int i = 0; i < 30; i++)
+                        filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
                     string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
 
-                    if(!catalogCache.ContainsKey(filename)) catalogCache.Add(filename, ts);
+                    if(!catalogCache.ContainsKey(filename))
+                        catalogCache.Add(filename, ts);
 
                     if(!fileTypeCache.ContainsKey(filename))
                         fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
@@ -121,16 +128,19 @@ namespace Aaru.Filesystems.AppleDOS
                     if(!fileSizeCache.ContainsKey(filename))
                         fileSizeCache.Add(filename, entry.length * vtoc.bytesPerSector);
 
-                    if((entry.typeAndFlags & 0x80) == 0x80 && !lockedFiles.Contains(filename))
+                    if((entry.typeAndFlags & 0x80) == 0x80 &&
+                       !lockedFiles.Contains(filename))
                         lockedFiles.Add(filename);
                 }
 
-                lba = (ulong)(catSector.trackOfNext * sectorsPerTrack + catSector.sectorOfNext);
+                lba = (ulong)((catSector.trackOfNext * sectorsPerTrack) + catSector.sectorOfNext);
 
-                if(lba > device.Info.Sectors) break;
+                if(lba > device.Info.Sectors)
+                    break;
             }
 
-            if(debug) catalogBlocks = catalogMs.ToArray();
+            if(debug)
+                catalogBlocks = catalogMs.ToArray();
 
             return Errno.NoError;
         }

@@ -53,18 +53,26 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
-            uint sbAddr            = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-            if(partition.Start + sbAddr + sbSize >= partition.End) return false;
+            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
+
+            if(partition.Start + sbAddr + sbSize >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>()) return false;
+
+            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>())
+                return false;
 
             NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
@@ -72,26 +80,35 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.UTF8;
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
 
-            uint sbAddr            = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
-            if(sbAddr == 0) sbAddr = 1;
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
+
+            uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
+
+            if(sbAddr == 0)
+                sbAddr = 1;
 
             uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>()) return;
+
+            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>())
+                return;
 
             NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
-            if(nilfsSb.magic != NILFS2_MAGIC) return;
+            if(nilfsSb.magic != NILFS2_MAGIC)
+                return;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("NILFS2 filesystem");
             sb.AppendFormat("Version {0}.{1}", nilfsSb.rev_level, nilfsSb.minor_rev_level).AppendLine();
@@ -99,39 +116,43 @@ namespace Aaru.Filesystems
             sb.AppendFormat("{0} bytes in volume", nilfsSb.dev_size).AppendLine();
             sb.AppendFormat("{0} blocks per segment", nilfsSb.blocks_per_segment).AppendLine();
             sb.AppendFormat("{0} segments", nilfsSb.nsegments).AppendLine();
-            if(nilfsSb.creator_os == 0) sb.AppendLine("Filesystem created on Linux");
-            else sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
+
+            if(nilfsSb.creator_os == 0)
+                sb.AppendLine("Filesystem created on Linux");
+            else
+                sb.AppendFormat("Creator OS code: {0}", nilfsSb.creator_os).AppendLine();
+
             sb.AppendFormat("{0} bytes per inode", nilfsSb.inode_size).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", nilfsSb.uuid).AppendLine();
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(nilfsSb.volume_name, Encoding)).AppendLine();
             sb.AppendFormat("Volume created on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).AppendLine();
-            sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime))
-              .AppendLine();
-            sb.AppendFormat("Volume last written on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime))
-              .AppendLine();
+
+            sb.AppendFormat("Volume last mounted on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).
+               AppendLine();
+
+            sb.AppendFormat("Volume last written on {0}", DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).
+               AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Type                      = "NILFS2 filesystem",
-                ClusterSize               = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
-                VolumeName                = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
-                VolumeSerial              = nilfsSb.uuid.ToString(),
-                CreationDate              = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
-                CreationDateSpecified     = true,
-                ModificationDate          = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime),
-                ModificationDateSpecified = true
+                Type             = "NILFS2 filesystem", ClusterSize = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
+                VolumeName       = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
+                VolumeSerial     = nilfsSb.uuid.ToString(),
+                CreationDate     = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime), CreationDateSpecified     = true,
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime), ModificationDateSpecified = true
             };
-            if(nilfsSb.creator_os == 0) XmlFsType.SystemIdentifier = "Linux";
+
+            if(nilfsSb.creator_os == 0)
+                XmlFsType.SystemIdentifier = "Linux";
+
             XmlFsType.Clusters = nilfsSb.dev_size / XmlFsType.ClusterSize;
         }
 
         enum NILFS2_State : ushort
         {
-            Valid  = 0x0001,
-            Error  = 0x0002,
-            Resize = 0x0004
+            Valid = 0x0001, Error = 0x0002, Resize = 0x0004
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -187,7 +187,7 @@ namespace Aaru.DiscImages
                             track.TrackDescription = Encoding.Default.GetString(textBlk, 0, bLen);
 
                             AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tTrack title = {0}",
-                                                      track.TrackDescription);
+                                                       track.TrackDescription);
                         }
                     }
 
@@ -206,8 +206,8 @@ namespace Aaru.DiscImages
                     track.TrackSequence =  BitConverter.ToUInt32(descriptor, position) + lastSessionTrack + 1;
 
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrack = {1} + {2} + 1 = {0}",
-                                              track.TrackSequence, BitConverter.ToUInt32(descriptor, position),
-                                              lastSessionTrack);
+                                               track.TrackSequence, BitConverter.ToUInt32(descriptor, position),
+                                               lastSessionTrack);
 
                     position               += 4;
                     track.TrackStartSector =  BitConverter.ToUInt32(descriptor, position);
@@ -559,7 +559,7 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.EndSector = {0}", session.EndSector);
 
                 AaruConsole.DebugWriteLine("DiscJuggler plugin", "session.SessionSequence = {0}",
-                                          session.SessionSequence);
+                                           session.SessionSequence);
             }
 
             // Skip unknown

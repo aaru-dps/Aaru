@@ -39,11 +39,9 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices.Linux
 {
-    static class Command
+    internal static class Command
     {
-        /// <summary>
-        ///     Sends a SCSI command
-        /// </summary>
+        /// <summary>Sends a SCSI command</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="cdb">SCSI CDB</param>
@@ -56,17 +54,17 @@ namespace Aaru.Devices.Linux
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
-        internal static int SendScsiCommand(int                fd,          byte[]     cdb, ref byte[] buffer,
-                                            out byte[]         senseBuffer, uint       timeout,
-                                            ScsiIoctlDirection direction,   out double duration, out bool sense)
+        internal static int SendScsiCommand(int fd, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+                                            ScsiIoctlDirection direction, out double duration, out bool sense)
         {
             senseBuffer = null;
             duration    = 0;
             sense       = false;
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
-            SgIoHdrT ioHdr = new SgIoHdrT();
+            var ioHdr = new SgIoHdrT();
 
             senseBuffer = new byte[32];
 
@@ -81,19 +79,20 @@ namespace Aaru.Devices.Linux
             ioHdr.timeout         = timeout * 1000;
             ioHdr.flags           = (uint)SgFlags.DirectIo;
 
-            Marshal.Copy(buffer,      0, ioHdr.dxferp, buffer.Length);
-            Marshal.Copy(cdb,         0, ioHdr.cmdp,   cdb.Length);
-            Marshal.Copy(senseBuffer, 0, ioHdr.sbp,    senseBuffer.Length);
+            Marshal.Copy(buffer, 0, ioHdr.dxferp, buffer.Length);
+            Marshal.Copy(cdb, 0, ioHdr.cmdp, cdb.Length);
+            Marshal.Copy(senseBuffer, 0, ioHdr.sbp, senseBuffer.Length);
 
             DateTime start = DateTime.UtcNow;
             int      error = Extern.ioctlSg(fd, LinuxIoctl.SgIo, ref ioHdr);
             DateTime end   = DateTime.UtcNow;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
-            Marshal.Copy(ioHdr.dxferp, buffer,      0, buffer.Length);
-            Marshal.Copy(ioHdr.cmdp,   cdb,         0, cdb.Length);
-            Marshal.Copy(ioHdr.sbp,    senseBuffer, 0, senseBuffer.Length);
+            Marshal.Copy(ioHdr.dxferp, buffer, 0, buffer.Length);
+            Marshal.Copy(ioHdr.cmdp, cdb, 0, cdb.Length);
+            Marshal.Copy(ioHdr.sbp, senseBuffer, 0, senseBuffer.Length);
 
             sense |= (ioHdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
@@ -106,9 +105,7 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
-        /// <summary>
-        ///     Converts ATA protocol to SG_IO direction
-        /// </summary>
+        /// <summary>Converts ATA protocol to SG_IO direction</summary>
         /// <param name="protocol">ATA protocol</param>
         /// <returns>SG_IO direction</returns>
         static ScsiIoctlDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
@@ -129,9 +126,7 @@ namespace Aaru.Devices.Linux
             }
         }
 
-        /// <summary>
-        ///     Sends an ATA command in CHS mode
-        /// </summary>
+        /// <summary>Sends an ATA command in CHS mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -143,36 +138,40 @@ namespace Aaru.Devices.Linux
         /// <param name="protocol">ATA protocol to use</param>
         /// <param name="transferRegister">Which register contains the transfer count</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-        internal static int SendAtaCommand(int                      fd, AtaRegistersChs registers,
-                                           out AtaErrorRegistersChs errorRegisters,
-                                           AtaProtocol              protocol, AtaTransferRegister transferRegister,
-                                           ref byte[]               buffer,   uint                timeout, bool transferBlocks,
-                                           out double               duration,
-                                           out bool                 sense)
+        internal static int SendAtaCommand(int fd, AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
+                                           AtaProtocol protocol, AtaTransferRegister transferRegister,
+                                           ref byte[] buffer, uint timeout, bool transferBlocks, out double duration,
+                                           out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersChs();
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
+
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
+               protocol         != AtaProtocol.NonData)
             {
                 switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
+
                         break;
                     default:
                         cdb[2] = 0x00;
+
                         break;
                 }
 
-                if(transferBlocks) cdb[2] |= 0x04;
+                if(transferBlocks)
+                    cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
@@ -187,11 +186,12 @@ namespace Aaru.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            int error = SendScsiCommand(fd,                                   cdb, ref buffer,
-                                        out byte[] senseBuffer,               timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
+            if(senseBuffer.Length < 22 ||
+               (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+                return error;
 
             errorRegisters.Error = senseBuffer[11];
 
@@ -207,9 +207,7 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 28-bit LBA mode
-        /// </summary>
+        /// <summary>Sends an ATA command in 28-bit LBA mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -221,36 +219,40 @@ namespace Aaru.Devices.Linux
         /// <param name="protocol">ATA protocol to use</param>
         /// <param name="transferRegister">Which register contains the transfer count</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-        internal static int SendAtaCommand(int                        fd,               AtaRegistersLba28 registers,
-                                           out AtaErrorRegistersLba28 errorRegisters,   AtaProtocol       protocol,
-                                           AtaTransferRegister        transferRegister, ref byte[]        buffer,
-                                           uint                       timeout,
-                                           bool                       transferBlocks, out double duration,
-                                           out bool                   sense)
+        internal static int SendAtaCommand(int fd, AtaRegistersLba28 registers,
+                                           out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersLba28();
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
-            if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
+
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
+               protocol         != AtaProtocol.NonData)
             {
                 switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
+
                         break;
                     default:
                         cdb[2] = 0x00;
+
                         break;
                 }
 
-                if(transferBlocks) cdb[2] |= 0x04;
+                if(transferBlocks)
+                    cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
@@ -265,11 +267,12 @@ namespace Aaru.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            int error = SendScsiCommand(fd,                                   cdb, ref buffer,
-                                        out byte[] senseBuffer,               timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
+            if(senseBuffer.Length < 22 ||
+               (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+                return error;
 
             errorRegisters.Error = senseBuffer[11];
 
@@ -285,9 +288,7 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
-        /// <summary>
-        ///     Sends an ATA command in 48-bit LBA mode
-        /// </summary>
+        /// <summary>Sends an ATA command in 48-bit LBA mode</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="fd">File handle</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -299,37 +300,41 @@ namespace Aaru.Devices.Linux
         /// <param name="protocol">ATA protocol to use</param>
         /// <param name="transferRegister">Which register contains the transfer count</param>
         /// <param name="transferBlocks">Set to <c>true</c> if the transfer count is in blocks, otherwise it is in bytes</param>
-        internal static int SendAtaCommand(int                        fd,               AtaRegistersLba48 registers,
-                                           out AtaErrorRegistersLba48 errorRegisters,   AtaProtocol       protocol,
-                                           AtaTransferRegister        transferRegister, ref byte[]        buffer,
-                                           uint                       timeout,
-                                           bool                       transferBlocks, out double duration,
-                                           out bool                   sense)
+        internal static int SendAtaCommand(int fd, AtaRegistersLba48 registers,
+                                           out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
+                                           AtaTransferRegister transferRegister, ref byte[] buffer, uint timeout,
+                                           bool transferBlocks, out double duration, out bool sense)
         {
             duration       = 0;
             sense          = false;
             errorRegisters = new AtaErrorRegistersLba48();
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
             byte[] cdb = new byte[16];
             cdb[0] =  (byte)ScsiCommands.AtaPassThrough16;
             cdb[1] =  (byte)(((byte)protocol << 1) & 0x1E);
             cdb[1] |= 0x01;
-            if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
+
+            if(transferRegister != AtaTransferRegister.NoTransfer &&
+               protocol         != AtaProtocol.NonData)
             {
                 switch(protocol)
                 {
                     case AtaProtocol.PioIn:
                     case AtaProtocol.UDmaIn:
                         cdb[2] = 0x08;
+
                         break;
                     default:
                         cdb[2] = 0x00;
+
                         break;
                 }
 
-                if(transferBlocks) cdb[2] |= 0x04;
+                if(transferBlocks)
+                    cdb[2] |= 0x04;
 
                 cdb[2] |= (byte)((int)transferRegister & 0x03);
             }
@@ -349,11 +354,12 @@ namespace Aaru.Devices.Linux
             cdb[13] = registers.DeviceHead;
             cdb[14] = registers.Command;
 
-            int error = SendScsiCommand(fd,                                   cdb, ref buffer,
-                                        out byte[] senseBuffer,               timeout,
+            int error = SendScsiCommand(fd, cdb, ref buffer, out byte[] senseBuffer, timeout,
                                         AtaProtocolToScsiDirection(protocol), out duration, out sense);
 
-            if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
+            if(senseBuffer.Length < 22 ||
+               (senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C))
+                return error;
 
             errorRegisters.Error = senseBuffer[11];
 
@@ -371,9 +377,7 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
-        /// <summary>
-        ///     Sends a MMC/SD command
-        /// </summary>
+        /// <summary>Sends a MMC/SD command</summary>
         /// <returns>The result of the command.</returns>
         /// <param name="fd">File handle</param>
         /// <param name="command">MMC/SD opcode</param>
@@ -388,20 +392,18 @@ namespace Aaru.Devices.Linux
         /// <param name="argument">Command argument</param>
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
-        internal static int SendMmcCommand(int        fd,            MmcCommands command, bool write,
-                                           bool       isApplication, MmcFlags    flags,
-                                           uint       argument,      uint        blockSize, uint blocks,
-                                           ref byte[] buffer,
-                                           out uint[] response, out double duration, out bool sense,
-                                           uint       timeout = 0)
+        internal static int SendMmcCommand(int fd, MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+                                           uint argument, uint blockSize, uint blocks, ref byte[] buffer,
+                                           out uint[] response, out double duration, out bool sense, uint timeout = 0)
         {
             response = null;
             duration = 0;
             sense    = false;
 
-            if(buffer == null) return -1;
+            if(buffer == null)
+                return -1;
 
-            MmcIocCmd ioCmd = new MmcIocCmd();
+            var ioCmd = new MmcIocCmd();
 
             IntPtr bufPtr = Marshal.AllocHGlobal(buffer.Length);
 
@@ -412,6 +414,7 @@ namespace Aaru.Devices.Linux
             ioCmd.flags      = flags;
             ioCmd.blksz      = blockSize;
             ioCmd.blocks     = blocks;
+
             if(timeout > 0)
             {
                 ioCmd.data_timeout_ns = timeout * 1000000000;
@@ -428,7 +431,8 @@ namespace Aaru.Devices.Linux
 
             sense |= error < 0;
 
-            if(error < 0) error = Marshal.GetLastWin32Error();
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
 
@@ -440,9 +444,7 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
-        /// <summary>
-        ///     Reads the contents of a symbolic link
-        /// </summary>
+        /// <summary>Reads the contents of a symbolic link</summary>
         /// <param name="path">Path to the symbolic link</param>
         /// <returns>Contents of the symbolic link</returns>
         internal static string ReadLink(string path)
@@ -453,14 +455,18 @@ namespace Aaru.Devices.Linux
             if(DetectOS.Is64Bit)
             {
                 long result64 = Extern.readlink64(path, buf, 4096);
-                if(result64 <= 0) return null;
+
+                if(result64 <= 0)
+                    return null;
 
                 resultSize = (int)result64;
             }
             else
             {
                 int result = Extern.readlink(path, buf, 4096);
-                if(result <= 0) return null;
+
+                if(result <= 0)
+                    return null;
 
                 resultSize = result;
             }
@@ -468,6 +474,7 @@ namespace Aaru.Devices.Linux
             byte[] resultString = new byte[resultSize];
             Marshal.Copy(buf, resultString, 0, resultSize);
             Marshal.FreeHGlobal(buf);
+
             return Encoding.ASCII.GetString(resultString);
         }
     }

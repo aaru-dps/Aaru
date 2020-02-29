@@ -61,14 +61,14 @@ namespace Aaru.Core
         /// <summary>Loads saved statistics from disk</summary>
         public static void LoadStats()
         {
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            if(File.Exists(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml")))
+            if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
                 try
                 {
                     var allStats = new Stats();
                     var xs       = new XmlSerializer(allStats.GetType());
-                    var sr       = new StreamReader(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml"));
+                    var sr       = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                     allStats = (Stats)xs.Deserialize(sr);
                     sr.Close();
 
@@ -467,9 +467,9 @@ namespace Aaru.Core
                             if(string.IsNullOrWhiteSpace(media.type))
                                 continue;
 
-                            Aaru.Database.Models.Media existing =
+                            Database.Models.Media existing =
                                 ctx.Medias.FirstOrDefault(c => c.Type == media.type && c.Real == media.real &&
-                                                               c.Synchronized) ?? new Aaru.Database.Models.Media
+                                                               c.Synchronized) ?? new Database.Models.Media
                                 {
                                     Type = media.type, Real = media.real, Synchronized = true
                                 };
@@ -479,14 +479,14 @@ namespace Aaru.Core
                         }
 
                     ctx.SaveChanges();
-                    File.Delete(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml"));
+                    File.Delete(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 }
                 catch
                 {
                     // Do not care about it
                 }
 
-            if(Aaru.Settings.Settings.Current.Stats == null)
+            if(Settings.Settings.Current.Stats == null)
                 return;
 
             ctx.OperatingSystems.Add(new OperatingSystem
@@ -506,11 +506,11 @@ namespace Aaru.Core
         /// <summary>Saves statistics to disk</summary>
         public static void SaveStats()
         {
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
             ctx.SaveChanges();
 
-            if(Aaru.Settings.Settings.Current.Stats != null &&
-               Aaru.Settings.Settings.Current.Stats.ShareStats)
+            if(Settings.Settings.Current.Stats != null &&
+               Settings.Settings.Current.Stats.ShareStats)
                 SubmitStats();
         }
 
@@ -519,7 +519,7 @@ namespace Aaru.Core
         {
             var submitThread = new Thread(() =>
             {
-                var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
                 try
                 {
@@ -746,8 +746,7 @@ namespace Aaru.Core
                         byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
                         var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
 
-                        ((HttpWebRequest)request).UserAgent =
-                            $"Aaru {typeof(Version).Assembly.GetName().Version}";
+                        ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
 
                         request.Method        = "POST";
                         request.ContentLength = jsonBytes.Length;
@@ -880,9 +879,9 @@ namespace Aaru.Core
                             {
                                 if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
                                 {
-                                    Aaru.Database.Models.Media existing =
+                                    Database.Models.Media existing =
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
-                                        new Aaru.Database.Models.Media
+                                        new Database.Models.Media
                                         {
                                             Synchronized = true, Type = media, Real = true
                                         };
@@ -900,9 +899,9 @@ namespace Aaru.Core
                                     continue;
 
                                 {
-                                    Aaru.Database.Models.Media existing =
+                                    Database.Models.Media existing =
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
-                                        new Aaru.Database.Models.Media
+                                        new Database.Models.Media
                                         {
                                             Synchronized = true, Type = media, Real = false
                                         };
@@ -1073,7 +1072,7 @@ namespace Aaru.Core
                 }
 
                 IEnumerable<string> statsFiles =
-                    Directory.EnumerateFiles(Aaru.Settings.Settings.StatsPath, "PartialStats_*.xml",
+                    Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
                                              SearchOption.TopDirectoryOnly);
 
                 foreach(string statsFile in statsFiles)
@@ -1153,11 +1152,11 @@ namespace Aaru.Core
             if(string.IsNullOrWhiteSpace(command))
                 return;
 
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.DeviceStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.DeviceStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.Commands.Add(new Command
             {
@@ -1174,11 +1173,11 @@ namespace Aaru.Core
             if(string.IsNullOrWhiteSpace(filesystem))
                 return;
 
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.FilesystemStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.FilesystemStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.Filesystems.Add(new Filesystem
             {
@@ -1195,11 +1194,11 @@ namespace Aaru.Core
             if(string.IsNullOrWhiteSpace(partition))
                 return;
 
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.PartitionStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.PartitionStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.Partitions.Add(new Partition
             {
@@ -1216,11 +1215,11 @@ namespace Aaru.Core
             if(string.IsNullOrWhiteSpace(filter))
                 return;
 
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.FilterStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.FilterStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.Filters.Add(new Filter
             {
@@ -1237,11 +1236,11 @@ namespace Aaru.Core
             if(string.IsNullOrWhiteSpace(format))
                 return;
 
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.MediaImageStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.MediaImageStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.MediaFormats.Add(new MediaFormat
             {
@@ -1255,8 +1254,8 @@ namespace Aaru.Core
         /// <param name="dev">Device</param>
         public static void AddDevice(Device dev)
         {
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.DeviceStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.DeviceStats)
                 return;
 
             string deviceBus;
@@ -1268,7 +1267,7 @@ namespace Aaru.Core
             else
                 deviceBus = dev.Type.ToString();
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.SeenDevices.Add(new DeviceStat
             {
@@ -1285,13 +1284,13 @@ namespace Aaru.Core
         /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
         public static void AddMedia(MediaType type, bool real)
         {
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.MediaStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            ctx.Medias.Add(new Aaru.Database.Models.Media
+            ctx.Medias.Add(new Database.Models.Media
             {
                 Real = real, Synchronized = false, Type = type.ToString(), Count = 1
             });
@@ -1303,11 +1302,11 @@ namespace Aaru.Core
         public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
                                      string serverOperatingSystemVersion, string serverArchitecture)
         {
-            if(Aaru.Settings.Settings.Current.Stats == null ||
-               !Aaru.Settings.Settings.Current.Stats.MediaStats)
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             ctx.RemoteApplications.Add(new RemoteApplication
             {

@@ -37,6 +37,7 @@ namespace Aaru.Core.Devices.Scanning
         ScanResults Nvme()
         {
             StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+
             return default;
         }
     }

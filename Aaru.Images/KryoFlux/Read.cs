@@ -49,7 +49,9 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf<OobBlock>()) return false;
+
+            if(stream.Length < Marshal.SizeOf<OobBlock>())
+                return false;
 
             byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
             stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
@@ -63,25 +65,29 @@ namespace Aaru.DiscImages
 
             OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-            if(header.blockId != BlockIds.Oob || header.blockType != OobTypes.KFInfo ||
-               footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF    ||
-               footer.length  != 0x0D0D) return false;
+            if(header.blockId   != BlockIds.Oob    ||
+               header.blockType != OobTypes.KFInfo ||
+               footer.blockId   != BlockIds.Oob    ||
+               footer.blockType != OobTypes.EOF    ||
+               footer.length    != 0x0D0D)
+                return false;
 
             // TODO: This is supposing NoFilter, shouldn't
             tracks = new SortedDictionary<byte, IFilter>();
             byte step    = 1;
             byte heads   = 2;
             bool topHead = false;
+
             string basename = Path.Combine(imageFilter.GetParentFolder(),
-                                           imageFilter.GetFilename()
-                                                      .Substring(0, imageFilter.GetFilename().Length - 8));
+                                           imageFilter.
+                                               GetFilename().Substring(0, imageFilter.GetFilename().Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {
                 int cylinder = t / heads;
                 int head     = topHead ? 1 : t % heads;
-                string trackfile = Directory.Exists(basename)
-                                       ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
+
+                string trackfile = Directory.Exists(basename) ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
                                        : $"{basename}{cylinder:D2}.{head:D1}.raw";
 
                 if(!File.Exists(trackfile))
@@ -90,40 +96,50 @@ namespace Aaru.DiscImages
                         if(head == 0)
                         {
                             AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                      "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+                                                       "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+
                             topHead = true;
                             heads   = 1;
+
                             continue;
                         }
 
                         AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                  "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+                                                   "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+
                         heads = 1;
+
                         continue;
                     }
                     else if(cylinder == 1)
                     {
                         AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
                         step = 2;
+
                         continue;
                     }
                     else
                     {
                         AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+
                         break;
                     }
 
-                ZZZNoFilter trackFilter = new ZZZNoFilter();
+                var trackFilter = new ZZZNoFilter();
                 trackFilter.Open(trackfile);
-                if(!trackFilter.IsOpened()) throw new IOException("Could not open KryoFlux track file.");
+
+                if(!trackFilter.IsOpened())
+                    throw new IOException("Could not open KryoFlux track file.");
 
                 imageInfo.CreationTime         = DateTime.MaxValue;
                 imageInfo.LastModificationTime = DateTime.MinValue;
 
                 Stream trackStream = trackFilter.GetDataForkStream();
+
                 while(trackStream.Position < trackStream.Length)
                 {
                     byte blockId = (byte)trackStream.ReadByte();
+
                     switch(blockId)
                     {
                         case (byte)BlockIds.Oob:
@@ -138,19 +154,25 @@ namespace Aaru.DiscImages
                             if(oobBlk.blockType == OobTypes.EOF)
                             {
                                 trackStream.Position = trackStream.Length;
+
                                 break;
                             }
 
                             if(oobBlk.blockType != OobTypes.KFInfo)
                             {
                                 trackStream.Position += oobBlk.length;
+
                                 break;
                             }
 
                             byte[] kfinfo = new byte[oobBlk.length];
                             trackStream.Read(kfinfo, 0, oobBlk.length);
-                            string   kfinfoStr = StringHandlers.CToString(kfinfo);
-                            string[] lines     = kfinfoStr.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                            string kfinfoStr = StringHandlers.CToString(kfinfo);
+
+                            string[] lines = kfinfoStr.Split(new[]
+                            {
+                                ','
+                            }, StringSplitOptions.RemoveEmptyEntries);
 
                             DateTime blockDate = DateTime.Now;
                             DateTime blockTime = DateTime.Now;
@@ -168,27 +190,34 @@ namespace Aaru.DiscImages
                                         if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
                                                                   DateTimeStyles.AssumeLocal, out blockDate))
                                             foundDate = true;
+
                                         break;
                                     case hostTime:
                                         DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                                DateTimeStyles.AssumeLocal, out blockTime);
+
                                         break;
                                     case kfName:
                                         imageInfo.Application = kvp[1];
+
                                         break;
                                     case kfVersion:
                                         imageInfo.ApplicationVersion = kvp[1];
+
                                         break;
                                 }
                             }
 
                             if(foundDate)
                             {
-                                DateTime blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
-                                                                       blockTime.Hour, blockTime.Minute,
-                                                                       blockTime.Second);
+                                var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
+                                                                  blockTime.Hour, blockTime.Minute, blockTime.Second);
+
                                 AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
-                                if(blockTimestamp < Info.CreationTime) imageInfo.CreationTime = blockTimestamp;
+
+                                if(blockTimestamp < Info.CreationTime)
+                                    imageInfo.CreationTime = blockTimestamp;
+
                                 if(blockTimestamp > Info.LastModificationTime)
                                     imageInfo.LastModificationTime = blockTimestamp;
                             }
@@ -205,10 +234,12 @@ namespace Aaru.DiscImages
                         case (byte)BlockIds.Flux2_7:
                         case (byte)BlockIds.Nop2:
                             trackStream.Position++;
+
                             continue;
                         case (byte)BlockIds.Nop3:
                         case (byte)BlockIds.Flux3:
                             trackStream.Position += 2;
+
                             continue;
                         default: continue;
                     }

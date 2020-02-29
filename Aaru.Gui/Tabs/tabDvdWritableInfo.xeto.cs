@@ -58,18 +58,13 @@ namespace Aaru.Gui.Tabs
         byte[] hddvdrLastRmd;
         byte[] hddvdrMediumStatus;
 
-        public tabDvdWritableInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabDvdWritableInfo() => XamlReader.Load(this);
 
-        internal void LoadData(MediaType mediaType, byte[] dds, byte[] cartridgeStatus,
-                               byte[]    spareArea,
-                               byte[]    lastBorderOutRmd,    byte[] preRecordedInfo, byte[] mediaIdentifier,
-                               byte[]    physicalInformation, byte[] mediumStatus,    byte[] hdLastRmd,
-                               byte[]    layerCapacity,
-                               byte[]    middleZoneStart,  byte[] jumpIntervalSize, byte[] manualLayerJumpStartLba,
-                               byte[]    remapAnchorPoint, byte[] adip,             byte[] dcb)
+        internal void LoadData(MediaType mediaType, byte[] dds, byte[] cartridgeStatus, byte[] spareArea,
+                               byte[] lastBorderOutRmd, byte[] preRecordedInfo, byte[] mediaIdentifier,
+                               byte[] physicalInformation, byte[] mediumStatus, byte[] hdLastRmd, byte[] layerCapacity,
+                               byte[] middleZoneStart, byte[] jumpIntervalSize, byte[] manualLayerJumpStartLba,
+                               byte[] remapAnchorPoint, byte[] adip, byte[] dcb)
         {
             dvdRamDds                     = dds;
             dvdRamCartridgeStatus         = cartridgeStatus;
@@ -87,49 +82,64 @@ namespace Aaru.Gui.Tabs
             dvdrDlRemapAnchorPoint        = remapAnchorPoint;
             dvdPlusAdip                   = adip;
             dvdPlusDcb                    = dcb;
+
             switch(mediaType)
             {
                 case MediaType.DVDR:
                     Text = "DVD-R";
+
                     break;
                 case MediaType.DVDRW:
                     Text = "DVD-RW";
+
                     break;
                 case MediaType.DVDPR:
                     Text = "DVD+R";
+
                     break;
                 case MediaType.DVDPRW:
                     Text = "DVD+RW";
+
                     break;
                 case MediaType.DVDPRWDL:
                     Text = "DVD+RW DL";
+
                     break;
                 case MediaType.DVDRDL:
                     Text = "DVD-R DL";
+
                     break;
                 case MediaType.DVDPRDL:
                     Text = "DVD+R DL";
+
                     break;
                 case MediaType.DVDRAM:
                     Text = "DVD-RAM";
+
                     break;
                 case MediaType.DVDRWDL:
                     Text = "DVD-RW DL";
+
                     break;
                 case MediaType.HDDVDRAM:
                     Text = "HD DVD-RAM";
+
                     break;
                 case MediaType.HDDVDR:
                     Text = "HD DVD-R";
+
                     break;
                 case MediaType.HDDVDRW:
                     Text = "HD DVD-RW";
+
                     break;
                 case MediaType.HDDVDRDL:
                     Text = "HD DVD-R DL";
+
                     break;
                 case MediaType.HDDVDRWDL:
                     Text = "HD DVD-RW DL";
+
                     break;
             }
 
@@ -185,97 +195,67 @@ namespace Aaru.Gui.Tabs
 
         void SaveElement(byte[] data)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(data, 0, data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveDvdRamDdsClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdRamDds);
-        }
+        protected void OnBtnSaveDvdRamDdsClick(object sender, EventArgs e) => SaveElement(dvdRamDds);
 
-        protected void OnBtnSaveDvdRamCartridgeStatusClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdRamCartridgeStatusClick(object sender, EventArgs e) =>
             SaveElement(dvdRamCartridgeStatus);
-        }
 
-        protected void OnBtnSaveDvdRamSpareAreaInformationClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdRamSpareAreaInformationClick(object sender, EventArgs e) =>
             SaveElement(dvdRamSpareArea);
-        }
 
-        protected void OnBtnSaveLastBorderOutRmdClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdLastBorderOutRmd);
-        }
+        protected void OnBtnSaveLastBorderOutRmdClick(object sender, EventArgs e) => SaveElement(dvdLastBorderOutRmd);
 
-        protected void OnBtnSaveDvdPreRecordedInfoClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdPreRecordedInfo);
-        }
+        protected void OnBtnSaveDvdPreRecordedInfoClick(object sender, EventArgs e) => SaveElement(dvdPreRecordedInfo);
 
-        protected void OnBtnSaveDvdrMediaIdentifierClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrMediaIdentifierClick(object sender, EventArgs e) =>
             SaveElement(dvdrMediaIdentifier);
-        }
 
-        protected void OnBtnSaveDvdrPhysicalInformationClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrPhysicalInformationClick(object sender, EventArgs e) =>
             SaveElement(dvdrPhysicalInformation);
-        }
 
-        protected void OnBtnSaveHddvdrMediumStatusClick(object sender, EventArgs e)
-        {
-            SaveElement(hddvdrMediumStatus);
-        }
+        protected void OnBtnSaveHddvdrMediumStatusClick(object sender, EventArgs e) => SaveElement(hddvdrMediumStatus);
 
-        protected void OnBtnSaveHddvdrLastRmdClick(object sender, EventArgs e)
-        {
-            SaveElement(hddvdrLastRmd);
-        }
+        protected void OnBtnSaveHddvdrLastRmdClick(object sender, EventArgs e) => SaveElement(hddvdrLastRmd);
 
-        protected void OnBtnSaveDvdrLayerCapacityClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdrLayerCapacity);
-        }
+        protected void OnBtnSaveDvdrLayerCapacityClick(object sender, EventArgs e) => SaveElement(dvdrLayerCapacity);
 
-        protected void OnBtnSaveDvdrDlMiddleZoneStartClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrDlMiddleZoneStartClick(object sender, EventArgs e) =>
             SaveElement(dvdrDlMiddleZoneStart);
-        }
 
-        protected void OnBtnSaveDvdrDlJumpIntervalSizeClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrDlJumpIntervalSizeClick(object sender, EventArgs e) =>
             SaveElement(dvdrDlJumpIntervalSize);
-        }
 
-        protected void OnBtnSaveDvdrDlManualLayerJumpStartLbaClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrDlManualLayerJumpStartLbaClick(object sender, EventArgs e) =>
             SaveElement(dvdrDlManualLayerJumpStartLba);
-        }
 
-        protected void OnBtnSaveDvdrDlRemapAnchorPointClick(object sender, EventArgs e)
-        {
+        protected void OnBtnSaveDvdrDlRemapAnchorPointClick(object sender, EventArgs e) =>
             SaveElement(dvdrDlRemapAnchorPoint);
-        }
 
-        protected void OnBtnSaveDvdPlusAdipClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdPlusAdip);
-        }
+        protected void OnBtnSaveDvdPlusAdipClick(object sender, EventArgs e) => SaveElement(dvdPlusAdip);
 
-        protected void OnBtnSaveDvdPlusDcbClick(object sender, EventArgs e)
-        {
-            SaveElement(dvdPlusDcb);
-        }
+        protected void OnBtnSaveDvdPlusDcbClick(object sender, EventArgs e) => SaveElement(dvdPlusDcb);
 
         #region XAML controls
         #pragma warning disable 169

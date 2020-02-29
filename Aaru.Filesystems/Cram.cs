@@ -42,9 +42,7 @@ namespace Aaru.Filesystems
 {
     public class Cram : IFilesystem
     {
-        /// <summary>
-        ///     Identifier for Cram
-        /// </summary>
+        /// <summary>Identifier for Cram</summary>
         const uint CRAM_MAGIC = 0x28CD3D45;
         const uint CRAM_CIGAM = 0x453DCD28;
 
@@ -56,7 +54,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start >= partition.End) return false;
+            if(partition.Start >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
@@ -66,27 +65,29 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-15");
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            CramSuperBlock crSb         = new CramSuperBlock();
-            bool           littleEndian = true;
+            var  crSb         = new CramSuperBlock();
+            bool littleEndian = true;
 
             switch(magic)
             {
                 case CRAM_MAGIC:
                     crSb = Marshal.ByteArrayToStructureLittleEndian<CramSuperBlock>(sector);
+
                     break;
                 case CRAM_CIGAM:
                     crSb         = Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
                     littleEndian = false;
+
                     break;
             }
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Cram file system");
             sbInformation.AppendLine(littleEndian ? "Little-endian" : "Big-endian");
@@ -100,40 +101,34 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                VolumeName            = StringHandlers.CToString(crSb.name, Encoding),
-                Type                  = "Cram file system",
-                Clusters              = crSb.blocks,
-                Files                 = crSb.files,
-                FilesSpecified        = true,
-                FreeClusters          = 0,
+                VolumeName            = StringHandlers.CToString(crSb.name, Encoding), Type = "Cram file system",
+                Clusters              = crSb.blocks, Files                                  = crSb.files,
+                FilesSpecified        = true, FreeClusters                                  = 0,
                 FreeClustersSpecified = true
             };
         }
 
         enum CramCompression : ushort
         {
-            Zlib = 1,
-            Lzma = 2,
-            Lzo  = 3,
-            Xz   = 4,
-            Lz4  = 5
+            Zlib = 1, Lzma = 2, Lzo = 3,
+            Xz   = 4, Lz4  = 5
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CramSuperBlock
         {
-            public uint magic;
-            public uint size;
-            public uint flags;
-            public uint future;
+            public readonly uint magic;
+            public readonly uint size;
+            public readonly uint flags;
+            public readonly uint future;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] signature;
-            public uint crc;
-            public uint edition;
-            public uint blocks;
-            public uint files;
+            public readonly byte[] signature;
+            public readonly uint crc;
+            public readonly uint edition;
+            public readonly uint blocks;
+            public readonly uint files;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            public readonly byte[] name;
         }
     }
 }

@@ -39,9 +39,9 @@ namespace Aaru.DiscImages
     {
         static uint Decompress(byte[] compressed, out byte[] decompressed)
         {
-            int          readp  = 0;
-            int          cLen   = compressed.Length;
-            MemoryStream buffer = new MemoryStream();
+            int readp  = 0;
+            int cLen   = compressed.Length;
+            var buffer = new MemoryStream();
 
             uint uLen = 0;
 
@@ -50,7 +50,8 @@ namespace Aaru.DiscImages
                 ushort blklen = BitConverter.ToUInt16(compressed, readp);
                 readp += 2;
 
-                for(int i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
+                for(int i = 0; i < blklen; i++)
+                    buffer.WriteByte(compressed[readp]);
 
                 uLen += blklen;
                 readp++;
@@ -58,6 +59,7 @@ namespace Aaru.DiscImages
             }
 
             decompressed = buffer.ToArray();
+
             return uLen;
         }
     }

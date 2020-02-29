@@ -32,66 +32,78 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices.ATA
 {
-    static class Smart
+    internal static class Smart
     {
         internal static void Menu(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send a S.M.A.R.T. command to the device:");
-                DicConsole.WriteLine("1.- Send DISABLE ATTRIBUTE AUTOSAVE command.");
-                DicConsole.WriteLine("2.- Send DISABLE OPERATIONS command.");
-                DicConsole.WriteLine("3.- Send ENABLE ATTRIBUTE AUTOSAVE command.");
-                DicConsole.WriteLine("4.- Send ENABLE OPERATIONS command.");
-                DicConsole.WriteLine("5.- Send EXECUTE OFF-LINE IMMEDIATE command.");
-                DicConsole.WriteLine("6.- Send READ DATA command.");
-                DicConsole.WriteLine("7.- Send READ LOG command.");
-                DicConsole.WriteLine("8.- Send RETURN STATUS command.");
-                DicConsole.WriteLine("0.- Return to ATA commands menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send a S.M.A.R.T. command to the device:");
+                AaruConsole.WriteLine("1.- Send DISABLE ATTRIBUTE AUTOSAVE command.");
+                AaruConsole.WriteLine("2.- Send DISABLE OPERATIONS command.");
+                AaruConsole.WriteLine("3.- Send ENABLE ATTRIBUTE AUTOSAVE command.");
+                AaruConsole.WriteLine("4.- Send ENABLE OPERATIONS command.");
+                AaruConsole.WriteLine("5.- Send EXECUTE OFF-LINE IMMEDIATE command.");
+                AaruConsole.WriteLine("6.- Send READ DATA command.");
+                AaruConsole.WriteLine("7.- Send READ LOG command.");
+                AaruConsole.WriteLine("8.- Send RETURN STATUS command.");
+                AaruConsole.WriteLine("0.- Return to ATA commands menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to ATA commands menu...");
+                        AaruConsole.WriteLine("Returning to ATA commands menu...");
+
                         return;
                     case 1:
                         DisableAttributeAutosave(devPath, dev);
+
                         continue;
                     case 2:
                         DisableOperations(devPath, dev);
+
                         continue;
                     case 3:
                         EnableAttributeAutosave(devPath, dev);
+
                         continue;
                     case 4:
                         EnableOperations(devPath, dev);
+
                         continue;
                     case 5:
                         ExecuteOfflineImmediate(devPath, dev);
+
                         continue;
                     case 6:
                         ReadData(devPath, dev);
+
                         continue;
                     case 7:
                         ReadLog(devPath, dev);
+
                         continue;
                     case 8:
                         ReturnStatus(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }
@@ -101,42 +113,47 @@ namespace Aaru.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
+
             bool sense =
                 dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                   out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending DISABLE ATTRIBUTE AUTOSAVE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("DISABLE ATTRIBUTE AUTOSAVE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending DISABLE ATTRIBUTE AUTOSAVE to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("DISABLE ATTRIBUTE AUTOSAVE status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -148,37 +165,41 @@ namespace Aaru.Tests.Devices.ATA
             bool sense = dev.SmartDisable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending DISABLE OPERATIONS to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("DISABLE OPERATIONS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending DISABLE OPERATIONS to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("DISABLE OPERATIONS status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -187,42 +208,47 @@ namespace Aaru.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
+
             bool sense =
                 dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                  out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending ENABLE ATTRIBUTE AUTOSAVE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("ENABLE ATTRIBUTE AUTOSAVE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending ENABLE ATTRIBUTE AUTOSAVE to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("ENABLE ATTRIBUTE AUTOSAVE status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -234,37 +260,41 @@ namespace Aaru.Tests.Devices.ATA
             bool sense = dev.SmartEnable(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending ENABLE OPERATIONS to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("ENABLE OPERATIONS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending ENABLE OPERATIONS to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("ENABLE OPERATIONS status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -276,37 +306,42 @@ namespace Aaru.Tests.Devices.ATA
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for EXECUTE OFF-LINE IMMEDIATE command:");
-                DicConsole.WriteLine("Subcommand: {0}", subcommand);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for EXECUTE OFF-LINE IMMEDIATE command:");
+                AaruConsole.WriteLine("Subcommand: {0}", subcommand);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                        AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("Subcommand?: ");
+                        AaruConsole.Write("Subcommand?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out subcommand))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             subcommand = 0;
                             System.Console.ReadKey();
                         }
@@ -318,43 +353,48 @@ namespace Aaru.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
+
             bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 errorRegisters, subcommand,
                                                           dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending EXECUTE OFF-LINE IMMEDIATE to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("EXECUTE OFF-LINE IMMEDIATE status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("2.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending EXECUTE OFF-LINE IMMEDIATE to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("EXECUTE OFF-LINE IMMEDIATE status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("2.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to Media Card Pass Through commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 case 2: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -363,63 +403,73 @@ namespace Aaru.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
+
             bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                            out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending READ DATA to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",         duration);
-            DicConsole.WriteLine("Sense is {0}.",                sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode error registers.");
-            DicConsole.WriteLine("3.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ DATA to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Decode error registers.");
+            AaruConsole.WriteLine("3.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ DATA response:");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ DATA response:");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ DATA status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ DATA status registers:");
+                    AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 4: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -431,37 +481,42 @@ namespace Aaru.Tests.Devices.ATA
             int    item;
 
             parameters:
+
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Parameters for READ LOG command:");
-                DicConsole.WriteLine("Log address: {0}", address);
-                DicConsole.WriteLine();
-                DicConsole.WriteLine("Choose what to do:");
-                DicConsole.WriteLine("1.- Change parameters.");
-                DicConsole.WriteLine("2.- Send command with these parameters.");
-                DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Parameters for READ LOG command:");
+                AaruConsole.WriteLine("Log address: {0}", address);
+                AaruConsole.WriteLine();
+                AaruConsole.WriteLine("Choose what to do:");
+                AaruConsole.WriteLine("1.- Change parameters.");
+                AaruConsole.WriteLine("2.- Send command with these parameters.");
+                AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
 
                 strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                        AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                         return;
                     case 1:
-                        DicConsole.Write("Log address?: ");
+                        AaruConsole.Write("Log address?: ");
                         strDev = System.Console.ReadLine();
+
                         if(!byte.TryParse(strDev, out address))
                         {
-                            DicConsole.WriteLine("Not a number. Press any key to continue...");
+                            AaruConsole.WriteLine("Not a number. Press any key to continue...");
                             address = 0;
                             System.Console.ReadKey();
                         }
@@ -473,65 +528,75 @@ namespace Aaru.Tests.Devices.ATA
 
             start:
             System.Console.Clear();
+
             bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, address,
                                           dev.Timeout, out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending READ LOG to the device:");
-            DicConsole.WriteLine("Command took {0} ms.",         duration);
-            DicConsole.WriteLine("Sense is {0}.",                sense);
-            DicConsole.WriteLine("Buffer is {0} bytes.",         buffer?.Length.ToString() ?? "null");
-            DicConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Print buffer.");
-            DicConsole.WriteLine("2.- Decode error registers.");
-            DicConsole.WriteLine("3.- Send command again.");
-            DicConsole.WriteLine("4.- Change parameters.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending READ LOG to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
+            AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Print buffer.");
+            AaruConsole.WriteLine("2.- Decode error registers.");
+            AaruConsole.WriteLine("3.- Send command again.");
+            AaruConsole.WriteLine("4.- Change parameters.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ LOG response:");
-                    if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ LOG response:");
+
+                    if(buffer != null)
+                        PrintHex.PrintHexArray(buffer, 64);
+
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 2:
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
-                    DicConsole.WriteLine("READ LOG status registers:");
-                    DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-                    DicConsole.WriteLine("Press any key to continue...");
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("READ LOG status registers:");
+                    AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+                    AaruConsole.WriteLine("Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
-                    DicConsole.WriteLine("Device: {0}", devPath);
+                    AaruConsole.WriteLine("Device: {0}", devPath);
+
                     goto menu;
                 case 3: goto start;
                 case 4: goto parameters;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }
@@ -540,41 +605,46 @@ namespace Aaru.Tests.Devices.ATA
         {
             start:
             System.Console.Clear();
+
             bool sense = dev.SmartReturnStatus(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
                                                out double duration);
 
             menu:
-            DicConsole.WriteLine("Device: {0}", devPath);
-            DicConsole.WriteLine("Sending RETURN STATUS to the device:");
-            DicConsole.WriteLine("Command took {0} ms.", duration);
-            DicConsole.WriteLine("Sense is {0}.",        sense);
-            DicConsole.WriteLine("RETURN STATUS status registers:");
-            DicConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Choose what to do:");
-            DicConsole.WriteLine("1.- Send command again.");
-            DicConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
-            DicConsole.Write("Choose: ");
+            AaruConsole.WriteLine("Device: {0}", devPath);
+            AaruConsole.WriteLine("Sending RETURN STATUS to the device:");
+            AaruConsole.WriteLine("Command took {0} ms.", duration);
+            AaruConsole.WriteLine("Sense is {0}.", sense);
+            AaruConsole.WriteLine("RETURN STATUS status registers:");
+            AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Choose what to do:");
+            AaruConsole.WriteLine("1.- Send command again.");
+            AaruConsole.WriteLine("0.- Return to S.M.A.R.T. commands menu.");
+            AaruConsole.Write("Choose: ");
 
             string strDev = System.Console.ReadLine();
+
             if(!int.TryParse(strDev, out int item))
             {
-                DicConsole.WriteLine("Not a number. Press any key to continue...");
+                AaruConsole.WriteLine("Not a number. Press any key to continue...");
                 System.Console.ReadKey();
                 System.Console.Clear();
+
                 goto menu;
             }
 
             switch(item)
             {
                 case 0:
-                    DicConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+                    AaruConsole.WriteLine("Returning to S.M.A.R.T. commands menu...");
+
                     return;
                 case 1: goto start;
                 default:
-                    DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                     System.Console.ReadKey();
                     System.Console.Clear();
+
                     goto menu;
             }
         }

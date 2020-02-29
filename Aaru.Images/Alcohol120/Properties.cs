@@ -64,18 +64,21 @@ namespace Aaru.DiscImages
                          where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
                          select session.SessionSequence).FirstOrDefault();
 
-                    if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra)) continue;
+                    if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
+                        continue;
 
-                    Track aaruTrack = new Track
+                    var aaruTrack = new Track
                     {
-                        Indexes                = new Dictionary<int, ulong> {{1, alcTrack.startLba}},
+                        Indexes = new Dictionary<int, ulong>
+                        {
+                            {
+                                1, alcTrack.startLba
+                            }
+                        },
                         TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = alcTrack.startLba + alcExtra.sectors - 1,
-                        TrackPregap            = alcExtra.pregap,
-                        TrackSession           = sessionNo,
-                        TrackSequence          = alcTrack.point,
-                        TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
-                        TrackFilter            = alcImage,
+                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1, TrackPregap = alcExtra.pregap,
+                        TrackSession           = sessionNo, TrackSequence                                = alcTrack.point,
+                        TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
                         TrackFile              = alcImage.GetFilename(),
                         TrackFileOffset        = alcTrack.startOffset,
                         TrackFileType          = "BINARY",
@@ -90,9 +93,11 @@ namespace Aaru.DiscImages
                             aaruTrack.TrackSubchannelFile   = alcImage.GetFilename();
                             aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
                             aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+
                             break;
                         case AlcoholSubchannelMode.None:
                             aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
+
                             break;
                     }
 
@@ -108,38 +113,40 @@ namespace Aaru.DiscImages
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
 
-        public IEnumerable<MediaTagType> SupportedMediaTags =>
-            new[] {MediaTagType.CD_FullTOC, MediaTagType.DVD_BCA, MediaTagType.DVD_DMI, MediaTagType.DVD_PFI};
-        public IEnumerable<SectorTagType> SupportedSectorTags =>
-            new[]
-            {
-                SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
-                SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
-                SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
-            };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.BDRXL, MediaType.CBHD,
-                MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
-                MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA,
-                MediaType.CDRW, MediaType.CDV, MediaType.DVDDownload, MediaType.DVDPR, MediaType.DVDPRDL,
-                MediaType.DVDPRW, MediaType.DVDPRWDL, MediaType.DVDR, MediaType.DVDRAM, MediaType.DVDRDL,
-                MediaType.DVDROM, MediaType.DVDRW, MediaType.DVDRWDL, MediaType.EVD, MediaType.FDDVD,
-                MediaType.DTSCD, MediaType.FVD, MediaType.HDDVDR, MediaType.HDDVDRAM, MediaType.HDDVDRDL,
-                MediaType.HDDVDROM, MediaType.HDDVDRW, MediaType.HDDVDRWDL, MediaType.HDVMD, MediaType.HVD,
-                MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD, MediaType.PS2DVD,
-                MediaType.PS3BD, MediaType.PS3DVD, MediaType.PS4BD, MediaType.SuperCDROM2, MediaType.SVCD,
-                MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2,
-                MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD,
-                MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
-                MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor,
-                MediaType.VideoNowXp
-            };
+        public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+        {
+            MediaTagType.CD_FullTOC, MediaTagType.DVD_BCA, MediaTagType.DVD_DMI, MediaTagType.DVD_PFI
+        };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+        {
+            SectorTagType.CdSectorEcc, SectorTagType.CdSectorEccP, SectorTagType.CdSectorEccQ,
+            SectorTagType.CdSectorEdc, SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader,
+            SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
+        };
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.BDR, MediaType.BDRE, MediaType.BDREXL, MediaType.BDROM, MediaType.BDRXL, MediaType.CBHD,
+            MediaType.CD, MediaType.CDDA, MediaType.CDEG, MediaType.CDG, MediaType.CDI, MediaType.CDMIDI,
+            MediaType.CDMRW, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROMXA, MediaType.CDRW,
+            MediaType.CDV, MediaType.DVDDownload, MediaType.DVDPR, MediaType.DVDPRDL, MediaType.DVDPRW,
+            MediaType.DVDPRWDL, MediaType.DVDR, MediaType.DVDRAM, MediaType.DVDRDL, MediaType.DVDROM, MediaType.DVDRW,
+            MediaType.DVDRWDL, MediaType.EVD, MediaType.FDDVD, MediaType.DTSCD, MediaType.FVD, MediaType.HDDVDR,
+            MediaType.HDDVDRAM, MediaType.HDDVDRDL, MediaType.HDDVDROM, MediaType.HDDVDRW, MediaType.HDDVDRWDL,
+            MediaType.HDVMD, MediaType.HVD, MediaType.JaguarCD, MediaType.MEGACD, MediaType.PS1CD, MediaType.PS2CD,
+            MediaType.PS2DVD, MediaType.PS3BD, MediaType.PS3DVD, MediaType.PS4BD, MediaType.SuperCDROM2, MediaType.SVCD,
+            MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM,
+            MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV,
+            MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD,
+            MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".mds"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".mds"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

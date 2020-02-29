@@ -51,6 +51,21 @@ namespace Aaru.Tests.Filters
         }
 
         [Test]
+        public void CheckContents()
+        {
+            IFilter filter = new AppleDouble();
+            filter.Open(location);
+            Stream str  = filter.GetDataForkStream();
+            byte[] data = new byte[737280];
+            str.Read(data, 0, 737280);
+            str.Close();
+            str.Dispose();
+            filter.Close();
+            string result = Md5Context.Data(data, out _);
+            Assert.AreEqual(EXPECTED_CONTENTS, result);
+        }
+
+        [Test]
         public void CheckCorrectFile()
         {
             string result = Md5Context.File(location, out _);
@@ -68,35 +83,6 @@ namespace Aaru.Tests.Filters
         }
 
         [Test]
-        public void Test()
-        {
-            IFilter filter = new AppleDouble();
-            filter.Open(location);
-            Assert.AreEqual(true,   filter.IsOpened());
-            Assert.AreEqual(737280, filter.GetDataForkLength());
-            Assert.AreNotEqual(null, filter.GetDataForkStream());
-            Assert.AreEqual(286, filter.GetResourceForkLength());
-            Assert.AreNotEqual(null, filter.GetResourceForkStream());
-            Assert.AreEqual(true, filter.HasResourceFork());
-            filter.Close();
-        }
-
-        [Test]
-        public void CheckContents()
-        {
-            IFilter filter = new AppleDouble();
-            filter.Open(location);
-            Stream str  = filter.GetDataForkStream();
-            byte[] data = new byte[737280];
-            str.Read(data, 0, 737280);
-            str.Close();
-            str.Dispose();
-            filter.Close();
-            string result = Md5Context.Data(data, out _);
-            Assert.AreEqual(EXPECTED_CONTENTS, result);
-        }
-
-        [Test]
         public void CheckResource()
         {
             IFilter filter = new AppleDouble();
@@ -109,6 +95,20 @@ namespace Aaru.Tests.Filters
             filter.Close();
             string result = Md5Context.Data(data, out _);
             Assert.AreEqual(EXPECTED_RESOURCE, result);
+        }
+
+        [Test]
+        public void Test()
+        {
+            IFilter filter = new AppleDouble();
+            filter.Open(location);
+            Assert.AreEqual(true, filter.IsOpened());
+            Assert.AreEqual(737280, filter.GetDataForkLength());
+            Assert.AreNotEqual(null, filter.GetDataForkStream());
+            Assert.AreEqual(286, filter.GetResourceForkLength());
+            Assert.AreNotEqual(null, filter.GetResourceForkStream());
+            Assert.AreEqual(true, filter.HasResourceFork());
+            filter.Close();
         }
     }
 }

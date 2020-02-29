@@ -82,18 +82,18 @@ namespace Aaru.Core.Devices.Info
                         AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                  errorRegisters.SectorCount);
+                                                   errorRegisters.SectorCount);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                  errorRegisters.CylinderHigh);
+                                                   errorRegisters.CylinderHigh);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                  errorRegisters.CylinderLow);
+                                                   errorRegisters.CylinderLow);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                  errorRegisters.DeviceHead);
+                                                   errorRegisters.DeviceHead);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
@@ -128,18 +128,18 @@ namespace Aaru.Core.Devices.Info
                         AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
-                                                  errorRegisters.SectorCount);
+                                                   errorRegisters.SectorCount);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
-                                                  errorRegisters.CylinderHigh);
+                                                   errorRegisters.CylinderHigh);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
-                                                  errorRegisters.CylinderLow);
+                                                   errorRegisters.CylinderLow);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
-                                                  errorRegisters.DeviceHead);
+                                                   errorRegisters.DeviceHead);
 
                         AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
@@ -308,20 +308,20 @@ namespace Aaru.Core.Devices.Info
 
                                 switch(dev.Model)
                                 {
-                                    case"DVDR   PX-708A":
-                                    case"DVDR   PX-708A2":
-                                    case"DVDR   PX-712A":
+                                    case "DVDR   PX-708A":
+                                    case "DVDR   PX-708A2":
+                                    case "DVDR   PX-712A":
                                         plxtDvd = true;
 
                                         plxtSense = dev.PlextorReadEeprom(out plxtBuf, out senseBuf, dev.Timeout,
                                                                           out _);
 
                                         break;
-                                    case"DVDR   PX-714A":
-                                    case"DVDR   PX-716A":
-                                    case"DVDR   PX-716AL":
-                                    case"DVDR   PX-755A":
-                                    case"DVDR   PX-760A":
+                                    case "DVDR   PX-714A":
+                                    case "DVDR   PX-716A":
+                                    case "DVDR   PX-716AL":
+                                    case "DVDR   PX-755A":
+                                    case "DVDR   PX-760A":
                                     {
                                         plxtBuf = new byte[256 * 4];
 
@@ -514,22 +514,22 @@ namespace Aaru.Core.Devices.Info
 
                             if(sense)
                                 AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                                           Sense.PrettifySense(senseBuf));
                             else
                             {
                                 DensitySupport       = seqBuf;
-                                DensitySupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                                DensitySupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
                             }
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
 
                             if(sense)
                                 AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                                           Sense.PrettifySense(senseBuf));
                             else
                             {
                                 MediumDensitySupport   = seqBuf;
-                                MediaTypeSupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                                MediaTypeSupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
                             }
 
                             break;

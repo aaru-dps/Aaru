@@ -45,6 +45,7 @@ namespace Aaru.Filesystems
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
         const uint FOSSIL_SB_MAGIC  = 0x2340A3B1;
+
         // Fossil header starts at 128KiB
         const ulong HEADER_POS = 128 * 1024;
 
@@ -58,24 +59,27 @@ namespace Aaru.Filesystems
         {
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
+            if(partition.Start + hdrSector > imagePlugin.Info.Sectors)
+                return false;
 
             byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                      FOSSIL_HDR_MAGIC);
+                                       FOSSIL_HDR_MAGIC);
 
             return hdr.magic == FOSSIL_HDR_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             // Technically everything on Plan 9 from Bell Labs is in UTF-8
             Encoding    = Encoding.UTF8;
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
+
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
 
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
@@ -83,9 +87,9 @@ namespace Aaru.Filesystems
             FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
-                                      FOSSIL_HDR_MAGIC);
+                                       FOSSIL_HDR_MAGIC);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.AppendLine("Fossil");
             sb.AppendFormat("Filesystem version {0}", hdr.version).AppendLine();
@@ -95,7 +99,7 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Data starts at block {0}", hdr.data).AppendLine();
             sb.AppendFormat("Volume has {0} blocks", hdr.end).AppendLine();
 
-            ulong sbLocation = hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize) + partition.Start;
+            ulong sbLocation = (hdr.super * (hdr.blockSize / imagePlugin.Info.SectorSize)) + partition.Start;
 
             XmlFsType = new FileSystemType
             {
@@ -108,7 +112,7 @@ namespace Aaru.Filesystems
                 FossilSuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
                 AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
-                                          FOSSIL_SB_MAGIC);
+                                           FOSSIL_SB_MAGIC);
 
                 if(fsb.magic == FOSSIL_SB_MAGIC)
                 {
@@ -129,81 +133,47 @@ namespace Aaru.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FossilHeader
         {
-            /// <summary>
-            ///     Magic number
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            ///     Header version
-            /// </summary>
-            public ushort version;
-            /// <summary>
-            ///     Block size
-            /// </summary>
-            public ushort blockSize;
-            /// <summary>
-            ///     Block containing superblock
-            /// </summary>
-            public uint super;
-            /// <summary>
-            ///     Block containing labels
-            /// </summary>
-            public uint label;
-            /// <summary>
-            ///     Where do data blocks start
-            /// </summary>
-            public uint data;
-            /// <summary>
-            ///     How many data blocks does it have
-            /// </summary>
-            public uint end;
+            /// <summary>Magic number</summary>
+            public readonly uint magic;
+            /// <summary>Header version</summary>
+            public readonly ushort version;
+            /// <summary>Block size</summary>
+            public readonly ushort blockSize;
+            /// <summary>Block containing superblock</summary>
+            public readonly uint super;
+            /// <summary>Block containing labels</summary>
+            public readonly uint label;
+            /// <summary>Where do data blocks start</summary>
+            public readonly uint data;
+            /// <summary>How many data blocks does it have</summary>
+            public readonly uint end;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FossilSuperBlock
         {
-            /// <summary>
-            ///     Magic number
-            /// </summary>
-            public uint magic;
-            /// <summary>
-            ///     Header version
-            /// </summary>
-            public ushort version;
-            /// <summary>
-            ///     file system low epoch
-            /// </summary>
-            public uint epochLow;
-            /// <summary>
-            ///     file system high(active) epoch
-            /// </summary>
-            public uint epochHigh;
-            /// <summary>
-            ///     next qid to allocate
-            /// </summary>
-            public ulong qid;
-            /// <summary>
-            ///     data block number: root of active file system
-            /// </summary>
-            public int active;
-            /// <summary>
-            ///     data block number: root of next file system to archive
-            /// </summary>
-            public int next;
-            /// <summary>
-            ///     data block number: root of file system currently being archived
-            /// </summary>
-            public int current;
-            /// <summary>
-            ///     Venti score of last successful archive
-            /// </summary>
+            /// <summary>Magic number</summary>
+            public readonly uint magic;
+            /// <summary>Header version</summary>
+            public readonly ushort version;
+            /// <summary>file system low epoch</summary>
+            public readonly uint epochLow;
+            /// <summary>file system high(active) epoch</summary>
+            public readonly uint epochHigh;
+            /// <summary>next qid to allocate</summary>
+            public readonly ulong qid;
+            /// <summary>data block number: root of active file system</summary>
+            public readonly int active;
+            /// <summary>data block number: root of next file system to archive</summary>
+            public readonly int next;
+            /// <summary>data block number: root of file system currently being archived</summary>
+            public readonly int current;
+            /// <summary>Venti score of last successful archive</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] last;
-            /// <summary>
-            ///     name of file system(just a comment)
-            /// </summary>
+            public readonly byte[] last;
+            /// <summary>name of file system(just a comment)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] name;
+            public readonly byte[] name;
         }
     }
 }

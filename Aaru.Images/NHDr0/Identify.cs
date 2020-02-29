@@ -45,28 +45,34 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Nhdr0Header>()) return false;
+            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+            var shiftjis = Encoding.GetEncoding("shift_jis");
+
+            if(stream.Length < Marshal.SizeOf<Nhdr0Header>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Nhdr0Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
             nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
 
-            if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
+            if(!nhdhdr.szFileID.SequenceEqual(signature))
+                return false;
 
             AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szFileID = \"{0}\"",
-                                      StringHandlers.CToString(nhdhdr.szFileID, shiftjis));
+                                       StringHandlers.CToString(nhdhdr.szFileID, shiftjis));
+
             AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.reserved1 = {0}", nhdhdr.reserved1);
+
             AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szComment = \"{0}\"",
-                                      StringHandlers.CToString(nhdhdr.szComment, shiftjis));
+                                       StringHandlers.CToString(nhdhdr.szComment, shiftjis));
+
             AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", nhdhdr.dwHeadSize);
             AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", nhdhdr.dwCylinder);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}",      nhdhdr.wHead);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}",      nhdhdr.wSect);
-            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}",   nhdhdr.wSectLen);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}", nhdhdr.wHead);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}", nhdhdr.wSect);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}", nhdhdr.wSectLen);
 
             return true;
         }

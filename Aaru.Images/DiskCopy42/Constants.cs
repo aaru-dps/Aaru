@@ -44,12 +44,14 @@ namespace Aaru.DiscImages
         /// <summary>3.5", double side, high density, MFM</summary>
         const byte kSonyFormat1440K = 0x03;
         /// <summary>3.5", double side, high density, MFM, 21 sectors/track (aka, Microsoft DMF)</summary>
+
         // Unchecked value</summary>
         const byte kSonyFormat1680K = 0x04;
         /// <summary>Defined by Sigma Seven's BLU</summary>
         const byte kSigmaFormatTwiggy = 0x54;
         /// <summary>Defined by LisaEm</summary>
         const byte kNotStandardFormat = 0x5D;
+
         // There should be a value for Apple HD20 hard disks, unknown...
         // fmyByte byte
         // Based on GCR nibble

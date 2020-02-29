@@ -44,7 +44,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0) return false;
+            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0)
+                return false;
 
             byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
@@ -55,41 +56,51 @@ namespace Aaru.DiscImages
             string sig = StringHandlers.CToString(tmpFooter.signature);
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.signature = \"{0}\"", sig);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}",      tmpFooter.bpb.five);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}", tmpFooter.bpb.driveCode);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}",   tmpFooter.bpb.unknown);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}", tmpFooter.bpb.cylinders);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}",  tmpFooter.bpb.unknown2);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}",       tmpFooter.bpb.bps);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spc = {0}",       tmpFooter.bpb.spc);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.rsectors = {0}",  tmpFooter.bpb.rsectors);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.fats_no = {0}",   tmpFooter.bpb.fats_no);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sectors = {0}",   tmpFooter.bpb.sectors);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
+
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}",
+                                       tmpFooter.bpb.driveCode);
+
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}", tmpFooter.bpb.unknown);
+
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.cylinders = {0}",
+                                       tmpFooter.bpb.cylinders);
+
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown2 = {0}", tmpFooter.bpb.unknown2);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.bps = {0}", tmpFooter.bpb.bps);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spc = {0}", tmpFooter.bpb.spc);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.rsectors = {0}", tmpFooter.bpb.rsectors);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.fats_no = {0}", tmpFooter.bpb.fats_no);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sectors = {0}", tmpFooter.bpb.sectors);
+
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.media_descriptor = {0}",
-                                      tmpFooter.bpb.media_descriptor);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spfat = {0}",    tmpFooter.bpb.spfat);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sptrack = {0}",  tmpFooter.bpb.sptrack);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.heads = {0}",    tmpFooter.bpb.heads);
+                                       tmpFooter.bpb.media_descriptor);
+
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.spfat = {0}", tmpFooter.bpb.spfat);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sptrack = {0}", tmpFooter.bpb.sptrack);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.heads = {0}", tmpFooter.bpb.heads);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.hsectors = {0}", tmpFooter.bpb.hsectors);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.drive_no = {0}", tmpFooter.bpb.drive_no);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown3 = {0}", tmpFooter.bpb.unknown3);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown4 = {0}", tmpFooter.bpb.unknown4);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.sptrack2 = {0}", tmpFooter.bpb.sptrack2);
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin",
-                                      "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
-                                      ArrayHelpers.ArrayIsNullOrEmpty(tmpFooter.bpb.unknown5));
 
-            Regex regexSignature = new Regex(REGEX_DRI);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin",
+                                       "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
+                                       ArrayHelpers.ArrayIsNullOrEmpty(tmpFooter.bpb.unknown5));
+
+            var   regexSignature = new Regex(REGEX_DRI);
             Match matchSignature = regexSignature.Match(sig);
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "MatchSignature.Success? = {0}", matchSignature.Success);
 
-            if(!matchSignature.Success) return false;
+            if(!matchSignature.Success)
+                return false;
 
             if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
                 return false;
 
-            return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf<DriFooter>() == stream.Length;
+            return (tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf<DriFooter>() == stream.Length;
         }
     }
 }

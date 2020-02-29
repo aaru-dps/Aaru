@@ -71,12 +71,12 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
 
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkId,
-                                          Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
+                                           Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
 
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
 
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8} (\"{1}\")", footerV2.ChunkId,
-                                          Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkId)));
+                                           Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV2.ChunkId)));
 
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
                     uint chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "ChunkID = 0x{0:X8} (\"{1}\")", chunkId,
-                                              Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
+                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(chunkId)));
 
                     AaruConsole.DebugWriteLine("Nero plugin", "ChunkLength = {0}", chunkLength);
 
@@ -127,7 +127,7 @@ namespace Aaru.DiscImages
                         case NERO_CUE_V1:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"CUES\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroCuesheetV1 = new NeroV1Cuesheet
                             {
@@ -151,25 +151,25 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1:X2}", (i / 8) + 1,
-                                                          entry.Mode);
+                                                           entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
-                                                          (i / 8) + 1, entry.TrackNumber);
+                                                           (i / 8) + 1, entry.TrackNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
-                                                          (i / 8) + 1, entry.IndexNumber);
+                                                           (i / 8) + 1, entry.IndexNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X4}", (i / 8) + 1,
-                                                          entry.Dummy);
+                                                           entry.Dummy);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Minute = {1:X2}", (i / 8) + 1,
-                                                          entry.Minute);
+                                                           entry.Minute);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Second = {1:X2}", (i / 8) + 1,
-                                                          entry.Second);
+                                                           entry.Second);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Frame = {1:X2}", (i / 8) + 1,
-                                                          entry.Frame);
+                                                           entry.Frame);
 
                                 neroCuesheetV1.Entries.Add(entry);
                             }
@@ -180,7 +180,7 @@ namespace Aaru.DiscImages
                         case NERO_CUE_V2:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"CUEX\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroCuesheetV2 = new NeroV2Cuesheet
                             {
@@ -202,19 +202,19 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Cuesheet entry {0}", (i / 8) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = 0x{1:X2}", (i / 8) + 1,
-                                                          entry.Mode);
+                                                           entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = {1:X2}",
-                                                          (i / 8) + 1, entry.TrackNumber);
+                                                           (i / 8) + 1, entry.TrackNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].IndexNumber = {1:X2}",
-                                                          (i / 8) + 1, entry.IndexNumber);
+                                                           (i / 8) + 1, entry.IndexNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Dummy = {1:X2}", (i / 8) + 1,
-                                                          entry.Dummy);
+                                                           entry.Dummy);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].LBAStart = {1}", (i / 8) + 1,
-                                                          entry.LbaStart);
+                                                           entry.LbaStart);
 
                                 neroCuesheetV2.Entries.Add(entry);
                             }
@@ -225,7 +225,7 @@ namespace Aaru.DiscImages
                         case NERO_DAO_V1:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DAOI\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroDaov1 = new NeroV1Dao
                             {
@@ -249,15 +249,16 @@ namespace Aaru.DiscImages
                                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.ChunkSizeLe = {0} bytes",
-                                                      neroDaov1.ChunkSizeLe);
+                                                       neroDaov1.ChunkSizeLe);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.UPC = \"{0}\"",
-                                                      StringHandlers.CToString(neroDaov1.Upc));
+                                                       StringHandlers.CToString(neroDaov1.Upc));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}", neroDaov1.TocType);
+                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}",
+                                                       neroDaov1.TocType);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}",
-                                                      neroDaov1.FirstTrack);
+                                                       neroDaov1.FirstTrack);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}", neroDaov1.LastTrack);
 
@@ -281,25 +282,25 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
-                                                          StringHandlers.CToString(entry.Isrc));
+                                                           StringHandlers.CToString(entry.Isrc));
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                          (i / 32) + 1, entry.SectorSize);
+                                                           (i / 32) + 1, entry.SectorSize);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                          (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                           (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                          (i / 32) + 1, entry.Unknown);
+                                                           (i / 32) + 1, entry.Unknown);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
-                                                          entry.Index0);
+                                                           entry.Index0);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
-                                                          entry.Index1);
+                                                           entry.Index1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                          (i / 32) + 1, entry.EndOfTrack);
+                                                           (i / 32) + 1, entry.EndOfTrack);
 
                                 neroDaov1.Tracks.Add(entry);
 
@@ -335,7 +336,7 @@ namespace Aaru.DiscImages
                         case NERO_DAO_V2:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DAOX\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroDaov2 = new NeroV2Dao
                             {
@@ -361,15 +362,16 @@ namespace Aaru.DiscImages
                             upc = neroDaov2.Upc;
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.ChunkSizeLe = {0} bytes",
-                                                      neroDaov2.ChunkSizeLe);
+                                                       neroDaov2.ChunkSizeLe);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.UPC = \"{0}\"",
-                                                      StringHandlers.CToString(neroDaov2.Upc));
+                                                       StringHandlers.CToString(neroDaov2.Upc));
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}", neroDaov2.TocType);
+                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}",
+                                                       neroDaov2.TocType);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}",
-                                                      neroDaov2.FirstTrack);
+                                                       neroDaov2.FirstTrack);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}", neroDaov2.LastTrack);
 
@@ -391,25 +393,25 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Disc-At-Once entry {0}", (i / 32) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].ISRC = \"{1}\"", (i / 32) + 1,
-                                                          StringHandlers.CToString(entry.Isrc));
+                                                           StringHandlers.CToString(entry.Isrc));
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].SectorSize = {1}",
-                                                          (i / 32) + 1, entry.SectorSize);
+                                                           (i / 32) + 1, entry.SectorSize);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                          (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                           (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = {1:X2}",
-                                                          (i / 32) + 1, entry.Unknown);
+                                                           (i / 32) + 1, entry.Unknown);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index0 = {1}", (i / 32) + 1,
-                                                          entry.Index0);
+                                                           entry.Index0);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Index1 = {1}", (i / 32) + 1,
-                                                          entry.Index1);
+                                                           entry.Index1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
-                                                          (i / 32) + 1, entry.EndOfTrack);
+                                                           (i / 32) + 1, entry.EndOfTrack);
 
                                 neroDaov2.Tracks.Add(entry);
 
@@ -445,7 +447,7 @@ namespace Aaru.DiscImages
                         case NERO_CDTEXT:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"CDTX\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroCdtxt = new NeroCdText
                             {
@@ -470,22 +472,22 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "CD-TEXT entry {0}", (i / 18) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackType = 0x{1:X2}",
-                                                          (i / 18) + 1, entry.PackType);
+                                                           (i / 18) + 1, entry.PackType);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].TrackNumber = 0x{1:X2}",
-                                                          (i / 18) + 1, entry.TrackNumber);
+                                                           (i / 18) + 1, entry.TrackNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].PackNumber = 0x{1:X2}",
-                                                          (i / 18) + 1, entry.PackNumber);
+                                                           (i / 18) + 1, entry.PackNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].BlockNumber = 0x{1:X2}",
-                                                          (i / 18) + 1, entry.BlockNumber);
+                                                           (i / 18) + 1, entry.BlockNumber);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Text = \"{1}\"", (i / 18) + 1,
-                                                          StringHandlers.CToString(entry.Text));
+                                                           StringHandlers.CToString(entry.Text));
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", (i / 18) + 1,
-                                                          entry.Crc);
+                                                           entry.Crc);
 
                                 neroCdtxt.Packs.Add(entry);
                             }
@@ -496,7 +498,7 @@ namespace Aaru.DiscImages
                         case NERO_TAO_V1:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroTaov1 = new NeroV1Tao
                             {
@@ -519,19 +521,19 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 20) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 20) + 1,
-                                                          entry.Offset);
+                                                           entry.Offset);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
-                                                          (i / 20) + 1, entry.Length);
+                                                           (i / 20) + 1, entry.Length);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                          (i / 20) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                           (i / 20) + 1, (DaoMode)entry.Mode, entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 20) + 1,
-                                                          entry.StartLba);
+                                                           entry.StartLba);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                          (i / 20) + 1, entry.Unknown);
+                                                           (i / 20) + 1, entry.Unknown);
 
                                 neroTaov1.Tracks.Add(entry);
 
@@ -563,7 +565,7 @@ namespace Aaru.DiscImages
                         case NERO_TAO_V2:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"ETN2\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroTaov2 = new NeroV2Tao
                             {
@@ -587,22 +589,22 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "Track-at-Once entry {0}", (i / 32) + 1);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Offset = {1}", (i / 32) + 1,
-                                                          entry.Offset);
+                                                           entry.Offset);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Length = {1} bytes",
-                                                          (i / 32) + 1, entry.Length);
+                                                           (i / 32) + 1, entry.Length);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Mode = {1} (0x{2:X4})",
-                                                          (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
+                                                           (i / 32) + 1, (DaoMode)entry.Mode, entry.Mode);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].StartLBA = {1}", (i / 32) + 1,
-                                                          entry.StartLba);
+                                                           entry.StartLba);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
-                                                          (i / 32) + 1, entry.Unknown);
+                                                           (i / 32) + 1, entry.Unknown);
 
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", (i / 32) + 1,
-                                                          entry.Sectors);
+                                                           entry.Sectors);
 
                                 neroTaov2.Tracks.Add(entry);
 
@@ -636,7 +638,7 @@ namespace Aaru.DiscImages
                         case NERO_SESSION:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             byte[] tmpbuffer = new byte[4];
                             imageStream.Read(tmpbuffer, 0, 4);
@@ -644,7 +646,7 @@ namespace Aaru.DiscImages
                             neroSessions.Add(currentsession, sessionTracks);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentsession,
-                                                      sessionTracks);
+                                                       sessionTracks);
 
                             currentsession++;
 
@@ -654,7 +656,7 @@ namespace Aaru.DiscImages
                         case NERO_DISC_TYPE:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"MTYP\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroMediaTyp = new NeroMediaType
                             {
@@ -666,7 +668,7 @@ namespace Aaru.DiscImages
                             neroMediaTyp.Type = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})",
-                                                      (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
+                                                       (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
 
                             imageInfo.MediaType = NeroMediaTypeToMediaType((NeroMediaTypes)neroMediaTyp.Type);
 
@@ -676,7 +678,7 @@ namespace Aaru.DiscImages
                         case NERO_DISC_INFO:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DINF\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroDiscInfo = new NeroDiscInformation
                             {
@@ -688,7 +690,7 @@ namespace Aaru.DiscImages
                             neroDiscInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroDiscInfo.Unknown = 0x{0:X4} ({0})",
-                                                      neroDiscInfo.Unknown);
+                                                       neroDiscInfo.Unknown);
 
                             break;
                         }
@@ -696,7 +698,7 @@ namespace Aaru.DiscImages
                         case NERO_RELOCATION:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"RELO\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroRelo = new NeroReloChunk
                             {
@@ -708,7 +710,7 @@ namespace Aaru.DiscImages
                             neroRelo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})",
-                                                      neroRelo.Unknown);
+                                                       neroRelo.Unknown);
 
                             break;
                         }
@@ -716,7 +718,7 @@ namespace Aaru.DiscImages
                         case NERO_TOC:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"TOCT\" chunk, parsing {0} bytes",
-                                                      chunkLength);
+                                                       chunkLength);
 
                             neroToc = new NeroTocChunk
                             {
@@ -728,7 +730,7 @@ namespace Aaru.DiscImages
                             neroToc.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})",
-                                                      neroToc.Unknown);
+                                                       neroToc.Unknown);
 
                             break;
                         }
@@ -744,8 +746,8 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
-                                                      Encoding.ASCII.GetString(BigEndianBitConverter.
-                                                                                   GetBytes(chunkId)));
+                                                       Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                                    GetBytes(chunkId)));
 
                             imageStream.Seek(chunkLength, SeekOrigin.Current);
 
@@ -809,7 +811,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("Nero plugin", "\tcurrentsessionmaxtrack = {0}", currentsessionmaxtrack);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\tcurrentsessioncurrenttrack = {0}",
-                                              currentsessioncurrenttrack);
+                                               currentsessioncurrenttrack);
 
                     var track = new Track();
 
@@ -825,8 +827,7 @@ namespace Aaru.DiscImages
                     track.TrackDescription = StringHandlers.CToString(neroTrack.Isrc);
                     track.TrackEndSector   = ((neroTrack.Length / neroTrack.SectorSize) + neroTrack.StartLba) - 1;
 
-                    track.TrackPregap = (neroTrack.Index1 - neroTrack.Index0) /
-                                                neroTrack.SectorSize;
+                    track.TrackPregap = (neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize;
 
                     track.TrackSequence       = neroTrack.Sequence;
                     track.TrackSession        = currentsession;
@@ -896,7 +897,7 @@ namespace Aaru.DiscImages
                     Tracks.Add(track);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackDescription = {0}",
-                                              track.TrackDescription);
+                                               track.TrackDescription);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackEndSector = {0}", track.TrackEndSector);
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackPregap = {0}", track.TrackPregap);
@@ -904,7 +905,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackSession = {0}", track.TrackSession);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackStartSector = {0}",
-                                              track.TrackStartSector);
+                                               track.TrackStartSector);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t _track.TrackType = {0}", track.TrackType);
 
@@ -939,7 +940,7 @@ namespace Aaru.DiscImages
                     offsetmap.Add(track.TrackSequence, track.TrackStartSector);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", track.TrackSequence,
-                                              track.TrackStartSector);
+                                               track.TrackStartSector);
 
                     /*if(_neroTrack.Index0 < _neroTrack.Index1)
                         {
@@ -1188,8 +1189,9 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                               SeekOrigin.Begin);
+            br.BaseStream.
+               Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                    SeekOrigin.Begin);
 
             if(mode2)
             {
@@ -1468,8 +1470,9 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                               SeekOrigin.Begin);
+            br.BaseStream.
+               Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                    SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)
@@ -1565,8 +1568,9 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                               SeekOrigin.Begin);
+            br.BaseStream.
+               Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                    SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)

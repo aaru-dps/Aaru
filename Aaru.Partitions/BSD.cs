@@ -48,9 +48,15 @@ namespace Aaru.Partitions
         /// <summary>Maximum size of a disklabel with 22 partitions</summary>
         const uint MAX_LABEL_SIZE = 500;
         /// <summary>Known sector locations for BSD disklabel</summary>
-        readonly ulong[] labelLocations = {0, 1, 2, 9};
+        readonly ulong[] labelLocations =
+        {
+            0, 1, 2, 9
+        };
         /// <summary>Known byte offsets for BSD disklabel</summary>
-        readonly uint[] labelOffsets = {0, 9, 64, 128, 516};
+        readonly uint[] labelOffsets =
+        {
+            0, 9, 64, 128, 516
+        };
 
         public string Name   => "BSD disklabel";
         public Guid   Id     => new Guid("246A6D93-4F1A-1F8A-344D-50187A5513A9");
@@ -60,78 +66,89 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
             uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.Info.SectorSize;
-            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0) run++;
 
-            DiskLabel dl    = new DiskLabel();
-            bool      found = false;
+            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0)
+                run++;
+
+            var  dl    = new DiskLabel();
+            bool found = false;
 
             foreach(ulong location in labelLocations)
             {
-                if(location + run + sectorOffset >= imagePlugin.Info.Sectors) return false;
+                if(location + run + sectorOffset >= imagePlugin.Info.Sectors)
+                    return false;
 
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
+
                 foreach(uint offset in labelOffsets)
                 {
                     byte[] sector = new byte[MAX_LABEL_SIZE];
 
-                    if(offset + MAX_LABEL_SIZE > tmp.Length) break;
+                    if(offset + MAX_LABEL_SIZE > tmp.Length)
+                        break;
 
                     Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
                     dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
+
                     AaruConsole.DebugWriteLine("BSD plugin",
-                                              "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
-                                              location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
+                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
+                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
+
                     if((dl.d_magic != DISKMAGIC || dl.d_magic2 != DISKMAGIC) &&
-                       (dl.d_magic != DISKCIGAM || dl.d_magic2 != DISKCIGAM)) continue;
+                       (dl.d_magic != DISKCIGAM || dl.d_magic2 != DISKCIGAM))
+                        continue;
 
                     found = true;
+
                     break;
                 }
 
-                if(found) break;
+                if(found)
+                    break;
             }
 
-            if(!found) return false;
+            if(!found)
+                return false;
 
-            if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM) dl = SwapDiskLabel(dl);
+            if(dl.d_magic  == DISKCIGAM &&
+               dl.d_magic2 == DISKCIGAM)
+                dl = SwapDiskLabel(dl);
 
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}",    dl.d_type);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
             AaruConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}",
-                                      StringHandlers.CToString(dl.d_typename));
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}",
-                                      StringHandlers.CToString(dl.d_packname));
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}",        dl.d_secsize);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}",       dl.d_nsectors);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}",        dl.d_ntracks);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}",     dl.d_ncylinders);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}",      dl.d_secpercyl);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}",     dl.d_secperunit);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}", StringHandlers.CToString(dl.d_typename));
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}", StringHandlers.CToString(dl.d_packname));
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}", dl.d_secsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}", dl.d_nsectors);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}", dl.d_ntracks);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}", dl.d_ncylinders);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}", dl.d_secpercyl);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}", dl.d_secperunit);
             AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}",   dl.d_sparespercyl);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}",     dl.d_acylinders);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}",            dl.d_rpm);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}",     dl.d_interleave);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}",      dl.d_trackskew);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}",       dl.d_cylskeew);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}",     dl.d_headswitch);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}",        dl.d_trkseek);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}",          dl.d_flags);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}",   dl.d_drivedata[0]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}",   dl.d_drivedata[1]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}",   dl.d_drivedata[2]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}",   dl.d_drivedata[3]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}",   dl.d_drivedata[4]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}",       dl.d_spare[0]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}",       dl.d_spare[1]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}",       dl.d_spare[2]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}",       dl.d_spare[3]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}",       dl.d_spare[4]);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}",    dl.d_magic2);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}",  dl.d_checksum);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}",    dl.d_npartitions);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}",         dl.d_bbsize);
-            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}",         dl.d_sbsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}", dl.d_sparespercyl);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}", dl.d_acylinders);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}", dl.d_rpm);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}", dl.d_interleave);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}", dl.d_trackskew);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}", dl.d_cylskeew);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}", dl.d_headswitch);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}", dl.d_trkseek);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}", dl.d_flags);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}", dl.d_drivedata[0]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}", dl.d_drivedata[1]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}", dl.d_drivedata[2]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}", dl.d_drivedata[3]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}", dl.d_drivedata[4]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}", dl.d_spare[0]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}", dl.d_spare[1]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}", dl.d_spare[2]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}", dl.d_spare[3]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}", dl.d_spare[4]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}", dl.d_magic2);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}", dl.d_checksum);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}", dl.d_npartitions);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}", dl.d_bbsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}", dl.d_sbsize);
 
             ulong counter         = 0;
             bool  addSectorOffset = false;
@@ -139,24 +156,30 @@ namespace Aaru.Partitions
             for(int i = 0; i < dl.d_npartitions && i < 22; i++)
             {
                 AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}",
-                                          dl.d_partitions[i].p_offset);
+                                           dl.d_partitions[i].p_offset);
+
                 AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
+
                 AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})",
-                                          dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
-                Partition part = new Partition
+                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
+
+                var part = new Partition
                 {
-                    Start    = dl.d_partitions[i].p_offset * dl.d_secsize / imagePlugin.Info.SectorSize,
-                    Offset   = dl.d_partitions[i].p_offset                * dl.d_secsize,
-                    Length   = dl.d_partitions[i].p_size * dl.d_secsize   / imagePlugin.Info.SectorSize,
-                    Size     = dl.d_partitions[i].p_size                  * dl.d_secsize,
+                    Start    = (dl.d_partitions[i].p_offset * dl.d_secsize) / imagePlugin.Info.SectorSize,
+                    Offset   = dl.d_partitions[i].p_offset                  * dl.d_secsize,
+                    Length   = (dl.d_partitions[i].p_size * dl.d_secsize)   / imagePlugin.Info.SectorSize,
+                    Size     = dl.d_partitions[i].p_size                    * dl.d_secsize,
                     Type     = fsTypeToString(dl.d_partitions[i].p_fstype),
-                    Sequence = counter,
-                    Scheme   = Name
+                    Sequence = counter, Scheme = Name
                 };
-                if(dl.d_partitions[i].p_fstype == fsType.Unused) continue;
+
+                if(dl.d_partitions[i].p_fstype == fsType.Unused)
+                    continue;
 
                 // Crude and dirty way to know if the disklabel is relative to its parent partition...
-                if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
+                if(dl.d_partitions[i].p_offset < sectorOffset &&
+                   !addSectorOffset)
+                    addSectorOffset = true;
 
                 if(addSectorOffset)
                 {
@@ -213,8 +236,13 @@ namespace Aaru.Partitions
         static DiskLabel SwapDiskLabel(DiskLabel dl)
         {
             dl = (DiskLabel)Marshal.SwapStructureMembersEndian(dl);
-            for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
-            for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i]         = Swapping.Swap(dl.d_spare[i]);
+
+            for(int i = 0; i < dl.d_drivedata.Length; i++)
+                dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
+
+            for(int i = 0; i < dl.d_spare.Length; i++)
+                dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
+
             for(int i = 0; i < dl.d_partitions.Length; i++)
                 dl.d_partitions[i] = (BSDPartition)Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
@@ -349,9 +377,7 @@ namespace Aaru.Partitions
             NANDFS = 30
         }
 
-        /// <summary>
-        ///     Drive flags
-        /// </summary>
+        /// <summary>Drive flags</summary>
         [Flags]
         enum dFlags : uint
         {

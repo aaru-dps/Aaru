@@ -40,6 +40,7 @@ namespace Aaru.DiscImages
         static byte[] ScrambleAtaString(string text, int length)
         {
             byte[] inbuf = Encoding.ASCII.GetBytes(text);
+
             if(inbuf.Length % 2 != 0)
             {
                 byte[] tmpbuf = new byte[inbuf.Length + 1];
@@ -56,10 +57,13 @@ namespace Aaru.DiscImages
                 outbuf[i            + 1] = inbuf[i];
             }
 
-            byte[] retBuf                             = new byte[length];
-            for(int i = 0; i < length; i++) retBuf[i] = 0x20;
+            byte[] retBuf = new byte[length];
+
+            for(int i = 0; i < length; i++)
+                retBuf[i] = 0x20;
 
             Array.Copy(outbuf, 0, retBuf, 0, outbuf.Length >= length ? length : outbuf.Length);
+
             return retBuf;
         }
     }

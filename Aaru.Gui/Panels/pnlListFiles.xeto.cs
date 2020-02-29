@@ -50,7 +50,6 @@ namespace Aaru.Gui.Panels
     public class pnlListFiles : Panel
     {
         readonly GridColumn                         accessColumn;
-        bool                                        ascendingSort;
         readonly GridColumn                         attributesColumn;
         readonly GridColumn                         backupColumn;
         readonly GridColumn                         changedColumn;
@@ -59,6 +58,16 @@ namespace Aaru.Gui.Panels
         readonly IReadOnlyFilesystem                filesystem;
         readonly GridColumn                         gidColumn;
 
+        readonly GridColumn     inodeColumn;
+        readonly GridColumn     linksColumn;
+        readonly GridColumn     modeColumn;
+        readonly GridColumn     nameColumn;
+        readonly ButtonMenuItem saveFilesMenuItem;
+        readonly GridColumn     sizeColumn;
+        readonly GridColumn     uidColumn;
+        readonly GridColumn     writeColumn;
+        bool                    ascendingSort;
+
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
@@ -66,16 +75,7 @@ namespace Aaru.Gui.Panels
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion
-
-        readonly GridColumn     inodeColumn;
-        readonly GridColumn     linksColumn;
-        readonly GridColumn     modeColumn;
-        readonly GridColumn     nameColumn;
-        readonly ButtonMenuItem saveFilesMenuItem;
-        readonly GridColumn     sizeColumn;
-        GridColumn              sortedColumn;
-        readonly GridColumn     uidColumn;
-        readonly GridColumn     writeColumn;
+        GridColumn sortedColumn;
 
         public pnlListFiles(IReadOnlyFilesystem filesystem, Dictionary<string, FileEntryInfo> files, string parentPath)
         {
@@ -86,122 +86,124 @@ namespace Aaru.Gui.Panels
 
             nameColumn = new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<EntryForGrid, string>(r => r.Name)},
-                HeaderText = "Name",
-                Sortable   = true
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Name)
+                },
+                HeaderText = "Name", Sortable = true
             };
+
             sizeColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Length}")
                 },
-                HeaderText = "Size",
-                Sortable   = true
+                HeaderText = "Size", Sortable = true
             };
+
             createdColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding =
-                        Binding.Property<EntryForGrid, string>(r => r.Stat.CreationTime == default(DateTime)
-                                                                        ? ""
-                                                                        : $"{r.Stat.CreationTime:G}")
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.CreationTime == default(DateTime) ? ""
+                                                                              : $"{r.Stat.CreationTime:G}")
                 },
-                HeaderText = "Created",
-                Sortable   = true
+                HeaderText = "Created", Sortable = true
             };
+
             accessColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.AccessTime == default(DateTime)
-                                                                              ? ""
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.AccessTime == default(DateTime) ? ""
                                                                               : $"{r.Stat.AccessTime:G}")
                 },
-                HeaderText = "Last access",
-                Sortable   = true
+                HeaderText = "Last access", Sortable = true
             };
+
             changedColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding =
-                        Binding.Property<EntryForGrid, string>(r => r.Stat.StatusChangeTime == default(DateTime)
-                                                                        ? ""
-                                                                        : $"{r.Stat.StatusChangeTime:G}")
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.StatusChangeTime == default(DateTime)
+                                                                              ? "" : $"{r.Stat.StatusChangeTime:G}")
                 },
-                HeaderText = "Changed",
-                Sortable   = true
+                HeaderText = "Changed", Sortable = true
             };
+
             backupColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.BackupTime == default(DateTime)
-                                                                              ? ""
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.BackupTime == default(DateTime) ? ""
                                                                               : $"{r.Stat.BackupTime:G}")
                 },
-                HeaderText = "Last backup",
-                Sortable   = true
+                HeaderText = "Last backup", Sortable = true
             };
+
             writeColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
-                    Binding =
-                        Binding.Property<EntryForGrid, string>(r => r.Stat.LastWriteTime == default(DateTime)
-                                                                        ? ""
-                                                                        : $"{r.Stat.LastWriteTime:G}")
+                    Binding = Binding.Property<EntryForGrid, string>(r => r.Stat.LastWriteTime == default(DateTime) ? ""
+                                                                              : $"{r.Stat.LastWriteTime:G}")
                 },
-                HeaderText = "Last write",
-                Sortable   = true
+                HeaderText = "Last write", Sortable = true
             };
+
             attributesColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Attributes}")
                 },
-                HeaderText = "Attributes",
-                Sortable   = true
+                HeaderText = "Attributes", Sortable = true
             };
+
             gidColumn = new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.GID}")},
-                HeaderText = "GID",
-                Sortable   = true
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.GID}")
+                },
+                HeaderText = "GID", Sortable = true
             };
+
             uidColumn = new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.UID}")},
-                HeaderText = "UID",
-                Sortable   = true
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.UID}")
+                },
+                HeaderText = "UID", Sortable = true
             };
+
             inodeColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Inode}")
                 },
-                HeaderText = "Inode",
-                Sortable   = true
+                HeaderText = "Inode", Sortable = true
             };
+
             linksColumn = new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Links}")
                 },
-                HeaderText = "Links",
-                Sortable   = true
+                HeaderText = "Links", Sortable = true
             };
+
             modeColumn = new GridColumn
             {
-                DataCell =
-                    new TextBoxCell {Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Mode}")},
-                HeaderText = "Mode",
-                Sortable   = true
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<EntryForGrid, string>(r => $"{r.Stat.Mode}")
+                },
+                HeaderText = "Mode", Sortable = true
             };
 
             grdFiles.Columns.Add(nameColumn);
@@ -224,15 +226,23 @@ namespace Aaru.Gui.Panels
             grdFiles.ShowHeader             = true;
 
             foreach(KeyValuePair<string, FileEntryInfo> file in files)
-                entries.Add(new EntryForGrid {Name = file.Key, Stat = file.Value, ParentPath = parentPath});
+                entries.Add(new EntryForGrid
+                {
+                    Name = file.Key, Stat = file.Value, ParentPath = parentPath
+                });
 
             grdFiles.DataStore         =  entries;
             sortedColumn               =  null;
             grdFiles.ColumnHeaderClick += OnGrdFilesOnColumnHeaderClick;
             ascendingSort              =  true;
 
-            grdFiles.ContextMenu    =  new ContextMenu();
-            saveFilesMenuItem       =  new ButtonMenuItem {Text = "Extract to...", Enabled = false};
+            grdFiles.ContextMenu = new ContextMenu();
+
+            saveFilesMenuItem = new ButtonMenuItem
+            {
+                Text = "Extract to...", Enabled = false
+            };
+
             saveFilesMenuItem.Click += OnSaveFilesMenuItemClick;
 
             grdFiles.ContextMenu.Items.Add(saveFilesMenuItem);
@@ -240,20 +250,23 @@ namespace Aaru.Gui.Panels
             grdFiles.SelectionChanged += OnGrdFilesSelectionChanged;
         }
 
-        void OnGrdFilesSelectionChanged(object sender, EventArgs e)
-        {
+        void OnGrdFilesSelectionChanged(object sender, EventArgs e) =>
             saveFilesMenuItem.Enabled = grdFiles.SelectedItems.Any();
-        }
 
         void OnSaveFilesMenuItemClick(object sender, EventArgs e)
         {
-            if(!grdFiles.SelectedItems.Any()) return;
+            if(!grdFiles.SelectedItems.Any())
+                return;
 
-            SelectFolderDialog saveFilesFolderDialog = new SelectFolderDialog {Title = "Choose destination folder..."};
+            var saveFilesFolderDialog = new SelectFolderDialog
+            {
+                Title = "Choose destination folder..."
+            };
 
             DialogResult result = saveFilesFolderDialog.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
             Statistics.AddCommand("extract-files");
 
@@ -264,28 +277,46 @@ namespace Aaru.Gui.Panels
                 string filename = file.Name;
 
                 if(DetectOS.IsWindows)
-                    if(filename.Contains('<')                || filename.Contains('>') ||
+                    if(filename.Contains('<')                ||
+                       filename.Contains('>')                ||
                        filename.Contains(':')                ||
-                       filename.Contains('\\')               || filename.Contains('/') ||
+                       filename.Contains('\\')               ||
+                       filename.Contains('/')                ||
                        filename.Contains('|')                ||
-                       filename.Contains('?')                || filename.Contains('*') ||
+                       filename.Contains('?')                ||
+                       filename.Contains('*')                ||
                        filename.Any(c => c < 32)             ||
-                       filename.ToUpperInvariant() == "CON"  || filename.ToUpperInvariant() == "PRN"  ||
-                       filename.ToUpperInvariant() == "AUX"  || filename.ToUpperInvariant() == "COM1" ||
-                       filename.ToUpperInvariant() == "COM2" || filename.ToUpperInvariant() == "COM3" ||
-                       filename.ToUpperInvariant() == "COM4" || filename.ToUpperInvariant() == "COM5" ||
-                       filename.ToUpperInvariant() == "COM6" || filename.ToUpperInvariant() == "COM7" ||
-                       filename.ToUpperInvariant() == "COM8" || filename.ToUpperInvariant() == "COM9" ||
-                       filename.ToUpperInvariant() == "LPT1" || filename.ToUpperInvariant() == "LPT2" ||
-                       filename.ToUpperInvariant() == "LPT3" || filename.ToUpperInvariant() == "LPT4" ||
-                       filename.ToUpperInvariant() == "LPT5" || filename.ToUpperInvariant() == "LPT6" ||
-                       filename.ToUpperInvariant() == "LPT7" || filename.ToUpperInvariant() == "LPT8" ||
-                       filename.ToUpperInvariant() == "LPT9" || filename.Last()             == '.'    ||
+                       filename.ToUpperInvariant() == "CON"  ||
+                       filename.ToUpperInvariant() == "PRN"  ||
+                       filename.ToUpperInvariant() == "AUX"  ||
+                       filename.ToUpperInvariant() == "COM1" ||
+                       filename.ToUpperInvariant() == "COM2" ||
+                       filename.ToUpperInvariant() == "COM3" ||
+                       filename.ToUpperInvariant() == "COM4" ||
+                       filename.ToUpperInvariant() == "COM5" ||
+                       filename.ToUpperInvariant() == "COM6" ||
+                       filename.ToUpperInvariant() == "COM7" ||
+                       filename.ToUpperInvariant() == "COM8" ||
+                       filename.ToUpperInvariant() == "COM9" ||
+                       filename.ToUpperInvariant() == "LPT1" ||
+                       filename.ToUpperInvariant() == "LPT2" ||
+                       filename.ToUpperInvariant() == "LPT3" ||
+                       filename.ToUpperInvariant() == "LPT4" ||
+                       filename.ToUpperInvariant() == "LPT5" ||
+                       filename.ToUpperInvariant() == "LPT6" ||
+                       filename.ToUpperInvariant() == "LPT7" ||
+                       filename.ToUpperInvariant() == "LPT8" ||
+                       filename.ToUpperInvariant() == "LPT9" ||
+                       filename.Last()             == '.'    ||
                        filename.Last()             == ' ')
                     {
                         char[] chars;
-                        if(filename.Last() == '.' || filename.Last() == ' ') chars = new char[filename.Length - 1];
-                        else chars                                                 = new char[filename.Length];
+
+                        if(filename.Last() == '.' ||
+                           filename.Last() == ' ')
+                            chars = new char[filename.Length - 1];
+                        else
+                            chars = new char[filename.Length];
 
                         for(int ci = 0; ci < chars.Length; ci++)
                             switch(filename[ci])
@@ -331,9 +362,11 @@ namespace Aaru.Gui.Panels
                                 case '\u001E':
                                 case '\u001F':
                                     chars[ci] = '_';
+
                                     break;
                                 default:
                                     chars[ci] = filename[ci];
+
                                     break;
                             }
 
@@ -354,9 +387,11 @@ namespace Aaru.Gui.Panels
                                                  $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
                                                  MessageBoxButtons.YesNoCancel, MessageBoxType.Warning);
 
-                        if(result == DialogResult.Cancel) return;
+                        if(result == DialogResult.Cancel)
+                            return;
 
-                        if(result == DialogResult.No) continue;
+                        if(result == DialogResult.No)
+                            continue;
 
                         filename = corrected;
                     }
@@ -369,17 +404,24 @@ namespace Aaru.Gui.Panels
                                              $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
                                              MessageBoxButtons.YesNoCancel, MessageBoxType.Question);
 
-                    if(result == DialogResult.Cancel) return;
+                    if(result == DialogResult.Cancel)
+                        return;
 
-                    if(result == DialogResult.No) continue;
+                    if(result == DialogResult.No)
+                        continue;
 
-                    try { File.Delete(outputPath); }
+                    try
+                    {
+                        File.Delete(outputPath);
+                    }
                     catch(IOException)
                     {
                         result = MessageBox.Show(this, "Cannot delete",
                                                  "Could not delete existing file.\nDo you want to continue?",
                                                  MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                        if(result == DialogResult.No) return;
+
+                        if(result == DialogResult.No)
+                            return;
                     }
                 }
 
@@ -394,21 +436,23 @@ namespace Aaru.Gui.Panels
                         result = MessageBox.Show(this, "Error reading file",
                                                  $"Error {error} reading file.\nDo you want to continue?",
                                                  MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                        if(result == DialogResult.No) return;
+
+                        if(result == DialogResult.No)
+                            return;
 
                         continue;
                     }
 
-                    FileStream fs =
-                        new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                    var fs = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 
                     fs.Write(outBuf, 0, outBuf.Length);
                     fs.Close();
-                    FileInfo fi = new FileInfo(outputPath);
+                    var fi = new FileInfo(outputPath);
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
-                        if(file.Stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
+                        if(file.Stat.CreationTimeUtc.HasValue)
+                            fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
                     }
                     catch
                     {
@@ -417,7 +461,8 @@ namespace Aaru.Gui.Panels
 
                     try
                     {
-                        if(file.Stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
+                        if(file.Stat.LastWriteTimeUtc.HasValue)
+                            fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
                     }
                     catch
                     {
@@ -426,7 +471,8 @@ namespace Aaru.Gui.Panels
 
                     try
                     {
-                        if(file.Stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
+                        if(file.Stat.AccessTimeUtc.HasValue)
+                            fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
                     }
                     catch
                     {
@@ -439,68 +485,60 @@ namespace Aaru.Gui.Panels
                     result = MessageBox.Show(this, "Cannot create file",
                                              "Could not create destination file.\nDo you want to continue?",
                                              MessageBoxButtons.YesNo, MessageBoxType.Warning);
-                    if(result == DialogResult.No) return;
+
+                    if(result == DialogResult.No)
+                        return;
                 }
             }
         }
 
         void OnGrdFilesOnColumnHeaderClick(object sender, GridColumnEventArgs gridColumnEventArgs)
         {
-            if(sortedColumn == gridColumnEventArgs.Column) ascendingSort = !ascendingSort;
-            else ascendingSort                                           = true;
+            if(sortedColumn == gridColumnEventArgs.Column)
+                ascendingSort = !ascendingSort;
+            else
+                ascendingSort = true;
 
             sortedColumn = gridColumnEventArgs.Column;
 
             if(sortedColumn == nameColumn)
-                grdFiles.DataStore =
-                    ascendingSort ? entries.OrderBy(t => t.Name) : entries.OrderByDescending(t => t.Name);
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Name)
+                                         : entries.OrderByDescending(t => t.Name);
             else if(sortedColumn == sizeColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.Length)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.Length)
                                          : entries.OrderByDescending(t => t.Stat.Length);
             else if(sortedColumn == createdColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.CreationTime)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.CreationTime)
                                          : entries.OrderByDescending(t => t.Stat.CreationTime);
             else if(sortedColumn == accessColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.AccessTime)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.AccessTime)
                                          : entries.OrderByDescending(t => t.Stat.AccessTime);
             else if(sortedColumn == changedColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.StatusChangeTime)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.StatusChangeTime)
                                          : entries.OrderByDescending(t => t.Stat.StatusChangeTime);
             else if(sortedColumn == backupColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.BackupTime)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.BackupTime)
                                          : entries.OrderByDescending(t => t.Stat.BackupTime);
             else if(sortedColumn == writeColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.LastWriteTime)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.LastWriteTime)
                                          : entries.OrderByDescending(t => t.Stat.LastWriteTime);
             else if(sortedColumn == attributesColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.Attributes)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.Attributes)
                                          : entries.OrderByDescending(t => t.Stat.Attributes);
             else if(sortedColumn == gidColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.GID)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.GID)
                                          : entries.OrderByDescending(t => t.Stat.GID);
             else if(sortedColumn == uidColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.UID)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.UID)
                                          : entries.OrderByDescending(t => t.Stat.UID);
             else if(sortedColumn == inodeColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.Inode)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.Inode)
                                          : entries.OrderByDescending(t => t.Stat.Inode);
             else if(sortedColumn == linksColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.Links)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.Links)
                                          : entries.OrderByDescending(t => t.Stat.Links);
             else if(sortedColumn == modeColumn)
-                grdFiles.DataStore = ascendingSort
-                                         ? entries.OrderBy(t => t.Stat.Mode)
+                grdFiles.DataStore = ascendingSort ? entries.OrderBy(t => t.Stat.Mode)
                                          : entries.OrderByDescending(t => t.Stat.Mode);
         }
 

@@ -41,26 +41,33 @@ namespace Aaru.DiscImages
 {
     public partial class RsIde
     {
-        public string                     Name                => "RS-IDE Hard Disk Image";
-        public Guid                       Id                  => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-        public ImageInfo                  Info                => imageInfo;
-        public string                     Author              => "Natalia Portillo";
-        public string                     Format              => "RS-IDE disk image";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.ATA_IDENTIFY};
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
-                MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
-                MediaType.PCCardTypeIV
-            };
+        public string                 Name         => "RS-IDE Hard Disk Image";
+        public Guid                   Id           => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "RS-IDE disk image";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new[]
+        {
+            MediaTagType.ATA_IDENTIFY
+        };
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash,
+            MediaType.CompactFlashType2, MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII,
+            MediaType.PCCardTypeIV
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".ide"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".ide"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

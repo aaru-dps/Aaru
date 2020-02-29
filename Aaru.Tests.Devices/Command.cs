@@ -31,50 +31,58 @@ using Aaru.Devices;
 
 namespace Aaru.Tests.Devices
 {
-    static partial class MainClass
+    internal static partial class MainClass
     {
         public static void Command(string devPath, Device dev)
         {
             while(true)
             {
                 System.Console.Clear();
-                DicConsole.WriteLine("Device: {0}", devPath);
-                DicConsole.WriteLine("Send a command to the device:");
-                DicConsole.WriteLine("1.- Send a SCSI command.");
-                DicConsole.WriteLine("2.- Send an ATA command.");
-                DicConsole.WriteLine("3.- Send a SecureDigital/MultiMediaCard command.");
-                DicConsole.WriteLine("4.- Send a NVMe command.");
-                DicConsole.WriteLine("0.- Return to device menu.");
-                DicConsole.Write("Choose: ");
+                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine("Send a command to the device:");
+                AaruConsole.WriteLine("1.- Send a SCSI command.");
+                AaruConsole.WriteLine("2.- Send an ATA command.");
+                AaruConsole.WriteLine("3.- Send a SecureDigital/MultiMediaCard command.");
+                AaruConsole.WriteLine("4.- Send a NVMe command.");
+                AaruConsole.WriteLine("0.- Return to device menu.");
+                AaruConsole.Write("Choose: ");
 
                 string strDev = System.Console.ReadLine();
+
                 if(!int.TryParse(strDev, out int item))
                 {
-                    DicConsole.WriteLine("Not a number. Press any key to continue...");
+                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
                     System.Console.ReadKey();
+
                     continue;
                 }
 
                 switch(item)
                 {
                     case 0:
-                        DicConsole.WriteLine("Returning to device menu...");
+                        AaruConsole.WriteLine("Returning to device menu...");
+
                         return;
                     case 1:
                         Scsi(devPath, dev);
+
                         continue;
                     case 2:
                         Ata(devPath, dev);
+
                         continue;
                     case 3:
                         SecureDigital(devPath, dev);
+
                         continue;
                     case 4:
                         NVMe(devPath, dev);
+
                         continue;
                     default:
-                        DicConsole.WriteLine("Incorrect option. Press any key to continue...");
+                        AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
                         System.Console.ReadKey();
+
                         continue;
                 }
             }

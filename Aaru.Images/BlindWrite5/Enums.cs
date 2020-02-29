@@ -36,20 +36,14 @@ namespace Aaru.DiscImages
     {
         enum Bw5TrackType : byte
         {
-            NotData = 0,
-            Audio   = 1,
-            Mode1   = 2,
-            Mode2   = 3,
-            Mode2F1 = 4,
-            Mode2F2 = 5,
+            NotData = 0, Audio   = 1, Mode1   = 2,
+            Mode2   = 3, Mode2F1 = 4, Mode2F2 = 5,
             Dvd     = 6
         }
 
         enum Bw5TrackSubchannel : byte
         {
-            None   = 0,
-            Q16    = 2,
-            Linear = 4
+            None = 0, Q16 = 2, Linear = 4
         }
     }
 }

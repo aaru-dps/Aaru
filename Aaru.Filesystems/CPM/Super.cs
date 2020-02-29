@@ -48,23 +48,27 @@ using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 namespace Aaru.Filesystems.CPM
 {
-    partial class CPM
+    internal partial class CPM
     {
-        public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options,     string    @namespace)
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                           Dictionary<string, string> options, string @namespace)
         {
             device         = imagePlugin;
             this.partition = partition;
             Encoding       = encoding ?? Encoding.GetEncoding("IBM437");
 
             // As the identification is so complex, just call Identify() and relay on its findings
-            if(!Identify(device, partition) || !cpmFound || workingDefinition == null || dpb == null)
+            if(!Identify(device, partition) ||
+               !cpmFound                    ||
+               workingDefinition == null    ||
+               dpb               == null)
                 return Errno.InvalidArgument;
 
             // Build the software interleaving sector mask
             if(workingDefinition.sides == 1)
             {
                 sectorMask = new int[workingDefinition.side1.sectorIds.Length];
+
                 for(int m = 0; m < sectorMask.Length; m++)
                     sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
             }
@@ -75,58 +79,69 @@ namespace Aaru.Filesystems.CPM
                 {
                     sectorMask = new int[workingDefinition.side1.sectorIds.Length +
                                          workingDefinition.side2.sectorIds.Length];
+
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+
                     // Skip first track (first side)
                     for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
                         sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0] +
+                            (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) +
                             workingDefinition.side1.sectorIds.Length;
                 }
+
                 // Head changes after whole side
                 else if(string.Compare(workingDefinition.order, "CYLINDERS",
                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+
                     // Skip first track (first side) and first track (second side)
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0] +
-                            workingDefinition.side1.sectorIds.Length                                    +
+                            (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) +
+                            workingDefinition.side1.sectorIds.Length                                      +
                             workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
                     AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
+
                     return Errno.NotImplemented;
                 }
+
                 // TODO: Implement COLUMBIA ordering
                 else if(string.Compare(workingDefinition.order, "COLUMBIA",
                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
-                                              "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+                                               "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
+
                     return Errno.NotImplemented;
                 }
+
                 // TODO: Implement EAGLE ordering
                 else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) ==
                         0)
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
-                                              "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+                                               "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
+
                     return Errno.NotImplemented;
                 }
                 else
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
-                                              "Unknown order type \"{0}\", not proceeding with this definition.",
-                                              workingDefinition.order);
+                                               "Unknown order type \"{0}\", not proceeding with this definition.",
+                                               workingDefinition.order);
+
                     return Errno.NotSupported;
                 }
             }
 
             // Deinterleave whole volume
             Dictionary<ulong, byte[]> deinterleavedSectors = new Dictionary<ulong, byte[]>();
+
             if(workingDefinition.sides                                                                       == 1 ||
                string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
@@ -135,8 +150,9 @@ namespace Aaru.Filesystems.CPM
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
                     byte[] readSector =
-                        device.ReadSector((ulong)((int)partition.Start + p / sectorMask.Length * sectorMask.Length +
-                                                  sectorMask[p % sectorMask.Length]));
+                        device.ReadSector((ulong)((int)partition.Start + ((p / sectorMask.Length) * sectorMask.Length) +
+                                                  sectorMask[p               % sectorMask.Length]));
+
                     if(workingDefinition.complement)
                         for(int b = 0; b < readSector.Length; b++)
                             readSector[b] = (byte)(~readSector[b] & 0xFF);
@@ -146,7 +162,7 @@ namespace Aaru.Filesystems.CPM
             }
 
             int                       blockSize        = 128 << dpb.bsh;
-            MemoryStream              blockMs          = new MemoryStream();
+            var                       blockMs          = new MemoryStream();
             ulong                     blockNo          = 0;
             int                       sectorsPerBlock  = 0;
             Dictionary<ulong, byte[]> allocationBlocks = new Dictionary<ulong, byte[]>();
@@ -166,31 +182,39 @@ namespace Aaru.Filesystems.CPM
                         Array.Copy(sector, blockSize * i, tmp, 0, blockSize);
                         allocationBlocks.Add(blockNo++, tmp);
                     }
+
                 // CP/M blocks are larger than physical sectors
                 else if(sector.Length < blockSize)
                 {
                     blockMs.Write(sector, 0, sector.Length);
                     sectorsPerBlock++;
 
-                    if(sectorsPerBlock != blockSize / sector.Length) continue;
+                    if(sectorsPerBlock != blockSize / sector.Length)
+                        continue;
 
                     allocationBlocks.Add(blockNo++, blockMs.ToArray());
                     sectorsPerBlock = 0;
                     blockMs         = new MemoryStream();
                 }
+
                 // CP/M blocks are same size than physical sectors
-                else allocationBlocks.Add(blockNo++, sector);
+                else
+                    allocationBlocks.Add(blockNo++, sector);
             }
 
             AaruConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
-            int dirSectors = (dpb.drm + 1) * 32 / workingDefinition.bytesPerSector;
-            if(workingDefinition.sofs > 0) dirOff = workingDefinition.sofs;
-            else dirOff                           = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
+            int dirSectors = ((dpb.drm + 1) * 32) / workingDefinition.bytesPerSector;
+
+            if(workingDefinition.sofs > 0)
+                dirOff = workingDefinition.sofs;
+            else
+                dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
 
             // Read the whole directory blocks
-            MemoryStream dirMs = new MemoryStream();
+            var dirMs = new MemoryStream();
+
             for(int d = 0; d < dirSectors; d++)
             {
                 deinterleavedSectors.TryGetValue((ulong)(d + dirOff), out byte[] sector);
@@ -199,14 +223,17 @@ namespace Aaru.Filesystems.CPM
 
             byte[] directory = dirMs.ToArray();
 
-            if(directory == null) return Errno.InvalidArgument;
+            if(directory == null)
+                return Errno.InvalidArgument;
 
             int    dirCnt = 0;
             string file1  = null;
             string file2  = null;
             string file3  = null;
+
             Dictionary<string, Dictionary<int, List<ushort>>> fileExtents =
                 new Dictionary<string, Dictionary<int, List<ushort>>>();
+
             statCache = new Dictionary<string, FileEntryInfo>();
             cpmStat   = new FileSystemInfo();
             bool atime = false;
@@ -219,6 +246,7 @@ namespace Aaru.Filesystems.CPM
 
             // For each directory entry
             for(int dOff = 0; dOff < directory.Length; dOff += 32)
+
                 // Describes a file (does not support PDOS entries with user >= 16, because they're identical to password entries
                 if((directory[dOff] & 0x7F) < 0x10)
                     if(allocationBlocks.Count > 256)
@@ -229,6 +257,7 @@ namespace Aaru.Filesystems.CPM
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
                         int user = entry.statusUser & 0x0F;
 
@@ -246,34 +275,51 @@ namespace Aaru.Filesystems.CPM
                             validEntry         &= entry.extension[i] >= 0x20;
                         }
 
-                        if(!validEntry) continue;
+                        if(!validEntry)
+                            continue;
 
                         string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0) filename                         = $"{user:X1}:{filename}";
-                        if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
+                        if(user > 0)
+                            filename = $"{user:X1}:{filename}";
 
-                        int entryNo = (32 * entry.extentCounter + entry.extentCounterHigh) / (dpb.exm + 1);
+                        if(!string.IsNullOrEmpty(extension))
+                            filename = filename + "." + extension;
+
+                        int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (dpb.exm + 1);
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
-                        else fInfo = new FileEntryInfo {Attributes = new FileAttributes()};
+                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                            statCache.Remove(filename);
+                        else
+                            fInfo = new FileEntryInfo
+                            {
+                                Attributes = new FileAttributes()
+                            };
 
                         // And any extent?
                         if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extentBlocks))
                             fileExtents.Remove(filename);
-                        else extentBlocks = new Dictionary<int, List<ushort>>();
+                        else
+                            extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks)) extentBlocks.Remove(entryNo);
-                        else blocks = new List<ushort>();
+                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks))
+                            extentBlocks.Remove(entryNo);
+                        else
+                            blocks = new List<ushort>();
 
                         // Attributes
-                        if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
-                        if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
-                        if(system) fInfo.Attributes |= FileAttributes.System;
+                        if(hidden)
+                            fInfo.Attributes |= FileAttributes.Hidden;
+
+                        if(rdOnly)
+                            fInfo.Attributes |= FileAttributes.ReadOnly;
+
+                        if(system)
+                            fInfo.Attributes |= FileAttributes.System;
 
                         // Supposedly there is a value in the directory entry telling how many blocks are designated in
                         // this entry. However some implementations tend to do whatever they wish, but none will ever
@@ -290,19 +336,23 @@ namespace Aaru.Filesystems.CPM
                         statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename)) dirList.Add(filename);
+                        if(!dirList.Contains(filename))
+                            dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
                         {
                             case 0:
                                 file1 = filename;
+
                                 break;
                             case 1:
                                 file2 = filename;
+
                                 break;
                             case 2:
                                 file3 = filename;
+
                                 break;
                         }
 
@@ -316,6 +366,7 @@ namespace Aaru.Filesystems.CPM
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
                         bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+
                         //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
                         int user = entry.statusUser & 0x0F;
 
@@ -333,42 +384,59 @@ namespace Aaru.Filesystems.CPM
                             validEntry         &= entry.extension[i] >= 0x20;
                         }
 
-                        if(!validEntry) continue;
+                        if(!validEntry)
+                            continue;
 
                         string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                         string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                         // If user is != 0, append user to name to have identical filenames
-                        if(user > 0) filename                         = $"{user:X1}:{filename}";
-                        if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
+                        if(user > 0)
+                            filename = $"{user:X1}:{filename}";
 
-                        int entryNo = (32 * entry.extentCounterHigh + entry.extentCounter) / (dpb.exm + 1);
+                        if(!string.IsNullOrEmpty(extension))
+                            filename = filename + "." + extension;
+
+                        int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (dpb.exm + 1);
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
-                        else fInfo = new FileEntryInfo {Attributes = new FileAttributes()};
+                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                            statCache.Remove(filename);
+                        else
+                            fInfo = new FileEntryInfo
+                            {
+                                Attributes = new FileAttributes()
+                            };
 
                         // And any extent?
                         if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extentBlocks))
                             fileExtents.Remove(filename);
-                        else extentBlocks = new Dictionary<int, List<ushort>>();
+                        else
+                            extentBlocks = new Dictionary<int, List<ushort>>();
 
                         // Do we already have this extent? Should never happen
-                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks)) extentBlocks.Remove(entryNo);
-                        else blocks = new List<ushort>();
+                        if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks))
+                            extentBlocks.Remove(entryNo);
+                        else
+                            blocks = new List<ushort>();
 
                         // Attributes
-                        if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
-                        if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
-                        if(system) fInfo.Attributes |= FileAttributes.System;
+                        if(hidden)
+                            fInfo.Attributes |= FileAttributes.Hidden;
+
+                        if(rdOnly)
+                            fInfo.Attributes |= FileAttributes.ReadOnly;
+
+                        if(system)
+                            fInfo.Attributes |= FileAttributes.System;
 
                         // Supposedly there is a value in the directory entry telling how many blocks are designated in
                         // this entry. However some implementations tend to do whatever they wish, but none will ever
                         // allocate block 0 for a file because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is
                         // non-standard so we must ignore it.
-                        foreach(ushort blk in entry.allocations
-                                                   .Where(blk => !blocks.Contains(blk) && blk != 0)) blocks.Add(blk);
+                        foreach(ushort blk in entry.allocations.Where(blk => !blocks.Contains(blk) && blk != 0))
+                            blocks.Add(blk);
 
                         // Save the file
                         fInfo.UID = (ulong)user;
@@ -377,43 +445,56 @@ namespace Aaru.Filesystems.CPM
                         statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename)) dirList.Add(filename);
+                        if(!dirList.Contains(filename))
+                            dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
                         {
                             case 0:
                                 file1 = filename;
+
                                 break;
                             case 1:
                                 file2 = filename;
+
                                 break;
                             case 2:
                                 file3 = filename;
+
                                 break;
                         }
 
                         dirCnt++;
                     }
+
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
-                else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
+                else if((directory[dOff] & 0x7F) >= 0x10 &&
+                        (directory[dOff] & 0x7F) < 0x20)
                 {
                     PasswordEntry entry = Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
 
                     int user = entry.userNumber & 0x0F;
 
-                    for(int i = 0; i < 8; i++) entry.filename[i]  &= 0x7F;
-                    for(int i = 0; i < 3; i++) entry.extension[i] &= 0x7F;
+                    for(int i = 0; i < 8; i++)
+                        entry.filename[i] &= 0x7F;
+
+                    for(int i = 0; i < 3; i++)
+                        entry.extension[i] &= 0x7F;
 
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0) filename                         = $"{user:X1}:{filename}";
-                    if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
+                    if(user > 0)
+                        filename = $"{user:X1}:{filename}";
+
+                    if(!string.IsNullOrEmpty(extension))
+                        filename = filename + "." + extension;
 
                     // Do not repeat passwords
-                    if(passwordCache.ContainsKey(filename)) passwordCache.Remove(filename);
+                    if(passwordCache.ContainsKey(filename))
+                        passwordCache.Remove(filename);
 
                     // Copy whole password entry
                     byte[] tmp = new byte[32];
@@ -425,17 +506,21 @@ namespace Aaru.Filesystems.CPM
                     {
                         case 0:
                             file1 = filename;
+
                             break;
                         case 1:
                             file2 = filename;
+
                             break;
                         case 2:
                             file3 = filename;
+
                             break;
                     }
 
                     dirCnt++;
                 }
+
                 // Volume label and password entry. Volume password is ignored.
                 else
                     switch(directory[dOff] & 0x7F)
@@ -452,27 +537,33 @@ namespace Aaru.Filesystems.CPM
                             labelCreationDate = new byte[4];
                             labelUpdateDate   = new byte[4];
                             Array.Copy(directory, dOff + 24, labelCreationDate, 0, 4);
-                            Array.Copy(directory, dOff + 28, labelUpdateDate,   0, 4);
+                            Array.Copy(directory, dOff + 28, labelUpdateDate, 0, 4);
 
                             // Count entries 3 by 3 for timestamps
                             switch(dirCnt % 3)
                             {
                                 case 0:
                                     file1 = null;
+
                                     break;
                                 case 1:
                                     file2 = null;
+
                                     break;
                                 case 2:
                                     file3 = null;
+
                                     break;
                             }
 
                             dirCnt++;
+
                             break;
                         case 0x21:
-                            if(directory[dOff + 10] == 0x00 && directory[dOff + 20] == 0x00 &&
-                               directory[dOff + 30] == 0x00 && directory[dOff + 31] == 0x00)
+                            if(directory[dOff + 10] == 0x00 &&
+                               directory[dOff + 20] == 0x00 &&
+                               directory[dOff + 30] == 0x00 &&
+                               directory[dOff + 31] == 0x00)
                             {
                                 DateEntry dateEntry =
                                     Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
@@ -482,11 +573,15 @@ namespace Aaru.Filesystems.CPM
                                 // Entry contains timestamps for last 3 entries, whatever the kind they are.
                                 if(!string.IsNullOrEmpty(file1))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file1);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file1, out fInfo))
+                                        statCache.Remove(file1);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
-                                    if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date1);
-                                    else fInfo.CreationTime    = DateHandlers.CpmToDateTime(dateEntry.date1);
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date1);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date1);
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date2);
 
@@ -495,11 +590,15 @@ namespace Aaru.Filesystems.CPM
 
                                 if(!string.IsNullOrEmpty(file2))
                                 {
-                                    if(statCache.TryGetValue(file2, out fInfo)) statCache.Remove(file2);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file2, out fInfo))
+                                        statCache.Remove(file2);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
-                                    if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date3);
-                                    else fInfo.CreationTime    = DateHandlers.CpmToDateTime(dateEntry.date3);
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date3);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date3);
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date4);
 
@@ -508,11 +607,15 @@ namespace Aaru.Filesystems.CPM
 
                                 if(!string.IsNullOrEmpty(file3))
                                 {
-                                    if(statCache.TryGetValue(file3, out fInfo)) statCache.Remove(file3);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file3, out fInfo))
+                                        statCache.Remove(file3);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
-                                    if(atime) fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date5);
-                                    else fInfo.CreationTime    = DateHandlers.CpmToDateTime(dateEntry.date5);
+                                    if(atime)
+                                        fInfo.AccessTime = DateHandlers.CpmToDateTime(dateEntry.date5);
+                                    else
+                                        fInfo.CreationTime = DateHandlers.CpmToDateTime(dateEntry.date5);
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date6);
 
@@ -524,6 +627,7 @@ namespace Aaru.Filesystems.CPM
                                 file3  = null;
                                 dirCnt = 0;
                             }
+
                             // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
                             else if(directory[dOff + 1] == 0x00)
                             {
@@ -535,8 +639,10 @@ namespace Aaru.Filesystems.CPM
                                 // Entry contains timestamps for last 3 entries, whatever the kind they are.
                                 if(!string.IsNullOrEmpty(file1))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file1);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file1, out fInfo))
+                                        statCache.Remove(file1);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
                                     ctime[0] = trdPartyDateEntry.create1[0];
@@ -551,8 +657,10 @@ namespace Aaru.Filesystems.CPM
 
                                 if(!string.IsNullOrEmpty(file2))
                                 {
-                                    if(statCache.TryGetValue(file2, out fInfo)) statCache.Remove(file2);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file2, out fInfo))
+                                        statCache.Remove(file2);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
                                     ctime[0] = trdPartyDateEntry.create2[0];
@@ -567,8 +675,10 @@ namespace Aaru.Filesystems.CPM
 
                                 if(!string.IsNullOrEmpty(file3))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo)) statCache.Remove(file3);
-                                    else fInfo = new FileEntryInfo();
+                                    if(statCache.TryGetValue(file1, out fInfo))
+                                        statCache.Remove(file3);
+                                    else
+                                        fInfo = new FileEntryInfo();
 
                                     byte[] ctime = new byte[4];
                                     ctime[0] = trdPartyDateEntry.create3[0];
@@ -595,18 +705,21 @@ namespace Aaru.Filesystems.CPM
             AaruConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
             long usedBlocks = 0;
             fileCache = new Dictionary<string, byte[]>();
+
             foreach(string filename in dirList)
             {
-                MemoryStream fileMs = new MemoryStream();
+                var fileMs = new MemoryStream();
 
-                if(statCache.TryGetValue(filename, out FileEntryInfo fInfo)) statCache.Remove(filename);
+                if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                    statCache.Remove(filename);
 
                 fInfo.Blocks = 0;
 
                 if(fileExtents.TryGetValue(filename, out Dictionary<int, List<ushort>> extents))
                     for(int ex = 0; ex < extents.Count; ex++)
                     {
-                        if(!extents.TryGetValue(ex, out List<ushort> alBlks)) continue;
+                        if(!extents.TryGetValue(ex, out List<ushort> alBlks))
+                            continue;
 
                         foreach(ushort alBlk in alBlks)
                         {
@@ -628,13 +741,16 @@ namespace Aaru.Filesystems.CPM
             }
 
             decodedPasswordCache = new Dictionary<string, byte[]>();
+
             // For each stored password, store a decoded version of it
             if(passwordCache.Count > 0)
                 foreach(KeyValuePair<string, byte[]> kvp in passwordCache)
                 {
                     byte[] tmp = new byte[8];
                     Array.Copy(kvp.Value, 16, tmp, 0, 8);
-                    for(int t = 0; t < 8; t++) tmp[t] ^= kvp.Value[13];
+
+                    for(int t = 0; t < 8; t++)
+                        tmp[t] ^= kvp.Value[13];
 
                     decodedPasswordCache.Add(kvp.Key, tmp);
                 }
@@ -650,14 +766,12 @@ namespace Aaru.Filesystems.CPM
             // Generate XML info
             XmlFsType = new FileSystemType
             {
-                Clusters              = cpmStat.Blocks,
-                ClusterSize           = (uint)blockSize,
-                Files                 = (ulong)fileCache.Count,
-                FilesSpecified        = true,
-                FreeClusters          = cpmStat.FreeBlocks,
-                FreeClustersSpecified = true,
-                Type                  = "CP/M filesystem"
+                Clusters       = cpmStat.Blocks, ClusterSize = (uint)blockSize,
+                Files          = (ulong)fileCache.Count,
+                FilesSpecified = true, FreeClusters = cpmStat.FreeBlocks, FreeClustersSpecified = true,
+                Type           = "CP/M filesystem"
             };
+
             if(labelCreationDate != null)
             {
                 XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(labelCreationDate);
@@ -670,20 +784,22 @@ namespace Aaru.Filesystems.CPM
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            if(!string.IsNullOrEmpty(label)) XmlFsType.VolumeName = label;
+            if(!string.IsNullOrEmpty(label))
+                XmlFsType.VolumeName = label;
 
             mounted = true;
+
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Gets information about the mounted volume.
-        /// </summary>
+        /// <summary>Gets information about the mounted volume.</summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = null;
-            if(!mounted) return Errno.AccessDenied;
+
+            if(!mounted)
+                return Errno.AccessDenied;
 
             stat = cpmStat;
 
@@ -703,6 +819,7 @@ namespace Aaru.Filesystems.CPM
             standardTimestamps   = false;
             labelCreationDate    = null;
             labelUpdateDate      = null;
+
             return Errno.NoError;
         }
     }

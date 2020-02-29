@@ -46,7 +46,8 @@ namespace Aaru.DiscImages
     {
         Track GetTrack(ulong sector)
         {
-            Track track = new Track();
+            var track = new Track();
+
             foreach(KeyValuePair<ulong, uint> kvp in offsetmap.Where(kvp => sector >= kvp.Key))
                 tracks.TryGetValue(kvp.Value, out track);
 
@@ -56,12 +57,14 @@ namespace Aaru.DiscImages
         ulong GetAbsoluteSector(ulong relativeSector, uint track)
         {
             tracks.TryGetValue(track, out Track aaruTrack);
+
             return aaruTrack.TrackStartSector + relativeSector;
         }
 
         byte[] GetHunk(ulong hunkNo)
         {
-            if(hunkCache.TryGetValue(hunkNo, out byte[] hunk)) return hunk;
+            if(hunkCache.TryGetValue(hunkNo, out byte[] hunk))
+                return hunk;
 
             switch(mapVersion)
             {
@@ -73,16 +76,17 @@ namespace Aaru.DiscImages
                     imageStream.Seek((long)offset, SeekOrigin.Begin);
                     imageStream.Read(compHunk, 0, compHunk.Length);
 
-                    if(length                              == sectorsPerHunk * imageInfo.SectorSize) hunk = compHunk;
+                    if(length == sectorsPerHunk * imageInfo.SectorSize)
+                        hunk = compHunk;
                     else if((ChdCompression)hdrCompression > ChdCompression.Zlib)
                         throw new
                             ImageNotSupportedException($"Unsupported compression {(ChdCompression)hdrCompression}");
                     else
                     {
-                        DeflateStream zStream =
-                            new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
+                        var zStream = new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
                         hunk = new byte[sectorsPerHunk * imageInfo.SectorSize];
                         int read = zStream.Read(hunk, 0, (int)(sectorsPerHunk * imageInfo.SectorSize));
+
                         if(read != sectorsPerHunk * imageInfo.SectorSize)
                             throw new
                                 IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {sectorsPerHunk * imageInfo.SectorSize}");
@@ -95,6 +99,7 @@ namespace Aaru.DiscImages
                     byte[] entryBytes = new byte[16];
                     Array.Copy(hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
                     ChdMapV3Entry entry = Marshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
+
                     switch((Chdv3EntryFlags)(entry.flags & 0x0F))
                     {
                         case Chdv3EntryFlags.Invalid: throw new ArgumentException("Invalid hunk found.");
@@ -109,16 +114,20 @@ namespace Aaru.DiscImages
                                         byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
                                         imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                                         imageStream.Read(zHunk, 0, zHunk.Length);
-                                        DeflateStream zStream =
+
+                                        var zStream =
                                             new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
+
                                         hunk = new byte[bytesPerHunk];
                                         int read = zStream.Read(hunk, 0, (int)bytesPerHunk);
+
                                         if(read != bytesPerHunk)
                                             throw new
                                                 IOException($"Unable to decompress hunk correctly, got {read} bytes, expected {bytesPerHunk}");
 
                                         zStream.Close();
                                     }
+
                                     // TODO: Guess wth is MAME doing with these hunks
                                     else
                                         throw new
@@ -136,12 +145,15 @@ namespace Aaru.DiscImages
                             hunk = new byte[bytesPerHunk];
                             imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                             imageStream.Read(hunk, 0, hunk.Length);
+
                             break;
                         case Chdv3EntryFlags.Mini:
                             hunk = new byte[bytesPerHunk];
                             byte[] mini;
                             mini = BigEndianBitConverter.GetBytes(entry.offset);
-                            for(int i = 0; i < bytesPerHunk; i++) hunk[i] = mini[i % 8];
+
+                            for(int i = 0; i < bytesPerHunk; i++)
+                                hunk[i] = mini[i % 8];
 
                             break;
                         case Chdv3EntryFlags.SelfHunk: return GetHunk(entry.offset);
@@ -161,13 +173,15 @@ namespace Aaru.DiscImages
                         imageStream.Seek(hunkTableSmall[hunkNo] * bytesPerHunk, SeekOrigin.Begin);
                         imageStream.Read(hunk, 0, hunk.Length);
                     }
-                    else throw new ImageNotSupportedException("Compressed v5 hunks not yet supported");
+                    else
+                        throw new ImageNotSupportedException("Compressed v5 hunks not yet supported");
 
                     break;
                 default: throw new ImageNotSupportedException($"Unsupported hunk map version {mapVersion}");
             }
 
-            if(hunkCache.Count >= maxBlockCache) hunkCache.Clear();
+            if(hunkCache.Count >= maxBlockCache)
+                hunkCache.Clear();
 
             hunkCache.Add(hunkNo, hunk);
 

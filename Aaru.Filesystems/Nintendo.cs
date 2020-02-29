@@ -49,9 +49,11 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start != 0) return false;
+            if(partition.Start != 0)
+                return false;
 
-            if(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize < 0x50000) return false;
+            if(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize < 0x50000)
+                return false;
 
             byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
@@ -62,14 +64,14 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("shift_jis");
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
             information = "";
             XmlFsType   = new FileSystemType();
 
-            NintendoFields fields = new NintendoFields();
+            var fields = new NintendoFields();
 
             byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
@@ -78,8 +80,10 @@ namespace Aaru.Filesystems
             uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
             uint magicWii = BigEndianBitConverter.ToUInt32(header, 0x18);
 
-            if(magicWii     == 0x5D1C9EA3) wii = true;
-            else if(magicGc != 0xC2339F3D) return;
+            if(magicWii == 0x5D1C9EA3)
+                wii = true;
+            else if(magicGc != 0xC2339F3D)
+                return;
 
             fields.DiscType         =  Encoding.ASCII.GetString(header, 0, 1);
             fields.GameCode         =  Encoding.ASCII.GetString(header, 1, 2);
@@ -117,39 +121,43 @@ namespace Aaru.Filesystems
                 fields.FourthPartitions = new NintendoPartition[BigEndianBitConverter.ToUInt32(header, 0x40018)];
 
                 for(int i = 0; i < fields.FirstPartitions.Length; i++)
-                    if(offset1 + i * 8 + 8 < 0x50000)
+                    if(offset1 + (i * 8) + 8 < 0x50000)
                     {
                         fields.FirstPartitions[i].Offset =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 0)) << 2;
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 0)) << 2;
+
                         fields.FirstPartitions[i].Type =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + i * 8 + 4));
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset1 + (i * 8) + 4));
                     }
 
                 for(int i = 0; i < fields.SecondPartitions.Length; i++)
-                    if(offset1 + i * 8 + 8 < 0x50000)
+                    if(offset1 + (i * 8) + 8 < 0x50000)
                     {
                         fields.FirstPartitions[i].Offset =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 0)) << 2;
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 0)) << 2;
+
                         fields.FirstPartitions[i].Type =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + i * 8 + 4));
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset2 + (i * 8) + 4));
                     }
 
                 for(int i = 0; i < fields.ThirdPartitions.Length; i++)
-                    if(offset1 + i * 8 + 8 < 0x50000)
+                    if(offset1 + (i * 8) + 8 < 0x50000)
                     {
                         fields.FirstPartitions[i].Offset =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 0)) << 2;
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 0)) << 2;
+
                         fields.FirstPartitions[i].Type =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + i * 8 + 4));
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset3 + (i * 8) + 4));
                     }
 
                 for(int i = 0; i < fields.FourthPartitions.Length; i++)
-                    if(offset1 + i * 8 + 8 < 0x50000)
+                    if(offset1 + (i * 8) + 8 < 0x50000)
                     {
                         fields.FirstPartitions[i].Offset =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 0)) << 2;
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 0)) << 2;
+
                         fields.FirstPartitions[i].Type =
-                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + i * 8 + 4));
+                            BigEndianBitConverter.ToUInt32(header, (int)(offset4 + (i * 8) + 4));
                     }
 
                 fields.Region       = header[0x4E000];
@@ -171,64 +179,69 @@ namespace Aaru.Filesystems
                 fields.FourthPartitions = new NintendoPartition[0];
             }
 
-            AaruConsole.DebugWriteLine("Nintendo plugin", "discType = {0}",         fields.DiscType);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}",         fields.GameCode);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}",       fields.RegionCode);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}",    fields.PublisherCode);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "discID = {0}",           fields.DiscId);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}",       fields.DiscNumber);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}",      fields.DiscVersion);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}",        fields.Streaming);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discType = {0}", fields.DiscType);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}", fields.GameCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}", fields.RegionCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}", fields.PublisherCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discID = {0}", fields.DiscId);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}", fields.DiscNumber);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}", fields.DiscVersion);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}", fields.Streaming);
             AaruConsole.DebugWriteLine("Nintendo plugin", "streamBufferSize = {0}", fields.StreamBufferSize);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"",        fields.Title);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}",    fields.DebugOff);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}",   fields.DebugAddr);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}",      fields.DolOff);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}",      fields.FstOff);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}",          fields.FstSize);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}",           fields.FstMax);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"", fields.Title);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}", fields.DebugOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}", fields.DebugAddr);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}", fields.DolOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}", fields.FstOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}", fields.FstSize);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}", fields.FstMax);
+
             for(int i = 0; i < fields.FirstPartitions.Length; i++)
             {
                 AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
-                                          fields.FirstPartitions[i].Offset, i);
+                                           fields.FirstPartitions[i].Offset, i);
+
                 AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}",
-                                          fields.FirstPartitions[i].Type, i);
+                                           fields.FirstPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.SecondPartitions.Length; i++)
             {
                 AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
-                                          fields.SecondPartitions[i].Offset, i);
+                                           fields.SecondPartitions[i].Offset, i);
+
                 AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}",
-                                          fields.SecondPartitions[i].Type, i);
+                                           fields.SecondPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.ThirdPartitions.Length; i++)
             {
                 AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
-                                          fields.ThirdPartitions[i].Offset, i);
+                                           fields.ThirdPartitions[i].Offset, i);
+
                 AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}",
-                                          fields.ThirdPartitions[i].Type, i);
+                                           fields.ThirdPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.FourthPartitions.Length; i++)
             {
                 AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
-                                          fields.FourthPartitions[i].Offset, i);
+                                           fields.FourthPartitions[i].Offset, i);
+
                 AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].type = {0}",
-                                          fields.FourthPartitions[i].Type, i);
+                                           fields.FourthPartitions[i].Type, i);
             }
 
-            AaruConsole.DebugWriteLine("Nintendo plugin", "region = {0}",       fields.Region);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}",     fields.JapanAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}",       fields.UsaAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}",    fields.GermanAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}",      fields.PegiAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}",   fields.FinlandAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}",  fields.PortugalAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}",        fields.UkAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "region = {0}", fields.Region);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}", fields.JapanAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}", fields.UsaAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}", fields.GermanAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}", fields.PegiAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}", fields.FinlandAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}", fields.PortugalAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}", fields.UkAge);
             AaruConsole.DebugWriteLine("Nintendo plugin", "australiaAge = {0}", fields.AustraliaAge);
-            AaruConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}",     fields.KoreaAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}", fields.KoreaAge);
 
             sbInformation.AppendLine("Nintendo optical filesystem");
             sbInformation.AppendLine(wii ? "Nintendo Wii Optical Disc" : "Nintendo GameCube Optical Disc");
@@ -236,12 +249,17 @@ namespace Aaru.Filesystems
             sbInformation.AppendFormat("Disc is a {0} disc", DiscTypeToString(fields.DiscType)).AppendLine();
             sbInformation.AppendFormat("Disc region is {0}", RegionCodeToString(fields.RegionCode)).AppendLine();
             sbInformation.AppendFormat("Published by {0}", PublisherCodeToString(fields.PublisherCode)).AppendLine();
+
             if(fields.DiscNumber > 0)
                 sbInformation.AppendFormat("Disc number {0} of a multi-disc set", fields.DiscNumber + 1).AppendLine();
-            if(fields.Streaming) sbInformation.AppendLine("Disc is prepared for audio streaming");
+
+            if(fields.Streaming)
+                sbInformation.AppendLine("Disc is prepared for audio streaming");
+
             if(fields.StreamBufferSize > 0)
-                sbInformation.AppendFormat("Audio streaming buffer size is {0} bytes", fields.StreamBufferSize)
-                             .AppendLine();
+                sbInformation.AppendFormat("Audio streaming buffer size is {0} bytes", fields.StreamBufferSize).
+                              AppendLine();
+
             sbInformation.AppendFormat("Title: {0}", fields.Title).AppendLine();
 
             if(wii)
@@ -250,14 +268,17 @@ namespace Aaru.Filesystems
                     sbInformation.AppendFormat("First {0} partition starts at sector {1}",
                                                PartitionTypeToString(fields.FirstPartitions[i].Type),
                                                fields.FirstPartitions[i].Offset / 2048).AppendLine();
+
                 for(int i = 0; i < fields.SecondPartitions.Length; i++)
                     sbInformation.AppendFormat("Second {0} partition starts at sector {1}",
                                                PartitionTypeToString(fields.SecondPartitions[i].Type),
                                                fields.SecondPartitions[i].Offset / 2048).AppendLine();
+
                 for(int i = 0; i < fields.ThirdPartitions.Length; i++)
                     sbInformation.AppendFormat("Third {0} partition starts at sector {1}",
                                                PartitionTypeToString(fields.ThirdPartitions[i].Type),
                                                fields.ThirdPartitions[i].Offset / 2048).AppendLine();
+
                 for(int i = 0; i < fields.FourthPartitions.Length; i++)
                     sbInformation.AppendFormat("Fourth {0} partition starts at sector {1}",
                                                PartitionTypeToString(fields.FourthPartitions[i].Type),
@@ -266,30 +287,38 @@ namespace Aaru.Filesystems
                 //                sbInformation.AppendFormat("Region byte is {0}", fields.region).AppendLine();
                 if((fields.JapanAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Japan age rating is {0}", fields.JapanAge).AppendLine();
+
                 if((fields.UsaAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("ESRB age rating is {0}", fields.UsaAge).AppendLine();
+
                 if((fields.GermanAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("German age rating is {0}", fields.GermanAge).AppendLine();
+
                 if((fields.PegiAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("PEGI age rating is {0}", fields.PegiAge).AppendLine();
+
                 if((fields.FinlandAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Finland age rating is {0}", fields.FinlandAge).AppendLine();
+
                 if((fields.PortugalAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Portugal age rating is {0}", fields.PortugalAge).AppendLine();
+
                 if((fields.UkAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("UK age rating is {0}", fields.UkAge).AppendLine();
+
                 if((fields.AustraliaAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Australia age rating is {0}", fields.AustraliaAge).AppendLine();
+
                 if((fields.KoreaAge & 0x80) != 0x80)
                     sbInformation.AppendFormat("Korea age rating is {0}", fields.KoreaAge).AppendLine();
             }
             else
-                sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.FstOff, fields.FstSize)
-                             .AppendLine();
+                sbInformation.AppendFormat("FST starts at {0} and has {1} bytes", fields.FstOff, fields.FstSize).
+                              AppendLine();
 
             information            = sbInformation.ToString();
             XmlFsType.Bootable     = true;
-            XmlFsType.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
+            XmlFsType.Clusters     = (imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize) / 2048;
             XmlFsType.ClusterSize  = 2048;
             XmlFsType.Type         = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
             XmlFsType.VolumeName   = fields.Title;

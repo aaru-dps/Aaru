@@ -42,6 +42,7 @@ namespace Aaru.DiscImages
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
     public partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
+        readonly List<ulong>       sectorsWhereCrcHasFailed;
         bool                       aDiskCrcHasFailed;
         byte[]                     commentBlock;
         TeleDiskCommentBlockHeader commentHeader;
@@ -49,9 +50,10 @@ namespace Aaru.DiscImages
         ImageInfo                  imageInfo;
         Stream                     inStream;
         byte[]                     leadOut;
+
         // Cylinder by head, sector data matrix
         byte[][][][] sectorsData;
-        List<ulong>  sectorsWhereCrcHasFailed;
+
         // LBA, data
         uint totalDiskSize;
 
@@ -59,25 +61,17 @@ namespace Aaru.DiscImages
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Application           = "Sydex TeleDisk",
-                Comments              = null,
-                Creator               = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
+                ReadableSectorTags    = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+                HasPartitions         = false, HasSessions                           = false,
+                Application           = "Sydex TeleDisk", Comments                   = null,
+                Creator               = null, MediaManufacturer                      = null, MediaModel = null,
                 MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
+                MediaBarcode          = null, MediaPartNumber = null, MediaSequence = 0,
                 LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
+                DriveManufacturer     = null, DriveModel = null, DriveSerialNumber = null,
                 DriveFirmwareRevision = null
             };
+
             aDiskCrcHasFailed        = false;
             sectorsWhereCrcHasFailed = new List<ulong>();
         }

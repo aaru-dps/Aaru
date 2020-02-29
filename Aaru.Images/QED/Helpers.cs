@@ -36,7 +36,9 @@ namespace Aaru.DiscImages
     {
         static bool IsPowerOfTwo(uint x)
         {
-            while((x & 1) == 0 && x > 1) x >>= 1;
+            while((x & 1) == 0 &&
+                  x       > 1)
+                x >>= 1;
 
             return x == 1;
         }
@@ -44,6 +46,7 @@ namespace Aaru.DiscImages
         static int Ctz32(uint val)
         {
             int cnt = 0;
+
             if((val & 0xFFFF) == 0)
             {
                 cnt +=  16;
@@ -74,7 +77,8 @@ namespace Aaru.DiscImages
                 val >>= 1;
             }
 
-            if((val & 0x1) == 0) cnt++;
+            if((val & 0x1) == 0)
+                cnt++;
 
             return cnt;
         }

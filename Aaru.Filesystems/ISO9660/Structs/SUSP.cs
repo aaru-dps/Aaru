@@ -87,6 +87,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte   des_len;
             public readonly byte   src_len;
             public readonly byte   ext_ver;
+
             // Follows extension identifier for id_len bytes
             // Follows extension descriptor for des_len bytes
             // Follows extension source for src_len bytes

@@ -39,10 +39,10 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DfiBlockHeader
         {
-            public ushort cylinder;
-            public ushort head;
-            public ushort sector;
-            public uint   length;
+            public readonly ushort cylinder;
+            public readonly ushort head;
+            public readonly ushort sector;
+            public readonly uint   length;
         }
     }
 }

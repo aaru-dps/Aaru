@@ -50,34 +50,30 @@ using Version = Aaru.CommonTypes.Metadata.Version;
 
 namespace Aaru.Core
 {
-    /// <summary>
-    ///     Handles connections to Aaru.Server
-    /// </summary>
+    /// <summary>Handles connections to Aaru.Server</summary>
     public static class Remote
     {
-        /// <summary>
-        ///     Submits a device report
-        /// </summary>
+        /// <summary>Submits a device report</summary>
         /// <param name="report">Device report</param>
         public static void SubmitReport(DeviceReportV2 report)
         {
-            Thread submitThread = new Thread(() =>
+            var submitThread = new Thread(() =>
             {
                 try
                 {
-                    #if DEBUG
+                #if DEBUG
                     System.Console.WriteLine("Uploading device report");
-                    #else
+                #else
                     Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", "Uploading device report");
-                    #endif
+                #endif
 
-                    string json = JsonConvert.SerializeObject(report, Formatting.Indented,
-                                                              new JsonSerializerSettings
-                                                              {
-                                                                  NullValueHandling = NullValueHandling.Ignore
-                                                              });
-                    byte[]     jsonBytes = Encoding.UTF8.GetBytes(json);
-                    WebRequest request   = WebRequest.Create("https://www.aaru.app/api/uploadreportv2");
+                    string json = JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
+
+                    byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                    var    request   = WebRequest.Create("https://www.aaru.app/api/uploadreportv2");
                     ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
                     request.Method                      = "POST";
                     request.ContentLength               = jsonBytes.Length;
@@ -87,10 +83,11 @@ namespace Aaru.Core
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
+                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                        return;
 
-                    Stream       data   = response.GetResponseStream();
-                    StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
+                    Stream data   = response.GetResponseStream();
+                    var    reader = new StreamReader(data ?? throw new InvalidOperationException());
 
                     reader.ReadToEnd();
                     data.Close();
@@ -100,20 +97,23 @@ namespace Aaru.Core
                 {
                     // Can't connect to the server, do nothing
                 }
+
                 // ReSharper disable once RedundantCatchClause
                 catch
                 {
-                    #if DEBUG
-                    if(Debugger.IsAttached) throw;
-                    #endif
+                #if DEBUG
+                    if(Debugger.IsAttached)
+                        throw;
+                #endif
                 }
             });
+
             submitThread.Start();
         }
 
         public static void UpdateMasterDatabase(bool create)
         {
-            AaruContext mctx = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            var mctx = AaruContext.Create(Settings.Settings.MasterDbPath);
             mctx.Database.Migrate();
             mctx.SaveChanges();
 
@@ -125,10 +125,18 @@ namespace Aaru.Core
                 if(!create)
                 {
                     List<DateTime> latestAll = new List<DateTime>();
-                    if(mctx.UsbVendors.Any()) latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
-                    if(mctx.UsbProducts.Any()) latestAll.Add(mctx.UsbProducts.Max(p => p.ModifiedWhen));
-                    if(mctx.CdOffsets.Any()) latestAll.Add(mctx.CdOffsets.Max(o => o.ModifiedWhen));
-                    if(mctx.Devices.Any()) latestAll.Add(mctx.Devices.Max(d => d.LastSynchronized));
+
+                    if(mctx.UsbVendors.Any())
+                        latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
+
+                    if(mctx.UsbProducts.Any())
+                        latestAll.Add(mctx.UsbProducts.Max(p => p.ModifiedWhen));
+
+                    if(mctx.CdOffsets.Any())
+                        latestAll.Add(mctx.CdOffsets.Max(o => o.ModifiedWhen));
+
+                    if(mctx.Devices.Any())
+                        latestAll.Add(mctx.Devices.Max(d => d.LastSynchronized));
 
                     if(latestAll.Any())
                     {
@@ -150,8 +158,7 @@ namespace Aaru.Core
 
                 DateTime updateStart = DateTime.UtcNow;
 
-                WebRequest request =
-                    WebRequest.Create($"https://www.aaru.app/api/update?timestamp={lastUpdate}");
+                var request = WebRequest.Create($"https://www.aaru.app/api/update?timestamp={lastUpdate}");
                 ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
                 request.Method                      = "GET";
                 request.ContentType                 = "application/json";
@@ -160,36 +167,48 @@ namespace Aaru.Core
                 if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
                 {
                     AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.",
-                                              ((HttpWebResponse)response).StatusCode);
+                                               ((HttpWebResponse)response).StatusCode);
+
                     return;
                 }
 
-                Stream       data   = response.GetResponseStream();
-                StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
-                SyncDto      sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd());
+                Stream  data   = response.GetResponseStream();
+                var     reader = new StreamReader(data ?? throw new InvalidOperationException());
+                SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd());
 
                 if(create)
                 {
                     AaruConsole.WriteLine("Adding USB vendors");
+
                     foreach(UsbVendorDto vendor in sync.UsbVendors)
                         mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
 
                     AaruConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
 
                     AaruConsole.WriteLine("Adding USB products");
+
                     foreach(UsbProductDto product in sync.UsbProducts)
                         mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId, product.Product));
 
                     AaruConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
 
                     AaruConsole.WriteLine("Adding CompactDisc read offsets");
+
                     foreach(CdOffsetDto offset in sync.Offsets)
-                        mctx.CdOffsets.Add(new CdOffset(offset) {Id = offset.Id});
+                        mctx.CdOffsets.Add(new CdOffset(offset)
+                        {
+                            Id = offset.Id
+                        });
 
                     AaruConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
 
                     AaruConsole.WriteLine("Adding known devices");
-                    foreach(DeviceDto device in sync.Devices) mctx.Devices.Add(new Device(device) {Id = device.Id});
+
+                    foreach(DeviceDto device in sync.Devices)
+                        mctx.Devices.Add(new Device(device)
+                        {
+                            Id = device.Id
+                        });
 
                     AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
                 }
@@ -205,6 +224,7 @@ namespace Aaru.Core
                     long modifiedDevices  = 0;
 
                     AaruConsole.WriteLine("Updating USB vendors");
+
                     foreach(UsbVendorDto vendor in sync.UsbVendors)
                     {
                         UsbVendor existing = mctx.UsbVendors.FirstOrDefault(v => v.Id == vendor.VendorId);
@@ -223,10 +243,11 @@ namespace Aaru.Core
                         }
                     }
 
-                    AaruConsole.WriteLine("Added {0} USB vendors",    addedVendors);
+                    AaruConsole.WriteLine("Added {0} USB vendors", addedVendors);
                     AaruConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
 
                     AaruConsole.WriteLine("Updating USB products");
+
                     foreach(UsbProductDto product in sync.UsbProducts)
                     {
                         UsbProduct existing =
@@ -247,10 +268,11 @@ namespace Aaru.Core
                         }
                     }
 
-                    AaruConsole.WriteLine("Added {0} USB products",    addedProducts);
+                    AaruConsole.WriteLine("Added {0} USB products", addedProducts);
                     AaruConsole.WriteLine("Modified {0} USB products", modifiedProducts);
 
                     AaruConsole.WriteLine("Updating CompactDisc read offsets");
+
                     foreach(CdOffsetDto offset in sync.Offsets)
                     {
                         CdOffset existing = mctx.CdOffsets.FirstOrDefault(o => o.Id == offset.Id);
@@ -269,14 +291,19 @@ namespace Aaru.Core
                         else
                         {
                             addedOffsets++;
-                            mctx.CdOffsets.Add(new CdOffset(offset) {Id = offset.Id});
+
+                            mctx.CdOffsets.Add(new CdOffset(offset)
+                            {
+                                Id = offset.Id
+                            });
                         }
                     }
 
-                    AaruConsole.WriteLine("Added {0} CompactDisc read offsets",    addedOffsets);
+                    AaruConsole.WriteLine("Added {0} CompactDisc read offsets", addedOffsets);
                     AaruConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
 
                     AaruConsole.WriteLine("Updating known devices");
+
                     foreach(DeviceDto device in sync.Devices)
                     {
                         Device existing = mctx.Devices.FirstOrDefault(d => d.Id == device.Id);
@@ -297,19 +324,22 @@ namespace Aaru.Core
                         else
                         {
                             addedDevices++;
+
                             mctx.Devices.Add(new Device(device)
                             {
-                                Id                         = device.Id,
-                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
+                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
                             });
                         }
                     }
 
-                    AaruConsole.WriteLine("Added {0} known devices",    addedDevices);
+                    AaruConsole.WriteLine("Added {0} known devices", addedDevices);
                     AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
                 }
             }
-            catch(Exception ex) { AaruConsole.ErrorWriteLine("Exception {0} when updating database.", ex); }
+            catch(Exception ex)
+            {
+                AaruConsole.ErrorWriteLine("Exception {0} when updating database.", ex);
+            }
             finally
             {
                 AaruConsole.WriteLine("Saving changes...");

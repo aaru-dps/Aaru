@@ -44,9 +44,10 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            FdiHeader hdr = new FdiHeader();
+            var hdr = new FdiHeader();
 
-            if(stream.Length < Marshal.SizeOf<FdiHeader>()) return false;
+            if(stream.Length < Marshal.SizeOf<FdiHeader>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);

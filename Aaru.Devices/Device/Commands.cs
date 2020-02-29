@@ -39,9 +39,7 @@ namespace Aaru.Devices
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device
     {
-        /// <summary>
-        ///     Sends a SCSI command to this device
-        /// </summary>
+        /// <summary>Sends a SCSI command to this device</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="cdb">SCSI CDB</param>
         /// <param name="buffer">Buffer for SCSI command response</param>
@@ -54,19 +52,17 @@ namespace Aaru.Devices
         ///     SCSI sense
         /// </param>
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
-            ScsiDirection direction, out double duration, out bool sense)
+                                   ScsiDirection direction, out double duration, out bool sense)
         {
-            if (!(_remote is null))
-                return _remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout,
-                    direction, out duration, out sense);
+            if(!(_remote is null))
+                return _remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, direction, out duration,
+                                               out sense);
 
             return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
-                out duration, out sense);
+                                           out duration, out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA/ATAPI command to this device using CHS addressing
-        /// </summary>
+        /// <summary>Sends an ATA/ATAPI command to this device using CHS addressing</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
         /// <param name="errorRegisters">Status/error registers.</param>
@@ -81,26 +77,19 @@ namespace Aaru.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-            AtaProtocol protocol, AtaTransferRegister transferRegister,
-            ref byte[] buffer,
-            uint timeout, bool transferBlocks,
-            out double duration, out bool sense)
+                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            if (!(_remote is null))
-                return _remote.SendAtaCommand(registers, out errorRegisters,
-                    protocol, transferRegister,
-                    ref buffer,
-                    timeout, transferBlocks,
-                    out duration, out sense);
+            if(!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                              timeout, transferBlocks, out duration, out sense);
 
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                transferRegister,
-                ref buffer, timeout, transferBlocks, out duration, out sense);
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA/ATAPI command to this device using 28-bit LBA addressing
-        /// </summary>
+        /// <summary>Sends an ATA/ATAPI command to this device using 28-bit LBA addressing</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
         /// <param name="errorRegisters">Status/error registers.</param>
@@ -115,26 +104,19 @@ namespace Aaru.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
-            AtaProtocol protocol, AtaTransferRegister transferRegister,
-            ref byte[] buffer,
-            uint timeout, bool transferBlocks,
-            out double duration, out bool sense)
+                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            if (!(_remote is null))
-                return _remote.SendAtaCommand(registers, out errorRegisters,
-                    protocol, transferRegister,
-                    ref buffer,
-                    timeout, transferBlocks,
-                    out duration, out sense);
+            if(!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                              timeout, transferBlocks, out duration, out sense);
 
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                transferRegister,
-                ref buffer, timeout, transferBlocks, out duration, out sense);
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
-        /// <summary>
-        ///     Sends an ATA/ATAPI command to this device using 48-bit LBA addressing
-        /// </summary>
+        /// <summary>Sends an ATA/ATAPI command to this device using 48-bit LBA addressing</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>
         /// <param name="registers">ATA registers.</param>
         /// <param name="errorRegisters">Status/error registers.</param>
@@ -149,26 +131,19 @@ namespace Aaru.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
-            AtaProtocol protocol, AtaTransferRegister transferRegister,
-            ref byte[] buffer,
-            uint timeout, bool transferBlocks,
-            out double duration, out bool sense)
+                                  AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                  uint timeout, bool transferBlocks, out double duration, out bool sense)
         {
-            if (!(_remote is null))
-                return _remote.SendAtaCommand(registers, out errorRegisters,
-                    protocol, transferRegister,
-                    ref buffer,
-                    timeout, transferBlocks,
-                    out duration, out sense);
+            if(!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer,
+                                              timeout, transferBlocks, out duration, out sense);
 
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                transferRegister,
-                ref buffer, timeout, transferBlocks, out duration, out sense);
+                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
+                                          out sense);
         }
 
-        /// <summary>
-        ///     Sends a MMC/SD command to this device
-        /// </summary>
+        /// <summary>Sends a MMC/SD command to this device</summary>
         /// <returns>The result of the command.</returns>
         /// <param name="command">MMC/SD opcode</param>
         /// <param name="buffer">Buffer for MMC/SD command response</param>
@@ -182,69 +157,70 @@ namespace Aaru.Devices
         /// <param name="argument">Command argument</param>
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
-        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-            uint argument,
-            uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
-            out double duration, out bool sense, uint timeout = 0)
+        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags, uint argument,
+                                  uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
+                                  out double duration, out bool sense, uint timeout = 0)
         {
-            switch (command)
+            switch(command)
             {
                 case MmcCommands.SendCid when cachedCid != null:
                 {
-                    var start = DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedCid.Length];
                     Array.Copy(cachedCid, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
-                    var end = DateTime.Now;
+                    sense    = false;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
+
                     return 0;
                 }
                 case MmcCommands.SendCsd when cachedCid != null:
                 {
-                    var start = DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedCsd.Length];
                     Array.Copy(cachedCsd, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
-                    var end = DateTime.Now;
+                    sense    = false;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
+
                     return 0;
                 }
-                case (MmcCommands) SecureDigitalCommands.SendScr when cachedScr != null:
+                case (MmcCommands)SecureDigitalCommands.SendScr when cachedScr != null:
                 {
-                    var start = DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedScr.Length];
                     Array.Copy(cachedScr, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
-                    var end = DateTime.Now;
+                    sense    = false;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
+
                     return 0;
                 }
-                case (MmcCommands) SecureDigitalCommands.SendOperatingCondition when cachedOcr != null:
-                case MmcCommands.SendOpCond when cachedOcr != null:
+                case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when cachedOcr != null:
+                case MmcCommands.SendOpCond when cachedOcr                                    != null:
                 {
-                    var start = DateTime.Now;
+                    DateTime start = DateTime.Now;
                     buffer = new byte[cachedOcr.Length];
                     Array.Copy(cachedOcr, buffer, buffer.Length);
                     response = new uint[4];
-                    sense = false;
-                    var end = DateTime.Now;
+                    sense    = false;
+                    DateTime end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
+
                     return 0;
                 }
             }
 
-            if (!(_remote is null))
-                return _remote.SendMmcCommand(command, write, isApplication, flags,
-                    argument,
-                    blockSize, blocks, ref buffer, out response,
-                    out duration, out sense, timeout);
+            if(!(_remote is null))
+                return _remote.SendMmcCommand(command, write, isApplication, flags, argument, blockSize, blocks,
+                                              ref buffer, out response, out duration, out sense, timeout);
 
             return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
-                blockSize, blocks, ref buffer, out response, out duration, out sense,
-                timeout);
+                                          blockSize, blocks, ref buffer, out response, out duration, out sense,
+                                          timeout);
         }
     }
 }

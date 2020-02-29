@@ -65,29 +65,17 @@ namespace Aaru.Filesystems
 
         const int TP_BSIZE = 1024;
 
-        /// <summary>
-        ///     Dump tape header
-        /// </summary>
+        /// <summary>Dump tape header</summary>
         const short TS_TAPE = 1;
-        /// <summary>
-        ///     Beginning of file record
-        /// </summary>
+        /// <summary>Beginning of file record</summary>
         const short TS_INODE = 2;
-        /// <summary>
-        ///     Map of inodes on tape
-        /// </summary>
+        /// <summary>Map of inodes on tape</summary>
         const short TS_BITS = 3;
-        /// <summary>
-        ///     Continuation of file record
-        /// </summary>
+        /// <summary>Continuation of file record</summary>
         const short TS_ADDR = 4;
-        /// <summary>
-        ///     Map of inodes deleted since last dump
-        /// </summary>
+        /// <summary>Map of inodes deleted since last dump</summary>
         const short TS_END = 5;
-        /// <summary>
-        ///     Inode bitmap
-        /// </summary>
+        /// <summary>Inode bitmap</summary>
         const short TS_CLRI = 6;
         const short TS_ACL = 7;
         const short TS_PCL = 8;
@@ -107,16 +95,22 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             // It should be start of a tape or floppy or file
-            if(partition.Start != 0) return false;
+            if(partition.Start != 0)
+                return false;
 
             uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf<s_spcl>()) return false;
+
+            if(sector.Length < Marshal.SizeOf<s_spcl>())
+                return false;
 
             spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
             spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
@@ -132,19 +126,26 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
 
-            if(partition.Start != 0) return;
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
+
+            if(partition.Start != 0)
+                return;
 
             uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
+
+            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
+                sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf<s_spcl>()) return;
+
+            if(sector.Length < Marshal.SizeOf<s_spcl>())
+                return;
 
             spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
             spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
@@ -153,17 +154,25 @@ namespace Aaru.Filesystems
             bool useOld = false;
             bool useAix = false;
 
-            if(newHdr.c_magic == OFS_MAGIC || newHdr.c_magic == NFS_MAGIC  || newHdr.c_magic == OFS_CIGAM ||
-               newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM)
+            if(newHdr.c_magic == OFS_MAGIC  ||
+               newHdr.c_magic == NFS_MAGIC  ||
+               newHdr.c_magic == OFS_CIGAM  ||
+               newHdr.c_magic == NFS_CIGAM  ||
+               newHdr.c_magic == UFS2_MAGIC ||
+               newHdr.c_magic == UFS2_CIGAM)
             {
-                if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_CIGAM)
+                if(newHdr.c_magic == OFS_CIGAM ||
+                   newHdr.c_magic == NFS_CIGAM ||
+                   newHdr.c_magic == UFS2_CIGAM)
                     newHdr = Marshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
             }
-            else if(aixHdr.c_magic == XIX_MAGIC || aixHdr.c_magic == XIX_CIGAM)
+            else if(aixHdr.c_magic == XIX_MAGIC ||
+                    aixHdr.c_magic == XIX_CIGAM)
             {
                 useAix = true;
 
-                if(aixHdr.c_magic == XIX_CIGAM) aixHdr = Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
+                if(aixHdr.c_magic == XIX_CIGAM)
+                    aixHdr = Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
             }
             else if(oldHdr.c_magic == OFS_MAGIC)
             {
@@ -176,17 +185,22 @@ namespace Aaru.Filesystems
             else
             {
                 information = "Could not read dump(8) header block";
+
                 return;
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            XmlFsType = new FileSystemType {ClusterSize = 1024, Clusters = partition.Size / 1024};
+            XmlFsType = new FileSystemType
+            {
+                ClusterSize = 1024, Clusters = partition.Size / 1024
+            };
 
             if(useOld)
             {
                 XmlFsType.Type = "Old 16-bit dump(8)";
                 sb.AppendLine(XmlFsType.Type);
+
                 if(oldHdr.c_date > 0)
                 {
                     XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(oldHdr.c_date);
@@ -207,6 +221,7 @@ namespace Aaru.Filesystems
             {
                 XmlFsType.Type = "AIX dump(8)";
                 sb.AppendLine(XmlFsType.Type);
+
                 if(aixHdr.c_date > 0)
                 {
                     XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(aixHdr.c_date);
@@ -227,6 +242,7 @@ namespace Aaru.Filesystems
             {
                 XmlFsType.Type = "dump(8)";
                 sb.AppendLine(XmlFsType.Type);
+
                 if(newHdr.c_ndate > 0)
                 {
                     XmlFsType.CreationDate          = DateHandlers.UnixToDateTime(newHdr.c_ndate);
@@ -256,6 +272,7 @@ namespace Aaru.Filesystems
                 sb.AppendFormat("Dump volume number: {0}", newHdr.c_volume).AppendLine();
                 sb.AppendFormat("Dump level: {0}", newHdr.c_level).AppendLine();
                 string dumpname = StringHandlers.CToString(newHdr.c_label);
+
                 if(!string.IsNullOrEmpty(dumpname))
                 {
                     XmlFsType.VolumeName = dumpname;
@@ -263,11 +280,19 @@ namespace Aaru.Filesystems
                 }
 
                 string str = StringHandlers.CToString(newHdr.c_filesys);
-                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dumped filesystem name: {0}", str).AppendLine();
+
+                if(!string.IsNullOrEmpty(str))
+                    sb.AppendFormat("Dumped filesystem name: {0}", str).AppendLine();
+
                 str = StringHandlers.CToString(newHdr.c_dev);
-                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dumped device: {0}", str).AppendLine();
+
+                if(!string.IsNullOrEmpty(str))
+                    sb.AppendFormat("Dumped device: {0}", str).AppendLine();
+
                 str = StringHandlers.CToString(newHdr.c_host);
-                if(!string.IsNullOrEmpty(str)) sb.AppendFormat("Dump hostname: {0}", str).AppendLine();
+
+                if(!string.IsNullOrEmpty(str))
+                    sb.AppendFormat("Dump hostname: {0}", str).AppendLine();
             }
 
             information = sb.ToString();
@@ -293,6 +318,7 @@ namespace Aaru.Filesystems
             public readonly ushort c_magic;
             /// <summary>Record checksum</summary>
             public readonly int c_checksum;
+
             // Unneeded for now
             /*
             struct dinode  c_dinode;
@@ -318,6 +344,7 @@ namespace Aaru.Filesystems
             public readonly uint c_inumber;
             public readonly uint c_magic;
             public readonly int  c_checksum;
+
             // Unneeded for now
             /*
             public bsd_dinode  bsd_c_dinode;

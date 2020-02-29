@@ -56,11 +56,10 @@ namespace Aaru.Partitions
 
         public List<Type> GetAllMediaImagePlugins() => null;
 
-        public List<Type> GetAllPartitionPlugins()
-        {
-            return Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IPartition)))
-                           .Where(t => t.IsClass).ToList();
-        }
+        public List<Type> GetAllPartitionPlugins() => Assembly.
+                                                      GetExecutingAssembly().GetTypes().
+                                                      Where(t => t.GetInterfaces().Contains(typeof(IPartition))).
+                                                      Where(t => t.IsClass).ToList();
 
         public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 

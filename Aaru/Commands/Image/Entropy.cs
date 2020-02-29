@@ -103,7 +103,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -112,7 +112,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
@@ -138,13 +138,13 @@ namespace Aaru.Commands.Image
 
                     if(trackEntropy.UniqueSectors != null)
                         AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
-                                             trackEntropy.UniqueSectors,
-                                             (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
+                                              trackEntropy.UniqueSectors,
+                                              (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                 }
             }
 
             if(!wholeDisc)
-                return(int)ErrorNumber.NoError;
+                return (int)ErrorNumber.NoError;
 
             EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
@@ -152,9 +152,9 @@ namespace Aaru.Commands.Image
 
             if(entropy.UniqueSectors != null)
                 AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
-                                     (double)entropy.UniqueSectors / (double)entropy.Sectors);
+                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

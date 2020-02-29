@@ -32,11 +32,11 @@
 
 using System;
 using System.Linq;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -247,8 +247,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             for(int b = 0; b < blocksToRead; b++)
                             {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
-                                           sectorSize);
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
@@ -276,8 +275,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             for(int b = 0; b < blocksToRead; b++)
                             {
-                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)),
-                                           sectorSize);
+                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
 
                                 Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
                             }

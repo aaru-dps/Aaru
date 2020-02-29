@@ -32,13 +32,13 @@
 
 using System;
 using System.Collections.Generic;
-using Claunia.Encoding;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
+using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
@@ -46,11 +46,9 @@ namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        /// <summary>
-        ///     Mounts an Apple Lisa filesystem
-        /// </summary>
-        public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options,     string    @namespace)
+        /// <summary>Mounts an Apple Lisa filesystem</summary>
+        public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
+                           Dictionary<string, string> options, string @namespace)
         {
             try
             {
@@ -64,6 +62,7 @@ namespace Aaru.Filesystems.LisaFS
                    !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                 {
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
+
                     return Errno.InOutError;
                 }
 
@@ -71,6 +70,7 @@ namespace Aaru.Filesystems.LisaFS
                 if(device.Info.Sectors < 800)
                 {
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
+
                     return Errno.InOutError;
                 }
 
@@ -84,10 +84,12 @@ namespace Aaru.Filesystems.LisaFS
 
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
-                    if(volumePrefix == device.Info.Sectors && searchTag.FileId == FILEID_LOADER_SIGNED)
+                    if(volumePrefix     == device.Info.Sectors &&
+                       searchTag.FileId == FILEID_LOADER_SIGNED)
                         volumePrefix = i - 1;
 
-                    if(searchTag.FileId != FILEID_MDDF) continue;
+                    if(searchTag.FileId != FILEID_MDDF)
+                        continue;
 
                     devTagSize = device.ReadSectorTag(i, SectorTagType.AppleSectorTag).Length;
 
@@ -102,6 +104,7 @@ namespace Aaru.Filesystems.LisaFS
                     mddf.volname  = StringHandlers.PascalToString(pString, Encoding);
                     mddf.unknown1 = sector[0x2D];
                     Array.Copy(sector, 0x2E, pString, 0, 33);
+
                     // Prevent garbage
                     mddf.password       = pString[0] <= 32 ? StringHandlers.PascalToString(pString, Encoding) : "";
                     mddf.unknown2       = sector[0x4F];
@@ -175,17 +178,16 @@ namespace Aaru.Filesystems.LisaFS
                     mddf.vol_left_mounted             = sector[0x138];
 
                     // Check that the MDDF is correct
-                    if(mddf.mddf_block != i - volumePrefix   ||
-                       mddf.vol_size   > device.Info.Sectors ||
-                       mddf.vol_size - 1 !=
-                       mddf.volsize_minus_one ||
-                       mddf.vol_size - i                 - 1 !=
-                       mddf.volsize_minus_mddf_minus_one - volumePrefix ||
-                       mddf.datasize >
-                       mddf.blocksize || mddf.blocksize < device.Info.SectorSize ||
-                       mddf.datasize                    != device.Info.SectorSize)
+                    if(mddf.mddf_block       != i - volumePrefix                                 ||
+                       mddf.vol_size         > device.Info.Sectors                               ||
+                       mddf.vol_size     - 1 != mddf.volsize_minus_one                           ||
+                       mddf.vol_size - i - 1 != mddf.volsize_minus_mddf_minus_one - volumePrefix ||
+                       mddf.datasize         > mddf.blocksize                                    ||
+                       mddf.blocksize        < device.Info.SectorSize                            ||
+                       mddf.datasize         != device.Info.SectorSize)
                     {
                         AaruConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
+
                         return Errno.InvalidArgument;
                     }
 
@@ -194,15 +196,19 @@ namespace Aaru.Filesystems.LisaFS
                     {
                         case LISA_V1:
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
+
                             break;
                         case LISA_V2:
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+
                             break;
                         case LISA_V3:
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
+
                             break;
                         default:
                             AaruConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", mddf.fsversion.ToString());
+
                             return Errno.NotSupported;
                     }
 
@@ -210,24 +216,37 @@ namespace Aaru.Filesystems.LisaFS
                     extentCache     = new Dictionary<short, ExtentFile>();
                     systemFileCache = new Dictionary<short, byte[]>();
                     fileCache       = new Dictionary<short, byte[]>();
+
                     //catalogCache = new Dictionary<short, List<CatalogEntry>>();
                     fileSizeCache = new Dictionary<short, int>();
 
                     mounted = true;
-                    if(options == null) options = GetDefaultOptions();
-                    if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
-                    if(debug) printedExtents = new List<short>();
+                    if(options == null)
+                        options = GetDefaultOptions();
+
+                    if(options.TryGetValue("debug", out string debugString))
+                        bool.TryParse(debugString, out debug);
+
+                    if(debug)
+                        printedExtents = new List<short>();
 
                     // Read the S-Records file
                     Errno error = ReadSRecords();
+
                     if(error != Errno.NoError)
                     {
                         AaruConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
+
                         return error;
                     }
 
-                    directoryDtcCache = new Dictionary<short, DateTime> {{DIRID_ROOT, mddf.dtcc}};
+                    directoryDtcCache = new Dictionary<short, DateTime>
+                    {
+                        {
+                            DIRID_ROOT, mddf.dtcc
+                        }
+                    };
 
                     // Read the Catalog File
                     error = ReadCatalog();
@@ -235,8 +254,10 @@ namespace Aaru.Filesystems.LisaFS
                     if(error != Errno.NoError)
                     {
                         AaruConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
-                                                  error.ToString());
+                                                   error.ToString());
+
                         mounted = false;
+
                         return error;
                     }
 
@@ -244,48 +265,59 @@ namespace Aaru.Filesystems.LisaFS
                     if(debug)
                     {
                         error = ReadSystemFile(FILEID_BOOT_SIGNED, out _);
+
                         if(error != Errno.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
                             mounted = false;
+
                             return error;
                         }
 
                         error = ReadSystemFile(FILEID_LOADER_SIGNED, out _);
+
                         if(error != Errno.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
                             mounted = false;
+
                             return error;
                         }
 
                         error = ReadSystemFile((short)FILEID_MDDF, out _);
+
                         if(error != Errno.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
                             mounted = false;
+
                             return error;
                         }
 
                         error = ReadSystemFile((short)FILEID_BITMAP, out _);
+
                         if(error != Errno.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
                             mounted = false;
+
                             return error;
                         }
 
                         error = ReadSystemFile((short)FILEID_SRECORD, out _);
+
                         if(error != Errno.NoError)
                         {
                             AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
                             mounted = false;
+
                             return error;
                         }
                     }
 
                     // Create XML metadata for mounted filesystem
                     XmlFsType = new FileSystemType();
+
                     if(DateTime.Compare(mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
                     {
                         XmlFsType.BackupDate          = mddf.dtvb;
@@ -294,6 +326,7 @@ namespace Aaru.Filesystems.LisaFS
 
                     XmlFsType.Clusters    = mddf.vol_size;
                     XmlFsType.ClusterSize = (uint)(mddf.clustersize * mddf.datasize);
+
                     if(DateTime.Compare(mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
                         XmlFsType.CreationDate          = mddf.dtvc;
@@ -313,18 +346,18 @@ namespace Aaru.Filesystems.LisaFS
                 }
 
                 AaruConsole.DebugWriteLine("LisaFS plugin", "Not a Lisa filesystem");
+
                 return Errno.NotSupported;
             }
             catch(Exception ex)
             {
                 AaruConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
+
                 return Errno.InOutError;
             }
         }
 
-        /// <summary>
-        ///     Umounts this Lisa filesystem
-        /// </summary>
+        /// <summary>Umounts this Lisa filesystem</summary>
         public Errno Unmount()
         {
             mounted         = false;
@@ -342,35 +375,40 @@ namespace Aaru.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Gets information about the mounted volume.
-        /// </summary>
+        /// <summary>Gets information about the mounted volume.</summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = null;
-            if(!mounted) return Errno.AccessDenied;
+
+            if(!mounted)
+                return Errno.AccessDenied;
 
             stat = new FileSystemInfo
             {
-                Blocks         = mddf.vol_size,
-                FilenameLength = (ushort)E_NAME,
-                Files          = mddf.filecount,
-                FreeBlocks     = mddf.freecount,
-                Id             = {Serial64 = mddf.volid, IsLong = true},
-                PluginId       = Id
+                Blocks     = mddf.vol_size, FilenameLength = (ushort)E_NAME, Files = mddf.filecount,
+                FreeBlocks = mddf.freecount, Id =
+                {
+                    Serial64 = mddf.volid, IsLong = true
+                },
+                PluginId = Id
             };
+
             stat.FreeFiles = FILEID_MAX - stat.Files;
+
             switch(mddf.fsversion)
             {
                 case LISA_V1:
                     stat.Type = "LisaFS v1";
+
                     break;
                 case LISA_V2:
                     stat.Type = "LisaFS v2";
+
                     break;
                 case LISA_V3:
                     stat.Type = "LisaFS v3";
+
                     break;
             }
 

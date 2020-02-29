@@ -39,31 +39,21 @@ namespace Aaru.DiscImages
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum AlcoholMediumType : ushort
         {
-            CD   = 0x00,
-            CDR  = 0x01,
-            CDRW = 0x02,
-            DVD  = 0x10,
-            DVDR = 0x12
+            CD  = 0x00, CDR  = 0x01, CDRW = 0x02,
+            DVD = 0x10, DVDR = 0x12
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum AlcoholTrackMode : byte
         {
-            NoData     = 0x00,
-            DVD        = 0x02,
-            Audio      = 0xA9,
-            Mode1      = 0xAA,
-            Mode2      = 0xAB,
-            Mode2F1    = 0xEC,
-            Mode2F2    = 0xED,
-            Mode2F1Alt = 0xAC,
-            Mode2F2Alt = 0xAD
+            NoData  = 0x00, DVD        = 0x02, Audio      = 0xA9,
+            Mode1   = 0xAA, Mode2      = 0xAB, Mode2F1    = 0xEC,
+            Mode2F2 = 0xED, Mode2F1Alt = 0xAC, Mode2F2Alt = 0xAD
         }
 
         enum AlcoholSubchannelMode : byte
         {
-            None        = 0x00,
-            Interleaved = 0x08
+            None = 0x00, Interleaved = 0x08
         }
     }
 }

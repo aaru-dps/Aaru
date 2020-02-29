@@ -53,23 +53,26 @@ namespace Aaru.Partitions
         {
             partitions = new List<Partition>();
 
-            if(31 + sectorOffset >= imagePlugin.Info.Sectors) return false;
+            if(31 + sectorOffset >= imagePlugin.Info.Sectors)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
-            if(sector.Length < 512) return false;
+
+            if(sector.Length < 512)
+                return false;
 
             DECLabel table = Marshal.ByteArrayToStructureLittleEndian<DECLabel>(sector);
 
-            if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;
+            if(table.pt_magic != PT_MAGIC ||
+               table.pt_valid != PT_VALID)
+                return false;
 
             ulong counter = 0;
 
             foreach(Partition part in table.pt_part.Select(entry => new Partition
             {
-                Start    = entry.pi_blkoff,
-                Offset   = (ulong)(entry.pi_blkoff * sector.Length),
-                Size     = (ulong)entry.pi_nblocks,
-                Length   = (ulong)(entry.pi_nblocks * sector.Length),
+                Start    = entry.pi_blkoff, Offset         = (ulong)(entry.pi_blkoff  * sector.Length),
+                Size     = (ulong)entry.pi_nblocks, Length = (ulong)(entry.pi_nblocks * sector.Length),
                 Sequence = counter,
                 Scheme   = Name
             }).Where(part => part.Size > 0))
@@ -85,18 +88,18 @@ namespace Aaru.Partitions
         struct DECLabel
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
-            public byte[] padding;
-            public int pt_magic;
-            public int pt_valid;
+            public readonly byte[] padding;
+            public readonly int pt_magic;
+            public readonly int pt_valid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public DECPartition[] pt_part;
+            public readonly DECPartition[] pt_part;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DECPartition
         {
-            public int  pi_nblocks;
-            public uint pi_blkoff;
+            public readonly int  pi_nblocks;
+            public readonly uint pi_blkoff;
         }
     }
 }

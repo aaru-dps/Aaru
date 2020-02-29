@@ -43,7 +43,10 @@ namespace Aaru.DiscImages
     public partial class Chd : IOpticalMediaImage, IVerifiableImage
     {
         /// <summary>"MComprHD"</summary>
-        readonly byte[] chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};
+        readonly byte[] chdTag =
+        {
+            0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
+        };
         uint                      bytesPerHunk;
         byte[]                    cis;
         byte[]                    expectedChecksum;
@@ -72,29 +75,17 @@ namespace Aaru.DiscImages
         uint                      totalHunks;
         Dictionary<uint, Track>   tracks;
 
-        public Chd()
+        public Chd() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = false,
-                HasSessions           = false,
-                Application           = "MAME",
-                Creator               = null,
-                Comments              = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaSerialNumber     = null,
-                MediaBarcode          = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags    = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions         = false, HasSessions                           = false, Application = "MAME",
+            Creator               = null,
+            Comments              = null, MediaManufacturer = null, MediaModel = null,
+            MediaSerialNumber     = null,
+            MediaBarcode          = null, MediaPartNumber = null, MediaSequence = 0,
+            LastMediaSequence     = 0,
+            DriveManufacturer     = null, DriveModel = null, DriveSerialNumber = null,
+            DriveFirmwareRevision = null
+        };
     }
 }

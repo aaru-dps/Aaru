@@ -4,14 +4,10 @@ using Eto.Forms;
 
 namespace Aaru.Gui.Controls
 {
-    /// <summary>
-    ///     Draws a grid of colored blocks
-    /// </summary>
+    /// <summary>Draws a grid of colored blocks</summary>
     public class ColoredGrid : Drawable
     {
-        /// <summary>
-        ///     Size of the block, including its top and left border, in pixels
-        /// </summary>
+        /// <summary>Size of the block, including its top and left border, in pixels</summary>
         const int BLOCK_SIZE = 5;
 
         Color gridColor;
@@ -24,24 +20,20 @@ namespace Aaru.Gui.Controls
         }
 
         new bool CanFocus => false;
-        /// <summary>
-        ///     How many columns are in the grid
-        /// </summary>
+        /// <summary>How many columns are in the grid</summary>
         public int Columns { get; private set; }
-        /// <summary>
-        ///     How many rows are in the grid
-        /// </summary>
+        /// <summary>How many rows are in the grid</summary>
         public int Rows { get; private set; }
-        /// <summary>
-        ///     How many blocks are in the grid
-        /// </summary>
+        /// <summary>How many blocks are in the grid</summary>
         public ulong Blocks { get; private set; }
+
         public Color GridColor
         {
             get => gridColor;
             set
             {
-                if(gridColor == value) return;
+                if(gridColor == value)
+                    return;
 
                 gridColor = value;
                 Invalidate();
@@ -62,9 +54,11 @@ namespace Aaru.Gui.Controls
             remainder = (int)rect.Height % (BLOCK_SIZE  + 1);
             int height = (int)rect.Height - remainder   - 1;
 
-            for(float i = rect.X; i <= width; i += 5) graphics.DrawLine(gridColor, i, rect.Y, i, height);
+            for(float i = rect.X; i <= width; i += 5)
+                graphics.DrawLine(gridColor, i, rect.Y, i, height);
 
-            for(float i = rect.Y; i <= height; i += 5) graphics.DrawLine(gridColor, rect.X, i, width, i);
+            for(float i = rect.Y; i <= height; i += 5)
+                graphics.DrawLine(gridColor, rect.X, i, width, i);
 
             Columns = width  / BLOCK_SIZE;
             Rows    = height / BLOCK_SIZE;
@@ -76,7 +70,8 @@ namespace Aaru.Gui.Controls
 
         void PaintBlock(Graphics graphics, Color color, ulong block)
         {
-            if(block > Blocks) return;
+            if(block > Blocks)
+                return;
 
             int row = (int)(block / (ulong)Columns);
             int col = (int)(block % (ulong)Columns);
@@ -87,9 +82,7 @@ namespace Aaru.Gui.Controls
         }
     }
 
-    /// <summary>
-    ///     Defines a block that has a corresponding color
-    /// </summary>
+    /// <summary>Defines a block that has a corresponding color</summary>
     public class ColoredBlock
     {
         public readonly ulong Block;

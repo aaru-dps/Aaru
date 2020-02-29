@@ -41,71 +41,41 @@ namespace Aaru.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryHeader
         {
-            /// <summary>
-            ///     Next block from this directory, -1 if last
-            /// </summary>
+            /// <summary>Next block from this directory, -1 if last</summary>
             public readonly int next_block;
-            /// <summary>
-            ///     Previous block from this directory, -1 if first
-            /// </summary>
+            /// <summary>Previous block from this directory, -1 if first</summary>
             public readonly int prev_block;
-            /// <summary>
-            ///     Directory flags
-            /// </summary>
+            /// <summary>Directory flags</summary>
             public readonly uint flags;
-            /// <summary>
-            ///     Offset to first free unused byte in the directory
-            /// </summary>
+            /// <summary>Offset to first free unused byte in the directory</summary>
             public readonly uint first_free;
-            /// <summary>
-            ///     Offset to first directory entry
-            /// </summary>
+            /// <summary>Offset to first directory entry</summary>
             public readonly uint first_used;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryEntry
         {
-            /// <summary>
-            ///     File flags, see <see cref="FileFlags" />
-            /// </summary>
+            /// <summary>File flags, see <see cref="FileFlags" /></summary>
             public readonly uint flags;
-            /// <summary>
-            ///     Unique file identifier
-            /// </summary>
+            /// <summary>Unique file identifier</summary>
             public readonly uint id;
-            /// <summary>
-            ///     Entry type
-            /// </summary>
+            /// <summary>Entry type</summary>
             public readonly uint type;
-            /// <summary>
-            ///     Block size
-            /// </summary>
+            /// <summary>Block size</summary>
             public readonly uint block_size;
-            /// <summary>
-            ///     Size in bytes
-            /// </summary>
+            /// <summary>Size in bytes</summary>
             public readonly uint byte_count;
-            /// <summary>
-            ///     Block count
-            /// </summary>
+            /// <summary>Block count</summary>
             public readonly uint block_count;
-            /// <summary>
-            ///     Unknown
-            /// </summary>
+            /// <summary>Unknown</summary>
             public readonly uint burst;
-            /// <summary>
-            ///     Unknown
-            /// </summary>
+            /// <summary>Unknown</summary>
             public readonly uint gap;
-            /// <summary>
-            ///     Filename
-            /// </summary>
+            /// <summary>Filename</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_NAME)]
             public readonly byte[] name;
-            /// <summary>
-            ///     Last copy
-            /// </summary>
+            /// <summary>Last copy</summary>
             public readonly uint last_copy;
         }
 

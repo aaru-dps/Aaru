@@ -55,7 +55,7 @@ namespace Aaru.Commands
             if(verbose)
                 AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&
@@ -67,7 +67,7 @@ namespace Aaru.Commands
             {
                 AaruConsole.WriteLine("There are no statistics.");
 
-                return(int)ErrorNumber.NothingFound;
+                return (int)ErrorNumber.NothingFound;
             }
 
             bool thereAreStats = false;
@@ -211,7 +211,9 @@ namespace Aaru.Commands
 
                     if(count > 0)
                     {
-                        AaruConsole.WriteLine("Media type {0} has been found {1} times in a real device.", media, count);
+                        AaruConsole.WriteLine("Media type {0} has been found {1} times in a real device.", media,
+                                              count);
+
                         thereAreStats = true;
                     }
 
@@ -233,7 +235,7 @@ namespace Aaru.Commands
             if(!thereAreStats)
                 AaruConsole.WriteLine("There are no statistics.");
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

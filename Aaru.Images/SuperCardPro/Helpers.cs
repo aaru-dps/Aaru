@@ -40,14 +40,17 @@ namespace Aaru.DiscImages
     {
         static string ReadPStringUtf8(Stream stream, uint position)
         {
-            if(position == 0) return null;
+            if(position == 0)
+                return null;
 
             stream.Position = position;
             byte[] lenB = new byte[2];
             stream.Read(lenB, 0, 2);
             ushort len = BitConverter.ToUInt16(lenB, 0);
 
-            if(len == 0 || len + stream.Position >= stream.Length) return null;
+            if(len                   == 0 ||
+               len + stream.Position >= stream.Length)
+                return null;
 
             byte[] str = new byte[len];
             stream.Read(str, 0, len);

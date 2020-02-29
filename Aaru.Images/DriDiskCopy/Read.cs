@@ -47,7 +47,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0) return false;
+            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0)
+                return false;
 
             byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
@@ -57,14 +58,17 @@ namespace Aaru.DiscImages
 
             string sig = StringHandlers.CToString(footer.signature);
 
-            Regex regexSignature = new Regex(REGEX_DRI);
+            var   regexSignature = new Regex(REGEX_DRI);
             Match matchSignature = regexSignature.Match(sig);
 
-            if(!matchSignature.Success) return false;
+            if(!matchSignature.Success)
+                return false;
 
-            if(footer.bpb.sptrack * footer.bpb.cylinders * footer.bpb.heads != footer.bpb.sectors) return false;
+            if(footer.bpb.sptrack * footer.bpb.cylinders * footer.bpb.heads != footer.bpb.sectors)
+                return false;
 
-            if(footer.bpb.sectors * footer.bpb.bps + Marshal.SizeOf<DriFooter>() != stream.Length) return false;
+            if((footer.bpb.sectors * footer.bpb.bps) + Marshal.SizeOf<DriFooter>() != stream.Length)
+                return false;
 
             imageInfo.Cylinders          = footer.bpb.cylinders;
             imageInfo.Heads              = footer.bpb.heads;
@@ -80,12 +84,14 @@ namespace Aaru.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
-                                      imageInfo.Application, imageInfo.ApplicationVersion);
+                                       imageInfo.Application, imageInfo.ApplicationVersion);
 
             // Correct some incorrect data in images of NEC 2HD disks
-            if(imageInfo.Cylinders  == 77  && imageInfo.Heads == 2 && imageInfo.SectorsPerTrack == 16 &&
-               imageInfo.SectorSize == 512 && (footer.bpb.driveCode == DriDriveCodes.md2hd ||
-                                               footer.bpb.driveCode == DriDriveCodes.mf2hd))
+            if(imageInfo.Cylinders       == 77  &&
+               imageInfo.Heads           == 2   &&
+               imageInfo.SectorsPerTrack == 16  &&
+               imageInfo.SectorSize      == 512 &&
+               (footer.bpb.driveCode == DriDriveCodes.md2hd || footer.bpb.driveCode == DriDriveCodes.mf2hd))
             {
                 imageInfo.SectorsPerTrack = 8;
                 imageInfo.SectorSize      = 1024;
@@ -100,20 +106,24 @@ namespace Aaru.DiscImages
                 case MediaType.NEC_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
                                                footer.bpb.driveCode == DriDriveCodes.mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_8;
+
                     break;
                 case MediaType.DOS_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
                                                footer.bpb.driveCode == DriDriveCodes.mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_15;
+
                     break;
                 case MediaType.RX50 when footer.bpb.driveCode == DriDriveCodes.md2dd ||
                                          footer.bpb.driveCode == DriDriveCodes.md2hd:
                     imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+
                     break;
             }
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+
             AaruConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
-                                        imageInfo.MediaType);
+                                         imageInfo.MediaType);
 
             return true;
         }

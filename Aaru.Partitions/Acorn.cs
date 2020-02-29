@@ -62,25 +62,32 @@ namespace Aaru.Partitions
             ulong sbSector;
 
             // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
-            if(sectorOffset != 0) return false;
+            if(sectorOffset != 0)
+                return false;
 
-            if(imagePlugin.Info.SectorSize > ADFS_SB_POS) sbSector = 0;
-            else sbSector                                          = ADFS_SB_POS / imagePlugin.Info.SectorSize;
+            if(imagePlugin.Info.SectorSize > ADFS_SB_POS)
+                sbSector = 0;
+            else
+                sbSector = ADFS_SB_POS / imagePlugin.Info.SectorSize;
 
             byte[] sector = imagePlugin.ReadSector(sbSector);
 
-            if(sector.Length < 512) return false;
+            if(sector.Length < 512)
+                return false;
 
             AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
-            int checksum                            = 0;
-            for(int i = 0; i < 0x1FF; i++) checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
+            int checksum = 0;
+
+            for(int i = 0; i < 0x1FF; i++)
+                checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
             int heads     = bootBlock.discRecord.heads + ((bootBlock.discRecord.lowsector >> 6) & 1);
             int secCyl    = bootBlock.discRecord.spt * heads;
             int mapSector = bootBlock.startCylinder  * secCyl;
 
-            if((ulong)mapSector >= imagePlugin.Info.Sectors) return false;
+            if((ulong)mapSector >= imagePlugin.Info.Sectors)
+                return false;
 
             byte[] map = imagePlugin.ReadSector((ulong)mapSector);
 
@@ -88,17 +95,15 @@ namespace Aaru.Partitions
 
             if(checksum == bootBlock.checksum)
             {
-                Partition part = new Partition
+                var part = new Partition
                 {
-                    Size =
-                        (ulong)bootBlock.discRecord.disc_size_high * 0x100000000 + bootBlock.discRecord.disc_size,
-                    Length =
-                        ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000 +
-                         bootBlock.discRecord.disc_size) / imagePlugin.Info.SectorSize,
+                    Size = ((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) + bootBlock.discRecord.disc_size,
+                    Length = (((ulong)bootBlock.discRecord.disc_size_high * 0x100000000) +
+                              bootBlock.discRecord.disc_size) / imagePlugin.Info.SectorSize,
                     Type = "ADFS",
-                    Name = StringHandlers.CToString(bootBlock.discRecord.disc_name,
-                                                    Encoding.GetEncoding("iso-8859-1"))
+                    Name = StringHandlers.CToString(bootBlock.discRecord.disc_name, Encoding.GetEncoding("iso-8859-1"))
                 };
+
                 if(part.Size > 0)
                 {
                     partitions.Add(part);
@@ -114,16 +119,17 @@ namespace Aaru.Partitions
 
                     foreach(LinuxEntry entry in table.entries)
                     {
-                        Partition part = new Partition
+                        var part = new Partition
                         {
-                            Start    = (ulong)(mapSector + entry.start),
-                            Size     = entry.size,
-                            Length   = (ulong)(entry.size * sector.Length),
-                            Sequence = counter,
-                            Scheme   = Name
+                            Start  = (ulong)(mapSector + entry.start), Size        = entry.size,
+                            Length = (ulong)(entry.size * sector.Length), Sequence = counter, Scheme = Name
                         };
+
                         part.Offset = part.Start * (ulong)sector.Length;
-                        if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC) continue;
+
+                        if(entry.magic != LINUX_MAGIC &&
+                           entry.magic != SWAP_MAGIC)
+                            continue;
 
                         partitions.Add(part);
                         counter++;
@@ -139,17 +145,18 @@ namespace Aaru.Partitions
                     if(table.magic == RISCIX_MAGIC)
                         foreach(RiscIxEntry entry in table.partitions)
                         {
-                            Partition part = new Partition
+                            var part = new Partition
                             {
-                                Start    = (ulong)(mapSector + entry.start),
-                                Size     = entry.length,
+                                Start    = (ulong)(mapSector + entry.start), Size = entry.length,
                                 Length   = (ulong)(entry.length * sector.Length),
                                 Name     = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
-                                Sequence = counter,
-                                Scheme   = Name
+                                Sequence = counter, Scheme = Name
                             };
+
                             part.Offset = part.Start * (ulong)sector.Length;
-                            if(entry.length <= 0) continue;
+
+                            if(entry.length <= 0)
+                                continue;
 
                             partitions.Add(part);
                             counter++;
@@ -165,77 +172,77 @@ namespace Aaru.Partitions
         [StructLayout(LayoutKind.Sequential)]
         struct DiscRecord
         {
-            public byte   log2secsize;
-            public byte   spt;
-            public byte   heads;
-            public byte   density;
-            public byte   idlen;
-            public byte   log2bpmb;
-            public byte   skew;
-            public byte   bootoption;
-            public byte   lowsector;
-            public byte   nzones;
-            public ushort zone_spare;
-            public uint   root;
-            public uint   disc_size;
-            public ushort disc_id;
+            public readonly byte   log2secsize;
+            public readonly byte   spt;
+            public readonly byte   heads;
+            public readonly byte   density;
+            public readonly byte   idlen;
+            public readonly byte   log2bpmb;
+            public readonly byte   skew;
+            public readonly byte   bootoption;
+            public readonly byte   lowsector;
+            public readonly byte   nzones;
+            public readonly ushort zone_spare;
+            public readonly uint   root;
+            public readonly uint   disc_size;
+            public readonly ushort disc_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] disc_name;
-            public uint disc_type;
-            public uint disc_size_high;
-            public byte flags;
-            public byte nzones_high;
-            public uint format_version;
-            public uint root_size;
+            public readonly byte[] disc_name;
+            public readonly uint disc_type;
+            public readonly uint disc_size_high;
+            public readonly byte flags;
+            public readonly byte nzones_high;
+            public readonly uint format_version;
+            public readonly uint root_size;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AcornBootBlock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
-            public byte[] spare;
-            public DiscRecord discRecord;
-            public byte       flags;
-            public ushort     startCylinder;
-            public byte       checksum;
+            public readonly byte[] spare;
+            public readonly DiscRecord discRecord;
+            public readonly byte       flags;
+            public readonly ushort     startCylinder;
+            public readonly byte       checksum;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LinuxTable
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
-            public LinuxEntry[] entries;
+            public readonly LinuxEntry[] entries;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] padding;
+            public readonly byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LinuxEntry
         {
-            public uint magic;
-            public uint start;
-            public uint size;
+            public readonly uint magic;
+            public readonly uint start;
+            public readonly uint size;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RiscIxTable
         {
-            public uint magic;
-            public uint date;
+            public readonly uint magic;
+            public readonly uint date;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public RiscIxEntry[] partitions;
+            public readonly RiscIxEntry[] partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RiscIxEntry
         {
-            public uint start;
-            public uint length;
-            public uint one;
+            public readonly uint start;
+            public readonly uint length;
+            public readonly uint one;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            public readonly byte[] name;
         }
     }
 }

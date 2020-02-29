@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -42,6 +41,7 @@ using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Core.Logging;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;

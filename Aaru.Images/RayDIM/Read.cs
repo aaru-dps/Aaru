@@ -46,7 +46,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < Marshal.SizeOf<RayHdr>()) return false;
+            if(stream.Length < Marshal.SizeOf<RayHdr>())
+                return false;
 
             byte[] buffer = new byte[Marshal.SizeOf<RayHdr>()];
             stream.Seek(0, SeekOrigin.Begin);
@@ -56,10 +57,11 @@ namespace Aaru.DiscImages
 
             string signature = StringHandlers.CToString(header.signature);
 
-            Regex sx = new Regex(REGEX_SIGNATURE);
+            var   sx = new Regex(REGEX_SIGNATURE);
             Match sm = sx.Match(signature);
 
-            if(!sm.Success) return false;
+            if(!sm.Success)
+                return false;
 
             imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
@@ -88,13 +90,16 @@ namespace Aaru.DiscImages
                 case MediaType.NEC_525_HD
                     when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_8;
+
                     break;
                 case MediaType.DOS_525_HD
                     when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
                     imageInfo.MediaType = MediaType.NEC_35_HD_15;
+
                     break;
                 case MediaType.RX50 when header.diskType == RayDiskTypes.Md2dd || header.diskType == RayDiskTypes.Md2hd:
                     imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+
                     break;
             }
 

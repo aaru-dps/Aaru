@@ -42,12 +42,12 @@ namespace Aaru.Core
         {
             get
             {
-                PluginBase instance = new PluginBase();
+                var instance = new PluginBase();
 
                 IPluginRegister checksumRegister    = new Register();
-                IPluginRegister imagesRegister      = new Aaru.DiscImages.Register();
+                IPluginRegister imagesRegister      = new DiscImages.Register();
                 IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
-                IPluginRegister filtersRegister     = new Aaru.Filters.Register();
+                IPluginRegister filtersRegister     = new Filters.Register();
                 IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
 
                 instance.AddPlugins(checksumRegister);

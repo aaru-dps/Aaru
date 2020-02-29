@@ -42,11 +42,8 @@ namespace Aaru.Filesystems.ISO9660
 
         enum Namespace
         {
-            Normal,
-            Vms,
-            Joliet,
-            Rrip,
-            Romeo
+            Normal, Vms, Joliet,
+            Rrip, Romeo
         }
     }
 }

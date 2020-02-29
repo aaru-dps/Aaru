@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Aaru.Core.Logging;
-using Aaru.Core.Media.Detection;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Core.Logging;
+using Aaru.Core.Media.Detection;
 using Aaru.Database.Models;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
@@ -125,17 +125,18 @@ namespace Aaru.Core.Media.Info
                                 // Clear cache
                                 for(int i = 0; i < 63; i++)
                                 {
-                                    sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + (16 * i)), sectorSize, 16, MmcSectorTypes.AllTypes, false,
-                                                       false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                    sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + (16 * i)), sectorSize, 16,
+                                                       MmcSectorTypes.AllTypes, false, false, false,
+                                                       MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                        MmcSubchannel.None, dev.Timeout, out _);
 
                                     if(sense || dev.Error)
                                         break;
                                 }
 
-                                sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
-                                                   false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                   MmcSubchannel.None, dev.Timeout, out _);
+                                sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda,
+                                                   false, false, false, MmcHeaderCodes.None, true, false,
+                                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                                 for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                                 {

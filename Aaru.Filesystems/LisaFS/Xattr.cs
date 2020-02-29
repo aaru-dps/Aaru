@@ -41,9 +41,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
-        /// <summary>
-        ///     Lists all extended attributes, alternate data streams and forks of the given file.
-        /// </summary>
+        /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
         /// <param name="xattrs">List of extended attributes, alternate data streams and forks.</param>
@@ -51,14 +49,14 @@ namespace Aaru.Filesystems.LisaFS
         {
             xattrs = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             return isDir ? Errno.InvalidArgument : ListXAttr(fileId, out xattrs);
         }
 
-        /// <summary>
-        ///     Reads an extended attribute, alternate data stream or fork from the given file.
-        /// </summary>
+        /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
         /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
@@ -66,14 +64,14 @@ namespace Aaru.Filesystems.LisaFS
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             return isDir ? Errno.InvalidArgument : GetXattr(fileId, xattr, out buf);
         }
 
-        /// <summary>
-        ///     Lists special Apple Lisa filesystem features as extended attributes
-        /// </summary>
+        /// <summary>Lists special Apple Lisa filesystem features as extended attributes</summary>
         /// <returns>Error number.</returns>
         /// <param name="fileId">File identifier.</param>
         /// <param name="xattrs">Extended attributes.</param>
@@ -81,12 +79,15 @@ namespace Aaru.Filesystems.LisaFS
         {
             xattrs = null;
 
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug || fileId == 0) return Errno.InvalidArgument;
+                if(!debug ||
+                   fileId == 0)
+                    return Errno.InvalidArgument;
 
                 xattrs = new List<string>();
 
@@ -96,7 +97,8 @@ namespace Aaru.Filesystems.LisaFS
                     byte[] buf = Encoding.ASCII.GetBytes(mddf.password);
 
                     // If the MDDF contains a password, show it
-                    if(buf.Length > 0) xattrs.Add("com.apple.lisa.password");
+                    if(buf.Length > 0)
+                        xattrs.Add("com.apple.lisa.password");
                 }
             }
             else
@@ -104,31 +106,34 @@ namespace Aaru.Filesystems.LisaFS
                 // Search for the file
                 Errno error = ReadExtentsFile(fileId, out ExtentFile file);
 
-                if(error != Errno.NoError) return error;
+                if(error != Errno.NoError)
+                    return error;
 
                 xattrs = new List<string>();
 
                 // Password field is never emptied, check if valid
-                if(file.password_valid > 0) xattrs.Add("com.apple.lisa.password");
+                if(file.password_valid > 0)
+                    xattrs.Add("com.apple.lisa.password");
 
                 // Check for a valid copy-protection serial number
-                if(file.serial > 0) xattrs.Add("com.apple.lisa.serial");
+                if(file.serial > 0)
+                    xattrs.Add("com.apple.lisa.serial");
 
                 // Check if the label contains something or is empty
-                if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo)) xattrs.Add("com.apple.lisa.label");
+                if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
+                    xattrs.Add("com.apple.lisa.label");
             }
 
             // On debug mode allow sector tags to be accessed as an xattr
-            if(debug) xattrs.Add("com.apple.lisa.tags");
+            if(debug)
+                xattrs.Add("com.apple.lisa.tags");
 
             xattrs.Sort();
 
             return Errno.NoError;
         }
 
-        /// <summary>
-        ///     Lists special Apple Lisa filesystem features as extended attributes
-        /// </summary>
+        /// <summary>Lists special Apple Lisa filesystem features as extended attributes</summary>
         /// <returns>Error number.</returns>
         /// <param name="fileId">File identifier.</param>
         /// <param name="xattr">Extended attribute name.</param>
@@ -137,23 +142,28 @@ namespace Aaru.Filesystems.LisaFS
         {
             buf = null;
 
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug || fileId == 0) return Errno.InvalidArgument;
+                if(!debug ||
+                   fileId == 0)
+                    return Errno.InvalidArgument;
 
                 // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
                     if(xattr == "com.apple.lisa.password")
                     {
                         buf = Encoding.ASCII.GetBytes(mddf.password);
+
                         return Errno.NoError;
                     }
 
                 // But on debug mode even system files contain tags
-                if(debug && xattr == "com.apple.lisa.tags") return ReadSystemFile(fileId, out buf, true);
+                if(debug && xattr == "com.apple.lisa.tags")
+                    return ReadSystemFile(fileId, out buf, true);
 
                 return Errno.NoSuchExtendedAttribute;
             }
@@ -161,34 +171,38 @@ namespace Aaru.Filesystems.LisaFS
             // Search for the file
             Errno error = ReadExtentsFile(fileId, out ExtentFile file);
 
-            if(error != Errno.NoError) return error;
+            if(error != Errno.NoError)
+                return error;
 
             switch(xattr)
             {
                 case "com.apple.lisa.password" when file.password_valid > 0:
                     buf = new byte[8];
                     Array.Copy(file.password, 0, buf, 0, 8);
+
                     return Errno.NoError;
                 case "com.apple.lisa.serial" when file.serial > 0:
                     buf = Encoding.ASCII.GetBytes(file.serial.ToString());
+
                     return Errno.NoError;
             }
 
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) && xattr == "com.apple.lisa.label")
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo) &&
+               xattr == "com.apple.lisa.label")
             {
                 buf = new byte[128];
                 Array.Copy(file.LisaInfo, 0, buf, 0, 128);
+
                 return Errno.NoError;
             }
 
-            if(debug && xattr == "com.apple.lisa.tags") return ReadFile(fileId, out buf, true);
+            if(debug && xattr == "com.apple.lisa.tags")
+                return ReadFile(fileId, out buf, true);
 
             return Errno.NoSuchExtendedAttribute;
         }
 
-        /// <summary>
-        ///     Decodes a sector tag. Not tested with 24-byte tags.
-        /// </summary>
+        /// <summary>Decodes a sector tag. Not tested with 24-byte tags.</summary>
         /// <returns>Error number.</returns>
         /// <param name="tag">Sector tag.</param>
         /// <param name="decoded">Decoded sector tag.</param>
@@ -197,9 +211,11 @@ namespace Aaru.Filesystems.LisaFS
             decoded = new LisaTag.PriamTag();
             LisaTag.PriamTag? pmTag = LisaTag.DecodeTag(tag);
 
-            if(!pmTag.HasValue) return Errno.InvalidArgument;
+            if(!pmTag.HasValue)
+                return Errno.InvalidArgument;
 
             decoded = pmTag.Value;
+
             return Errno.NoError;
         }
     }

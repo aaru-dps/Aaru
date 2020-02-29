@@ -107,7 +107,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             Encoding encodingClass = null;
@@ -124,7 +124,7 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
-                    return(int)ErrorNumber.EncodingUnknown;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -139,12 +139,12 @@ namespace Aaru.Commands.Image
                 {
                     AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
-                    return(int)ErrorNumber.UnrecognizedFormat;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
                     AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                imageFormat.Id);
+                                                 imageFormat.Id);
                 else
                     AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
@@ -157,7 +157,7 @@ namespace Aaru.Commands.Image
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
 
-                        return(int)ErrorNumber.CannotOpenFormat;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     if(verbose)
@@ -176,7 +176,7 @@ namespace Aaru.Commands.Image
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     AaruConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
 
-                    return(int)ErrorNumber.CannotOpenFormat;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
                 List<string> idPlugins;
@@ -185,8 +185,8 @@ namespace Aaru.Commands.Image
 
                 if(partitions)
                 {
-                    List<Partition> partitionsList = Aaru.Core.Partitions.GetAll(imageFormat);
-                    Aaru.Core.Partitions.AddSchemesToStats(partitionsList);
+                    List<Partition> partitionsList = Core.Partitions.GetAll(imageFormat);
+                    Core.Partitions.AddSchemesToStats(partitionsList);
 
                     if(partitionsList.Count == 0)
                     {
@@ -196,7 +196,7 @@ namespace Aaru.Commands.Image
                         {
                             AaruConsole.WriteLine("No partitions founds, not searching for filesystems");
 
-                            return(int)ErrorNumber.NothingFound;
+                            return (int)ErrorNumber.NothingFound;
                         }
 
                         checkRaw = true;
@@ -213,10 +213,10 @@ namespace Aaru.Commands.Image
                             AaruConsole.WriteLine("Partition type: {0}", partitionsList[i].Type);
 
                             AaruConsole.WriteLine("Partition start: sector {0}, byte {1}", partitionsList[i].Start,
-                                                 partitionsList[i].Offset);
+                                                  partitionsList[i].Offset);
 
                             AaruConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitionsList[i].Length,
-                                                 partitionsList[i].Size);
+                                                  partitionsList[i].Size);
 
                             AaruConsole.WriteLine("Partition scheme: {0}", partitionsList[i].Scheme);
                             AaruConsole.WriteLine("Partition description:");
@@ -227,7 +227,7 @@ namespace Aaru.Commands.Image
 
                             AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                            Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
 
                             if(idPlugins.Count == 0)
                                 AaruConsole.WriteLine("Filesystem not identified");
@@ -271,7 +271,7 @@ namespace Aaru.Commands.Image
                         Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
-                    Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                     if(idPlugins.Count == 0)
                         AaruConsole.WriteLine("Filesystem not identified");
@@ -307,10 +307,10 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
 
-                return(int)ErrorNumber.UnexpectedException;
+                return (int)ErrorNumber.UnexpectedException;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

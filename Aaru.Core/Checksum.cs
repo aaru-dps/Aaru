@@ -54,42 +54,42 @@ namespace Aaru.Core
     public class Checksum
     {
         readonly IChecksum      adler32Ctx;
-        HashPacket              adlerPkt;
-        Thread                  adlerThread;
         readonly IChecksum      crc16Ctx;
-        HashPacket              crc16Pkt;
-        Thread                  crc16Thread;
         readonly IChecksum      crc32Ctx;
-        HashPacket              crc32Pkt;
-        Thread                  crc32Thread;
         readonly IChecksum      crc64Ctx;
-        HashPacket              crc64Pkt;
-        Thread                  crc64Thread;
         readonly EnableChecksum enabled;
         readonly IChecksum      f16Ctx;
+        readonly IChecksum      f32Ctx;
+        readonly IChecksum      md5Ctx;
+        readonly IChecksum      sha1Ctx;
+        readonly IChecksum      sha256Ctx;
+        readonly IChecksum      sha384Ctx;
+        readonly IChecksum      sha512Ctx;
+        readonly IChecksum      ssctx;
+        HashPacket              adlerPkt;
+        Thread                  adlerThread;
+        HashPacket              crc16Pkt;
+        Thread                  crc16Thread;
+        HashPacket              crc32Pkt;
+        Thread                  crc32Thread;
+        HashPacket              crc64Pkt;
+        Thread                  crc64Thread;
         HashPacket              f16Pkt;
         Thread                  f16Thread;
-        readonly IChecksum      f32Ctx;
         HashPacket              f32Pkt;
         Thread                  f32Thread;
-        readonly IChecksum      md5Ctx;
         HashPacket              md5Pkt;
         Thread                  md5Thread;
-        readonly IChecksum      sha1Ctx;
         HashPacket              sha1Pkt;
         Thread                  sha1Thread;
-        readonly IChecksum      sha256Ctx;
         HashPacket              sha256Pkt;
         Thread                  sha256Thread;
-        readonly IChecksum      sha384Ctx;
         HashPacket              sha384Pkt;
         Thread                  sha384Thread;
-        readonly IChecksum      sha512Ctx;
         HashPacket              sha512Pkt;
         Thread                  sha512Thread;
         HashPacket              spamsumPkt;
         Thread                  spamsumThread;
-        readonly IChecksum      ssctx;
 
         public Checksum(EnableChecksum enabled = EnableChecksum.All)
         {
@@ -314,7 +314,7 @@ namespace Aaru.Core
                   sha512Thread.IsAlive  ||
                   spamsumThread.IsAlive ||
                   f16Thread.IsAlive     ||
-                  f32Thread.IsAlive) { }
+                  f32Thread.IsAlive) {}
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
                 adlerThread = new Thread(UpdateHash);
@@ -665,7 +665,7 @@ namespace Aaru.Core
                   sha512ThreadData.IsAlive  ||
                   spamsumThreadData.IsAlive ||
                   f16ThreadData.IsAlive     ||
-                  f32ThreadData.IsAlive) { }
+                  f32ThreadData.IsAlive) {}
 
             List<ChecksumType> dataChecksums = new List<ChecksumType>();
             ChecksumType       chk;

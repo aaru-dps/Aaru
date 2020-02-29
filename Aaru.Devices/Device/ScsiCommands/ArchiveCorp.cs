@@ -36,9 +36,7 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
-        /// </summary>
+        /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Address.</param>
@@ -59,6 +57,7 @@ namespace Aaru.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. REQUEST BLOCK ADDRESS took {0} ms.", duration);
@@ -66,9 +65,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
-        /// </summary>
+        /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="lba">Logical Block Address, starting from 1.</param>
         /// <param name="timeout">Timeout.</param>
@@ -76,9 +73,7 @@ namespace Aaru.Devices
         public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
             ArchiveCorpSeekBlock(out senseBuffer, false, lba, timeout, out duration);
 
-        /// <summary>
-        ///     Positions the tape at the specified block address
-        /// </summary>
+        /// <summary>Positions the tape at the specified block address</summary>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="immediate">If set to <c>true</c>, return from the command immediately.</param>
         /// <param name="lba">Logical Block Address, starting from 1.</param>
@@ -95,10 +90,13 @@ namespace Aaru.Devices
             cdb[1] = (byte)((lba & 0x1F0000) >> 16);
             cdb[2] = (byte)((lba & 0xFF00)   >> 8);
             cdb[3] = (byte)(lba & 0xFF);
-            if(immediate) cdb[1] += 0x01;
+
+            if(immediate)
+                cdb[1] += 0x01;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("SCSI Device", "ARCHIVE CORP. SEEK BLOCK took {0} ms.", duration);

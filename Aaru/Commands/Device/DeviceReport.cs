@@ -88,11 +88,11 @@ namespace Aaru.Commands.Device
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Aaru.Devices.Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Aaru.Devices.Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -102,14 +102,14 @@ namespace Aaru.Commands.Device
                 {
                     AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
-                    return(int)ErrorNumber.CannotOpenDevice;
+                    return (int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
                 AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
-                return(int)ErrorNumber.CannotOpenDevice;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -125,7 +125,7 @@ namespace Aaru.Commands.Device
 
                 AaruConsole.ErrorWriteLine("Not continuing.");
 
-                return(int)ErrorNumber.NotEnoughPermissions;
+                return (int)ErrorNumber.NotEnoughPermissions;
             }
 
             var report = new DeviceReportV2
@@ -709,8 +709,9 @@ namespace Aaru.Commands.Device
                                 while(pressedKey.Key != ConsoleKey.Y &&
                                       pressedKey.Key != ConsoleKey.N)
                                 {
-                                    AaruConsole.Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
-                                                     mediaType);
+                                    AaruConsole.
+                                        Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
+                                              mediaType);
 
                                     pressedKey = System.Console.ReadKey();
                                     AaruConsole.WriteLine();
@@ -794,9 +795,9 @@ namespace Aaru.Commands.Device
                                         else
                                         {
                                             AaruConsole.DebugWriteLine("Device-Report command",
-                                                                      "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                                      decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                      decSense.Value.ASCQ);
+                                                                       "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ);
 
                                             mediaIsRecognized = false;
                                         }
@@ -804,7 +805,7 @@ namespace Aaru.Commands.Device
                                     else
                                     {
                                         AaruConsole.DebugWriteLine("Device-Report command",
-                                                                  "Got sense status but no sense buffer");
+                                                                   "Got sense status but no sense buffer");
 
                                         mediaIsRecognized = false;
                                     }
@@ -840,7 +841,7 @@ namespace Aaru.Commands.Device
                                             for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                             {
                                                 AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
-                                                                 i);
+                                                                  i);
 
                                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
                                                                        dev.Timeout, out _);
@@ -992,9 +993,9 @@ namespace Aaru.Commands.Device
                                         else
                                         {
                                             AaruConsole.DebugWriteLine("Device-Report command",
-                                                                      "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                                                      decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                      decSense.Value.ASCQ);
+                                                                       "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ);
 
                                             mediaIsRecognized = false;
                                         }
@@ -1002,7 +1003,7 @@ namespace Aaru.Commands.Device
                                     else
                                     {
                                         AaruConsole.DebugWriteLine("Device-Report command",
-                                                                  "Got sense status but no sense buffer");
+                                                                   "Got sense status but no sense buffer");
 
                                         mediaIsRecognized = false;
                                     }
@@ -1044,7 +1045,9 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                        AaruConsole.
+                                            Write("Do you have media that you can insert in the drive? (Y/N): ");
+
                                         pressedKey = System.Console.ReadKey();
                                         AaruConsole.WriteLine();
                                     }
@@ -1265,17 +1268,17 @@ namespace Aaru.Commands.Device
             jsonSw.Close();
             jsonFs.Close();
 
-            using(var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath))
+            using(var ctx = AaruContext.Create(Settings.Settings.LocalDbPath))
             {
                 ctx.Reports.Add(new Report(report));
                 ctx.SaveChanges();
             }
 
             // TODO:
-            if(Aaru.Settings.Settings.Current.ShareReports)
+            if(Settings.Settings.Current.ShareReports)
                 Remote.SubmitReport(report);
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

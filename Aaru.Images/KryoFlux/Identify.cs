@@ -42,7 +42,9 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf<OobBlock>()) return false;
+
+            if(stream.Length < Marshal.SizeOf<OobBlock>())
+                return false;
 
             byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
             stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());

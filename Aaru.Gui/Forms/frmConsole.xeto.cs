@@ -52,118 +52,134 @@ namespace Aaru.Gui.Forms
             XamlReader.Load(this);
 
             grdMessages.DataStore = ConsoleHandler.Entries;
+
             grdMessages.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<LogEntry, string>(r => $"{r.Timestamp}")
                 },
-                HeaderText = "Time",
-                Sortable   = true
+                HeaderText = "Time", Sortable = true
             });
+
             grdMessages.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<LogEntry, string>(r => r.Type)
                 },
-                HeaderText = "Type",
-                Sortable   = true
+                HeaderText = "Type", Sortable = true
             });
+
             grdMessages.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<LogEntry, string>(r => r.Module)
                 },
-                HeaderText = "Module",
-                Sortable   = true
+                HeaderText = "Module", Sortable = true
             });
+
             grdMessages.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell
                 {
                     Binding = Binding.Property<LogEntry, string>(r => r.Message)
                 },
-                HeaderText = "Message",
-                Sortable   = true
+                HeaderText = "Message", Sortable = true
             });
 
             grdMessages.AllowMultipleSelection = false;
+
             grdMessages.CellFormatting += (sender, e) =>
             {
-                if(((LogEntry)e.Item).Type.ToLower() != "error") return;
+                if(((LogEntry)e.Item).Type.ToLower() != "error")
+                    return;
 
                 e.BackgroundColor = Colors.Red;
                 e.ForegroundColor = Colors.Black;
             };
+
             grdMessages.AllowColumnReordering = true;
 
             chkDebug.Checked =  ConsoleHandler.Debug;
             Closing          += OnClosing;
         }
 
-        void OnClosing(object sender, CancelEventArgs e)
-        {
-            // Otherwise if this closes it does not stop hearing events from collection, preventing console to keep working.
-            grdMessages.DataStore = null;
-        }
+        // Otherwise if this closes it does not stop hearing events from collection, preventing console to keep working.
+        void OnClosing(object sender, CancelEventArgs e) => grdMessages.DataStore = null;
 
-        protected void OnChkDebugChecked(object sender, EventArgs e)
-        {
-            ConsoleHandler.Debug = chkDebug.Checked.Value;
-        }
+        protected void OnChkDebugChecked(object sender, EventArgs e) => ConsoleHandler.Debug = chkDebug.Checked.Value;
 
-        protected void OnBtnClearClicked(object sender, EventArgs e)
-        {
-            ConsoleHandler.Entries.Clear();
-        }
+        protected void OnBtnClearClicked(object sender, EventArgs e) => ConsoleHandler.Entries.Clear();
 
         protected void OnBtnSaveClicked(object sender, EventArgs e)
         {
-            SaveFileDialog dlgSave = new SaveFileDialog {CheckFileExists = true};
-            dlgSave.Filters.Add(new FileFilter {Extensions               = new[] {"log"}, Name = "Log files"});
+            var dlgSave = new SaveFileDialog
+            {
+                CheckFileExists = true
+            };
+
+            dlgSave.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "log"
+                },
+                Name = "Log files"
+            });
+
             DialogResult result = dlgSave.ShowDialog(this);
-            if(result != DialogResult.Ok) return;
+
+            if(result != DialogResult.Ok)
+                return;
 
             try
             {
-                FileStream   logFs = new FileStream(dlgSave.FileName, FileMode.Create, FileAccess.ReadWrite);
-                StreamWriter logSw = new StreamWriter(logFs);
+                var logFs = new FileStream(dlgSave.FileName, FileMode.Create, FileAccess.ReadWrite);
+                var logSw = new StreamWriter(logFs);
 
                 logSw.WriteLine("Log saved at {0}", DateTime.Now);
 
                 PlatformID platId  = DetectOS.GetRealPlatformID();
                 string     platVer = DetectOS.GetVersion();
-                AssemblyInformationalVersionAttribute assemblyVersion =
+
+                var assemblyVersion =
                     Attribute.GetCustomAttribute(typeof(AaruConsole).Assembly,
                                                  typeof(AssemblyInformationalVersionAttribute)) as
                         AssemblyInformationalVersionAttribute;
 
                 logSw.WriteLine("################# System information #################");
+
                 logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                                 Environment.Is64BitOperatingSystem ? 64 : 32);
-                if(DetectOS.IsMono) logSw.WriteLine("Mono {0}",              Version.GetMonoVersion());
-                else if(DetectOS.IsNetCore) logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
-                else logSw.WriteLine(RuntimeInformation.FrameworkDescription);
+
+                if(DetectOS.IsMono)
+                    logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
+                else if(DetectOS.IsNetCore)
+                    logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
+                else
+                    logSw.WriteLine(RuntimeInformation.FrameworkDescription);
 
                 logSw.WriteLine();
 
                 logSw.WriteLine("################# Program information ################");
-                logSw.WriteLine("Aaru {0}",          assemblyVersion?.InformationalVersion);
-                logSw.WriteLine("Running in {0}-bit",         Environment.Is64BitProcess ? 64 : 32);
+                logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
+                logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
                 logSw.WriteLine("Running GUI mode using {0}", Application.Instance.Platform.ID);
-                #if DEBUG
+            #if DEBUG
                 logSw.WriteLine("DEBUG version");
-                #endif
+            #endif
                 logSw.WriteLine("Command line: {0}", Environment.CommandLine);
                 logSw.WriteLine();
 
                 logSw.WriteLine("################# Console ################");
+
                 foreach(LogEntry entry in ConsoleHandler.Entries)
                     if(entry.Type != "Info")
                         logSw.WriteLine("{0}: ({1}) {2}", entry.Timestamp, entry.Type.ToLower(), entry.Message);
-                    else logSw.WriteLine("{0}: {1}",      entry.Timestamp, entry.Message);
+                    else
+                        logSw.WriteLine("{0}: {1}", entry.Timestamp, entry.Message);
 
                 logSw.Close();
                 logFs.Close();
@@ -172,6 +188,7 @@ namespace Aaru.Gui.Forms
             {
                 MessageBox.Show("Exception {0} trying to save logfile, details has been sent to console.",
                                 exception.Message);
+
                 AaruConsole.ErrorWriteLine("Console", exception.Message);
                 AaruConsole.ErrorWriteLine("Console", exception.StackTrace);
             }

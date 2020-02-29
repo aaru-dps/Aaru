@@ -50,28 +50,16 @@ namespace Aaru.DiscImages
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
         Dictionary<uint, ulong> offsetmap;
 
-        public Gdi()
+        public Gdi() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = true,
-                HasSessions           = true,
-                Version               = null,
-                ApplicationVersion    = null,
-                MediaTitle            = null,
-                Creator               = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = true, HasSessions                            = true, Version = null,
+            ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null,
+            MediaModel         = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
+            DriveManufacturer  = null,
+            DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
+        };
     }
 }

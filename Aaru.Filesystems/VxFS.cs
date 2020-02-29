@@ -42,9 +42,7 @@ namespace Aaru.Filesystems
 {
     public class VxFS : IFilesystem
     {
-        /// <summary>
-        ///     Identifier for VxFS
-        /// </summary>
+        /// <summary>Identifier for VxFS</summary>
         const uint VXFS_MAGIC = 0xA501FCF5;
         const uint VXFS_BASE = 0x400;
 
@@ -58,7 +56,8 @@ namespace Aaru.Filesystems
         {
             ulong vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
 
-            if(partition.Start + vmfsSuperOff >= partition.End) return false;
+            if(partition.Start + vmfsSuperOff >= partition.End)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
@@ -68,7 +67,7 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.UTF8;
             ulong  vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
@@ -76,23 +75,30 @@ namespace Aaru.Filesystems
 
             VxSuperBlock vxSb = Marshal.ByteArrayToStructureLittleEndian<VxSuperBlock>(sector);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             sbInformation.AppendLine("Veritas file system");
 
             sbInformation.AppendFormat("Volume version {0}", vxSb.vs_version).AppendLine();
-            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, Encoding))
-                         .AppendLine();
-            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size)
-                         .AppendLine();
+
+            sbInformation.AppendFormat("Volume name {0}", StringHandlers.CToString(vxSb.vs_fname, Encoding)).
+                          AppendLine();
+
+            sbInformation.AppendFormat("Volume has {0} blocks of {1} bytes each", vxSb.vs_bsize, vxSb.vs_size).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume has {0} inodes per block", vxSb.vs_inopb).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free inodes", vxSb.vs_ifree).AppendLine();
             sbInformation.AppendFormat("Volume has {0} free blocks", vxSb.vs_free).AppendLine();
+
             sbInformation.AppendFormat("Volume created on {0}",
                                        DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime)).AppendLine();
+
             sbInformation.AppendFormat("Volume last modified on {0}",
                                        DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime)).AppendLine();
-            if(vxSb.vs_clean != 0) sbInformation.AppendLine("Volume is dirty");
+
+            if(vxSb.vs_clean != 0)
+                sbInformation.AppendLine("Volume is dirty");
 
             information = sbInformation.ToString();
 
@@ -102,11 +108,9 @@ namespace Aaru.Filesystems
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
-                ModificationDateSpecified = true,
-                Clusters                  = (ulong)vxSb.vs_size,
+                ModificationDateSpecified = true, Clusters = (ulong)vxSb.vs_size,
                 ClusterSize               = (uint)vxSb.vs_bsize,
-                Dirty                     = vxSb.vs_clean != 0,
-                FreeClusters              = (ulong)vxSb.vs_free,
+                Dirty                     = vxSb.vs_clean != 0, FreeClusters = (ulong)vxSb.vs_free,
                 FreeClustersSpecified     = true
             };
         }

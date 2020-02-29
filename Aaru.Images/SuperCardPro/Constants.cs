@@ -34,17 +34,17 @@ namespace Aaru.DiscImages
 {
     public partial class SuperCardPro
     {
-        /// <summary>
-        ///     SuperCardPro footer signature: "FPCS"
-        /// </summary>
+        /// <summary>SuperCardPro footer signature: "FPCS"</summary>
         const uint FOOTER_SIGNATURE = 0x53435046;
-        /// <summary>
-        ///     SuperCardPro header signature: "SCP"
-        /// </summary>
-        readonly byte[] scpSignature = {0x53, 0x43, 0x50};
-        /// <summary>
-        ///     SuperCardPro track header signature: "TRK"
-        /// </summary>
-        readonly byte[] trkSignature = {0x54, 0x52, 0x4B};
+        /// <summary>SuperCardPro header signature: "SCP"</summary>
+        readonly byte[] scpSignature =
+        {
+            0x53, 0x43, 0x50
+        };
+        /// <summary>SuperCardPro track header signature: "TRK"</summary>
+        readonly byte[] trkSignature =
+        {
+            0x54, 0x52, 0x4B
+        };
     }
 }

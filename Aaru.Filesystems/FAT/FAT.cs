@@ -73,19 +73,33 @@ namespace Aaru.Filesystems.FAT
         public string   Author   => "Natalia Portillo";
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+                {};
 
-        public Dictionary<string, string> Namespaces =>
-            new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        {
             {
-                {"dos", "DOS (8.3 all uppercase)"},
-                {"nt", "Windows NT (8.3 mixed case)"},
-                {"os2", "OS/2 .LONGNAME extended attribute"},
-                {"ecs", "Use LFN when available with fallback to .LONGNAME (default)"},
-                {"lfn", "Long file names"}
-            };
+                "dos", "DOS (8.3 all uppercase)"
+            },
+            {
+                "nt", "Windows NT (8.3 mixed case)"
+            },
+            {
+                "os2", "OS/2 .LONGNAME extended attribute"
+            },
+            {
+                "ecs", "Use LFN when available with fallback to .LONGNAME (default)"
+            },
+            {
+                "lfn", "Long file names"
+            }
+        };
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
     }
 }

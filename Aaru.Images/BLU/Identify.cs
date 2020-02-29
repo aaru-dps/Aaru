@@ -43,12 +43,16 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < 0x200) return false;
+            if(stream.Length < 0x200)
+                return false;
 
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);
 
-            BluHeader tmpHdr = new BluHeader {DeviceName = new byte[0x0D]};
+            var tmpHdr = new BluHeader
+            {
+                DeviceName = new byte[0x0D]
+            };
 
             Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
             tmpHdr.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;

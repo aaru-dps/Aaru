@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
         struct FdiHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] magic;
-            public DiskFlags flags;
-            public ushort    cylinders;
-            public ushort    heads;
-            public ushort    descOff;
-            public ushort    dataOff;
-            public ushort    addInfoLen;
+            public readonly byte[] magic;
+            public readonly DiskFlags flags;
+            public readonly ushort    cylinders;
+            public readonly ushort    heads;
+            public readonly ushort    descOff;
+            public readonly ushort    dataOff;
+            public readonly ushort    addInfoLen;
         }
     }
 }

@@ -42,17 +42,10 @@ namespace Aaru.Filesystems.ISO9660
         [Flags]
         enum XaAttributes : ushort
         {
-            SystemRead    = 0x01,
-            SystemExecute = 0x04,
-            OwnerRead     = 0x10,
-            OwnerExecute  = 0x40,
-            GroupRead     = 0x100,
-            GroupExecute  = 0x400,
-            Mode2Form1    = 0x800,
-            Mode2Form2    = 0x1000,
-            Interleaved   = 0x2000,
-            Cdda          = 0x4000,
-            Directory     = 0x8000
+            SystemRead   = 0x01, SystemExecute = 0x04, OwnerRead     = 0x10,
+            OwnerExecute = 0x40, GroupRead     = 0x100, GroupExecute = 0x400,
+            Mode2Form1   = 0x800, Mode2Form2   = 0x1000, Interleaved = 0x2000,
+            Cdda         = 0x4000, Directory   = 0x8000
         }
     }
 }

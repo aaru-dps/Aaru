@@ -34,6 +34,9 @@ namespace Aaru.DiscImages
 {
     public partial class UkvFdi
     {
-        readonly byte[] signature = {0x46, 0x44, 0x49};
+        readonly byte[] signature =
+        {
+            0x46, 0x44, 0x49
+        };
     }
 }

@@ -41,21 +41,31 @@ namespace Aaru.DiscImages
 {
     public partial class Nhdr0
     {
-        public string                     Name                => "T98-Next NHD r0 Disk Image";
-        public Guid                       Id                  => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
-        public ImageInfo                  Info                => imageInfo;
-        public string                     Author              => "Natalia Portillo";
-        public string                     Format              => "NHDr0 disk image";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
-        public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.GENERIC_HDD, MediaType.Unknown};
+        public string                 Name         => "T98-Next NHD r0 Disk Image";
+        public Guid                   Id           => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "NHDr0 disk image";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
+            {};
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.GENERIC_HDD, MediaType.Unknown
+        };
+
         // TODO: Support dynamic images
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".nhd"};
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".nhd"
+        };
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }

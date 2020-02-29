@@ -39,7 +39,10 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Vtoc
     {
-        readonly string[] testfiles = {"att_unix_vtoc.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "att_unix_vtoc.vdi.lz"
+        };
 
         readonly Partition[][] wanted =
         {
@@ -48,147 +51,83 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: Boot",
-                    Length      = 34,
-                    Sequence    = 0,
-                    Start       = 1
+                    Description = null, Name = null, Type = "UNIX: Boot", Length = 34,
+                    Sequence    = 0, Start   = 1
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: Whole disk",
-                    Length      = 1023119,
-                    Sequence    = 1,
-                    Start       = 1
+                    Description = null, Name = null, Type = "UNIX: Whole disk", Length = 1023119,
+                    Sequence    = 1, Start   = 1
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: Stand",
-                    Length      = 253,
-                    Sequence    = 2,
-                    Start       = 63
+                    Description = null, Name = null, Type = "UNIX: Stand", Length = 253,
+                    Sequence    = 2, Start   = 63
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 3,
-                    Start       = 378
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 3, Start   = 378
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 4,
-                    Start       = 79002
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 4, Start   = 79002
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 5,
-                    Start       = 157626
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 5, Start   = 157626
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 6,
-                    Start       = 236250
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 6, Start   = 236250
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 7,
-                    Start       = 314874
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 7, Start   = 314874
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 8,
-                    Start       = 393498
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 8, Start   = 393498
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 9,
-                    Start       = 472122
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 9, Start   = 472122
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 10,
-                    Start       = 550746
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 10, Start  = 550746
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 78624,
-                    Sequence    = 11,
-                    Start       = 629370
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 78624,
+                    Sequence    = 11, Start  = 629370
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 76608,
-                    Sequence    = 12,
-                    Start       = 707994
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 76608,
+                    Sequence    = 12, Start  = 707994
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 77616,
-                    Sequence    = 13,
-                    Start       = 784602
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 77616,
+                    Sequence    = 13, Start  = 784602
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 75600,
-                    Sequence    = 14,
-                    Start       = 862218
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 75600,
+                    Sequence    = 14, Start  = 862218
                 },
                 new Partition
                 {
-                    Description = null,
-                    Name        = null,
-                    Type        = "UNIX: /usr",
-                    Length      = 84672,
-                    Sequence    = 15,
-                    Start       = 937818
+                    Description = null, Name = null, Type = "UNIX: /usr", Length = 84672,
+                    Sequence    = 15, Start  = 937818
                 }
             }
         };
@@ -205,17 +144,19 @@ namespace Aaru.Tests.Partitions
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);
+
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
                     Assert.AreEqual(wanted[i][j].Length * 512, partitions[j].Size, testfiles[i]);
+
                     //                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Type,        partitions[j].Type,     testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset,   testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Length,      partitions[j].Length,   testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Sequence,    partitions[j].Sequence, testfiles[i]);
-                    Assert.AreEqual(wanted[i][j].Start,       partitions[j].Start,    testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Type, partitions[j].Type, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start * 512, partitions[j].Offset, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Length, partitions[j].Length, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Sequence, partitions[j].Sequence, testfiles[i]);
+                    Assert.AreEqual(wanted[i][j].Start, partitions[j].Start, testfiles[i]);
                 }
             }
         }

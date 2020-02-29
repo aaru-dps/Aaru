@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.Core.Logging;
 using Aaru.Database;
 using Aaru.Devices;
 using Schemas;
@@ -42,8 +42,8 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _trim;
         bool                                _aborted;
-        AaruContext                          _ctx;   // Master database context
-        Aaru.Database.Models.Device              _dbDev; // Device database entry
+        AaruContext                         _ctx;   // Master database context
+        Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
@@ -113,7 +113,7 @@ namespace Aaru.Core.Devices.Dumping
         public void Start()
         {
             // Open master database
-            _ctx = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            _ctx = AaruContext.Create(Settings.Settings.MasterDbPath);
 
             // Search for device in master database
             _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&

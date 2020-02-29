@@ -44,13 +44,13 @@ namespace Aaru.Gui.Dialogs
             XamlReader.Load(this);
 
             lblGdpr1.Text =
-                "In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n"    +
-                "we must give you the following information about Aaru and ask if you want to opt-in\n" +
+                "In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n" +
+                "we must give you the following information about Aaru and ask if you want to opt-in\n"       +
                 "in some information sharing.";
 
             lblGdpr2.Text =
-                "Disclaimer: Because Aaru is an open source software this information, and therefore,\n" +
-                "compliance with GDPR only holds true if you obtained a certificated copy from its original\n"    +
+                "Disclaimer: Because Aaru is an open source software this information, and therefore,\n"       +
+                "compliance with GDPR only holds true if you obtained a certificated copy from its original\n" +
                 "authors. In case of doubt, close Aaru now and ask in our IRC support channel.";
 
             lblGdpr3.Text =
@@ -62,7 +62,7 @@ namespace Aaru.Gui.Dialogs
 
             #region Device reports
             lblSaveReportsGlobally.Text =
-                "With the 'device-report' command, Aaru creates a report of a device, that includes its\n"       +
+                "With the 'device-report' command, Aaru creates a report of a device, that includes its\n"                +
                 "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n"    +
                 "The serial number of the device is not stored in the report. If used with the debug parameter,\n"        +
                 "extra information about the device will be stored in the report. This information is known to contain\n" +
@@ -73,66 +73,64 @@ namespace Aaru.Gui.Dialogs
             chkSaveReportsGlobally.Text =
                 "Do you want to save device reports in shared folder of your computer? (Y/N): ";
 
-            chkSaveReportsGlobally.Checked = Aaru.Settings.Settings.Current.SaveReportsGlobally;
+            chkSaveReportsGlobally.Checked = Settings.Settings.Current.SaveReportsGlobally;
 
             lblShareReports.Text =
-                "Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
-                "will be manually analized by an european union citizen to remove any trace of personal identification\n"      +
-                "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n"          +
-                "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n" +
+                "Sharing a report with us will send it to our server, that's in the european union territory, where it\n" +
+                "will be manually analized by an european union citizen to remove any trace of personal identification\n" +
+                "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n"              +
+                "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n"     +
                 "devices to other open-source projects. In any case, no information linking the report to you will be stored.";
 
             chkShareReports.Text    = "Do you want to share your device reports with us? (Y/N): ";
-            chkShareReports.Checked = Aaru.Settings.Settings.Current.ShareReports;
+            chkShareReports.Checked = Settings.Settings.Current.ShareReports;
             #endregion Device reports
 
             #region Statistics
             lblStatistics.Text =
-                "Aaru can store some usage statistics. These statistics are limited to the number of times a\n"        +
+                "Aaru can store some usage statistics. These statistics are limited to the number of times a\n"                 +
                 "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n"   +
                 "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                 "pool with no way of using them to identify you.";
 
             chkSaveStats.Text = "Do you want to save stats about your Aaru usage? (Y/N): ";
 
-            if(Aaru.Settings.Settings.Current.Stats != null)
+            if(Settings.Settings.Current.Stats != null)
             {
                 chkSaveStats.Checked  = true;
                 stkStatistics.Visible = true;
 
                 chkShareStats.Text    = "Do you want to share your stats anonymously? (Y/N): ";
-                chkShareStats.Checked = Aaru.Settings.Settings.Current.Stats.ShareStats;
+                chkShareStats.Checked = Settings.Settings.Current.Stats.ShareStats;
 
                 chkCommandStats.Text    = "Do you want to gather statistics about command usage? (Y/N): ";
-                chkCommandStats.Checked = Aaru.Settings.Settings.Current.Stats.CommandStats;
+                chkCommandStats.Checked = Settings.Settings.Current.Stats.CommandStats;
 
                 chkDeviceStats.Text    = "Do you want to gather statistics about found devices? (Y/N): ";
-                chkDeviceStats.Checked = Aaru.Settings.Settings.Current.Stats.DeviceStats;
+                chkDeviceStats.Checked = Settings.Settings.Current.Stats.DeviceStats;
 
                 chkFilesystemStats.Text    = "Do you want to gather statistics about found filesystems? (Y/N): ";
-                chkFilesystemStats.Checked = Aaru.Settings.Settings.Current.Stats.FilesystemStats;
+                chkFilesystemStats.Checked = Settings.Settings.Current.Stats.FilesystemStats;
 
                 chkFilterStats.Text    = "Do you want to gather statistics about found file filters? (Y/N): ";
-                chkFilterStats.Checked = Aaru.Settings.Settings.Current.Stats.FilterStats;
+                chkFilterStats.Checked = Settings.Settings.Current.Stats.FilterStats;
 
-                chkMediaImageStats.Text =
-                    "Do you want to gather statistics about found media image formats? (Y/N): ";
+                chkMediaImageStats.Text = "Do you want to gather statistics about found media image formats? (Y/N): ";
 
-                chkMediaImageStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaImageStats;
+                chkMediaImageStats.Checked = Settings.Settings.Current.Stats.MediaImageStats;
 
                 chkMediaScanStats.Text    = "Do you want to gather statistics about scanned media? (Y/N): ";
-                chkMediaScanStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaScanStats;
+                chkMediaScanStats.Checked = Settings.Settings.Current.Stats.MediaScanStats;
 
-                chkPartitionStats.Text =
-                    "Do you want to gather statistics about found partitioning schemes? (Y/N): ";
+                chkPartitionStats.Text = "Do you want to gather statistics about found partitioning schemes? (Y/N): ";
 
-                chkPartitionStats.Checked = Aaru.Settings.Settings.Current.Stats.PartitionStats;
+                chkPartitionStats.Checked = Settings.Settings.Current.Stats.PartitionStats;
 
                 chkMediaStats.Text    = "Do you want to gather statistics about media types? (Y/N): ";
-                chkMediaStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaStats;
+                chkMediaStats.Checked = Settings.Settings.Current.Stats.MediaStats;
 
                 chkVerifyStats.Text    = "Do you want to gather statistics about media image verifications? (Y/N): ";
-                chkVerifyStats.Checked = Aaru.Settings.Settings.Current.Stats.VerifyStats;
+                chkVerifyStats.Checked = Settings.Settings.Current.Stats.VerifyStats;
             }
             else
             {
@@ -146,11 +144,11 @@ namespace Aaru.Gui.Dialogs
 
         protected void OnBtnSave(object sender, EventArgs e)
         {
-            Aaru.Settings.Settings.Current.SaveReportsGlobally = chkSaveReportsGlobally.Checked == true;
-            Aaru.Settings.Settings.Current.ShareReports        = chkShareReports.Checked        == true;
+            Settings.Settings.Current.SaveReportsGlobally = chkSaveReportsGlobally.Checked == true;
+            Settings.Settings.Current.ShareReports        = chkShareReports.Checked        == true;
 
             if(chkSaveStats.Checked == true)
-                Aaru.Settings.Settings.Current.Stats = new StatsSettings
+                Settings.Settings.Current.Stats = new StatsSettings
                 {
                     ShareStats      = chkShareStats.Checked      == true,
                     CommandStats    = chkCommandStats.Checked    == true,
@@ -163,10 +161,10 @@ namespace Aaru.Gui.Dialogs
                     VerifyStats     = chkVerifyStats.Checked     == true
                 };
             else
-                Aaru.Settings.Settings.Current.Stats = null;
+                Settings.Settings.Current.Stats = null;
 
-            Aaru.Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
-            Aaru.Settings.Settings.SaveSettings();
+            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
+            Settings.Settings.SaveSettings();
             Close();
         }
 

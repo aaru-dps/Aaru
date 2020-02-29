@@ -115,7 +115,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -124,7 +124,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Unable to recognize image format, not decoding");
 
-                return(int)ErrorNumber.UnrecognizedFormat;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
@@ -331,14 +331,14 @@ namespace Aaru.Commands.Image
                             }
                             default:
                                 AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
-                                                     tag);
+                                                      tag);
 
                                 break;
                         }
 
             if(sectorTags)
             {
-                if(length.ToLowerInvariant() == "all") { }
+                if(length.ToLowerInvariant() == "all") {}
                 else
                 {
                     if(!ulong.TryParse(length, out ulong _))
@@ -358,7 +358,7 @@ namespace Aaru.Commands.Image
                         {
                             default:
                                 AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
-                                                     tag);
+                                                      tag);
 
                                 break;
                         }
@@ -366,7 +366,7 @@ namespace Aaru.Commands.Image
                 // TODO: Not implemented
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

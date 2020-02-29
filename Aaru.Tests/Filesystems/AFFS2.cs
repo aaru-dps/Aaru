@@ -40,19 +40,40 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Affs2Rdb
     {
-        readonly string[] testfiles = {"amigaos_4.0.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "amigaos_4.0.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {1024128};
+        readonly ulong[] sectors =
+        {
+            1024128
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {511040};
+        readonly long[] clusters =
+        {
+            511040
+        };
 
-        readonly int[] clustersize = {1024};
+        readonly int[] clustersize =
+        {
+            1024
+        };
 
-        readonly string[] volumename = {"Volume label"};
+        readonly string[] volumename =
+        {
+            "Volume label"
+        };
 
-        readonly string[] volumeserial = {"611D85E5"};
+        readonly string[] volumeserial =
+        {
+            "611D85E5"
+        };
 
         [Test]
         public void Test()
@@ -63,26 +84,28 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new AmigaDOSPlugin();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "\"DOS\\7\"")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,     testfiles[i]);
-                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,  testfiles[i]);
-                Assert.AreEqual("Amiga FFS2",    fs.XmlFsType.Type,         testfiles[i]);
-                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,   testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("Amiga FFS2", fs.XmlFsType.Type, testfiles[i]);
+                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
                 Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
             }
         }

@@ -33,8 +33,6 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using Claunia.Encoding;
-using Claunia.RsrcFork;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
@@ -42,6 +40,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Compression;
 using Aaru.Console;
 using Aaru.Helpers;
+using Claunia.Encoding;
+using Claunia.RsrcFork;
 using Version = Resources.Version;
 
 namespace Aaru.DiscImages
@@ -52,7 +52,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < 84) return false;
+            if(stream.Length < 84)
+                return false;
 
             stream.Seek(0, SeekOrigin.Begin);
             byte[] headerB = new byte[Marshal.SizeOf<DartHeader>()];
@@ -60,48 +61,61 @@ namespace Aaru.DiscImages
             stream.Read(headerB, 0, Marshal.SizeOf<DartHeader>());
             DartHeader header = Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
-            if(header.srcCmp > COMPRESS_NONE) return false;
+            if(header.srcCmp > COMPRESS_NONE)
+                return false;
 
-            int expectedMaxSize = 84 + header.srcSize * 2 * 524;
+            int expectedMaxSize = 84 + (header.srcSize * 2 * 524);
 
             switch(header.srcType)
             {
                 case DISK_MAC:
-                    if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return false;
+                    if(header.srcSize != SIZE_MAC_SS &&
+                       header.srcSize != SIZE_MAC)
+                        return false;
 
                     break;
                 case DISK_LISA:
-                    if(header.srcSize != SIZE_LISA) return false;
+                    if(header.srcSize != SIZE_LISA)
+                        return false;
 
                     break;
                 case DISK_APPLE2:
-                    if(header.srcSize != DISK_APPLE2) return false;
+                    if(header.srcSize != DISK_APPLE2)
+                        return false;
 
                     break;
                 case DISK_MAC_HD:
-                    if(header.srcSize != SIZE_MAC_HD) return false;
+                    if(header.srcSize != SIZE_MAC_HD)
+                        return false;
 
                     expectedMaxSize += 64;
+
                     break;
                 case DISK_DOS:
-                    if(header.srcSize != SIZE_DOS) return false;
+                    if(header.srcSize != SIZE_DOS)
+                        return false;
 
                     break;
                 case DISK_DOS_HD:
-                    if(header.srcSize != SIZE_DOS_HD) return false;
+                    if(header.srcSize != SIZE_DOS_HD)
+                        return false;
 
                     expectedMaxSize += 64;
+
                     break;
                 default: return false;
             }
 
-            if(stream.Length > expectedMaxSize) return false;
+            if(stream.Length > expectedMaxSize)
+                return false;
 
             short[] bLength;
 
-            if(header.srcType == DISK_MAC_HD || header.srcType == DISK_DOS_HD)
-                bLength  = new short[BLOCK_ARRAY_LEN_HIGH];
-            else bLength = new short[BLOCK_ARRAY_LEN_LOW];
+            if(header.srcType == DISK_MAC_HD ||
+               header.srcType == DISK_DOS_HD)
+                bLength = new short[BLOCK_ARRAY_LEN_HIGH];
+            else
+                bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
             for(int i = 0; i < bLength.Length; i++)
             {
@@ -110,13 +124,14 @@ namespace Aaru.DiscImages
                 bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
             }
 
-            MemoryStream dataMs = new MemoryStream();
-            MemoryStream tagMs  = new MemoryStream();
+            var dataMs = new MemoryStream();
+            var tagMs  = new MemoryStream();
 
             foreach(short l in bLength)
                 if(l != 0)
                 {
                     byte[] buffer = new byte[BUFFER_SIZE];
+
                     if(l == -1)
                     {
                         stream.Read(buffer, 0, BUFFER_SIZE);
@@ -126,13 +141,17 @@ namespace Aaru.DiscImages
                     else
                     {
                         byte[] temp;
+
                         if(header.srcCmp == COMPRESS_RLE)
                         {
                             temp = new byte[l * 2];
                             stream.Read(temp, 0, temp.Length);
-                            AppleRle rle = new AppleRle(new MemoryStream(temp));
+                            var rle = new AppleRle(new MemoryStream(temp));
                             buffer = new byte[BUFFER_SIZE];
-                            for(int i = 0; i < BUFFER_SIZE; i++) buffer[i] = (byte)rle.ProduceByte();
+
+                            for(int i = 0; i < BUFFER_SIZE; i++)
+                                buffer[i] = (byte)rle.ProduceByte();
+
                             dataMs.Write(buffer, 0, DATA_SIZE);
                             tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                         }
@@ -140,13 +159,17 @@ namespace Aaru.DiscImages
                         {
                             temp = new byte[l];
                             stream.Read(temp, 0, temp.Length);
+
                             throw new ImageNotSupportedException("LZH Compressed images not yet supported");
                         }
                     }
                 }
 
             dataCache = dataMs.ToArray();
-            if(header.srcType == DISK_LISA || header.srcType == DISK_MAC || header.srcType == DISK_APPLE2)
+
+            if(header.srcType == DISK_LISA ||
+               header.srcType == DISK_MAC  ||
+               header.srcType == DISK_APPLE2)
             {
                 imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
                 tagCache = tagMs.ToArray();
@@ -156,7 +179,8 @@ namespace Aaru.DiscImages
             {
                 if(imageFilter.HasResourceFork())
                 {
-                    ResourceFork rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+                    var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
+
                     // "vers"
                     if(rsrcFork.ContainsKey(0x76657273))
                     {
@@ -166,31 +190,40 @@ namespace Aaru.DiscImages
 
                         if(vers != null)
                         {
-                            Version version = new Version(vers);
+                            var version = new Version(vers);
 
                             string release = null;
                             string dev     = null;
                             string pre     = null;
 
-                            string major                              = $"{version.MajorVersion}";
-                            string minor                              = $".{version.MinorVersion / 10}";
-                            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
+                            string major = $"{version.MajorVersion}";
+                            string minor = $".{version.MinorVersion / 10}";
+
+                            if(version.MinorVersion % 10 > 0)
+                                release = $".{version.MinorVersion % 10}";
+
                             switch(version.DevStage)
                             {
                                 case Version.DevelopmentStage.Alpha:
                                     dev = "a";
+
                                     break;
                                 case Version.DevelopmentStage.Beta:
                                     dev = "b";
+
                                     break;
                                 case Version.DevelopmentStage.PreAlpha:
                                     dev = "d";
+
                                     break;
                             }
 
-                            if(dev == null && version.PreReleaseVersion > 0) dev = "f";
+                            if(dev                       == null &&
+                               version.PreReleaseVersion > 0)
+                                dev = "f";
 
-                            if(dev != null) pre = $"{version.PreReleaseVersion}";
+                            if(dev != null)
+                                pre = $"{version.PreReleaseVersion}";
 
                             imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                             imageInfo.Application        = version.VersionString;
@@ -202,13 +235,16 @@ namespace Aaru.DiscImages
                     if(rsrcFork.ContainsKey(0x44415254))
                     {
                         Resource dartRsrc = rsrcFork.GetResource(0x44415254);
+
                         if(dartRsrc != null)
                         {
                             string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
+
                             const string DART_REGEX =
                                 @"(?<version>\S+), tag checksum=\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\$(?<datachk>[0123456789ABCDEF]{8})$";
-                            Regex dArtEx    = new Regex(DART_REGEX);
+
+                            var   dArtEx    = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 
                             if(dArtMatch.Success)
@@ -216,7 +252,7 @@ namespace Aaru.DiscImages
                                 imageInfo.Application        = "DART";
                                 imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
                                 dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                                tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value,  16);
+                                tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
                             }
                         }
                     }
@@ -225,6 +261,7 @@ namespace Aaru.DiscImages
                     if(rsrcFork.ContainsKey(0x434B534D))
                     {
                         Resource cksmRsrc = rsrcFork.GetResource(0x434B534D);
+
                         if(cksmRsrc?.ContainsId(1) == true)
                         {
                             byte[] tagChk = cksmRsrc.GetResource(1);
@@ -239,10 +276,10 @@ namespace Aaru.DiscImages
                     }
                 }
             }
-            catch(InvalidCastException) { }
+            catch(InvalidCastException) {}
 
             AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", imageInfo.Application,
-                                      imageInfo.ApplicationVersion);
+                                       imageInfo.ApplicationVersion);
 
             imageInfo.Sectors              = (ulong)(header.srcSize * 2);
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
@@ -260,24 +297,28 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 1;
                     imageInfo.SectorsPerTrack = 10;
                     imageInfo.MediaType       = MediaType.AppleSonySS;
+
                     break;
                 case SIZE_MAC:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 10;
                     imageInfo.MediaType       = MediaType.AppleSonyDS;
+
                     break;
                 case SIZE_DOS:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 9;
                     imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
+
                     break;
                 case SIZE_MAC_HD:
                     imageInfo.Cylinders       = 80;
                     imageInfo.Heads           = 2;
                     imageInfo.SectorsPerTrack = 18;
                     imageInfo.MediaType       = MediaType.DOS_35_HD;
+
                     break;
             }
 
@@ -308,7 +349,8 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(tagCache == null || tagCache.Length == 0)
+            if(tagCache        == null ||
+               tagCache.Length == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
             if(sectorAddress > imageInfo.Sectors - 1)
@@ -342,8 +384,9 @@ namespace Aaru.DiscImages
             {
                 Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + TAG_SECTOR_SIZE),
                            imageInfo.SectorSize);
+
                 Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                           i * (imageInfo.SectorSize + TAG_SECTOR_SIZE) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                           (i * (imageInfo.SectorSize + TAG_SECTOR_SIZE)) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
             return buffer;

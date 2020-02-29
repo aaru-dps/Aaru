@@ -112,7 +112,7 @@ namespace Aaru.Commands.Filesystem
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
-            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Ls command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -124,7 +124,7 @@ namespace Aaru.Commands.Filesystem
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             Encoding encodingClass = null;
@@ -141,7 +141,7 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
-                    return(int)ErrorNumber.EncodingUnknown;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -154,12 +154,12 @@ namespace Aaru.Commands.Filesystem
                 {
                     AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
-                    return(int)ErrorNumber.UnrecognizedFormat;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
                     AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                imageFormat.Id);
+                                                 imageFormat.Id);
                 else
                     AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
@@ -170,18 +170,18 @@ namespace Aaru.Commands.Filesystem
                         AaruConsole.WriteLine("Unable to open image format");
                         AaruConsole.WriteLine("No error given");
 
-                        return(int)ErrorNumber.CannotOpenFormat;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     AaruConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
 
                     AaruConsole.DebugWriteLine("Ls command", "Image without headers is {0} bytes.",
-                                              imageFormat.Info.ImageSize);
+                                               imageFormat.Info.ImageSize);
 
                     AaruConsole.DebugWriteLine("Ls command", "Image has {0} sectors.", imageFormat.Info.Sectors);
 
                     AaruConsole.DebugWriteLine("Ls command", "Image identifies disk type as {0}.",
-                                              imageFormat.Info.MediaType);
+                                               imageFormat.Info.MediaType);
 
                     Statistics.AddMediaFormat(imageFormat.Format);
                     Statistics.AddMedia(imageFormat.Info.MediaType, false);
@@ -192,11 +192,11 @@ namespace Aaru.Commands.Filesystem
                     AaruConsole.ErrorWriteLine("Unable to open image format");
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
 
-                    return(int)ErrorNumber.CannotOpenFormat;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
-                List<Partition> partitions = Aaru.Core.Partitions.GetAll(imageFormat);
-                Aaru.Core.Partitions.AddSchemesToStats(partitions);
+                List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                Core.Partitions.AddSchemesToStats(partitions);
 
                 List<string>        idPlugins;
                 IReadOnlyFilesystem plugin;
@@ -215,7 +215,7 @@ namespace Aaru.Commands.Filesystem
 
                         AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                        Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
 
                         if(idPlugins.Count == 0)
                             AaruConsole.WriteLine("Filesystem not identified");
@@ -231,7 +231,7 @@ namespace Aaru.Commands.Filesystem
                                     var fs = (IReadOnlyFilesystem)plugin.
                                                                   GetType().GetConstructor(Type.EmptyTypes)?.
                                                                   Invoke(new object[]
-                                                                             { });
+                                                                             {});
 
                                     if(fs == null)
                                         continue;
@@ -247,7 +247,7 @@ namespace Aaru.Commands.Filesystem
                                     }
                                     else
                                         AaruConsole.ErrorWriteLine("Unable to mount device, error {0}",
-                                                                  error.ToString());
+                                                                   error.ToString());
                                 }
                         }
                         else
@@ -261,7 +261,7 @@ namespace Aaru.Commands.Filesystem
 
                             var fs = (IReadOnlyFilesystem)plugin.
                                                           GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                { });
+                                                                                                                {});
 
                             if(fs == null)
                                 continue;
@@ -286,7 +286,7 @@ namespace Aaru.Commands.Filesystem
                     Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                 if(idPlugins.Count == 0)
                     AaruConsole.WriteLine("Filesystem not identified");
@@ -301,7 +301,7 @@ namespace Aaru.Commands.Filesystem
 
                             var fs = (IReadOnlyFilesystem)plugin.
                                                           GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                { });
+                                                                                                                {});
 
                             if(fs == null)
                                 continue;
@@ -328,7 +328,7 @@ namespace Aaru.Commands.Filesystem
 
                         var fs = (IReadOnlyFilesystem)plugin.
                                                       GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                            { });
+                                                                                                            {});
 
                         if(fs != null)
                         {
@@ -351,10 +351,10 @@ namespace Aaru.Commands.Filesystem
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 AaruConsole.DebugWriteLine("Ls command", ex.StackTrace);
 
-                return(int)ErrorNumber.UnexpectedException;
+                return (int)ErrorNumber.UnexpectedException;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
 
         static void ListFilesInDir(string path, IReadOnlyFilesystem fs, bool longFormat)
@@ -390,11 +390,11 @@ namespace Aaru.Commands.Filesystem
                     {
                         if(entry.Value.Attributes.HasFlag(FileAttributes.Directory))
                             AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}", entry.Value.CreationTimeUtc,
-                                                 "<DIR>", entry.Key);
+                                                  "<DIR>", entry.Key);
                         else
                             AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:##,#}  {3}",
-                                                 entry.Value.CreationTimeUtc, entry.Value.Inode, entry.Value.Length,
-                                                 entry.Key);
+                                                  entry.Value.CreationTimeUtc, entry.Value.Inode, entry.Value.Length,
+                                                  entry.Key);
 
                         error = fs.ListXAttr(path + "/" + entry.Key, out List<string> xattrs);
 

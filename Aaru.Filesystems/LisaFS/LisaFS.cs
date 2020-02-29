@@ -59,17 +59,25 @@ namespace Aaru.Filesystems.LisaFS
 
         // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+                {};
 
-        public Dictionary<string, string> Namespaces =>
-            new Dictionary<string, string>
+        public Dictionary<string, string> Namespaces => new Dictionary<string, string>
+        {
             {
-                {"workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"},
-                {"office", "Filenames as shown by the Lisa Office System (not yet implemented)"}
-            };
+                "workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"
+            },
+            {
+                "office", "Filenames as shown by the Lisa Office System (not yet implemented)"
+            }
+        };
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
 
         #region Caches
         /// <summary>Caches Extents Files</summary>

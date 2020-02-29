@@ -48,9 +48,11 @@ namespace Aaru.Filesystems
         const uint BEFS_MAGIC2 = 0xDD121031;
         const uint BEFS_MAGIC3 = 0x15B6830E;
         const uint BEFS_ENDIAN = 0x42494745;
+
         // Big endian constants
         const uint BEFS_CIGAM1 = 0x31534642;
         const uint BEFS_NAIDNE = 0x45474942;
+
         // Common constants
         const uint BEFS_CLEAN = 0x434C454E;
         const uint BEFS_DIRTY = 0x44495254;
@@ -63,14 +65,17 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(2 + partition.Start >= partition.End) return false;
+            if(2 + partition.Start >= partition.End)
+                return false;
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             uint magic   = BitConverter.ToUInt32(sbSector, 0x20);
             uint magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-            if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
+            if(magic   == BEFS_MAGIC1 ||
+               magicBe == BEFS_MAGIC1)
+                return true;
 
             if(sbSector.Length >= 0x400)
             {
@@ -78,7 +83,9 @@ namespace Aaru.Filesystems
                 magicBe = BigEndianBitConverter.ToUInt32(sbSector, 0x220);
             }
 
-            if(magic == BEFS_MAGIC1 || magicBe == BEFS_MAGIC1) return true;
+            if(magic   == BEFS_MAGIC1 ||
+               magicBe == BEFS_MAGIC1)
+                return true;
 
             sbSector = imagePlugin.ReadSector(1 + partition.Start);
 
@@ -89,53 +96,63 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
-            BeSuperBlock besb = new BeSuperBlock();
+            var besb = new BeSuperBlock();
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             bool littleEndian;
 
             besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
-            if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // Magic is at offset
+
+            if(besb.magic1 == BEFS_MAGIC1 ||
+               besb.magic1 == BEFS_CIGAM1) // Magic is at offset
                 littleEndian = besb.magic1 == BEFS_CIGAM1;
             else
             {
                 sbSector    = imagePlugin.ReadSector(1 + partition.Start);
                 besb.magic1 = BigEndianBitConverter.ToUInt32(sbSector, 0x20);
 
-                if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+                if(besb.magic1 == BEFS_MAGIC1 ||
+                   besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     littleEndian = besb.magic1 == BEFS_CIGAM1;
                 else if(sbSector.Length >= 0x400)
                 {
                     byte[] temp = imagePlugin.ReadSector(0 + partition.Start);
                     besb.magic1 = BigEndianBitConverter.ToUInt32(temp, 0x220);
 
-                    if(besb.magic1 == BEFS_MAGIC1 || besb.magic1 == BEFS_CIGAM1) // There is a boot sector
+                    if(besb.magic1 == BEFS_MAGIC1 ||
+                       besb.magic1 == BEFS_CIGAM1) // There is a boot sector
                     {
                         littleEndian = besb.magic1 == BEFS_CIGAM1;
                         sbSector     = new byte[0x200];
                         Array.Copy(temp, 0x200, sbSector, 0, 0x200);
                     }
-                    else return;
+                    else
+                        return;
                 }
-                else return;
+                else
+                    return;
             }
 
-            if(littleEndian) besb = Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
-            else besb             = Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
+            if(littleEndian)
+                besb = Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
+            else
+                besb = Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 
-            if(besb.magic1                != BEFS_MAGIC1 || besb.fs_byte_order != BEFS_ENDIAN ||
+            if(besb.magic1                != BEFS_MAGIC1 ||
+               besb.fs_byte_order         != BEFS_ENDIAN ||
                besb.magic2                != BEFS_MAGIC2 ||
-               besb.magic3                != BEFS_MAGIC3 || besb.root_dir_len != 1 ||
+               besb.magic3                != BEFS_MAGIC3 ||
+               besb.root_dir_len          != 1           ||
                besb.indices_len           != 1           ||
                1 << (int)besb.block_shift != besb.block_size)
             {
@@ -143,10 +160,13 @@ namespace Aaru.Filesystems
                 sb.AppendFormat("Magic 1: 0x{0:X8} (Should be 0x42465331)", besb.magic1).AppendLine();
                 sb.AppendFormat("Magic 2: 0x{0:X8} (Should be 0xDD121031)", besb.magic2).AppendLine();
                 sb.AppendFormat("Magic 3: 0x{0:X8} (Should be 0x15B6830E)", besb.magic3).AppendLine();
-                sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order)
-                  .AppendLine();
+
+                sb.AppendFormat("Filesystem endianness: 0x{0:X8} (Should be 0x42494745)", besb.fs_byte_order).
+                   AppendLine();
+
                 sb.AppendFormat("Root folder's i-node size: {0} blocks (Should be 1)", besb.root_dir_len).AppendLine();
                 sb.AppendFormat("Indices' i-node size: {0} blocks (Should be 1)", besb.indices_len).AppendLine();
+
                 sb.AppendFormat("1 << block_shift == block_size => 1 << {0} == {1} (Should be {2})", besb.block_shift,
                                 1 << (int)besb.block_shift, besb.block_size).AppendLine();
             }
@@ -155,56 +175,64 @@ namespace Aaru.Filesystems
             {
                 case BEFS_CLEAN:
                     sb.AppendLine(besb.log_start == besb.log_end ? "Filesystem is clean" : "Filesystem is dirty");
+
                     break;
                 case BEFS_DIRTY:
                     sb.AppendLine("Filesystem is dirty");
+
                     break;
                 default:
                     sb.AppendFormat("Unknown flags: {0:X8}", besb.flags).AppendLine();
+
                     break;
             }
 
             sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(besb.name, Encoding)).AppendLine();
             sb.AppendFormat("{0} bytes per block", besb.block_size).AppendLine();
-            sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size)
-              .AppendLine();
-            sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size)
-              .AppendLine();
+
+            sb.AppendFormat("{0} blocks in volume ({1} bytes)", besb.num_blocks, besb.num_blocks * besb.block_size).
+               AppendLine();
+
+            sb.AppendFormat("{0} used blocks ({1} bytes)", besb.used_blocks, besb.used_blocks * besb.block_size).
+               AppendLine();
+
             sb.AppendFormat("{0} bytes per i-node", besb.inode_size).AppendLine();
+
             sb.AppendFormat("{0} blocks per allocation group ({1} bytes)", besb.blocks_per_ag,
                             besb.blocks_per_ag * besb.block_size).AppendLine();
+
             sb.AppendFormat("{0} allocation groups in volume", besb.num_ags).AppendLine();
+
             sb.AppendFormat("Journal resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                             besb.log_blocks_start, besb.log_blocks_ag, besb.log_blocks_len,
                             besb.log_blocks_len * besb.block_size).AppendLine();
-            sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end)
-              .AppendLine();
-            sb
-               .AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+
+            sb.AppendFormat("Journal starts in byte {0} and ends in byte {1}", besb.log_start, besb.log_end).
+               AppendLine();
+
+            sb.
+                AppendFormat("Root folder's i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
                              besb.root_dir_start, besb.root_dir_ag, besb.root_dir_len,
                              besb.root_dir_len * besb.block_size).AppendLine();
-            sb
-               .AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
-                             besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size)
-               .AppendLine();
+
+            sb.
+                AppendFormat("Indices' i-node resides in block {0} of allocation group {1} and runs for {2} blocks ({3} bytes)",
+                             besb.indices_start, besb.indices_ag, besb.indices_len, besb.indices_len * besb.block_size).
+                AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Clusters              = (ulong)besb.num_blocks,
-                ClusterSize           = besb.block_size,
-                Dirty                 = besb.flags == BEFS_DIRTY,
-                FreeClusters          = (ulong)(besb.num_blocks - besb.used_blocks),
-                FreeClustersSpecified = true,
-                Type                  = "BeFS",
-                VolumeName            = StringHandlers.CToString(besb.name, Encoding)
+                Clusters     = (ulong)besb.num_blocks, ClusterSize = besb.block_size,
+                Dirty        = besb.flags == BEFS_DIRTY,
+                FreeClusters = (ulong)(besb.num_blocks - besb.used_blocks), FreeClustersSpecified = true,
+                Type         = "BeFS",
+                VolumeName   = StringHandlers.CToString(besb.name, Encoding)
             };
         }
 
-        /// <summary>
-        ///     Be superblock
-        /// </summary>
+        /// <summary>Be superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct BeSuperBlock
         {

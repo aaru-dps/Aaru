@@ -39,7 +39,7 @@ namespace Aaru.Database.Models
 {
     public class UsbVendor
     {
-        public UsbVendor() { }
+        public UsbVendor() {}
 
         public UsbVendor(ushort id, string vendor)
         {

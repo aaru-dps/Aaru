@@ -39,7 +39,8 @@ namespace Aaru.DiscImages
     {
         static byte[] ClauniaSubchannelTransform(byte[] interleaved)
         {
-            if(interleaved == null) return null;
+            if(interleaved == null)
+                return null;
 
             int[] p = new int[interleaved.Length / 8];
             int[] q = new int[interleaved.Length / 8];
@@ -51,6 +52,7 @@ namespace Aaru.DiscImages
             int[] w = new int[interleaved.Length / 8];
 
             DateTime start = DateTime.UtcNow;
+
             for(int i = 0; i < interleaved.Length; i += 8)
             {
                 p[i / 8] =  interleaved[i] & 0x80;
@@ -156,18 +158,21 @@ namespace Aaru.DiscImages
             TimeSpan sequentialize = end - start;
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to deinterleave subchannel.",
-                                      deinterleave.TotalMilliseconds);
+                                       deinterleave.TotalMilliseconds);
+
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to sequentialize subchannel.",
-                                      sequentialize.TotalMilliseconds);
+                                       sequentialize.TotalMilliseconds);
+
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to transform subchannel.",
-                                      deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
+                                       deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
             return sequential;
         }
 
         static byte[] ClauniaSubchannelUntransform(byte[] sequential)
         {
-            if(sequential == null) return null;
+            if(sequential == null)
+                return null;
 
             int[] p = new int[sequential.Length / 8];
             int[] q = new int[sequential.Length / 8];
@@ -205,6 +210,7 @@ namespace Aaru.DiscImages
 
             byte[] interleaved = new byte[sequential.Length];
             start = DateTime.UtcNow;
+
             for(int i = 0; i < interleaved.Length; i += 8)
             {
                 interleaved[i]     =  (byte)((p[i / 8] & 0x80) == 0x80 ? 0x80 : 0);
@@ -284,11 +290,13 @@ namespace Aaru.DiscImages
             TimeSpan interleave = end - start;
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to de-sequentialize subchannel.",
-                                      desequentialize.TotalMilliseconds);
+                                       desequentialize.TotalMilliseconds);
+
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to interleave subchannel.",
-                                      interleave.TotalMilliseconds);
+                                       interleave.TotalMilliseconds);
+
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to untransform subchannel.",
-                                      interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
+                                       interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
             return interleaved;
         }

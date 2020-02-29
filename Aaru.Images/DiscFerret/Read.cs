@@ -49,7 +49,9 @@ namespace Aaru.DiscImages
             stream.Read(magicB, 0, 4);
             uint magic = BitConverter.ToUInt32(magicB, 0);
 
-            if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return false;
+            if(magic != DFI_MAGIC &&
+               magic != DFI_MAGIC2)
+                return false;
 
             TrackOffsets = new SortedDictionary<int, long>();
             TrackLengths = new SortedDictionary<int, long>();
@@ -66,41 +68,50 @@ namespace Aaru.DiscImages
                 DfiBlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
                 AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
-                                          blockHeader.cylinder);
+                                           blockHeader.cylinder);
+
                 AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
+
                 AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
-                                          blockHeader.sector);
+                                           blockHeader.sector);
+
                 AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
-                                          blockHeader.length);
+                                           blockHeader.length);
 
                 if(stream.Position + blockHeader.length > stream.Length)
                 {
                     AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
+
                     break;
                 }
 
                 stream.Position += blockHeader.length;
 
-                if(blockHeader.cylinder > 0 && blockHeader.cylinder > lastCylinder)
+                if(blockHeader.cylinder > 0 &&
+                   blockHeader.cylinder > lastCylinder)
                 {
                     lastCylinder = blockHeader.cylinder;
                     lastHead     = 0;
                     TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, thisOffset - offset + 1);
+                    TrackLengths.Add(t, (thisOffset - offset) + 1);
                     offset = thisOffset;
                     t++;
                 }
-                else if(blockHeader.head > 0 && blockHeader.head > lastHead)
+                else if(blockHeader.head > 0 &&
+                        blockHeader.head > lastHead)
                 {
                     lastHead = blockHeader.head;
                     TrackOffsets.Add(t, offset);
-                    TrackLengths.Add(t, thisOffset - offset + 1);
+                    TrackLengths.Add(t, (thisOffset - offset) + 1);
                     offset = thisOffset;
                     t++;
                 }
 
-                if(blockHeader.cylinder > imageInfo.Cylinders) imageInfo.Cylinders = blockHeader.cylinder;
-                if(blockHeader.head     > imageInfo.Heads) imageInfo.Heads         = blockHeader.head;
+                if(blockHeader.cylinder > imageInfo.Cylinders)
+                    imageInfo.Cylinders = blockHeader.cylinder;
+
+                if(blockHeader.head > imageInfo.Heads)
+                    imageInfo.Heads = blockHeader.head;
             }
 
             imageInfo.Heads++;

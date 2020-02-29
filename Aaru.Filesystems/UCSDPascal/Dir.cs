@@ -43,9 +43,12 @@ namespace Aaru.Filesystems.UCSDPascal
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(!string.IsNullOrEmpty(path) &&
+               string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
             contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
@@ -57,6 +60,7 @@ namespace Aaru.Filesystems.UCSDPascal
             }
 
             contents.Sort();
+
             return Errno.NoError;
         }
     }

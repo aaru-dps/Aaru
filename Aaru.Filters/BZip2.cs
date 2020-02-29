@@ -38,9 +38,7 @@ using SharpCompress.Compressors.BZip2;
 
 namespace Aaru.Filters
 {
-    /// <summary>
-    ///     Decompress bz2 files while reading
-    /// </summary>
+    /// <summary>Decompress bz2 files while reading</summary>
     public class BZip2 : IFilter
     {
         string   basePath;
@@ -75,10 +73,15 @@ namespace Aaru.Filters
 
         public bool Identify(byte[] buffer)
         {
-            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
-               buffer[3] > 0x39) return false;
+            if(buffer[0] != 0x42 ||
+               buffer[1] != 0x5A ||
+               buffer[2] != 0x68 ||
+               buffer[3] < 0x31  ||
+               buffer[3] > 0x39)
+                return false;
 
-            if(buffer.Length <= 512) return true;
+            if(buffer.Length <= 512)
+                return true;
 
             return buffer[buffer.Length - 512] != 0x6B || buffer[buffer.Length - 511] != 0x6F ||
                    buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
@@ -92,37 +95,50 @@ namespace Aaru.Filters
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
-               buffer[3] > 0x39) return false;
+            if(buffer[0] != 0x42 ||
+               buffer[1] != 0x5A ||
+               buffer[2] != 0x68 ||
+               buffer[3] < 0x31  ||
+               buffer[3] > 0x39)
+                return false;
 
-            if(stream.Length <= 512) return true;
+            if(stream.Length <= 512)
+                return true;
 
             stream.Seek(-512, SeekOrigin.End);
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
+
             // Check it is not an UDIF
             return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
         }
 
         public bool Identify(string path)
         {
-            if(!File.Exists(path)) return false;
+            if(!File.Exists(path))
+                return false;
 
-            FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[]     buffer = new byte[4];
+            var    stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            byte[] buffer = new byte[4];
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 ||
-               buffer[3] > 0x39) return false;
+            if(buffer[0] != 0x42 ||
+               buffer[1] != 0x5A ||
+               buffer[2] != 0x68 ||
+               buffer[3] < 0x31  ||
+               buffer[3] > 0x39)
+                return false;
 
-            if(stream.Length <= 512) return true;
+            if(stream.Length <= 512)
+                return true;
 
             stream.Seek(-512, SeekOrigin.End);
             stream.Read(buffer, 0, 4);
             stream.Seek(0, SeekOrigin.Begin);
+
             // Check it is not an UDIF
             return buffer[0] != 0x6B || buffer[1] != 0x6F || buffer[2] != 0x6C || buffer[3] != 0x79;
         }
@@ -154,7 +170,7 @@ namespace Aaru.Filters
             dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             basePath   = Path.GetFullPath(path);
 
-            FileInfo fi = new FileInfo(path);
+            var fi = new FileInfo(path);
             creationTime     = fi.CreationTimeUtc;
             lastWriteTime    = fi.LastWriteTimeUtc;
             innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false);
@@ -178,8 +194,7 @@ namespace Aaru.Filters
                 return basePath.Substring(0, basePath.Length - 4);
 
             return basePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 6)
-                       : basePath;
+                       ? basePath.Substring(0, basePath.Length - 6) : basePath;
         }
 
         public string GetParentFolder() => Path.GetDirectoryName(basePath);

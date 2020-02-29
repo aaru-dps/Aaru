@@ -44,6 +44,7 @@ namespace Aaru.Core
 {
     public partial class Sidecar
     {
+        readonly ChecksumType[] emptyChecksums;
         readonly Encoding       encoding;
         readonly FileInfo       fi;
         readonly Guid           filterId;
@@ -52,7 +53,6 @@ namespace Aaru.Core
         readonly Checksum       imgChkWorker;
         readonly PluginBase     plugins;
         bool                    aborted;
-        readonly ChecksumType[] emptyChecksums;
         FileStream              fs;
         CICMMetadataType        sidecar;
 
@@ -62,7 +62,7 @@ namespace Aaru.Core
             imgChkWorker = new Checksum();
             aborted      = false;
 
-            Checksum emptyChkWorker = new Checksum();
+            var emptyChkWorker = new Checksum();
             emptyChkWorker.Update(new byte[0]);
             emptyChecksums = emptyChkWorker.End().ToArray();
         }
@@ -88,9 +88,7 @@ namespace Aaru.Core
             aborted      = false;
         }
 
-        /// <summary>
-        ///     Implements creating a metadata sidecar
-        /// </summary>
+        /// <summary>Implements creating a metadata sidecar</summary>
         /// <returns>The metadata sidecar</returns>
         public CICMMetadataType Create()
         {
@@ -101,9 +99,11 @@ namespace Aaru.Core
             long   position = 0;
             UpdateStatus("Hashing image file...");
             InitProgress();
+
             while(position < fi.Length - 1048576)
             {
-                if(aborted) return sidecar;
+                if(aborted)
+                    return sidecar;
 
                 data = new byte[1048576];
                 fs.Read(data, 0, 1048576);
@@ -135,7 +135,8 @@ namespace Aaru.Core
             sidecar.AudioMedia  = null;
             sidecar.LinearMedia = null;
 
-            if(aborted) return sidecar;
+            if(aborted)
+                return sidecar;
 
             switch(image.Info.XmlMediaType)
             {
@@ -145,20 +146,24 @@ namespace Aaru.Core
                                     encoding);
                     else
                     {
-                        AaruConsole
-                           .ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+                        AaruConsole.
+                            ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+
                         AaruConsole.ErrorWriteLine("Please open an issue at Github.");
                     }
 
                     break;
                 case XmlMediaType.BlockMedia:
                     BlockMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+
                     break;
                 case XmlMediaType.LinearMedia:
                     LinearMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+
                     break;
                 case XmlMediaType.AudioMedia:
                     AudioMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+
                     break;
             }
 

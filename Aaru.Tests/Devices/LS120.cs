@@ -38,13 +38,25 @@ namespace Aaru.Tests.Devices
     [TestFixture]
     public class Ls120
     {
-        readonly string[] testfiles = {"ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"};
+        readonly string[] testfiles =
+        {
+            "ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"
+        };
 
-        readonly MediaType[] mediatypes = {MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
+        readonly MediaType[] mediatypes =
+        {
+            MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
+        };
 
-        readonly ulong[] sectors = {246528, 1440, 2880};
+        readonly ulong[] sectors =
+        {
+            246528, 1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512
+        };
 
         [Test]
         public void Test()
@@ -55,9 +67,9 @@ namespace Aaru.Tests.Devices
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
             }
         }

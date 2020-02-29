@@ -66,7 +66,8 @@ namespace Aaru.DiscImages
             for(int t = 0; t < 35; t++)
             {
                 for(int s = 0; s < 16; s++)
-                    Array.Copy(tmp, t * 16 * 256 + s * 256, deinterleaved, t * 16 * 256 + offsets[s] * 256, 256);
+                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                               256);
             }
 
             imageInfo.SectorSize           = 256;

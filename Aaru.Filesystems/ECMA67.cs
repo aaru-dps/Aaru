@@ -43,7 +43,10 @@ namespace Aaru.Filesystems
 {
     public class ECMA67 : IFilesystem
     {
-        readonly byte[] ecma67_magic = {0x56, 0x4F, 0x4C};
+        readonly byte[] ecma67_magic =
+        {
+            0x56, 0x4F, 0x4C
+        };
 
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "ECMA-67";
@@ -53,13 +56,16 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Start > 0) return false;
+            if(partition.Start > 0)
+                return false;
 
-            if(partition.End < 8) return false;
+            if(partition.End < 8)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(6);
 
-            if(sector.Length != 128) return false;
+            if(sector.Length != 128)
+                return false;
 
             VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
@@ -67,12 +73,12 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[] sector = imagePlugin.ReadSector(6);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
 
             VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
@@ -83,10 +89,8 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "ECMA-67",
-                ClusterSize = 256,
-                Clusters    = partition.End - partition.Start + 1,
-                VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
+                Type       = "ECMA-67", ClusterSize = 256, Clusters = (partition.End - partition.Start) + 1,
+                VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier)
             };
 
             information = sbInformation.ToString();

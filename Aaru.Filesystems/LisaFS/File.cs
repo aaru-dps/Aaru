@@ -45,9 +45,12 @@ namespace Aaru.Filesystems.LisaFS
             attributes = new FileAttributes();
 
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
-            if(error != Errno.NoError) return error;
 
-            if(!isDir) return GetAttributes(fileId, out attributes);
+            if(error != Errno.NoError)
+                return error;
+
+            if(!isDir)
+                return GetAttributes(fileId, out attributes);
 
             attributes = FileAttributes.Directory;
 
@@ -59,15 +62,20 @@ namespace Aaru.Filesystems.LisaFS
             if(size == 0)
             {
                 buf = new byte[0];
+
                 return Errno.NoError;
             }
 
-            if(offset < 0) return Errno.InvalidArgument;
+            if(offset < 0)
+                return Errno.InvalidArgument;
 
             Errno error = LookupFileId(path, out short fileId, out _);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             byte[] tmp;
+
             if(debug)
                 switch(fileId)
                 {
@@ -78,21 +86,28 @@ namespace Aaru.Filesystems.LisaFS
                     case (short)FILEID_SRECORD:
                     case (short)FILEID_CATALOG:
                         error = ReadSystemFile(fileId, out tmp);
+
                         break;
                     default:
                         error = ReadFile(fileId, out tmp);
+
                         break;
                 }
-            else error = ReadFile(fileId, out tmp);
+            else
+                error = ReadFile(fileId, out tmp);
 
-            if(error != Errno.NoError) return error;
+            if(error != Errno.NoError)
+                return error;
 
-            if(offset >= tmp.Length) return Errno.EINVAL;
+            if(offset >= tmp.Length)
+                return Errno.EINVAL;
 
-            if(size + offset >= tmp.Length) size = tmp.Length - offset;
+            if(size + offset >= tmp.Length)
+                size = tmp.Length - offset;
 
             buf = new byte[size];
             Array.Copy(tmp, offset, buf, 0, size);
+
             return Errno.NoError;
         }
 
@@ -100,7 +115,9 @@ namespace Aaru.Filesystems.LisaFS
         {
             stat = null;
             Errno error = LookupFileId(path, out short fileId, out bool isDir);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             return isDir ? StatDir(fileId, out stat) : Stat(fileId, out stat);
         }
@@ -108,11 +125,14 @@ namespace Aaru.Filesystems.LisaFS
         Errno GetAttributes(short fileId, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
-            if(!mounted) return Errno.AccessDenied;
+
+            if(!mounted)
+                return Errno.AccessDenied;
 
             if(fileId < 4)
             {
-                if(!debug) return Errno.NoSuchFile;
+                if(!debug)
+                    return Errno.NoSuchFile;
 
                 attributes =  new FileAttributes();
                 attributes =  FileAttributes.System;
@@ -125,30 +145,40 @@ namespace Aaru.Filesystems.LisaFS
 
             Errno error = ReadExtentsFile(fileId, out ExtentFile extFile);
 
-            if(error != Errno.NoError) return error;
+            if(error != Errno.NoError)
+                return error;
 
             switch(extFile.ftype)
             {
                 case FileType.Spool:
                     attributes |= FileAttributes.CharDevice;
+
                     break;
                 case FileType.UserCat:
                 case FileType.RootCat:
                     attributes |= FileAttributes.Directory;
+
                     break;
                 case FileType.Pipe:
                     attributes |= FileAttributes.Pipe;
+
                     break;
                 case FileType.Undefined: break;
                 default:
                     attributes |= FileAttributes.File;
                     attributes |= FileAttributes.Extents;
+
                     break;
             }
 
-            if(extFile.protect        > 0) attributes |= FileAttributes.Immutable;
-            if(extFile.locked         > 0) attributes |= FileAttributes.ReadOnly;
-            if(extFile.password_valid > 0) attributes |= FileAttributes.Password;
+            if(extFile.protect > 0)
+                attributes |= FileAttributes.Immutable;
+
+            if(extFile.locked > 0)
+                attributes |= FileAttributes.ReadOnly;
+
+            if(extFile.password_valid > 0)
+                attributes |= FileAttributes.Password;
 
             return Errno.NoError;
         }
@@ -158,13 +188,20 @@ namespace Aaru.Filesystems.LisaFS
         Errno ReadSystemFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
-            if(!mounted || !debug) return Errno.AccessDenied;
 
-            if(fileId > 4 || fileId <= 0)
-                if(fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
+            if(!mounted ||
+               !debug)
+                return Errno.AccessDenied;
+
+            if(fileId > 4 ||
+               fileId <= 0)
+                if(fileId != FILEID_BOOT_SIGNED &&
+                   fileId != FILEID_LOADER_SIGNED)
                     return Errno.InvalidArgument;
 
-            if(systemFileCache.TryGetValue(fileId, out buf) && !tags) return Errno.NoError;
+            if(systemFileCache.TryGetValue(fileId, out buf) &&
+               !tags)
+                return Errno.NoError;
 
             int count = 0;
 
@@ -173,12 +210,14 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     buf = device.ReadSectors(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len);
                     systemFileCache.Add(fileId, buf);
+
                     return Errno.NoError;
                 }
                 else
                 {
                     buf = device.ReadSectorsTag(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len,
                                                 SectorTagType.AppleSectorTag);
+
                     return Errno.NoError;
                 }
 
@@ -189,10 +228,12 @@ namespace Aaru.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(sysTag.FileId == fileId) count++;
+                if(sysTag.FileId == fileId)
+                    count++;
             }
 
-            if(count == 0) return Errno.NoSuchFile;
+            if(count == 0)
+                return Errno.NoSuchFile;
 
             buf = !tags ? new byte[count * device.Info.SectorSize] : new byte[count * devTagSize];
 
@@ -201,17 +242,20 @@ namespace Aaru.Filesystems.LisaFS
             {
                 DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
-                if(sysTag.FileId != fileId) continue;
+                if(sysTag.FileId != fileId)
+                    continue;
 
                 byte[] sector = !tags ? device.ReadSector(i) : device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
                 // Relative block for $Loader starts at $Boot block
-                if(sysTag.FileId == FILEID_LOADER_SIGNED) sysTag.RelPage--;
+                if(sysTag.FileId == FILEID_LOADER_SIGNED)
+                    sysTag.RelPage--;
 
                 Array.Copy(sector, 0, buf, sector.Length * sysTag.RelPage, sector.Length);
             }
 
-            if(!tags) systemFileCache.Add(fileId, buf);
+            if(!tags)
+                systemFileCache.Add(fileId, buf);
 
             return Errno.NoError;
         }
@@ -220,24 +264,36 @@ namespace Aaru.Filesystems.LisaFS
         {
             stat = null;
 
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
             Errno      error;
             ExtentFile file;
 
             if(fileId <= 4)
-                if(!debug || fileId == 0) return Errno.NoSuchFile;
+                if(!debug ||
+                   fileId == 0)
+                    return Errno.NoSuchFile;
                 else
                 {
-                    stat = new FileEntryInfo {Attributes = new FileAttributes()};
+                    stat = new FileEntryInfo
+                    {
+                        Attributes = new FileAttributes()
+                    };
 
                     error = GetAttributes(fileId, out stat.Attributes);
-                    if(error != Errno.NoError) return error;
 
-                    if(fileId < 0 && fileId != FILEID_BOOT_SIGNED && fileId != FILEID_LOADER_SIGNED)
+                    if(error != Errno.NoError)
+                        return error;
+
+                    if(fileId < 0                   &&
+                       fileId != FILEID_BOOT_SIGNED &&
+                       fileId != FILEID_LOADER_SIGNED)
                     {
                         error = ReadExtentsFile((short)(fileId * -1), out file);
-                        if(error != Errno.NoError) return error;
+
+                        if(error != Errno.NoError)
+                            return error;
 
                         stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
                         stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
@@ -253,7 +309,9 @@ namespace Aaru.Filesystems.LisaFS
                     else
                     {
                         error = ReadSystemFile(fileId, out byte[] buf);
-                        if(error != Errno.NoError) return error;
+
+                        if(error != Errno.NoError)
+                            return error;
 
                         stat.CreationTime = fileId != 4 ? mddf.dtvc : mddf.dtcc;
 
@@ -269,12 +327,20 @@ namespace Aaru.Filesystems.LisaFS
                     return Errno.NoError;
                 }
 
-            stat  = new FileEntryInfo {Attributes = new FileAttributes()};
+            stat = new FileEntryInfo
+            {
+                Attributes = new FileAttributes()
+            };
+
             error = GetAttributes(fileId, out stat.Attributes);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             error = ReadExtentsFile(fileId, out file);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             stat.CreationTime  = DateHandlers.LisaToDateTime(file.dtc);
             stat.AccessTime    = DateHandlers.LisaToDateTime(file.dta);
@@ -283,8 +349,12 @@ namespace Aaru.Filesystems.LisaFS
 
             stat.Inode = (ulong)fileId;
             stat.Links = 1;
-            if(!fileSizeCache.TryGetValue(fileId, out int len)) stat.Length = srecords[fileId].filesize;
-            else stat.Length                                                = len;
+
+            if(!fileSizeCache.TryGetValue(fileId, out int len))
+                stat.Length = srecords[fileId].filesize;
+            else
+                stat.Length = len;
+
             stat.BlockSize = mddf.datasize;
             stat.Blocks    = file.length;
 
@@ -296,25 +366,36 @@ namespace Aaru.Filesystems.LisaFS
         Errno ReadFile(short fileId, out byte[] buf, bool tags)
         {
             buf = null;
-            if(!mounted) return Errno.AccessDenied;
+
+            if(!mounted)
+                return Errno.AccessDenied;
 
             tags &= debug;
 
-            if(fileId < 4 || fileId == 4 && mddf.fsversion != LISA_V2 && mddf.fsversion != LISA_V1)
+            if(fileId < 4 ||
+               (fileId == 4 && mddf.fsversion != LISA_V2 && mddf.fsversion != LISA_V1))
                 return Errno.InvalidArgument;
 
-            if(!tags && fileCache.TryGetValue(fileId, out buf)) return Errno.NoError;
+            if(!tags &&
+               fileCache.TryGetValue(fileId, out buf))
+                return Errno.NoError;
 
             Errno error = ReadExtentsFile(fileId, out ExtentFile file);
-            if(error != Errno.NoError) return error;
+
+            if(error != Errno.NoError)
+                return error;
 
             int sectorSize;
-            if(tags) sectorSize = devTagSize;
-            else sectorSize     = (int)device.Info.SectorSize;
+
+            if(tags)
+                sectorSize = devTagSize;
+            else
+                sectorSize = (int)device.Info.SectorSize;
 
             byte[] temp = new byte[file.length * sectorSize];
 
             int offset = 0;
+
             for(int i = 0; i < file.extents.Length; i++)
             {
                 byte[] sector;
@@ -335,11 +416,13 @@ namespace Aaru.Filesystems.LisaFS
                 if(fileSizeCache.TryGetValue(fileId, out int realSize))
                     if(realSize > temp.Length)
                         AaruConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
+
                 buf = temp;
 
                 fileCache.Add(fileId, buf);
             }
-            else buf = temp;
+            else
+                buf = temp;
 
             return Errno.NoError;
         }
@@ -349,49 +432,61 @@ namespace Aaru.Filesystems.LisaFS
             fileId = 0;
             isDir  = false;
 
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             if(pathElements.Length == 0)
             {
                 fileId = DIRID_ROOT;
                 isDir  = true;
+
                 return Errno.NoError;
             }
 
             // Only V3 supports subdirectories
-            if(pathElements.Length > 1 && mddf.fsversion != LISA_V3) return Errno.NotSupported;
+            if(pathElements.Length > 1 &&
+               mddf.fsversion      != LISA_V3)
+                return Errno.NotSupported;
 
             if(debug && pathElements.Length == 1)
             {
                 if(string.Compare(pathElements[0], "$MDDF", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_MDDF;
+
                     return Errno.NoError;
                 }
 
                 if(string.Compare(pathElements[0], "$Boot", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = FILEID_BOOT_SIGNED;
+
                     return Errno.NoError;
                 }
 
                 if(string.Compare(pathElements[0], "$Loader", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = FILEID_LOADER_SIGNED;
+
                     return Errno.NoError;
                 }
 
                 if(string.Compare(pathElements[0], "$Bitmap", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_BITMAP;
+
                     return Errno.NoError;
                 }
 
                 if(string.Compare(pathElements[0], "$S-Record", StringComparison.InvariantCulture) == 0)
                 {
                     fileId = (short)FILEID_SRECORD;
+
                     return Errno.NoError;
                 }
 
@@ -399,6 +494,7 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     fileId = DIRID_ROOT;
                     isDir  = true;
+
                     return Errno.NoError;
                 }
             }
@@ -413,17 +509,20 @@ namespace Aaru.Filesystems.LisaFS
 
                     // LisaOS is case insensitive
                     if(string.Compare(wantedFilename, filename, StringComparison.InvariantCultureIgnoreCase) != 0 ||
-                       entry.parentID !=
-                       fileId) continue;
+                       entry.parentID                                                                        != fileId)
+                        continue;
 
                     fileId = entry.fileID;
                     isDir  = entry.fileType == 0x01;
 
                     // Not last path element, and it's not a directory
-                    if(lvl != pathElements.Length - 1 && !isDir) return Errno.NotDirectory;
+                    if(lvl != pathElements.Length - 1 &&
+                       !isDir)
+                        return Errno.NotDirectory;
 
                     // Arrived last path element
-                    if(lvl == pathElements.Length - 1) return Errno.NoError;
+                    if(lvl == pathElements.Length - 1)
+                        return Errno.NoError;
                 }
             }
 

@@ -11,11 +11,12 @@ namespace Aaru.Core
     {
         FilesystemContentsType Files(IReadOnlyFilesystem filesystem)
         {
-            FilesystemContentsType contents = new FilesystemContentsType();
+            var contents = new FilesystemContentsType();
 
             Errno ret = filesystem.ReadDir("/", out List<string> dirents);
 
-            if(ret != Errno.NoError) return null;
+            if(ret != Errno.NoError)
+                return null;
 
             List<DirectoryType>    directories = new List<DirectoryType>();
             List<ContentsFileType> files       = new List<ContentsFileType>();
@@ -27,27 +28,32 @@ namespace Aaru.Core
                 if(ret != Errno.NoError)
                 {
                     AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+
                     continue;
                 }
 
                 if(stat.Attributes.HasFlag(FileAttributes.Directory))
                 {
                     directories.Add(SidecarDirectory(filesystem, "", dirent, stat));
+
                     continue;
                 }
 
                 files.Add(SidecarFile(filesystem, "", dirent, stat));
             }
 
-            if(files.Count       > 0) contents.File      = files.OrderBy(f => f.name).ToArray();
-            if(directories.Count > 0) contents.Directory = directories.OrderBy(d => d.name).ToArray();
+            if(files.Count > 0)
+                contents.File = files.OrderBy(f => f.name).ToArray();
+
+            if(directories.Count > 0)
+                contents.Directory = directories.OrderBy(d => d.name).ToArray();
 
             return contents;
         }
 
         DirectoryType SidecarDirectory(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
         {
-            DirectoryType directory = new DirectoryType();
+            var directory = new DirectoryType();
 
             if(stat.AccessTimeUtc.HasValue)
             {
@@ -112,7 +118,8 @@ namespace Aaru.Core
 
             Errno ret = filesystem.ReadDir(path + "/" + filename, out List<string> dirents);
 
-            if(ret != Errno.NoError) return null;
+            if(ret != Errno.NoError)
+                return null;
 
             List<DirectoryType>    directories = new List<DirectoryType>();
             List<ContentsFileType> files       = new List<ContentsFileType>();
@@ -124,28 +131,33 @@ namespace Aaru.Core
                 if(ret != Errno.NoError)
                 {
                     AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+
                     continue;
                 }
 
                 if(entryStat.Attributes.HasFlag(FileAttributes.Directory))
                 {
                     directories.Add(SidecarDirectory(filesystem, path + "/" + filename, dirent, entryStat));
+
                     continue;
                 }
 
                 files.Add(SidecarFile(filesystem, path + "/" + filename, dirent, entryStat));
             }
 
-            if(files.Count       > 0) directory.File      = files.OrderBy(f => f.name).ToArray();
-            if(directories.Count > 0) directory.Directory = directories.OrderBy(d => d.name).ToArray();
+            if(files.Count > 0)
+                directory.File = files.OrderBy(f => f.name).ToArray();
+
+            if(directories.Count > 0)
+                directory.Directory = directories.OrderBy(d => d.name).ToArray();
 
             return directory;
         }
 
         ContentsFileType SidecarFile(IReadOnlyFilesystem filesystem, string path, string filename, FileEntryInfo stat)
         {
-            ContentsFileType file          = new ContentsFileType();
-            Checksum         fileChkWorker = new Checksum();
+            var file          = new ContentsFileType();
+            var fileChkWorker = new Checksum();
 
             if(stat.AccessTimeUtc.HasValue)
             {
@@ -210,14 +222,17 @@ namespace Aaru.Core
             }
 
             byte[] data = new byte[0];
+
             if(stat.Length > 0)
             {
                 long position = 0;
                 UpdateStatus($"Hashing file {path}/{filename}...");
                 InitProgress2();
+
                 while(position < stat.Length - 1048576)
                 {
-                    if(aborted) return file;
+                    if(aborted)
+                        return file;
 
                     data = new byte[1048576];
                     filesystem.Read(path + "/" + filename, position, 1048576, ref data);
@@ -240,11 +255,13 @@ namespace Aaru.Core
 
                 file.Checksums = fileChkWorker.End().ToArray();
             }
-            else file.Checksums = emptyChecksums;
+            else
+                file.Checksums = emptyChecksums;
 
             Errno ret = filesystem.ListXAttr(path + "/" + filename, out List<string> xattrs);
 
-            if(ret != Errno.NoError) return file;
+            if(ret != Errno.NoError)
+                return file;
 
             List<ExtendedAttributeType> xattrTypes = new List<ExtendedAttributeType>();
 
@@ -252,20 +269,20 @@ namespace Aaru.Core
             {
                 ret = filesystem.GetXattr(path + "/" + filename, xattr, ref data);
 
-                if(ret != Errno.NoError) continue;
+                if(ret != Errno.NoError)
+                    continue;
 
-                Checksum xattrChkWorker = new Checksum();
+                var xattrChkWorker = new Checksum();
                 xattrChkWorker.Update(data);
 
                 xattrTypes.Add(new ExtendedAttributeType
                 {
-                    Checksums = xattrChkWorker.End().ToArray(),
-                    length    = (ulong)data.Length,
-                    name      = xattr
+                    Checksums = xattrChkWorker.End().ToArray(), length = (ulong)data.Length, name = xattr
                 });
             }
 
-            if(xattrTypes.Count > 0) file.ExtendedAttributes = xattrTypes.OrderBy(x => x.name).ToArray();
+            if(xattrTypes.Count > 0)
+                file.ExtendedAttributes = xattrTypes.OrderBy(x => x.name).ToArray();
 
             return file;
         }

@@ -38,24 +38,27 @@ namespace Aaru.Devices
     public partial class Device
     {
         public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                               out double               duration) =>
+                                               out double duration) =>
             CheckMediaCardType(1, out statusRegisters, timeout, out duration);
 
         public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                                out double               duration) =>
+                                                out double duration) =>
             CheckMediaCardType(0, out statusRegisters, timeout, out duration);
 
-        public bool CheckMediaCardType(byte       feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
+        public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                        out double duration)
         {
             byte[] buffer = new byte[0];
-            AtaRegistersChs registers =
-                new AtaRegistersChs {Command = (byte)AtaCommands.CheckMediaCardType, Feature = feature};
 
-            LastError = SendAtaCommand(registers,                      out statusRegisters, AtaProtocol.NonData,
-                                       AtaTransferRegister.NoTransfer, ref buffer,          timeout, false,
-                                       out duration,
+            var registers = new AtaRegistersChs
+            {
+                Command = (byte)AtaCommands.CheckMediaCardType, Feature = feature
+            };
+
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, false, out duration,
                                        out bool sense);
+
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);

@@ -97,7 +97,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
-                return(int)ErrorNumber.CannotOpenFile;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -106,7 +106,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
 
-                return(int)ErrorNumber.FormatNotFound;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             inputFormat.Open(inputFilter);
@@ -127,7 +127,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("The specified image does not support any kind of verification");
 
-                return(int)ErrorNumber.NotVerificable;
+                return (int)ErrorNumber.NotVerificable;
             }
 
             if(verifyDisc && verifiableImage != null)
@@ -165,7 +165,8 @@ namespace Aaru.Commands.Image
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
-                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage && opticalMediaImage.Tracks != null)
+                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage &&
+                   opticalMediaImage.Tracks != null)
                 {
                     List<Track> inputTracks      = opticalMediaImage.Tracks;
                     ulong       currentSectorAll = 0;
@@ -180,7 +181,7 @@ namespace Aaru.Commands.Image
                         while(remainingSectors > 0)
                         {
                             AaruConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
-                                             inputFormat.Info.Sectors, currentTrack.TrackSequence);
+                                              inputFormat.Info.Sectors, currentTrack.TrackSequence);
 
                             List<ulong> tempFailingLbas;
                             List<ulong> tempUnknownLbas;
@@ -302,18 +303,18 @@ namespace Aaru.Commands.Image
 
             switch(correctImage)
             {
-                case null when correctSectors is null:   return(int)ErrorNumber.NotVerificable;
-                case null when correctSectors == false:  return(int)ErrorNumber.BadSectorsImageNotVerified;
-                case null when correctSectors == true:   return(int)ErrorNumber.CorrectSectorsImageNotVerified;
-                case false when correctSectors is null:  return(int)ErrorNumber.BadImageSectorsNotVerified;
-                case false when correctSectors == false: return(int)ErrorNumber.BadImageBadSectors;
-                case false when correctSectors == true:  return(int)ErrorNumber.CorrectSectorsBadImage;
-                case true when correctSectors is null:   return(int)ErrorNumber.CorrectImageSectorsNotVerified;
-                case true when correctSectors == false:  return(int)ErrorNumber.CorrectImageBadSectors;
-                case true when correctSectors == true:   return(int)ErrorNumber.NoError;
+                case null when correctSectors is null:   return (int)ErrorNumber.NotVerificable;
+                case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
+                case null when correctSectors == true:   return (int)ErrorNumber.CorrectSectorsImageNotVerified;
+                case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;
+                case false when correctSectors == false: return (int)ErrorNumber.BadImageBadSectors;
+                case false when correctSectors == true:  return (int)ErrorNumber.CorrectSectorsBadImage;
+                case true when correctSectors is null:   return (int)ErrorNumber.CorrectImageSectorsNotVerified;
+                case true when correctSectors == false:  return (int)ErrorNumber.CorrectImageBadSectors;
+                case true when correctSectors == true:   return (int)ErrorNumber.NoError;
             }
 
-            return(int)ErrorNumber.NoError;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

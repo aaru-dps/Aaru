@@ -32,9 +32,9 @@
 
 using System;
 using System.Text;
-using Claunia.Encoding;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 

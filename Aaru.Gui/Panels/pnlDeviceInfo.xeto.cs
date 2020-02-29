@@ -32,9 +32,9 @@
 
 using System;
 using System.IO;
-using Aaru.Gui.Tabs;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
+using Aaru.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
@@ -155,8 +155,7 @@ namespace Aaru.Gui.Panels
                             {
                                 stkPlextorPoweRecSelected.Visible = true;
 
-                                txtPlextorPoweRecSelected.Text =
-                                    $"{devInfo.PlextorFeatures.PoweRecSelected} Kb/sec.";
+                                txtPlextorPoweRecSelected.Text = $"{devInfo.PlextorFeatures.PoweRecSelected} Kb/sec.";
                             }
 
                             if(devInfo.PlextorFeatures.PoweRecMax > 0)

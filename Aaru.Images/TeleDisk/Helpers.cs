@@ -41,9 +41,9 @@ namespace Aaru.DiscImages
     {
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba                           / (imageInfo.Heads * imageInfo.SectorsPerTrack));
-            byte   head     = (byte)(lba / imageInfo.SectorsPerTrack % imageInfo.Heads);
-            byte   sector   = (byte)(lba % imageInfo.SectorsPerTrack + 1);
+            ushort cylinder = (ushort)(lba / (imageInfo.Heads * imageInfo.SectorsPerTrack));
+            byte   head     = (byte)((lba                     / imageInfo.SectorsPerTrack) % imageInfo.Heads);
+            byte   sector   = (byte)((lba                     % imageInfo.SectorsPerTrack) + 1);
 
             return (cylinder, head, sector);
         }
@@ -71,28 +71,36 @@ namespace Aaru.DiscImages
         static byte[] DecodeTeleDiskData(byte sectorSize, byte encodingType, byte[] encodedData)
         {
             byte[] decodedData;
+
             switch(sectorSize)
             {
                 case SECTOR_SIZE_128:
                     decodedData = new byte[128];
+
                     break;
                 case SECTOR_SIZE_256:
                     decodedData = new byte[256];
+
                     break;
                 case SECTOR_SIZE_512:
                     decodedData = new byte[512];
+
                     break;
                 case SECTOR_SIZE_1K:
                     decodedData = new byte[1024];
+
                     break;
                 case SECTOR_SIZE_2K:
                     decodedData = new byte[2048];
+
                     break;
                 case SECTOR_SIZE_4K:
                     decodedData = new byte[4096];
+
                     break;
                 case SECTOR_SIZE_8K:
                     decodedData = new byte[8192];
+
                     break;
                 default: throw new ImageNotSupportedException($"Sector size {sectorSize} is incorrect.");
             }
@@ -101,11 +109,13 @@ namespace Aaru.DiscImages
             {
                 case DATA_BLOCK_COPY:
                     Array.Copy(encodedData, decodedData, decodedData.Length);
+
                     break;
                 case DATA_BLOCK_PATTERN:
                 {
                     int ins  = 0;
                     int outs = 0;
+
                     while(ins < encodedData.Length)
                     {
                         byte[] repeatValue = new byte[2];
@@ -120,24 +130,31 @@ namespace Aaru.DiscImages
                     }
 
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes",
-                                              encodedData.Length);
+                                               encodedData.Length);
+
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
-                                              ins);
-                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
-                                              decodedData.Length);
-                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
-                                              outs);
+                                               ins);
+
+                    AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                               "(Block pattern decoder): Output data size: {0} bytes",
+                                               decodedData.Length);
+
+                    AaruConsole.DebugWriteLine("TeleDisk plugin",
+                                               "(Block pattern decoder): Processed Output: {0} bytes", outs);
+
                     break;
                 }
                 case DATA_BLOCK_RLE:
                 {
                     int ins  = 0;
                     int outs = 0;
+
                     while(ins < encodedData.Length)
                     {
                         byte length;
 
                         byte encoding = encodedData[ins];
+
                         if(encoding == 0x00)
                         {
                             length = encodedData[ins + 1];
@@ -160,10 +177,13 @@ namespace Aaru.DiscImages
                     }
 
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes",
-                                              encodedData.Length);
+                                               encodedData.Length);
+
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
+
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes",
-                                              decodedData.Length);
+                                               decodedData.Length);
+
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
 
                     break;
@@ -187,8 +207,7 @@ namespace Aaru.DiscImages
                         case 163840:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256
-                                       ? MediaType.ACORN_525_SS_DD_40
+                            return imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40
                                        : MediaType.DOS_525_SS_DD_8;
 
                             // DOS disks use 512 bytes/sector
@@ -203,8 +222,7 @@ namespace Aaru.DiscImages
                         case 327680:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256
-                                       ? MediaType.ACORN_525_SS_DD_80
+                            return imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80
                                        : MediaType.DOS_525_DS_DD_8;
 
                             // DOS disks use 512 bytes/sector
@@ -229,7 +247,8 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes",
-                                                      totalDiskSize);
+                                                       totalDiskSize);
+
                             return MediaType.Unknown;
                         }
                     }
@@ -261,7 +280,8 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes",
-                                                      totalDiskSize);
+                                                       totalDiskSize);
+
                             return MediaType.Unknown;
                         }
                     }
@@ -296,15 +316,17 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes",
-                                                      totalDiskSize);
+                                                       totalDiskSize);
+
                             return MediaType.Unknown;
                         }
                     }
                 }
                 default:
                 {
-                    AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize,
-                                              header.DriveType);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes",
+                                               totalDiskSize, header.DriveType);
+
                     return MediaType.Unknown;
                 }
             }

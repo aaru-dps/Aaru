@@ -46,10 +46,12 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
-            Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Nhdr0Header>()) return false;
+            // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
+            var shiftjis = Encoding.GetEncoding("shift_jis");
+
+            if(stream.Length < Marshal.SizeOf<Nhdr0Header>())
+                return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<Nhdr0Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
@@ -89,7 +91,7 @@ namespace Aaru.DiscImages
 
             Stream stream = nhdImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)nhdhdr.dwHeadSize + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)nhdhdr.dwHeadSize + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 

@@ -48,7 +48,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(2 + partition.Start >= partition.End) return false;
+            if(2 + partition.Start >= partition.End)
+                return false;
 
             byte[] systemDescriptor = new byte[23];
             byte[] sector           = imagePlugin.ReadSector(1 + partition.Start);
@@ -59,14 +60,15 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding    = encoding ?? Encoding.GetEncoding("shift_jis");
             information = "";
+
             XmlFsType = new FileSystemType
             {
                 Type        = "PC Engine filesystem",
-                Clusters    = (partition.End - partition.Start + 1) / imagePlugin.Info.SectorSize * 2048,
+                Clusters    = (((partition.End - partition.Start) + 1) / imagePlugin.Info.SectorSize) * 2048,
                 ClusterSize = 2048
             };
         }

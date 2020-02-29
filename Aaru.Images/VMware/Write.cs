@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     public partial class VMware
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(options != null)
             {
@@ -56,37 +56,45 @@ namespace Aaru.DiscImages
                         case "lsilogic":
                         case "buslogic":
                             adapter_type = adapter_type.ToLowerInvariant();
+
                             break;
                         case "legacyesx":
                             adapter_type = "legacyESX";
+
                             break;
                         default:
                             ErrorMessage = $"Invalid adapter type {adapter_type}";
+
                             return false;
                     }
-                else adapter_type = "ide";
+                else
+                    adapter_type = "ide";
 
                 if(options.TryGetValue("hwversion", out string tmpValue))
                 {
                     if(!uint.TryParse(tmpValue, out hwversion))
                     {
                         ErrorMessage = "Invalid value for hwversion option";
+
                         return false;
                     }
                 }
-                else hwversion = 4;
+                else
+                    hwversion = 4;
 
                 if(options.TryGetValue("split", out tmpValue))
                 {
                     if(!bool.TryParse(tmpValue, out bool tmpBool))
                     {
                         ErrorMessage = "Invalid value for split option";
+
                         return false;
                     }
 
                     if(tmpBool)
                     {
                         ErrorMessage = "Splitted images not yet implemented";
+
                         return false;
                     }
                 }
@@ -96,12 +104,14 @@ namespace Aaru.DiscImages
                     if(!bool.TryParse(tmpValue, out bool tmpBool))
                     {
                         ErrorMessage = "Invalid value for sparse option";
+
                         return false;
                     }
 
                     if(tmpBool)
                     {
                         ErrorMessage = "Sparse images not yet implemented";
+
                         return false;
                     }
                 }
@@ -115,21 +125,27 @@ namespace Aaru.DiscImages
             if(sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
             try
             {
                 writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
                 descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+
                 // TODO: Support split
                 writingStream = new FileStream(writingBaseName + "-flat.vmdk", FileMode.OpenOrCreate,
                                                FileAccess.ReadWrite, FileShare.None);
@@ -137,17 +153,20 @@ namespace Aaru.DiscImages
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
             ErrorMessage = "Writing media tags is not supported.";
+
             return false;
         }
 
@@ -156,18 +175,21 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != 512)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -175,6 +197,7 @@ namespace Aaru.DiscImages
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -184,18 +207,21 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % 512 != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
@@ -203,18 +229,21 @@ namespace Aaru.DiscImages
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -224,6 +253,7 @@ namespace Aaru.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -248,7 +278,10 @@ namespace Aaru.DiscImages
 
                     imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                    if(imageInfo.Cylinders       == 0 &&
+                       imageInfo.Heads           == 0 &&
+                       imageInfo.SectorsPerTrack == 0)
+                        break;
                 }
             }
 
@@ -275,6 +308,7 @@ namespace Aaru.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -285,18 +319,21 @@ namespace Aaru.DiscImages
             if(cylinders > ushort.MaxValue)
             {
                 ErrorMessage = "Too many cylinders.";
+
                 return false;
             }
 
             if(heads > byte.MaxValue)
             {
                 ErrorMessage = "Too many heads.";
+
                 return false;
             }
 
             if(sectorsPerTrack > byte.MaxValue)
             {
                 ErrorMessage = "Too many sectors per track.";
+
                 return false;
             }
 
@@ -310,12 +347,14 @@ namespace Aaru.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 

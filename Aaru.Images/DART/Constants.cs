@@ -45,8 +45,10 @@ namespace Aaru.DiscImages
         // Compression types
         // "fast"
         const byte COMPRESS_RLE = 0;
+
         // "best"
         const byte COMPRESS_LZH = 1;
+
         // DART <= 1.4
         const byte COMPRESS_NONE = 2;
 
@@ -68,6 +70,6 @@ namespace Aaru.DiscImages
         const int TAG_SECTOR_SIZE   = 12;
         const int DATA_SIZE         = SECTORS_PER_BLOCK * SECTOR_SIZE;
         const int TAG_SIZE          = SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
-        const int BUFFER_SIZE       = SECTORS_PER_BLOCK * SECTOR_SIZE + SECTORS_PER_BLOCK * TAG_SECTOR_SIZE;
+        const int BUFFER_SIZE       = (SECTORS_PER_BLOCK * SECTOR_SIZE) + (SECTORS_PER_BLOCK * TAG_SECTOR_SIZE);
     }
 }

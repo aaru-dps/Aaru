@@ -32,8 +32,8 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.Core.Logging;
 using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Core.Logging;
 
 namespace Aaru.Core.Devices.Scanning
 {

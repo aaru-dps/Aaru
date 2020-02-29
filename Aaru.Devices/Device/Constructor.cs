@@ -86,10 +86,10 @@ namespace Aaru.Devices
                 {
                     case PlatformID.Win32NT:
                     {
-                        FileHandle = Windows.Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                                               FileShare.Read                     | FileShare.Write,
-                                                               IntPtr.Zero,
-                                                               FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
+                        FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                                                       FileShare.Read                     | FileShare.Write,
+                                                       IntPtr.Zero,
+                                                       FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
 
                         if(((SafeFileHandle)FileHandle).IsInvalid)
                         {
@@ -184,10 +184,10 @@ namespace Aaru.Devices
                         int  error    = 0;
 
                         bool hasError = !Extern.DeviceIoControlStorageQuery((SafeFileHandle)FileHandle,
-                                                                                    WindowsIoctl.IoctlStorageQueryProperty,
-                                                                                    ref query, (uint)Marshal.SizeOf(query),
-                                                                                    descriptorPtr, 1000, ref returned,
-                                                                                    IntPtr.Zero);
+                                                                            WindowsIoctl.IoctlStorageQueryProperty,
+                                                                            ref query, (uint)Marshal.SizeOf(query),
+                                                                            descriptorPtr, 1000, ref returned,
+                                                                            IntPtr.Zero);
 
                         if(hasError)
                             error = Marshal.GetLastWin32Error();
@@ -440,7 +440,7 @@ namespace Aaru.Devices
                 if(cachedScr != null)
                 {
                     Type = DeviceType.SecureDigital;
-                    CID decoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
+                    CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
                     Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                     Model        = decoded.ProductName;
 

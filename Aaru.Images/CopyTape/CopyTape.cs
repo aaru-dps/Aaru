@@ -12,28 +12,16 @@ namespace Aaru.DiscImages.CopyTape
         ImageInfo imageInfo;
         Stream    imageStream;
 
-        public CopyTape()
+        public CopyTape() => imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = true,
-                HasSessions           = true,
-                Version               = null,
-                ApplicationVersion    = null,
-                MediaTitle            = null,
-                Creator               = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = true, HasSessions                            = true, Version = null,
+            ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null,
+            MediaModel         = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
+            DriveManufacturer  = null,
+            DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
+        };
     }
 }

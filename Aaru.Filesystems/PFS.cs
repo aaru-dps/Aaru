@@ -42,25 +42,15 @@ namespace Aaru.Filesystems
 {
     public class PFS : IFilesystem
     {
-        /// <summary>
-        ///     Identifier for AFS (PFS v1)
-        /// </summary>
+        /// <summary>Identifier for AFS (PFS v1)</summary>
         const uint AFS_DISK = 0x41465301;
-        /// <summary>
-        ///     Identifier for PFS v2
-        /// </summary>
+        /// <summary>Identifier for PFS v2</summary>
         const uint PFS2_DISK = 0x50465302;
-        /// <summary>
-        ///     Identifier for PFS v3
-        /// </summary>
+        /// <summary>Identifier for PFS v3</summary>
         const uint PFS_DISK = 0x50465301;
-        /// <summary>
-        ///     Identifier for multi-user AFS
-        /// </summary>
+        /// <summary>Identifier for multi-user AFS</summary>
         const uint MUAF_DISK = 0x6D754146;
-        /// <summary>
-        ///     Identifier for multi-user PFS
-        /// </summary>
+        /// <summary>Identifier for multi-user PFS</summary>
         const uint MUPFS_DISK = 0x6D755046;
 
         public FileSystemType XmlFsType { get; private set; }
@@ -71,7 +61,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(partition.Length < 3) return false;
+            if(partition.Length < 3)
+                return false;
 
             byte[] sector = imagePlugin.ReadSector(2 + partition.Start);
 
@@ -82,13 +73,13 @@ namespace Aaru.Filesystems
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[]    rootBlockSector = imagePlugin.ReadSector(2 + partition.Start);
             RootBlock rootBlock       = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
-            StringBuilder sbInformation = new StringBuilder();
+            var sbInformation = new StringBuilder();
             XmlFsType = new FileSystemType();
 
             switch(rootBlock.diskType)
@@ -97,38 +88,46 @@ namespace Aaru.Filesystems
                 case MUAF_DISK:
                     sbInformation.Append("Professional File System v1");
                     XmlFsType.Type = "PFS v1";
+
                     break;
                 case PFS2_DISK:
                     sbInformation.Append("Professional File System v2");
                     XmlFsType.Type = "PFS v2";
+
                     break;
                 case PFS_DISK:
                 case MUPFS_DISK:
                     sbInformation.Append("Professional File System v3");
                     XmlFsType.Type = "PFS v3";
+
                     break;
             }
 
-            if(rootBlock.diskType == MUAF_DISK || rootBlock.diskType == MUPFS_DISK)
+            if(rootBlock.diskType == MUAF_DISK ||
+               rootBlock.diskType == MUPFS_DISK)
                 sbInformation.Append(", with multi-user support");
 
             sbInformation.AppendLine();
 
-            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, Encoding))
-                         .AppendLine();
-            sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize)
-                         .AppendLine();
+            sbInformation.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(rootBlock.diskname, Encoding)).
+                          AppendLine();
+
+            sbInformation.AppendFormat("Volume has {0} free sectors of {1}", rootBlock.blocksfree, rootBlock.diskSize).
+                          AppendLine();
+
             sbInformation.AppendFormat("Volume created on {0}",
                                        DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute,
                                                                     rootBlock.creationtick)).AppendLine();
+
             if(rootBlock.extension > 0)
-                sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension)
-                             .AppendLine();
+                sbInformation.AppendFormat("Root block extension resides at block {0}", rootBlock.extension).
+                              AppendLine();
 
             information = sbInformation.ToString();
 
             XmlFsType.CreationDate =
                 DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute, rootBlock.creationtick);
+
             XmlFsType.CreationDateSpecified = true;
             XmlFsType.FreeClusters          = rootBlock.blocksfree;
             XmlFsType.FreeClustersSpecified = true;
@@ -137,105 +136,59 @@ namespace Aaru.Filesystems
             XmlFsType.VolumeName            = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
         }
 
-        /// <summary>
-        ///     Boot block, first 2 sectors
-        /// </summary>
+        /// <summary>Boot block, first 2 sectors</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct BootBlock
         {
-            /// <summary>
-            ///     "PFS\1" disk type
-            /// </summary>
+            /// <summary>"PFS\1" disk type</summary>
             public readonly uint diskType;
-            /// <summary>
-            ///     Boot code, til completion
-            /// </summary>
+            /// <summary>Boot code, til completion</summary>
             public readonly byte[] bootCode;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RootBlock
         {
-            /// <summary>
-            ///     Disk type
-            /// </summary>
+            /// <summary>Disk type</summary>
             public readonly uint diskType;
-            /// <summary>
-            ///     Options
-            /// </summary>
+            /// <summary>Options</summary>
             public readonly uint options;
-            /// <summary>
-            ///     Current datestamp
-            /// </summary>
+            /// <summary>Current datestamp</summary>
             public readonly uint datestamp;
-            /// <summary>
-            ///     Volume creation day
-            /// </summary>
+            /// <summary>Volume creation day</summary>
             public readonly ushort creationday;
-            /// <summary>
-            ///     Volume creation minute
-            /// </summary>
+            /// <summary>Volume creation minute</summary>
             public readonly ushort creationminute;
-            /// <summary>
-            ///     Volume creation tick
-            /// </summary>
+            /// <summary>Volume creation tick</summary>
             public readonly ushort creationtick;
-            /// <summary>
-            ///     AmigaDOS protection bits
-            /// </summary>
+            /// <summary>AmigaDOS protection bits</summary>
             public readonly ushort protection;
-            /// <summary>
-            ///     Volume label (Pascal string)
-            /// </summary>
+            /// <summary>Volume label (Pascal string)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] diskname;
-            /// <summary>
-            ///     Last reserved block
-            /// </summary>
+            /// <summary>Last reserved block</summary>
             public readonly uint lastreserved;
-            /// <summary>
-            ///     First reserved block
-            /// </summary>
+            /// <summary>First reserved block</summary>
             public readonly uint firstreserved;
-            /// <summary>
-            ///     Free reserved blocks
-            /// </summary>
+            /// <summary>Free reserved blocks</summary>
             public readonly uint reservedfree;
-            /// <summary>
-            ///     Size of reserved blocks in bytes
-            /// </summary>
+            /// <summary>Size of reserved blocks in bytes</summary>
             public readonly ushort reservedblocksize;
-            /// <summary>
-            ///     Blocks in rootblock, including bitmap
-            /// </summary>
+            /// <summary>Blocks in rootblock, including bitmap</summary>
             public readonly ushort rootblockclusters;
-            /// <summary>
-            ///     Free blocks
-            /// </summary>
+            /// <summary>Free blocks</summary>
             public readonly uint blocksfree;
-            /// <summary>
-            ///     Blocks that must be always free
-            /// </summary>
+            /// <summary>Blocks that must be always free</summary>
             public readonly uint alwaysfree;
-            /// <summary>
-            ///     Current bitmapfield number for allocation
-            /// </summary>
+            /// <summary>Current bitmapfield number for allocation</summary>
             public readonly uint rovingPointer;
-            /// <summary>
-            ///     Pointer to deldir
-            /// </summary>
+            /// <summary>Pointer to deldir</summary>
             public readonly uint delDirPtr;
-            /// <summary>
-            ///     Disk size in sectors
-            /// </summary>
+            /// <summary>Disk size in sectors</summary>
             public readonly uint diskSize;
-            /// <summary>
-            ///     Rootblock extension
-            /// </summary>
+            /// <summary>Rootblock extension</summary>
             public readonly uint extension;
-            /// <summary>
-            ///     Unused
-            /// </summary>
+            /// <summary>Unused</summary>
             public readonly uint unused;
         }
     }

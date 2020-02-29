@@ -34,13 +34,9 @@ namespace Aaru.DiscImages
 {
     public partial class Ndif
     {
-        /// <summary>
-        ///     Resource OSType for NDIF is "bcem"
-        /// </summary>
+        /// <summary>Resource OSType for NDIF is "bcem"</summary>
         const uint NDIF_RESOURCE = 0x6263656D;
-        /// <summary>
-        ///     Resource ID is always 128? Never found another
-        /// </summary>
+        /// <summary>Resource ID is always 128? Never found another</summary>
         const short NDIF_RESOURCEID = 128;
 
         const byte CHUNK_TYPE_NOCOPY  = 0;
@@ -49,9 +45,7 @@ namespace Aaru.DiscImages
         const byte CHUNK_TYPE_RLE     = 0x81;
         const byte CHUNK_TYPE_LZH     = 0x82;
         const byte CHUNK_TYPE_ADC     = 0x83;
-        /// <summary>
-        ///     Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using
-        /// </summary>
+        /// <summary>Created by ShrinkWrap 3.5, dunno which version of the StuffIt algorithm it is using</summary>
         const byte CHUNK_TYPE_STUFFIT = 0xF0;
         const byte CHUNK_TYPE_END             = 0xFF;
         const byte CHUNK_TYPE_COMPRESSED_MASK = 0x80;

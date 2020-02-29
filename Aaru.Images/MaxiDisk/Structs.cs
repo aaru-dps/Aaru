@@ -39,14 +39,14 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HdkHeader
         {
-            public byte unknown;
-            public byte diskType;
-            public byte heads;
-            public byte cylinders;
-            public byte bytesPerSector;
-            public byte sectorsPerTrack;
-            public byte unknown2;
-            public byte unknown3;
+            public readonly byte unknown;
+            public          byte diskType;
+            public          byte heads;
+            public          byte cylinders;
+            public          byte bytesPerSector;
+            public          byte sectorsPerTrack;
+            public readonly byte unknown2;
+            public readonly byte unknown3;
         }
     }
 }

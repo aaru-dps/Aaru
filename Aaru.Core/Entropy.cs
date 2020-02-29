@@ -42,9 +42,9 @@ namespace Aaru.Core
 {
     public class Entropy
     {
-        bool        debug;
-        IMediaImage inputFormat;
-        bool        verbose;
+        readonly bool        debug;
+        readonly IMediaImage inputFormat;
+        bool                 verbose;
 
         public Entropy(bool debug, bool verbose, IMediaImage inputFormat)
         {
@@ -67,6 +67,7 @@ namespace Aaru.Core
             if(!(inputFormat is IOpticalMediaImage opticalMediaImage))
             {
                 AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
+
                 return entropyResultses.ToArray();
             }
 
@@ -78,46 +79,56 @@ namespace Aaru.Core
 
                 foreach(Track currentTrack in inputTracks)
                 {
-                    EntropyResults trackEntropy = new EntropyResults {Track = currentTrack.TrackSequence, Entropy = 0};
-                    UpdateProgressEvent
-                      ?.Invoke($"Entropying track {currentTrack.TrackSequence} of {inputTracks.Max(t => t.TrackSequence)}",
+                    var trackEntropy = new EntropyResults
+                    {
+                        Track = currentTrack.TrackSequence, Entropy = 0
+                    };
+
+                    UpdateProgressEvent?.
+                        Invoke($"Entropying track {currentTrack.TrackSequence} of {inputTracks.Max(t => t.TrackSequence)}",
                                currentTrack.TrackSequence, inputTracks.Max(t => t.TrackSequence));
 
                     ulong[]      entTable              = new ulong[256];
                     ulong        trackSize             = 0;
                     List<string> uniqueSectorsPerTrack = new List<string>();
 
-                    trackEntropy.Sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                    trackEntropy.Sectors = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
+
                     AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence,
-                                                trackEntropy.Sectors);
+                                                 trackEntropy.Sectors);
 
                     InitProgress2Event?.Invoke();
 
                     for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
                     {
-                        UpdateProgress2Event
-                          ?.Invoke($"Entropying sector {i             + 1} of track {currentTrack.TrackSequence}",
+                        UpdateProgress2Event?.
+                            Invoke($"Entropying sector {i             + 1} of track {currentTrack.TrackSequence}",
                                    (long)(currentTrack.TrackEndSector - (i + 1)),
                                    (long)trackEntropy.Sectors);
+
                         byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.TrackSequence);
 
                         if(duplicatedSectors)
                         {
                             string sectorHash = Sha1Context.Data(sector, out _);
-                            if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
+
+                            if(!uniqueSectorsPerTrack.Contains(sectorHash))
+                                uniqueSectorsPerTrack.Add(sectorHash);
                         }
 
-                        foreach(byte b in sector) entTable[b]++;
+                        foreach(byte b in sector)
+                            entTable[b]++;
 
                         trackSize += (ulong)sector.LongLength;
                     }
 
                     EndProgress2Event?.Invoke();
 
-                    trackEntropy.Entropy += entTable.Select(l => (double)l / (double)trackSize)
-                                                    .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+                    trackEntropy.Entropy += entTable.Select(l => (double)l / (double)trackSize).
+                                                     Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
-                    if(duplicatedSectors) trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
+                    if(duplicatedSectors)
+                        trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
 
                     entropyResultses.Add(trackEntropy);
                 }
@@ -126,8 +137,10 @@ namespace Aaru.Core
             }
             catch(Exception ex)
             {
-                if(debug) AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                else AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
+                if(debug)
+                    AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                else
+                    AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
             }
 
             return entropyResultses.ToArray();
@@ -135,14 +148,19 @@ namespace Aaru.Core
 
         public EntropyResults CalculateMediaEntropy(bool duplicatedSectors)
         {
-            EntropyResults entropy       = new EntropyResults {Entropy = 0};
-            ulong[]        entTable      = new ulong[256];
-            ulong          diskSize      = 0;
-            List<string>   uniqueSectors = new List<string>();
+            var entropy = new EntropyResults
+            {
+                Entropy = 0
+            };
+
+            ulong[]      entTable      = new ulong[256];
+            ulong        diskSize      = 0;
+            List<string> uniqueSectors = new List<string>();
 
             entropy.Sectors = inputFormat.Info.Sectors;
             AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
             InitProgressEvent?.Invoke();
+
             for(ulong i = 0; i < entropy.Sectors; i++)
             {
                 UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
@@ -151,20 +169,24 @@ namespace Aaru.Core
                 if(duplicatedSectors)
                 {
                     string sectorHash = Sha1Context.Data(sector, out _);
-                    if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
+
+                    if(!uniqueSectors.Contains(sectorHash))
+                        uniqueSectors.Add(sectorHash);
                 }
 
-                foreach(byte b in sector) entTable[b]++;
+                foreach(byte b in sector)
+                    entTable[b]++;
 
                 diskSize += (ulong)sector.LongLength;
             }
 
             EndProgressEvent?.Invoke();
 
-            entropy.Entropy += entTable.Select(l => (double)l / (double)diskSize)
-                                       .Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
+            entropy.Entropy += entTable.Select(l => (double)l / (double)diskSize).
+                                        Select(frequency => -(frequency * Math.Log(frequency, 2))).Sum();
 
-            if(duplicatedSectors) entropy.UniqueSectors = uniqueSectors.Count;
+            if(duplicatedSectors)
+                entropy.UniqueSectors = uniqueSectors.Count;
 
             return entropy;
         }

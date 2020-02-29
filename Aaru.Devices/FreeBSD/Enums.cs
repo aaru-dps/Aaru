@@ -36,120 +36,71 @@ using System;
 namespace Aaru.Devices.FreeBSD
 {
     [Flags]
-    enum FileFlags
+    internal enum FileFlags
     {
-        /// <summary>
-        ///     O_RDONLY
-        /// </summary>
+        /// <summary>O_RDONLY</summary>
         ReadOnly = 0x00000000,
-        /// <summary>
-        ///     O_WRONLY
-        /// </summary>
+        /// <summary>O_WRONLY</summary>
         WriteOnly = 0x00000001,
-        /// <summary>
-        ///     O_RDWR
-        /// </summary>
+        /// <summary>O_RDWR</summary>
         ReadWrite = 0x00000002,
-        /// <summary>
-        ///     O_NONBLOCK
-        /// </summary>
+        /// <summary>O_NONBLOCK</summary>
         NonBlocking = 0x00000004,
-        /// <summary>
-        ///     O_APPEND
-        /// </summary>
+        /// <summary>O_APPEND</summary>
         Append = 0x00000008,
-        /// <summary>
-        ///     O_SHLOCK
-        /// </summary>
+        /// <summary>O_SHLOCK</summary>
         SharedLock = 0x00000010,
-        /// <summary>
-        ///     O_EXLOCK
-        /// </summary>
+        /// <summary>O_EXLOCK</summary>
         ExclusiveLock = 0x00000020,
-        /// <summary>
-        ///     O_ASYNC
-        /// </summary>
+        /// <summary>O_ASYNC</summary>
         Async = 0x00000040,
-        /// <summary>
-        ///     O_FSYNC
-        /// </summary>
+        /// <summary>O_FSYNC</summary>
         SyncWrites = 0x00000080,
-        /// <summary>
-        ///     O_NOFOLLOW
-        /// </summary>
+        /// <summary>O_NOFOLLOW</summary>
         NoFollowSymlink = 0x00000100,
-        /// <summary>
-        ///     O_CREAT
-        /// </summary>
+        /// <summary>O_CREAT</summary>
         OpenOrCreate = 0x00000200,
-        /// <summary>
-        ///     O_TRUNC
-        /// </summary>
+        /// <summary>O_TRUNC</summary>
         Truncate = 0x00000400,
-        /// <summary>
-        ///     O_EXCL
-        /// </summary>
+        /// <summary>O_EXCL</summary>
         CreateNew = 0x00000800,
-        /// <summary>
-        ///     O_NOCTTY
-        /// </summary>
+        /// <summary>O_NOCTTY</summary>
         NoControlTty = 0x00008000,
-        /// <summary>
-        ///     O_DIRECT
-        /// </summary>
+        /// <summary>O_DIRECT</summary>
         Direct = 0x00010000,
-        /// <summary>
-        ///     O_DIRECTORY
-        /// </summary>
+        /// <summary>O_DIRECTORY</summary>
         Directory = 0x00020000,
-        /// <summary>
-        ///     O_EXEC
-        /// </summary>
+        /// <summary>O_EXEC</summary>
         Execute = 0x00040000,
-        /// <summary>
-        ///     O_TTY_INIT
-        /// </summary>
+        /// <summary>O_TTY_INIT</summary>
         InitializeTty = 0x00080000,
-        /// <summary>
-        ///     O_CLOEXEC
-        /// </summary>
+        /// <summary>O_CLOEXEC</summary>
         CloseOnExec = 0x00100000
     }
 
     [Flags]
-    enum CamAtaIoFlags : byte
+    internal enum CamAtaIoFlags : byte
     {
-        /// <summary>
-        ///     48-bit command
-        /// </summary>
+        /// <summary>48-bit command</summary>
         ExtendedCommand = 0x01,
-        /// <summary>
-        ///     FPDMA command
-        /// </summary>
+        /// <summary>FPDMA command</summary>
         Fpdma = 0x02,
-        /// <summary>
-        ///     Control, not a command
-        /// </summary>
+        /// <summary>Control, not a command</summary>
         Control = 0x04,
-        /// <summary>
-        ///     Needs result
-        /// </summary>
+        /// <summary>Needs result</summary>
         NeedResult = 0x08,
-        /// <summary>
-        ///     DMA command
-        /// </summary>
+        /// <summary>DMA command</summary>
         Dma = 0x10
     }
 
     /// <summary>XPT Opcodes for xpt_action</summary>
     [Flags]
-    enum XptOpcode
+    internal enum XptOpcode
     {
         // Function code flags are bits greater than 0xff
 
         /// <summary>Non-immediate function code</summary>
-        XptFcQueued = 0x100,
-        XptFcUserCcb = 0x200,
+        XptFcQueued = 0x100, XptFcUserCcb = 0x200,
         /// <summary>Only for the transport layer device</summary>
         XptFcXptOnly = 0x400,
         /// <summary>Passes through the device queues</summary>
@@ -250,316 +201,195 @@ namespace Aaru.Devices.FreeBSD
         XptVunique = 0x80
     }
 
-    enum CcbDevMatchStatus
+    internal enum CcbDevMatchStatus
     {
-        CamDevMatchLast,
-        CamDevMatchMore,
-        CamDevMatchListChanged,
-        CamDevMatchSizeError,
-        CamDevMatchError
+        CamDevMatchLast, CamDevMatchMore, CamDevMatchListChanged,
+        CamDevMatchSizeError, CamDevMatchError
     }
 
-    enum DevMatchType
+    internal enum DevMatchType
     {
-        DevMatchPeriph = 0,
-        DevMatchDevice,
-        DevMatchBus
+        DevMatchPeriph = 0, DevMatchDevice, DevMatchBus
     }
 
     [Flags]
-    enum PeriphPatternFlags
+    internal enum PeriphPatternFlags
     {
-        PeriphMatchNone   = 0x000,
-        PeriphMatchPath   = 0x001,
-        PeriphMatchTarget = 0x002,
-        PeriphMatchLun    = 0x004,
-        PeriphMatchName   = 0x008,
-        PeriphMatchUnit   = 0x010
+        PeriphMatchNone = 0x000, PeriphMatchPath = 0x001, PeriphMatchTarget = 0x002,
+        PeriphMatchLun  = 0x004, PeriphMatchName = 0x008, PeriphMatchUnit   = 0x010
+
         //  PERIPH_MATCH_ANY = 0x01f
     }
 
     [Flags]
-    enum DevPatternFlags
+    internal enum DevPatternFlags
     {
-        DevMatchNone    = 0x000,
-        DevMatchPath    = 0x001,
-        DevMatchTarget  = 0x002,
-        DevMatchLun     = 0x004,
-        DevMatchInquiry = 0x008,
-        DevMatchDevid   = 0x010
+        DevMatchNone = 0x000, DevMatchPath    = 0x001, DevMatchTarget = 0x002,
+        DevMatchLun  = 0x004, DevMatchInquiry = 0x008, DevMatchDevid  = 0x010
+
         //  DEV_MATCH_ANY = 0x00f
     }
 
     [Flags]
-    enum BusPatternFlags
+    internal enum BusPatternFlags
     {
-        BusMatchNone  = 0x000,
-        BusMatchPath  = 0x001,
-        BusMatchName  = 0x002,
-        BusMatchUnit  = 0x004,
-        BusMatchBusId = 0x008
+        BusMatchNone = 0x000, BusMatchPath  = 0x001, BusMatchName = 0x002,
+        BusMatchUnit = 0x004, BusMatchBusId = 0x008
+
         //  BUS_MATCH_ANY = 0x00f
     }
 
     [Flags]
-    enum DevResultFlags
+    internal enum DevResultFlags
     {
-        DevResultNoflag       = 0x00,
-        DevResultUnconfigured = 0x01
+        DevResultNoflag = 0x00, DevResultUnconfigured = 0x01
     }
 
-    enum CamProto
+    internal enum CamProto
     {
-        ProtoUnknown,
-        ProtoUnspecified,
+        ProtoUnknown, ProtoUnspecified,
 
-        /// <summary>
-        ///     Small Computer System Interface
-        /// </summary>
+        /// <summary>Small Computer System Interface</summary>
         ProtoScsi,
 
-        /// <summary>
-        ///     AT Attachment
-        /// </summary>
+        /// <summary>AT Attachment</summary>
         ProtoAta,
 
-        /// <summary>
-        ///     AT Attachment Packetized Interface
-        /// </summary>
+        /// <summary>AT Attachment Packetized Interface</summary>
         ProtoAtapi,
 
-        /// <summary>
-        ///     SATA Port Multiplier
-        /// </summary>
+        /// <summary>SATA Port Multiplier</summary>
         ProtoSatapm,
 
-        /// <summary>
-        ///     SATA Enclosure Management Bridge
-        /// </summary>
+        /// <summary>SATA Enclosure Management Bridge</summary>
         ProtoSemb,
 
-        /// <summary>
-        ///     NVMe
-        /// </summary>
+        /// <summary>NVMe</summary>
         ProtoNvme,
 
-        /// <summary>
-        ///     MMC, SD, SDIO
-        /// </summary>
+        /// <summary>MMC, SD, SDIO</summary>
         ProtoMmcsd
     }
 
     [Flags]
-    enum MmcCardFeatures
+    internal enum MmcCardFeatures
     {
-        CardFeatureMemory = 0x1,
-        CardFeatureSdhc   = 0x1 << 1,
-        CardFeatureSdio   = 0x1 << 2,
-        CardFeatureSd20   = 0x1 << 3,
-        CardFeatureMmc    = 0x1 << 4,
-        CardFeature18V    = 0x1 << 5
+        CardFeatureMemory = 0x1, CardFeatureSdhc = 0x1 << 1, CardFeatureSdio = 0x1 << 2,
+        CardFeatureSd20   = 0x1                        << 3, CardFeatureMmc  = 0x1 << 4, CardFeature18V = 0x1 << 5
     }
 
-    enum CamGenerations : uint
+    internal enum CamGenerations : uint
     {
-        CamBusGeneration    = 0x00,
-        CamTargetGeneration = 0x01,
-        CamDevGeneration    = 0x02,
+        CamBusGeneration    = 0x00, CamTargetGeneration = 0x01, CamDevGeneration = 0x02,
         CamPeriphGeneration = 0x03
     }
 
     [Flags]
-    enum DevPosType
+    internal enum DevPosType
     {
-        CamDevPosNone   = 0x000,
-        CamDevPosBus    = 0x001,
-        CamDevPosTarget = 0x002,
-        CamDevPosDevice = 0x004,
-        CamDevPosPeriph = 0x008,
-        CamDevPosPdptr  = 0x010,
+        CamDevPosNone   = 0x000, CamDevPosBus    = 0x001, CamDevPosTarget = 0x002,
+        CamDevPosDevice = 0x004, CamDevPosPeriph = 0x008, CamDevPosPdptr  = 0x010,
+
         //  CAM_DEV_POS_TYPEMASK = 0xf00,
-        CamDevPosEdt  = 0x100,
-        CamDevPosPdrv = 0x200
+        CamDevPosEdt = 0x100, CamDevPosPdrv = 0x200
     }
 
-    enum FreebsdIoctl : uint
+    internal enum FreebsdIoctl : uint
     {
         Camiocommand = 0xC4D81802
     }
 
     [Flags]
-    enum CcbFlags : uint
+    internal enum CcbFlags : uint
     {
-        /// <summary>
-        ///     The CDB field is a pointer
-        /// </summary>
+        /// <summary>The CDB field is a pointer</summary>
         CamCdbPointer = 0x00000001,
-        /// <summary>
-        ///     SIM queue actions are enabled
-        /// </summary>
+        /// <summary>SIM queue actions are enabled</summary>
         CamQueueEnable = 0x00000002,
-        /// <summary>
-        ///     CCB contains a linked CDB
-        /// </summary>
+        /// <summary>CCB contains a linked CDB</summary>
         CamCdbLinked = 0x00000004,
-        /// <summary>
-        ///     Perform transport negotiation with this command.
-        /// </summary>
+        /// <summary>Perform transport negotiation with this command.</summary>
         CamNegotiate = 0x00000008,
-        /// <summary>
-        ///     Data type with physical addrs
-        /// </summary>
+        /// <summary>Data type with physical addrs</summary>
         CamDataIsphys = 0x00000010,
-        /// <summary>
-        ///     Disable autosense feature
-        /// </summary>
+        /// <summary>Disable autosense feature</summary>
         CamDisAutosense = 0x00000020,
-        /// <summary>
-        ///     Data direction (00:IN/OUT)
-        /// </summary>
+        /// <summary>Data direction (00:IN/OUT)</summary>
         CamDirBoth = 0x00000000,
-        /// <summary>
-        ///     Data direction (01:DATA IN)
-        /// </summary>
+        /// <summary>Data direction (01:DATA IN)</summary>
         CamDirIn = 0x00000040,
-        /// <summary>
-        ///     Data direction (10:DATA OUT)
-        /// </summary>
+        /// <summary>Data direction (10:DATA OUT)</summary>
         CamDirOut = 0x00000080,
-        /// <summary>
-        ///     Data direction (11:no data)
-        /// </summary>
+        /// <summary>Data direction (11:no data)</summary>
         CamDirNone = 0x000000C0,
-        /// <summary>
-        ///     Data type (000:Virtual)
-        /// </summary>
+        /// <summary>Data type (000:Virtual)</summary>
         CamDataVaddr = 0x00000000,
-        /// <summary>
-        ///     Data type (001:Physical)
-        /// </summary>
+        /// <summary>Data type (001:Physical)</summary>
         CamDataPaddr = 0x00000010,
-        /// <summary>
-        ///     Data type (010:sglist)
-        /// </summary>
+        /// <summary>Data type (010:sglist)</summary>
         CamDataSg = 0x00040000,
-        /// <summary>
-        ///     Data type (011:sglist phys)
-        /// </summary>
+        /// <summary>Data type (011:sglist phys)</summary>
         CamDataSgPaddr = 0x00040010,
-        /// <summary>
-        ///     Data type (100:bio)
-        /// </summary>
+        /// <summary>Data type (100:bio)</summary>
         CamDataBio = 0x00200000,
-        /// <summary>
-        ///     Use Soft reset alternative
-        /// </summary>
+        /// <summary>Use Soft reset alternative</summary>
         CamSoftRstOp = 0x00000100,
-        /// <summary>
-        ///     Flush resid bytes on complete
-        /// </summary>
+        /// <summary>Flush resid bytes on complete</summary>
         CamEngSync = 0x00000200,
-        /// <summary>
-        ///     Disable DEV Q freezing
-        /// </summary>
+        /// <summary>Disable DEV Q freezing</summary>
         CamDevQfrzdis = 0x00000400,
-        /// <summary>
-        ///     Freeze DEV Q on execution
-        /// </summary>
+        /// <summary>Freeze DEV Q on execution</summary>
         CamDevQfreeze = 0x00000800,
-        /// <summary>
-        ///     Command takes a lot of power
-        /// </summary>
+        /// <summary>Command takes a lot of power</summary>
         CamHighPower = 0x00001000,
-        /// <summary>
-        ///     Sense data is a pointer
-        /// </summary>
+        /// <summary>Sense data is a pointer</summary>
         CamSensePtr = 0x00002000,
-        /// <summary>
-        ///     Sense pointer is physical addr
-        /// </summary>
+        /// <summary>Sense pointer is physical addr</summary>
         CamSensePhys = 0x00004000,
-        /// <summary>
-        ///     Use the tag action in this ccb
-        /// </summary>
+        /// <summary>Use the tag action in this ccb</summary>
         CamTagActionValid = 0x00008000,
-        /// <summary>
-        ///     Pass driver does err. recovery
-        /// </summary>
+        /// <summary>Pass driver does err. recovery</summary>
         CamPassErrRecover = 0x00010000,
-        /// <summary>
-        ///     Disable disconnect
-        /// </summary>
+        /// <summary>Disable disconnect</summary>
         CamDisDisconnect = 0x00020000,
-        /// <summary>
-        ///     Message buffer ptr is physical
-        /// </summary>
+        /// <summary>Message buffer ptr is physical</summary>
         CamMsgBufPhys = 0x00080000,
-        /// <summary>
-        ///     Autosense data ptr is physical
-        /// </summary>
+        /// <summary>Autosense data ptr is physical</summary>
         CamSnsBufPhys = 0x00100000,
-        /// <summary>
-        ///     CDB poiner is physical
-        /// </summary>
+        /// <summary>CDB poiner is physical</summary>
         CamCdbPhys = 0x00400000,
-        /// <summary>
-        ///     SG list is for the HBA engine
-        /// </summary>
+        /// <summary>SG list is for the HBA engine</summary>
         CamEngSglist = 0x00800000,
 
         /* Phase cognizant mode flags */
-        /// <summary>
-        ///     Disable autosave/restore ptrs
-        /// </summary>
+        /// <summary>Disable autosave/restore ptrs</summary>
         CamDisAutosrp = 0x01000000,
-        /// <summary>
-        ///     Disable auto disconnect
-        /// </summary>
+        /// <summary>Disable auto disconnect</summary>
         CamDisAutodisc = 0x02000000,
-        /// <summary>
-        ///     Target CCB available
-        /// </summary>
+        /// <summary>Target CCB available</summary>
         CamTgtCcbAvail = 0x04000000,
-        /// <summary>
-        ///     The SIM runs in phase mode
-        /// </summary>
+        /// <summary>The SIM runs in phase mode</summary>
         CamTgtPhaseMode = 0x08000000,
-        /// <summary>
-        ///     Message buffer valid
-        /// </summary>
+        /// <summary>Message buffer valid</summary>
         CamMsgbValid = 0x10000000,
-        /// <summary>
-        ///     Status buffer valid
-        /// </summary>
+        /// <summary>Status buffer valid</summary>
         CamStatusValid = 0x20000000,
-        /// <summary>
-        ///     Data buffer valid
-        /// </summary>
+        /// <summary>Data buffer valid</summary>
         CamDatabValid = 0x40000000,
         /* Host target Mode flags */
-        /// <summary>
-        ///     Send sense data with status
-        /// </summary>
+        /// <summary>Send sense data with status</summary>
         CamSendSense = 0x08000000,
-        /// <summary>
-        ///     Terminate I/O Message sup.
-        /// </summary>
+        /// <summary>Terminate I/O Message sup.</summary>
         CamTermIo = 0x10000000,
-        /// <summary>
-        ///     Disconnects are mandatory
-        /// </summary>
+        /// <summary>Disconnects are mandatory</summary>
         CamDisconnect = 0x20000000,
-        /// <summary>
-        ///     Send status after data phase
-        /// </summary>
+        /// <summary>Send status after data phase</summary>
         CamSendStatus = 0x40000000,
-        /// <summary>
-        ///     Call callback without lock.
-        /// </summary>
+        /// <summary>Call callback without lock.</summary>
         CamUnlocked = 0x80000000
     }
 
-    enum CamStatus : uint
+    internal enum CamStatus : uint
     {
         /// <summary>CCB request is in progress</summary>
         CamReqInprog = 0x00,

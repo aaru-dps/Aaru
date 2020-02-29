@@ -84,7 +84,8 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            if(imagePlugin.Info.SectorSize < 512) return false;
+            if(imagePlugin.Info.SectorSize < 512)
+                return false;
 
             byte[] sector;
             ulong  magic;
@@ -93,23 +94,30 @@ namespace Aaru.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic  = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) return true;
+
+                if(magic == ZEC_MAGIC ||
+                   magic == ZEC_CIGAM)
+                    return true;
             }
 
-            if(partition.Start + 16 >= partition.End) return false;
+            if(partition.Start + 16 >= partition.End)
+                return false;
 
             sector = imagePlugin.ReadSector(partition.Start + 16);
             magic  = BitConverter.ToUInt64(sector, 0x1D8);
+
             return magic == ZEC_MAGIC || magic == ZEC_CIGAM;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
-                                   Encoding    encoding)
+                                   Encoding encoding)
         {
             // ZFS is always UTF-8
             Encoding    = Encoding.UTF8;
             information = "";
-            if(imagePlugin.Info.SectorSize < 512) return;
+
+            if(imagePlugin.Info.SectorSize < 512)
+                return;
 
             byte[] sector;
             ulong  magic;
@@ -121,30 +129,43 @@ namespace Aaru.Filesystems
             {
                 sector = imagePlugin.ReadSector(partition.Start + 31);
                 magic  = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 32;
+
+                if(magic == ZEC_MAGIC ||
+                   magic == ZEC_CIGAM)
+                    nvlistOff = 32;
             }
 
             if(partition.Start + 16 < partition.End)
             {
                 sector = imagePlugin.ReadSector(partition.Start + 16);
                 magic  = BitConverter.ToUInt64(sector, 0x1D8);
-                if(magic == ZEC_MAGIC || magic == ZEC_CIGAM) nvlistOff = 17;
+
+                if(magic == ZEC_MAGIC ||
+                   magic == ZEC_CIGAM)
+                    nvlistOff = 17;
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine("ZFS filesystem");
 
             byte[] nvlist = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen);
 
             sb.AppendLine(!DecodeNvList(nvlist, out Dictionary<string, NVS_Item> decodedNvList)
-                              ? "Could not decode nvlist"
-                              : PrintNvList(decodedNvList));
+                              ? "Could not decode nvlist" : PrintNvList(decodedNvList));
 
             information = sb.ToString();
 
-            XmlFsType = new FileSystemType {Type = "ZFS filesystem"};
-            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) XmlFsType.VolumeName = (string)tmpObj.value;
-            if(decodedNvList.TryGetValue("guid", out tmpObj)) XmlFsType.VolumeSerial        = $"{(ulong)tmpObj.value}";
+            XmlFsType = new FileSystemType
+            {
+                Type = "ZFS filesystem"
+            };
+
+            if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj))
+                XmlFsType.VolumeName = (string)tmpObj.value;
+
+            if(decodedNvList.TryGetValue("guid", out tmpObj))
+                XmlFsType.VolumeSerial = $"{(ulong)tmpObj.value}";
+
             if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
                 XmlFsType.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
         }
@@ -161,32 +182,40 @@ namespace Aaru.Filesystems
 
         // TODO: Decode native nvlist
         static bool DecodeNvList(byte[] nvlist, out Dictionary<string, NVS_Item> decodedNvList, bool xdr,
-                                 bool   littleEndian)
+                                 bool littleEndian)
         {
             decodedNvList = new Dictionary<string, NVS_Item>();
 
-            if(nvlist == null || nvlist.Length < 16) return false;
+            if(nvlist        == null ||
+               nvlist.Length < 16)
+                return false;
 
-            if(!xdr) return false;
+            if(!xdr)
+                return false;
 
             int offset = 8;
+
             while(offset < nvlist.Length)
             {
-                NVS_Item item    = new NVS_Item();
-                int      currOff = offset;
+                var item    = new NVS_Item();
+                int currOff = offset;
 
                 item.encodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
 
                 // Finished
-                if(item.encodedSize == 0) break;
+                if(item.encodedSize == 0)
+                    break;
 
                 offset           += 4;
                 item.decodedSize =  BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset           += 4;
                 uint nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
                 offset += 4;
-                if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
-                byte[] nameBytes                  = new byte[nameLength];
+
+                if(nameLength % 4 > 0)
+                    nameLength += 4 - (nameLength % 4);
+
+                byte[] nameBytes = new byte[nameLength];
                 Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
                 item.name     =  StringHandlers.CToString(nameBytes);
                 offset        += (int)nameLength;
@@ -198,6 +227,7 @@ namespace Aaru.Filesystems
                 if(item.elements == 0)
                 {
                     decodedNvList.Add(item.name, item);
+
                     continue;
                 }
 
@@ -209,6 +239,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             bool[] boolArray = new bool[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
@@ -235,7 +266,10 @@ namespace Aaru.Filesystems
                             byte[] byteArray = new byte[item.elements];
                             Array.Copy(nvlist, offset, byteArray, 0, item.elements);
                             offset += (int)item.elements;
-                            if(item.elements % 4 > 0) offset += 4 - (int)(item.elements % 4);
+
+                            if(item.elements % 4 > 0)
+                                offset += 4 - (int)(item.elements % 4);
+
                             item.value = byteArray;
                         }
                         else
@@ -249,6 +283,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             double[] doubleArray = new double[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 double temp = BigEndianBitConverter.ToDouble(nvlist, offset);
@@ -269,10 +304,12 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             DateTime[] hrtimeArray = new DateTime[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 DateTime temp =
                                     DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+
                                 hrtimeArray[i] =  temp;
                                 offset         += 8;
                             }
@@ -283,6 +320,7 @@ namespace Aaru.Filesystems
                         {
                             item.value =
                                 DateHandlers.UnixHrTimeToDateTime(BigEndianBitConverter.ToUInt64(nvlist, offset));
+
                             offset += 8;
                         }
 
@@ -292,6 +330,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             short[] shortArray = new short[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 short temp = BigEndianBitConverter.ToInt16(nvlist, offset);
@@ -313,6 +352,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             int[] intArray = new int[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 int temp = BigEndianBitConverter.ToInt32(nvlist, offset);
@@ -334,6 +374,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             long[] longArray = new long[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 long temp = BigEndianBitConverter.ToInt64(nvlist, offset);
@@ -355,6 +396,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             sbyte[] sbyteArray = new sbyte[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 sbyte temp = (sbyte)nvlist[offset];
@@ -363,7 +405,9 @@ namespace Aaru.Filesystems
                             }
 
                             item.value = sbyteArray;
-                            if(sbyteArray.Length % 4 > 0) offset += 4 - sbyteArray.Length % 4;
+
+                            if(sbyteArray.Length % 4 > 0)
+                                offset += 4 - (sbyteArray.Length % 4);
                         }
                         else
                         {
@@ -377,6 +421,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             string[] stringArray = new string[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 uint strLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
@@ -385,7 +430,9 @@ namespace Aaru.Filesystems
                                 Array.Copy(nvlist, offset, strBytes, 0, strLength);
                                 stringArray[i] =  StringHandlers.CToString(strBytes);
                                 offset         += (int)strLength;
-                                if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
+
+                                if(strLength % 4 > 0)
+                                    offset += 4 - (int)(strLength % 4);
                             }
 
                             item.value = stringArray;
@@ -398,7 +445,9 @@ namespace Aaru.Filesystems
                             Array.Copy(nvlist, offset, strBytes, 0, strLength);
                             item.value =  StringHandlers.CToString(strBytes);
                             offset     += (int)strLength;
-                            if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
+
+                            if(strLength % 4 > 0)
+                                offset += 4 - (int)(strLength % 4);
                         }
 
                         break;
@@ -407,6 +456,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             ushort[] ushortArray = new ushort[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 ushort temp = BigEndianBitConverter.ToUInt16(nvlist, offset);
@@ -428,6 +478,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             uint[] uintArray = new uint[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 uint temp = BigEndianBitConverter.ToUInt32(nvlist, offset);
@@ -449,6 +500,7 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                         {
                             ulong[] ulongArray = new ulong[item.elements];
+
                             for(int i = 0; i < item.elements; i++)
                             {
                                 ulong temp = BigEndianBitConverter.ToUInt64(nvlist, offset);
@@ -466,20 +518,26 @@ namespace Aaru.Filesystems
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_NVLIST:
-                        if(item.elements > 1) goto default;
+                        if(item.elements > 1)
+                            goto default;
 
                         byte[] subListBytes = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
+
                         if(DecodeNvList(subListBytes, out Dictionary<string, NVS_Item> subList, true, littleEndian))
                             item.value = subList;
-                        else goto default;
+                        else
+                            goto default;
+
                         offset = (int)(currOff + item.encodedSize);
+
                         break;
                     default:
                         byte[] unknown = new byte[item.encodedSize - (offset - currOff)];
                         Array.Copy(nvlist, offset, unknown, 0, unknown.Length);
                         item.value = unknown;
                         offset     = (int)(currOff + item.encodedSize);
+
                         break;
                 }
 
@@ -491,12 +549,14 @@ namespace Aaru.Filesystems
 
         static string PrintNvList(Dictionary<string, NVS_Item> decodedNvList)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
+
             foreach(NVS_Item item in decodedNvList.Values)
             {
                 if(item.elements == 0)
                 {
                     sb.AppendFormat("{0} is not set", item.name).AppendLine();
+
                     continue;
                 }
 
@@ -508,7 +568,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((bool[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (bool)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_BYTE:
@@ -518,22 +579,25 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((byte[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (byte)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_DOUBLE:
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((double[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (double)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_HRTIME:
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
-                                sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i])
-                                  .AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
+                                sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((DateTime[])item.value)[i]).
+                                   AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (DateTime)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT16:
@@ -541,7 +605,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((short[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (short)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT32:
@@ -549,7 +614,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((int[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (int)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT64:
@@ -557,7 +623,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((long[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (long)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_INT8:
@@ -565,7 +632,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((sbyte[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (sbyte)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_STRING:
@@ -573,7 +641,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((string[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (string)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT16:
@@ -581,7 +650,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ushort[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (ushort)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT32:
@@ -589,7 +659,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((uint[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (uint)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_UINT64:
@@ -597,7 +668,8 @@ namespace Aaru.Filesystems
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
                                 sb.AppendFormat("{0}[{1}] = {2}", item.name, i, ((ulong[])item.value)[i]).AppendLine();
-                        else sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
+                        else
+                            sb.AppendFormat("{0} = {1}", item.name, (ulong)item.value).AppendLine();
 
                         break;
                     case NVS_DataTypes.DATA_TYPE_NVLIST:
@@ -605,15 +677,17 @@ namespace Aaru.Filesystems
                             sb.AppendFormat("{0} =\n{1}", item.name,
                                             PrintNvList((Dictionary<string, NVS_Item>)item.value)).AppendLine();
                         else
-                            sb.AppendFormat("{0} = {1} elements nvlist[], unable to print", item.name, item.elements)
-                              .AppendLine();
+                            sb.AppendFormat("{0} = {1} elements nvlist[], unable to print", item.name, item.elements).
+                               AppendLine();
+
                         break;
                     default:
                         if(item.elements > 1)
                             for(int i = 0; i < item.elements; i++)
-                                sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType)
-                                  .AppendLine();
-                        else sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
+                                sb.AppendFormat("{0}[{1}] = Unknown data type {2}", item.name, i, item.dataType).
+                                   AppendLine();
+                        else
+                            sb.AppendFormat("{0} = Unknown data type {1}", item.name, item.dataType).AppendLine();
 
                         break;
                 }
@@ -629,7 +703,8 @@ namespace Aaru.Filesystems
         }
 
         /// <summary>
-        ///     There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I suppose.
+        ///     There is an empty ZIO at sector 16 or sector 31, with magic and checksum, to detect it is really ZFS I
+        ///     suppose.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZIO_Empty
@@ -640,9 +715,7 @@ namespace Aaru.Filesystems
             public readonly ZIO_Checksum checksum;
         }
 
-        /// <summary>
-        ///     This structure indicates which encoding method and endianness is used to encode the nvlist
-        /// </summary>
+        /// <summary>This structure indicates which encoding method and endianness is used to encode the nvlist</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NVS_Method
         {
@@ -652,9 +725,7 @@ namespace Aaru.Filesystems
             public readonly byte reserved2;
         }
 
-        /// <summary>
-        ///     This structure gives information about the encoded nvlist
-        /// </summary>
+        /// <summary>This structure gives information about the encoded nvlist</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NVS_XDR_Header
         {
@@ -665,64 +736,32 @@ namespace Aaru.Filesystems
 
         enum NVS_DataTypes : uint
         {
-            DATA_TYPE_UNKNOWN = 0,
-            DATA_TYPE_BOOLEAN,
-            DATA_TYPE_BYTE,
-            DATA_TYPE_INT16,
-            DATA_TYPE_UINT16,
-            DATA_TYPE_INT32,
-            DATA_TYPE_UINT32,
-            DATA_TYPE_INT64,
-            DATA_TYPE_UINT64,
-            DATA_TYPE_STRING,
-            DATA_TYPE_BYTE_ARRAY,
-            DATA_TYPE_INT16_ARRAY,
-            DATA_TYPE_UINT16_ARRAY,
-            DATA_TYPE_INT32_ARRAY,
-            DATA_TYPE_UINT32_ARRAY,
-            DATA_TYPE_INT64_ARRAY,
-            DATA_TYPE_UINT64_ARRAY,
-            DATA_TYPE_STRING_ARRAY,
-            DATA_TYPE_HRTIME,
-            DATA_TYPE_NVLIST,
-            DATA_TYPE_NVLIST_ARRAY,
-            DATA_TYPE_BOOLEAN_VALUE,
-            DATA_TYPE_INT8,
-            DATA_TYPE_UINT8,
-            DATA_TYPE_BOOLEAN_ARRAY,
-            DATA_TYPE_INT8_ARRAY,
-            DATA_TYPE_UINT8_ARRAY,
+            DATA_TYPE_UNKNOWN = 0, DATA_TYPE_BOOLEAN, DATA_TYPE_BYTE,
+            DATA_TYPE_INT16, DATA_TYPE_UINT16, DATA_TYPE_INT32,
+            DATA_TYPE_UINT32, DATA_TYPE_INT64, DATA_TYPE_UINT64,
+            DATA_TYPE_STRING, DATA_TYPE_BYTE_ARRAY, DATA_TYPE_INT16_ARRAY,
+            DATA_TYPE_UINT16_ARRAY, DATA_TYPE_INT32_ARRAY, DATA_TYPE_UINT32_ARRAY,
+            DATA_TYPE_INT64_ARRAY, DATA_TYPE_UINT64_ARRAY, DATA_TYPE_STRING_ARRAY,
+            DATA_TYPE_HRTIME, DATA_TYPE_NVLIST, DATA_TYPE_NVLIST_ARRAY,
+            DATA_TYPE_BOOLEAN_VALUE, DATA_TYPE_INT8, DATA_TYPE_UINT8,
+            DATA_TYPE_BOOLEAN_ARRAY, DATA_TYPE_INT8_ARRAY, DATA_TYPE_UINT8_ARRAY,
             DATA_TYPE_DOUBLE
         }
 
-        /// <summary>
-        ///     This represent an encoded nvpair (an item of an nvlist)
-        /// </summary>
+        /// <summary>This represent an encoded nvpair (an item of an nvlist)</summary>
         struct NVS_Item
         {
-            /// <summary>
-            ///     Size in bytes when encoded in XDR
-            /// </summary>
+            /// <summary>Size in bytes when encoded in XDR</summary>
             public uint encodedSize;
-            /// <summary>
-            ///     Size in bytes when decoded
-            /// </summary>
+            /// <summary>Size in bytes when decoded</summary>
             public uint decodedSize;
-            /// <summary>
-            ///     On disk, it is null-padded for alignment to 4 bytes and prepended by a 4 byte length indicator
-            /// </summary>
+            /// <summary>On disk, it is null-padded for alignment to 4 bytes and prepended by a 4 byte length indicator</summary>
             public string name;
-            /// <summary>
-            ///     Data type
-            /// </summary>
+            /// <summary>Data type</summary>
             public NVS_DataTypes dataType;
-            /// <summary>
-            ///     How many elements are here
-            /// </summary>
+            /// <summary>How many elements are here</summary>
             public uint elements;
-            /// <summary>
-            ///     On disk size is relative to <see cref="dataType" /> and <see cref="elements" /> always aligned to 4 bytes
-            /// </summary>
+            /// <summary>On disk size is relative to <see cref="dataType" /> and <see cref="elements" /> always aligned to 4 bytes</summary>
             public object value;
         }
 
@@ -736,30 +775,18 @@ namespace Aaru.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SPA_BlockPointer
         {
-            /// <summary>
-            ///     Data virtual address
-            /// </summary>
+            /// <summary>Data virtual address</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly DVA[] dataVirtualAddress;
-            /// <summary>
-            ///     Block properties
-            /// </summary>
+            /// <summary>Block properties</summary>
             public readonly ulong properties;
-            /// <summary>
-            ///     Reserved for future expansion
-            /// </summary>
+            /// <summary>Reserved for future expansion</summary>
             public readonly ulong[] padding;
-            /// <summary>
-            ///     TXG when block was allocated
-            /// </summary>
+            /// <summary>TXG when block was allocated</summary>
             public readonly ulong birthTxg;
-            /// <summary>
-            ///     Transaction group at birth
-            /// </summary>
+            /// <summary>Transaction group at birth</summary>
             public readonly ulong birth;
-            /// <summary>
-            ///     Fill count
-            /// </summary>
+            /// <summary>Fill count</summary>
             public readonly ulong fill;
             public readonly ZIO_Checksum checksum;
         }

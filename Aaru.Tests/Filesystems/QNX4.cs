@@ -50,13 +50,25 @@ namespace Aaru.Tests.Filesystems
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors = {720, 2400, 1440, 2880};
+        readonly ulong[] sectors =
+        {
+            720, 2400, 1440, 2880
+        };
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize =
+        {
+            512, 512, 512, 512
+        };
 
-        readonly long[] clusters = {720, 2400, 1440, 2880};
+        readonly long[] clusters =
+        {
+            720, 2400, 1440, 2880
+        };
 
-        readonly int[] clustersize = {512, 512, 512, 512};
+        readonly int[] clustersize =
+        {
+            512, 512, 512, 512
+        };
 
         [Test]
         public void Test()
@@ -67,22 +79,23 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 IFilesystem fs = new QNX4();
-                Partition wholePart = new Partition
+
+                var wholePart = new Partition
                 {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
+                    Name = "Whole device", Length = image.Info.Sectors,
+                    Size = image.Info.Sectors * image.Info.SectorSize
                 };
+
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i],       fs.XmlFsType.Clusters,    testfiles[i]);
-                Assert.AreEqual(clustersize[i],    fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }
@@ -90,15 +103,30 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Qnx4Mbr
     {
-        readonly string[] testfiles = {"qnx_4.24.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "qnx_4.24.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {1024000};
+        readonly ulong[] sectors =
+        {
+            1024000
+        };
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize =
+        {
+            512
+        };
 
-        readonly long[] clusters = {1023104};
+        readonly long[] clusters =
+        {
+            1023104
+        };
 
-        readonly int[] clustersize = {512};
+        readonly int[] clustersize =
+        {
+            512
+        };
 
         [Test]
         public void Test()
@@ -109,25 +137,27 @@ namespace Aaru.Tests.Filesystems
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
-                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
-                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
+                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new QNX4();
                 int             part       = -1;
+
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x4D")
                     {
                         part = j;
+
                         break;
                     }
 
                 Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
                 Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i],       fs.XmlFsType.Clusters,    testfiles[i]);
-                Assert.AreEqual(clustersize[i],    fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type,        testfiles[i]);
+                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
+                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
+                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, testfiles[i]);
             }
         }
     }

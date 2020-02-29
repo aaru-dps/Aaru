@@ -47,8 +47,8 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            DiskType type = (DiskType)stream.ReadByte();
-            byte     tracks;
+            var  type = (DiskType)stream.ReadByte();
+            byte tracks;
 
             switch(type)
             {
@@ -57,11 +57,13 @@ namespace Aaru.DiscImages
                 case DiskType.MD2DD8:
                 case DiskType.MD2DD:
                     tracks = 80;
+
                     break;
                 case DiskType.MF2DD:
                 case DiskType.MD2HD:
                 case DiskType.MF2HD:
                     tracks = 160;
+
                     break;
                 default: throw new ImageNotSupportedException($"Incorrect disk type {(byte)type}");
             }
@@ -69,7 +71,7 @@ namespace Aaru.DiscImages
             byte[] trackBytes = new byte[tracks];
             stream.Read(trackBytes, 0, tracks);
 
-            Compression cmpr = (Compression)stream.ReadByte();
+            var cmpr = (Compression)stream.ReadByte();
 
             if(cmpr != Compression.None)
                 throw new FeatureSupportedButNotImplementedImageException("Compressed images are not supported.");
@@ -81,31 +83,40 @@ namespace Aaru.DiscImages
                 case DiskType.MD1DD8:
                 case DiskType.MD2DD8:
                     tracksize = 8 * 512;
+
                     break;
                 case DiskType.MD1DD:
                 case DiskType.MD2DD:
                 case DiskType.MF2DD:
                     tracksize = 9 * 512;
+
                     break;
                 case DiskType.MD2HD:
                     tracksize = 15 * 512;
+
                     break;
                 case DiskType.MF2HD:
                     tracksize = 18 * 512;
+
                     break;
             }
 
-            int headstep                                                   = 1;
-            if(type == DiskType.MD1DD || type == DiskType.MD1DD8) headstep = 2;
+            int headstep = 1;
 
-            MemoryStream decodedImage = new MemoryStream();
+            if(type == DiskType.MD1DD ||
+               type == DiskType.MD1DD8)
+                headstep = 2;
+
+            var decodedImage = new MemoryStream();
 
             for(int i = 0; i < tracks; i += headstep)
             {
                 byte[] track = new byte[tracksize];
 
-                if((TrackType)trackBytes[i] == TrackType.Copied) stream.Read(track, 0, tracksize);
-                else ArrayHelpers.ArrayFill(track, (byte)0xF6);
+                if((TrackType)trackBytes[i] == TrackType.Copied)
+                    stream.Read(track, 0, tracksize);
+                else
+                    ArrayHelpers.ArrayFill(track, (byte)0xF6);
 
                 decodedImage.Write(track, 0, tracksize);
             }
@@ -125,6 +136,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 1;
                     imageInfo.Cylinders       = 40;
                     imageInfo.SectorsPerTrack = 8;
+
                     break;
                 case DiskType.MD2DD8:
                     imageInfo.MediaType       = MediaType.DOS_525_DS_DD_8;
@@ -132,6 +144,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.Cylinders       = 40;
                     imageInfo.SectorsPerTrack = 8;
+
                     break;
                 case DiskType.MD1DD:
                     imageInfo.MediaType       = MediaType.DOS_525_SS_DD_9;
@@ -139,6 +152,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 1;
                     imageInfo.Cylinders       = 40;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case DiskType.MD2DD:
                     imageInfo.MediaType       = MediaType.DOS_525_DS_DD_9;
@@ -146,6 +160,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.Cylinders       = 40;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case DiskType.MF2DD:
                     imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
@@ -153,6 +168,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.Cylinders       = 80;
                     imageInfo.SectorsPerTrack = 9;
+
                     break;
                 case DiskType.MD2HD:
                     imageInfo.MediaType       = MediaType.DOS_525_HD;
@@ -160,6 +176,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.Cylinders       = 80;
                     imageInfo.SectorsPerTrack = 15;
+
                     break;
                 case DiskType.MF2HD:
                     imageInfo.MediaType       = MediaType.DOS_35_HD;
@@ -167,6 +184,7 @@ namespace Aaru.DiscImages
                     imageInfo.Heads           = 2;
                     imageInfo.Cylinders       = 80;
                     imageInfo.SectorsPerTrack = 18;
+
                     break;
             }
 

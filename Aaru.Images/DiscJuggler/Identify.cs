@@ -50,20 +50,34 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
 
-            if(dscLen >= imageStream.Length) return false;
+            if(dscLen >= imageStream.Length)
+                return false;
 
             byte[] descriptor = new byte[dscLen];
             imageStream.Seek(-dscLen, SeekOrigin.End);
             imageStream.Read(descriptor, 0, dscLen);
 
             // Sessions
-            if(descriptor[0] > 99 || descriptor[0] == 0) return false;
+            if(descriptor[0] > 99 ||
+               descriptor[0] == 0)
+                return false;
 
             // Seems all sessions start with this data
-            if(descriptor[1]  != 0x00 || descriptor[3]  != 0x00 || descriptor[4]  != 0x00 || descriptor[5]  != 0x00 ||
-               descriptor[6]  != 0x00 || descriptor[7]  != 0x00 || descriptor[8]  != 0x00 || descriptor[9]  != 0x00 ||
-               descriptor[10] != 0x01 || descriptor[11] != 0x00 || descriptor[12] != 0x00 || descriptor[13] != 0x00 ||
-               descriptor[14] != 0xFF || descriptor[15] != 0xFF) return false;
+            if(descriptor[1]  != 0x00 ||
+               descriptor[3]  != 0x00 ||
+               descriptor[4]  != 0x00 ||
+               descriptor[5]  != 0x00 ||
+               descriptor[6]  != 0x00 ||
+               descriptor[7]  != 0x00 ||
+               descriptor[8]  != 0x00 ||
+               descriptor[9]  != 0x00 ||
+               descriptor[10] != 0x01 ||
+               descriptor[11] != 0x00 ||
+               descriptor[12] != 0x00 ||
+               descriptor[13] != 0x00 ||
+               descriptor[14] != 0xFF ||
+               descriptor[15] != 0xFF)
+                return false;
 
             // Too many tracks
             return descriptor[2] <= 99;

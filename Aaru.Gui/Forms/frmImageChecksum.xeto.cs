@@ -45,17 +45,24 @@ namespace Aaru.Gui.Forms
     public class frmImageChecksum : Form
     {
         // How many sectors to read at once
-        const uint  SECTORS_TO_READ = 256;
-        bool        cancel;
-        IMediaImage inputFormat;
+        const    uint        SECTORS_TO_READ = 256;
+        readonly IMediaImage inputFormat;
+        bool                 cancel;
 
         public frmImageChecksum(IMediaImage inputFormat)
         {
             this.inputFormat = inputFormat;
             XamlReader.Load(this);
             cancel = false;
-            try { chkChecksumTracks.Visible = (inputFormat as IOpticalMediaImage)?.Tracks?.Count > 0; }
-            catch { chkChecksumTracks.Visible = false; }
+
+            try
+            {
+                chkChecksumTracks.Visible = (inputFormat as IOpticalMediaImage)?.Tracks?.Count > 0;
+            }
+            catch
+            {
+                chkChecksumTracks.Visible = false;
+            }
 
             chkChecksumTracks.Checked = chkChecksumTracks.Visible;
             chkChecksumMedia.Visible  = chkChecksumTracks.Visible;
@@ -88,12 +95,18 @@ namespace Aaru.Gui.Forms
 
         void DoWork()
         {
-            IOpticalMediaImage opticalMediaImage = inputFormat as IOpticalMediaImage;
-            bool               formatHasTracks   = false;
+            var  opticalMediaImage = inputFormat as IOpticalMediaImage;
+            bool formatHasTracks   = false;
 
             if(opticalMediaImage != null)
-                try { formatHasTracks = opticalMediaImage.Tracks?.Count > 0; }
-                catch { formatHasTracks = false; }
+                try
+                {
+                    formatHasTracks = opticalMediaImage.Tracks?.Count > 0;
+                }
+                catch
+                {
+                    formatHasTracks = false;
+                }
 
             // Setup progress bars
             Application.Instance.Invoke(() =>
@@ -102,7 +115,9 @@ namespace Aaru.Gui.Forms
                 prgProgress.MaxValue  = 1;
                 prgProgress2.MaxValue = (int)(inputFormat.Info.Sectors / SECTORS_TO_READ);
 
-                if(formatHasTracks && chkChecksumTracks.Checked == true && opticalMediaImage != null)
+                if(formatHasTracks                   &&
+                   chkChecksumTracks.Checked == true &&
+                   opticalMediaImage         != null)
                     prgProgress.MaxValue += opticalMediaImage.Tracks.Count;
                 else
                 {
@@ -112,32 +127,56 @@ namespace Aaru.Gui.Forms
                 }
             });
 
-            EnableChecksum enabledChecksums = new EnableChecksum();
+            var enabledChecksums = new EnableChecksum();
 
-            if(chkAdler32.Checked == true) enabledChecksums |= EnableChecksum.Adler32;
-            if(chkCrc16.Checked   == true) enabledChecksums |= EnableChecksum.Crc16;
-            if(chkCrc32.Checked   == true) enabledChecksums |= EnableChecksum.Crc32;
-            if(chkCrc64.Checked   == true) enabledChecksums |= EnableChecksum.Crc64;
-            if(chkMd5.Checked     == true) enabledChecksums |= EnableChecksum.Md5;
-            if(chkSha1.Checked       == true) enabledChecksums |= EnableChecksum.Sha1;
-            if(chkSha256.Checked     == true) enabledChecksums |= EnableChecksum.Sha256;
-            if(chkSha384.Checked     == true) enabledChecksums |= EnableChecksum.Sha384;
-            if(chkSha512.Checked     == true) enabledChecksums |= EnableChecksum.Sha512;
-            if(chkSpamsum.Checked    == true) enabledChecksums |= EnableChecksum.SpamSum;
-            if(chkFletcher16.Checked == true) enabledChecksums |= EnableChecksum.Fletcher16;
-            if(chkFletcher32.Checked == true) enabledChecksums |= EnableChecksum.Fletcher32;
+            if(chkAdler32.Checked == true)
+                enabledChecksums |= EnableChecksum.Adler32;
+
+            if(chkCrc16.Checked == true)
+                enabledChecksums |= EnableChecksum.Crc16;
+
+            if(chkCrc32.Checked == true)
+                enabledChecksums |= EnableChecksum.Crc32;
+
+            if(chkCrc64.Checked == true)
+                enabledChecksums |= EnableChecksum.Crc64;
+
+            if(chkMd5.Checked == true)
+                enabledChecksums |= EnableChecksum.Md5;
+
+            if(chkSha1.Checked == true)
+                enabledChecksums |= EnableChecksum.Sha1;
+
+            if(chkSha256.Checked == true)
+                enabledChecksums |= EnableChecksum.Sha256;
+
+            if(chkSha384.Checked == true)
+                enabledChecksums |= EnableChecksum.Sha384;
+
+            if(chkSha512.Checked == true)
+                enabledChecksums |= EnableChecksum.Sha512;
+
+            if(chkSpamsum.Checked == true)
+                enabledChecksums |= EnableChecksum.SpamSum;
+
+            if(chkFletcher16.Checked == true)
+                enabledChecksums |= EnableChecksum.Fletcher16;
+
+            if(chkFletcher32.Checked == true)
+                enabledChecksums |= EnableChecksum.Fletcher32;
 
             Checksum mediaChecksum = null;
 
-            TreeGridItemCollection trackHashes = new TreeGridItemCollection();
-            TreeGridItemCollection mediaHashes = new TreeGridItemCollection();
+            var trackHashes = new TreeGridItemCollection();
+            var mediaHashes = new TreeGridItemCollection();
 
             if(opticalMediaImage != null)
                 try
                 {
                     Checksum trackChecksum = null;
 
-                    if(chkChecksumMedia.Checked == true) mediaChecksum = new Checksum(enabledChecksums);
+                    if(chkChecksumMedia.Checked == true)
+                        mediaChecksum = new Checksum(enabledChecksums);
 
                     ulong previousTrackEnd = 0;
 
@@ -147,13 +186,16 @@ namespace Aaru.Gui.Forms
                         {
                             lblProgress.Text =
                                 $"Hashing track {currentTrack.TrackSequence} of {opticalMediaImage.Tracks.Count}";
+
                             prgProgress.Value++;
                         });
 
-                        if(currentTrack.TrackStartSector - previousTrackEnd != 0 && chkChecksumMedia.Checked == true)
+                        if(currentTrack.TrackStartSector - previousTrackEnd != 0 &&
+                           chkChecksumMedia.Checked                         == true)
                             for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                             {
                                 ulong sector = i;
+
                                 Application.Instance.Invoke(() =>
                                 {
                                     prgProgress2.Value = (int)(sector / SECTORS_TO_READ);
@@ -166,13 +208,14 @@ namespace Aaru.Gui.Forms
                             }
 
                         AaruConsole.DebugWriteLine("Checksum command",
-                                                  "Track {0} starts at sector {1} and ends at sector {2}",
-                                                  currentTrack.TrackSequence, currentTrack.TrackStartSector,
-                                                  currentTrack.TrackEndSector);
+                                                   "Track {0} starts at sector {1} and ends at sector {2}",
+                                                   currentTrack.TrackSequence, currentTrack.TrackStartSector,
+                                                   currentTrack.TrackEndSector);
 
-                        if(chkChecksumTracks.Checked == true) trackChecksum = new Checksum(enabledChecksums);
+                        if(chkChecksumTracks.Checked == true)
+                            trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ulong sectors     = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
                         ulong doneSectors = 0;
 
                         while(doneSectors < sectors)
@@ -185,6 +228,7 @@ namespace Aaru.Gui.Forms
                                     btnStart.Visible = false;
                                     btnStop.Visible  = false;
                                 });
+
                                 return;
                             }
 
@@ -196,9 +240,11 @@ namespace Aaru.Gui.Forms
                                                                        currentTrack.TrackSequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
+
                                 Application.Instance.Invoke(() =>
                                 {
                                     prgProgress2.Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
+
                                     lblProgress2.Text =
                                         $"Hashings sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ} of track {currentTrack.TrackSequence}";
                                 });
@@ -211,9 +257,11 @@ namespace Aaru.Gui.Forms
                                                                        currentTrack.TrackSequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
+
                                 Application.Instance.Invoke(() =>
                                 {
                                     prgProgress2.Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
+
                                     lblProgress2.Text =
                                         $"Hashings sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (sectors - doneSectorsToInvoke)} of track {currentTrack.TrackSequence}";
                                 });
@@ -221,9 +269,11 @@ namespace Aaru.Gui.Forms
                                 doneSectors += sectors - doneSectors;
                             }
 
-                            if(chkChecksumMedia.Checked == true) mediaChecksum?.Update(sector);
+                            if(chkChecksumMedia.Checked == true)
+                                mediaChecksum?.Update(sector);
 
-                            if(chkChecksumTracks.Checked == true) trackChecksum?.Update(sector);
+                            if(chkChecksumTracks.Checked == true)
+                                trackChecksum?.Update(sector);
                         }
 
                         if(chkChecksumTracks.Checked == true)
@@ -240,10 +290,12 @@ namespace Aaru.Gui.Forms
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if(opticalMediaImage.Info.Sectors - previousTrackEnd != 0 && chkChecksumMedia.Checked == true)
+                    if(opticalMediaImage.Info.Sectors - previousTrackEnd != 0 &&
+                       chkChecksumMedia.Checked                          == true)
                         for(ulong i = previousTrackEnd + 1; i < opticalMediaImage.Info.Sectors; i++)
                         {
                             ulong sector = i;
+
                             Application.Instance.Invoke(() =>
                             {
                                 prgProgress2.Value = (int)(sector / SECTORS_TO_READ);
@@ -257,7 +309,13 @@ namespace Aaru.Gui.Forms
                     if(chkChecksumMedia.Checked == true)
                         if(mediaChecksum != null)
                             foreach(ChecksumType chk in mediaChecksum.End())
-                                mediaHashes.Add(new TreeGridItem {Values = new object[] {chk.type, chk.Value}});
+                                mediaHashes.Add(new TreeGridItem
+                                {
+                                    Values = new object[]
+                                    {
+                                        chk.type, chk.Value
+                                    }
+                                });
                 }
                 catch(Exception ex)
                 {
@@ -266,7 +324,11 @@ namespace Aaru.Gui.Forms
                 }
             else
             {
-                Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
+                Application.Instance.Invoke(() =>
+                {
+                    stkProgress1.Visible = false;
+                });
+
                 mediaChecksum = new Checksum(enabledChecksums);
 
                 ulong doneSectors = 0;
@@ -281,6 +343,7 @@ namespace Aaru.Gui.Forms
                             btnStart.Visible = false;
                             btnStop.Visible  = false;
                         });
+
                         return;
                     }
 
@@ -291,24 +354,30 @@ namespace Aaru.Gui.Forms
                         sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
 
                         ulong doneSectorsToInvoke = doneSectors;
+
                         Application.Instance.Invoke(() =>
                         {
                             prgProgress2.Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
+
                             lblProgress2.Text =
                                 $"Hashings sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + SECTORS_TO_READ}";
                         });
+
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
                     {
                         sector = inputFormat.ReadSectors(doneSectors, (uint)(inputFormat.Info.Sectors - doneSectors));
                         ulong doneSectorsToInvoke = doneSectors;
+
                         Application.Instance.Invoke(() =>
                         {
                             prgProgress2.Value = (int)(doneSectorsToInvoke / SECTORS_TO_READ);
+
                             lblProgress2.Text =
                                 $"Hashings sectors {doneSectorsToInvoke} to {doneSectorsToInvoke + (inputFormat.Info.Sectors - doneSectorsToInvoke)}";
                         });
+
                         doneSectors += inputFormat.Info.Sectors - doneSectors;
                     }
 
@@ -316,7 +385,13 @@ namespace Aaru.Gui.Forms
                 }
 
                 foreach(ChecksumType chk in mediaChecksum.End())
-                    mediaHashes.Add(new TreeGridItem {Values = new object[] {chk.type, chk.Value}});
+                    mediaHashes.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            chk.type, chk.Value
+                        }
+                    });
             }
 
             if(chkChecksumTracks.Checked == true)
@@ -329,11 +404,16 @@ namespace Aaru.Gui.Forms
                     {
                         HeaderText = "Track", DataCell = new TextBoxCell(0)
                     });
+
                     treeTrackChecksums.Columns.Add(new GridColumn
                     {
                         HeaderText = "Algorithm", DataCell = new TextBoxCell(1)
                     });
-                    treeTrackChecksums.Columns.Add(new GridColumn {HeaderText = "Hash", DataCell = new TextBoxCell(2)});
+
+                    treeTrackChecksums.Columns.Add(new GridColumn
+                    {
+                        HeaderText = "Hash", DataCell = new TextBoxCell(2)
+                    });
 
                     treeTrackChecksums.AllowMultipleSelection = false;
                     treeTrackChecksums.ShowHeader             = true;
@@ -350,7 +430,11 @@ namespace Aaru.Gui.Forms
                     {
                         HeaderText = "Algorithm", DataCell = new TextBoxCell(0)
                     });
-                    treeMediaChecksums.Columns.Add(new GridColumn {HeaderText = "Hash", DataCell = new TextBoxCell(1)});
+
+                    treeMediaChecksums.Columns.Add(new GridColumn
+                    {
+                        HeaderText = "Hash", DataCell = new TextBoxCell(1)
+                    });
 
                     treeMediaChecksums.AllowMultipleSelection = false;
                     treeMediaChecksums.ShowHeader             = true;
@@ -370,10 +454,7 @@ namespace Aaru.Gui.Forms
             });
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         protected void OnBtnStop(object sender, EventArgs e)
         {

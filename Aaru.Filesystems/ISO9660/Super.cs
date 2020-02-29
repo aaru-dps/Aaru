@@ -74,23 +74,23 @@ namespace Aaru.Filesystems.ISO9660
 
             switch(@namespace.ToLowerInvariant())
             {
-                case"normal":
+                case "normal":
                     this.@namespace = Namespace.Normal;
 
                     break;
-                case"vms":
+                case "vms":
                     this.@namespace = Namespace.Vms;
 
                     break;
-                case"joliet":
+                case "joliet":
                     this.@namespace = Namespace.Joliet;
 
                     break;
-                case"rrip":
+                case "rrip":
                     this.@namespace = Namespace.Rrip;
 
                     break;
-                case"romeo":
+                case "romeo":
                     this.@namespace = Namespace.Romeo;
 
                     break;
@@ -209,7 +209,7 @@ namespace Aaru.Filesystems.ISO9660
                                     jolietvd = svd;
                                 else
                                     AaruConsole.WriteLine("ISO9660 plugin",
-                                                         "Found unknown supplementary volume descriptor");
+                                                          "Found unknown supplementary volume descriptor");
 
                             if(debug)
                                 svdSectors.Add(16 + counter + partition.Start);

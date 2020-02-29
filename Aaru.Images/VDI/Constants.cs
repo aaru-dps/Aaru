@@ -43,8 +43,8 @@ namespace Aaru.DiscImages
         const string SUN_VDI         = "<<< Sun VirtualBox Disk Image >>>\n";
         const string INNOTEK_VDI     = "<<< innotek VirtualBox Disk Image >>>\n";
         const string INNOTEK_OLD_VDI = "<<< InnoTek VirtualBox Disk Image >>>\n";
-        const string DIC_VDI = "<<< DiscImageChef VirtualBox Disk Image >>>\n";
-        const string DIC_AARU = "<<< Aaru VirtualBox Disk Image >>>\n";
+        const string DIC_VDI         = "<<< DiscImageChef VirtualBox Disk Image >>>\n";
+        const string DIC_AARU        = "<<< Aaru VirtualBox Disk Image >>>\n";
 
         const uint MAX_CACHE_SIZE     = 16777216;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / 512;

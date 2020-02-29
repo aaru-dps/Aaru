@@ -40,13 +40,15 @@ namespace Aaru.DiscImages
     {
         public bool? VerifySector(ulong sectorAddress)
         {
-            if(!rawCompactDisc) return null;
+            if(!rawCompactDisc)
+                return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress);
+
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
             if(!rawCompactDisc)
@@ -54,7 +56,8 @@ namespace Aaru.DiscImages
                 failingLbas = new List<ulong>();
                 unknownLbas = new List<ulong>();
 
-                for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+                for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+                    unknownLbas.Add(i);
 
                 return null;
             }
@@ -74,19 +77,22 @@ namespace Aaru.DiscImages
                 {
                     case null:
                         unknownLbas.Add((ulong)i + sectorAddress);
+
                         break;
                     case false:
                         failingLbas.Add((ulong)i + sectorAddress);
+
                         break;
                 }
             }
 
-            if(unknownLbas.Count > 0) return null;
+            if(unknownLbas.Count > 0)
+                return null;
 
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
             if(!rawCompactDisc)
@@ -94,7 +100,8 @@ namespace Aaru.DiscImages
                 failingLbas = new List<ulong>();
                 unknownLbas = new List<ulong>();
 
-                for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
+                for(ulong i = sectorAddress; i < sectorAddress + length; i++)
+                    unknownLbas.Add(i);
 
                 return null;
             }
@@ -114,23 +121,28 @@ namespace Aaru.DiscImages
                 {
                     case null:
                         unknownLbas.Add((ulong)i + sectorAddress);
+
                         break;
                     case false:
                         failingLbas.Add((ulong)i + sectorAddress);
+
                         break;
                 }
             }
 
-            if(unknownLbas.Count > 0) return null;
+            if(unknownLbas.Count > 0)
+                return null;
 
             return failingLbas.Count <= 0;
         }
 
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
-            if(!rawCompactDisc) return null;
+            if(!rawCompactDisc)
+                return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress, track);
+
             return CdChecksums.CheckCdSector(buffer);
         }
     }

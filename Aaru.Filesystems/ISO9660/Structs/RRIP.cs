@@ -92,6 +92,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte         length;
             public readonly byte         version;
             public readonly SymlinkFlags flags;
+
             // Followed by SymbolicLinkComponent (link to /bar/foo uses at least two of these structs)
         }
 
@@ -100,6 +101,7 @@ namespace Aaru.Filesystems.ISO9660
         {
             public readonly SymlinkComponentFlags flags;
             public readonly byte                  length;
+
             // Followed by component content
         }
 
@@ -110,6 +112,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte               length;
             public readonly byte               version;
             public readonly AlternateNameFlags flags;
+
             // Folowed by name, can be divided in pieces
         }
 
@@ -148,6 +151,7 @@ namespace Aaru.Filesystems.ISO9660
             public readonly byte           length;
             public readonly byte           version;
             public readonly TimestampFlags flags;
+
             // If flags indicate long format, timestamps are 17 bytes, if not, 7 bytes
             // Followed by creation time if present
             // Followed by modification time if present

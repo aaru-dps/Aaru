@@ -48,14 +48,10 @@ namespace Aaru.Gui.Tabs
         byte[] DvdPfi;
         byte[] HddvdCopyrightInformation;
 
-        public tabDvdInfo()
-        {
-            XamlReader.Load(this);
-        }
+        public tabDvdInfo() => XamlReader.Load(this);
 
-        internal void LoadData(MediaType mediaType, byte[] pfi, byte[] dmi, byte[] cmi,
-                               byte[]    hdCopyrightInformation,
-                               byte[]    bca, byte[] aacs, PFI.PhysicalFormatInformation? decodedPfi)
+        internal void LoadData(MediaType mediaType, byte[] pfi, byte[] dmi, byte[] cmi, byte[] hdCopyrightInformation,
+                               byte[] bca, byte[] aacs, PFI.PhysicalFormatInformation? decodedPfi)
         {
             DvdPfi                    = pfi;
             DvdDmi                    = dmi;
@@ -73,9 +69,11 @@ namespace Aaru.Gui.Tabs
                 case MediaType.HDDVDRDL:
                 case MediaType.HDDVDRWDL:
                     Text = "HD DVD";
+
                     break;
                 default:
                     Text = "DVD";
+
                     break;
             }
 
@@ -107,47 +105,39 @@ namespace Aaru.Gui.Tabs
 
         void SaveElement(byte[] data)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(data, 0, data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveDvdPfiClick(object sender, EventArgs e)
-        {
-            SaveElement(DvdPfi);
-        }
+        protected void OnBtnSaveDvdPfiClick(object sender, EventArgs e) => SaveElement(DvdPfi);
 
-        protected void OnBtnSaveDvdDmiClick(object sender, EventArgs e)
-        {
-            SaveElement(DvdDmi);
-        }
+        protected void OnBtnSaveDvdDmiClick(object sender, EventArgs e) => SaveElement(DvdDmi);
 
-        protected void OnBtnSaveDvdCmiClick(object sender, EventArgs e)
-        {
-            SaveElement(DvdCmi);
-        }
+        protected void OnBtnSaveDvdCmiClick(object sender, EventArgs e) => SaveElement(DvdCmi);
 
-        protected void OnBtnSaveHdDvdCmiClick(object sender, EventArgs e)
-        {
-            SaveElement(HddvdCopyrightInformation);
-        }
+        protected void OnBtnSaveHdDvdCmiClick(object sender, EventArgs e) => SaveElement(HddvdCopyrightInformation);
 
-        protected void OnBtnSaveDvdBcaClick(object sender, EventArgs e)
-        {
-            SaveElement(DvdBca);
-        }
+        protected void OnBtnSaveDvdBcaClick(object sender, EventArgs e) => SaveElement(DvdBca);
 
-        protected void OnBtnSaveDvdAacsClick(object sender, EventArgs e)
-        {
-            SaveElement(DvdAacs);
-        }
+        protected void OnBtnSaveDvdAacsClick(object sender, EventArgs e) => SaveElement(DvdAacs);
 
         #region XAML controls
         #pragma warning disable 169

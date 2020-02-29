@@ -41,26 +41,33 @@ namespace Aaru.DiscImages
 {
     public partial class Blu
     {
-        public ImageInfo                  Info                => imageInfo;
-        public string                     Name                => "Basic Lisa Utility";
-        public Guid                       Id                  => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
-        public string                     Author              => "Natalia Portillo";
-        public string                     Format              => "Basic Lisa Utility";
-        public List<DumpHardwareType>     DumpHardware        => null;
-        public CICMMetadataType           CicmMetadata        => null;
-        public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
-        public IEnumerable<SectorTagType> SupportedSectorTags => new[] {SectorTagType.AppleSectorTag};
-        public IEnumerable<MediaType> SupportedMediaTypes =>
-            new[]
-            {
-                MediaType.AppleProfile, MediaType.AppleWidget, MediaType.PriamDataTower, MediaType.GENERIC_HDD,
-                MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2,
-                MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
-            };
+        public ImageInfo              Info         => imageInfo;
+        public string                 Name         => "Basic Lisa Utility";
+        public Guid                   Id           => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "Basic Lisa Utility";
+        public List<DumpHardwareType> DumpHardware => null;
+        public CICMMetadataType       CicmMetadata => null;
+        public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]
+            {};
+        public IEnumerable<SectorTagType> SupportedSectorTags => new[]
+        {
+            SectorTagType.AppleSectorTag
+        };
+        public IEnumerable<MediaType> SupportedMediaTypes => new[]
+        {
+            MediaType.AppleProfile, MediaType.AppleWidget, MediaType.PriamDataTower, MediaType.GENERIC_HDD,
+            MediaType.Unknown, MediaType.FlashDrive, MediaType.CompactFlash, MediaType.CompactFlashType2,
+            MediaType.PCCardTypeI, MediaType.PCCardTypeII, MediaType.PCCardTypeIII, MediaType.PCCardTypeIV
+        };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
-            new (string name, Type type, string description, object @default)[] { };
-        public IEnumerable<string> KnownExtensions => new[] {".blu"}; // Just invented
-        public bool                IsWriting       { get; private set; }
-        public string              ErrorMessage    { get; private set; }
+            new (string name, Type type, string description, object @default)[]
+                {};
+        public IEnumerable<string> KnownExtensions => new[]
+        {
+            ".blu"
+        }; // Just invented
+        public bool   IsWriting    { get; private set; }
+        public string ErrorMessage { get; private set; }
     }
 }
