@@ -295,9 +295,9 @@ namespace Aaru.Decoders.SCSI.MMC
             for(int i = 0; i < (AACSLBAExtsResponse.Length - 4) / 16; i++)
             {
                 decoded.Extents[i].Reserved = new byte[8];
-                Array.Copy(AACSLBAExtsResponse, 0 + i * 16 + 4, decoded.Extents[i].Reserved, 0, 8);
-                decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8 + i * 16  + 4);
-                decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + i * 16 + 4);
+                Array.Copy(AACSLBAExtsResponse, 0 + (i * 16) + 4, decoded.Extents[i].Reserved, 0, 8);
+                decoded.Extents[i].StartLBA = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 8 + (i * 16)  + 4);
+                decoded.Extents[i].LBACount = BigEndianBitConverter.ToUInt32(AACSLBAExtsResponse, 12 + (i * 16) + 4);
             }
 
             return decoded;

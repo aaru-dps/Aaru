@@ -168,16 +168,16 @@ namespace Aaru.Decoders.Floppy
 
             for(int i = 0; i < 51; i++)
             {
-                byte b1 = buffer[51 * 3 - i];
-                byte b2 = buffer[51 * 2 - i];
-                byte b3 = buffer[51     - i];
+                byte b1 = buffer[(51 * 3) - i];
+                byte b2 = buffer[(51 * 2) - i];
+                byte b3 = buffer[51       - i];
                 byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2)        | ((b3 & 2) >> 1)) & 0xFF);
                 byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1))        & 0xFF);
-                output[250 - 5 * i] = (byte)(((buffer[i + 51 * 3 + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
-                output[251 - 5 * i] = (byte)(((buffer[i + 51 * 4 + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
-                output[252 - 5 * i] = (byte)(((buffer[i + 51 * 5 + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
-                output[253 - 5 * i] = (byte)(((buffer[i + 51 * 6 + 1] << 3) | b4)                & 0xFF);
-                output[254 - 5 * i] = (byte)(((buffer[i + 51 * 7 + 1] << 3) | b5)                & 0xFF);
+                output[250 - (5 * i)] = (byte)(((buffer[i + (51 * 3) + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
+                output[251 - (5 * i)] = (byte)(((buffer[i + (51 * 4) + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
+                output[252 - (5 * i)] = (byte)(((buffer[i + (51 * 5) + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
+                output[253 - (5 * i)] = (byte)(((buffer[i + (51 * 6) + 1] << 3) | b4)                & 0xFF);
+                output[254 - (5 * i)] = (byte)(((buffer[i + (51 * 7) + 1] << 3) | b5)                & 0xFF);
             }
 
             output[255] = (byte)(((buffer[409] << 3) | (buffer[0] & 0x7)) & 0xFF);
@@ -220,8 +220,8 @@ namespace Aaru.Decoders.Floppy
                 }
                 else
                 {
-                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x10) >> 3) & 0xFF);
-                    output[i] |= (byte)(((buffer[i - 86 * 2] & 0x20) >> 5) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x10) >> 3) & 0xFF);
+                    output[i] |= (byte)(((buffer[i - (86 * 2)] & 0x20) >> 5) & 0xFF);
                 }
             }
 
@@ -306,24 +306,24 @@ namespace Aaru.Decoders.Floppy
                         };
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
-                                                  (((sector.addressField.volume[0] & 0x55) << 1) |
-                                                   (sector.addressField.volume[1] & 0x55)) & 0xFF);
+                                                   (((sector.addressField.volume[0] & 0x55) << 1) |
+                                                    (sector.addressField.volume[1] & 0x55)) & 0xFF);
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}",
-                                                  (((sector.addressField.track[0] & 0x55) << 1) |
-                                                   (sector.addressField.track[1] & 0x55)) & 0xFF);
+                                                   (((sector.addressField.track[0] & 0x55) << 1) |
+                                                    (sector.addressField.track[1] & 0x55)) & 0xFF);
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}",
-                                                  (((sector.addressField.sector[0] & 0x55) << 1) |
-                                                   (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                                                   (((sector.addressField.sector[0] & 0x55) << 1) |
+                                                    (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}",
-                                                  (((sector.addressField.checksum[0] & 0x55) << 1) |
-                                                   (sector.addressField.checksum[1] & 0x55)) & 0xFF);
+                                                   (((sector.addressField.checksum[0] & 0x55) << 1) |
+                                                    (sector.addressField.checksum[1] & 0x55)) & 0xFF);
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}",
-                                                  sector.addressField.epilogue[0], sector.addressField.epilogue[1],
-                                                  sector.addressField.epilogue[2]);
+                                                   sector.addressField.epilogue[0], sector.addressField.epilogue[1],
+                                                   sector.addressField.epilogue[2]);
 
                         position += 14;
                         int  syncCount = 0;
@@ -351,7 +351,7 @@ namespace Aaru.Decoders.Floppy
                         sector.dataField = new RawDataField();
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes",
-                                                  sector.innerGap.Length);
+                                                   sector.innerGap.Length);
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
                         sector.dataField.prologue    =  new byte[3];
@@ -377,7 +377,7 @@ namespace Aaru.Decoders.Floppy
                         sector.dataField.data = gaps.ToArray();
 
                         AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes",
-                                                  sector.dataField.data.Length);
+                                                   sector.dataField.data.Length);
 
                         sector.dataField.checksum    = data[position];
                         sector.dataField.epilogue    = new byte[3];
@@ -519,10 +519,10 @@ namespace Aaru.Decoders.Floppy
                 }
 
                 AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}",
-                                          (((sector.addressField.sector[0] & 0x55) << 1) |
-                                           (sector.addressField.sector[1] & 0x55)) & 0xFF,
-                                          (((sector.addressField.track[0] & 0x55) << 1) |
-                                           (sector.addressField.track[1] & 0x55)) & 0xFF);
+                                           (((sector.addressField.sector[0] & 0x55) << 1) |
+                                            (sector.addressField.sector[1] & 0x55)) & 0xFF,
+                                           (((sector.addressField.track[0] & 0x55) << 1) |
+                                            (sector.addressField.track[1] & 0x55)) & 0xFF);
 
                 sectors.Add(sector);
             }

@@ -50,23 +50,28 @@ namespace Aaru.Decoders.Bluray
         public enum BluSize : byte
         {
             /// <summary>120mm</summary>
-            OneTwenty = 0, /// <summary>80mm</summary>
+            OneTwenty = 0,
+            /// <summary>80mm</summary>
             Eighty = 1
         }
 
         public enum ChannelLength : byte
         {
             /// <summary>74.5nm channel or 25Gb/layer</summary>
-            Seventy = 1, /// <summary>69.0nm channel or 27Gb/layer</summary>
+            Seventy = 1,
+            /// <summary>69.0nm channel or 27Gb/layer</summary>
             Sixty = 2
         }
 
         public enum HybridLayer : byte
         {
             /// <summary>No hybrid layer</summary>
-            None = 0, /// <summary>-ROM layer</summary>
-            ReadOnly = 1, /// <summary>-R layer</summary>
-            Recordable = 2, /// <summary>-RW layer</summary>
+            None = 0,
+            /// <summary>-ROM layer</summary>
+            ReadOnly = 1,
+            /// <summary>-R layer</summary>
+            Recordable = 2,
+            /// <summary>-RW layer</summary>
             Rewritable = 3
         }
 
@@ -88,8 +93,8 @@ namespace Aaru.Decoders.Bluray
             if(DIResponse.Length != 4100)
             {
                 AaruConsole.DebugWriteLine("BD Disc Information decoder",
-                                          "Found incorrect Blu-ray Disc Information size ({0} bytes)",
-                                          DIResponse.Length);
+                                           "Found incorrect Blu-ray Disc Information size ({0} bytes)",
+                                           DIResponse.Length);
 
                 return null;
             }
@@ -178,8 +183,8 @@ namespace Aaru.Decoders.Bluray
                     default:
                     {
                         AaruConsole.DebugWriteLine("BD Disc Information decoder",
-                                                  "Found unknown disc type identifier \"{0}\"",
-                                                  Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
+                                                   "Found unknown disc type identifier \"{0}\"",
+                                                   Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 
                         break;
                     }

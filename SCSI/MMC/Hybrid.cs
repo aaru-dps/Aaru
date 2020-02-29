@@ -64,7 +64,7 @@ namespace Aaru.Decoders.SCSI.MMC
             };
 
             for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
-                decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
+                decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, (i * 2) + 6);
 
             return decoded;
         }
@@ -83,7 +83,7 @@ namespace Aaru.Decoders.SCSI.MMC
             for(int i = 0; i < response.FormatLayers.Length; i++)
                 switch(response.FormatLayers[i])
                 {
-                    case(ushort)FormatLayerTypeCodes.BDLayer:
+                    case (ushort)FormatLayerTypeCodes.BDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type Blu-ray", i).AppendLine();
 
@@ -96,7 +96,7 @@ namespace Aaru.Decoders.SCSI.MMC
                         break;
                     }
 
-                    case(ushort)FormatLayerTypeCodes.CDLayer:
+                    case (ushort)FormatLayerTypeCodes.CDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
 
@@ -109,7 +109,7 @@ namespace Aaru.Decoders.SCSI.MMC
                         break;
                     }
 
-                    case(ushort)FormatLayerTypeCodes.DVDLayer:
+                    case (ushort)FormatLayerTypeCodes.DVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
 
@@ -122,7 +122,7 @@ namespace Aaru.Decoders.SCSI.MMC
                         break;
                     }
 
-                    case(ushort)FormatLayerTypeCodes.HDDVDLayer:
+                    case (ushort)FormatLayerTypeCodes.HDDVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
 

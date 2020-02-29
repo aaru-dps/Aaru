@@ -69,28 +69,28 @@ namespace Aaru.Decoders.CD
             if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
                 AaruConsole.DebugWriteLine("CD full TOC decoder",
-                                          "Expected CDFullTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
-                                          decoded.DataLength + 2, CDFullTOCResponse.Length);
+                                           "Expected CDFullTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                           decoded.DataLength + 2, CDFullTOCResponse.Length);
 
                 return null;
             }
 
             for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
-                decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + i * 11 + 4];
-                decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + i * 11 + 4] & 0x0F);
-                decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + i * 11 + 4];
-                decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + i * 11 + 4];
-                decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + i * 11 + 4];
-                decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + i * 11 + 4] & 0x0F);
-                decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8 + i * 11  + 4];
-                decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9 + i * 11  + 4];
-                decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + i * 11 + 4];
+                decoded.TrackDescriptors[i].SessionNumber = CDFullTOCResponse[0 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].ADR           = (byte)((CDFullTOCResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
+                decoded.TrackDescriptors[i].CONTROL       = (byte)(CDFullTOCResponse[1 + (i * 11) + 4] & 0x0F);
+                decoded.TrackDescriptors[i].TNO           = CDFullTOCResponse[2 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].POINT         = CDFullTOCResponse[3 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].Min           = CDFullTOCResponse[4 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].Sec           = CDFullTOCResponse[5 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].Frame         = CDFullTOCResponse[6 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + (i * 11) + 4];
+                decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
+                decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + (i * 11) + 4] & 0x0F);
+                decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8 + (i * 11)  + 4];
+                decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9 + (i * 11)  + 4];
+                decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + (i * 11) + 4];
             }
 
             return decoded;
@@ -111,8 +111,8 @@ namespace Aaru.Decoders.CD
             sb.AppendFormat("Last complete session number: {0}", response.LastCompleteSession).AppendLine();
 
             foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
-                if((descriptor.CONTROL & 0x08) == 0x08                                                      ||
-                   descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6 ||
+                if((descriptor.CONTROL & 0x08) == 0x08                                                        ||
+                   (descriptor.ADR != 1 && descriptor.ADR != 5 && descriptor.ADR != 4 && descriptor.ADR != 6) ||
                    descriptor.TNO != 0)
                 {
                     sb.AppendLine("Unknown TOC entry format, printing values as-is");

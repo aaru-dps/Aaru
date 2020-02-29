@@ -90,12 +90,13 @@ namespace Aaru.Decoders.Xbox
             for(int i = 0; i < 23; i++)
                 ss.ChallengeEntries[i] = new ChallengeEntry
                 {
-                    Level = response[770 + i * 11 + 0], ChallengeId = response[770 + i * 11 + 1],
-                    ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) + (response[770 + i * 11 + 3] << 16) +
-                                            (response[770 + i * 11 + 4] << 8)  + response[770 + i * 11 + 5]),
-                    ResponseModifier = response[770 + i * 11 + 6],
-                    ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) + (response[770 + i * 11 + 8] << 16) +
-                                           (response[770 + i * 11 + 9] << 8)  + response[770 + i * 11 + 10])
+                    Level = response[770 + (i * 11) + 0], ChallengeId = response[770 + (i * 11) + 1],
+                    ChallengeValue = (uint)((response[770 + (i * 11) + 2] << 24) +
+                                            (response[770 + (i * 11) + 3] << 16) + (response[770 + (i * 11) + 4] << 8) +
+                                            response[770 + (i * 11) + 5]),
+                    ResponseModifier = response[770 + (i * 11) + 6],
+                    ResponseValue = (uint)((response[770 + (i * 11) + 7] << 24) + (response[770 + (i * 11) + 8] << 16) +
+                                           (response[770 + (i * 11) + 9] << 8)  + response[770 + (i * 11) + 10])
                 };
 
             Array.Copy(response, 1052, ss.Unknown7, 0, 48);
@@ -107,23 +108,23 @@ namespace Aaru.Decoders.Xbox
             for(int i = 0; i < 23; i++)
                 ss.Extents[i] = new SecuritySectorExtent
                 {
-                    Unknown = (uint)((response[1633 + i * 9 + 0] << 16) + (response[1633 + i * 9 + 1] << 8) +
-                                     response[1633 + i * 9 + 2]),
-                    StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) + (response[1633 + i * 9 + 4] << 8) +
-                                      response[1633 + i * 9 + 5]),
-                    EndPSN = (uint)((response[1633 + i * 9 + 6] << 16) + (response[1633 + i * 9 + 7] << 8) +
-                                    response[1633 + i * 9 + 8])
+                    Unknown = (uint)((response[1633 + (i * 9) + 0] << 16) + (response[1633 + (i * 9) + 1] << 8) +
+                                     response[1633 + (i * 9) + 2]),
+                    StartPSN = (uint)((response[1633 + (i * 9) + 3] << 16) + (response[1633 + (i * 9) + 4] << 8) +
+                                      response[1633 + (i * 9) + 5]),
+                    EndPSN = (uint)((response[1633 + (i * 9) + 6] << 16) + (response[1633 + (i * 9) + 7] << 8) +
+                                    response[1633 + (i * 9) + 8])
                 };
 
             for(int i = 0; i < 23; i++)
                 ss.ExtentsCopy[i] = new SecuritySectorExtent
                 {
-                    Unknown = (uint)((response[1840 + i * 9 + 0] << 16) + (response[1840 + i * 9 + 1] << 8) +
-                                     response[1840 + i * 9 + 2]),
-                    StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) + (response[1840 + i * 9 + 4] << 8) +
-                                      response[1840 + i * 9 + 5]),
-                    EndPSN = (uint)((response[1840 + i * 9 + 6] << 16) + (response[1840 + i * 9 + 7] << 8) +
-                                    response[1840 + i * 9 + 8])
+                    Unknown = (uint)((response[1840 + (i * 9) + 0] << 16) + (response[1840 + (i * 9) + 1] << 8) +
+                                     response[1840 + (i * 9) + 2]),
+                    StartPSN = (uint)((response[1840 + (i * 9) + 3] << 16) + (response[1840 + (i * 9) + 4] << 8) +
+                                      response[1840 + (i * 9) + 5]),
+                    EndPSN = (uint)((response[1840 + (i * 9) + 6] << 16) + (response[1840 + (i * 9) + 7] << 8) +
+                                    response[1840 + (i * 9) + 8])
                 };
 
             return ss;

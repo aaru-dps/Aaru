@@ -96,16 +96,17 @@ namespace Aaru.Decoders.SCSI.MMC
             decoded.OPCTablesNumber     = response[33];
 
             if(decoded.OPCTablesNumber <= 0 ||
-               response.Length         != decoded.OPCTablesNumber * 8 + 34)
+               response.Length         != (decoded.OPCTablesNumber * 8) + 34)
                 return decoded;
 
             decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
 
             for(int i = 0; i < decoded.OPCTablesNumber; i++)
             {
-                decoded.OPCTables[i].Speed     = (ushort)((response[34 + i * 8 + 0] << 16) + response[34 + i * 8 + 1]);
+                decoded.OPCTables[i].Speed = (ushort)((response[34 + (i * 8) + 0] << 16) + response[34 + (i * 8) + 1]);
+
                 decoded.OPCTables[i].OPCValues = new byte[6];
-                Array.Copy(response, 34 + i * 8 + 2, decoded.OPCTables[i].OPCValues, 0, 6);
+                Array.Copy(response, 34 + (i * 8) + 2, decoded.OPCTables[i].OPCValues, 0, 6);
             }
 
             return decoded;

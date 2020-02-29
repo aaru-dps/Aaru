@@ -57,8 +57,8 @@ namespace Aaru.Decoders.CD
                CDATIPResponse.Length != 28)
             {
                 AaruConsole.DebugWriteLine("CD ATIP decoder",
-                                          "Expected CD ATIP size (32 bytes) is not received size ({0} bytes), not decoding",
-                                          CDATIPResponse.Length);
+                                           "Expected CD ATIP size (32 bytes) is not received size ({0} bytes), not decoding",
+                                           CDATIPResponse.Length);
 
                 return null;
             }
@@ -322,169 +322,169 @@ namespace Aaru.Decoders.CD
                 case 15:
                     switch(frm)
                     {
-                        case 00: return"TDK Corporation";
-                        case 10: return"Ritek Co.";
-                        case 20: return"Mitsubishi Chemical Corporation";
-                        case 30: return"NAN-YA Plastics Corporation";
+                        case 00: return "TDK Corporation";
+                        case 10: return "Ritek Co.";
+                        case 20: return "Mitsubishi Chemical Corporation";
+                        case 30: return "NAN-YA Plastics Corporation";
                     }
 
                     break;
                 case 16:
                     switch(frm)
                     {
-                        case 20: return"Shenzen SG&Gast Digital Optical Discs";
-                        case 30: return"Grand Advance Technology Ltd.";
+                        case 20: return "Shenzen SG&Gast Digital Optical Discs";
+                        case 30: return "Grand Advance Technology Ltd.";
                     }
 
                     break;
                 case 17:
                     if(frm == 00)
-                        return"Moser Baer India Limited";
+                        return "Moser Baer India Limited";
 
                     break;
                 case 18:
                     switch(frm)
                     {
-                        case 10: return"Wealth Fair Investment Ltd.";
-                        case 60: return"Taroko International Co. Ltd.";
+                        case 10: return "Wealth Fair Investment Ltd.";
+                        case 60: return "Taroko International Co. Ltd.";
                     }
 
                     break;
                 case 20:
                     if(frm == 10)
-                        return"CDA Datenträger Albrechts GmbH";
+                        return "CDA Datenträger Albrechts GmbH";
 
                     break;
                 case 21:
                     switch(frm)
                     {
-                        case 10: return"Grupo Condor S.L.";
-                        case 30: return"Bestdisc Technology Corporation";
-                        case 40: return"Optical Disc Manufacturing Equipment";
-                        case 50: return"Sound Sound Multi-Media Development Ltd.";
+                        case 10: return "Grupo Condor S.L.";
+                        case 30: return "Bestdisc Technology Corporation";
+                        case 40: return "Optical Disc Manufacturing Equipment";
+                        case 50: return "Sound Sound Multi-Media Development Ltd.";
                     }
 
                     break;
                 case 22:
                     switch(frm)
                     {
-                        case 00: return"Woongjin Media Corp.";
-                        case 10: return"Seantram Technology Inc.";
-                        case 20: return"Advanced Digital Media";
-                        case 30: return"EXIMPO";
-                        case 40: return"CIS Technology Inc.";
-                        case 50: return"Hong Kong Digital Technology Co., Ltd.";
-                        case 60: return"Acer Media Technology, Inc.";
+                        case 00: return "Woongjin Media Corp.";
+                        case 10: return "Seantram Technology Inc.";
+                        case 20: return "Advanced Digital Media";
+                        case 30: return "EXIMPO";
+                        case 40: return "CIS Technology Inc.";
+                        case 50: return "Hong Kong Digital Technology Co., Ltd.";
+                        case 60: return "Acer Media Technology, Inc.";
                     }
 
                     break;
                 case 23:
                     switch(frm)
                     {
-                        case 00: return"Matsushita Electric Industrial Co., Ltd.";
-                        case 10: return"Doremi Media Co., Ltd.";
-                        case 20: return"Nacar Media s.r.l.";
-                        case 30: return"Audio Distributors Co., Ltd.";
-                        case 40: return"Victor Company of Japan, Ltd.";
-                        case 50: return"Optrom Inc.";
-                        case 60: return"Customer Pressing Oosterhout";
+                        case 00: return "Matsushita Electric Industrial Co., Ltd.";
+                        case 10: return "Doremi Media Co., Ltd.";
+                        case 20: return "Nacar Media s.r.l.";
+                        case 30: return "Audio Distributors Co., Ltd.";
+                        case 40: return "Victor Company of Japan, Ltd.";
+                        case 50: return "Optrom Inc.";
+                        case 60: return "Customer Pressing Oosterhout";
                     }
 
                     break;
                 case 24:
                     switch(frm)
                     {
-                        case 00: return"Taiyo Yuden Company Ltd.";
-                        case 10: return"SONY Corporation";
-                        case 20: return"Computer Support Italy s.r.l.";
-                        case 30: return"Unitech Japan Inc.";
-                        case 40: return"kdg mediatech AG";
-                        case 50: return"Guann Yinn Co., Ltd.";
-                        case 60: return"Harmonic Hall Optical Disc Ltd.";
+                        case 00: return "Taiyo Yuden Company Ltd.";
+                        case 10: return "SONY Corporation";
+                        case 20: return "Computer Support Italy s.r.l.";
+                        case 30: return "Unitech Japan Inc.";
+                        case 40: return "kdg mediatech AG";
+                        case 50: return "Guann Yinn Co., Ltd.";
+                        case 60: return "Harmonic Hall Optical Disc Ltd.";
                     }
 
                     break;
                 case 25:
                     switch(frm)
                     {
-                        case 00: return"MPO";
-                        case 20: return"Hitachi Maxell, Ltd.";
-                        case 30: return"Infodisc Technology Co. Ltd.";
-                        case 40: return"Vivastar AG";
-                        case 50: return"AMS Technology Inc.";
-                        case 60: return"Xcitec Inc.";
+                        case 00: return "MPO";
+                        case 20: return "Hitachi Maxell, Ltd.";
+                        case 30: return "Infodisc Technology Co. Ltd.";
+                        case 40: return "Vivastar AG";
+                        case 50: return "AMS Technology Inc.";
+                        case 60: return "Xcitec Inc.";
                     }
 
                     break;
                 case 26:
                     switch(frm)
                     {
-                        case 00: return"Fornet International Pte Ltd.";
-                        case 10: return"POSTECH Corporation";
-                        case 20: return"SKC Co., Ltd.";
-                        case 30: return"Optical Disc Corporation";
-                        case 40: return"FUJI Photo Film Co., Ltd.";
-                        case 50: return"Lead Data Inc.";
-                        case 60: return"CMC Magnetics Corporation";
+                        case 00: return "Fornet International Pte Ltd.";
+                        case 10: return "POSTECH Corporation";
+                        case 20: return "SKC Co., Ltd.";
+                        case 30: return "Optical Disc Corporation";
+                        case 40: return "FUJI Photo Film Co., Ltd.";
+                        case 50: return "Lead Data Inc.";
+                        case 60: return "CMC Magnetics Corporation";
                     }
 
                     break;
                 case 27:
                     switch(frm)
                     {
-                        case 00: return"Digital Storage Technology Co., Ltd.";
-                        case 10: return"Plasmon Data systems Ltd.";
-                        case 20: return"Princo Corporation";
-                        case 30: return"Pioneer Video Corporation";
-                        case 40: return"Kodak Japan Ltd.";
-                        case 50: return"Mitsui Chemicals, Inc.";
-                        case 60: return"Ricoh Company Ltd.";
+                        case 00: return "Digital Storage Technology Co., Ltd.";
+                        case 10: return "Plasmon Data systems Ltd.";
+                        case 20: return "Princo Corporation";
+                        case 30: return "Pioneer Video Corporation";
+                        case 40: return "Kodak Japan Ltd.";
+                        case 50: return "Mitsui Chemicals, Inc.";
+                        case 60: return "Ricoh Company Ltd.";
                     }
 
                     break;
                 case 28:
                     switch(frm)
                     {
-                        case 00: return"Opti.Me.S. S.p.A.";
-                        case 10: return"Gigastore Corporation";
-                        case 20: return"Multi Media Masters & Machinary SA";
-                        case 30: return"Auvistar Industry Co., Ltd.";
-                        case 40: return"King Pro Mediatek Inc.";
-                        case 50: return"Delphi Technology Inc.";
-                        case 60: return"Friendly CD-Tek Co.";
+                        case 00: return "Opti.Me.S. S.p.A.";
+                        case 10: return "Gigastore Corporation";
+                        case 20: return "Multi Media Masters & Machinary SA";
+                        case 30: return "Auvistar Industry Co., Ltd.";
+                        case 40: return "King Pro Mediatek Inc.";
+                        case 50: return "Delphi Technology Inc.";
+                        case 60: return "Friendly CD-Tek Co.";
                     }
 
                     break;
                 case 29:
                     switch(frm)
                     {
-                        case 00: return"Taeil Media Co., Ltd.";
-                        case 10: return"Vanguard Disc Inc.";
-                        case 20: return"Unidisc Technology Co., Ltd.";
-                        case 30: return"Hile Optical Disc Technology Corp.";
-                        case 40: return"Viva Magnetics Ltd.";
-                        case 50: return"General Magnetics Ltd.";
+                        case 00: return "Taeil Media Co., Ltd.";
+                        case 10: return "Vanguard Disc Inc.";
+                        case 20: return "Unidisc Technology Co., Ltd.";
+                        case 30: return "Hile Optical Disc Technology Corp.";
+                        case 40: return "Viva Magnetics Ltd.";
+                        case 50: return "General Magnetics Ltd.";
                     }
 
                     break;
                 case 30:
                     if(frm == 10)
-                        return"CDA Datenträger Albrechts GmbH";
+                        return "CDA Datenträger Albrechts GmbH";
 
                     break;
                 case 31:
                     switch(frm)
                     {
-                        case 00: return"Ritek Co.";
-                        case 30: return"Grand Advance Technology Ltd.";
+                        case 00: return "Ritek Co.";
+                        case 30: return "Grand Advance Technology Ltd.";
                     }
 
                     break;
                 case 32:
                     switch(frm)
                     {
-                        case 00: return"TDK Corporation";
-                        case 10: return"Prodisc Technology Inc.";
+                        case 00: return "TDK Corporation";
+                        case 10: return "Prodisc Technology Inc.";
                     }
 
                     break;
@@ -492,97 +492,97 @@ namespace Aaru.Decoders.CD
                     switch(frm)
                     {
                         case 20:
-                        case 22: return"Mitsubishi Chemical Corporation";
+                        case 22: return "Mitsubishi Chemical Corporation";
                     }
 
                     break;
                 case 42:
                     if(frm == 20)
-                        return"Advanced Digital Media";
+                        return "Advanced Digital Media";
 
                     break;
                 case 45:
                     switch(frm)
                     {
-                        case 00: return"Fornet International Pte Ltd.";
-                        case 10: return"Unitech Japan Inc.";
-                        case 20: return"Acer Media Technology, Inc.";
-                        case 40: return"CIS Technology Inc.";
-                        case 50: return"Guann Yinn Co., Ltd.";
-                        case 60: return"Xcitec Inc.";
+                        case 00: return "Fornet International Pte Ltd.";
+                        case 10: return "Unitech Japan Inc.";
+                        case 20: return "Acer Media Technology, Inc.";
+                        case 40: return "CIS Technology Inc.";
+                        case 50: return "Guann Yinn Co., Ltd.";
+                        case 60: return "Xcitec Inc.";
                     }
 
                     break;
                 case 46:
                     switch(frm)
                     {
-                        case 00: return"Taiyo Yuden Company Ltd.";
-                        case 10: return"Hong Kong Digital Technology Co., Ltd.";
-                        case 20: return"Multi Media Masters & Machinary SA";
-                        case 30: return"Computer Support Italy s.r.l.";
-                        case 40: return"FUJI Photo Film Co., Ltd.";
-                        case 50: return"Auvistar Industry Co., Ltd.";
-                        case 60: return"CMC Magnetics Corporation";
+                        case 00: return "Taiyo Yuden Company Ltd.";
+                        case 10: return "Hong Kong Digital Technology Co., Ltd.";
+                        case 20: return "Multi Media Masters & Machinary SA";
+                        case 30: return "Computer Support Italy s.r.l.";
+                        case 40: return "FUJI Photo Film Co., Ltd.";
+                        case 50: return "Auvistar Industry Co., Ltd.";
+                        case 60: return "CMC Magnetics Corporation";
                     }
 
                     break;
                 case 47:
                     switch(frm)
                     {
-                        case 10: return"Hitachi Maxell, Ltd.";
-                        case 20: return"Princo Corporation";
-                        case 40: return"POSTECH Corporation";
-                        case 50: return"Ritek Co.";
-                        case 60: return"Prodisc Technology Inc.";
+                        case 10: return "Hitachi Maxell, Ltd.";
+                        case 20: return "Princo Corporation";
+                        case 40: return "POSTECH Corporation";
+                        case 50: return "Ritek Co.";
+                        case 60: return "Prodisc Technology Inc.";
                     }
 
                     break;
                 case 48:
                     switch(frm)
                     {
-                        case 00: return"Ricoh Company Ltd.";
-                        case 10: return"Kodak Japan Ltd.";
-                        case 20: return"Plasmon Data systems Ltd.";
-                        case 30: return"Pioneer Video Corporation";
-                        case 40: return"Digital Storage Technology Co., Ltd.";
-                        case 50: return"Mitsui Chemicals, Inc.";
-                        case 60: return"Lead Data Inc.";
+                        case 00: return "Ricoh Company Ltd.";
+                        case 10: return "Kodak Japan Ltd.";
+                        case 20: return "Plasmon Data systems Ltd.";
+                        case 30: return "Pioneer Video Corporation";
+                        case 40: return "Digital Storage Technology Co., Ltd.";
+                        case 50: return "Mitsui Chemicals, Inc.";
+                        case 60: return "Lead Data Inc.";
                     }
 
                     break;
                 case 49:
                     switch(frm)
                     {
-                        case 00: return"TDK Corporation";
-                        case 10: return"Gigastore Corporation";
-                        case 20: return"King Pro Mediatek Inc.";
-                        case 30: return"Opti.Me.S. S.p.A.";
-                        case 40: return"Victor Company of Japan, Ltd.";
-                        case 60: return"Matsushita Electric Industrial Co., Ltd.";
+                        case 00: return "TDK Corporation";
+                        case 10: return "Gigastore Corporation";
+                        case 20: return "King Pro Mediatek Inc.";
+                        case 30: return "Opti.Me.S. S.p.A.";
+                        case 40: return "Victor Company of Japan, Ltd.";
+                        case 60: return "Matsushita Electric Industrial Co., Ltd.";
                     }
 
                     break;
                 case 50:
                     switch(frm)
                     {
-                        case 10: return"Vanguard Disc Inc.";
-                        case 20: return"Mitsubishi Chemical Corporation";
-                        case 30: return"CDA Datenträger Albrechts GmbH";
+                        case 10: return "Vanguard Disc Inc.";
+                        case 20: return "Mitsubishi Chemical Corporation";
+                        case 30: return "CDA Datenträger Albrechts GmbH";
                     }
 
                     break;
                 case 51:
                     switch(frm)
                     {
-                        case 10: return"Grand Advance Technology Ltd.";
-                        case 20: return"Infodisc Technology Co. Ltd.";
-                        case 50: return"Hile Optical Disc Technology Corp.";
+                        case 10: return "Grand Advance Technology Ltd.";
+                        case 20: return "Infodisc Technology Co. Ltd.";
+                        case 50: return "Hile Optical Disc Technology Corp.";
                     }
 
                     break;
             }
 
-            return"";
+            return "";
         }
 
         public struct CDATIP

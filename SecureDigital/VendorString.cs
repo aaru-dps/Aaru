@@ -38,11 +38,11 @@ namespace Aaru.Decoders.SecureDigital
         {
             switch(sdVendorId)
             {
-                case 0x02: return"Kingston";
-                case 0x03: return"Sandisk";
-                case 0x27: return"CnMemory";
-                case 0xAA: return"QEMU";
-                default:   return$"Unknown manufacturer ID 0x{sdVendorId:X2}";
+                case 0x02: return "Kingston";
+                case 0x03: return "Sandisk";
+                case 0x27: return "CnMemory";
+                case 0xAA: return "QEMU";
+                default:   return $"Unknown manufacturer ID 0x{sdVendorId:X2}";
             }
         }
     }

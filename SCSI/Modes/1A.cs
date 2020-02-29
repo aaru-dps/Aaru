@@ -140,8 +140,8 @@ namespace Aaru.Decoders.SCSI
             if(page.PS)
                 sb.AppendLine("\tParameters can be saved");
 
-            if(page.Standby   && page.StandbyTimer   > 0 ||
-               page.Standby_Y && page.StandbyTimer_Y > 0)
+            if((page.Standby   && page.StandbyTimer   > 0) ||
+               (page.Standby_Y && page.StandbyTimer_Y > 0))
             {
                 if(page.Standby &&
                    page.StandbyTimer > 0)
@@ -154,9 +154,9 @@ namespace Aaru.Decoders.SCSI
             else
                 sb.AppendLine("\tDrive will not enter standy mode");
 
-            if(page.Idle   && page.IdleTimer   > 0 ||
-               page.Idle_B && page.IdleTimer_B > 0 ||
-               page.Idle_C && page.IdleTimer_C > 0)
+            if((page.Idle   && page.IdleTimer   > 0) ||
+               (page.Idle_B && page.IdleTimer_B > 0) ||
+               (page.Idle_C && page.IdleTimer_C > 0))
             {
                 if(page.Idle &&
                    page.IdleTimer > 0)

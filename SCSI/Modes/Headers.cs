@@ -51,7 +51,7 @@ namespace Aaru.Decoders.SCSI
                     return
                         "ECMA-59 & ANSI X3.121-1984: 200 mm Flexible Disk Cartridge using Two-Frequency Recording at 13262 ftprad on Both Sides";
                 case MediumTypes.ECMA69:
-                    return"ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides";
+                    return "ECMA-69: 200 mm Flexible Disk Cartridge using MFM Recording at 13262 ftprad on Both Sides";
                 case MediumTypes.ECMA66:
                     return
                         "ECMA-66: 130 mm Flexible Disk Cartridge using Two-Frequency Recording at 7958 ftprad on One Side";
@@ -75,16 +75,16 @@ namespace Aaru.Decoders.SCSI
                 case MediumTypes.Unspecified_DS:
                     return "Unspecified double sided flexible disk";
                 */
-                case MediumTypes.X3_73:    return"ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
-                case MediumTypes.X3_73_DS: return"ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
-                case MediumTypes.X3_82:    return"ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73:    return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 1 side";
+                case MediumTypes.X3_73_DS: return "ANSI X3.73-1980: 200 mm, 6631 ftprad, 1,9 Tracks per mm, 2 sides";
+                case MediumTypes.X3_82:    return "ANSI X3.80-1980: 130 mm, 3979 ftprad, 1,9 Tracks per mm, 1 side";
                 case MediumTypes.Type3Floppy:
-                    return"3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
-                case MediumTypes.HDFloppy: return"3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
-                case MediumTypes.ReadOnly: return"a Read-only optical";
-                case MediumTypes.WORM:     return"a Write-once Read-many optical";
-                case MediumTypes.Erasable: return"a Erasable optical";
-                case MediumTypes.RO_WORM:  return"a combination of read-only and write-once optical";
+                    return "3.5-inch, 135 tpi, 12362 bits/radian, double-sided MFM (aka 1.25Mb)";
+                case MediumTypes.HDFloppy: return "3.5-inch, 135 tpi, 15916 bits/radian, double-sided MFM (aka 1.44Mb)";
+                case MediumTypes.ReadOnly: return "a Read-only optical";
+                case MediumTypes.WORM:     return "a Write-once Read-many optical";
+                case MediumTypes.Erasable: return "a Erasable optical";
+                case MediumTypes.RO_WORM:  return "a combination of read-only and write-once optical";
 
                 // These magneto-opticals were never manufactured
                 /*
@@ -94,9 +94,9 @@ namespace Aaru.Decoders.SCSI
                 case MediumTypes.WORM_RW:
                     return "a combination of write-once and erasable optical";
                 */
-                case MediumTypes.DOW:  return"a direct-overwrite optical";
-                case MediumTypes.HiMD: return"a Sony Hi-MD disc";
-                default:               return$"Unknown medium type 0x{(byte)type:X2}";
+                case MediumTypes.DOW:  return "a direct-overwrite optical";
+                case MediumTypes.HiMD: return "a Sony Hi-MD disc";
+                default:               return $"Unknown medium type 0x{(byte)type:X2}";
             }
         }
 

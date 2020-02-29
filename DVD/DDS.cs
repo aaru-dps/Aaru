@@ -69,11 +69,9 @@ namespace Aaru.Decoders.DVD
             dds.UserCertification         |= (response[7] & 0x02) == 0x02;
             dds.ManufacturerCertification |= (response[7] & 0x01) == 0x01;
 
-            dds.UpdateCount =
-                (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
+            dds.UpdateCount = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]);
 
-            dds.Groups =
-                (ushort)((response[12] << 8) + response[13]);
+            dds.Groups = (ushort)((response[12] << 8) + response[13]);
 
             // ECMA-272
             if(dds.Groups == 24)
@@ -110,8 +108,8 @@ namespace Aaru.Decoders.DVD
                 dds.StartLSNForZone   = new uint[dds.Zones];
 
                 for(int i = 0; i < dds.Zones; i++)
-                    dds.StartLSNForZone[i] = (uint)((response[260 + i * 4 + 1] << 16) +
-                                                    (response[260 + i * 4 + 2] << 8)  + response[260 + i * 4 + 3]);
+                    dds.StartLSNForZone[i] = (uint)((response[260 + (i * 4) + 1] << 16) +
+                                                    (response[260 + (i * 4) + 2] << 8)  + response[260 + (i * 4) + 3]);
             }
 
             return dds;

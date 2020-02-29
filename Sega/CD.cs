@@ -52,64 +52,64 @@ namespace Aaru.Decoders.Sega
             if(ipbin_sector.Length < 512)
                 return null;
 
-            var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
+            IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.volume_name));
+                                       Encoding.ASCII.GetString(ipbin.volume_name));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.system_name));
+                                       Encoding.ASCII.GetString(ipbin.system_name));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
-                                      ipbin.volume_version);
+                                       ipbin.volume_version);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
-                                      ipbin.volume_type);
+                                       ipbin.volume_type);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
-                                      ipbin.system_version);
+                                       ipbin.system_version);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
-                                      ipbin.ip_entry_address);
+                                       ipbin.ip_entry_address);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
-                                      ipbin.ip_work_ram_size);
+                                       ipbin.ip_work_ram_size);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
-                                      ipbin.sp_entry_address);
+                                       ipbin.sp_entry_address);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
-                                      ipbin.sp_work_ram_size);
+                                       ipbin.sp_work_ram_size);
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.release_date));
+                                       Encoding.ASCII.GetString(ipbin.release_date));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.release_date2));
+                                       Encoding.ASCII.GetString(ipbin.release_date2));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.developer_code));
+                                       Encoding.ASCII.GetString(ipbin.developer_code));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.domestic_title));
+                                       Encoding.ASCII.GetString(ipbin.domestic_title));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.overseas_title));
+                                       Encoding.ASCII.GetString(ipbin.overseas_title));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.product_code));
+                                       Encoding.ASCII.GetString(ipbin.product_code));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.peripherals));
+                                       Encoding.ASCII.GetString(ipbin.peripherals));
 
             AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.region_codes));
+                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
             string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
 
@@ -213,51 +213,51 @@ namespace Aaru.Decoders.Sega
             foreach(byte peripheral in ipbin.peripherals)
                 switch((char)peripheral)
                 {
-                    case'A':
+                    case 'A':
                         IPBinInformation.AppendLine("Game supports analog controller.");
 
                         break;
-                    case'B':
+                    case 'B':
                         IPBinInformation.AppendLine("Game supports trackball.");
 
                         break;
-                    case'G':
+                    case 'G':
                         IPBinInformation.AppendLine("Game supports light gun.");
 
                         break;
-                    case'J':
+                    case 'J':
                         IPBinInformation.AppendLine("Game supports JoyPad.");
 
                         break;
-                    case'K':
+                    case 'K':
                         IPBinInformation.AppendLine("Game supports keyboard.");
 
                         break;
-                    case'M':
+                    case 'M':
                         IPBinInformation.AppendLine("Game supports mouse.");
 
                         break;
-                    case'O':
+                    case 'O':
                         IPBinInformation.AppendLine("Game supports Master System's JoyPad.");
 
                         break;
-                    case'P':
+                    case 'P':
                         IPBinInformation.AppendLine("Game supports printer interface.");
 
                         break;
-                    case'R':
+                    case 'R':
                         IPBinInformation.AppendLine("Game supports serial (RS-232C) interface.");
 
                         break;
-                    case'T':
+                    case 'T':
                         IPBinInformation.AppendLine("Game supports tablet interface.");
 
                         break;
-                    case'V':
+                    case 'V':
                         IPBinInformation.AppendLine("Game supports paddle controller.");
 
                         break;
-                    case' ': break;
+                    case ' ': break;
                     default:
                         IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
 
@@ -269,19 +269,19 @@ namespace Aaru.Decoders.Sega
             foreach(byte region in ipbin.region_codes)
                 switch((char)region)
                 {
-                    case'J':
+                    case 'J':
                         IPBinInformation.AppendLine("Japanese NTSC.");
 
                         break;
-                    case'U':
+                    case 'U':
                         IPBinInformation.AppendLine("USA NTSC.");
 
                         break;
-                    case'E':
+                    case 'E':
                         IPBinInformation.AppendLine("Europe PAL.");
 
                         break;
-                    case' ': break;
+                    case ' ': break;
                     default:
                         IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
 

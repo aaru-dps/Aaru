@@ -221,8 +221,8 @@ namespace Aaru.Decoders.MMC
             if(response.Length != 512)
                 return null;
 
-            GCHandle handle = GCHandle.Alloc(response, GCHandleType.Pinned);
-            var      csd    = (ExtendedCSD)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedCSD));
+            var handle = GCHandle.Alloc(response, GCHandleType.Pinned);
+            var csd    = (ExtendedCSD)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedCSD));
             handle.Free();
 
             return csd;
@@ -473,7 +473,7 @@ namespace Aaru.Decoders.MMC
                 sb.AppendFormat("\tDevice has a {0} KiB boot partition", csd.BootPartitionSize * 128).AppendLine();
 
             if((csd.AccessSize & 0x0F) > 0)
-                sb.AppendFormat("\tDevice has a page size of {0} KiB", (csd.AccessSize & 0x0F) * 512.0 / 1024.0).
+                sb.AppendFormat("\tDevice has a page size of {0} KiB", ((csd.AccessSize & 0x0F) * 512.0) / 1024.0).
                    AppendLine();
 
             if(csd.HighCapacityEraseUnitSize > 0)

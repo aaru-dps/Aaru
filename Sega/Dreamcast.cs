@@ -52,54 +52,55 @@ namespace Aaru.Decoders.Sega
             if(ipbin_sector.Length < 512)
                 return null;
 
-            var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
+            IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.maker_id = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.maker_id));
+                                       Encoding.ASCII.GetString(ipbin.maker_id));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space1 = \"{0}\"",
-                                      (char)ipbin.spare_space1);
+                                       (char)ipbin.spare_space1);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.dreamcast_media));
+                                       Encoding.ASCII.GetString(ipbin.dreamcast_media));
 
-            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}",
+                                       (char)ipbin.disc_no);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
-                                      (char)ipbin.disc_no_separator);
+                                       (char)ipbin.disc_no_separator);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_total_nos = \"{0}\"",
-                                      (char)ipbin.disc_total_nos);
+                                       (char)ipbin.disc_total_nos);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space2 = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.spare_space2));
+                                       Encoding.ASCII.GetString(ipbin.spare_space2));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.region_codes = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.region_codes));
+                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.peripherals = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.peripherals));
+                                       Encoding.ASCII.GetString(ipbin.peripherals));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_no = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.product_no));
+                                       Encoding.ASCII.GetString(ipbin.product_no));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_version = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.product_version));
+                                       Encoding.ASCII.GetString(ipbin.product_version));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.release_date = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.release_date));
+                                       Encoding.ASCII.GetString(ipbin.release_date));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space3 = \"{0}\"",
-                                      (char)ipbin.spare_space3);
+                                       (char)ipbin.spare_space3);
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.boot_filename = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.boot_filename));
+                                       Encoding.ASCII.GetString(ipbin.boot_filename));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.producer = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.producer));
+                                       Encoding.ASCII.GetString(ipbin.producer));
 
             AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_name = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.product_name));
+                                       Encoding.ASCII.GetString(ipbin.product_name));
 
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : (IPBin?)null;
         }
@@ -141,11 +142,11 @@ namespace Aaru.Decoders.Sega
 
             switch(Encoding.ASCII.GetString(ipbin.boot_filename))
             {
-                case"1ST_READ.BIN":
+                case "1ST_READ.BIN":
                     IPBinInformation.AppendLine("Disc boots natively.");
 
                     break;
-                case"0WINCE.BIN  ":
+                case "0WINCE.BIN  ":
                     IPBinInformation.AppendLine("Disc boots using Windows CE.");
 
                     break;
@@ -161,19 +162,19 @@ namespace Aaru.Decoders.Sega
             foreach(byte region in ipbin.region_codes)
                 switch((char)region)
                 {
-                    case'J':
+                    case 'J':
                         IPBinInformation.AppendLine("Japanese NTSC.");
 
                         break;
-                    case'U':
+                    case 'U':
                         IPBinInformation.AppendLine("North America NTSC.");
 
                         break;
-                    case'E':
+                    case 'E':
                         IPBinInformation.AppendLine("Europe PAL.");
 
                         break;
-                    case' ': break;
+                    case ' ': break;
                     default:
                         IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
 

@@ -104,8 +104,7 @@ namespace Aaru.Decoders.SCSI
             string UnrecECCNotAbort     = "\tUnrecovered ECC errors will not abort the transfer.";
             string UnrecCIRCNotAbort    = "\tUnrecovered CIRC errors will not abort the transfer.";
 
-            string UnrecECCAbortData =
-                "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
+            string UnrecECCAbortData = "\tUnrecovered ECC errors will return CHECK CONDITION and the uncorrected data.";
 
             string UnrecCIRCAbortData =
                 "\tUnrecovered CIRC errors will return CHECK CONDITION and the uncorrected data.";

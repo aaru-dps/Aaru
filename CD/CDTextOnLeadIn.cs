@@ -49,21 +49,36 @@ namespace Aaru.Decoders.CD
         public enum PackTypeIndicator : byte
         {
             /// <summary>Title of the track (or album if track == 0)</summary>
-            Title = 0x80, /// <summary>Performer</summary>
-            Performer = 0x81, /// <summary>Songwriter</summary>
-            Songwriter = 0x82, /// <summary>Composer</summary>
-            Composer = 0x83, /// <summary>Arranger</summary>
-            Arranger = 0x84, /// <summary>Message from the content provider or artist</summary>
-            Message = 0x85, /// <summary>Disc identification information</summary>
-            DiscIdentification = 0x86, /// <summary>Genre identification</summary>
-            GenreIdentification = 0x87, /// <summary>Table of content information</summary>
-            TOCInformation = 0x88, /// <summary>Second table of content information</summary>
-            SecondTOCInformation = 0x89, /// <summary>Reserved</summary>
-            Reserved1 = 0x8A, /// <summary>Reserved</summary>
-            Reserved2 = 0x8B, /// <summary>Reserved</summary>
-            Reserved3 = 0x8C, /// <summary>Reserved for content provider only</summary>
-            ReservedForContentProvider = 0x8D, /// <summary>UPC of album or ISRC of track</summary>
-            UPCorISRC = 0x8E, /// <summary>Size information of the block</summary>
+            Title = 0x80,
+            /// <summary>Performer</summary>
+            Performer = 0x81,
+            /// <summary>Songwriter</summary>
+            Songwriter = 0x82,
+            /// <summary>Composer</summary>
+            Composer = 0x83,
+            /// <summary>Arranger</summary>
+            Arranger = 0x84,
+            /// <summary>Message from the content provider or artist</summary>
+            Message = 0x85,
+            /// <summary>Disc identification information</summary>
+            DiscIdentification = 0x86,
+            /// <summary>Genre identification</summary>
+            GenreIdentification = 0x87,
+            /// <summary>Table of content information</summary>
+            TOCInformation = 0x88,
+            /// <summary>Second table of content information</summary>
+            SecondTOCInformation = 0x89,
+            /// <summary>Reserved</summary>
+            Reserved1 = 0x8A,
+            /// <summary>Reserved</summary>
+            Reserved2 = 0x8B,
+            /// <summary>Reserved</summary>
+            Reserved3 = 0x8C,
+            /// <summary>Reserved for content provider only</summary>
+            ReservedForContentProvider = 0x8D,
+            /// <summary>UPC of album or ISRC of track</summary>
+            UPCorISRC = 0x8E,
+            /// <summary>Size information of the block</summary>
             BlockSizeInformation = 0x8F
         }
 
@@ -86,23 +101,23 @@ namespace Aaru.Decoders.CD
             if(decoded.DataLength + 2 != CDTextResponse.Length)
             {
                 AaruConsole.DebugWriteLine("CD-TEXT decoder",
-                                          "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding",
-                                          decoded.DataLength + 2, CDTextResponse.Length);
+                                           "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                           decoded.DataLength + 2, CDTextResponse.Length);
 
                 return null;
             }
 
             for(int i = 0; i < (decoded.DataLength - 2) / 18; i++)
             {
-                decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + i * 18 + 4];
-                decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + i * 18 + 4];
-                decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + i * 18 + 4];
-                decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + i * 18 + 4] & 0x80);
-                decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + i * 18 + 4] & 0x70) >> 4);
-                decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + i * 18 + 4] & 0x0F);
+                decoded.DataPacks[i].HeaderID1         = CDTextResponse[0 + (i * 18) + 4];
+                decoded.DataPacks[i].HeaderID2         = CDTextResponse[1 + (i * 18) + 4];
+                decoded.DataPacks[i].HeaderID3         = CDTextResponse[2 + (i * 18) + 4];
+                decoded.DataPacks[i].DBCC              = Convert.ToBoolean(CDTextResponse[3 + (i * 18) + 4] & 0x80);
+                decoded.DataPacks[i].BlockNumber       = (byte)((CDTextResponse[3 + (i * 18) + 4] & 0x70) >> 4);
+                decoded.DataPacks[i].CharacterPosition = (byte)(CDTextResponse[3 + (i * 18) + 4] & 0x0F);
                 decoded.DataPacks[i].TextDataField     = new byte[12];
-                Array.Copy(CDTextResponse, 4 + i * 18 + 4, decoded.DataPacks[i].TextDataField, 0, 12);
-                decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + i * 18 + 4);
+                Array.Copy(CDTextResponse, 4 + (i * 18) + 4, decoded.DataPacks[i].TextDataField, 0, 12);
+                decoded.DataPacks[i].CRC = BigEndianBitConverter.ToUInt16(CDTextResponse, 16 + (i * 18) + 4);
             }
 
             return decoded;

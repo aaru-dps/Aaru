@@ -252,12 +252,12 @@ namespace Aaru.Decoders.SCSI
         {
             switch(definition)
             {
-                case ScsiDefinitions.Current: return"";
-                case ScsiDefinitions.CCS:     return"CCS";
-                case ScsiDefinitions.SCSI1:   return"SCSI-1";
-                case ScsiDefinitions.SCSI2:   return"SCSI-2";
-                case ScsiDefinitions.SCSI3:   return"SCSI-3";
-                default:                      return$"Unknown definition code {(byte)definition}";
+                case ScsiDefinitions.Current: return "";
+                case ScsiDefinitions.CCS:     return "CCS";
+                case ScsiDefinitions.SCSI1:   return "SCSI-1";
+                case ScsiDefinitions.SCSI2:   return "SCSI-2";
+                case ScsiDefinitions.SCSI3:   return "SCSI-3";
+                default:                      return $"Unknown definition code {(byte)definition}";
             }
         }
 

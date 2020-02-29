@@ -126,8 +126,7 @@ namespace Aaru.Decoders.SecureDigital
 
             if(csd.Structure == 0)
             {
-                csd.Size =
-                    (ushort)(((response[6] & 0x03) << 10) + (response[7] << 2) + ((response[8] & 0xC0) >> 6));
+                csd.Size = (ushort)(((response[6] & 0x03) << 10) + (response[7] << 2) + ((response[8] & 0xC0) >> 6));
 
                 csd.ReadCurrentAtVddMin  = (byte)((response[8] & 0x38) >> 3);
                 csd.ReadCurrentAtVddMax  = (byte)(response[8] & 0x07);

@@ -123,7 +123,7 @@ namespace Aaru.Decoders.Bluray
             if(decoded.Signature != DDSIdentifier)
             {
                 AaruConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})",
-                                          decoded.Signature);
+                                           decoded.Signature);
 
                 return null;
             }

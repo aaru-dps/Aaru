@@ -99,8 +99,7 @@ namespace Aaru.Decoders.DVD
             pfi.DataAreaEndPSN =
                 (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]);
 
-            pfi.Layer0EndPSN =
-                (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
+            pfi.Layer0EndPSN = (uint)((response[16] << 24) + (response[17] << 16) + (response[18] << 8) + response[19]);
 
             pfi.BCA |= (response[20] & 0x80) == 0x80;
 

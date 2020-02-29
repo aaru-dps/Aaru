@@ -44,18 +44,24 @@ namespace Aaru.Decoders.SCSI
         public enum PartitionSizeUnitOfMeasures : byte
         {
             /// <summary>Partition size is measures in bytes</summary>
-            Bytes = 0, /// <summary>Partition size is measures in Kilobytes</summary>
-            Kilobytes = 1, /// <summary>Partition size is measures in Megabytes</summary>
-            Megabytes = 2, /// <summary>Partition size is 10eUNITS bytes</summary>
+            Bytes = 0,
+            /// <summary>Partition size is measures in Kilobytes</summary>
+            Kilobytes = 1,
+            /// <summary>Partition size is measures in Megabytes</summary>
+            Megabytes = 2,
+            /// <summary>Partition size is 10eUNITS bytes</summary>
             Exponential = 3
         }
 
         public enum MediumFormatRecognitionValues : byte
         {
             /// <summary>Logical unit is incapable of format or partition recognition</summary>
-            Incapable = 0, /// <summary>Logical unit is capable of format recognition only</summary>
-            FormatCapable = 1, /// <summary>Logical unit is capable of partition recognition only</summary>
-            PartitionCapable = 2, /// <summary>Logical unit is capable of both format and partition recognition</summary>
+            Incapable = 0,
+            /// <summary>Logical unit is capable of format recognition only</summary>
+            FormatCapable = 1,
+            /// <summary>Logical unit is capable of partition recognition only</summary>
+            PartitionCapable = 2,
+            /// <summary>Logical unit is capable of both format and partition recognition</summary>
             Capable = 3
         }
 

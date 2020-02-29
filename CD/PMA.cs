@@ -61,27 +61,27 @@ namespace Aaru.Decoders.CD
             if(decoded.DataLength + 2 != CDPMAResponse.Length)
             {
                 AaruConsole.DebugWriteLine("CD PMA decoder",
-                                          "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding",
-                                          decoded.DataLength + 2, CDPMAResponse.Length);
+                                           "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding",
+                                           decoded.DataLength + 2, CDPMAResponse.Length);
 
                 return null;
             }
 
             for(int i = 0; i < (decoded.DataLength - 2) / 11; i++)
             {
-                decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + i * 11 + 4];
-                decoded.PMADescriptors[i].ADR      = (byte)((CDPMAResponse[1 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.PMADescriptors[i].CONTROL  = (byte)(CDPMAResponse[1 + i * 11 + 4] & 0x0F);
-                decoded.PMADescriptors[i].TNO      = CDPMAResponse[2 + i * 11 + 4];
-                decoded.PMADescriptors[i].POINT    = CDPMAResponse[3 + i * 11 + 4];
-                decoded.PMADescriptors[i].Min      = CDPMAResponse[4 + i * 11 + 4];
-                decoded.PMADescriptors[i].Sec      = CDPMAResponse[5 + i * 11 + 4];
-                decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + i * 11 + 4];
-                decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + i * 11 + 4] & 0xF0) >> 4);
-                decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + i * 11 + 4] & 0x0F);
-                decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8 + i * 11  + 4];
-                decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9 + i * 11  + 4];
-                decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + i * 11 + 4];
+                decoded.PMADescriptors[i].Reserved = CDPMAResponse[0 + (i * 11) + 4];
+                decoded.PMADescriptors[i].ADR      = (byte)((CDPMAResponse[1 + (i * 11) + 4] & 0xF0) >> 4);
+                decoded.PMADescriptors[i].CONTROL  = (byte)(CDPMAResponse[1 + (i * 11) + 4] & 0x0F);
+                decoded.PMADescriptors[i].TNO      = CDPMAResponse[2 + (i * 11) + 4];
+                decoded.PMADescriptors[i].POINT    = CDPMAResponse[3 + (i * 11) + 4];
+                decoded.PMADescriptors[i].Min      = CDPMAResponse[4 + (i * 11) + 4];
+                decoded.PMADescriptors[i].Sec      = CDPMAResponse[5 + (i * 11) + 4];
+                decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + (i * 11) + 4];
+                decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
+                decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + (i * 11) + 4] & 0x0F);
+                decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8 + (i * 11)  + 4];
+                decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9 + (i * 11)  + 4];
+                decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + (i * 11) + 4];
             }
 
             return decoded;
