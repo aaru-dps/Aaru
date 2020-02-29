@@ -42,7 +42,7 @@ namespace Aaru.CommonTypes
 {
     public static class Geometry
     {
-        static readonly(ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
+        static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
             encoding, bool variableSectorsPerTrack, MediaType type)[] KnownGeometries =
             {
                 (32, 1, 8, 319, MediaEncoding.FM, false, MediaType.IBM23FD),
@@ -128,8 +128,8 @@ namespace Aaru.CommonTypes
                                                              geometry.variableSectorsPerTrack select geom.type).
             FirstOrDefault();
 
-        public static(ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding,
-            bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
+        public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding
+            , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
             (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();
     }
 }

@@ -53,14 +53,14 @@ namespace Aaru.CommonTypes
         /// <summary>Fills the list of all known filters</summary>
         public FiltersList()
         {
-            Assembly assembly = Assembly.Load("Aaru.Filters");
+            var assembly = Assembly.Load("Aaru.Filters");
             Filters = new SortedDictionary<string, IFilter>();
 
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
                 try
                 {
                     var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                           { });
+                                                                                           {});
 
                     if(filter != null &&
                        !Filters.ContainsKey(filter.Name.ToLower()))
@@ -88,7 +88,7 @@ namespace Aaru.CommonTypes
                             continue;
 
                         var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                { });
+                                                                                                                {});
 
                         foundFilter?.Open(path);
 

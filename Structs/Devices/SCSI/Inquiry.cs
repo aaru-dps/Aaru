@@ -223,8 +223,8 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
                SCSIInquiryResponse.Length != 5)
             {
                 AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
-                                          "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.",
-                                          SCSIInquiryResponse.Length);
+                                           "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.",
+                                           SCSIInquiryResponse.Length);
 
                 return null;
             }
@@ -233,8 +233,8 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
                SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
             {
                 AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
-                                          "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
-                                          SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
+                                           "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
+                                           SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
 
                 return null;
             }

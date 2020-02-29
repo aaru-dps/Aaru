@@ -132,7 +132,7 @@ namespace Aaru.CommonTypes.Extents
             short realEnd;
 
             if(run)
-                realEnd = (short)(start + end - 1);
+                realEnd = (short)((start + end) - 1);
             else
                 realEnd = end;
 

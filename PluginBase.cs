@@ -84,54 +84,54 @@ namespace Aaru.CommonTypes
         {
             foreach(Type type in pluginRegister.GetAllChecksumPlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IChecksum plugin)
+                                                                    {}) is IChecksum plugin)
                     Checksums.Add(plugin);
 
             foreach(Type type in pluginRegister.GetAllFilesystemPlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IFilesystem plugin &&
+                                                                    {}) is IFilesystem plugin &&
                    !PluginsList.ContainsKey(plugin.Name.ToLower()))
                     PluginsList.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllFilterPlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IFilter plugin &&
+                                                                    {}) is IFilter plugin &&
                    !Filters.ContainsKey(plugin.Name.ToLower()))
                     Filters.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllFloppyImagePlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IFloppyImage plugin &&
+                                                                    {}) is IFloppyImage plugin &&
                    !FloppyImages.ContainsKey(plugin.Name.ToLower()))
                     FloppyImages.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllMediaImagePlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IMediaImage plugin &&
+                                                                    {}) is IMediaImage plugin &&
                    !ImagePluginsList.ContainsKey(plugin.Name.ToLower()))
                     ImagePluginsList.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllPartitionPlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IPartition plugin &&
+                                                                    {}) is IPartition plugin &&
                    !PartPluginsList.ContainsKey(plugin.Name.ToLower()))
                     PartPluginsList.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllReadOnlyFilesystemPlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IReadOnlyFilesystem plugin &&
+                                                                    {}) is IReadOnlyFilesystem plugin &&
                    !ReadOnlyFilesystems.ContainsKey(plugin.Name.ToLower()))
                     ReadOnlyFilesystems.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllWritableFloppyImagePlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IWritableFloppyImage plugin &&
+                                                                    {}) is IWritableFloppyImage plugin &&
                    !WritableFloppyImages.ContainsKey(plugin.Name.ToLower()))
                     WritableFloppyImages.Add(plugin.Name.ToLower(), plugin);
 
             foreach(Type type in pluginRegister.GetAllWritableImagePlugins() ?? Enumerable.Empty<Type>())
                 if(type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                    { }) is IWritableImage plugin &&
+                                                                    {}) is IWritableImage plugin &&
                    !WritableImages.ContainsKey(plugin.Name.ToLower()))
                     WritableImages.Add(plugin.Name.ToLower(), plugin);
         }

@@ -40,7 +40,7 @@ namespace Aaru.CommonTypes.Metadata
 {
     public static class MediaType
     {
-        public static(string type, string subType) MediaTypeToString(CommonTypes.MediaType dskType)
+        public static (string type, string subType) MediaTypeToString(CommonTypes.MediaType dskType)
         {
             string discType;
             string discSubType;
@@ -2492,7 +2492,7 @@ namespace Aaru.CommonTypes.Metadata
                     break;
             }
 
-            return(discType, discSubType);
+            return (discType, discSubType);
         }
     }
 }

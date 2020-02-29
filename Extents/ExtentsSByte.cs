@@ -132,7 +132,7 @@ namespace Aaru.CommonTypes.Extents
             sbyte realEnd;
 
             if(run)
-                realEnd = (sbyte)(start + end - 1);
+                realEnd = (sbyte)((start + end) - 1);
             else
                 realEnd = end;
 

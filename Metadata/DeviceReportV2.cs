@@ -58,7 +58,7 @@ namespace Aaru.CommonTypes.Metadata
 {
     public class DeviceReportV2
     {
-        public DeviceReportV2() { }
+        public DeviceReportV2() {}
 
         public DeviceReportV2(DeviceReport reportV1)
         {
@@ -161,7 +161,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Usb
     {
-        public Usb() { }
+        public Usb() {}
 
         public Usb(usbType usb)
         {
@@ -188,7 +188,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class FireWire
     {
-        public FireWire() { }
+        public FireWire() {}
 
         public FireWire(firewireType firewire)
         {
@@ -215,7 +215,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Ata
     {
-        public Ata() { }
+        public Ata() {}
 
         public Ata(ataType ata)
         {
@@ -488,7 +488,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Chs
     {
-        public Chs() { }
+        public Chs() {}
 
         public Chs(chsType chs)
         {
@@ -506,7 +506,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Scsi
     {
-        public Scsi() { }
+        public Scsi() {}
 
         public Scsi(scsiType scsi)
         {
@@ -660,7 +660,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class ScsiMode
     {
-        public ScsiMode() { }
+        public ScsiMode() {}
 
         public ScsiMode(modeType mode)
         {
@@ -714,7 +714,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class BlockDescriptor
     {
-        public BlockDescriptor() { }
+        public BlockDescriptor() {}
 
         public BlockDescriptor(blockDescriptorType descriptor)
         {
@@ -737,7 +737,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class ScsiPage
     {
-        public ScsiPage() { }
+        public ScsiPage() {}
 
         public ScsiPage(pageType evpdPage)
         {
@@ -761,7 +761,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Mmc
     {
-        public Mmc() { }
+        public Mmc() {}
 
         public Mmc(mmcType mmc)
         {
@@ -843,7 +843,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class MmcFeatures
     {
-        public MmcFeatures() { }
+        public MmcFeatures() {}
 
         public MmcFeatures(mmcFeaturesType features)
         {
@@ -1256,7 +1256,7 @@ namespace Aaru.CommonTypes.Metadata
     {
         public Identify.IdentifyDevice? IdentifyDevice;
 
-        public TestedMedia() { }
+        public TestedMedia() {}
 
         public TestedMedia(testedMediaType mediaType, bool ata)
         {
@@ -1852,7 +1852,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class Ssc
     {
-        public Ssc() { }
+        public Ssc() {}
 
         public Ssc(sscType ssc)
         {
@@ -1901,7 +1901,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class TestedSequentialMedia
     {
-        public TestedSequentialMedia() { }
+        public TestedSequentialMedia() {}
 
         public TestedSequentialMedia(SequentialMedia media)
         {
@@ -1963,7 +1963,7 @@ namespace Aaru.CommonTypes.Metadata
     {
         public string[] AdditionalInformation;
 
-        public Pcmcia() { }
+        public Pcmcia() {}
 
         public Pcmcia(pcmciaType pcmcia)
         {
@@ -1996,7 +1996,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class MmcSd
     {
-        public MmcSd() { }
+        public MmcSd() {}
 
         public MmcSd(mmcsdType mmcSd)
         {
@@ -2018,7 +2018,7 @@ namespace Aaru.CommonTypes.Metadata
 
     public class SscSupportedMedia
     {
-        public SscSupportedMedia() { }
+        public SscSupportedMedia() {}
 
         public SscSupportedMedia(SupportedMedia media)
         {

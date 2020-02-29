@@ -49,11 +49,11 @@ namespace Aaru.CommonTypes.Exceptions
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
         public FeatureSupportedButNotImplementedImageException(string message, Exception inner) :
-            base(message, inner) { }
+            base(message, inner) {}
 
         /// <summary>Feature is supported by image but not implemented yet.</summary>
         /// <param name="message">Message.</param>
-        public FeatureSupportedButNotImplementedImageException(string message) : base(message) { }
+        public FeatureSupportedButNotImplementedImageException(string message) : base(message) {}
 
         /// <summary>Feature is supported by image but not implemented yet.</summary>
         /// <param name="info">Info.</param>
@@ -72,11 +72,11 @@ namespace Aaru.CommonTypes.Exceptions
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeatureUnsupportedImageException(string message, Exception inner) : base(message, inner) { }
+        public FeatureUnsupportedImageException(string message, Exception inner) : base(message, inner) {}
 
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="message">Message.</param>
-        public FeatureUnsupportedImageException(string message) : base(message) { }
+        public FeatureUnsupportedImageException(string message) : base(message) {}
 
         /// <summary>Feature is not supported by image.</summary>
         /// <param name="info">Info.</param>
@@ -95,11 +95,11 @@ namespace Aaru.CommonTypes.Exceptions
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeatureNotPresentImageException(string message, Exception inner) : base(message, inner) { }
+        public FeatureNotPresentImageException(string message, Exception inner) : base(message, inner) {}
 
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="message">Message.</param>
-        public FeatureNotPresentImageException(string message) : base(message) { }
+        public FeatureNotPresentImageException(string message) : base(message) {}
 
         /// <summary>Feature is supported by image but not present on it.</summary>
         /// <param name="info">Info.</param>
@@ -118,11 +118,11 @@ namespace Aaru.CommonTypes.Exceptions
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public FeaturedNotSupportedByDiscImageException(string message, Exception inner) : base(message, inner) { }
+        public FeaturedNotSupportedByDiscImageException(string message, Exception inner) : base(message, inner) {}
 
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="message">Message.</param>
-        public FeaturedNotSupportedByDiscImageException(string message) : base(message) { }
+        public FeaturedNotSupportedByDiscImageException(string message) : base(message) {}
 
         /// <summary>Feature is supported by image but not by the disc it represents.</summary>
         /// <param name="info">Info.</param>
@@ -141,11 +141,11 @@ namespace Aaru.CommonTypes.Exceptions
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="message">Message.</param>
         /// <param name="inner">Inner.</param>
-        public ImageNotSupportedException(string message, Exception inner) : base(message, inner) { }
+        public ImageNotSupportedException(string message, Exception inner) : base(message, inner) {}
 
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="message">Message.</param>
-        public ImageNotSupportedException(string message) : base(message) { }
+        public ImageNotSupportedException(string message) : base(message) {}
 
         /// <summary>Corrupt, incorrect or unhandled feature found on image</summary>
         /// <param name="info">Info.</param>

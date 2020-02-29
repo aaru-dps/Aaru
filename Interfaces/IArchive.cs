@@ -41,15 +41,18 @@ namespace Aaru.CommonTypes.Interfaces
     public enum ArchiveSupportedFeature : uint
     {
         /// <summary>The archive supports filenames for its entries. If this flag is not set, files can only be accessed by number.</summary>
-        SupportsFilenames = 1 << 0, /// <summary>
+        SupportsFilenames = 1 << 0,
+        /// <summary>
         ///     The archive supports compression. If this flag is not set, compressed and uncompressed lengths are always the
         ///     same.
         /// </summary>
-        SupportsCompression = 1 << 1, /// <summary>
+        SupportsCompression = 1 << 1,
+        /// <summary>
         ///     The archive supports subdirectories. If this flag is not set, all filenames are guaranteed to not contain any
         ///     "/" character.
         /// </summary>
-        SupportsSubdirectories = 1 << 2, /// <summary>
+        SupportsSubdirectories = 1 << 2,
+        /// <summary>
         ///     The archive supports explicit entries for directories (like Zip, for example). If this flag is not set,
         ///     directories are implicit by the relative name of the files.
         /// </summary>
