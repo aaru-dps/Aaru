@@ -36,7 +36,7 @@ namespace Aaru.Dto
 {
     public class CdOffsetDto : CdOffset
     {
-        public CdOffsetDto() { }
+        public CdOffsetDto() {}
 
         public CdOffsetDto(CdOffset offset, int id)
         {
