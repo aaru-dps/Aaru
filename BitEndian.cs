@@ -42,7 +42,8 @@ namespace Aaru.Helpers
     public enum BitEndian
     {
         /// <summary>Little-endian, or least significant bit</summary>
-        Little, /// <summary>Big-endian, or most significant bit</summary>
+        Little,
+        /// <summary>Big-endian, or most significant bit</summary>
         Big,
         /// <summary>PDP-11 endian, little endian except for 32-bit integers where the 16 halves are swapped between them</summary>
         Pdp

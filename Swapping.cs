@@ -53,7 +53,7 @@ namespace Aaru
         {
             x = ((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
 
-            return(x << 16) | (x >> 16);
+            return (x << 16) | (x >> 16);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -61,7 +61,7 @@ namespace Aaru
         {
             x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
 
-            return(int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
+            return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

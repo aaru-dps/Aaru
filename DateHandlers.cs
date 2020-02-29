@@ -108,7 +108,7 @@ namespace Aaru
             fourcharvalue[3] = vdDateTime[3];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
-                                      StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out int year))
                 year = 0;
@@ -117,7 +117,7 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[5];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int month))
                 month = 0;
@@ -126,7 +126,7 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[7];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int day))
                 day = 0;
@@ -135,7 +135,7 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[9];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hour))
                 hour = 0;
@@ -144,7 +144,7 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[11];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int minute))
                 minute = 0;
@@ -153,7 +153,7 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[13];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int second))
                 second = 0;
@@ -162,14 +162,14 @@ namespace Aaru
             twocharvalue[1] = vdDateTime[15];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
-                                      StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths))
                 hundredths = 0;
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler",
-                                      "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
-                                      year, month, day, hour, minute, second, hundredths * 10);
+                                       "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
+                                       year, month, day, hour, minute, second, hundredths * 10);
 
             var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
                                          DateTimeKind.Unspecified);
@@ -211,8 +211,8 @@ namespace Aaru
             int month = dateRecord & 0x000F;
 
             AaruConsole.DebugWriteLine("UCSDPascalToDateTime handler",
-                                      "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
-                                      month, day);
+                                       "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
+                                       month, day);
 
             return new DateTime(year, month, day);
         }
@@ -231,11 +231,11 @@ namespace Aaru
             int second = (time & 0x1F) * 2;
 
             AaruConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
-                                      date, year, month, day);
+                                       date, year, month, day);
 
             AaruConsole.DebugWriteLine("DOSToDateTime handler",
-                                      "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
-                                      second);
+                                       "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
+                                       second);
 
             DateTime dosdate;
 
@@ -285,8 +285,8 @@ namespace Aaru
         {
             byte specification = (byte)((typeAndTimeZone & 0xF000) >> 12);
 
-            long ticks = (long)centiseconds         * 100000 + (long)hundredsOfMicroseconds * 1000 +
-                                 (long)microseconds * 10;
+            long ticks = ((long)centiseconds * 100000) + ((long)hundredsOfMicroseconds * 1000) +
+                         ((long)microseconds * 10);
 
             if(specification == 0)
                 return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
@@ -321,7 +321,7 @@ namespace Aaru
         public static DateTime Os9ToDateTime(byte[] date)
         {
             if(date == null ||
-               date.Length != 3 && date.Length != 5)
+               (date.Length != 3 && date.Length != 5))
                 return DateTime.MinValue;
 
             DateTime os9Date;
@@ -363,12 +363,12 @@ namespace Aaru
         {
             try
             {
-                int iyear   = (year   >> 4) * 10 + (year   & 0xF);
-                int imonth  = (month  >> 4) * 10 + (month  & 0xF);
-                int iday    = (day    >> 4) * 10 + (day    & 0xF);
-                int iminute = (minute >> 4) * 10 + (minute & 0xF);
-                int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
-                int isecond = (second >> 4) * 10 + (second & 0xF);
+                int iyear   = ((year   >> 4) * 10) + (year   & 0xF);
+                int imonth  = ((month  >> 4) * 10) + (month  & 0xF);
+                int iday    = ((day    >> 4) * 10) + (day    & 0xF);
+                int iminute = ((minute >> 4) * 10) + (minute & 0xF);
+                int ihour   = ((hour   >> 4) * 10) + (hour   & 0xF);
+                int isecond = ((second >> 4) * 10) + (second & 0xF);
 
                 if(iyear >= 70)
                     iyear += 1900;

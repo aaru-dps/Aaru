@@ -136,7 +136,7 @@ namespace Aaru
             for(int i = SpacePaddedString.Length; i >= start; i--)
             {
                 if(i == start)
-                    return"";
+                    return "";
 
                 if(SpacePaddedString[i - 1] == 0x20)
                     continue;

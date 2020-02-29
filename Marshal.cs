@@ -89,7 +89,7 @@ namespace Aaru.Helpers
 
             ptr.Free();
 
-            return(T)SwapStructureMembersEndian(str);
+            return (T)SwapStructureMembersEndian(str);
         }
 
         /// <summary>Marshal big-endian binary data to a structure</summary>
@@ -121,7 +121,7 @@ namespace Aaru.Helpers
 
                 ptr.Free();
 
-                return(T)SwapStructureMembersEndianPdp(str);
+                return (T)SwapStructureMembersEndianPdp(str);
             }
         }
 
@@ -175,7 +175,7 @@ namespace Aaru.Helpers
         {
             T str = SpanToStructureLittleEndian<T>(bytes);
 
-            return(T)SwapStructureMembersEndian(str);
+            return (T)SwapStructureMembersEndian(str);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace Aaru.Helpers
         {
             T str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
 
-            return(T)SwapStructureMembersEndian(str);
+            return (T)SwapStructureMembersEndian(str);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Aaru.Helpers
         {
             object str = SpanToStructureLittleEndian<T>(bytes);
 
-            return(T)SwapStructureMembersEndianPdp(str);
+            return (T)SwapStructureMembersEndianPdp(str);
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace Aaru.Helpers
         {
             object str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
 
-            return(T)SwapStructureMembersEndianPdp(str);
+            return (T)SwapStructureMembersEndianPdp(str);
         }
 
         /// <summary>
