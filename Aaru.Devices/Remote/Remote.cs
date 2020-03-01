@@ -324,7 +324,7 @@ namespace Aaru.Devices.Remote
             for(ushort i = 0; i < response.devices; i++)
             {
                 DeviceInfo dev = Marshal.ByteArrayToStructureLittleEndian<DeviceInfo>(buf, offset, devInfoLen);
-                dev.Path = dev.Path[0] == '/' ? $"dic://{_host}{dev.Path}" : $"dic://{_host}/{dev.Path}";
+                dev.Path = dev.Path[0] == '/' ? $"aaru://{_host}{dev.Path}" : $"aaru://{_host}/{dev.Path}";
                 devices.Add(dev);
                 offset += devInfoLen;
             }

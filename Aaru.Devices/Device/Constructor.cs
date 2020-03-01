@@ -68,9 +68,14 @@ namespace Aaru.Devices
             Error       = false;
             IsRemovable = false;
 
-            if(devicePath.StartsWith("dic://"))
+            if(devicePath.StartsWith("dic://") ||
+               devicePath.StartsWith("aaru://"))
             {
-                devicePath = devicePath.Substring(6);
+                if(devicePath.StartsWith("dic://"))
+                    devicePath = devicePath.Substring(6);
+                else
+                    devicePath = devicePath.Substring(7);
+
                 string[] pieces = devicePath.Split('/');
                 string   host   = pieces[0];
                 devicePath = devicePath.Substring(host.Length);
