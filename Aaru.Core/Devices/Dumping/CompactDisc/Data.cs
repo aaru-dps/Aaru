@@ -94,6 +94,31 @@ namespace Aaru.Core.Devices.Dumping
             const uint sectorSize       = 2352;            // Full sector size
             byte[]     tmpBuf;                             // Temporary buffer
             newTrim = false;
+            PlextorSubchannel supportedPlextorSubchannel;
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    supportedPlextorSubchannel = PlextorSubchannel.All;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    supportedPlextorSubchannel = PlextorSubchannel.Q16;
+
+                    break;
+                case MmcSubchannel.Rw:
+                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
+
+                    break;
+                default:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+            }
 
             InitProgress?.Invoke();
 
@@ -200,7 +225,14 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                if(readcd)
+                if(_supportsPlextorD8 && !inData)
+                {
+                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                                 supportedPlextorSubchannel, _dev.Timeout, out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+                else if(readcd)
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,

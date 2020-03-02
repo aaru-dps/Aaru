@@ -52,12 +52,37 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration)
         {
-            bool       sense  = true;     // Sense indicator
-            byte[]     cmdBuf = null;     // Data buffer
-            double     cmdDuration;       // Command execution time
-            const uint sectorSize = 2352; // Full sector size
-            byte[]     tmpBuf;            // Temporary buffer
-            byte[]     senseBuf = null;   // Sense buffer
+            bool              sense  = true;     // Sense indicator
+            byte[]            cmdBuf = null;     // Data buffer
+            double            cmdDuration;       // Command execution time
+            const uint        sectorSize = 2352; // Full sector size
+            byte[]            tmpBuf;            // Temporary buffer
+            byte[]            senseBuf = null;   // Sense buffer
+            PlextorSubchannel supportedPlextorSubchannel;
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    supportedPlextorSubchannel = PlextorSubchannel.All;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    supportedPlextorSubchannel = PlextorSubchannel.Q16;
+
+                    break;
+                case MmcSubchannel.Rw:
+                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
+
+                    break;
+                default:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+            }
 
             if(_resume.BadBlocks.Count <= 0 ||
                _aborted                     ||
@@ -195,7 +220,15 @@ namespace Aaru.Core.Devices.Dumping
                     sectorsToReRead = (byte)(sectorsForOffset + 1);
                 }
 
-                if(readcd)
+                if(_supportsPlextorD8 && audioExtents.Contains(badSector))
+                {
+                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, badSectorToReRead, blockSize,
+                                                 sectorsToReRead, supportedPlextorSubchannel, _dev.Timeout,
+                                                 out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+                else if(readcd)
                 {
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,

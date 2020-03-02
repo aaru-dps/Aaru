@@ -860,7 +860,7 @@ namespace Aaru.Core.Devices.Dumping
             cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
 
             Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,
-                                             out int? driveOffset, out int? combinedOffset);
+                                             out int? driveOffset, out int? combinedOffset, out _supportsPlextorD8);
 
             if(combinedOffset is null)
             {

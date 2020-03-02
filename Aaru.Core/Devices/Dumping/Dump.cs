@@ -52,6 +52,7 @@ namespace Aaru.Core.Devices.Dumping
         uint                                _skip;
         int                                 _speed;
         int                                 _speedMultiplier;
+        bool                                _supportsPlextorD8;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>

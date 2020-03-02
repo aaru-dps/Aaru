@@ -30,7 +30,8 @@ namespace Aaru.Core.Media.Info
         [SuppressMessage("ReSharper", "TooWideLocalVariableScope")]
         public static void GetOffset(CdOffset cdOffset, Device dbDev, bool debug, Aaru.Devices.Device dev,
                                      MediaType dskType, DumpLog dumpLog, Track[] tracks,
-                                     UpdateStatusHandler updateStatus, out int? driveOffset, out int? combinedOffset)
+                                     UpdateStatusHandler updateStatus, out int? driveOffset, out int? combinedOffset,
+                                     out bool supportsPlextorReadCdDa)
         {
             byte[]     cmdBuf;
             bool       sense;
@@ -45,8 +46,9 @@ namespace Aaru.Core.Media.Info
             Track      audioTrack  = default;
             bool       offsetFound = false;
             const uint sectorSize  = 2352;
-            driveOffset    = cdOffset?.Offset * 4;
-            combinedOffset = null;
+            driveOffset             = cdOffset?.Offset * 4;
+            combinedOffset          = null;
+            supportsPlextorReadCdDa = false;
 
             if(dskType != MediaType.VideoNowColor)
             {
@@ -78,6 +80,8 @@ namespace Aaru.Core.Media.Info
                             if(!sense &&
                                !dev.Error)
                             {
+                                supportsPlextorReadCdDa = true;
+
                                 for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                                 {
                                     Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);

@@ -593,7 +593,7 @@ namespace Aaru.Commands.Media
                                                                  d.Model        == dev.Model);
 
                     CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
-                                          out int? driveOffset, out int? combinedOffset);
+                                          out int? driveOffset, out int? combinedOffset, out _);
 
                     if(combinedOffset is null)
                     {

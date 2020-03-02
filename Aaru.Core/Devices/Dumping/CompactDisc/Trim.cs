@@ -49,13 +49,38 @@ namespace Aaru.Core.Devices.Dumping
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration)
         {
-            DateTime   start;
-            DateTime   end;
-            bool       sense       = true; // Sense indicator
-            byte[]     cmdBuf      = null; // Data buffer
-            double     cmdDuration = 0;    // Command execution time
-            const uint sectorSize  = 2352; // Full sector size
-            byte[]     tmpBuf;             // Temporary buffer
+            DateTime          start;
+            DateTime          end;
+            bool              sense       = true; // Sense indicator
+            byte[]            cmdBuf      = null; // Data buffer
+            double            cmdDuration = 0;    // Command execution time
+            const uint        sectorSize  = 2352; // Full sector size
+            byte[]            tmpBuf;             // Temporary buffer
+            PlextorSubchannel supportedPlextorSubchannel;
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    supportedPlextorSubchannel = PlextorSubchannel.All;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    supportedPlextorSubchannel = PlextorSubchannel.Q16;
+
+                    break;
+                case MmcSubchannel.Rw:
+                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
+
+                    break;
+                default:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+            }
 
             if(_resume.BadBlocks.Count <= 0 ||
                _aborted                     ||
@@ -98,7 +123,14 @@ namespace Aaru.Core.Devices.Dumping
                     sectorsToTrim = (byte)(sectorsForOffset + 1);
                 }
 
-                if(readcd)
+                if(_supportsPlextorD8 && audioExtents.Contains(badSector))
+                {
+                    sense = _dev.PlextorReadCdDa(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
+                                                 supportedPlextorSubchannel, _dev.Timeout, out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+                else if(readcd)
                     sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                         true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
