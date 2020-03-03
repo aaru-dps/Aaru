@@ -388,7 +388,7 @@ namespace Aaru.Core.Media.Detection
                 else
                 {
                     sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
-                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                        MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                     if(!sense &&
@@ -408,7 +408,7 @@ namespace Aaru.Core.Media.Detection
                 else
                 {
                     sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
-                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
                                        MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                     if(!sense &&
@@ -427,8 +427,8 @@ namespace Aaru.Core.Media.Detection
 
                 if(sense || dev.Error)
                 {
-                    sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false, true,
-                                       MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                    sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false, false,
+                                       MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                        dev.Timeout, out _);
 
                     if(sense || !dev.Error)
@@ -579,8 +579,8 @@ namespace Aaru.Core.Media.Detection
                     }
                     else
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, 0, 2324, 1, MmcSectorTypes.Mode2, false, false, true,
-                                           MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                        sense = dev.ReadCd(out cmdBuf, out _, 0, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
+                                           MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                            dev.Timeout, out _);
 
                         if(!sense &&
@@ -589,8 +589,8 @@ namespace Aaru.Core.Media.Detection
                             sector0 = new byte[2048];
                             Array.Copy(cmdBuf, 0, sector0, 0, 2048);
 
-                            sense = dev.ReadCd(out cmdBuf, out _, 1, 2324, 1, MmcSectorTypes.Mode2, false, false, true,
-                                               MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                            sense = dev.ReadCd(out cmdBuf, out _, 1, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
+                                               MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                                dev.Timeout, out _);
 
                             if(!sense &&
@@ -601,7 +601,7 @@ namespace Aaru.Core.Media.Detection
                             }
 
                             sense = dev.ReadCd(out cmdBuf, out _, 4200, 2324, 1, MmcSectorTypes.Mode2, false, false,
-                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
 
                             if(!sense &&
@@ -612,7 +612,7 @@ namespace Aaru.Core.Media.Detection
                             }
 
                             sense = dev.ReadCd(out cmdBuf, out _, 4201, 2324, 1, MmcSectorTypes.Mode2, false, false,
-                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                MmcSubchannel.None, dev.Timeout, out _);
 
                             if(!sense &&
@@ -625,8 +625,8 @@ namespace Aaru.Core.Media.Detection
                             if(startOfFirstDataTrack != uint.MaxValue)
                             {
                                 sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2324, 1,
-                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
-                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                                   MmcSectorTypes.Mode2, false, false, false, MmcHeaderCodes.None, true,
+                                                   false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(!sense &&
                                    !dev.Error)
@@ -636,8 +636,8 @@ namespace Aaru.Core.Media.Detection
                                 }
 
                                 sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2324, 1,
-                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
-                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                                   MmcSectorTypes.Mode2, false, false, false, MmcHeaderCodes.None, true,
+                                                   false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(!sense &&
                                    !dev.Error)
@@ -652,7 +652,7 @@ namespace Aaru.Core.Media.Detection
                             for(uint p = 0; p < 12; p++)
                             {
                                 sense = dev.ReadCd(out cmdBuf, out _, p, 2324, 1, MmcSectorTypes.Mode2, false, false,
-                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                    MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(sense || dev.Error)
@@ -666,8 +666,8 @@ namespace Aaru.Core.Media.Detection
                         }
                         else
                         {
-                            sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false, true,
-                                               MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                            sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false, false,
+                                               MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
                                                dev.Timeout, out _);
 
                             if(!sense &&
@@ -676,7 +676,7 @@ namespace Aaru.Core.Media.Detection
                                 sector0 = cmdBuf;
 
                                 sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false,
-                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                    MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(!sense &&
@@ -684,7 +684,7 @@ namespace Aaru.Core.Media.Detection
                                     sector1 = cmdBuf;
 
                                 sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 12, MmcSectorTypes.Mode1, false, false,
-                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                    MmcSubchannel.None, dev.Timeout, out _);
 
                                 if(!sense &&
@@ -694,8 +694,8 @@ namespace Aaru.Core.Media.Detection
                                 if(startOfFirstDataTrack != uint.MaxValue)
                                 {
                                     sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2048, 1,
-                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
-                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None,
+                                                       true, false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
                                                        out _);
 
                                     if(!sense &&
@@ -703,8 +703,8 @@ namespace Aaru.Core.Media.Detection
                                         firstDataSectorNotZero = cmdBuf;
 
                                     sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2048, 1,
-                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
-                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None,
+                                                       true, false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
                                                        out _);
 
                                     if(!sense &&
