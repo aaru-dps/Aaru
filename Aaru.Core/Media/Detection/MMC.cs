@@ -252,7 +252,25 @@ namespace Aaru.Core.Media.Detection
                 bool hasVideoTrack                 = false;
 
                 if(decodedToc.HasValue)
-                    foreach(FullTOC.TrackDataDescriptor track in decodedToc.Value.TrackDescriptors)
+                {
+                    FullTOC.TrackDataDescriptor a0Track =
+                        decodedToc.Value.TrackDescriptors.FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
+
+                    if(a0Track.POINT == 0xA0)
+                        switch(a0Track.PSEC)
+                        {
+                            case 0x10:
+                                mediaType = MediaType.CDI;
+
+                                break;
+                            case 0x20:
+                                mediaType = MediaType.CDROMXA;
+
+                                break;
+                        }
+
+                    foreach(FullTOC.TrackDataDescriptor track in
+                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT > 0 && t.POINT <= 0x99))
                     {
                         if(track.TNO == 1 &&
                            ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -279,6 +297,7 @@ namespace Aaru.Core.Media.Detection
 
                         hasVideoTrack |= track.ADR == 4;
                     }
+                }
 
                 if(hasDataTrack                  &&
                    hasAudioTrack                 &&
@@ -300,6 +319,48 @@ namespace Aaru.Core.Media.Detection
                    !hasDataTrack &&
                    sessions == 1)
                     mediaType = MediaType.CDV;
+
+                if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
+                {
+                    foreach(FullTOC.TrackDataDescriptor track in
+                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
+                                                                     ((TocControl)(t.CONTROL & 0x0D) ==
+                                                                      TocControl.DataTrack ||
+                                                                      (TocControl)(t.CONTROL & 0x0D) ==
+                                                                      TocControl.DataTrackIncremental)))
+                    {
+                        uint startAddress =
+                            (uint)(((track.PHOUR * 3600 * 75) + (track.PMIN * 60 * 75) + (track.PSEC * 75) +
+                                    track.PFRAME) - 150) + 16;
+
+                        sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            if(cmdBuf[0]  == 0x00 &&
+                               cmdBuf[1]  == 0xFF &&
+                               cmdBuf[2]  == 0xFF &&
+                               cmdBuf[3]  == 0xFF &&
+                               cmdBuf[4]  == 0xFF &&
+                               cmdBuf[5]  == 0xFF &&
+                               cmdBuf[6]  == 0xFF &&
+                               cmdBuf[7]  == 0xFF &&
+                               cmdBuf[8]  == 0xFF &&
+                               cmdBuf[9]  == 0xFF &&
+                               cmdBuf[10] == 0xFF &&
+                               cmdBuf[11] == 0x00 &&
+                               cmdBuf[15] == 0x02)
+                            {
+                                mediaType = MediaType.CDROMXA;
+
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             if(secondSessionFirstTrack != 0 &&

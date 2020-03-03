@@ -169,20 +169,6 @@ namespace Aaru.Core.Devices.Dumping
                     else if(trk.POINT == 0xA0 &&
                             trk.ADR   == 1)
                     {
-                        switch(trk.PSEC)
-                        {
-                            case 0x10:
-                                dskType = MediaType.CDI;
-
-                                break;
-                            case 0x20:
-                                if(dskType == MediaType.CD ||
-                                   dskType == MediaType.CDROM)
-                                    dskType = MediaType.CDROMXA;
-
-                                break;
-                        }
-
                         leadoutTrackType =
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data

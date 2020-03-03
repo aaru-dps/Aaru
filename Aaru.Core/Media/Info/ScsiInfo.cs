@@ -1148,26 +1148,6 @@ namespace Aaru.Core.Media.Info
                                 RawToc = cmdBuf;
 
                                 FullToc = FullTOC.Decode(cmdBuf);
-
-                                if(FullToc.HasValue)
-                                {
-                                    FullTOC.TrackDataDescriptor a0Track =
-                                        FullToc.Value.TrackDescriptors.
-                                                FirstOrDefault(t => t.POINT == 0xA0 && t.ADR == 1);
-
-                                    if(a0Track.POINT == 0xA0)
-                                        switch(a0Track.PSEC)
-                                        {
-                                            case 0x10:
-                                                MediaType = MediaType.CDI;
-
-                                                break;
-                                            case 0x20:
-                                                MediaType = MediaType.CDROMXA;
-
-                                                break;
-                                        }
-                                }
                             }
 
                             sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
