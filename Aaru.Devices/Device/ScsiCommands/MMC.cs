@@ -685,7 +685,7 @@ namespace Aaru.Devices
             byte[] cdb    = new byte[12];
             byte[] buffer = new byte[0];
 
-            cdb[0] = (byte)ScsiCommands.SetCdSpeed;
+            cdb[0] = (byte)ScsiCommands.SetCdRomSpeed;
             cdb[1] = (byte)((byte)rotationalControl & 0x03);
             cdb[2] = (byte)((readSpeed & 0xFF00) >> 8);
             cdb[3] = (byte)(readSpeed & 0xFF);
