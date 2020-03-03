@@ -953,8 +953,8 @@ namespace Aaru.Core.Devices.Dumping
             // Set speed
             if(_speedMultiplier >= 0)
             {
-                _dumpLog.WriteLine($"Setting speed to {(_speed   == 0 ? "MAX" : $"{_speed}x")}.");
-                UpdateStatus?.Invoke($"Setting speed to {(_speed == 0 ? "MAX" : $"{_speed}x")}.");
+                _dumpLog.WriteLine($"Setting speed to {(_speed   == 0 ? "MAX for data reading" : $"{_speed}x")}.");
+                UpdateStatus?.Invoke($"Setting speed to {(_speed == 0 ? "MAX for data reading" : $"{_speed}x")}.");
 
                 _speed *= _speedMultiplier;
 
@@ -962,7 +962,8 @@ namespace Aaru.Core.Devices.Dumping
                    _speed > 0xFFFF)
                     _speed = 0xFFFF;
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout,
+                                out _);
             }
 
             // Start reading

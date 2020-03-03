@@ -122,6 +122,7 @@ namespace Aaru.Core.Devices.Dumping
 
             InitProgress?.Invoke();
 
+            int  currentReadSpeed      = _speed;
             bool crossingLeadOut       = false;
             bool failedCrossingLeadOut = false;
 
@@ -205,6 +206,31 @@ namespace Aaru.Core.Devices.Dumping
                         else
                             firstSectorToRead -= (uint)sectorsForOffset;
                     }
+                }
+
+                if(!inData && currentReadSpeed == 0xFFFF)
+                {
+                    _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
+                    UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
+
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+
+                    currentReadSpeed = 1200;
+                }
+
+                if(inData && currentReadSpeed != _speed)
+                {
+                    _dumpLog.WriteLine($"Setting speed to {(_speed   == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+                    UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+
+                    _speed *= _speedMultiplier;
+
+                    if(_speed == 0 ||
+                       _speed > 0xFFFF)
+                        _speed = 0xFFFF;
+
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0,
+                                    _dev.Timeout, out _);
                 }
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
