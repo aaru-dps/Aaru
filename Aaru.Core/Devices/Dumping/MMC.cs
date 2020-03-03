@@ -195,10 +195,13 @@ namespace Aaru.Core.Devices.Dumping
 
             if(compactDisc)
             {
+                _speedMultiplier *= 177;
                 CompactDisc();
 
                 return;
             }
+
+            _speedMultiplier *= 150;
 
             var   scsiReader = new Reader(_dev, _dev.Timeout, null, _dumpRaw);
             ulong blocks     = scsiReader.GetDeviceBlocks();
