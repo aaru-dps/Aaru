@@ -228,7 +228,18 @@ namespace Aaru.Core.Devices.Dumping
                 if(_supportsPlextorD8 && !inData)
                 {
                     sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
-                                                 supportedPlextorSubchannel, _dev.Timeout, out cmdDuration);
+                                                 supportedPlextorSubchannel, 0, out cmdDuration);
+
+                    if(sense)
+                    {
+                        // As a workaround for some firmware bugs, seek far away.
+                        _dev.PlextorReadCdDa(out _, out senseBuf, firstSectorToRead - 32, blockSize, blocksToRead,
+                                             supportedPlextorSubchannel, 0, out _);
+
+                        sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, blockSize,
+                                                     blocksToRead, supportedPlextorSubchannel, _dev.Timeout,
+                                                     out cmdDuration);
+                    }
 
                     totalDuration += cmdDuration;
                 }
