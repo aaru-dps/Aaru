@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
         };
         public IEnumerable<string> KnownExtensions => new[]
         {
-            ".dicf", ".aaru", ".aaruformat", ".aaruf"
+            ".dicf", ".aaru", ".aaruformat", ".aaruf", ".aif"
         };
         public bool   IsWriting    { get; private set; }
         public string ErrorMessage { get; private set; }
