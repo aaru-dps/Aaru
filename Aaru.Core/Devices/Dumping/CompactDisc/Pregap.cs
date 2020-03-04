@@ -493,11 +493,7 @@ namespace Aaru.Core.Devices.Dumping
                     // Pregap according to Q position
                     posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75)                   + subBuf[9]) - 150;
                     int diff    = posQ                                                 - lba;
-                    int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
-
-                    // If we obtained a Q from a previous sector, or we just came back from the previous track Q, sum the difference
-                    if(diff < 0 || forward)
-                        pregapQ += diff;
+                    int pregapQ = (int)track.TrackStartSector - lba;
 
                     if(diff != 0)
                     {
