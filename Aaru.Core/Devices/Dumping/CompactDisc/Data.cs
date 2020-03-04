@@ -208,7 +208,8 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
-                if(!inData && currentReadSpeed == 0xFFFF)
+                if(!inData &&
+                   currentReadSpeed == 0xFFFF)
                 {
                     _dumpLog.WriteLine("Setting speed to 8x for audio reading.");
                     UpdateStatus?.Invoke("Setting speed to 8x for audio reading.");
@@ -220,8 +221,10 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(inData && currentReadSpeed != _speed)
                 {
-                    _dumpLog.WriteLine($"Setting speed to {(_speed   == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
-                    UpdateStatus?.Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+                    _dumpLog.WriteLine($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
+
+                    UpdateStatus?.
+                        Invoke($"Setting speed to {(_speed == 0xFFFF ? "MAX for data reading" : $"{_speed}x")}.");
 
                     _speed *= _speedMultiplier;
 
@@ -229,8 +232,7 @@ namespace Aaru.Core.Devices.Dumping
                        _speed > 0xFFFF)
                         _speed = 0xFFFF;
 
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0,
-                                    _dev.Timeout, out _);
+                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
                 }
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -306,7 +308,8 @@ namespace Aaru.Core.Devices.Dumping
                        !inData    &&
                        offsetBytes != 0)
                     {
-                        int offsetFix = offsetBytes < 0 ? (int)(sectorSize - (offsetBytes * -1)) : offsetBytes;
+                        int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
+                                            : offsetBytes;
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
