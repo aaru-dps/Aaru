@@ -174,7 +174,8 @@ namespace Aaru.Core.Devices.Dumping
                    audioExtents.Contains(badSector) &&
                    offsetBytes != 0)
                 {
-                    int offsetFix = offsetBytes < 0 ? (int)(sectorSize - (offsetBytes * -1)) : offsetBytes;
+                    int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
+                                        : offsetBytes;
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
