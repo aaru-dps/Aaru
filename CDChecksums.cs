@@ -310,7 +310,7 @@ namespace Aaru.Checksums
                         return !failedEccP && !failedEccQ;
 
                     AaruConsole.DebugWriteLine("CD checksums",
-                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
+                                               "Mode 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                                channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
                                                storedEdc);
 
