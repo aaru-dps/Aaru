@@ -389,10 +389,8 @@ namespace Aaru.Core.Devices.Dumping
                                         cmdBuf = tmpBuf;
                                     }
 
+                                    // TODO: Implement sector validity
                                     cmdBuf = Sector.Scramble(cmdBuf);
-
-                                    // TODO: In error correction, if persistent, consider we got the sector, just save it
-                                    sense = CdChecksums.CheckCdSector(cmdBuf) != true;
                                 }
                             }
                         }
