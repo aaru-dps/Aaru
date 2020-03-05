@@ -32,11 +32,13 @@
 
 using System;
 using System.Linq;
+using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -193,7 +195,8 @@ namespace Aaru.Core.Devices.Dumping
                    (i + blocksToRead) - (ulong)sectorsForOffset > track.TrackEndSector + 1)
                     blocksToRead = (uint)(((track.TrackEndSector + 1) - i) + (ulong)sectorsForOffset);
 
-                if(blocksToRead == 1)
+                if(blocksToRead == 1 &&
+                   !inData)
                     blocksToRead += (uint)sectorsForOffset;
 
                 if(_fixOffset && !inData)
@@ -298,6 +301,221 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     sense = _dev.Read6(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, (byte)blocksToRead,
                                        _dev.Timeout, out cmdDuration);
+                }
+
+                double elapsed;
+
+                // Overcome the track mode change drive error
+                if(inData    &&
+                   !nextData &&
+                   sense)
+                {
+                    for(uint r = 0; r < blocksToRead; r++)
+                    {
+                        UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
+                                               (long)i + r, (long)blocks);
+
+                        if(readcd)
+                        {
+                            sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1,
+                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                                                out cmdDuration);
+
+                            totalDuration += cmdDuration;
+
+                            // Some drives just happily return the next audio sector instead of the last data sector, so we need to manually check for correctness
+                            // TODO: Check the same when trimming and reading back
+                            if(!sense)
+                                sense = CdChecksums.CheckCdSector(cmdBuf) != true;
+
+                            if(_supportsPlextorD8 && sense)
+                            {
+                                int adjustment = 0;
+
+                                if(offsetBytes < 0)
+                                    adjustment = -sectorsForOffset;
+
+                                sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
+                                                             (uint)(firstSectorToRead + r + adjustment), blockSize,
+                                                             (uint)sectorsForOffset, supportedPlextorSubchannel, 0,
+                                                             out cmdDuration);
+
+                                if(sense)
+                                {
+                                    // As a workaround for some firmware bugs, seek far away.
+                                    _dev.PlextorReadCdDa(out _, out senseBuf, firstSectorToRead - 32, blockSize,
+                                                         blocksToRead, supportedPlextorSubchannel, 0, out _);
+
+                                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
+                                                                 (uint)(firstSectorToRead + r + adjustment), blockSize,
+                                                                 (uint)sectorsForOffset, supportedPlextorSubchannel,
+                                                                 _dev.Timeout, out cmdDuration);
+                                }
+
+                                totalDuration += cmdDuration;
+
+                                if(!sense)
+                                {
+                                    int offsetFix = offsetBytes < 0
+                                                        ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
+                                                        : offsetBytes;
+
+                                    if(supportedSubchannel != MmcSubchannel.None)
+                                    {
+                                        // De-interleave subchannel
+                                        byte[] data = new byte[sectorSize];
+                                        byte[] sub  = new byte[subSize];
+
+                                        Array.Copy(cmdBuf, (int)blockSize, data, sectorSize, sectorSize);
+                                        Array.Copy(cmdBuf, (int)(sectorSize + blockSize), sub, subSize, subSize);
+
+                                        tmpBuf = new byte[sectorSize];
+                                        Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                                        data = tmpBuf;
+
+                                        blocksToRead -= (uint)sectorsForOffset;
+
+                                        // Re-interleave subchannel
+                                        cmdBuf = new byte[blockSize * blocksToRead];
+
+                                        Array.Copy(data, sectorSize, cmdBuf, (int)blockSize, sectorSize);
+                                        Array.Copy(sub, subSize, cmdBuf, (int)(sectorSize + blockSize), subSize);
+                                    }
+                                    else
+                                    {
+                                        tmpBuf = new byte[blockSize];
+                                        Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                                        cmdBuf = tmpBuf;
+                                    }
+
+                                    cmdBuf = Sector.Scramble(cmdBuf);
+
+                                    // TODO: In error correction, if persistent, consider we got the sector, just save it
+                                    sense = CdChecksums.CheckCdSector(cmdBuf) != true;
+                                }
+                            }
+                        }
+                        else if(read16)
+                        {
+                            sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i + r, blockSize, 0, 1,
+                                                false, _dev.Timeout, out cmdDuration);
+                        }
+                        else if(read12)
+                        {
+                            sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
+                                                blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
+                        }
+                        else if(read10)
+                        {
+                            sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
+                                                blockSize, 0, 1, _dev.Timeout, out cmdDuration);
+                        }
+                        else if(read6)
+                        {
+                            sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1, _dev.Timeout,
+                                               out cmdDuration);
+                        }
+
+                        if(!sense &&
+                           !_dev.Error)
+                        {
+                            mhddLog.Write(i + r, cmdDuration);
+                            ibgLog.Write(i  + r, currentSpeed * 1024);
+                            extents.Add(i   + r, 1, true);
+                            DateTime writeStart = DateTime.Now;
+
+                            if(supportedSubchannel != MmcSubchannel.None)
+                            {
+                                byte[] data = new byte[sectorSize];
+                                byte[] sub  = new byte[subSize];
+
+                                Array.Copy(cmdBuf, (int)blockSize, data, sectorSize, sectorSize);
+
+                                Array.Copy(cmdBuf, (int)(sectorSize + blockSize), sub, subSize, subSize);
+
+                                _outputPlugin.WriteSectorsLong(data, i + r, 1);
+                                _outputPlugin.WriteSectorsTag(sub, i   + r, 1, SectorTagType.CdSectorSubchannel);
+                            }
+                            else
+                            {
+                                if(supportsLongSectors)
+                                {
+                                    _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
+                                }
+                                else
+                                {
+                                    if(cmdBuf.Length % sectorSize == 0)
+                                    {
+                                        byte[] data = new byte[2048];
+
+                                        Array.Copy(cmdBuf, (int)(16 + blockSize), data, 2048, 2048);
+
+                                        _outputPlugin.WriteSectors(data, i + r, 1);
+                                    }
+                                    else
+                                    {
+                                        _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
+                                    }
+                                }
+                            }
+
+                            imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        }
+                        else
+                        {
+                            // Write empty data
+                            DateTime writeStart = DateTime.Now;
+
+                            if(supportedSubchannel != MmcSubchannel.None)
+                            {
+                                _outputPlugin.WriteSectorsLong(new byte[sectorSize], i + r, 1);
+
+                                _outputPlugin.WriteSectorsTag(new byte[subSize], i + r, 1,
+                                                              SectorTagType.CdSectorSubchannel);
+                            }
+                            else
+                            {
+                                if(supportsLongSectors)
+                                {
+                                    _outputPlugin.WriteSectorsLong(new byte[blockSize], i + r, 1);
+                                }
+                                else
+                                {
+                                    if(cmdBuf.Length % sectorSize == 0)
+                                        _outputPlugin.WriteSectors(new byte[2048], i + r, 1);
+                                    else
+                                        _outputPlugin.WriteSectorsLong(new byte[blockSize], i + r, 1);
+                                }
+                            }
+
+                            imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                            _resume.BadBlocks.Add(i + r);
+
+                            AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                            mhddLog.Write(i + r, cmdDuration < 500 ? 65535 : cmdDuration);
+
+                            ibgLog.Write(i                                                         + r, 0);
+                            _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", 1, i + r);
+                            newTrim = true;
+                        }
+
+                        sectorSpeedStart += blocksToRead;
+
+                        _resume.NextBlock = i + blocksToRead;
+
+                        elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+
+                        if(elapsed < 1)
+                            continue;
+
+                        currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                        sectorSpeedStart = 0;
+                        timeSpeedStart   = DateTime.UtcNow;
+                    }
+
+                    continue;
                 }
 
                 if(!sense &&
@@ -476,7 +694,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 _resume.NextBlock = i + blocksToRead;
 
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
                 if(elapsed < 1)
                     continue;
