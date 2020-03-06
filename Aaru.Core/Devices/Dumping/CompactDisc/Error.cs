@@ -266,42 +266,10 @@ namespace Aaru.Core.Devices.Dumping
                    audioExtents.Contains(badSector) &&
                    offsetBytes != 0)
                 {
-                    int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
-                                        : offsetBytes;
+                    uint blocksToRead = sectorsToReRead;
 
-                    if(supportedSubchannel != MmcSubchannel.None)
-                    {
-                        // De-interleave subchannel
-                        byte[] data = new byte[sectorSize * sectorsToReRead];
-                        byte[] sub  = new byte[subSize    * sectorsToReRead];
-
-                        for(int b = 0; b < sectorsToReRead; b++)
-                        {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
-
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
-                        }
-
-                        tmpBuf = new byte[sectorSize * (sectorsToReRead - sectorsForOffset)];
-                        Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                        data = tmpBuf;
-
-                        // Re-interleave subchannel
-                        cmdBuf = new byte[blockSize * sectorsToReRead];
-
-                        for(int b = 0; b < sectorsToReRead; b++)
-                        {
-                            Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
-
-                            Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
-                        }
-                    }
-                    else
-                    {
-                        tmpBuf = new byte[blockSize * (sectorsToReRead - sectorsForOffset)];
-                        Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                        cmdBuf = tmpBuf;
-                    }
+                    FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
+                                  subSize, ref cmdBuf, blockSize, false);
                 }
 
                 if(!sense &&

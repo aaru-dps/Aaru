@@ -357,37 +357,10 @@ namespace Aaru.Core.Devices.Dumping
 
                                 if(!sense)
                                 {
-                                    int offsetFix = offsetBytes < 0
-                                                        ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
-                                                        : offsetBytes;
+                                    uint sectorsForFix = (uint)(1 + sectorsForOffset);
 
-                                    if(supportedSubchannel != MmcSubchannel.None)
-                                    {
-                                        // De-interleave subchannel
-                                        byte[] data = new byte[sectorSize];
-                                        byte[] sub  = new byte[subSize];
-
-                                        Array.Copy(cmdBuf, (int)blockSize, data, sectorSize, sectorSize);
-                                        Array.Copy(cmdBuf, (int)(sectorSize + blockSize), sub, subSize, subSize);
-
-                                        tmpBuf = new byte[sectorSize];
-                                        Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                                        data = tmpBuf;
-
-                                        blocksToRead -= (uint)sectorsForOffset;
-
-                                        // Re-interleave subchannel
-                                        cmdBuf = new byte[blockSize * blocksToRead];
-
-                                        Array.Copy(data, sectorSize, cmdBuf, (int)blockSize, sectorSize);
-                                        Array.Copy(sub, subSize, cmdBuf, (int)(sectorSize + blockSize), subSize);
-                                    }
-                                    else
-                                    {
-                                        tmpBuf = new byte[blockSize];
-                                        Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                                        cmdBuf = tmpBuf;
-                                    }
+                                    FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
+                                                  ref sectorsForFix, subSize, ref cmdBuf, blockSize, false);
 
                                     // TODO: Implement sector validity
                                     cmdBuf = Sector.Scramble(cmdBuf);
@@ -523,68 +496,8 @@ namespace Aaru.Core.Devices.Dumping
                     if(_fixOffset &&
                        !inData    &&
                        offsetBytes != 0)
-                    {
-                        int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
-                                            : offsetBytes;
-
-                        if(supportedSubchannel != MmcSubchannel.None)
-                        {
-                            // De-interleave subchannel
-                            byte[] data = new byte[sectorSize * blocksToRead];
-                            byte[] sub  = new byte[subSize    * blocksToRead];
-
-                            for(int b = 0; b < blocksToRead; b++)
-                            {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
-
-                                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
-                            }
-
-                            if(failedCrossingLeadOut)
-                            {
-                                blocksToRead += (uint)sectorsForOffset;
-
-                                tmpBuf = new byte[sectorSize * blocksToRead];
-                                Array.Copy(data, 0, tmpBuf, 0, data.Length);
-                                data   = tmpBuf;
-                                tmpBuf = new byte[subSize * blocksToRead];
-                                Array.Copy(sub, 0, tmpBuf, 0, sub.Length);
-                                sub = tmpBuf;
-                            }
-
-                            tmpBuf = new byte[sectorSize * (blocksToRead - sectorsForOffset)];
-                            Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                            data = tmpBuf;
-
-                            blocksToRead -= (uint)sectorsForOffset;
-
-                            // Re-interleave subchannel
-                            cmdBuf = new byte[blockSize * blocksToRead];
-
-                            for(int b = 0; b < blocksToRead; b++)
-                            {
-                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
-
-                                Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
-                            }
-                        }
-                        else
-                        {
-                            if(failedCrossingLeadOut)
-                            {
-                                blocksToRead += (uint)sectorsForOffset;
-
-                                tmpBuf = new byte[blockSize * blocksToRead];
-                                Array.Copy(cmdBuf, 0, tmpBuf, 0, cmdBuf.Length);
-                                cmdBuf = tmpBuf;
-                            }
-
-                            tmpBuf = new byte[blockSize * (blocksToRead - sectorsForOffset)];
-                            Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                            cmdBuf       =  tmpBuf;
-                            blocksToRead -= (uint)sectorsForOffset;
-                        }
-                    }
+                        FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
+                                      subSize, ref cmdBuf, blockSize, failedCrossingLeadOut);
 
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);

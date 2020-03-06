@@ -174,42 +174,10 @@ namespace Aaru.Core.Devices.Dumping
                    audioExtents.Contains(badSector) &&
                    offsetBytes != 0)
                 {
-                    int offsetFix = offsetBytes < 0 ? (int)((sectorSize * sectorsForOffset) + offsetBytes)
-                                        : offsetBytes;
+                    uint blocksToRead = sectorsToTrim;
 
-                    if(supportedSubchannel != MmcSubchannel.None)
-                    {
-                        // De-interleave subchannel
-                        byte[] data = new byte[sectorSize * sectorsToTrim];
-                        byte[] sub  = new byte[subSize    * sectorsToTrim];
-
-                        for(int b = 0; b < sectorsToTrim; b++)
-                        {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
-
-                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
-                        }
-
-                        tmpBuf = new byte[sectorSize * (sectorsToTrim - sectorsForOffset)];
-                        Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                        data = tmpBuf;
-
-                        // Re-interleave subchannel
-                        cmdBuf = new byte[blockSize * sectorsToTrim];
-
-                        for(int b = 0; b < sectorsToTrim; b++)
-                        {
-                            Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
-
-                            Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
-                        }
-                    }
-                    else
-                    {
-                        tmpBuf = new byte[blockSize * (sectorsToTrim - sectorsForOffset)];
-                        Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                        cmdBuf = tmpBuf;
-                    }
+                    FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
+                                  subSize, ref cmdBuf, blockSize, false);
                 }
 
                 if(supportedSubchannel != MmcSubchannel.None)
