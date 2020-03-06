@@ -84,7 +84,8 @@ namespace Aaru.Decoders.CD
 
         public static CDText? Decode(byte[] CDTextResponse)
         {
-            if(CDTextResponse == null)
+            if(CDTextResponse        == null ||
+               CDTextResponse.Length <= 4)
                 return null;
 
             var decoded = new CDText

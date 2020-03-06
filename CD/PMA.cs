@@ -47,7 +47,8 @@ namespace Aaru.Decoders.CD
     {
         public static CDPMA? Decode(byte[] CDPMAResponse)
         {
-            if(CDPMAResponse == null)
+            if(CDPMAResponse        == null ||
+               CDPMAResponse.Length <= 4)
                 return null;
 
             var decoded = new CDPMA

@@ -55,7 +55,8 @@ namespace Aaru.Decoders.CD
 
         public static CDFullTOC? Decode(byte[] CDFullTOCResponse)
         {
-            if(CDFullTOCResponse == null)
+            if(CDFullTOCResponse        == null ||
+               CDFullTOCResponse.Length <= 4)
                 return null;
 
             var decoded = new CDFullTOC

@@ -48,7 +48,8 @@ namespace Aaru.Decoders.CD
     {
         public static CDTOC? Decode(byte[] CDTOCResponse)
         {
-            if(CDTOCResponse == null)
+            if(CDTOCResponse        == null ||
+               CDTOCResponse.Length <= 4)
                 return null;
 
             var decoded = new CDTOC

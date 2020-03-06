@@ -48,7 +48,8 @@ namespace Aaru.Decoders.CD
     {
         public static CDATIP? Decode(byte[] CDATIPResponse)
         {
-            if(CDATIPResponse == null)
+            if(CDATIPResponse        == null ||
+               CDATIPResponse.Length <= 4)
                 return null;
 
             var decoded = new CDATIP();

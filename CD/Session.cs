@@ -47,7 +47,8 @@ namespace Aaru.Decoders.CD
     {
         public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
         {
-            if(CDSessionInfoResponse == null)
+            if(CDSessionInfoResponse        == null ||
+               CDSessionInfoResponse.Length <= 4)
                 return null;
 
             var decoded = new CDSessionInfo
