@@ -1124,7 +1124,7 @@ namespace Aaru.Core.Media.Info
                                 AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Session info\n{0}",
                                                            Sense.PrettifySense(senseBuf));
                             }
-                            else
+                            else if(cmdBuf.Length > 4)
                             {
                                 Session        = cmdBuf;
                                 DecodedSession = Decoders.CD.Session.Decode(cmdBuf);
@@ -1143,7 +1143,7 @@ namespace Aaru.Core.Media.Info
                                 AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: Raw TOC\n{0}",
                                                            Sense.PrettifySense(senseBuf));
                             }
-                            else
+                            else if(cmdBuf.Length > 4)
                             {
                                 RawToc = cmdBuf;
 
@@ -1155,7 +1155,7 @@ namespace Aaru.Core.Media.Info
                             if(sense)
                                 AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: PMA\n{0}",
                                                            Sense.PrettifySense(senseBuf));
-                            else
+                            else if(cmdBuf.Length > 4)
                                 Pma = cmdBuf;
 
                             sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -1165,7 +1165,7 @@ namespace Aaru.Core.Media.Info
                                 AaruConsole.DebugWriteLine("Media-Info command", "READ TOC/PMA/ATIP: CD-TEXT\n{0}",
                                                            Sense.PrettifySense(senseBuf));
                             }
-                            else
+                            else if(cmdBuf.Length > 4)
                             {
                                 CdTextLeadIn        = cmdBuf;
                                 DecodedCdTextLeadIn = CDTextOnLeadIn.Decode(cmdBuf);

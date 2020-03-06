@@ -299,26 +299,29 @@ namespace Aaru.Core.Media.Detection
                     }
                 }
 
-                if(hasDataTrack                  &&
-                   hasAudioTrack                 &&
-                   allFirstSessionTracksAreAudio &&
-                   sessions == 2)
-                    mediaType = MediaType.CDPLUS;
+                if(mediaType != MediaType.CDI)
+                {
+                    if(hasDataTrack                  &&
+                       hasAudioTrack                 &&
+                       allFirstSessionTracksAreAudio &&
+                       sessions == 2)
+                        mediaType = MediaType.CDPLUS;
 
-                if(!hasDataTrack &&
-                   hasAudioTrack &&
-                   sessions == 1)
-                    mediaType = MediaType.CDDA;
+                    if(!hasDataTrack &&
+                       hasAudioTrack &&
+                       sessions == 1)
+                        mediaType = MediaType.CDDA;
 
-                if(hasDataTrack   &&
-                   !hasAudioTrack &&
-                   sessions == 1)
-                    mediaType = MediaType.CDROM;
+                    if(hasDataTrack   &&
+                       !hasAudioTrack &&
+                       sessions == 1)
+                        mediaType = MediaType.CDROM;
 
-                if(hasVideoTrack &&
-                   !hasDataTrack &&
-                   sessions == 1)
-                    mediaType = MediaType.CDV;
+                    if(hasVideoTrack &&
+                       !hasDataTrack &&
+                       sessions == 1)
+                        mediaType = MediaType.CDV;
+                }
 
                 if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
                 {
