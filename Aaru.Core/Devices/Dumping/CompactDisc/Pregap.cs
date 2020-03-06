@@ -503,6 +503,17 @@ namespace Aaru.Core.Devices.Dumping
                         inexactPositioning = true;
                     }
 
+                    // Received a Q post the LBA we wanted, just go back. If we are already going forward, break
+                    if(posQ > lba)
+                    {
+                        if(forward)
+                            break;
+
+                        lba--;
+
+                        continue;
+                    }
+
                     // Bigger than known change, otherwise we found it
                     if(pregapQ > pregaps[track.TrackSequence])
                     {
