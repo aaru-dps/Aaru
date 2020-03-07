@@ -304,7 +304,32 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i + r, (long)blocks);
 
-                        if(readcd)
+                        if(_supportsPlextorD8)
+                        {
+                            int adjustment = 0;
+
+                            if(offsetBytes < 0)
+                                adjustment = -sectorsForOffset;
+
+                            sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf,
+                                                              (uint)(firstSectorToRead + r + adjustment), blockSize,
+                                                              (uint)sectorsForOffset + 1,
+                                                              supportedPlextorSubchannel, out cmdDuration);
+
+                            totalDuration += cmdDuration;
+
+                            if(!sense)
+                            {
+                                uint sectorsForFix = (uint)(1 + sectorsForOffset);
+
+                                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
+                                              ref sectorsForFix, subSize, ref cmdBuf, blockSize, false);
+
+                                // TODO: Implement sector validity
+                                cmdBuf = Sector.Scramble(cmdBuf);
+                            }
+                        }
+                        else if(readcd)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1,
                                                 MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
@@ -312,37 +337,6 @@ namespace Aaru.Core.Devices.Dumping
                                                 out cmdDuration);
 
                             totalDuration += cmdDuration;
-
-                            // Some drives just happily return the next audio sector instead of the last data sector, so we need to manually check for correctness
-                            // TODO: Check the same when trimming and reading back
-                            if(!sense)
-                                sense = CdChecksums.CheckCdSector(cmdBuf) != true;
-
-                            if(_supportsPlextorD8 && sense)
-                            {
-                                int adjustment = 0;
-
-                                if(offsetBytes < 0)
-                                    adjustment = -sectorsForOffset;
-
-                                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf,
-                                                                  (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                                  (uint)sectorsForOffset + 1,
-                                                                  supportedPlextorSubchannel, out cmdDuration);
-
-                                totalDuration += cmdDuration;
-
-                                if(!sense)
-                                {
-                                    uint sectorsForFix = (uint)(1 + sectorsForOffset);
-
-                                    FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
-                                                  ref sectorsForFix, subSize, ref cmdBuf, blockSize, false);
-
-                                    // TODO: Implement sector validity
-                                    cmdBuf = Sector.Scramble(cmdBuf);
-                                }
-                            }
                         }
                         else if(read16)
                         {
