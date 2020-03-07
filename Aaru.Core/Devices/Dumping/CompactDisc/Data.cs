@@ -338,7 +338,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                 sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
                                                              (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                             (uint)sectorsForOffset, supportedPlextorSubchannel, 0,
+                                                             (uint)sectorsForOffset + 1, supportedPlextorSubchannel, 0,
                                                              out cmdDuration);
 
                                 if(sense)
@@ -349,7 +349,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                     sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
                                                                  (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                                 (uint)sectorsForOffset, supportedPlextorSubchannel,
+                                                                 (uint)sectorsForOffset + 1, supportedPlextorSubchannel,
                                                                  _dev.Timeout, out cmdDuration);
                                 }
 
@@ -401,9 +401,9 @@ namespace Aaru.Core.Devices.Dumping
                                 byte[] data = new byte[sectorSize];
                                 byte[] sub  = new byte[subSize];
 
-                                Array.Copy(cmdBuf, (int)blockSize, data, sectorSize, sectorSize);
+                                Array.Copy(cmdBuf, 0, data, 0, sectorSize);
 
-                                Array.Copy(cmdBuf, (int)(sectorSize + blockSize), sub, subSize, subSize);
+                                Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
                                 _outputPlugin.WriteSectorsTag(sub, i   + r, 1, SectorTagType.CdSectorSubchannel);
@@ -420,7 +420,7 @@ namespace Aaru.Core.Devices.Dumping
                                     {
                                         byte[] data = new byte[2048];
 
-                                        Array.Copy(cmdBuf, (int)(16 + blockSize), data, 2048, 2048);
+                                        Array.Copy(cmdBuf, 16, data, 2048, 2048);
 
                                         _outputPlugin.WriteSectors(data, i + r, 1);
                                     }
