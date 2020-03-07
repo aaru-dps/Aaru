@@ -222,19 +222,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(_supportsPlextorD8 && audioExtents.Contains(badSector))
                 {
-                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, badSectorToReRead, blockSize,
-                                                 sectorsToReRead, supportedPlextorSubchannel, 0, out cmdDuration);
-
-                    if(sense)
-                    {
-                        // As a workaround for some firmware bugs, seek far away.
-                        _dev.PlextorReadCdDa(out _, out _, badSectorToReRead - 32, blockSize, sectorsToReRead,
-                                             supportedPlextorSubchannel, 0, out _);
-
-                        sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, badSectorToReRead, blockSize,
-                                                     sectorsToReRead, supportedPlextorSubchannel, _dev.Timeout,
-                                                     out cmdDuration);
-                    }
+                    sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToReRead, blockSize,
+                                                      sectorsToReRead, supportedPlextorSubchannel, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }

@@ -268,6 +268,7 @@
               <e p="Error.cs" t="Include" />
               <e p="LeadOuts.cs" t="Include" />
               <e p="Offset.cs" t="Include" />
+              <e p="Plextor.cs" t="Include" />
               <e p="Pregap.cs" t="Include" />
               <e p="Subchannel.cs" t="Include" />
               <e p="Tags.cs" t="Include" />

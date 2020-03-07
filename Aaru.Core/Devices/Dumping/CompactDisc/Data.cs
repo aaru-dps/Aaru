@@ -258,19 +258,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(_supportsPlextorD8 && !inData)
                 {
-                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
-                                                 supportedPlextorSubchannel, 0, out cmdDuration);
-
-                    if(sense)
-                    {
-                        // As a workaround for some firmware bugs, seek far away.
-                        _dev.PlextorReadCdDa(out _, out senseBuf, firstSectorToRead - 32, blockSize, blocksToRead,
-                                             supportedPlextorSubchannel, 0, out _);
-
-                        sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, blockSize,
-                                                     blocksToRead, supportedPlextorSubchannel, _dev.Timeout,
-                                                     out cmdDuration);
-                    }
+                    sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, firstSectorToRead, blockSize,
+                                                      blocksToRead, supportedPlextorSubchannel, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
@@ -336,22 +325,10 @@ namespace Aaru.Core.Devices.Dumping
                                 if(offsetBytes < 0)
                                     adjustment = -sectorsForOffset;
 
-                                sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
-                                                             (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                             (uint)sectorsForOffset + 1, supportedPlextorSubchannel, 0,
-                                                             out cmdDuration);
-
-                                if(sense)
-                                {
-                                    // As a workaround for some firmware bugs, seek far away.
-                                    _dev.PlextorReadCdDa(out _, out senseBuf, firstSectorToRead - 32, blockSize,
-                                                         blocksToRead, supportedPlextorSubchannel, 0, out _);
-
-                                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
-                                                                 (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                                 (uint)sectorsForOffset + 1, supportedPlextorSubchannel,
-                                                                 _dev.Timeout, out cmdDuration);
-                                }
+                                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf,
+                                                                  (uint)(firstSectorToRead + r + adjustment), blockSize,
+                                                                  (uint)sectorsForOffset + 1,
+                                                                  supportedPlextorSubchannel, out cmdDuration);
 
                                 totalDuration += cmdDuration;
 

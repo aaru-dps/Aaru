@@ -491,9 +491,9 @@ namespace Aaru.Core.Devices.Dumping
                     previousPregapIsPreviousTrack = false;
 
                     // Pregap according to Q position
-                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75)                   + subBuf[9]) - 150;
-                    int diff    = posQ                                                 - lba;
-                    int pregapQ = (int)track.TrackStartSector - lba;
+                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
+                    int diff    = posQ                               - lba;
+                    int pregapQ = (int)track.TrackStartSector        - lba;
 
                     if(diff != 0)
                     {
@@ -593,16 +593,12 @@ namespace Aaru.Core.Devices.Dumping
                 else if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
                         dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
                         dev.Manufacturer.ToLowerInvariant()                                        == "plextor")
-                    sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 2448, 1, PlextorSubchannel.All, dev.Timeout,
+                    sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 96, 1, PlextorSubchannel.All, dev.Timeout,
                                                 out _);
 
                 {
                     if(!sense)
-                    {
-                        byte[] tmpBuf = new byte[96];
-                        Array.Copy(cmdBuf, 0, tmpBuf, 0, 96);
-                        subBuf = DeinterleaveQ(tmpBuf);
-                    }
+                        subBuf = DeinterleaveQ(cmdBuf);
                 }
             }
 
