@@ -599,10 +599,6 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            // Try to read the first track pregap
-            if(_dumpFirstTrackPregap && readcd)
-                ReadCdFirstTrackPregap(blockSize, ref currentSpeed, mediaTags, supportedSubchannel, ref totalDuration);
-
             // Try how many blocks are readable at once
             while(true)
             {
@@ -657,6 +653,10 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", _dev.LastError);
                 StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
             }
+
+            // Try to read the first track pregap
+            if(_dumpFirstTrackPregap && readcd)
+                ReadCdFirstTrackPregap(blockSize, ref currentSpeed, mediaTags, supportedSubchannel, ref totalDuration);
 
             _dumpLog.WriteLine("Reading {0} sectors at a time.", _maximumReadable);
             _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
@@ -962,8 +962,7 @@ namespace Aaru.Core.Devices.Dumping
                    _speed > 0xFFFF)
                     _speed = 0xFFFF;
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout,
-                                out _);
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
             }
 
             // Start reading
