@@ -553,9 +553,6 @@ namespace Aaru.Commands.Image
                     doneSectors = 0;
                     ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
 
-                    if(track.TrackSequence == 11)
-                        System.Console.WriteLine("foo");
-
                     while(doneSectors < trackSectors)
                     {
                         byte[] sector;
