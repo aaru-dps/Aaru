@@ -73,7 +73,7 @@ namespace Aaru.Core
                 }
 
             // Getting all partitions from device (e.g. tracks)
-            else if(partitionableImage?.Partitions != null)
+            if(partitionableImage?.Partitions != null)
                 foreach(Partition imagePartition in partitionableImage.Partitions)
                 {
                     foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
@@ -89,7 +89,7 @@ namespace Aaru.Core
                 }
 
             // Getting all partitions at start of device
-            else
+            if(!checkedLocations.Contains(0))
             {
                 foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                     if(partitionPlugin.GetInformation(image, out List<Partition> partitions, 0))
@@ -166,7 +166,8 @@ namespace Aaru.Core
                                                            Sequence = tapeFile.File
                                                        }));
             }
-            else if(!(partitionableImage is null))
+
+            if(!(partitionableImage is null))
             {
                 List<ulong> startLocations =
                     childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
