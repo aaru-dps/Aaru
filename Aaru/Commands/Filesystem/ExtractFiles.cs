@@ -281,6 +281,10 @@ namespace Aaru.Commands.Filesystem
                         else
                         {
                             plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+
+                            if(plugin == null)
+                                continue;
+
                             AaruConsole.WriteLine($"Identified by {plugin.Name}.");
 
                             var fs = (IReadOnlyFilesystem)plugin.
