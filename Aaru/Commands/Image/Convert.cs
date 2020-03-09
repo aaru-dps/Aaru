@@ -553,6 +553,9 @@ namespace Aaru.Commands.Image
                     doneSectors = 0;
                     ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
 
+                    if(track.TrackSequence == 11)
+                        System.Console.WriteLine("foo");
+
                     while(doneSectors < trackSectors)
                     {
                         byte[] sector;
@@ -604,11 +607,13 @@ namespace Aaru.Commands.Image
                         if(!result)
                             if(force)
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
-                                                           outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage,
+                                                           doneSectors + track.TrackStartSector);
                             else
                             {
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
-                                                           outputFormat.ErrorMessage, doneSectors);
+                                                           outputFormat.ErrorMessage,
+                                                           doneSectors + track.TrackStartSector);
 
                                 return (int)ErrorNumber.WriteError;
                             }
@@ -709,12 +714,13 @@ namespace Aaru.Commands.Image
                             if(!result)
                                 if(force)
                                     AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
-                                                               outputFormat.ErrorMessage, doneSectors);
+                                                               outputFormat.ErrorMessage,
+                                                               doneSectors + track.TrackStartSector);
                                 else
                                 {
                                     AaruConsole.
                                         ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
-                                                       outputFormat.ErrorMessage, doneSectors);
+                                                       outputFormat.ErrorMessage, doneSectors + track.TrackStartSector);
 
                                     return (int)ErrorNumber.WriteError;
                                 }
