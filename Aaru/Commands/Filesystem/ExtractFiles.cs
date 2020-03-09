@@ -303,67 +303,6 @@ namespace Aaru.Commands.Filesystem
                         }
                     }
                 }
-
-                var wholePart = new Partition
-                {
-                    Name = "Whole device", Length = imageFormat.Info.Sectors,
-                    Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
-                };
-
-                Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
-
-                if(idPlugins.Count == 0)
-                    AaruConsole.WriteLine("Filesystem not identified");
-                else if(idPlugins.Count > 1)
-                {
-                    AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
-
-                    foreach(string pluginName in idPlugins)
-                        if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
-                        {
-                            AaruConsole.WriteLine($"As identified by {plugin.Name}.");
-
-                            var fs = (IReadOnlyFilesystem)plugin.
-                                                          GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                {});
-
-                            error = fs.Mount(imageFormat, wholePart, encodingClass, parsedOptions, @namespace);
-
-                            if(error == Errno.NoError)
-                            {
-                                string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                        : fs.XmlFsType.VolumeName;
-
-                                ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                Statistics.AddFilesystem(fs.XmlFsType.Type);
-                            }
-                            else
-                                AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
-                        }
-                }
-                else
-                {
-                    plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
-                    AaruConsole.WriteLine($"Identified by {plugin.Name}.");
-
-                    var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                               {});
-
-                    error = fs.Mount(imageFormat, wholePart, encodingClass, parsedOptions, @namespace);
-
-                    if(error == Errno.NoError)
-                    {
-                        string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                : fs.XmlFsType.VolumeName;
-
-                        ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                        Statistics.AddFilesystem(fs.XmlFsType.Type);
-                    }
-                    else
-                        AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
-                }
             }
             catch(Exception ex)
             {
