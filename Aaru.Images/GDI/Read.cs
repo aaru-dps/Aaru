@@ -429,21 +429,9 @@ namespace Aaru.DiscImages
             if(aaruTrack.Pregap > 0 &&
                sectorAddress    < aaruTrack.Pregap)
             {
-                ulong  remainingPregap = aaruTrack.Pregap - sectorAddress;
-                byte[] zero;
+                ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
-                if(length > remainingPregap)
-                {
-                    zero             =  new byte[remainingPregap * sectorSize];
-                    remainingSectors -= remainingPregap;
-                }
-                else
-                {
-                    zero             =  new byte[length * sectorSize];
-                    remainingSectors -= length;
-                }
-
-                Array.Copy(zero, 0, buffer, 0, zero.Length);
+                remainingSectors -= length > remainingPregap ? remainingPregap : length;
             }
 
             if(remainingSectors == 0)
@@ -624,21 +612,9 @@ namespace Aaru.DiscImages
             if(aaruTrack.Pregap > 0 &&
                sectorAddress    < aaruTrack.Pregap)
             {
-                ulong  remainingPregap = aaruTrack.Pregap - sectorAddress;
-                byte[] zero;
+                ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
-                if(length > remainingPregap)
-                {
-                    zero             =  new byte[remainingPregap * sectorSize];
-                    remainingSectors -= remainingPregap;
-                }
-                else
-                {
-                    zero             =  new byte[length * sectorSize];
-                    remainingSectors -= length;
-                }
-
-                Array.Copy(zero, 0, buffer, 0, zero.Length);
+                remainingSectors -= length > remainingPregap ? remainingPregap : length;
             }
 
             if(remainingSectors == 0)
@@ -770,21 +746,9 @@ namespace Aaru.DiscImages
             if(aaruTrack.Pregap > 0 &&
                sectorAddress    < aaruTrack.Pregap)
             {
-                ulong  remainingPregap = aaruTrack.Pregap - sectorAddress;
-                byte[] zero;
+                ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
-                if(length > remainingPregap)
-                {
-                    zero             =  new byte[remainingPregap * sectorSize];
-                    remainingSectors -= remainingPregap;
-                }
-                else
-                {
-                    zero             =  new byte[length * sectorSize];
-                    remainingSectors -= length;
-                }
-
-                Array.Copy(zero, 0, buffer, 0, zero.Length);
+                remainingSectors -= length > remainingPregap ? remainingPregap : length;
             }
 
             if(remainingSectors == 0)
