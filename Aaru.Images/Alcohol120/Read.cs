@@ -98,6 +98,9 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessionOffset = {0}", header.sessionOffset);
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.dpmOffset = {0}", header.dpmOffset);
 
+            if(header.version[0] > _maximumSupportedVersion)
+                return false;
+
             stream.Seek(header.sessionOffset, SeekOrigin.Begin);
             alcSessions = new Dictionary<int, AlcoholSession>();
 
