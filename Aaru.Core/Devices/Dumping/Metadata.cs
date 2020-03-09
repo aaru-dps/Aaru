@@ -86,6 +86,9 @@ namespace Aaru.Core.Devices.Dumping
             CICMMetadataType sidecar = _sidecarClass.Create();
             DateTime         end     = DateTime.UtcNow;
 
+            if(_aborted)
+                return;
+
             totalChkDuration = (end - chkStart).TotalMilliseconds;
             _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
