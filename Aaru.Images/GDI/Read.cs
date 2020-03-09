@@ -452,21 +452,39 @@ namespace Aaru.DiscImages
             imageStream = aaruTrack.Trackfilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.
-               Seek(aaruTrack.Offset + (long)((sectorAddress * (sectorOffset + sectorSize + sectorSkip)) + (aaruTrack.Pregap * aaruTrack.Bps)),
-                    SeekOrigin.Begin);
+            long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
+                                                 (aaruTrack.Pregap * aaruTrack.Bps));
 
-            if(sectorOffset == 0 &&
-               sectorSkip   == 0)
+            if(pos < 0)
+                pos = 0;
+
+            br.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+            if(sectorOffset     == 0 &&
+               sectorSkip       == 0 &&
+               remainingSectors == length)
+            {
                 buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
+            }
+            else if(sectorOffset == 0 &&
+                    sectorSkip   == 0)
+            {
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+            }
             else
+            {
+                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                     byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, (int)(i * sectorSize), sectorSize);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
                 }
+            }
 
             return buffer;
         }
@@ -629,21 +647,39 @@ namespace Aaru.DiscImages
             imageStream = aaruTrack.Trackfilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.
-               Seek(aaruTrack.Offset + (long)((sectorAddress * (sectorOffset + sectorSize + sectorSkip)) + (aaruTrack.Pregap * aaruTrack.Bps)),
-                    SeekOrigin.Begin);
+            long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
+                                                 (aaruTrack.Pregap * aaruTrack.Bps));
 
-            if(sectorOffset == 0 &&
-               sectorSkip   == 0)
+            if(pos < 0)
+                pos = 0;
+
+            br.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+            if(sectorOffset     == 0 &&
+               sectorSkip       == 0 &&
+               remainingSectors == length)
+            {
                 buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
+            }
+            else if(sectorOffset == 0 &&
+                    sectorSkip   == 0)
+            {
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+            }
             else
+            {
+                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                     byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, (int)(i * sectorSize), sectorSize);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
                 }
+            }
 
             return buffer;
         }
@@ -757,21 +793,39 @@ namespace Aaru.DiscImages
             imageStream = aaruTrack.Trackfilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.
-               Seek(aaruTrack.Offset + (long)((sectorAddress * (sectorOffset + sectorSize + sectorSkip)) + (aaruTrack.Pregap * aaruTrack.Bps)),
-                    SeekOrigin.Begin);
+            long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
+                                                 (aaruTrack.Pregap * aaruTrack.Bps));
 
-            if(sectorOffset == 0 &&
-               sectorSkip   == 0)
+            if(pos < 0)
+                pos = 0;
+
+            br.BaseStream.Seek(pos, SeekOrigin.Begin);
+
+            if(sectorOffset     == 0 &&
+               sectorSkip       == 0 &&
+               remainingSectors == length)
+            {
                 buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
+            }
+            else if(sectorOffset == 0 &&
+                    sectorSkip   == 0)
+            {
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+            }
             else
+            {
+                int bufferPos = (int)((length - remainingSectors) * sectorSize);
+
                 for(ulong i = 0; i < remainingSectors; i++)
                 {
                     br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
                     byte[] sector = br.ReadBytes((int)sectorSize);
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, (int)(i * sectorSize), sectorSize);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
                 }
+            }
 
             return buffer;
         }
