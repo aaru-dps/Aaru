@@ -92,6 +92,7 @@ namespace Aaru.DiscImages
         MemoryStream blockStream;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 checksumProvider;
+        bool compress;
         /// <summary>Provides CRC64.</summary>
         Crc64Context crc64;
         /// <summary>Header of the currently writing block.</summary>
@@ -131,7 +132,6 @@ namespace Aaru.DiscImages
         /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> mediaTags;
         byte[] mode2Subheaders;
-        bool   nocompress;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
         long outMemoryDdtPosition;
         bool rewinded;

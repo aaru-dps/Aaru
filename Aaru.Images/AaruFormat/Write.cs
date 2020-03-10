@@ -166,17 +166,17 @@ namespace Aaru.DiscImages
                 else
                     deduplicate = true;
 
-                if(options.TryGetValue("nocompress", out tmpValue))
+                if(options.TryGetValue("compress", out tmpValue))
                 {
-                    if(!bool.TryParse(tmpValue, out nocompress))
+                    if(!bool.TryParse(tmpValue, out compress))
                     {
-                        ErrorMessage = "Invalid value for nocompress option";
+                        ErrorMessage = "Invalid value for compress option";
 
                         return false;
                     }
                 }
                 else
-                    nocompress = false;
+                    compress = true;
             }
             else
             {
@@ -188,7 +188,7 @@ namespace Aaru.DiscImages
                 doSha256        = false;
                 doSpamsum       = false;
                 deduplicate     = true;
-                nocompress      = false;
+                compress        = true;
             }
 
             // This really, cannot happen
@@ -1125,14 +1125,14 @@ namespace Aaru.DiscImages
             {
                 currentBlockHeader = new BlockHeader
                 {
-                    identifier  = BlockType.DataBlock, type = DataType.UserData,
-                    compression = nocompress ? CompressionType.None : CompressionType.Lzma,
-                    sectorSize  = (uint)data.Length
+                    identifier  = BlockType.DataBlock,
+                    type        = DataType.UserData,
+                    compression = compress ? CompressionType.Lzma : CompressionType.None, sectorSize = (uint)data.Length
                 };
 
                 if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc &&
                    trk.TrackType          == TrackType.Audio          &&
-                   !nocompress)
+                   compress)
                     currentBlockHeader.compression = CompressionType.Flac;
 
                 // JaguarCD stores data in audio tracks. FLAC is too inefficient, use LZMA there.
@@ -1142,7 +1142,7 @@ namespace Aaru.DiscImages
                     imageInfo.MediaType == MediaType.VideoNowColor                      ||
                     imageInfo.MediaType == MediaType.VideoNowXp) &&
                    trk.TrackType == TrackType.Audio              &&
-                   !nocompress                                   &&
+                   compress                                      &&
                    currentBlockHeader.compression == CompressionType.Flac)
                     currentBlockHeader.compression = CompressionType.Lzma;
 
@@ -2416,7 +2416,7 @@ namespace Aaru.DiscImages
 
                         byte[] lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
@@ -2479,7 +2479,7 @@ namespace Aaru.DiscImages
                             sectorSize = 288
                         };
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
@@ -2699,7 +2699,7 @@ namespace Aaru.DiscImages
 
                         lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             prefixBlock.compression = CompressionType.None;
                             prefixBlock.cmpCrc64    = prefixBlock.crc64;
@@ -2766,7 +2766,7 @@ namespace Aaru.DiscImages
 
                         lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             suffixBlock.compression = CompressionType.None;
                             suffixBlock.cmpCrc64    = suffixBlock.crc64;
@@ -2836,7 +2836,7 @@ namespace Aaru.DiscImages
 
                         byte[] lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             subheaderBlock.compression = CompressionType.None;
                             subheaderBlock.cmpCrc64    = subheaderBlock.crc64;
@@ -2906,7 +2906,7 @@ namespace Aaru.DiscImages
 
                         byte[] lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             subchannelBlock.compression = CompressionType.None;
                             subchannelBlock.cmpCrc64    = subchannelBlock.crc64;
@@ -3090,7 +3090,7 @@ namespace Aaru.DiscImages
 
                         byte[] lzmaProperties = null;
 
-                        if(nocompress)
+                        if(!compress)
                         {
                             subchannelBlock.compression = CompressionType.None;
                             subchannelBlock.cmpCrc64    = subchannelBlock.crc64;

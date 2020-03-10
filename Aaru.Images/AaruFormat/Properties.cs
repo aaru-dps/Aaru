@@ -71,8 +71,8 @@ namespace Aaru.DiscImages
             ("deduplicate", typeof(bool),
              "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default",
              (object)true),
-            ("nocompress", typeof(bool), "Don't compress user data blocks. Other blocks will still be compressed",
-             (object)false)
+            ("compress", typeof(bool), "Compress user data blocks. Other blocks will always be compressed",
+             (object)true)
         };
         public IEnumerable<string> KnownExtensions => new[]
         {
