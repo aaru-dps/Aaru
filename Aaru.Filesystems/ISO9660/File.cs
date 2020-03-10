@@ -153,7 +153,10 @@ namespace Aaru.Filesystems.ISO9660
                 }
             }
 
-            buf = ReadWithExtents(offset, size, entry.Extents);
+            buf = ReadWithExtents(offset, size, entry.Extents,
+                                  entry.XA?.signature                                    == XA_MAGIC &&
+                                  entry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                  entry.XA?.filenumber ?? 0);
 
             return Errno.NoError;
         }
@@ -483,23 +486,15 @@ namespace Aaru.Filesystems.ISO9660
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        byte[] ReadSingleExtent(long offset, long size, uint startingSector) => ReadWithExtents(offset, size,
-                                                                                                new List<(uint extent,
-                                                                                                    uint size)>
-                                                                                                {
-                                                                                                    (startingSector,
-                                                                                                     (uint)size)
-                                                                                                });
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        byte[] ReadSingleExtent(long offset, long size, uint startingSector, uint fileSize) =>
-            ReadWithExtents(offset, size, new List<(uint extent, uint size)>
-            {
-                (startingSector, fileSize)
-            });
+        byte[] ReadSingleExtent(long offset, long size, uint startingSector, bool interleaved = false,
+                                byte fileNumber = 0) => ReadWithExtents(offset, size, new List<(uint extent, uint size)>
+        {
+            (startingSector, (uint)size)
+        }, interleaved, fileNumber);
 
         // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
-        byte[] ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents)
+        byte[] ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents, bool interleaved,
+                               byte fileNumber)
         {
             var  ms             = new MemoryStream();
             long currentFilePos = 0;
@@ -518,7 +513,14 @@ namespace Aaru.Filesystems.ISO9660
 
                 while(leftExtentSize > 0)
                 {
-                    byte[] sector = ReadSector(extents[i].extent + currentExtentSector);
+                    byte[] sector = ReadSector(extents[i].extent + currentExtentSector, interleaved, fileNumber);
+
+                    if(sector is null)
+                    {
+                        currentExtentSector++;
+
+                        continue;
+                    }
 
                     if(offset - currentFilePos > sector.Length)
                     {

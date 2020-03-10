@@ -440,7 +440,10 @@ namespace Aaru.Filesystems.ISO9660
             if(transTblEntry.Value == null)
                 return;
 
-            byte[] transTbl = ReadWithExtents(0, (long)transTblEntry.Value.Size, transTblEntry.Value.Extents);
+            byte[] transTbl = ReadWithExtents(0, (long)transTblEntry.Value.Size, transTblEntry.Value.Extents,
+                                              transTblEntry.Value.XA?.signature == XA_MAGIC &&
+                                              transTblEntry.Value.XA?.attributes.HasFlag(XaAttributes.Interleaved) ==
+                                              true, transTblEntry.Value.XA?.filenumber ?? 0);
 
             var mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
             var sr = new StreamReader(mr, Encoding);

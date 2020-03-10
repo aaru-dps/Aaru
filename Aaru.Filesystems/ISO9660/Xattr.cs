@@ -119,7 +119,11 @@ namespace Aaru.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents);
+                    buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
+                                          entry.AssociatedFile.XA?.signature ==
+                                          XA_MAGIC &&
+                                          entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                          entry.AssociatedFile.XA?.filenumber ?? 0);
 
                     return Errno.NoError;
                 case "com.apple.dos.type":
@@ -151,7 +155,11 @@ namespace Aaru.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents);
+                    buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
+                                          entry.ResourceFork.XA?.signature ==
+                                          XA_MAGIC &&
+                                          entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
+                                          entry.ResourceFork.XA?.filenumber ?? 0);
 
                     return Errno.NoError;
                 case "com.apple.FinderInfo":

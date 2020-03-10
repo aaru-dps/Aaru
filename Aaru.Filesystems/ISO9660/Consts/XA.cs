@@ -47,5 +47,13 @@ namespace Aaru.Filesystems.ISO9660
             Mode2Form1   = 0x800, Mode2Form2   = 0x1000, Interleaved = 0x2000,
             Cdda         = 0x4000, Directory   = 0x8000
         }
+
+        [Flags]
+        enum Mode2Submode : byte
+        {
+            EndOfFile = 0x80, RealTime    = 0x40, Form2 = 0x20,
+            Trigger   = 0x10, Data        = 0x08, Audio = 0x04,
+            Video     = 0x02, EndOfRecord = 0x01
+        }
     }
 }
