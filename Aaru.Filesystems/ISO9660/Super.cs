@@ -272,7 +272,6 @@ namespace Aaru.Filesystems.ISO9660
 
             string fsFormat;
             byte[] pathTableData;
-            uint   pathTableSizeInSectors;
 
             uint pathTableMsbLocation;
             uint pathTableLsbLocation = 0; // Initialize to 0 as ignored in CD-i
@@ -281,12 +280,8 @@ namespace Aaru.Filesystems.ISO9660
 
             if(highSierra)
             {
-                pathTableSizeInSectors = hsvd.Value.path_table_size / 2048;
-
-                if(hsvd.Value.path_table_size % 2048 > 0)
-                    pathTableSizeInSectors++;
-
-                pathTableData = ReadSectors(Swapping.Swap(hsvd.Value.mandatory_path_table_msb), pathTableSizeInSectors);
+                pathTableData = ReadSingleExtent(0, hsvd.Value.path_table_size,
+                                                 Swapping.Swap(hsvd.Value.mandatory_path_table_msb));
 
                 fsFormat = "High Sierra Format";
 
@@ -295,12 +290,7 @@ namespace Aaru.Filesystems.ISO9660
             }
             else if(cdi)
             {
-                pathTableSizeInSectors = fsvd.Value.path_table_size / 2048;
-
-                if(fsvd.Value.path_table_size % 2048 > 0)
-                    pathTableSizeInSectors++;
-
-                pathTableData = ReadSectors(fsvd.Value.path_table_addr, pathTableSizeInSectors);
+                pathTableData = ReadSingleExtent(0, fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
 
                 fsFormat = "CD-i";
 
@@ -311,12 +301,8 @@ namespace Aaru.Filesystems.ISO9660
             }
             else
             {
-                pathTableSizeInSectors = pvd.Value.path_table_size / 2048;
-
-                if(pvd.Value.path_table_size % 2048 > 0)
-                    pathTableSizeInSectors++;
-
-                pathTableData = ReadSectors(Swapping.Swap(pvd.Value.type_m_path_table), pathTableSizeInSectors);
+                pathTableData =
+                    ReadSingleExtent(0, pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table));
 
                 fsFormat = "ISO9660";
 
@@ -349,33 +335,20 @@ namespace Aaru.Filesystems.ISO9660
                                       : pvd.Value.root_directory_record.xattr_len;
 
                 if(highSierra)
-                {
-                    rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
-
-                    if(hsvd.Value.root_directory_record.size % hsvd.Value.logical_block_size > 0)
-                        rootSize++;
-                }
+                    rootSize = hsvd.Value.root_directory_record.size;
                 else
-                {
-                    rootSize = pvd.Value.root_directory_record.size / pvd.Value.logical_block_size;
-
-                    if(pvd.Value.root_directory_record.size % pvd.Value.logical_block_size > 0)
-                        rootSize++;
-                }
+                    rootSize = pvd.Value.root_directory_record.size;
             }
             else
             {
                 rootLocation = pathTable[0].Extent;
 
-                byte[] firstRootSector = ReadSectors(rootLocation, 1);
+                byte[] firstRootSector = ReadSector(rootLocation);
 
                 CdiDirectoryRecord rootEntry =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
 
-                rootSize = rootEntry.size / fsvd.Value.logical_block_size;
-
-                if(rootEntry.size % fsvd.Value.logical_block_size > 0)
-                    rootSize++;
+                rootSize = rootEntry.size;
 
                 usePathTable = usePathTable || pathTable.Length == 1;
                 useTransTbl  = false;
@@ -385,12 +358,16 @@ namespace Aaru.Filesystems.ISO9660
             if(usePathTable && pathTableData.Length == 1)
                 usePathTable = false;
 
-            if(rootLocation + rootSize >= imagePlugin.Info.Sectors)
+            try
+            {
+                byte[] rootDir = ReadSingleExtent(0, rootSize, rootLocation);
+            }
+            catch
+            {
                 return Errno.InvalidArgument;
+            }
 
-            byte[] rootDir = ReadSectors(rootLocation, rootSize);
-
-            byte[]           ipbinSector = ReadSectors(partition.Start, 1);
+            byte[]           ipbinSector = ReadSector(partition.Start);
             CD.IPBin?        segaCd      = CD.DecodeIPBin(ipbinSector);
             Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
             Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
@@ -421,13 +398,7 @@ namespace Aaru.Filesystems.ISO9660
                 rootLocation    = jolietvd.Value.root_directory_record.extent;
                 rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;
 
-                rootSize = jolietvd.Value.root_directory_record.size / jolietvd.Value.logical_block_size;
-
-                if(pvd.Value.root_directory_record.size % jolietvd.Value.logical_block_size > 0)
-                    rootSize++;
-
-                if(rootLocation + rootSize >= imagePlugin.Info.Sectors)
-                    return Errno.InvalidArgument;
+                rootSize = jolietvd.Value.root_directory_record.size;
 
                 joliet = true;
 
@@ -529,9 +500,9 @@ namespace Aaru.Filesystems.ISO9660
                 {
                     Extents = new List<(uint extent, uint size)>
                     {
-                        (rootLocation, (uint)rootDir.Length)
+                        (rootLocation, rootSize)
                     },
-                    Filename = "$", Size = (uint)rootDir.Length, Timestamp = decodedVd.CreationTime
+                    Filename = "$", Size = rootSize, Timestamp = decodedVd.CreationTime
                 });
 
                 if(!cdi)

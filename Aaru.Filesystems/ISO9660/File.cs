@@ -36,7 +36,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
@@ -121,27 +123,37 @@ namespace Aaru.Filesystems.ISO9660
 
             offset += entry.XattrLength;
 
-            long firstSector    = offset                  / 2048;
-            long offsetInSector = offset                  % 2048;
-            long sizeInSectors  = (size + offsetInSector) / 2048;
-
-            if((size + offsetInSector) % 2048 > 0)
-                sizeInSectors++;
-
-            if(entry.Extents.Count == 1)
+            if(entry.CdiSystemArea != null                                              &&
+               entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.DigitalAudio) &&
+               entry.Extents.Count == 1)
             {
-                // No need to check mode, if we know it is CD-DA
-                byte[] buffer =
-                    entry.CdiSystemArea != null &&
-                    entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.DigitalAudio)
-                        ? image.ReadSectors((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors)
-                        : ReadSectors((ulong)(entry.Extents[0].extent       + firstSector), (uint)sizeInSectors);
+                try
+                {
+                    long firstSector    = offset                  / 2352;
+                    long offsetInSector = offset                  % 2352;
+                    long sizeInSectors  = (size + offsetInSector) / 2352;
 
-                buf = new byte[size];
-                Array.Copy(buffer, offsetInSector, buf, 0, size);
+                    if((size + offsetInSector) % 2352 > 0)
+                        sizeInSectors++;
+
+                    byte[] buffer =
+                        image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
+
+                    buf = new byte[size];
+                    Array.Copy(buffer, offsetInSector, buf, 0, size);
+
+                    return Errno.NoError;
+                }
+                catch(Exception e)
+                {
+                    AaruConsole.DebugWriteLine("ISO9660 plugin", "Exception reading CD-i audio file");
+                    AaruConsole.DebugWriteLine("ISO9660 plugin", "{0}", e);
+
+                    return Errno.InOutError;
+                }
             }
-            else
-                buf = ReadWithExtents(offset, size, entry.Extents);
+
+            buf = ReadWithExtents(offset, size, entry.Extents);
 
             return Errno.NoError;
         }
@@ -364,12 +376,7 @@ namespace Aaru.Filesystems.ISO9660
                     stat.Mode |= 256;
             }
 
-            uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
-
-            if(entry.XattrLength % 2048 > 0)
-                eaSizeInSectors++;
-
-            byte[] ea = ReadSectors(entry.Extents[0].extent, eaSizeInSectors);
+            byte[] ea = ReadSingleExtent(0, entry.XattrLength, entry.Extents[0].extent);
 
             ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
@@ -475,6 +482,22 @@ namespace Aaru.Filesystems.ISO9660
             return Errno.NoError;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        byte[] ReadSingleExtent(long offset, long size, uint startingSector) => ReadWithExtents(offset, size,
+                                                                                                new List<(uint extent,
+                                                                                                    uint size)>
+                                                                                                {
+                                                                                                    (startingSector,
+                                                                                                     (uint)size)
+                                                                                                });
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        byte[] ReadSingleExtent(long offset, long size, uint startingSector, uint fileSize) =>
+            ReadWithExtents(offset, size, new List<(uint extent, uint size)>
+            {
+                (startingSector, fileSize)
+            });
+
         // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
         byte[] ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents)
         {
@@ -495,7 +518,7 @@ namespace Aaru.Filesystems.ISO9660
 
                 while(leftExtentSize > 0)
                 {
-                    byte[] sector = ReadSectors(extents[i].extent + currentExtentSector, 1);
+                    byte[] sector = ReadSector(extents[i].extent + currentExtentSector);
 
                     if(offset - currentFilePos > sector.Length)
                     {

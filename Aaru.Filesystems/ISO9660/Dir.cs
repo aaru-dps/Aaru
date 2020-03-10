@@ -108,19 +108,15 @@ namespace Aaru.Filesystems.ISO9660
                 if(entry.Value.Extents.Count == 0)
                     return Errno.InvalidArgument;
 
-                uint dirSizeInSectors = entry.Value.Extents[0].size / 2048;
-
-                if(entry.Value.Size % 2048 > 0)
-                    dirSizeInSectors++;
-
                 currentDirectory = cdi
-                                       ? DecodeCdiDirectory(entry.Value.Extents[0].extent, dirSizeInSectors,
+                                       ? DecodeCdiDirectory(entry.Value.Extents[0].extent, entry.Value.Extents[0].size,
                                                             entry.Value.XattrLength)
                                        : highSierra
-                                           ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent, dirSizeInSectors,
+                                           ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent,
+                                                                       entry.Value.Extents[0].size,
                                                                        entry.Value.XattrLength)
-                                           : DecodeIsoDirectory(entry.Value.Extents[0].extent, dirSizeInSectors,
-                                                                entry.Value.XattrLength);
+                                           : DecodeIsoDirectory(entry.Value.Extents[0].extent,
+                                                                entry.Value.Extents[0].size, entry.Value.XattrLength);
 
                 if(usePathTable)
                     foreach(DecodedDirectoryEntry subDirectory in cdi
@@ -163,137 +159,124 @@ namespace Aaru.Filesystems.ISO9660
             return contents;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint count, byte xattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size, byte xattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = xattrLength;
+            int                                       entryOff = 0;
 
-            for(ulong sector = start; sector < start + count; sector++)
+            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+
+            while(entryOff + CdiDirectoryRecordSize < data.Length)
             {
-                byte[] data = ReadSectors(sector, 1);
+                CdiDirectoryRecord record =
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff, CdiDirectoryRecordSize);
 
-                while(entryOff + CdiDirectoryRecordSize < data.Length)
-                {
-                    CdiDirectoryRecord record =
-                        Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff,
-                                                                                  CdiDirectoryRecordSize);
+                if(record.length == 0)
+                    break;
 
-                    if(record.length == 0)
-                        break;
-
-                    // Special entries for current and parent directories, skip them
-                    if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 ||
-                           data[entryOff + DirectoryRecordSize] == 1)
-                        {
-                            entryOff += record.length;
-
-                            continue;
-                        }
-
-                    var entry = new DecodedDirectoryEntry
-                    {
-                        Size = record.size,
-                        Filename =
-                            Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                        VolumeSequenceNumber = record.volume_sequence_number,
-                        Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
-                    };
-
-                    if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)>
-                        {
-                            (record.start_lbn, record.size)
-                        };
-
-                    if(record.flags.HasFlag(CdiFileFlags.Hidden))
-                    {
-                        entry.Flags |= FileFlags.Hidden;
-
-                        continue;
-                    }
-
-                    int systemAreaStart = entryOff + record.name_len + CdiDirectoryRecordSize;
-
-                    if(systemAreaStart % 2 != 0)
-                        systemAreaStart++;
-
-                    entry.CdiSystemArea =
-                        Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, CdiSystemAreaSize);
-
-                    if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
-                        entry.Flags |= FileFlags.Directory;
-
-                    if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) ||
-                       !usePathTable)
-                        entries[entry.Filename] = entry;
-
-                    entryOff += record.length;
-                }
-
-                entryOff = 0;
-            }
-
-            return entries;
-        }
-
-        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint count, byte xattrLength)
-        {
-            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = xattrLength;
-
-            for(ulong sector = start; sector < start + count; sector++)
-            {
-                byte[] data = ReadSectors(sector, 1);
-
-                while(entryOff + DirectoryRecordSize < data.Length)
-                {
-                    HighSierraDirectoryRecord record =
-                        Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
-                                                                                            HighSierraDirectoryRecordSize);
-
-                    if(record.length == 0)
-                        break;
-
-                    // Special entries for current and parent directories, skip them
-                    if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 ||
-                           data[entryOff + DirectoryRecordSize] == 1)
-                        {
-                            entryOff += record.length;
-
-                            continue;
-                        }
-
-                    var entry = new DecodedDirectoryEntry
-                    {
-                        Size                 = record.size, Flags = record.flags, Interleave = record.interleave,
-                        VolumeSequenceNumber = record.volume_sequence_number,
-                        Filename =
-                            Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                        Timestamp = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
-                    };
-
-                    if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)>
-                        {
-                            (record.extent, record.size)
-                        };
-
-                    if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                // Special entries for current and parent directories, skip them
+                if(record.name_len == 1)
+                    if(data[entryOff + DirectoryRecordSize] == 0 ||
+                       data[entryOff + DirectoryRecordSize] == 1)
                     {
                         entryOff += record.length;
 
                         continue;
                     }
 
-                    if(!entries.ContainsKey(entry.Filename))
-                        entries.Add(entry.Filename, entry);
+                var entry = new DecodedDirectoryEntry
+                {
+                    Size                 = record.size,
+                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
+                };
 
-                    entryOff += record.length;
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)>
+                    {
+                        (record.start_lbn, record.size)
+                    };
+
+                if(record.flags.HasFlag(CdiFileFlags.Hidden))
+                {
+                    entry.Flags |= FileFlags.Hidden;
+
+                    continue;
                 }
 
-                entryOff = 0;
+                int systemAreaStart = entryOff + record.name_len + CdiDirectoryRecordSize;
+
+                if(systemAreaStart % 2 != 0)
+                    systemAreaStart++;
+
+                entry.CdiSystemArea =
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, CdiSystemAreaSize);
+
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
+                    entry.Flags |= FileFlags.Directory;
+
+                if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) ||
+                   !usePathTable)
+                    entries[entry.Filename] = entry;
+
+                entryOff += record.length;
+            }
+
+            return entries;
+        }
+
+        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint size, byte xattrLength)
+        {
+            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            int                                       entryOff = 0;
+
+            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+
+            while(entryOff + DirectoryRecordSize < data.Length)
+            {
+                HighSierraDirectoryRecord record =
+                    Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
+                                                                                        HighSierraDirectoryRecordSize);
+
+                if(record.length == 0)
+                    break;
+
+                // Special entries for current and parent directories, skip them
+                if(record.name_len == 1)
+                    if(data[entryOff + DirectoryRecordSize] == 0 ||
+                       data[entryOff + DirectoryRecordSize] == 1)
+                    {
+                        entryOff += record.length;
+
+                        continue;
+                    }
+
+                var entry = new DecodedDirectoryEntry
+                {
+                    Size                 = record.size, Flags = record.flags, Interleave = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
+                };
+
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)>
+                    {
+                        (record.extent, record.size)
+                    };
+
+                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                {
+                    entryOff += record.length;
+
+                    continue;
+                }
+
+                if(!entries.ContainsKey(entry.Filename))
+                    entries.Add(entry.Filename, entry);
+
+                entryOff += record.length;
             }
 
             if(useTransTbl)
@@ -302,145 +285,140 @@ namespace Aaru.Filesystems.ISO9660
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint count, byte xattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint size, byte xattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = xattrLength;
+            int                                       entryOff = 0;
 
-            for(ulong sector = start; sector < start + count; sector++)
+            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+
+            while(entryOff + DirectoryRecordSize < data.Length)
             {
-                byte[] data = ReadSectors(sector, 1);
+                DirectoryRecord record =
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, DirectoryRecordSize);
 
-                while(entryOff + DirectoryRecordSize < data.Length)
-                {
-                    DirectoryRecord record =
-                        Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, DirectoryRecordSize);
+                if(record.length == 0)
+                    break;
 
-                    if(record.length == 0)
-                        break;
-
-                    // Special entries for current and parent directories, skip them
-                    if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 ||
-                           data[entryOff + DirectoryRecordSize] == 1)
-                        {
-                            entryOff += record.length;
-
-                            continue;
-                        }
-
-                    var entry = new DecodedDirectoryEntry
-                    {
-                        Size = record.size, Flags = record.flags,
-                        Filename =
-                            joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
-                                                                         record.name_len)
-                                : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                        FileUnitSize         = record.file_unit_size, Interleave = record.interleave,
-                        VolumeSequenceNumber = record.volume_sequence_number,
-                        Timestamp            = DecodeIsoDateTime(record.date), XattrLength = record.xattr_len
-                    };
-
-                    if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)>
-                        {
-                            (record.extent, record.size)
-                        };
-
-                    if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                // Special entries for current and parent directories, skip them
+                if(record.name_len == 1)
+                    if(data[entryOff + DirectoryRecordSize] == 0 ||
+                       data[entryOff + DirectoryRecordSize] == 1)
                     {
                         entryOff += record.length;
 
                         continue;
                     }
 
-                    // Mac OS can use slashes, we cannot
-                    entry.Filename = entry.Filename.Replace('/', '\u2215');
+                var entry = new DecodedDirectoryEntry
+                {
+                    Size = record.size, Flags = record.flags,
+                    Filename =
+                        joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
+                                                                     record.name_len)
+                            : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    FileUnitSize         = record.file_unit_size, Interleave        = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number, Timestamp = DecodeIsoDateTime(record.date),
+                    XattrLength          = record.xattr_len
+                };
 
-                    // Tailing '.' is only allowed on RRIP. If present it will be recreated below with the alternate name
-                    if(entry.Filename.EndsWith(".", StringComparison.Ordinal))
-                        entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 1);
-
-                    if(entry.Filename.EndsWith(".;1", StringComparison.Ordinal))
-                        entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 3) + ";1";
-
-                    // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
-                    if(joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
-                        entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
-
-                    int systemAreaStart  = entryOff + record.name_len      + DirectoryRecordSize;
-                    int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
-
-                    if(systemAreaStart % 2 != 0)
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)>
                     {
-                        systemAreaStart++;
-                        systemAreaLength--;
-                    }
+                        (record.extent, record.size)
+                    };
 
-                    DecodeSystemArea(data, systemAreaStart, systemAreaStart + systemAreaLength, ref entry,
-                                     out bool hasResourceFork);
+                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                {
+                    entryOff += record.length;
 
-                    if(entry.Flags.HasFlag(FileFlags.Associated))
+                    continue;
+                }
+
+                // Mac OS can use slashes, we cannot
+                entry.Filename = entry.Filename.Replace('/', '\u2215');
+
+                // Tailing '.' is only allowed on RRIP. If present it will be recreated below with the alternate name
+                if(entry.Filename.EndsWith(".", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 1);
+
+                if(entry.Filename.EndsWith(".;1", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 3) + ";1";
+
+                // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
+                if(joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
+
+                int systemAreaStart  = entryOff + record.name_len      + DirectoryRecordSize;
+                int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
+
+                if(systemAreaStart % 2 != 0)
+                {
+                    systemAreaStart++;
+                    systemAreaLength--;
+                }
+
+                DecodeSystemArea(data, systemAreaStart, systemAreaStart + systemAreaLength, ref entry,
+                                 out bool hasResourceFork);
+
+                if(entry.Flags.HasFlag(FileFlags.Associated))
+                {
+                    if(entries.ContainsKey(entry.Filename))
                     {
-                        if(entries.ContainsKey(entry.Filename))
+                        if(hasResourceFork)
                         {
-                            if(hasResourceFork)
-                            {
-                                entries[entry.Filename].ResourceFork.Size += entry.Size;
-                                entries[entry.Filename].ResourceFork.Extents.Add(entry.Extents[0]);
-                            }
-                            else
-                            {
-                                entries[entry.Filename].AssociatedFile.Size += entry.Size;
-                                entries[entry.Filename].AssociatedFile.Extents.Add(entry.Extents[0]);
-                            }
+                            entries[entry.Filename].ResourceFork.Size += entry.Size;
+                            entries[entry.Filename].ResourceFork.Extents.Add(entry.Extents[0]);
                         }
                         else
                         {
-                            entries[entry.Filename] = new DecodedDirectoryEntry
-                            {
-                                Size                 = 0,
-                                Flags                = record.flags ^ FileFlags.Associated,
-                                FileUnitSize         = 0, Interleave                               = 0,
-                                VolumeSequenceNumber = record.volume_sequence_number, Filename     = entry.Filename,
-                                Timestamp            = DecodeIsoDateTime(record.date), XattrLength = 0
-                            };
-
-                            if(hasResourceFork)
-                                entries[entry.Filename].ResourceFork = entry;
-                            else
-                                entries[entry.Filename].AssociatedFile = entry;
+                            entries[entry.Filename].AssociatedFile.Size += entry.Size;
+                            entries[entry.Filename].AssociatedFile.Extents.Add(entry.Extents[0]);
                         }
                     }
                     else
                     {
-                        if(entries.ContainsKey(entry.Filename))
+                        entries[entry.Filename] = new DecodedDirectoryEntry
                         {
-                            entries[entry.Filename].Size += entry.Size;
+                            Size                 = 0,
+                            Flags                = record.flags ^ FileFlags.Associated,
+                            FileUnitSize         = 0, Interleave                               = 0,
+                            VolumeSequenceNumber = record.volume_sequence_number, Filename     = entry.Filename,
+                            Timestamp            = DecodeIsoDateTime(record.date), XattrLength = 0
+                        };
 
-                            // Can appear after an associated file
-                            if(entries[entry.Filename].Extents is null)
-                            {
-                                entries[entry.Filename].Extents              = new List<(uint extent, uint size)>();
-                                entries[entry.Filename].Flags                = entry.Flags;
-                                entries[entry.Filename].FileUnitSize         = entry.FileUnitSize;
-                                entries[entry.Filename].Interleave           = entry.Interleave;
-                                entries[entry.Filename].VolumeSequenceNumber = entry.VolumeSequenceNumber;
-                                entries[entry.Filename].Filename             = entry.Filename;
-                                entries[entry.Filename].Timestamp            = entry.Timestamp;
-                                entries[entry.Filename].XattrLength          = entry.XattrLength;
-                            }
-
-                            entries[entry.Filename].Extents.Add(entry.Extents[0]);
-                        }
+                        if(hasResourceFork)
+                            entries[entry.Filename].ResourceFork = entry;
                         else
-                            entries[entry.Filename] = entry;
+                            entries[entry.Filename].AssociatedFile = entry;
                     }
+                }
+                else
+                {
+                    if(entries.ContainsKey(entry.Filename))
+                    {
+                        entries[entry.Filename].Size += entry.Size;
 
-                    entryOff += record.length;
+                        // Can appear after an associated file
+                        if(entries[entry.Filename].Extents is null)
+                        {
+                            entries[entry.Filename].Extents              = new List<(uint extent, uint size)>();
+                            entries[entry.Filename].Flags                = entry.Flags;
+                            entries[entry.Filename].FileUnitSize         = entry.FileUnitSize;
+                            entries[entry.Filename].Interleave           = entry.Interleave;
+                            entries[entry.Filename].VolumeSequenceNumber = entry.VolumeSequenceNumber;
+                            entries[entry.Filename].Filename             = entry.Filename;
+                            entries[entry.Filename].Timestamp            = entry.Timestamp;
+                            entries[entry.Filename].XattrLength          = entry.XattrLength;
+                        }
+
+                        entries[entry.Filename].Extents.Add(entry.Extents[0]);
+                    }
+                    else
+                        entries[entry.Filename] = entry;
                 }
 
-                entryOff = 0;
+                entryOff += record.length;
             }
 
             if(useTransTbl)
@@ -462,13 +440,7 @@ namespace Aaru.Filesystems.ISO9660
             if(transTblEntry.Value == null)
                 return;
 
-            // The probability of a TRANS.TBL to be bigger than 2GiB is nil
-            uint transTblSectors = (uint)transTblEntry.Value.Size / 2048;
-
-            if(transTblEntry.Value.Size % 2048 > 0)
-                transTblSectors++;
-
-            byte[] transTbl = ReadSectors(transTblEntry.Value.Extents[0].extent, transTblSectors);
+            byte[] transTbl = ReadWithExtents(0, (long)transTblEntry.Value.Size, transTblEntry.Value.Extents);
 
             var mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
             var sr = new StreamReader(mr, Encoding);
@@ -871,7 +843,7 @@ namespace Aaru.Filesystems.ISO9660
                             Marshal.ByteArrayToStructureLittleEndian<ChildLink>(data, systemAreaOff,
                                                                                 Marshal.SizeOf<ChildLink>());
 
-                        byte[] childSector = ReadSectors(cl.child_dir_lba, 1);
+                        byte[] childSector = ReadSector(cl.child_dir_lba);
 
                         DirectoryRecord childRecord =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
@@ -982,17 +954,9 @@ namespace Aaru.Filesystems.ISO9660
                                                                                        Marshal.
                                                                                            SizeOf<ContinuationArea>());
 
-                        uint caOffSector    = ca.offset    / 2048;
-                        uint caOff          = ca.offset    % 2048;
-                        uint caLenInSectors = ca.ca_length / 2048;
+                        byte[] caData = ReadSingleExtent(ca.offset, ca.ca_length, ca.block);
 
-                        if((ca.ca_length + caOff) % 2048 > 0)
-                            caLenInSectors++;
-
-                        byte[] caData = ReadSectors(ca.block + caOffSector, caLenInSectors);
-
-                        DecodeSystemArea(caData, (int)caOff, (int)(caOff + ca.ca_length), ref entry,
-                                         out hasResourceFork);
+                        DecodeSystemArea(caData, 0, (int)ca.ca_length, ref entry, out hasResourceFork);
 
                         systemAreaOff += ceLength;
 
@@ -1091,7 +1055,7 @@ namespace Aaru.Filesystems.ISO9660
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSectors(tEntry.Extent, 1);
+                byte[] sector = ReadSector(tEntry.Extent);
 
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
@@ -1140,7 +1104,7 @@ namespace Aaru.Filesystems.ISO9660
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSectors(tEntry.Extent, 1);
+                byte[] sector = ReadSector(tEntry.Extent);
 
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
@@ -1188,7 +1152,7 @@ namespace Aaru.Filesystems.ISO9660
 
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = ReadSectors(tEntry.Extent, 1);
+                byte[] sector = ReadSector(tEntry.Extent);
 
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,

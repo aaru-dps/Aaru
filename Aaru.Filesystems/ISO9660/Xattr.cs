@@ -102,15 +102,7 @@ namespace Aaru.Filesystems.ISO9660
                     if(entry.Extents is null)
                         return Errno.InvalidArgument;
 
-                    uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
-
-                    if(entry.XattrLength % 2048 > 0)
-                        eaSizeInSectors++;
-
-                    byte[] ea = ReadSectors(entry.Extents[0].extent, eaSizeInSectors);
-
-                    buf = new byte[entry.AssociatedFile.Size];
-                    Array.Copy(ea, 0, buf, 0, buf.LongLength);
+                    buf = ReadSingleExtent(0, entry.XattrLength, entry.Extents[0].extent);
 
                     return Errno.NoError;
                 case "org.iso.9660.AssociatedFile":
@@ -127,20 +119,7 @@ namespace Aaru.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    if(entry.AssociatedFile.Extents.Count == 1)
-                    {
-                        uint associatedFileSize = (uint)(entry.AssociatedFile.Size / 2048);
-
-                        if(entry.AssociatedFile.Size % 2048 > 0)
-                            associatedFileSize++;
-
-                        byte[] buffer = ReadSectors(entry.AssociatedFile.Extents[0].extent, associatedFileSize);
-
-                        buf = new byte[entry.AssociatedFile.Size];
-                        Array.Copy(buffer, 0, buf, 0, buf.LongLength);
-                    }
-                    else
-                        buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents);
+                    buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents);
 
                     return Errno.NoError;
                 case "com.apple.dos.type":
@@ -172,20 +151,7 @@ namespace Aaru.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    if(entry.ResourceFork.Extents.Count == 1)
-                    {
-                        uint rsrcSizeInSectors = (uint)(entry.ResourceFork.Size / 2048);
-
-                        if(entry.AssociatedFile.Size % 2048 > 0)
-                            rsrcSizeInSectors++;
-
-                        byte[] buffer = ReadSectors(entry.ResourceFork.Extents[0].extent, rsrcSizeInSectors);
-
-                        buf = new byte[entry.ResourceFork.Size];
-                        Array.Copy(buffer, 0, buf, 0, buf.LongLength);
-                    }
-                    else
-                        buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents);
+                    buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents);
 
                     return Errno.NoError;
                 case "com.apple.FinderInfo":
