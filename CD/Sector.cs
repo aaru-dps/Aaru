@@ -208,7 +208,7 @@ namespace Aaru.Decoders.CD
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte[] GetUserData(byte[] data)
+        public static byte[] GetUserData(byte[] data, bool interleaved = false, byte fileNumber = 0)
         {
             switch(data.Length)
             {
@@ -224,16 +224,16 @@ namespace Aaru.Decoders.CD
                             Array.Copy(data, 16, sector, 0, 2048);
 
                             return sector;
-                        case 2:  return GetUserDataFromMode2(data);
+                        case 2:  return GetUserDataFromMode2(data, interleaved, fileNumber);
                         default: return data;
                     }
-                case 2336: return GetUserDataFromMode2(data);
+                case 2336: return GetUserDataFromMode2(data, interleaved, fileNumber);
                 default:   return data;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte[] GetUserDataFromMode2(byte[] data)
+        public static byte[] GetUserDataFromMode2(byte[] data, bool interleaved = false, byte fileNumber = 0)
         {
             if(data.Length != 2352 &&
                data.Length != 2336)
@@ -260,6 +260,10 @@ namespace Aaru.Decoders.CD
 
                 pos = 16;
             }
+
+            // This is not the sector you are looking for
+            if(interleaved && data[pos] != fileNumber)
+                return null;
 
             int len = (data[pos + 2] & 0x20) == 0x20 ? 2324 : 2048;
             pos += 8;
