@@ -208,6 +208,31 @@ namespace Aaru.Decoders.CD
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte[] GetUserData(byte[] data)
+        {
+            switch(data.Length)
+            {
+                case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
+                               data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
+                               data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00: return data;
+                case 2352:
+                    switch(data[15])
+                    {
+                        case 0: return new byte[2048];
+                        case 1:
+                            byte[] sector = new byte[2048];
+                            Array.Copy(data, 16, sector, 0, 2048);
+
+                            return sector;
+                        case 2:  return GetUserDataFromMode2(data);
+                        default: return data;
+                    }
+                case 2336: return GetUserDataFromMode2(data);
+                default:   return data;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] GetUserDataFromMode2(byte[] data)
         {
             if(data.Length != 2352 &&
