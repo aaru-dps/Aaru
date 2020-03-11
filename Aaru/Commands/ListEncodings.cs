@@ -5,7 +5,7 @@
 // Filename       : ListEncodings.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //

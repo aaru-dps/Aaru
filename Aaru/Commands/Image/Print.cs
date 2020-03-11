@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : PrintHex.cs
+// Filename       : Print.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'printhex' verb.
+//     Implements the 'print' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

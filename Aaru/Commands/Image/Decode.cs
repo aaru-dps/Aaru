@@ -5,11 +5,11 @@
 // Filename       : Decode.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'decode' verb.
+//     Implements the 'decode' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

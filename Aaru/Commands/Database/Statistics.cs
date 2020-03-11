@@ -5,11 +5,11 @@
 // Filename       : Statistics.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'stats' verb.
+//     Implements the 'stats' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

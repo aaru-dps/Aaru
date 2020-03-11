@@ -5,11 +5,11 @@
 // Filename       : Verify.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'verify' verb.
+//     Implements the 'verify' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

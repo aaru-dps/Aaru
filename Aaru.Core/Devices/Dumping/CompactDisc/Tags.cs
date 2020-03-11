@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : CompactDisc.cs
+// Filename       : Tags.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Core algorithms.
+// Component      : CompactDisc dumping.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Dumps CDs and DDCDs.
+//     Dumps CompactDisc non-user data.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : AppleHFS.cs
+// Filename       : Enums.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Apple Hierarchical File System plugin.
+// Component      : Common Apple file systems.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the Apple Hierarchical File System and shows information.
+//     Common Apple file systems enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //

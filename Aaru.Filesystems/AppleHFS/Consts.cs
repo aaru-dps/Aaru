@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : AppleHFS.cs
+// Filename       : Consts.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Apple Hierarchical File System plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the Apple Hierarchical File System and shows information.
+//     Apple Hierarchical File System constants.
 //
 // --[ License ] --------------------------------------------------------------
 //

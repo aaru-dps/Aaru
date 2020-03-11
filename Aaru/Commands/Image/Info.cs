@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : ImageInfo.cs
+// Filename       : Info.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'image-info' verb.
+//     Implements the 'info' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -5,11 +5,11 @@
 // Filename       : Entropy.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'entropy' verb.
+//     Implements the 'entropy' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

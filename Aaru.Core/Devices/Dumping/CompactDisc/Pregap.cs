@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : CompactDisc.cs
+// Filename       : Pregap.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Core algorithms.
+// Component      : CompactDisc dumping.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Dumps CDs and DDCDs.
+//     Calculates CompactDisc track pregaps.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -5,11 +5,11 @@
 // Filename       : Checksum.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'checksum' verb.
+//     Implements the 'checksum' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

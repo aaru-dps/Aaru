@@ -9,7 +9,8 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies the Apple Hierarchical File System and shows information.
+//     Constructors and common variables for the Apple Hierarchical File System
+//     plugin.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : CompactDisc.cs
+// Filename       : Trim.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Core algorithms.
+// Component      : CompactDisc dumping.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Dumps CDs and DDCDs.
+//     Trims skipped sectors when dumping CompactDiscs.
 //
 // --[ License ] --------------------------------------------------------------
 //

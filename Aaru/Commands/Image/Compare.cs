@@ -5,11 +5,11 @@
 // Filename       : Compare.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'compare' verb.
+//     Implements the 'compare' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

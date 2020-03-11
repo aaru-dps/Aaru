@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : ListOptions.cs
+// Filename       : Options.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lists all options supported by read-only filesystems.
+//     Lists all options supported by writable media image formats.
 //
 // --[ License ] --------------------------------------------------------------
 //

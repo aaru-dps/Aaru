@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : SBC.cs
+// Filename       : Metadata.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Core algorithms.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Dumps SCSI Block devices.
+//     Generates metadata from dumps.
 //
 // --[ License ] --------------------------------------------------------------
 //

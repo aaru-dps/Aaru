@@ -5,11 +5,11 @@
 // Filename       : FilesystemFamily.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'image' verb.
+//     Implements the 'filesystem' command family.
 //
 // --[ License ] --------------------------------------------------------------
 //

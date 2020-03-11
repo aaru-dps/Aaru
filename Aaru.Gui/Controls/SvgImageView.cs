@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : SvgImageView.xeto.cs
+// Filename       : SvgImageView.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : SVG image view.

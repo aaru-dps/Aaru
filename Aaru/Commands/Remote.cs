@@ -5,11 +5,11 @@
 // Filename       : Remote.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'remote' verb.
+//     Implements the 'remote' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

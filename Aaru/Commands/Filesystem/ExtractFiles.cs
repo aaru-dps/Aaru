@@ -5,11 +5,11 @@
 // Filename       : ExtractFiles.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'extract-files' verb.
+//     Implements the 'extract' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

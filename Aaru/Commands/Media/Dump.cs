@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : DumpMedia.cs
+// Filename       : Dump.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'dump-media' verb.
+//     Implements the 'dump' command.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -5,11 +5,11 @@
 // Filename       : Ls.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Verbs.
+// Component      : Commands.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'ls' verb.
+//     Implements the 'ls' command.
 //
 // --[ License ] --------------------------------------------------------------
 //
