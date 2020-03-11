@@ -570,9 +570,11 @@ namespace Aaru.Commands.Image
                                           (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                           track.TrackSequence);
 
-                        bool result;
+                        bool useNotLong = false;
+                        bool result = false;
 
                         if(useLong)
+                        {
                             if(sectorsToDo == 1)
                             {
                                 sector = inputFormat.ReadSectorLong(doneSectors           + track.TrackStartSector);
@@ -585,7 +587,22 @@ namespace Aaru.Commands.Image
                                 result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
                                                                        sectorsToDo);
                             }
-                        else
+
+                            if(!result &&
+                               sector.Length % 2352 != 0)
+                            {
+                                if(!force)
+                                {
+                                    AaruConsole.ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
+
+                                    return (int)Errno.InOutError;
+                                }
+
+                                useNotLong = true;
+                            }
+                        }
+
+                        if(!useLong || useNotLong)
                         {
                             if(sectorsToDo == 1)
                             {
