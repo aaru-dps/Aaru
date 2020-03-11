@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -143,10 +144,15 @@ namespace Aaru.Commands.Image
 
             if(verbose)
             {
-                sb.AppendLine("\tDisc image 1\tDisc image 2");
-                sb.AppendLine("================================");
-                sb.AppendFormat("File\t{0}\t{1}", imagePath1, imagePath2).AppendLine();
-                sb.AppendFormat("Disc image format\t{0}\t{1}", input1Format.Name, input2Format.Name).AppendLine();
+                sb.AppendFormat("{0,50}{1,20}", "Disc image 1", "Disc image 2").AppendLine();
+                sb.AppendLine("================================================================================================");
+                sb.AppendFormat("{0,-38}{1}", "File", imagePath1).AppendLine();
+
+                sb.AppendFormat("                                                          {0}", imagePath2).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disc image format", input1Format.Name, input2Format.Name).
+                   AppendLine();
             }
             else
             {
@@ -195,66 +201,86 @@ namespace Aaru.Commands.Image
 
             if(verbose)
             {
-                sb.AppendFormat("Has partitions?\t{0}\t{1}", image1Info.HasPartitions, image2Info.HasPartitions).
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Has partitions?", image1Info.HasPartitions,
+                                image2Info.HasPartitions).AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Has sessions?", image1Info.HasSessions, image2Info.HasSessions).
                    AppendLine();
 
-                sb.AppendFormat("Has sessions?\t{0}\t{1}", image1Info.HasSessions, image2Info.HasSessions).AppendLine();
-                sb.AppendFormat("Image size\t{0}\t{1}", image1Info.ImageSize, image2Info.ImageSize).AppendLine();
-                sb.AppendFormat("Sectors\t{0}\t{1}", image1Info.Sectors, image2Info.Sectors).AppendLine();
-                sb.AppendFormat("Sector size\t{0}\t{1}", image1Info.SectorSize, image2Info.SectorSize).AppendLine();
-
-                sb.AppendFormat("Creation time\t{0}\t{1}", image1Info.CreationTime, image2Info.CreationTime).
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image size", image1Info.ImageSize, image2Info.ImageSize).
                    AppendLine();
 
-                sb.AppendFormat("Last modification time\t{0}\t{1}", image1Info.LastModificationTime,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Sectors", image1Info.Sectors, image2Info.Sectors).AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Sector size", image1Info.SectorSize, image2Info.SectorSize).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Creation time", image1Info.CreationTime, image2Info.CreationTime).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Last modification time", image1Info.LastModificationTime,
                                 image2Info.LastModificationTime).AppendLine();
 
-                sb.AppendFormat("Disk type\t{0}\t{1}", image1Info.MediaType, image2Info.MediaType).AppendLine();
-                sb.AppendFormat("Image version\t{0}\t{1}", image1Info.Version, image2Info.Version).AppendLine();
-
-                sb.AppendFormat("Image application\t{0}\t{1}", image1Info.Application, image2Info.Application).
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk type", image1Info.MediaType, image2Info.MediaType).
                    AppendLine();
 
-                sb.AppendFormat("Image application version\t{0}\t{1}", image1Info.ApplicationVersion,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image version", image1Info.Version, image2Info.Version).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image application", image1Info.Application,
+                                image2Info.Application).AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image application version", image1Info.ApplicationVersion,
                                 image2Info.ApplicationVersion).AppendLine();
 
-                sb.AppendFormat("Image creator\t{0}\t{1}", image1Info.Creator, image2Info.Creator).AppendLine();
-                sb.AppendFormat("Image name\t{0}\t{1}", image1Info.MediaTitle, image2Info.MediaTitle).AppendLine();
-                sb.AppendFormat("Image comments\t{0}\t{1}", image1Info.Comments, image2Info.Comments).AppendLine();
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image creator", image1Info.Creator, image2Info.Creator).
+                   AppendLine();
 
-                sb.AppendFormat("Disk manufacturer\t{0}\t{1}", image1Info.MediaManufacturer,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image name", image1Info.MediaTitle, image2Info.MediaTitle).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image comments", image1Info.Comments, image2Info.Comments).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Image comments", image1Info.Comments, image2Info.Comments).
+                   AppendLine();
+
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk manufacturer", image1Info.MediaManufacturer,
                                 image2Info.MediaManufacturer).AppendLine();
 
-                sb.AppendFormat("Disk model\t{0}\t{1}", image1Info.MediaModel, image2Info.MediaModel).AppendLine();
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk model", image1Info.MediaModel, image2Info.MediaModel).
+                   AppendLine();
 
-                sb.AppendFormat("Disk serial number\t{0}\t{1}", image1Info.MediaSerialNumber,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk serial number", image1Info.MediaSerialNumber,
                                 image2Info.MediaSerialNumber).AppendLine();
 
-                sb.AppendFormat("Disk barcode\t{0}\t{1}", image1Info.MediaBarcode, image2Info.MediaBarcode).
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk barcode", image1Info.MediaBarcode, image2Info.MediaBarcode).
                    AppendLine();
 
-                sb.AppendFormat("Disk part no.\t{0}\t{1}", image1Info.MediaPartNumber, image2Info.MediaPartNumber).
-                   AppendLine();
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk part no.", image1Info.MediaPartNumber,
+                                image2Info.MediaPartNumber).AppendLine();
 
-                sb.AppendFormat("Disk sequence\t{0}\t{1}", image1Info.MediaSequence, image2Info.MediaSequence).
-                   AppendLine();
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Disk sequence", image1Info.MediaSequence,
+                                image2Info.MediaSequence).AppendLine();
 
-                sb.AppendFormat("Last disk on sequence\t{0}\t{1}", image1Info.LastMediaSequence,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Last disk on sequence", image1Info.LastMediaSequence,
                                 image2Info.LastMediaSequence).AppendLine();
 
-                sb.AppendFormat("Drive manufacturer\t{0}\t{1}", image1Info.DriveManufacturer,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive manufacturer", image1Info.DriveManufacturer,
                                 image2Info.DriveManufacturer).AppendLine();
 
-                sb.AppendFormat("Drive firmware revision\t{0}\t{1}", image1Info.DriveFirmwareRevision,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive firmware revision", image1Info.DriveFirmwareRevision,
                                 image2Info.DriveFirmwareRevision).AppendLine();
 
-                sb.AppendFormat("Drive model\t{0}\t{1}", image1Info.DriveModel, image2Info.DriveModel).AppendLine();
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive model", image1Info.DriveModel, image2Info.DriveModel).
+                   AppendLine();
 
-                sb.AppendFormat("Drive serial number\t{0}\t{1}", image1Info.DriveSerialNumber,
+                sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive serial number", image1Info.DriveSerialNumber,
                                 image2Info.DriveSerialNumber).AppendLine();
 
-                foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
-                    sb.AppendFormat("Has {0}?\t{1}\t{2}", disktag, image1DiskTags.ContainsKey(disktag),
+                foreach(MediaTagType disktag in
+                    (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
+                    sb.AppendFormat("{0,-38}{1,-20}{2}", $"Has {disktag}?", image1DiskTags.ContainsKey(disktag),
                                     image2DiskTags.ContainsKey(disktag)).AppendLine();
             }
 
