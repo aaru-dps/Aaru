@@ -59,7 +59,7 @@
     <Compile Include="Commands\Device\DeviceFamily.cs" />
     <Compile Include="Commands\Device\Info.cs" />
     <Compile Include="Commands\Device\DeviceReport.cs" />
-    <Compile Include="Commands\Device\Devices.cs" />
+    <Compile Include="Commands\Device\List.cs" />
     <Compile Include="Commands\Filesystem\ExtractFiles.cs" />
     <Compile Include="Commands\Filesystem\FilesystemFamily.cs" />
     <Compile Include="Commands\Filesystem\Options.cs" />
