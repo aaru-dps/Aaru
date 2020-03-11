@@ -60,7 +60,9 @@
     <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\Metadata.cs" />
-    <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
+    <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs" />
+    <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs" />
+    <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />
     <Compile Include="Devices\Info\Properties.cs" />

@@ -279,7 +279,11 @@
             <e p="MMC.cs" t="Include" />
             <e p="Metadata.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
-            <e p="PlayStationPortable.cs" t="Include" />
+            <e p="PlayStationPortable" t="Include">
+              <e p="MemoryStick.cs" t="Include" />
+              <e p="PlayStationPortable.cs" t="Include" />
+              <e p="UMD.cs" t="Include" />
+            </e>
             <e p="ResumeSupport.cs" t="Include" />
             <e p="SBC.cs" t="Include" />
             <e p="SCSI.cs" t="Include" />
