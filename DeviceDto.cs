@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Device.cs
+// Filename       : DeviceDto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Model for storing processed device reports in database.
+//     DTO for syncing processed device reports in database.
 //
 // --[ License ] --------------------------------------------------------------
 //

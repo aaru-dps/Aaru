@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : UsbVendor.cs
+// Filename       : UsbVendorDto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Model for storing USB vendor identifiers in database.
+//     DTO for syncing USB vendor identifiers in database.
 //
 // --[ License ] --------------------------------------------------------------
 //

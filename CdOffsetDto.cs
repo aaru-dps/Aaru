@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : CdOffset.cs
+// Filename       : CdOffsetDto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Database.
+// Component      : DTOs.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Model for storing Compact Disc read offsets in database.
+//     DTO for syncing Compact Disc read offsets.
 //
 // --[ License ] --------------------------------------------------------------
 //

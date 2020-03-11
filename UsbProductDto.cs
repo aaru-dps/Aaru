@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : UsbProduct.cs
+// Filename       : UsbProductDto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Model for storing USB product identifiers in database.
+//     DTO for syncing USB product identifiers in database.
 //
 // --[ License ] --------------------------------------------------------------
 //
