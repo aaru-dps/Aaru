@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by optical disc image plugins.
+//     Defines the interface to be implemented by optical disc image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //

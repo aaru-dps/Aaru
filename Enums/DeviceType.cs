@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines enumerations of devce types.
+//     Defines enumerations of device types.
 //
 // --[ License ] --------------------------------------------------------------
 //

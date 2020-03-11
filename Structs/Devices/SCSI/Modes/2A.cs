@@ -5,7 +5,7 @@
 // Filename       : 2A.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Device structures decoders.
+// Component      : Common structures for SCSI devices.
 //
 // --[ Description ] ----------------------------------------------------------
 //

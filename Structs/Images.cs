@@ -5,11 +5,11 @@
 // Filename       : IMediaImage.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Disc image plugins.
+// Component      : Common structures.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines structures to be used by disc image plugins.
+//     Defines structures to be used by media image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //

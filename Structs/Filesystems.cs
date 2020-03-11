@@ -5,7 +5,7 @@
 // Filename       : Structs.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Aaru filesystem plugins.
+// Component      : Common structures.
 //
 // --[ Description ] ----------------------------------------------------------
 //

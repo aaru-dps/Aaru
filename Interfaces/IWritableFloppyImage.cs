@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by floppy image plugins.
+//     Defines the interface to be implemented by floppy image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //

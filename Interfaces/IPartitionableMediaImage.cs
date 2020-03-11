@@ -9,8 +9,8 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by image plugins that can contain
-//     partitioned medias, usually optical discs and some newer tapes.
+//     Defines the interface to be implemented by image plugins that can
+//     contain partitioned medias, usually optical discs and some newer tapes.
 //
 // --[ License ] --------------------------------------------------------------
 //

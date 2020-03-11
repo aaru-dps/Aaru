@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by writable image plugins.
+//     Defines the interface to be implemented by writable image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //

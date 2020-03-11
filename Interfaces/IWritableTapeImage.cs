@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by writable block addressable
+//     Defines the interface to be implemented by writable block addressable
 //     sequential tape image plugins.
 //
 // --[ License ] --------------------------------------------------------------

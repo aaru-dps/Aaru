@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines the interface for an Archive.
+//     Defines the interface for implementing archive plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //

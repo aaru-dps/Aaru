@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : MediaTypeFromSCSI.cs
+// Filename       : MediaTypeFromDevice.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru common types.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Lookups media type from SCSI informative values.
+//     Lookups media type from SCSI and ATA informative values.
 //
 // --[ License ] --------------------------------------------------------------
 //

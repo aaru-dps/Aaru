@@ -9,8 +9,8 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by block addressable sequential tape
-//     image plugins.
+//     Defines the interface to be implemented by block addressable sequential
+//     tape image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
