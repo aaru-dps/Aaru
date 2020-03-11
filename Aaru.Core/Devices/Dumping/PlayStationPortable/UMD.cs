@@ -249,7 +249,7 @@ namespace Aaru.Core.Devices.Dumping
                newTrim)
             {
                 start = DateTime.UtcNow;
-                _dumpLog.WriteLine("Trimming bad sectors");
+                _dumpLog.WriteLine("Trimming skipped sectors");
 
                 ulong[] tmpArray = _resume.BadBlocks.ToArray();
                 InitProgress?.Invoke();
