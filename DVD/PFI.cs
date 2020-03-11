@@ -36,25 +36,35 @@ using System.Text;
 
 namespace Aaru.Decoders.DVD
 {
-    /// <summary>
-    ///     Information from the following standards: ANSI X3.304-1997 T10/1048-D revision 9.0 T10/1048-D revision 10a
-    ///     T10/1228-D revision 7.0c T10/1228-D revision 11a T10/1363-D revision 10g T10/1545-D revision 1d T10/1545-D revision
-    ///     5 T10/1545-D revision 5a T10/1675-D revision 2c T10/1675-D revision 4 T10/1836-D revision 2g ECMA 267: 120 mm DVD -
-    ///     Read-Only Disk ECMA 268: 80 mm DVD - Read-Only Disk ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM) ECMA 274: Data
-    ///     Interchange on 120 mm Optical Disk using +RW Format - Capacity: 3,0 Gbytes and 6,0 Gbytes ECMA 279: 80 mm (1,23
-    ///     Gbytes per side) and 120 mm (3,95 Gbytes per side) DVD-Recordable Disk (DVD-R) ECMA 330: 120 mm (4,7 Gbytes per
-    ///     side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM) ECMA 337: Data Interchange on 120 mm and 80 mm
-    ///     Optical Disk using +RW Format - Capacity: 4,7 and 1,46 Gbytes per Side ECMA 338: 80 mm (1,46 Gbytes per side) and
-    ///     120 mm (4,70 Gbytes per side) DVD Re-recordable Disk (DVD-RW) ECMA 349: Data Interchange on 120 mm and 80 mm
-    ///     Optical Disk using +R Format - Capacity: 4,7 and 1,46 Gbytes per Side ECMA 359: 80 mm (1,46 Gbytes per side) and
-    ///     120 mm (4,70 Gbytes per side) DVD Recordable Disk (DVD-R) ECMA 364: Data Interchange on 120 mm and 80 mm Optical
-    ///     Disk using +R DL Format - Capacity 8,55 and 2,66 Gbytes per Side ECMA 365: Data Interchange on 60 mm Read-Only ODC
-    ///     - Capacity: 1,8 Gbytes (UMD™) ECMA 371: Data Interchange on 120 mm and 80 mm Optical Disk using +RW HS Format -
-    ///     Capacity 4,7 and 1,46 Gbytes per side ECMA 374: Data Interchange on 120 mm and 80 mm Optical Disk using +RW DL
-    ///     Format - Capacity 8,55 and 2,66 Gbytes per side ECMA 382: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per
-    ///     side) DVD Recordable Disk for Dual Layer (DVD-R for DL) ECMA 384: 120 mm (8,54 Gbytes per side) and 80 mm (2,66
-    ///     Gbytes per side) DVD Re-recordable Disk for Dual Layer (DVD-RW for DL)
-    /// </summary>
+    // Information from the following standards:
+    // ANSI X3.304-1997
+    // T10/1048-D revision 9.0
+    // T10/1048-D revision 10a
+    // T10/1228-D revision 7.0c
+    // T10/1228-D revision 11a
+    // T10/1363-D revision 10g
+    // T10/1545-D revision 1d
+    // T10/1545-D revision 5
+    // T10/1545-D revision 5a
+    // T10/1675-D revision 2c
+    // T10/1675-D revision 4
+    // T10/1836-D revision 2g
+    // ECMA 267: 120 mm DVD - Read-Only Disk
+    // ECMA 268: 80 mm DVD - Read-Only Disk
+    // ECMA 272: 120 mm DVD Rewritable Disk (DVD-RAM)
+    // ECMA 274: Data Interchange on 120 mm Optical Disk using +RW Format - Capacity: 3,0 Gbytes and 6,0 Gbytes
+    // ECMA 279: 80 mm (1,23 Gbytes per side) and 120 mm (3,95 Gbytes per side) DVD-Recordable Disk (DVD-R)
+    // ECMA 330: 120 mm (4,7 Gbytes per side) and 80 mm (1,46 Gbytes per side) DVD Rewritable Disk (DVD-RAM)
+    // ECMA 337: Data Interchange on 120 mm and 80 mm Optical Disk using +RW Format - Capacity: 4,7 and 1,46 Gbytes per Side
+    // ECMA 338: 80 mm (1,46 Gbytes per side) and 120 mm (4,70 Gbytes per side) DVD Re-recordable Disk (DVD-RW)
+    // ECMA 349: Data Interchange on 120 mm and 80 mm Optical Disk using +R Format - Capacity: 4,7 and 1,46 Gbytes per Side
+    // ECMA 359: 80 mm (1,46 Gbytes per side) and 120 mm (4,70 Gbytes per side) DVD Recordable Disk (DVD-R)
+    // ECMA 364: Data Interchange on 120 mm and 80 mm Optical Disk using +R DL Format - Capacity 8,55 and 2,66 Gbytes per Side
+    // ECMA 365: Data Interchange on 60 mm Read-Only ODC - Capacity: 1,8 Gbytes (UMD™)
+    // ECMA 371: Data Interchange on 120 mm and 80 mm Optical Disk using +RW HS Format - Capacity 4,7 and 1,46 Gbytes per side
+    // ECMA 374: Data Interchange on 120 mm and 80 mm Optical Disk using +RW DL Format - Capacity 8,55 and 2,66 Gbytes per side
+    // ECMA 382: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Recordable Disk for Dual Layer (DVD-R for DL)
+    // ECMA 384: 120 mm (8,54 Gbytes per side) and 80 mm (2,66 Gbytes per side) DVD Re-recordable Disk for Dual Layer (DVD-RW for DL)
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class PFI

@@ -38,10 +38,15 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 namespace Aaru.Decoders.SCSI
 {
-    /// <summary>
-    ///     Information from the following standards: T9/375-D revision 10l T10/995-D revision 10 T10/1236-D revision 20
-    ///     T10/1416-D revision 23 T10/1731-D revision 16 T10/502 revision 05 RFC 7144 ECMA-111
-    /// </summary>
+    // Information from the following standards:
+    // T9/375-D revision 10l
+    // T10/995-D revision 10
+    // T10/1236-D revision 20
+    // T10/1416-D revision 23
+    // T10/1731-D revision 16
+    // T10/502 revision 05
+    // RFC 7144
+    // ECMA-111
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Inquiry

@@ -37,12 +37,18 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 namespace Aaru.Decoders.ATA
 {
-    /// <summary>
-    ///     Information from following standards: T10-791D rev. 4c (ATA) T10-948D rev. 4c (ATA-2) T13-1153D rev. 18
-    ///     (ATA/ATAPI-4) T13-1321D rev. 3 (ATA/ATAPI-5) T13-1410D rev. 3b (ATA/ATAPI-6) T13-1532D rev. 4b (ATA/ATAPI-7)
-    ///     T13-1699D rev. 3f (ATA8-ACS) T13-1699D rev. 4a (ATA8-ACS) T13-2015D rev. 2 (ACS-2) T13-2161D rev. 5 (ACS-3) CF+
-    ///     &amp; CF Specification rev. 1.4 (CFA)
-    /// </summary>
+    // Information from following standards:
+    // T10-791D rev. 4c (ATA)
+    // T10-948D rev. 4c (ATA-2)
+    // T13-1153D rev. 18 (ATA/ATAPI-4)
+    // T13-1321D rev. 3 (ATA/ATAPI-5)
+    // T13-1410D rev. 3b (ATA/ATAPI-6)
+    // T13-1532D rev. 4b (ATA/ATAPI-7)
+    // T13-1699D rev. 3f (ATA8-ACS)
+    // T13-1699D rev. 4a (ATA8-ACS)
+    // T13-2015D rev. 2 (ACS-2)
+    // T13-2161D rev. 5 (ACS-3)
+    // CF+ & CF Specification rev. 1.4 (CFA)
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Identify
