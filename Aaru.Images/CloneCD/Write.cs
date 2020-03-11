@@ -102,10 +102,7 @@ namespace Aaru.DiscImages
 
                     return true;
                 case MediaTagType.CD_FullTOC:
-                    fulltoc = new byte[data.Length + 2];
-                    Array.Copy(data, 0, fulltoc, 2, data.Length);
-                    fulltoc[0] = (byte)((data.Length & 0xFF00) >> 8);
-                    fulltoc[1] = (byte)(data.Length & 0xFF);
+                    fulltoc = data;
 
                     return true;
                 default:
@@ -285,7 +282,12 @@ namespace Aaru.DiscImages
 
             // Easy, just decode the real toc
             if(fulltoc != null)
-                nullableToc = FullTOC.Decode(fulltoc);
+            {
+                byte[] tmp = new byte[fulltoc.Length + 2];
+                Array.Copy(BigEndianBitConverter.GetBytes((ushort)fulltoc.Length), 0, tmp, 0, 2);
+                Array.Copy(fulltoc, 0, tmp, 2, fulltoc.Length);
+                nullableToc = FullTOC.Decode(tmp);
+            }
 
             // Not easy, create a toc from scratch
             if(nullableToc == null)

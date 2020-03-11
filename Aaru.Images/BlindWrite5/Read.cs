@@ -166,44 +166,19 @@ namespace Aaru.DiscImages
                     pma = null;
             }
 
-            temp = new byte[header.atipLen];
+            atip = new byte[header.atipLen];
 
-            if(temp.Length > 0)
-            {
-                byte[] tushort = BitConverter.GetBytes((ushort)(temp.Length + 2));
-                stream.Read(temp, 0, temp.Length);
-                atip    = new byte[temp.Length + 4];
-                atip[0] = tushort[1];
-                atip[1] = tushort[0];
-                Array.Copy(temp, 0, atip, 4, temp.Length);
+            if(atip.Length > 0)
+                stream.Read(atip, 0, atip.Length);
+            else
+                atip = null;
 
-                ATIP.CDATIP? decodedAtip = ATIP.Decode(atip);
+            cdtext = new byte[header.cdtLen];
 
-                if(decodedAtip.HasValue)
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ATIP: {0}", ATIP.Prettify(decodedAtip));
-                else
-                    atip = null;
-            }
-
-            temp = new byte[header.cdtLen];
-
-            if(temp.Length > 0)
-            {
-                byte[] tushort = BitConverter.GetBytes((ushort)(temp.Length + 2));
-                stream.Read(temp, 0, temp.Length);
-                cdtext    = new byte[temp.Length + 4];
-                cdtext[0] = tushort[1];
-                cdtext[1] = tushort[0];
-                Array.Copy(temp, 0, cdtext, 4, temp.Length);
-
-                CDTextOnLeadIn.CDText? decodedCdText = CDTextOnLeadIn.Decode(cdtext);
-
-                if(decodedCdText.HasValue)
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "CD-Text: {0}",
-                                               CDTextOnLeadIn.Prettify(decodedCdText));
-                else
-                    cdtext = null;
-            }
+            if(cdtext.Length > 0)
+                stream.Read(cdtext, 0, cdtext.Length);
+            else
+                cdtext = null;
 
             bca = new byte[header.bcaLen];
 
@@ -220,7 +195,8 @@ namespace Aaru.DiscImages
                 dmi = new byte[2052];
                 pfi = new byte[2052];
 
-                Array.Copy(temp, 0, dmi, 0, 2050);
+                // TODO: CMI
+                Array.Copy(temp, 2, dmi, 4, 2048);
                 Array.Copy(temp, 0x802, pfi, 4, 2048);
 
                 pfi[0] = 0x08;
@@ -650,8 +626,8 @@ namespace Aaru.DiscImages
 
             fullTocStream.Write(new byte[]
             {
-                0, 0, 0, 0
-            }, 0, 4);
+                0, 0
+            }, 0, 2);
 
             ulong offsetBytes = 0;
             offsetmap = new Dictionary<uint, ulong>();
@@ -893,21 +869,8 @@ namespace Aaru.DiscImages
                 fullToc = fullTocStream.ToArray();
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", fullToc.Length);
 
-                byte[] fullTocSize = BitConverter.GetBytes((short)(fullToc.Length - 2));
-                fullToc[0] = fullTocSize[1];
-                fullToc[1] = fullTocSize[0];
-                fullToc[2] = firstSession;
-                fullToc[3] = lastSession;
-
-                FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(fullToc);
-
-                if(!decodedFullToc.HasValue)
-                {
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC not correctly rebuilt");
-                    fullToc = null;
-                }
-                else
-                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC correctly rebuilt");
+                fullToc[0] = firstSession;
+                fullToc[1] = lastSession;
 
                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
@@ -1124,11 +1087,23 @@ namespace Aaru.DiscImages
                 else if(isBd)
                     imageInfo.ReadableMediaTags.Add(MediaTagType.BD_BCA);
 
+            byte[] tmp;
+
             if(dmi != null)
+            {
+                tmp = new byte[2048];
+                Array.Copy(dmi, 4, tmp, 0, 2048);
+                dmi = tmp;
                 imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
+            }
 
             if(pfi != null)
+            {
+                tmp = new byte[2048];
+                Array.Copy(pfi, 4, tmp, 0, 2048);
+                pfi = tmp;
                 imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
+            }
 
             if(fullToc != null)
                 imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);

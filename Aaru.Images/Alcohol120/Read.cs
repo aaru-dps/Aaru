@@ -368,7 +368,8 @@ namespace Aaru.DiscImages
                     dmi = new byte[2052];
                     pfi = new byte[2052];
 
-                    Array.Copy(structures, 0, dmi, 0, 2052);
+                    // TODO: CMI
+                    Array.Copy(structures, 4, dmi, 4, 2048);
                     Array.Copy(structures, 0x804, pfi, 4, 2048);
 
                     pfi[0] = 0x08;
@@ -447,6 +448,13 @@ namespace Aaru.DiscImages
                             imageInfo.MediaType = MediaType.XGD;
                         else if(DMI.IsXbox360(dmi))
                             imageInfo.MediaType = MediaType.XGD2;
+
+                        byte[] tmp = new byte[2048];
+                        Array.Copy(dmi, 4, tmp, 0, 2048);
+                        dmi = tmp;
+                        tmp = new byte[2048];
+                        Array.Copy(pfi, 4, tmp, 0, 2048);
+                        pfi = tmp;
 
                         imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
                         imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
@@ -644,8 +652,8 @@ namespace Aaru.DiscImages
 
                 tocMs.Write(new byte[]
                 {
-                    0, 0, 0, 0
-                }, 0, 4); // Reserved for TOC response size and session numbers
+                    0, 0
+                }, 0, 2); // Reserved for TOC session numbers
 
                 foreach(KeyValuePair<int, Dictionary<int, AlcoholTrack>> sessionToc in alcToc)
                 {
@@ -671,23 +679,11 @@ namespace Aaru.DiscImages
                     }
                 }
 
-                fullToc = tocMs.ToArray();
-                byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)(fullToc.Length - 2));
-                fullToc[0] = fullTocSize[0];
-                fullToc[1] = fullTocSize[1];
-                fullToc[2] = firstSession;
-                fullToc[3] = lastSession;
+                fullToc    = tocMs.ToArray();
+                fullToc[0] = firstSession;
+                fullToc[1] = lastSession;
 
-                FullTOC.CDFullTOC? decodedFullToc = FullTOC.Decode(fullToc);
-
-                if(!decodedFullToc.HasValue)
-                {
-                    AaruConsole.DebugWriteLine("Alcohol 120% plugin", "TOC not correctly rebuilt");
-                    fullToc = null;
-                }
-                else
-                    imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
-
+                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
 

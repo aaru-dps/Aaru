@@ -154,11 +154,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)data.Length);
-                    fullToc = new byte[data.Length + 2];
-                    Array.Copy(data, 0, fullToc, 2, data.Length);
-                    fullToc[0] = fullTocSize[0];
-                    fullToc[1] = fullTocSize[1];
+                    fullToc = data;
 
                     return true;
                 case MediaTagType.DVD_PFI:
@@ -481,7 +477,18 @@ namespace Aaru.DiscImages
             alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
             long currentTrackOffset = header.sessionOffset + (Marshal.SizeOf<AlcoholSession>() * sessions);
 
-            FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(fullToc);
+            byte[] tmpToc = null;
+
+            if(fullToc != null)
+            {
+                byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)fullToc.Length);
+                tmpToc = new byte[fullToc.Length + 2];
+                Array.Copy(fullToc, 0, tmpToc, 2, fullToc.Length);
+                tmpToc[0] = fullTocSize[0];
+                tmpToc[1] = fullTocSize[1];
+            }
+
+            FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(tmpToc);
 
             long currentExtraOffset = currentTrackOffset;
 

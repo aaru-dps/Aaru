@@ -346,7 +346,6 @@ namespace Aaru.DiscImages
                 toc.FirstCompleteSession = (byte)minSession;
                 toc.DataLength           = (ushort)((entries.Count * 11) + 2);
                 var tocMs = new MemoryStream();
-                tocMs.Write(BigEndianBitConverter.GetBytes(toc.DataLength), 0, 2);
                 tocMs.WriteByte(toc.FirstCompleteSession);
                 tocMs.WriteByte(toc.LastCompleteSession);
 
@@ -367,8 +366,6 @@ namespace Aaru.DiscImages
 
                 fulltoc = tocMs.ToArray();
                 imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
-
-                AaruConsole.DebugWriteLine("CloneCD plugin", "{0}", FullTOC.Prettify(toc));
 
                 string dataFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".img";
                 string subFile  = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".sub";
@@ -800,10 +797,7 @@ namespace Aaru.DiscImages
         {
             switch(tag)
             {
-                case MediaTagType.CD_FullTOC:
-                {
-                    return fulltoc;
-                }
+                case MediaTagType.CD_FullTOC: return fulltoc;
                 case MediaTagType.CD_TEXT:
                 {
                     if(cdtext        != null &&
