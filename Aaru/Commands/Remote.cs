@@ -72,6 +72,9 @@ namespace Aaru.Commands
 
             try
             {
+                if(host.ToLowerInvariant().StartsWith("aaru://"))
+                    host = host.Substring(7);
+
                 var remote = new Remote(host);
 
                 Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,

@@ -92,6 +92,9 @@ namespace Aaru.Devices
 
             try
             {
+                if(aaruRemote.ToLowerInvariant().StartsWith("aaru://"))
+                    aaruRemote = aaruRemote.Substring(7);
+
                 using(var remote = new Remote.Remote(aaruRemote))
                 {
                     isRemote                     = true;
