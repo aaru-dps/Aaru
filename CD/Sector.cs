@@ -2,14 +2,14 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Scramble.cs
+// Filename       : Sector.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Device structures decoders.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     Decodes and descrambles CompactDisc sectors.
 //
 // --[ License ] --------------------------------------------------------------
 //
