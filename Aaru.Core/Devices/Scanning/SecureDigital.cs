@@ -158,7 +158,7 @@ namespace Aaru.Core.Devices.Scanning
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, SD_PROFILE);
-            var mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+            var mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
             var ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
 
             start = DateTime.UtcNow;

@@ -51,7 +51,8 @@ namespace Aaru.Core.Logging
         /// <param name="blocks">Blocks in media</param>
         /// <param name="blockSize">Bytes per block</param>
         /// <param name="blocksToRead">How many blocks read at once</param>
-        internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
+        internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead,
+                         bool @private)
         {
             if(dev == null ||
                string.IsNullOrEmpty(outputFile))
@@ -93,7 +94,7 @@ namespace Aaru.Core.Logging
 
             string device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
             string fw         = $"F/W: {dev.FirmwareRevision}";
-            string sn         = $"S/N: {dev.Serial}";
+            string sn         = $"S/N: {(@private ? "" : dev.Serial)}";
             string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
             string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
 

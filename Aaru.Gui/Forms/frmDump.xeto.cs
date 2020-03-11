@@ -517,7 +517,7 @@ namespace Aaru.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            var dumpLog = new DumpLog(_outputPrefix + ".log", _dev);
+            var dumpLog = new DumpLog(_outputPrefix + ".log", _dev, false);
 
             dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
 
@@ -527,7 +527,7 @@ namespace Aaru.Gui.Forms
                                chkStopOnError.Checked == true, _resume, dumpLog, encoding, _outputPrefix,
                                txtDestination.Text, parsedOptions, _sidecar, (uint)stpSkipped.Value,
                                chkExistingMetadata.Checked == false, chkTrim.Checked == false,
-                               chkTrack1Pregap.Checked     == true, true, false, DumpSubchannel.Any, 0);
+                               chkTrack1Pregap.Checked     == true, true, false, DumpSubchannel.Any, 0, false);
 
             new Thread(DoWork).Start();
         }

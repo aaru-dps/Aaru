@@ -315,7 +315,7 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
-                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
@@ -443,7 +443,7 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
-                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;

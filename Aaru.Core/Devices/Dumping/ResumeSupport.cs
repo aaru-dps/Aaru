@@ -64,8 +64,11 @@ namespace Aaru.Core.Devices.Dumping
         internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
                                      string serial, PlatformID platform, ref Resume resume,
                                      ref DumpHardwareType currentTry, ref ExtentsULong extents, string firmware,
-                                     bool isTape = false)
+                                     bool @private, bool isTape = false)
         {
+            if(@private)
+                serial = null;
+
             if(resume != null)
             {
                 if(!isLba)

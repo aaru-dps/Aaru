@@ -247,7 +247,7 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, false, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private);
 
             if(currentTry == null ||
                extents    == null)
@@ -285,7 +285,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SD_PROFILE);
 
             ret = _outputPlugin.Create(_outputPath,
@@ -601,6 +601,26 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(cid != null)
                 {
+                    if(_dev.Type == DeviceType.SecureDigital && _private)
+                    {
+                        // Clear serial number and manufacturing date
+                        cid[9]  = 0;
+                        cid[10] = 0;
+                        cid[11] = 0;
+                        cid[12] = 0;
+                        cid[13] = 0;
+                        cid[14] = 0;
+                    }
+                    else if(_dev.Type == DeviceType.MMC && _private)
+                    {
+                        // Clear serial number and manufacturing date
+                        cid[10] = 0;
+                        cid[11] = 0;
+                        cid[12] = 0;
+                        cid[13] = 0;
+                        cid[14] = 0;
+                    }
+
                     cidDump = new DumpType
                     {
                         Image = _outputPath, Size = (ulong)cid.Length, Checksums = Checksum.GetChecksums(cid).ToArray()
@@ -775,8 +795,11 @@ namespace Aaru.Core.Devices.Dumping
                 sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                 sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                 sidecar.BlockMedia[0].Model             = _dev.Model;
-                sidecar.BlockMedia[0].Serial            = _dev.Serial;
-                sidecar.BlockMedia[0].Size              = blocks * blockSize;
+
+                if(!_private)
+                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                sidecar.BlockMedia[0].Size = blocks * blockSize;
 
                 UpdateStatus?.Invoke("Writing metadata sidecar");
 

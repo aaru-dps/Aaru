@@ -471,7 +471,7 @@ namespace Aaru.Core.Devices.Dumping
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
                                   _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
-                                  true);
+                                  _private, true);
 
             if(currentTry == null ||
                extents    == null)
@@ -765,7 +765,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             start = DateTime.UtcNow;
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, 1);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, 1, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
             var currentTapeFile = new TapeFile
@@ -1345,8 +1345,11 @@ namespace Aaru.Core.Devices.Dumping
                 sidecar.BlockMedia[0].LogicalBlocks = blocks;
                 sidecar.BlockMedia[0].Manufacturer  = _dev.Manufacturer;
                 sidecar.BlockMedia[0].Model         = _dev.Model;
-                sidecar.BlockMedia[0].Serial        = _dev.Serial;
-                sidecar.BlockMedia[0].Size          = blocks * blockSize;
+
+                if(!_private)
+                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                sidecar.BlockMedia[0].Size = blocks * blockSize;
 
                 if(_dev.IsRemovable)
                     sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();

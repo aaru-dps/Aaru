@@ -47,6 +47,7 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
+using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using MediaType = Aaru.CommonTypes.MediaType;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -108,6 +109,10 @@ namespace Aaru.Core.Devices.Dumping
                     mediaTags.Add(MediaTagType.PCMCIA_CIS, null);
 
                 sense = _dev.ScsiInquiry(out byte[] cmdBuf, out _);
+
+                if(_private)
+                    cmdBuf = DeviceReport.ClearInquiry(cmdBuf);
+
                 mediaTags.Add(MediaTagType.SCSI_INQUIRY, cmdBuf);
 
                 if(!sense)
@@ -311,7 +316,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
             _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SBC_PROFILE);
             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
@@ -404,7 +409,8 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
+                                  _private);
 
             if(currentTry == null ||
                extents    == null)
@@ -867,6 +873,9 @@ namespace Aaru.Core.Devices.Dumping
 
                             if(!sense)
                             {
+                                if(_private)
+                                    cmdBuf = DeviceReport.ClearIdentify(cmdBuf);
+
                                 ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
 
                                 if(!ret &&
@@ -1232,8 +1241,11 @@ namespace Aaru.Core.Devices.Dumping
                     sidecar.BlockMedia[0].LogicalBlockSize  = logicalBlockSize;
                     sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                     sidecar.BlockMedia[0].Model             = _dev.Model;
-                    sidecar.BlockMedia[0].Serial            = _dev.Serial;
-                    sidecar.BlockMedia[0].Size              = blocks * blockSize;
+
+                    if(!_private)
+                        sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                    sidecar.BlockMedia[0].Size = blocks * blockSize;
 
                     if(_dev.IsRemovable)
                         sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();

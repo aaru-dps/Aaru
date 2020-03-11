@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Core.Devices.Report;
 using Aaru.Core.Logging;
 using Aaru.Decoders.PCMCIA;
 using Schemas;
@@ -160,7 +161,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model,
                                           _dev.Serial, _dev.PlatformId, ref _resume, ref currentTry, ref extents,
-                                          _dev.FirmwareRevision);
+                                          _dev.FirmwareRevision, _private);
 
                     if(currentTry == null ||
                        extents    == null)
@@ -243,8 +244,10 @@ namespace Aaru.Core.Devices.Dumping
                         if(_skip < blocksToRead)
                             _skip = blocksToRead;
 
-                        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
-                        ibgLog  = new IbgLog(_outputPrefix  + ".ibg", ATA_PROFILE);
+                        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
+                                              _private);
+
+                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ATA_PROFILE);
 
                         if(_resume.NextBlock > 0)
                         {
@@ -461,8 +464,10 @@ namespace Aaru.Core.Devices.Dumping
                     }
                     else
                     {
-                        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
-                        ibgLog  = new IbgLog(_outputPrefix  + ".ibg", ATA_PROFILE);
+                        mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
+                                              _private);
+
+                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ATA_PROFILE);
 
                         ulong currentBlock = 0;
                         blocks = (ulong)(cylinders * heads * sectors);
@@ -720,6 +725,9 @@ namespace Aaru.Core.Devices.Dumping
                                     }
                         }
 
+                        if(!_private)
+                            DeviceReport.ClearIdentify(ataIdentify);
+
                         ret = _outputPlugin.WriteMediaTag(ataIdentify, MediaTagType.ATA_IDENTIFY);
 
                         if(ret)
@@ -777,8 +785,11 @@ namespace Aaru.Core.Devices.Dumping
                         sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                         sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                         sidecar.BlockMedia[0].Model             = _dev.Model;
-                        sidecar.BlockMedia[0].Serial            = _dev.Serial;
-                        sidecar.BlockMedia[0].Size              = blocks * blockSize;
+
+                        if(!_private)
+                            sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                        sidecar.BlockMedia[0].Size = blocks * blockSize;
 
                         if(cylinders > 0 &&
                            heads     > 0 &&

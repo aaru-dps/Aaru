@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Devices;
+using Microsoft.EntityFrameworkCore.Internal;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -49,7 +50,7 @@ namespace Aaru.Core.Logging
         /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
         /// <param name="dev">Device</param>
-        public DumpLog(string outputFile, Device dev)
+        public DumpLog(string outputFile, Device dev, bool @private)
         {
             if(string.IsNullOrEmpty(outputFile))
                 return;
@@ -85,7 +86,31 @@ namespace Aaru.Core.Logging
         #if DEBUG
             logSw.WriteLine("DEBUG version");
         #endif
-            logSw.WriteLine("Command line: {0}", Environment.CommandLine);
+            if(@private)
+            {
+                string[] args = Environment.GetCommandLineArgs();
+
+                for(int i = 0; i < args.Length; i++)
+                {
+                    if(args[i].StartsWith("/dev") ||
+                       args[i].StartsWith("aaru://"))
+                        continue;
+
+                    try
+                    {
+                        args[i] = Path.GetFileName(args[i]);
+                    }
+                    catch
+                    {
+                        // Do nothing
+                    }
+                }
+
+                logSw.WriteLine("Command line: {0}", args.Join(" "));
+            }
+            else
+                logSw.WriteLine("Command line: {0}", Environment.CommandLine);
+
             logSw.WriteLine();
 
             if(dev.IsRemote)
@@ -106,7 +131,10 @@ namespace Aaru.Core.Logging
             logSw.WriteLine("Manufacturer: {0}", dev.Manufacturer);
             logSw.WriteLine("Model: {0}", dev.Model);
             logSw.WriteLine("Firmware revision: {0}", dev.FirmwareRevision);
-            logSw.WriteLine("Serial number: {0}", dev.Serial);
+
+            if(!@private)
+                logSw.WriteLine("Serial number: {0}", dev.Serial);
+
             logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
             logSw.WriteLine("Device type: {0}", dev.Type);
             logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
@@ -117,7 +145,10 @@ namespace Aaru.Core.Logging
             {
                 logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
                 logSw.WriteLine("USB product: {0}", dev.UsbProductString);
-                logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
+
+                if(!@private)
+                    logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
+
                 logSw.WriteLine("USB vendor ID: {0:X4}h", dev.UsbVendorId);
                 logSw.WriteLine("USB product ID: {0:X4}h", dev.UsbProductId);
             }
@@ -128,7 +159,10 @@ namespace Aaru.Core.Logging
             {
                 logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
                 logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
-                logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
+
+                if(!@private)
+                    logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
+
                 logSw.WriteLine("FireWire vendor ID: 0x{0:X8}", dev.FireWireVendor);
                 logSw.WriteLine("FireWire product ID: 0x{0:X8}", dev.FireWireModel);
             }

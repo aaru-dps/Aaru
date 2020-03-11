@@ -352,7 +352,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             ResumeSupport.Process(true, true, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private);
 
             if(currentTry == null ||
                extents    == null)
@@ -940,7 +940,7 @@ namespace Aaru.Core.Devices.Dumping
                 sectorsForOffset = 0;
             }
 
-            mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable);
+            mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable, _private);
             ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
             audioExtents = new ExtentsULong();

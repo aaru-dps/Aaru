@@ -123,7 +123,7 @@ namespace Aaru.Core.Devices.Scanning
                     UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                     InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
-                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
 
                     start = DateTime.UtcNow;
@@ -241,7 +241,7 @@ namespace Aaru.Core.Devices.Scanning
                 else
                 {
                     InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
-                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
+                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
 
                     ulong currentBlock = 0;

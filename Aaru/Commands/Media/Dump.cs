@@ -175,13 +175,22 @@ namespace Aaru.Commands.Media
                 Arity = ArgumentArity.ExactlyOne, Description = "Output image path", Name = "output-path"
             });
 
+            Add(new Option(new[]
+                {
+                    "--private"
+                }, "Do not store paths and serial numbers in log or metadata.")
+                {
+                    Argument = new Argument<bool>(() => false), Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
         public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume,
                                  string encoding, bool firstPregap, bool fixOffset, bool force, bool metadata,
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
-                                 uint skip, byte speed, bool stopOnError, string format, string subchannel)
+                                 uint skip, byte speed, bool stopOnError, string format, string subchannel,
+                                 bool @private)
         {
             MainClass.PrintCopyright();
 
@@ -212,6 +221,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--trim={0}", trim);
             AaruConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", verbose);
             AaruConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", subchannel);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--private={0}", @private);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -393,7 +403,7 @@ namespace Aaru.Commands.Media
 
             IWritableImage outputFormat = candidates[0];
 
-            var dumpLog = new DumpLog(outputPrefix + ".log", dev);
+            var dumpLog = new DumpLog(outputPrefix + ".log", dev, @private);
 
             if(verbose)
             {
@@ -409,7 +419,7 @@ namespace Aaru.Commands.Media
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
                                   parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
-                                  wantedSubchannel, speed);
+                                  wantedSubchannel, speed, @private);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

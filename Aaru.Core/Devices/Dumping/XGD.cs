@@ -454,7 +454,7 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, BLOCK_SIZE);
 
@@ -479,7 +479,7 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents          = null;
 
             ResumeSupport.Process(true, true, totalSize, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private);
 
             if(currentTry == null ||
                extents    == null)

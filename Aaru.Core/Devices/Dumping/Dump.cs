@@ -47,6 +47,7 @@ namespace Aaru.Core.Devices.Dumping
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
+        readonly bool                       _private;
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
@@ -79,7 +80,7 @@ namespace Aaru.Core.Devices.Dumping
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
-                    bool fixOffset, bool debug, DumpSubchannel subchannel, int speed)
+                    bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private)
         {
             _doResume             = doResume;
             _dev                  = dev;
@@ -108,6 +109,7 @@ namespace Aaru.Core.Devices.Dumping
             _subchannel           = subchannel;
             _speedMultiplier      = -1;
             _speed                = speed;
+            _private              = @private;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>

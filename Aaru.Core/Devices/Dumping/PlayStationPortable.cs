@@ -261,7 +261,7 @@ namespace Aaru.Core.Devices.Dumping
 
             bool ret;
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
             ret = _outputPlugin.Create(_outputPath, DSK_TYPE, _formatOptions, blocks, BLOCK_SIZE);
 
@@ -294,7 +294,8 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
+                                  _private);
 
             if(currentTry == null ||
                extents    == null)
@@ -729,7 +730,7 @@ namespace Aaru.Core.Devices.Dumping
 
             bool ret;
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SBC_PROFILE);
             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, BLOCK_SIZE);
 
@@ -752,7 +753,8 @@ namespace Aaru.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
+                                  _private);
 
             if(currentTry == null ||
                extents    == null)
@@ -1195,8 +1197,11 @@ namespace Aaru.Core.Devices.Dumping
                 sidecar.BlockMedia[0].LogicalBlockSize  = (int)BLOCK_SIZE;
                 sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                 sidecar.BlockMedia[0].Model             = _dev.Model;
-                sidecar.BlockMedia[0].Serial            = _dev.Serial;
-                sidecar.BlockMedia[0].Size              = blocks * BLOCK_SIZE;
+
+                if(!_private)
+                    sidecar.BlockMedia[0].Serial = _dev.Serial;
+
+                sidecar.BlockMedia[0].Size = blocks * BLOCK_SIZE;
 
                 if(_dev.IsRemovable)
                     sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();

@@ -59,17 +59,27 @@ namespace Aaru.Core.Devices.Report
             if(!decodedNullable.HasValue)
                 return null;
 
+            report.InquiryData = ClearInquiry(buffer);
+
+            return report;
+        }
+
+        public static byte[] ClearInquiry(byte[] inquiry)
+        {
+            Inquiry? decodedNullable = Inquiry.Decode(inquiry);
+
+            if(!decodedNullable.HasValue)
+                return inquiry;
+
             Inquiry decoded = decodedNullable.Value;
 
             // Clear Seagate serial number
             if(decoded.SeagatePresent &&
                StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() == "seagate")
                 for(int i = 36; i <= 43; i++)
-                    buffer[i] = 0;
+                    inquiry[i] = 0;
 
-            report.InquiryData = buffer;
-
-            return report;
+            return inquiry;
         }
 
         public List<ScsiPage> ReportEvpdPages(string vendor)
