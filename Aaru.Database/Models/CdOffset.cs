@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aaru.Database.Models
 {
@@ -59,9 +58,8 @@ namespace Aaru.Database.Models
             AddedWhen    = ModifiedWhen = DateTime.UtcNow;
         }
 
-        public int      Id        { get; set; }
-        public DateTime AddedWhen { get; set; }
-        [Index]
+        public int      Id           { get; set; }
+        public DateTime AddedWhen    { get; set; }
         public DateTime ModifiedWhen { get; set; }
     }
 }

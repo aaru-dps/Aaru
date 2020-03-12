@@ -5,7 +5,33 @@
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
+    <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.0.2/runtimes" t="Include">
+      <e p="linux-arm" t="Include">
+        <e p="native" t="Include">
+          <e p="libe_sqlite3.so" t="Include" />
+        </e>
+      </e>
+      <e p="linux-arm64" t="Include">
+        <e p="native" t="Include">
+          <e p="libe_sqlite3.so" t="Include" />
+        </e>
+      </e>
+      <e p="linux-armel" t="Include">
+        <e p="native" t="Include">
+          <e p="libe_sqlite3.so" t="Include" />
+        </e>
+      </e>
+      <e p="linux-x64" t="Include">
+        <e p="native" t="Include">
+          <e p="libe_sqlite3.so" t="Include" />
+        </e>
+      </e>
+      <e p="linux-x86" t="Include">
+        <e p="native" t="Include">
+          <e p="libe_sqlite3.so" t="Include" />
+        </e>
+      </e>
+    </e>
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
       <e p=".git/modules/Aaru.Checksums/info/exclude" t="IncludeRecursive" />

@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Aaru.Database.Models
 {
@@ -49,10 +48,9 @@ namespace Aaru.Database.Models
         }
 
         [Key]
-        public ushort Id { get;          set; }
-        public string   Vendor    { get; set; }
-        public DateTime AddedWhen { get; set; }
-        [Index]
+        public ushort Id { get;             set; }
+        public string   Vendor       { get; set; }
+        public DateTime AddedWhen    { get; set; }
         public DateTime ModifiedWhen { get; set; }
 
         public virtual ICollection<UsbProduct> Products { get; set; }

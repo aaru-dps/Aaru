@@ -105,7 +105,7 @@
     <Compile Include="Windows\UsbFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Management" Version="4.5.0" />
+    <PackageReference Include="System.Management" Version="4.7.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ProjectExtensions>

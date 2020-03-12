@@ -59,11 +59,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
   </ItemGroup>
-    <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) == true">
-        <PackageReference Include="Microsoft.Win32.Registry" Version="4.6.0" />
-    </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="plist-cil" Version="1.60.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="plist-cil" Version="2.0.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ProjectExtensions>
