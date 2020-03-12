@@ -36,6 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+#pragma warning disable 612
 namespace Aaru.CommonTypes.Metadata
 {
     public static class MediaType

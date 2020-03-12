@@ -38,6 +38,8 @@
 
 using Schemas;
 
+#pragma warning disable 612
+
 namespace Aaru.CommonTypes.Metadata
 {
     public static class Dimensions
