@@ -17,7 +17,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Decoders</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFrameworks>net461;netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
@@ -43,9 +43,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-      <HintPath>..\..\..\.nuget\packages\newtonsoft.json\11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
