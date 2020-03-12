@@ -17,7 +17,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Settings</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

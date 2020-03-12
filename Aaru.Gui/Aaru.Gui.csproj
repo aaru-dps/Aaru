@@ -10,7 +10,7 @@
         <Product>Aaru Data Preservation Suite</Product>
         <Title>Aaru Data Preservation Suite</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
         <NoWarn>CS0649,CS0169</NoWarn>
     </PropertyGroup>
     <PropertyGroup>
