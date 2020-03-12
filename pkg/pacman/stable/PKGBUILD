@@ -28,8 +28,8 @@ fi
 build() {
     cd "${srcdir}"
     dotnet restore Aaru.sln
-    dotnet build -f ${_netcoretarget} -c Debug Aaru.sln
-    dotnet publish -f ${_netcoretarget} -c Debug --self-contained -r ${dotnet_rid} Aaru.sln
+    dotnet build -f ${_netcoretarget} -c Release Aaru.sln
+    dotnet publish -f ${_netcoretarget} -c Release --self-contained -r ${dotnet_rid} Aaru.sln
 }
 
 package() {
@@ -38,7 +38,7 @@ package() {
     install -d -m0755 -g 0 "${pkgdir}"/usr/share/mime/packages
     install -m0755 -g 0 -t "${pkgdir}"/usr/share/mime/packages aaruformat.xml
 
-    cd "${srcdir}"/Aaru/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
+    cd "${srcdir}"/Aaru/bin/Release/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
     install -d -m0755 -g 0 "${pkgdir}"/opt/Aaru
@@ -61,9 +61,6 @@ package() {
     # Copy documentation files
     install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru *.md
     install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru LICENSE*
-
-    # Copy .NET debug files
-    install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru *.pdb
 
     # Link executable
     install -d -m0755 -g 0 "${pkgdir}"/usr/bin
