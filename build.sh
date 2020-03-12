@@ -47,8 +47,8 @@ if [[ ${OS_NAME} == Linux ]]; then
  makepkg -g >> PKGBUILD
  makepkg
  mv PKGBUILD.bak PKGBUILD
- mv aaru-src-${AARU_VERSION}.tar.xz aaru-src-${AARU_VERSION}.tar.xz.asc ../../build
- cd ../..
+ mv aaru-src-${AARU_VERSION}.tar.xz aaru-src-${AARU_VERSION}.tar.xz.asc ../../../build
+ cd ../../..
 
 fi
 
