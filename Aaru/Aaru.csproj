@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,7 +7,7 @@
     <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Aaru</RootNamespace>
-    <AssemblyName>Aaru</AssemblyName>
+    <AssemblyName>aaru</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -18,7 +18,8 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86;osx-x64;win-x64;win-x86</RuntimeIdentifiers>
+    <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm;rhel-arm64;rhel-x64;sles-arm;sles-arm64;sles-x64</RuntimeIdentifiers>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
@@ -281,4 +282,99 @@
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugPackage>-dbg</DebugPackage>
+    <Optimize>false</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
+    <Optimize>true</Optimize>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineDebug>false</DefineDebug>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageVersion>$(Version)-1</PackageVersion>
+    <PackagePrefix>aaru</PackagePrefix>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <Section>net</Section>
+    <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_arm64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_arm$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm64'">
+    <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm'">
+    <PackageName>$(PackagePrefix)_$(PackageVersion)_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-x64'">
+    <PackageName>$(PackagePrefix)_$(PackageVersion)_amd64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).el.armhfp$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).sles.aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).sles.armv7hl$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 </Project>
