@@ -32,12 +32,10 @@
 
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using Aaru.Commands;
 using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
@@ -60,12 +58,6 @@ namespace Aaru
         [STAThread]
         public static int Main(string[] args)
         {
-            if(args.Length == 0)
-                args = new[]
-                {
-                    "--help"
-                };
-
             object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
             _assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
             attributes     = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
