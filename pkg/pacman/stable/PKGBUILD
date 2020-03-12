@@ -1,43 +1,68 @@
 # Maintainer: Natalia Portillo <claunia@claunia.com>
 packager='Natalia Portillo <claunia@claunia.com>'
-pkgname='discimagechef'
-pkgver=4.5.1.1692
+_netcoretarget='netcoreapp2.1'
+pkgname='aaru'
+pkgver=4.5.99.2020
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
-arch=('any')
-url='http://www.discimagechef.app'
+arch=('x86_64' 'armv7h' 'aarch64')
+url='http://www.aaru.app'
 license=('GPL')
-source=('https://github.com/discimagechef/DiscImageChef/releases/download/v4.5.1.1692/DiscImageChef-4.5.1.1692.zip'
-        'https://github.com/discimagechef/DiscImageChef/releases/download/v4.5.1.1692/DiscImageChef-4.5.1.1692.zip.asc'
-        'discimagechef.sh')
-depends=('mono')
-options=('!strip')
-sha256sums=('f0eeadb1c963e26f6b661943dd73c070e469a27c143e11b7bdf59b1da47cb37a'
-            'SKIP'
-            'f55f4b5a861856473b21edd5ee7edd3605bf225186af1fdffad9b553789542bb')
+source=('aaru-src-4.5.99.2020.tar.xz::local://aaru-src-4.5.99.2020.tar.xz'
+        'aaru-src-4.5.99.2020.tar.xz.asc::local://aaru-src-4.5.99.2020.tar.xz.asc')
+makedepends=('dotnet-sdk>=2.1.0')
+options=('staticlibs')
+sha256sums=('4f62f61a53313b83fd20a0b43f3ae9ed2a8a74c571decf9d4b5970766ac2ed7b'
+            'SKIP')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
-provides=('discimagechef')
+provides=('aaru')
+conflicts=('aaru')
+depends=('icu' 'krb5' 'libcurl.so' 'libunwind' 'openssl-1.0' 'zlib')
+
+if [ $arch == 'aarch64' ]; then
+    dotnet_rid=linux-arm64
+elif [ $arch == 'armv7h' ]; then
+    dotnet_rid=linux-arm
+else
+    dotnet_rid=linux-x64
+fi
+
+build() {
+    cd "${srcdir}"
+    dotnet restore Aaru.sln
+    dotnet build -f ${_netcoretarget} -c Debug Aaru.sln
+    dotnet publish -f ${_netcoretarget} -c Debug --self-contained -r ${dotnet_rid} Aaru.sln
+}
 
 package() {
-    cd "${srcdir}"
+    cd "${srcdir}"/Aaru/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
-    install -d -m0755 -g 0 "${pkgdir}"/opt/DiscImageChef
+    install -d -m0755 -g 0 "${pkgdir}"/opt/Aaru
 
-    # Copy .NET binary
-    install -m0755 -g 0 -t "${pkgdir}"/opt/DiscImageChef DiscImageChef.exe
+    # Copy Linux binary
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru aaru
+
+    # Copy Linux dependencies
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.so
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.a
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru createdump
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru sosdocsunix.txt
 
     # Copy .NET dependencies
-    install -m0755 -g 0 -t "${pkgdir}"/opt/DiscImageChef *.dll
+    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.dll
 
     # Copy .NET configuration files
-    install -m0644 -g 0 -t "${pkgdir}"/opt/DiscImageChef *.config
+    install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru *.json
 
-    # Copy documentation
-    install -m0644 -g 0 -t "${pkgdir}"/opt/DiscImageChef *.md
-    install -m0644 -g 0 -t "${pkgdir}"/opt/DiscImageChef LICENSE*
+    # Copy documentation files
+    install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru *.md
+    install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru LICENSE*
 
-    # Install launcher
+    # Copy .NET debug files
+    install -m0644 -g 0 -t "${pkgdir}"/opt/Aaru *.pdb
+
+    # Link executable
     install -d -m0755 -g 0 "${pkgdir}"/usr/bin
-    install -m0755 -g 0 -T discimagechef.sh "${pkgdir}"/usr/bin/discimagechef
+    ln -sf /opt/Aaru/aaru "${pkgdir}"/usr/bin/aaru
 }
