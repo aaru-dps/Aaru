@@ -18,7 +18,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm;rhel-arm64;rhel-x64;sles-arm;sles-arm64;sles-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
   </PropertyGroup>
   <PropertyGroup>
@@ -364,20 +364,8 @@
     <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm'">
-    <PackageName>$(PackagePrefix)-$(PackageVersion).el.armhfp$(DebugPackage)</PackageName>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-arm64'">
-    <PackageName>$(PackagePrefix)-$(PackageVersion).sles.aarch64$(DebugPackage)</PackageName>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-arm'">
-    <PackageName>$(PackagePrefix)-$(PackageVersion).sles.armv7hl$(DebugPackage)</PackageName>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">

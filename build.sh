@@ -8,7 +8,7 @@ mkdir -p build
 cd Aaru
 for conf in Debug Release;
 do
- for distro in alpine-x64 linux-arm64 linux-arm linux-x64 osx-x64 win-arm64 win-arm win-x64 win-x86 debian-arm debian-arm64 debian-x64 rhel-arm rhel-arm64 rhel-x64 sles-arm sles-arm64 sles-x64;
+ for distro in alpine-x64 linux-arm64 linux-arm linux-x64 osx-x64 win-arm64 win-arm win-x64 win-x86 debian-arm debian-arm64 debian-x64 rhel-arm64 rhel-x64 sles-x64;
  do
   dotnet publish -f netcoreapp2.1 -r ${distro} -c ${conf}
 
