@@ -12,8 +12,6 @@ source=('aaru-src-4.5.99.2020.tar.xz::local://aaru-src-4.5.99.2020.tar.xz'
         'aaru-src-4.5.99.2020.tar.xz.asc::local://aaru-src-4.5.99.2020.tar.xz.asc')
 makedepends=('dotnet-sdk>=2.1.0')
 options=('staticlibs')
-sha256sums=('4f62f61a53313b83fd20a0b43f3ae9ed2a8a74c571decf9d4b5970766ac2ed7b'
-            'SKIP')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
 provides=('aaru')
 conflicts=('aaru')
