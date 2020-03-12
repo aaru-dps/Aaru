@@ -593,3 +593,5 @@ pkg/**/*.zip
 pkg/**/aaru
 
 .sonarqube
+
+build/*
