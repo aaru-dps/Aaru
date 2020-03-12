@@ -103,7 +103,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -135,7 +135,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Checksums.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Checksums.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -229,7 +229,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.CommonTypes.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.CommonTypes.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -245,7 +245,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Compression.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Compression.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -262,7 +262,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Console.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Console.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -377,7 +377,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Core.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Core.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -466,7 +466,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Database.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Database.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -626,7 +626,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Decoders.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Decoders.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -711,7 +711,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Devices.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Devices.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -732,7 +732,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Dto.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Dto.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -934,7 +934,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Filesystems.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Filesystems.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -960,7 +960,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Filters.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Filters.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1338,7 +1338,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1367,7 +1367,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Helpers.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Helpers.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1937,7 +1937,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1973,7 +1973,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Partitions.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Partitions.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1988,7 +1988,7 @@
             <e p="net461" t="Include">
               <e p="Aaru.Settings.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netcoreapp2.0" t="Include">
+            <e p="netcoreapp2.1" t="Include">
               <e p="Aaru.Settings.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
