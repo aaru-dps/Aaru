@@ -55,7 +55,7 @@ fi
 mv pkg/pacman/stable/*.pkg.tar.xz build/
 
 cd build
-for i in *.deb *.rpm *.zip;
+for i in *.deb *.rpm *.zip *.tar.gz;
 do
  gpg --armor --detach-sign "$i"
 done

@@ -33,6 +33,11 @@ build() {
 }
 
 package() {
+    # Install MIME database file
+    cd "${srcdir}"/Aaru
+    install -d -m0755 -g 0 "${pkgdir}"/usr/share/mime/packages
+    install -m0755 -g 0 -t "${pkgdir}"/usr/share/mime/packages aaruformat.xml
+
     cd "${srcdir}"/Aaru/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
@@ -63,4 +68,18 @@ package() {
     # Link executable
     install -d -m0755 -g 0 "${pkgdir}"/usr/bin
     ln -sf /opt/Aaru/aaru "${pkgdir}"/usr/bin/aaru
+}
+
+post_install() {
+  xdg-icon-resource forceupdate --theme hicolor &>/dev/null
+  update-mime-database usr/share/mime &>/dev/null
+  update-desktop-database -q
+}
+
+post_upgrade() {
+  post_install "$1"
+}
+
+post_remove() {
+  post_install "$1"
 }

@@ -74,6 +74,7 @@
           <e p="launchSettings.json" t="Include" />
         </e>
         <e p="Settings.StyleCop" t="Include" />
+        <e p="aaruformat.xml" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

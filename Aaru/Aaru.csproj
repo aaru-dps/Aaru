@@ -305,6 +305,12 @@
     <Section>net</Section>
     <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
+      <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
+    </Content>
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-x64'">
     <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
