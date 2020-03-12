@@ -48,6 +48,8 @@ using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
 using Version = Resources.Version;
 
+#pragma warning disable 612
+
 namespace Aaru.DiscImages
 {
     public partial class Udif

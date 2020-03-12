@@ -90,7 +90,7 @@ namespace Aaru.Commands
                     ctx.Database.Migrate();
                     ctx.SaveChanges();
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     if(Debugger.IsAttached)
                         throw;
@@ -107,7 +107,7 @@ namespace Aaru.Commands
                 {
                     File.Delete(Settings.Settings.MasterDbPath);
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     if(Debugger.IsAttached)
                         throw;

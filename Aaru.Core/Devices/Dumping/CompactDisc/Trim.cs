@@ -55,7 +55,6 @@ namespace Aaru.Core.Devices.Dumping
             byte[]            cmdBuf      = null; // Data buffer
             double            cmdDuration = 0;    // Command execution time
             const uint        sectorSize  = 2352; // Full sector size
-            byte[]            tmpBuf;             // Temporary buffer
             PlextorSubchannel supportedPlextorSubchannel;
 
             switch(supportedSubchannel)

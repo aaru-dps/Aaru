@@ -36,7 +36,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Devices;
-using Microsoft.EntityFrameworkCore.Internal;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -106,7 +105,7 @@ namespace Aaru.Core.Logging
                     }
                 }
 
-                logSw.WriteLine("Command line: {0}", args.Join(" "));
+                logSw.WriteLine("Command line: {0}", string.Join(" ", args));
             }
             else
                 logSw.WriteLine("Command line: {0}", Environment.CommandLine);

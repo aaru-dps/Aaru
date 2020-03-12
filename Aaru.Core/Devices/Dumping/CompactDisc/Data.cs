@@ -32,7 +32,6 @@
 
 using System;
 using System.Linq;
-using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs;
@@ -94,7 +93,6 @@ namespace Aaru.Core.Devices.Dumping
             byte[]     senseBuf         = null;            // Sense buffer
             double     cmdDuration      = 0;               // Command execution time
             const uint sectorSize       = 2352;            // Full sector size
-            byte[]     tmpBuf;                             // Temporary buffer
             newTrim = false;
             PlextorSubchannel supportedPlextorSubchannel;
 
@@ -313,8 +311,8 @@ namespace Aaru.Core.Devices.Dumping
 
                             sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf,
                                                               (uint)(firstSectorToRead + r + adjustment), blockSize,
-                                                              (uint)sectorsForOffset + 1,
-                                                              supportedPlextorSubchannel, out cmdDuration);
+                                                              (uint)sectorsForOffset + 1, supportedPlextorSubchannel,
+                                                              out cmdDuration);
 
                             totalDuration += cmdDuration;
 
