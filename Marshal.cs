@@ -381,13 +381,13 @@ namespace Aaru.Helpers
                         (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int)))
                 {
                     int x = (int)fi.GetValue(str);
-                    fi.SetValue(str, ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16));
+                    fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
                 }
                 else if(fi.FieldType == typeof(uint) ||
                         (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint)))
                 {
                     uint x = (uint)fi.GetValue(str);
-                    fi.SetValue(str, ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16));
+                    fi.SetValue(str, ((x & 0xffffu) << 16) | ((x & 0xffff0000u) >> 16));
                 }
 
                 // TODO: Swap arrays
