@@ -1,3 +1,295 @@
+# [4.5.99.2020] - 2020-xx-xx
+- First and most importantly, we got a rename. We're now Aaru, part of the Aaru Data Preservation Suite, that encompasses Aaru (previously DiscImageChef), 
+Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat) and aaruremote.
+- This release is dedicated to the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24.
+
+## Added
+### - Aaru Image Format
+- Add ".aif" as a supported extension.
+- Add CD Mode 2 sector reconstruction.
+- Claunia Subchannel Transform algorithm. Makes subchannel compress 100% faster and 25% better.
+- Compress VideoNow discs as data not audio.
+- Support for CD-i Ready.
+- Support for skipping storing CD prefixes and suffixes that are correct.
+- Support writing logically block addressable tapes.
+- Update template with block addressable tape types.
+
+### - CDRWin cuesheet disc image
+- Save metadata in CDRWin cuesheet.
+
+### - Database
+- Add entities for USB vendor and product IDs.
+- Add entry for optimal count of sectors for multiple read in devices.
+- Added new database system
+- Enhance support and tweaks for devices depending on the parameters in the database
+- Fill CompactDisc read offsets from AccurateRip list.
+- Store and retrieve USB IDs from databases.
+- Store device reports in the database instead of XML files
+- Store statistics on database
+- Submit pending statistics in background.
+
+### - Device report
+- Add check for Nintendo discs.
+- Add new CompactDisc and Blu-ray variants.
+- Add test for inter-session reading in multi-session discs.
+- Change device report entry for Lead-in to first track pre-gap and add a new entry for proper Lead-in
+- Check if data CDs can be read scrambled by READ CD command.
+- Check sector 16 for MMC discs, as 0 is usually empty.
+- Clear ATA IDENTIFY DEVICE private fields.
+- Clear serial numbers.
+- Create new more extensible device report format in JSON.
+- Do not allow to be run without administrative privileges.
+- Eject SCSI DirectAccess devices if removable.
+- Save data when not in debug mode.
+- Store not only default, but current and changeable modes in SCSI.
+- Store read results in report and database.
+- Support iomega REV disks.
+
+### - Dumping
+- Add default value for writable image options.
+- Add option to not store paths and serial numbers when dumping.
+- Add support for CD-i Ready.
+- Add support for dumping MemoryStick from USB attached PlayStation Portable with CFW installed.
+- Add support for dumping UMD from USB attached PlayStation Portable with CFW installed.
+- Allow to abort anywhere
+- Change --no-metadata to --metadata and --no-trim to --trim.
+- Prevent dumping XGD without administrative privileges.
+- Show error message if unsupported dump is tried.
+- Show more information when dumping an XGD.
+- Support fixing Compact Disc audio tracks offset using scrambled read commands and database.
+- Support iomega REV disks.
+- Support PD650 discs.
+
+### - Filesystems
+- Full read-only implementation of Xbox and Xbox 360 FAT filesystems
+
+### - FAT filesystem
+- Full read-only implementation.
+- Support for Microsoft FASTFAT long file names.
+- Support for OS/2 Extended Attributes.
+- Support for OS/2 WorkPlace Shell long file names.
+- Support for PCExchange filenames.
+- Support for PCExchange Resource Fork.
+- Support for Sharp X68000 extended filenames.
+
+### - ISO9660 filesystem
+- Full read-only implementation for CD-i filesystem.
+- Full read-only implementation for High Sierra Format.
+- Full read-only implementation for ISO 9660 (up to level 4).
+- Support for AAIP.
+- Support for Amiga RRIP.
+- Support for Apple Extensions.
+- Support for eXtended Architecture (XA).
+- Support for Joliet extensions.
+- Support for Rock Ridge Interchange Protocol.
+- Support for Romeo variant.
+
+### - Media image formats
+- Add support for DataPackRat's f2d/d2f disk images.
+- Full read/write support for CopyTape tape images.
+
+### - Media information
+- Add another value for Mitsubishi Chemical ATIP frame number. (97:34:22)
+- Detect 3DO discs.
+- Detect Atari Jaguar CD discs.
+- Detect audio MiniDisc.
+- Detect Bandai Playdia discs.
+- Detect Castlewood Orb 2.2Gb.
+- Detect CD-i Ready.
+- Detect EZFlyer 230MB.
+- Detect Fujitsu FM-Towns discs.
+- Detect Hasbro VideoNow Color detection.
+- Detect Hi-MD formatted 60 minutes MiniDisc.
+- Detect Hi-MD formatted 74 minutes MiniDisc.
+- Detect iomega REV, REV70 and REV120.
+- Detect media types also in ATA.
+- Detect NEC PC-Engine discs.
+- Detect NEC PC-FX discs.
+- Detect Sega CD / Mega CD.
+- Detect Sega Dreamcast GD-ROM.
+- Detect Sega MilCD discs.
+- Detect Sega Saturn CD.
+- Detect Sony PlayStation 2 discs (CD and DVD).
+- Detect Sony PlayStation 3 discs (DVD and Blu-ray).
+- Detect Sony PlayStation 4 Blu-ray discs.
+- Detect SparQ carts in SCSI devices.
+- Detect SparQ media in ATA drive.
+- Detect SyQuest SQ2000 and SQ800.
+- Detect SyQuest SQ310.
+- Detect TR-4 and TR-5.
+
+### - Media types
+- Add Amiga CD32
+- Add Amiga CDTV.
+- Add another DDS1 SCSI medium type.
+- Add Bandai Pippin.
+- Add Bandai Playdia
+- Add CD-i Ready.
+- Add dimensions for Iomega REV.
+- Add Fujitsu FM-Towns.
+- Add Hasbro VideoNow.
+- Add HP codes for DDS.
+- Add Nuon
+- Add PD650.
+- Add SEAGATE code for DDS-2.
+- Add Sega MilCD.
+
+### - Metadata sidecar
+- List and hash filesystem contents when creating a sidecar.
+
+### - Opera filesystem
+- Full read-only implementation.
+
+### - SCSI response decoders
+- Add encoder for ATA IDENTIFY (PACKET) DEVICE.
+- Add encoder for SCSI INQUIRY.
+- Add encoder for SCSI MODE PAGE 2Ah.
+
+## Fixed
+### - Aaru Image Format
+- Don't initialize LZMA when compression is disabled.
+- Ensure all LZMA allocations are freed when closed.
+- Fix double negation options
+- Fix reading MODE2 sectors with incorrect EDC/ECC correctly.
+
+### - Alcohol 120% disc image
+- Fix media size calculation when reading Alcohol images with several pregaps.
+
+### - Apple Hierarchical File System
+- Fix interpretation of the Apple boot block.
+
+### - CDRWin cuesheet disc image
+- Fix pregap reading in CDRWin format.
+- Fix pregap writing in CDRWin format.
+
+### - Checksum
+- Optimize SpamSum
+
+### - CPCEMU Disk-File and Extended CPC Disk-File disk image
+- Fix images not recognized as such.
+
+### - CP/M File System
+- Fix the CPM filesystem detection and file listing
+
+### - Device report
+- Allow ASC 28h in streaming device report.
+- Eject media once reported.
+- Fix SCSI Streaming Command device reporting.
+- On streaming device report do not LOAD as the tape is already in loaded state once inserted in the drive, and some old drives get confused.
+- Retry 50 times as tapes can take long to be ready.
+
+### - Devices
+- Allow opening read-only devices on Linux.
+- Allows opening some devices in non-administrator mode.
+- Close device when finished command execution.
+- Correct detection of errors sending ATA commands.
+- Correct detection of Plextor features.
+- Correct showing EVPD page number.
+- Do not search for floppy mode page when mode sense returned no pages.
+- Get serial number using MMC GET CONFIGURATION for optical drives.
+- In Windows, close the device handle, to prevent an exception being raised.
+
+### - Dreamcast GDI disc image
+- Fix reading pregap in GDI images.
+
+### - Dumping
+- Check which LOCATE version is supported regardless of the next block on resume.
+- Correct device not ready error messages on dumping SCSI.
+- Fix Compact Disc type detection
+- Fix detecting tape block size when tape reports a lower minimum size.
+- Fix printing of sense in SSC dump.
+- Fix speed calculation on.
+- Handle errors when dumping SSC.
+- Handle when SSC drive does not report block size for first block.
+- Prevent showing option to dump first pregap on FreeBSD where it crashes the system.
+- Save tape files when dumping SSC media.
+- Save tape partitions when dumping SSC media.
+- Set image's tape mode when dumping SSC.
+- Show message indicating that audio MiniDisc cannot be dumped.
+- Store MODE responses from SSC dumping in output image.
+- Support resume in SSC dumping.
+- Try to detect if the Kreon drive has not locked correctly, and try to use cold values if they look as possibly valid.
+- Use output plugin when dumpìng SSC.
+- When SCSI device is becoming ready, wait more, as tapes can take a long time to become ready.
+
+### - Filesystems
+- Fix extracting file from filesystems with subdirectories.
+- Fix listing files walking thru subdirectories.
+- Stylize output when listing files.
+
+### - IBM Journaled File System
+- Fix decoding of volume label.
+
+### - Image analysis
+- Fix crash in partitions enumeration.
+- Treat tape files as partitions.
+
+### - Image comparison
+- Do not compare metadata between two images.
+
+### - Image conversion
+- Checking if input tracks is null when converting image.
+- Fix showing sector where conversion fails.
+
+### - Image filters
+- Fix bzip2 initialization.
+
+### - Image verification
+- Fix verify command when image can represent optical media, but doesn't.
+
+### - ISO9660 filesystem
+- Do not set ISO identifiers in XML metadata if they are empty.
+- Fix reading application identifier from ISO9660.
+- Fix trimming of null character and spaces in Joliet volume descriptor.
+
+### - Macintosh File System
+- Correct behaviour when path starts with directory separator.
+- Fix interpretation of the Apple boot block.
+
+### - Media information
+- Fix media type detection from SBC devices.
+- Fix support for 128Mb 3.5" magneto optical.
+
+### - Metadata sidecar
+- Calculate tape hashes in smaller chunks as tapes can have huge blocks.
+- Fix error creating sidecar with DVD's CMI.
+- Fix media type sidecar on DVD based console discs.
+- Fix setting application identifier for metadata sidecar.
+- Fix when USB descriptors are null at sidecar creation after dump.
+
+### - Nero Burning ROM disc image
+- Fix offset by 1 that prevented reading the last sector of every track.
+
+### - RAW (sector by sector) disk image
+- Do not allow CDs with more than one tracks, or non-mode1 tracks to be written as raw images (.iso).
+- Fix dumping CDs in raw image format (.iso).
+
+### - SCSI response decoders
+- Protect against null mode pages.
+
+### - SecureDigital devices
+- Fix overflow on SecureDigital CSD v2.0 size calculation.
+
+### - VirtualPC disk image
+- Conversion optimizations make opening images up to 38 times faster.
+
+## Changes
+- Add binary packages for major targets.
+- Add mime database file for Linux systems to correctly recognize aaruformat images.
+- Add support to use devices remotely with Aaruremote.
+- Change command line to a cleaner and more natural system.
+- Complete CompactDisc dumping rewrite, allowing fixing audio tracks offset, more correct audio track dumping, workarounds firmware bugs from several common drives and gives more preservation-quality dumps.
+- Deprecate Mono and .NET Framework.
+- Fix null reference exception on verify.
+- Fix overflow with small sectors in Apple Partition Map.
+- Fix overflow with small sectors in BSD disklabel.
+- Fix progress crashing when terminal window changes size.
+- Get device information from database when dumping Compact Disc.
+- Hide device commands on unsupported platforms.
+- Remove RIPEMD160.
+- Separate CRC16 IBM and CRC16 CCITT contexts, use cached tables.
+- Use .NET Core.
+
 # [4.5.1.1692] - 2018-07-19
 ## Fixed
 ### - Alcohol 120% disc image
@@ -847,11 +1139,12 @@
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[4.5.1.1692]: https://github.com/aaru/Aaru/releases/tag/v4.5.1.1692
-[4.5.0.1663]: https://github.com/aaru/Aaru/releases/tag/v4.5.0.1663
-[4.0.1.0]: https://github.com/aaru/Aaru/releases/tag/v4.0.1.0
-[4.0.0.0]: https://github.com/aaru/Aaru/releases/tag/v4.0.0.0
-[3.0.0.0]: https://github.com/aaru/Aaru/releases/tag/v3.0.0.0
-[2.20]: https://github.com/aaru/Aaru/releases/tag/v2.2
-[2.10]: https://github.com/aaru/Aaru/releases/tag/v2.1
-[2.0]: https://github.com/aaru/Aaru/releases/tag/v2.0
+[4.5.99.2020]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.99.2020
+[4.5.1.1692]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.1.1692
+[4.5.0.1663]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.0.1663
+[4.0.1.0]: https://github.com/aaru-dps/Aaru/releases/tag/v4.0.1.0
+[4.0.0.0]: https://github.com/aaru-dps/Aaru/releases/tag/v4.0.0.0
+[3.0.0.0]: https://github.com/aaru-dps/Aaru/releases/tag/v3.0.0.0
+[2.20]: https://github.com/aaru-dps/Aaru/releases/tag/v2.2
+[2.10]: https://github.com/aaru-dps/Aaru/releases/tag/v2.1
+[2.0]: https://github.com/aaru-dps/Aaru/releases/tag/v2.0
