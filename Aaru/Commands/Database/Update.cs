@@ -61,7 +61,7 @@ namespace Aaru.Commands
                 Argument = new Argument<bool>(() => false), Required = false
             });
 
-            Handler = CommandHandler.Create<bool, bool, bool, bool>(Invoke);
+            Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
         }
 
         public int Invoke(bool debug, bool verbose, bool clear, bool clearAll)

@@ -50,7 +50,7 @@ namespace Aaru.Commands
             _gdprChange = gdprChange;
             _autoCall   = autoCall;
 
-            Handler = CommandHandler.Create<bool, bool>(Invoke);
+            Handler = CommandHandler.Create((Func<bool, bool, int>)Invoke);
         }
 
         public int Invoke(bool debug, bool verbose)

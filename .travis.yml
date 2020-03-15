@@ -3,7 +3,8 @@ solution: Aaru.sln
 mono: none
 dotnet: 2.1.502
 script:
-  - ./build.sh
+  - dotnet restore Aaru.sln
+  - dotnet build Aaru.sln
 notifications:
   irc:
     channels:
