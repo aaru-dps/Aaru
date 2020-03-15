@@ -1,4 +1,4 @@
-# [4.5.99.2020] - 2020-xx-xx
+# [5.0.0.2879] - 2020-03-15
 - First and most importantly, we got a rename. We're now Aaru, part of the Aaru Data Preservation Suite, that encompasses Aaru (previously DiscImageChef), 
 Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat) and aaruremote.
 - This release is dedicated to the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24.
@@ -1139,7 +1139,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[4.5.99.2020]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.99.2020
+[5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
 [4.5.1.1692]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.1.1692
 [4.5.0.1663]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.0.1663
 [4.0.1.0]: https://github.com/aaru-dps/Aaru/releases/tag/v4.0.1.0

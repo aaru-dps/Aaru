@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.99.2020</Version>
+    <Version>5.0.0.2879</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -305,7 +305,7 @@
     <Section>net</Section>
     <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
       <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
