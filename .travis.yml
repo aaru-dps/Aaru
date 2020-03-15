@@ -1,7 +1,9 @@
 language: csharp
 solution: Aaru.sln
-mono:
- - latest
+mono: none
+dotnet: 2.1.502
+script:
+  - dotnet restore
 notifications:
   irc:
     channels:
@@ -11,7 +13,3 @@ notifications:
       - "Commit %{commit} by %{author} in %{branch} %{result} after %{duration}."
       - "Commit changes: %{commit_subject}"
       - "Details on %{build_url}, changes on %{compare_url}"
-before_install:
-  - mkdir -p .nuget
-  - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-  - mono .nuget/nuget.exe restore Aaru.sln
