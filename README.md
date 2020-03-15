@@ -4,10 +4,9 @@ Aaru
 
 Copyright © 2011-2020 Natalia Portillo <claunia@claunia.com>
 
-[![Build status](https://dev.azure.com/Aaru/Aaru/_apis/build/status/Aaru-.NET%20Desktop-CI)](https://dev.azure.com/Aaru/Aaru/_build/latest?definitionId=4)
-[![Build Status](https://travis-ci.org/aaru/Aaru.svg?branch=master)](https://travis-ci.org/aaru/Aaru)
+[![Build status](https://dev.azure.com/Aaru-dps/Aaru/_apis/build/status/Aaru-.NET%20Desktop-CI)](https://dev.azure.com/Aaru-dps/Aaru/_build/latest?definitionId=4)
+[![Build Status](https://travis-ci.org/aaru-dps/Aaru.svg?branch=master)](https://travis-ci.org/aaru-dps/Aaru)
 [![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/aaru)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FAaru.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FAaru?ref=badge_shield)
 
 You can see statistics and device reports [here](https://www.aaru.app/Stats)
 
@@ -30,19 +29,17 @@ CI beta builds [here](https://goo.gl/6dZPMq).
 
 System requirements
 ===================
-Aaru should work under any operating system where there is [Mono](http://www.mono-project.com/)
-or [.NET Framework](https://www.microsoft.com/net/download).
-It has been tested using Mono 5.0 and .NET Framework 4.6.1. However recommended versions are
-Mono 5.8 and .NET Framework 4.7.1. .NET Core is unsupported.
+Aaru is created using .NET Core 2.1 and can be compiled with all the major IDEs.
+To run it you require to use one of the stable releases, or build it yourself.
 
 Usage
 =====
 
-Aaru.exe 
+aaru.exe 
 
 And read help.
 
-Or read the [wiki](https://github.com/claunia/Aaru/wiki).
+Or read the [documentation](https://github.com/aaru-dps/Aaru.Documentation/blob/master/5.0/README.md).
 
 Features
 ========
@@ -56,7 +53,7 @@ Features
 * Can verify sectors or disk images if supported by the underlying format
 * Can dump media from ATA, ATAPI, SCSI, USB, FireWire and SDHCI drives (magnetic disks, optical discs, magnetoptical disks, flash devices, memory cards and tapes) to several supported image formats.
 * Can convert between image formats.
-* Include an opensource archival image format with compression and deduplication.
+* Includes an opensource archival image format with compression and deduplication.
 * Can create standard open XML metadata from existing images.
 * Can measure readability and speed of media (same that can be dumped, MHDD style)
 * Has an online database with drive capabilities, and can report the capabilities of any drive.
@@ -65,7 +62,7 @@ Features
 
 Feature requests
 ================
-[![Feature Requests](http://feathub.com/aaru/Aaru?format=svg)](http://feathub.com/aaru/Aaru)
+[![Feature Requests](https://feathub.com/discimagechef/DiscImageChef?format=svg)](https://feathub.com/discimagechef/DiscImageChef)
 
 Supported disk image formats (read-only)
 ========================================
@@ -243,7 +240,6 @@ Supported checksums
 * Fletcher-16
 * Fletcher-32
 * MD5
-* RMD160
 * SHA-1
 * SHA-2 (256, 384 and 512 bits)
 * SpamSum (fuzzy hashing)
@@ -269,4 +265,4 @@ These disk image formats cannot be read, but their contents can be checksummed o
 
 License
 =======
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FAaru.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FAaru?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
