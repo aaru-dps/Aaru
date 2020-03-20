@@ -1093,7 +1093,7 @@ namespace Aaru.Devices
         CompareAndWrite = 0x89,
 
         /// <summary>Formats the medium into addressable logical blocks ECMA-111 (SCSI-1)</summary>
-        FormatUnit = SasiCommands.FormatUnit,
+        FormatUnit = SasiCommands.FormatUnit, FormatWithPreset = 0x38,
 
         /// <summary>Locks blocks from eviction of device's cache SCSI-2 X3T9.2/375R rev. 10l</summary>
         LockUnlockCache = 0x36,
@@ -1148,7 +1148,7 @@ namespace Aaru.Devices
         Regenerate = 0x82,
 
         /// <summary>Requests the device to set the LUN in a vendor specific state ECMA-111 (SCSI-1)</summary>
-        RezeroUnit = SasiCommands.RezeroUnit,
+        RezeroUnit = SasiCommands.RezeroUnit, Sanitize = 0x48,
 
         /// <summary>Searches data on blocks ECMA-111 (SCSI-1)</summary>
         SearchDataEqual = SasiCommands.SearchDataEqual,
@@ -1916,7 +1916,18 @@ namespace Aaru.Devices
         OpenZone = 0x03,
 
         /// <summary>Resets zone's write pointer to zone start</summary>
-        ResetWritePointer = 0x04
+        ResetWritePointer = 0x04,
+
+        /// <summary>Requests device to transfer parameters describing realms</summary>
+        ReportRealms = 0x06,
+        /// <summary>Requests device to transfer parameters describing the zone domains structure</summary>
+        ReportZoneDomains = 0x07,
+        /// <summary>Requests device to perform a zone activation operation</summary>
+        ZoneActivate = 0x08,
+        /// <summary>Requests information about a zone</summary>
+        ZoneQuery = 0x09,
+        /// <summary>Requests device to perform sequentialize zone operations</summary>
+        SequentializeZone = 0x10
     }
 
     /// <summary>MODE SENSE page control, mask 0xC0</summary>
