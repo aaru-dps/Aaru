@@ -230,81 +230,86 @@ namespace Aaru.Commands.Filesystem
                 Errno               error;
 
                 if(partitions.Count == 0)
-                    AaruConsole.DebugWriteLine("Extract-Files command", "No partitions found");
-                else
                 {
-                    AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
+                    AaruConsole.DebugWriteLine("Ls command", "No partitions found");
 
-                    for(int i = 0; i < partitions.Count; i++)
+                    partitions.Add(new Partition
                     {
-                        AaruConsole.WriteLine();
-                        AaruConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
+                        Description = "Whole device",
+                        Length      = imageFormat.Info.Sectors, Offset                                 = 0,
+                        Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors, Sequence = 1,
+                        Start       = 0
+                    });
+                }
 
-                        AaruConsole.WriteLine("Identifying filesystem on partition");
+                AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
 
-                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                for(int i = 0; i < partitions.Count; i++)
+                {
+                    AaruConsole.WriteLine();
+                    AaruConsole.WriteLine("Partition {0}:", partitions[i].Sequence);
 
-                        if(idPlugins.Count == 0)
-                            AaruConsole.WriteLine("Filesystem not identified");
-                        else if(idPlugins.Count > 1)
-                        {
-                            AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                    AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                            foreach(string pluginName in idPlugins)
-                                if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+
+                    if(idPlugins.Count == 0)
+                        AaruConsole.WriteLine("Filesystem not identified");
+                    else if(idPlugins.Count > 1)
+                    {
+                        AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+
+                        foreach(string pluginName in idPlugins)
+                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                            {
+                                AaruConsole.WriteLine($"As identified by {plugin.Name}.");
+
+                                var fs = (IReadOnlyFilesystem)plugin.
+                                                              GetType().GetConstructor(Type.EmptyTypes)?.
+                                                              Invoke(new object[]
+                                                                         {});
+
+                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+
+                                if(error == Errno.NoError)
                                 {
-                                    AaruConsole.WriteLine($"As identified by {plugin.Name}.");
+                                    string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                            : fs.XmlFsType.VolumeName;
 
-                                    var fs = (IReadOnlyFilesystem)plugin.
-                                                                  GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                  Invoke(new object[]
-                                                                             {});
+                                    ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
 
-                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
-                                                     @namespace);
-
-                                    if(error == Errno.NoError)
-                                    {
-                                        string volumeName =
-                                            string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                : fs.XmlFsType.VolumeName;
-
-                                        ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                        Statistics.AddFilesystem(fs.XmlFsType.Type);
-                                    }
-                                    else
-                                        AaruConsole.ErrorWriteLine("Unable to mount device, error {0}",
-                                                                   error.ToString());
+                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
                                 }
+                                else
+                                    AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                            }
+                    }
+                    else
+                    {
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+
+                        if(plugin == null)
+                            continue;
+
+                        AaruConsole.WriteLine($"Identified by {plugin.Name}.");
+
+                        var fs = (IReadOnlyFilesystem)plugin.
+                                                      GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                                                                                                            {});
+
+                        error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+
+                        if(error == Errno.NoError)
+                        {
+                            string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                    : fs.XmlFsType.VolumeName;
+
+                            ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
+
+                            Statistics.AddFilesystem(fs.XmlFsType.Type);
                         }
                         else
-                        {
-                            plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
-
-                            if(plugin == null)
-                                continue;
-
-                            AaruConsole.WriteLine($"Identified by {plugin.Name}.");
-
-                            var fs = (IReadOnlyFilesystem)plugin.
-                                                          GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                {});
-
-                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
-
-                            if(error == Errno.NoError)
-                            {
-                                string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                        : fs.XmlFsType.VolumeName;
-
-                                ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                Statistics.AddFilesystem(fs.XmlFsType.Type);
-                            }
-                            else
-                                AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
-                        }
+                            AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                     }
                 }
             }
