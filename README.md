@@ -23,7 +23,7 @@ To see list of pending things to do, check the [TODO list](TODO.md).
 
 If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
 
-Stable releases in [Github](https://github.com/aaru/Aaru/releases).
+Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
 CI beta builds [here](https://goo.gl/6dZPMq).  
 
 
