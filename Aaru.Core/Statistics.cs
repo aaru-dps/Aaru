@@ -41,8 +41,10 @@ using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Device = Aaru.Devices.Device;
@@ -500,14 +502,30 @@ namespace Aaru.Core
                 Name = CommonTypes.Interop.Version.GetVersion(), Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Saves statistics to disk</summary>
         public static void SaveStats()
         {
-            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-            ctx.SaveChanges();
+            try
+            {
+                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
 
             if(Settings.Settings.Current.Stats != null &&
                Settings.Settings.Current.Stats.ShareStats)
@@ -1163,7 +1181,15 @@ namespace Aaru.Core
                 Name = command, Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new filesystem to statistics</summary>
@@ -1184,7 +1210,15 @@ namespace Aaru.Core
                 Name = filesystem, Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new partition scheme to statistics</summary>
@@ -1205,7 +1239,15 @@ namespace Aaru.Core
                 Name = partition, Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new filter to statistics</summary>
@@ -1226,7 +1268,15 @@ namespace Aaru.Core
                 Name = filter, Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Ads a new media image to statistics</summary>
@@ -1247,7 +1297,15 @@ namespace Aaru.Core
                 Name = format, Synchronized = false, Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new device to statistics</summary>
@@ -1276,7 +1334,15 @@ namespace Aaru.Core
                 Synchronized = false
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new media type to statistics</summary>
@@ -1295,7 +1361,15 @@ namespace Aaru.Core
                 Real = real, Synchronized = false, Type = type.ToString(), Count = 1
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
 
         /// <summary>Adds a new remote to statistics</summary>
@@ -1323,7 +1397,15 @@ namespace Aaru.Core
                 Count = 1, Name = serverOperatingSystem, Synchronized = false, Version = serverOperatingSystemVersion
             });
 
-            ctx.SaveChanges();
+            try
+            {
+                ctx.SaveChanges();
+            }
+            catch(SqliteException ex)
+            {
+                AaruConsole.DebugWriteLine("Stats", "Exception while trying to save statistics:");
+                AaruConsole.DebugWriteLine("Stats", "{0}", ex);
+            }
         }
     }
 }
