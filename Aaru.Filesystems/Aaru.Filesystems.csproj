@@ -79,7 +79,10 @@
     <Compile Include="FAT\Structs.cs" />
     <Compile Include="FAT\Super.cs" />
     <Compile Include="FAT\Xattr.cs" />
-    <Compile Include="HPOFS.cs" />
+    <Compile Include="HPOFS\Consts.cs" />
+    <Compile Include="HPOFS\HPOFS.cs" />
+    <Compile Include="HPOFS\Info.cs" />
+    <Compile Include="HPOFS\Structs.cs" />
     <Compile Include="ISO9660\Consts\Internal.cs" />
     <Compile Include="ISO9660\Date.cs" />
     <Compile Include="ISO9660\Dir.cs" />

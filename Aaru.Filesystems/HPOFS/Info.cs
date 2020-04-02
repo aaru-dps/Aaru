@@ -1,8 +1,8 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : HPOFS.cs
+// Filename       : Info.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : High Performance Optical File System plugin.
@@ -31,41 +31,18 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Schemas;
-using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    // Information from test floppy images created with OS/2 HPOFS 2.0
-    // Need to get IBM document GA32-0224 -> IBM 3995 Optical Library Dataserver Products: Optical Disk Format
-    public class HPOFS : IFilesystem
+    public partial class HPOFS
     {
-        readonly byte[] hpofsType =
-        {
-            0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
-        };
-        readonly byte[] medinfoSignature =
-        {
-            0x4D, 0x45, 0x44, 0x49, 0x4E, 0x46, 0x4F, 0x20
-        };
-        readonly byte[] volinfoSignature =
-        {
-            0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
-        };
-
-        public FileSystemType XmlFsType { get; private set; }
-        public Encoding       Encoding  { get; private set; }
-        public string         Name      => "High Performance Optical File System";
-        public Guid           Id        => new Guid("1b72dcd5-d031-4757-8a9f-8d2fb18c59e2");
-        public string         Author    => "Natalia Portillo";
-
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(16 + partition.Start >= partition.End)
@@ -231,149 +208,6 @@ namespace Aaru.Filesystems
             };
 
             information = sb.ToString();
-        }
-
-        /// <summary>BIOS Parameter Block, at sector 0, little-endian</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BiosParameterBlock
-        {
-            /// <summary>0x000, Jump to boot code</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public readonly byte[] jump;
-            /// <summary>0x003, OEM Name, 8 bytes, space-padded</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly byte[] oem_name;
-            /// <summary>0x00B, Bytes per sector</summary>
-            public readonly ushort bps;
-            /// <summary>0x00D, Sectors per cluster</summary>
-            public readonly byte spc;
-            /// <summary>0x00E, Reserved sectors between BPB and... does it have sense in HPFS?</summary>
-            public readonly ushort rsectors;
-            /// <summary>0x010, Number of FATs... seriously?</summary>
-            public readonly byte fats_no;
-            /// <summary>0x011, Number of entries on root directory... ok</summary>
-            public readonly ushort root_ent;
-            /// <summary>0x013, Sectors in volume... doubt it</summary>
-            public readonly ushort sectors;
-            /// <summary>0x015, Media descriptor</summary>
-            public readonly byte media;
-            /// <summary>0x016, Sectors per FAT... again</summary>
-            public readonly ushort spfat;
-            /// <summary>0x018, Sectors per track... you're kidding</summary>
-            public readonly ushort sptrk;
-            /// <summary>0x01A, Heads... stop!</summary>
-            public readonly ushort heads;
-            /// <summary>0x01C, Hidden sectors before BPB</summary>
-            public readonly uint hsectors;
-            /// <summary>0x024, Sectors in volume if &gt; 65535...</summary>
-            public readonly uint big_sectors;
-            /// <summary>0x028, Drive number</summary>
-            public readonly byte drive_no;
-            /// <summary>0x029, Volume flags?</summary>
-            public readonly byte nt_flags;
-            /// <summary>0x02A, EPB signature, 0x29</summary>
-            public readonly byte signature;
-            /// <summary>0x02B, Volume serial number</summary>
-            public readonly uint serial_no;
-            /// <summary>0x02F, Volume label, 11 bytes, space-padded</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public readonly byte[] volume_label;
-            /// <summary>0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly byte[] fs_type;
-            /// <summary>Boot code.</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 442)]
-            public readonly byte[] boot_code;
-            /// <summary>0x1F8, Unknown</summary>
-            public readonly uint unknown;
-            /// <summary>0x1FC, Unknown</summary>
-            public readonly ushort unknown2;
-            /// <summary>0x1FE, 0xAA55</summary>
-            public readonly ushort signature2;
-        }
-
-        /// <summary>Media Information Block, at sector 13, big-endian</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MediaInformationBlock
-        {
-            /// <summary>Block identifier "MEDINFO "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly byte[] blockId;
-            /// <summary>Volume label</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public readonly byte[] volumeLabel;
-            /// <summary>Volume comment</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 160)]
-            public readonly byte[] comment;
-            /// <summary>Volume serial number</summary>
-            public readonly uint serial;
-            /// <summary>Volume creation date, DOS format</summary>
-            public readonly ushort creationDate;
-            /// <summary>Volume creation time, DOS format</summary>
-            public readonly ushort creationTime;
-            /// <summary>Codepage type: 1 ASCII, 2 EBCDIC</summary>
-            public readonly ushort codepageType;
-            /// <summary>Codepage</summary>
-            public readonly ushort codepage;
-            /// <summary>RPS level</summary>
-            public readonly uint rps;
-            /// <summary>Coincides with bytes per sector, and bytes per cluster, need more media</summary>
-            public readonly ushort bps;
-            /// <summary>Coincides with bytes per sector, and bytes per cluster, need more media</summary>
-            public readonly ushort bpc;
-            /// <summary>Unknown, empty</summary>
-            public readonly uint unknown2;
-            /// <summary>Sectors (or clusters)</summary>
-            public readonly uint sectors;
-            /// <summary>Unknown, coincides with bps but changing it makes nothing</summary>
-            public readonly uint unknown3;
-            /// <summary>Empty?</summary>
-            public readonly ulong unknown4;
-            /// <summary>Format major version</summary>
-            public readonly ushort major;
-            /// <summary>Format minor version</summary>
-            public readonly ushort minor;
-            /// <summary>Empty?</summary>
-            public readonly uint unknown5;
-            /// <summary>Unknown, non-empty</summary>
-            public readonly uint unknown6;
-            /// <summary>Empty</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)]
-            public readonly byte[] filler;
-        }
-
-        /// <summary>Volume Information Block, at sector 14, big-endian</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeInformationBlock
-        {
-            /// <summary>Block identifier "VOLINFO "</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly byte[] blockId;
-            /// <summary>Unknown</summary>
-            public readonly uint unknown;
-            /// <summary>Unknown</summary>
-            public readonly uint unknown2;
-            /// <summary>Unknown</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public readonly byte[] unknown3;
-            /// <summary>Unknown, space-padded string</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public readonly byte[] unknown4;
-            /// <summary>Owner, space-padded string</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public readonly byte[] owner;
-            /// <summary>Unknown, space-padded string</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] unknown5;
-            /// <summary>Unknown, empty?</summary>
-            public readonly uint unknown6;
-            /// <summary>Maximum percent full</summary>
-            public readonly ushort percentFull;
-            /// <summary>Unknown, empty?</summary>
-            public readonly ushort unknown7;
-            /// <summary>Empty</summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 384)]
-            public readonly byte[] filler;
         }
     }
 }
