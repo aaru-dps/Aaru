@@ -196,7 +196,7 @@ namespace Aaru.Commands.Image
                                  string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
                                  string mediaBarcode, string mediaManufacturer, string mediaModel,
                                  string mediaPartNumber, int mediaSequence, string mediaSerialNumber, string mediaTitle,
-                                 string outputPath, string outputOptions, string resumeFile, string format)
+                                 string outputPath, string options, string resumeFile, string format)
         {
             MainClass.PrintCopyright();
 
@@ -228,12 +228,12 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Analyze command", "--media-sequence={0}", mediaSequence);
             AaruConsole.DebugWriteLine("Analyze command", "--media-serial={0}", mediaSerialNumber);
             AaruConsole.DebugWriteLine("Analyze command", "--media-title={0}", mediaTitle);
-            AaruConsole.DebugWriteLine("Analyze command", "--options={0}", outputOptions);
+            AaruConsole.DebugWriteLine("Analyze command", "--options={0}", options);
             AaruConsole.DebugWriteLine("Analyze command", "--output={0}", outputPath);
             AaruConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
             AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
-            Dictionary<string, string> parsedOptions = Core.Options.Parse(outputOptions);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
