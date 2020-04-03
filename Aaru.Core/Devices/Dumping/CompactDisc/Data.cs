@@ -233,6 +233,8 @@ namespace Aaru.Core.Devices.Dumping
                        _speed > 0xFFFF)
                         _speed = 0xFFFF;
 
+                    currentReadSpeed = _speed;
+
                     _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
                 }
 
