@@ -352,19 +352,19 @@ namespace Aaru.Decoders.SCSI
             switch((TGPSValues)response.TPGS)
             {
                 case TGPSValues.NotSupported:
-                    sb.AppendLine("Device does not support assymetrical access");
+                    sb.AppendLine("Device does not support asymmetrical access");
 
                     break;
                 case TGPSValues.OnlyImplicit:
-                    sb.AppendLine("Device only supports implicit assymetrical access");
+                    sb.AppendLine("Device only supports implicit asymmetrical access");
 
                     break;
                 case TGPSValues.OnlyExplicit:
-                    sb.AppendLine("Device only supports explicit assymetrical access");
+                    sb.AppendLine("Device only supports explicit asymmetrical access");
 
                     break;
                 case TGPSValues.Both:
-                    sb.AppendLine("Device supports implicit and explicit assymetrical access");
+                    sb.AppendLine("Device supports implicit and explicit asymmetrical access");
 
                     break;
                 default:
