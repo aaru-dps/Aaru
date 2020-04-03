@@ -751,6 +751,8 @@ namespace Aaru.Commands.Device
                                                 leftRetries--;
                                             }
 
+                                            AaruConsole.WriteLine();
+
                                             mediaIsRecognized &= !sense;
                                         }
                                         else if(decSense.Value.ASC  == 0x04 &&
@@ -769,6 +771,8 @@ namespace Aaru.Commands.Device
 
                                                 leftRetries--;
                                             }
+
+                                            AaruConsole.WriteLine();
 
                                             mediaIsRecognized &= !sense;
                                         }
@@ -789,6 +793,8 @@ namespace Aaru.Commands.Device
 
                                                 leftRetries--;
                                             }
+
+                                            AaruConsole.WriteLine();
 
                                             mediaIsRecognized &= !sense;
                                         }
@@ -949,6 +955,8 @@ namespace Aaru.Commands.Device
                                                 leftRetries--;
                                             }
 
+                                            AaruConsole.WriteLine();
+
                                             mediaIsRecognized &= !sense;
                                         }
                                         else if(decSense.Value.ASC  == 0x04 &&
@@ -967,6 +975,8 @@ namespace Aaru.Commands.Device
 
                                                 leftRetries--;
                                             }
+
+                                            AaruConsole.WriteLine();
 
                                             mediaIsRecognized &= !sense;
                                         }
@@ -987,6 +997,8 @@ namespace Aaru.Commands.Device
 
                                                 leftRetries--;
                                             }
+
+                                            AaruConsole.WriteLine();
 
                                             mediaIsRecognized &= !sense;
                                         }
@@ -1092,6 +1104,8 @@ namespace Aaru.Commands.Device
                                                     leftRetries--;
                                                 }
 
+                                                AaruConsole.WriteLine();
+
                                                 mediaIsRecognized &= !sense;
                                             }
                                             else if(decSense.Value.ASC  == 0x04 &&
@@ -1110,6 +1124,8 @@ namespace Aaru.Commands.Device
 
                                                     leftRetries--;
                                                 }
+
+                                                AaruConsole.WriteLine();
 
                                                 mediaIsRecognized &= !sense;
                                             }
