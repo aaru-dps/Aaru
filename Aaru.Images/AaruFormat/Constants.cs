@@ -42,7 +42,9 @@ namespace Aaru.DiscImages
         ///     Image format version. A change in this number indicates an incompatible change to the format that prevents
         ///     older implementations from reading it correctly, if at all.
         /// </summary>
-        const byte AARUFMT_VERSION = 1;
+        const byte AARUFMT_VERSION_V1 = 1;
+        /// <summary>Adds new index format with 64-bit entries counter</summary>
+        const byte AARUFMT_VERSION = 2;
         /// <summary>Maximum read cache size, 256MiB.</summary>
         const uint MAX_CACHE_SIZE = 256 * 1024 * 1024;
         /// <summary>Size in bytes of LZMA properties.</summary>

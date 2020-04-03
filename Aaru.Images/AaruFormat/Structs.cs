@@ -101,6 +101,18 @@ namespace Aaru.DiscImages
             public ulong crc64;
         }
 
+        /// <summary>Header for the index, followed by entries</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct IndexHeader2
+        {
+            /// <summary>Identifier, <see cref="BlockType.Index2" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public ulong entries;
+            /// <summary>CRC64-ECMA of the index</summary>
+            public ulong crc64;
+        }
+
         /// <summary>Index entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct IndexEntry

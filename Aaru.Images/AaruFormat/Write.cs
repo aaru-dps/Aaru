@@ -270,7 +270,7 @@ namespace Aaru.DiscImages
             }
 
             header.application             = "Aaru";
-            header.imageMajorVersion       = AARUFMT_VERSION;
+            header.imageMajorVersion       = AARUFMT_VERSION_V1;
             header.imageMinorVersion       = 0;
             header.applicationMajorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Major;
             header.applicationMinorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Minor;
@@ -3357,15 +3357,36 @@ namespace Aaru.DiscImages
 
             Crc64Context.Data(blockStream.ToArray(), out byte[] idxCrc);
 
-            var idxHeader = new IndexHeader
+            if(index.Count > ushort.MaxValue)
             {
-                identifier = BlockType.Index, entries = (ushort)index.Count, crc64 = BitConverter.ToUInt64(idxCrc, 0)
-            };
+                header.imageMajorVersion = AARUFMT_VERSION;
+
+                var idxHeader = new IndexHeader2
+                {
+                    identifier = BlockType.Index2, entries = (ulong)index.Count,
+                    crc64      = BitConverter.ToUInt64(idxCrc, 0)
+                };
+
+                // Write index header to disk
+                structureBytes = new byte[Marshal.SizeOf<IndexHeader2>()];
+                MemoryMarshal.Write(structureBytes, ref idxHeader);
+                imageStream.Write(structureBytes, 0, structureBytes.Length);
+            }
+            else
+            {
+                var idxHeader = new IndexHeader
+                {
+                    identifier = BlockType.Index, entries = (ushort)index.Count,
+                    crc64      = BitConverter.ToUInt64(idxCrc, 0)
+                };
+
+                // Write index header to disk
+                structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
+                MemoryMarshal.Write(structureBytes, ref idxHeader);
+                imageStream.Write(structureBytes, 0, structureBytes.Length);
+            }
 
             // Write index to disk
-            structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
-            MemoryMarshal.Write(structureBytes, ref idxHeader);
-            imageStream.Write(structureBytes, 0, structureBytes.Length);
             imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
             blockStream.Close();
             blockStream = null;

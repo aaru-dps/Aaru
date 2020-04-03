@@ -218,9 +218,11 @@ namespace Aaru.DiscImages
             /// <summary>Block containing data</summary>
             DataBlock = 0x4B4C4244,
             /// <summary>Block containing a deduplication table</summary>
-            DeDuplicationTable = 0X2A544444,
+            DeDuplicationTable = 0x2A544444,
             /// <summary>Block containing the index</summary>
-            Index = 0X58444E49,
+            Index = 0x58444E49,
+            /// <summary>Block containing the index</summary>
+            Index2 = 0x32584449,
             /// <summary>Block containing logical geometry</summary>
             GeometryBlock = 0x4D4F4547,
             /// <summary>Block containing metadata</summary>

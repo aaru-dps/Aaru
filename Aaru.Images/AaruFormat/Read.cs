@@ -86,28 +86,62 @@ namespace Aaru.DiscImages
             imageStream.Read(structureBytes, 0, structureBytes.Length);
             IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(structureBytes);
 
-            if(idxHeader.identifier != BlockType.Index)
+            if(idxHeader.identifier != BlockType.Index &&
+               idxHeader.identifier != BlockType.Index2)
                 throw new FeatureUnsupportedImageException("Index not found!");
 
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries", header.indexOffset,
-                                       idxHeader.entries);
-
-            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
-
-            // Fill in-memory index
-            index = new List<IndexEntry>();
-
-            for(ushort i = 0; i < idxHeader.entries; i++)
+            if(idxHeader.identifier == BlockType.Index2)
             {
-                structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
+                imageStream.Position = (long)header.indexOffset;
+                structureBytes       = new byte[Marshal.SizeOf<IndexHeader2>()];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
+                IndexHeader2 idxHeader2 = Marshal.SpanToStructureLittleEndian<IndexHeader2>(structureBytes);
 
-                AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                           "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
-                                           entry.dataType, entry.offset);
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
+                                           header.indexOffset, idxHeader2.entries);
 
-                index.Add(entry);
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                           GC.GetTotalMemory(false));
+
+                // Fill in-memory index
+                index = new List<IndexEntry>();
+
+                for(ulong i = 0; i < idxHeader2.entries; i++)
+                {
+                    structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
+                    imageStream.Read(structureBytes, 0, structureBytes.Length);
+                    IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               "Block type {0} with data type {1} is indexed to be at {2}",
+                                               entry.blockType, entry.dataType, entry.offset);
+
+                    index.Add(entry);
+                }
+            }
+            else
+            {
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
+                                           header.indexOffset, idxHeader.entries);
+
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                           GC.GetTotalMemory(false));
+
+                // Fill in-memory index
+                index = new List<IndexEntry>();
+
+                for(ushort i = 0; i < idxHeader.entries; i++)
+                {
+                    structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
+                    imageStream.Read(structureBytes, 0, structureBytes.Length);
+                    IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                               "Block type {0} with data type {1} is indexed to be at {2}",
+                                               entry.blockType, entry.dataType, entry.offset);
+
+                    index.Add(entry);
+                }
             }
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
