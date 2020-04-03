@@ -152,13 +152,13 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum TGPSValues : byte
     {
-        /// <summary>Assymetrical access not supported</summary>
+        /// <summary>Asymmetrical access not supported</summary>
         NotSupported = 0x00,
-        /// <summary>Only implicit assymetrical access is supported</summary>
+        /// <summary>Only implicit asymmetrical access is supported</summary>
         OnlyImplicit = 0x01,
-        /// <summary>Only explicit assymetrical access is supported</summary>
+        /// <summary>Only explicit asymmetrical access is supported</summary>
         OnlyExplicit = 0x02,
-        /// <summary>Both implicit and explicit assymetrical access are supported</summary>
+        /// <summary>Both implicit and explicit asymmetrical access are supported</summary>
         Both = 0x03
     }
 
