@@ -178,6 +178,14 @@ namespace Aaru.Commands.Image
                     Argument = new Argument<string>(() => null), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--geometry", "-g"
+                }, "Force geometry, only supported in not tape block media. Specify as C/H/S.")
+                {
+                    Argument = new Argument<string>(() => null), Required = false
+                });
+
             AddArgument(new Argument<string>
             {
                 Arity = ArgumentArity.ExactlyOne, Description = "Input image path", Name = "input-path"
@@ -196,7 +204,7 @@ namespace Aaru.Commands.Image
                                  string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
                                  string mediaBarcode, string mediaManufacturer, string mediaModel,
                                  string mediaPartNumber, int mediaSequence, string mediaSerialNumber, string mediaTitle,
-                                 string outputPath, string options, string resumeFile, string format)
+                                 string outputPath, string options, string resumeFile, string format, string geometry)
         {
             MainClass.PrintCopyright();
 
@@ -219,6 +227,7 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Analyze command", "--drive-serial={0}", driveSerialNumber);
             AaruConsole.DebugWriteLine("Analyze command", "--force={0}", force);
             AaruConsole.DebugWriteLine("Analyze command", "--format={0}", format);
+            AaruConsole.DebugWriteLine("Analyze command", "--geometry={0}", geometry);
             AaruConsole.DebugWriteLine("Analyze command", "--input={0}", inputPath);
             AaruConsole.DebugWriteLine("Analyze command", "--media-barcode={0}", mediaBarcode);
             AaruConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", lastMediaSequence);
@@ -244,6 +253,47 @@ namespace Aaru.Commands.Image
                 AaruConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
 
                 return (int)ErrorNumber.InvalidArgument;
+            }
+
+            (uint cylinders, uint heads, uint sectors)? geometryValues = null;
+
+            if(geometry != null)
+            {
+                string[] geometryPieces = geometry.Split('/');
+
+                if(geometryPieces.Length == 0)
+                    geometryPieces = geometry.Split('-');
+
+                if(geometryPieces.Length != 3)
+                {
+                    AaruConsole.ErrorWriteLine("Invalid geometry specified");
+
+                    return (int)ErrorNumber.InvalidArgument;
+                }
+
+                if(!uint.TryParse(geometryPieces[0], out uint cylinders) ||
+                   cylinders == 0)
+                {
+                    AaruConsole.ErrorWriteLine("Invalid number of cylinders specified");
+
+                    return (int)ErrorNumber.InvalidArgument;
+                }
+
+                if(!uint.TryParse(geometryPieces[0], out uint heads) ||
+                   heads == 0)
+                {
+                    AaruConsole.ErrorWriteLine("Invalid number of heads specified");
+
+                    return (int)ErrorNumber.InvalidArgument;
+                }
+
+                if(!uint.TryParse(geometryPieces[0], out uint spt) ||
+                   spt == 0)
+                {
+                    AaruConsole.ErrorWriteLine("Invalid sectors per track specified");
+
+                    return (int)ErrorNumber.InvalidArgument;
+                }
             }
 
             Resume           resume  = null;
@@ -571,7 +621,7 @@ namespace Aaru.Commands.Image
                                           track.TrackSequence);
 
                         bool useNotLong = false;
-                        bool result = false;
+                        bool result     = false;
 
                         if(useLong)
                         {
@@ -593,7 +643,8 @@ namespace Aaru.Commands.Image
                             {
                                 if(!force)
                                 {
-                                    AaruConsole.ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
+                                    AaruConsole.
+                                        ErrorWriteLine("Input image is not returning raw sectors, use force if you want to continue...");
 
                                     return (int)Errno.InOutError;
                                 }
@@ -764,12 +815,15 @@ namespace Aaru.Commands.Image
             }
             else
             {
-                AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
-                                      inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                      inputFormat.Info.SectorsPerTrack);
+                (uint cylinders, uint heads, uint sectors) chs =
+                    geometryValues != null
+                        ? (geometryValues.Value.cylinders, geometryValues.Value.heads, geometryValues.Value.sectors)
+                        : (inputFormat.Info.Cylinders, inputFormat.Info.Heads, inputFormat.Info.SectorsPerTrack);
 
-                if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                             inputFormat.Info.SectorsPerTrack))
+                AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
+                                      chs.cylinders, chs.heads, chs.sectors);
+
+                if(!outputFormat.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
                     AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
                                                outputFormat.ErrorMessage);
 
