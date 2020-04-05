@@ -726,27 +726,27 @@ namespace Aaru.CommonTypes
         #endregion VXA, types 620 to 629
 
         #region Magneto-optical, types 630 to 659
-        /// <summary>5,25", M.O., ??? sectors, 1024 bytes/sector, ECMA-153, ISO 11560</summary>
+        /// <summary>5,25", M.O., WORM, 650Mb, 318750 sectors, 1024 bytes/sector, ECMA-153, ISO 11560</summary>
         ECMA_153 = 630,
-        /// <summary>5,25", M.O., ??? sectors, 512 bytes/sector, ECMA-153, ISO 11560</summary>
+        /// <summary>5,25", M.O., WORM, 600Mb, 581250 sectors, 512 bytes/sector, ECMA-153, ISO 11560</summary>
         ECMA_153_512 = 631,
-        /// <summary>3,5", M.O., 248826 sectors, 512 bytes/sector, ECMA-154, ISO 10090</summary>
+        /// <summary>3,5", M.O., RW, 128Mb, 248826 sectors, 512 bytes/sector, ECMA-154, ISO 10090</summary>
         ECMA_154 = 632,
-        /// <summary>5,25", M.O., 904995 sectors, 512 bytes/sector, ECMA-183, ISO 13481</summary>
+        /// <summary>5,25", M.O., RW/WORM, 1Gb, 904995 sectors, 512 bytes/sector, ECMA-183, ISO 13481</summary>
         ECMA_183_512 = 633,
-        /// <summary>5,25", M.O., 498526 sectors, 1024 bytes/sector, ECMA-183, ISO 13481</summary>
+        /// <summary>5,25", M.O., RW/WORM, 1Gb, 498526 sectors, 1024 bytes/sector, ECMA-183, ISO 13481</summary>
         ECMA_183 = 634,
-        /// <summary>5,25", M.O., 1128772 or 1163337 sectors, 512 bytes/sector, ECMA-183, ISO 13549</summary>
+        /// <summary>5,25", M.O., RW/WORM, 1.2Gb, 1165600 sectors, 512 bytes/sector, ECMA-184, ISO 13549</summary>
         ECMA_184_512 = 635,
-        /// <summary>5,25", M.O., 603466 or 637041 sectors, 1024 bytes/sector, ECMA-183, ISO 13549</summary>
+        /// <summary>5,25", M.O., RW/WORM, 1.3Gb, 639200 sectors, 1024 bytes/sector, ECMA-184, ISO 13549</summary>
         ECMA_184 = 636,
-        /// <summary>300mm, M.O., ??? sectors, 1024 bytes/sector, ECMA-189, ISO 13614</summary>
+        /// <summary>300mm, M.O., WORM, ??? sectors, 1024 bytes/sector, ECMA-189, ISO 13614</summary>
         ECMA_189 = 637,
-        /// <summary>300mm, M.O., ??? sectors, 1024 bytes/sector, ECMA-190, ISO 13403</summary>
+        /// <summary>300mm, M.O., WORM, ??? sectors, 1024 bytes/sector, ECMA-190, ISO 13403</summary>
         ECMA_190 = 638,
-        /// <summary>5,25", M.O., 936921 or 948770 sectors, 1024 bytes/sector, ECMA-195, ISO 13842</summary>
+        /// <summary>5,25", M.O., RW/WORM, 936921 or 948770 sectors, 1024 bytes/sector, ECMA-195, ISO 13842</summary>
         ECMA_195 = 639,
-        /// <summary>5,25", M.O., 1644581 or 1647371 sectors, 512 bytes/sector, ECMA-195, ISO 13842</summary>
+        /// <summary>5,25", M.O., RW/WORM, 1644581 or 1647371 sectors, 512 bytes/sector, ECMA-195, ISO 13842</summary>
         ECMA_195_512 = 640,
         /// <summary>3,5", M.O., 446325 sectors, 512 bytes/sector, ECMA-201, ISO 13963</summary>
         ECMA_201 = 641,
