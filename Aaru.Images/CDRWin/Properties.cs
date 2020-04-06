@@ -61,8 +61,8 @@ namespace Aaru.DiscImages
                     var aaruTrack = new Track
                     {
                         Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
-                        TrackStartSector    = previousStartSector, TrackPregap   = cdrTrack.Pregap,
-                        TrackSession        = cdrTrack.Session, TrackSequence    = cdrTrack.Sequence,
+                        TrackPregap         = cdrTrack.Pregap,
+                        TrackSession        = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
                         TrackType           = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
                         TrackFile           = cdrTrack.TrackFile.DataFilter.GetFilename(),
                         TrackFilter         = cdrTrack.TrackFile.DataFilter,
@@ -73,8 +73,10 @@ namespace Aaru.DiscImages
 
                     aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
-                    /*if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);*/
+                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
+                        if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
+                            aaruTrack.TrackStartSector = previousStartSector;
+
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
                         aaruTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
