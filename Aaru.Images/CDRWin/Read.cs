@@ -347,7 +347,9 @@ namespace Aaru.DiscImages
                     else if(matchLba.Success)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
                     else if(matchLeadOut.Success)
+                    {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
+                    }
                     else if(matchApplication.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool at line {0}", lineNumber);
@@ -769,7 +771,7 @@ namespace Aaru.DiscImages
 
                 for(int s = 1; s <= sessions.Length; s++)
                 {
-                    sessions[s - 1].SessionSequence = 1;
+                    sessions[s - 1].SessionSequence = (ushort)s;
 
                     if(s > 1)
                         sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
