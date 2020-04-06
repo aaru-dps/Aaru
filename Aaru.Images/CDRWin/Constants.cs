@@ -136,7 +136,7 @@ namespace Aaru.DiscImages
 
         const string REGEX_SESSION    = @"\bREM\s+SESSION\s+(?<number>\d+).*$";
         const string REGEX_MEDIA_TYPE = @"\bREM\s+ORIGINAL MEDIA-TYPE:\s+(?<mediatype>.+)$";
-        const string REGEX_LEAD_OUT   = @"\bREM\s+LEAD-OUT\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
+        const string REGEX_LEAD_OUT   = @"\bREM\s+LEAD-OUT\s+(?<msf>[\d]+:[\d]+:[\d]+).*$";
 
         // Not checked
         const string REGEX_LBA        = @"\bREM MSF:\s+(?<msf>[\d]+:[\d]+:[\d]+)\s+=\s+LBA:\s+(?<lba>[\d]+)$";
