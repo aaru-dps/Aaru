@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Aaru.Gui;
 using Aaru.Commands;
 using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
@@ -46,6 +47,9 @@ using Aaru.Core;
 using Aaru.Database;
 using Aaru.Settings;
 using Microsoft.EntityFrameworkCore;
+using Avalonia;
+using Avalonia.Logging.Serilog;
+using Avalonia.ReactiveUI;
 
 namespace Aaru
 {
@@ -55,7 +59,6 @@ namespace Aaru
         static string                                _assemblyTitle;
         static AssemblyInformationalVersionAttribute _assemblyVersion;
 
-        [STAThread]
         public static int Main(string[] args)
         {
             object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
@@ -67,6 +70,13 @@ namespace Aaru
                     as AssemblyInformationalVersionAttribute;
 
             _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+
+            if(args.Length                == 1 &&
+               args[0].ToLowerInvariant() == "gui")
+            {
+                return BuildAvaloniaApp()
+                   .StartWithClassicDesktopLifetime(args);
+            }
 
             AaruConsole.WriteLineEvent      += System.Console.WriteLine;
             AaruConsole.WriteEvent          += System.Console.Write;
@@ -157,5 +167,12 @@ namespace Aaru
             AaruConsole.WriteLine("{0}", _assemblyCopyright);
             AaruConsole.WriteLine();
         }
+
+        // Avalonia configuration, don't remove; also used by visual designer.
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>()
+                         .UsePlatformDetect()
+                         .LogToDebug()
+                         .UseReactiveUI();
     }
 }

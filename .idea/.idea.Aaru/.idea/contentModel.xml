@@ -3,7 +3,7 @@
   <component name="ContentModelStore">
     <e p="C:\Users\claunia\AppData\Local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
     <e p="C:\Users\claunia\AppData\Local\JetBrains\Rider2020.1\resharper-host\Local\Transient\ReSharperHost\v201\SolutionCaches\_Aaru.795230756.00" t="ExcludeRecursive" />
-    <e p="C:\Users\claunia\AppData\Local\JetBrains\Toolbox\apps\Rider\ch-1\201.6668.91.plugins\puppet\lib\stubs" t="IncludeRecursive" />
+    <e p="C:\Users\claunia\AppData\Local\JetBrains\Toolbox\apps\Rider\ch-1\201.6668.112.plugins\puppet\lib\stubs" t="IncludeRecursive" />
     <e p="C:\Users\claunia\Development\Aaru\Aaru" t="IncludeFlat">
       <e p=".git\info\exclude" t="IncludeRecursive" />
       <e p=".git\modules\Aaru.Checksums\info\exclude" t="IncludeRecursive" />
@@ -74,6 +74,9 @@
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
               <e p="Aaru.AssemblyInfo.cs" t="Include" />
+              <e p="Avalonia" t="Include">
+                <e p="resources" t="Include" />
+              </e>
             </e>
           </e>
         </e>
@@ -82,37 +85,6 @@
           <e p="launchSettings.json" t="Include" />
         </e>
         <e p="Settings.StyleCop" t="Include" />
-      </e>
-      <e p="Aaru.Avalon" t="IncludeRecursive">
-        <e p="Aaru.Avalon.csproj" t="IncludeRecursive" />
-        <e p="App.xaml" t="Include" />
-        <e p="App.xaml.cs" t="Include" />
-        <e p="Assets" t="Include">
-          <e p="avalonia-logo.ico" t="Include" />
-        </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="Models" t="Include" />
-        <e p="nuget.config" t="Include" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Avalon.AssemblyInfo.cs" t="Include" />
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
-            </e>
-          </e>
-        </e>
-        <e p="Program.cs" t="Include" />
-        <e p="ViewLocator.cs" t="Include" />
-        <e p="ViewModels" t="Include">
-          <e p="MainWindowViewModel.cs" t="Include" />
-          <e p="ViewModelBase.cs" t="Include" />
-        </e>
-        <e p="Views" t="Include">
-          <e p="MainWindow.xaml" t="Include" />
-          <e p="MainWindow.xaml.cs" t="Include" />
-        </e>
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -944,9 +916,11 @@
         <e p="ZZZNoFilter.cs" t="Include" />
       </e>
       <e p="Aaru.Gui" t="IncludeRecursive">
-        <e p=".Aaru.Gui.csproj.kate-swp" t="Include" />
         <e p="Aaru.Gui.csproj" t="IncludeRecursive" />
+        <e p="App.xaml" t="Include" />
+        <e p="App.xaml.cs" t="Include" />
         <e p="Assets" t="Include">
+          <e p="avalonia-logo.ico" t="Include" />
           <e p="Icons" t="Include">
             <e p="oxygen" t="Include">
               <e p="32x32" t="Include">
@@ -1276,10 +1250,14 @@
           <e p="frmPrintHex.xeto" t="Include" />
           <e p="frmPrintHex.xeto.cs" t="Include" />
         </e>
+        <e p="Models" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
               <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
+              <e p="Avalonia" t="Include">
+                <e p="resources" t="Include" />
+              </e>
             </e>
           </e>
         </e>
@@ -1317,6 +1295,15 @@
           <e p="tabSdMmcInfo.xeto.cs" t="Include" />
           <e p="tabXboxInfo.xeto" t="Include" />
           <e p="tabXboxInfo.xeto.cs" t="Include" />
+        </e>
+        <e p="ViewLocator.cs" t="Include" />
+        <e p="ViewModels" t="Include">
+          <e p="MainWindowViewModel.cs" t="Include" />
+          <e p="ViewModelBase.cs" t="Include" />
+        </e>
+        <e p="Views" t="Include">
+          <e p="MainWindow.xaml" t="Include" />
+          <e p="MainWindow.xaml.cs" t="Include" />
         </e>
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">

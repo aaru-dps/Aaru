@@ -200,6 +200,7 @@
       <Name>Aaru.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+    <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>Aaru.Helpers</Name>
@@ -281,8 +282,10 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="Avalonia" Version="0.9.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.0" />
   </ItemGroup>
-
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <DebugPackage>-dbg</DebugPackage>
     <Optimize>false</Optimize>

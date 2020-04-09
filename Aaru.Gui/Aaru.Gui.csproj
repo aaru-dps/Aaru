@@ -23,6 +23,9 @@
         <PackageReference Include="Eto.Forms" Version="2.5.0" />
         <PackageReference Include="Eto.Serialization.Xaml" Version="2.5.0" />
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
+        <PackageReference Include="Avalonia" Version="0.9.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.9.0" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
@@ -303,6 +306,20 @@
         <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-eject.png" />
         <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-flash-sd-mmc.png" />
         <EmbeddedResource Include="Assets\Icons\oxygen\32x32\media-tape.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Assets" />
+      <Folder Include="Models\" />
+      <Compile Update="**\*.xaml.cs">
+        <DependentUpon>%(Filename)</DependentUpon>
+      </Compile>
+      <AvaloniaResource Include="**\*.xaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <AvaloniaResource Include="Assets\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Views\MainWindow.xaml" />
     </ItemGroup>
     <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
         <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
