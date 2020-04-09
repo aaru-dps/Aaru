@@ -1,6 +1,8 @@
-﻿using Aaru.Gui.ViewModels;
+﻿using System;
+using Aaru.Gui.ViewModels;
 using Aaru.Gui.Views;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
@@ -14,13 +16,39 @@ namespace Aaru.Gui
         {
             if(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                var swvm = new SplashWindowViewModel();
+                swvm.WorkFinished += OnSplashFinished;
+
                 desktop.MainWindow = new SplashWindow
                 {
-                    DataContext = new SplashWindowViewModel()
+                    DataContext = swvm
                 };
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        void OnSplashFinished(object sender, EventArgs e)
+        {
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop))
+                return;
+
+            // Ensure not exit
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            // Close splash window
+            desktop.MainWindow.Close();
+
+            // Create and show main window
+            desktop.MainWindow = new MainWindow
+            {
+                DataContext = new MainWindowViewModel()
+            };
+
+            desktop.MainWindow.Show();
+
+            // Now can close when all windows are closed
+            desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
         }
     }
 }
