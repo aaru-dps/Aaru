@@ -317,6 +317,12 @@
         <SubType>Designer</SubType>
       </AvaloniaResource>
       <AvaloniaResource Include="Assets\**" />
+      <AvaloniaResource Update="Views\SplashWindow.xaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <Compile Update="Views\SplashWindow.xaml.cs">
+        <DependentUpon>SplashWindow.xaml</DependentUpon>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\MainWindow.xaml" />

@@ -1,0 +1,20 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.SplashWindow" Icon="/Assets/avalonia-logo.ico" Title="Aaru"
+        HasSystemDecorations="False">
+    <Design.DataContext>
+        <vm:SplashWindowViewModel />
+    </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Image Source="/Assets/avalonia-logo.ico" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+               Grid.Row="0" />
+        <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
+        <ProgressBar Maximum="{Binding MaxProgress}" Minimum="0" Value="{Binding CurrentProgress}"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2" />
+    </Grid>
+</Window>

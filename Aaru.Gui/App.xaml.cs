@@ -8,18 +8,15 @@ namespace Aaru.Gui
 {
     public class App : Application
     {
-        public override void Initialize()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
+        public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow
+                desktop.MainWindow = new SplashWindow
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = new SplashWindowViewModel()
                 };
             }
 

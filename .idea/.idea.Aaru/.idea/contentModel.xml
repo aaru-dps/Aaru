@@ -1299,11 +1299,14 @@
         <e p="ViewLocator.cs" t="Include" />
         <e p="ViewModels" t="Include">
           <e p="MainWindowViewModel.cs" t="Include" />
+          <e p="SplashWindowViewModel.cs" t="Include" />
           <e p="ViewModelBase.cs" t="Include" />
         </e>
         <e p="Views" t="Include">
           <e p="MainWindow.xaml" t="Include" />
           <e p="MainWindow.xaml.cs" t="Include" />
+          <e p="SplashWindow.xaml" t="Include" />
+          <e p="SplashWindow.xaml.cs" t="Include" />
         </e>
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">
