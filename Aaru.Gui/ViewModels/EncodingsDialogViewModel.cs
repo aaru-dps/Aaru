@@ -13,7 +13,6 @@ namespace Aaru.Gui.ViewModels
     public class EncodingsDialogViewModel : ViewModelBase
     {
         readonly EncodingsDialog _view;
-        string                   _versionText;
 
         public EncodingsDialogViewModel(EncodingsDialog view)
         {

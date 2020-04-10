@@ -15,6 +15,7 @@ namespace Aaru.Gui.ViewModels
         {
             AboutCommand     = ReactiveCommand.Create(ExecuteAboutCommand);
             EncodingsCommand = ReactiveCommand.Create(ExecuteEncodingsCommand);
+            PluginsCommand   = ReactiveCommand.Create(ExecutePluginsCommand);
             _view            = view;
         }
 
@@ -26,6 +27,7 @@ namespace Aaru.Gui.ViewModels
 
         public ReactiveCommand<Unit, Unit> AboutCommand     { get; }
         public ReactiveCommand<Unit, Unit> EncodingsCommand { get; }
+        public ReactiveCommand<Unit, Unit> PluginsCommand   { get; }
 
         internal void ExecuteAboutCommand()
         {
@@ -38,6 +40,13 @@ namespace Aaru.Gui.ViewModels
         {
             var dialog = new EncodingsDialog();
             dialog.DataContext = new EncodingsDialogViewModel(dialog);
+            dialog.ShowDialog(_view);
+        }
+
+        internal void ExecutePluginsCommand()
+        {
+            var dialog = new PluginsDialog();
+            dialog.DataContext = new PluginsDialogViewModel(dialog);
             dialog.ShowDialog(_view);
         }
     }

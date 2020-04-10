@@ -684,8 +684,6 @@ namespace Aaru.Gui.Forms
 
         protected void OnMenuConsole(object sender, EventArgs e) => new frmConsole().Show();
 
-        protected void OnMenuPlugins(object sender, EventArgs e) => new dlgPlugins().ShowModal(this);
-
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
             var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
