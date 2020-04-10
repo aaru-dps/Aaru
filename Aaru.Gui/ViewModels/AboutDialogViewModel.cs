@@ -73,7 +73,10 @@ Testers:
     Silas Laspada
 
 Public relations:
-    Noah Bacon";
+    Noah Bacon
+
+Logo and art:
+    Juan Carlos Pastor Segura (Denymetanol)";
         public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
         public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
         public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }
