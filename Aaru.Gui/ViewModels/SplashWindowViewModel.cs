@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
+using Aaru.Gui.Views;
 using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,12 @@ namespace Aaru.Gui.ViewModels
 {
     public class SplashWindowViewModel : ViewModelBase
     {
-        double _currentProgress;
-        double _maxProgress;
-        string _message;
+        readonly SplashWindow _view;
+        double                _currentProgress;
+        double                _maxProgress;
+        string                _message;
+
+        public SplashWindowViewModel(SplashWindow view) => _view = view;
 
         public string Message
         {
@@ -130,19 +134,21 @@ namespace Aaru.Gui.ViewModels
             });
         }
 
-        void CheckGdprCompliance()
+        async void CheckGdprCompliance()
         {
             CurrentProgress++;
             Message = "Checking GDPR compliance...";
 
-            Task.Run(() =>
+            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
             {
-                // TODO: Settings window
-                if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
-                    AaruConsole.ErrorWriteLine("Settings window not yet implemented");
+                var settingsDialog          = new SettingsDialog();
+                var settingsDialogViewModel = new SettingsDialogViewModel(settingsDialog, true);
+                settingsDialog.DataContext = settingsDialogViewModel;
+                await settingsDialog.ShowDialog(_view);
+                AaruConsole.ErrorWriteLine("Settings window not yet implemented");
+            }
 
-                Dispatcher.UIThread.Post(LoadStatistics);
-            });
+            LoadStatistics();
         }
 
         void LoadStatistics()

@@ -16,13 +16,11 @@ namespace Aaru.Gui
         {
             if(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var swvm = new SplashWindowViewModel();
-                swvm.WorkFinished += OnSplashFinished;
-
-                desktop.MainWindow = new SplashWindow
-                {
-                    DataContext = swvm
-                };
+                var splashWindow = new SplashWindow();
+                var swvm         = new SplashWindowViewModel(splashWindow);
+                swvm.WorkFinished        += OnSplashFinished;
+                splashWindow.DataContext =  swvm;
+                desktop.MainWindow       =  splashWindow;
             }
 
             base.OnFrameworkInitializationCompleted();
@@ -66,6 +64,16 @@ namespace Aaru.Gui
                 return;
 
             mainWindowViewModel.ExecuteExitCommand();
+        }
+
+        void OnPreferencesClicked(object sender, EventArgs args)
+        {
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) ||
+               !(desktop.MainWindow is MainWindow mainWindow)                            ||
+               !(mainWindow.DataContext is MainWindowViewModel mainWindowViewModel))
+                return;
+
+            mainWindowViewModel.ExecuteSettingsCommand();
         }
     }
 }

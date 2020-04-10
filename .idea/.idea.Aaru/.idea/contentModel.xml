@@ -1218,10 +1218,6 @@
           <e p="LineChart.cs" t="Include" />
           <e p="SvgImageView.cs" t="Include" />
         </e>
-        <e p="Dialogs" t="Include">
-          <e p="dlgSettings.xeto" t="Include" />
-          <e p="dlgSettings.xeto.cs" t="Include" />
-        </e>
         <e p="Forms" t="Include">
           <e p="frmConsole.xeto" t="Include" />
           <e p="frmConsole.xeto.cs" t="Include" />
@@ -1296,6 +1292,7 @@
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
           <e p="PluginsDialogViewModel.cs" t="Include" />
+          <e p="SettingsDialogViewModel.cs" t="Include" />
           <e p="SplashWindowViewModel.cs" t="Include" />
           <e p="StatisticsDialogViewModel.cs" t="Include" />
           <e p="ViewModelBase.cs" t="Include" />
@@ -1311,6 +1308,8 @@
           <e p="MainWindow.xaml.cs" t="Include" />
           <e p="PluginsDialog.xaml" t="Include" />
           <e p="PluginsDialog.xaml.cs" t="Include" />
+          <e p="SettingsDialog.xaml" t="Include" />
+          <e p="SettingsDialog.xaml.cs" t="Include" />
           <e p="SplashWindow.xaml" t="Include" />
           <e p="SplashWindow.xaml.cs" t="Include" />
           <e p="StatisticsDialog.xaml" t="Include" />

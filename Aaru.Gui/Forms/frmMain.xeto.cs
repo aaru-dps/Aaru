@@ -44,9 +44,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media.Info;
 using Aaru.Devices;
-using Aaru.Gui.Dialogs;
 using Aaru.Gui.Panels;
-using Aaru.Settings;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
@@ -293,14 +291,6 @@ namespace Aaru.Gui.Forms
 
         // TODO
         void CloseAllImages(object sender, EventArgs eventArgs) => Eto.Forms.MessageBox.Show("Not yet implemented");
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
-                new dlgSettings(true).ShowModal(this);
-        }
 
         void OnClosing(object sender, CancelEventArgs e)
         {
@@ -580,8 +570,6 @@ namespace Aaru.Gui.Forms
         protected void OnMenuQuit(object sender, EventArgs e) => Application.Instance.Quit();
 
         protected void OnDeviceRefresh(object sender, EventArgs e) => RefreshDevices();
-
-        protected void OnMenuSettings(object sender, EventArgs e) => new dlgSettings(false).ShowModal(this);
 
         protected override void OnLoadComplete(EventArgs e)
         {

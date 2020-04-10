@@ -10,7 +10,8 @@
     </Application.Styles>
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="_About" Clicked="OnAboutClicked" /> <NativeMenuItem Header="_Preferences" />
+            <NativeMenuItem Header="_About" Clicked="OnAboutClicked" />
+            <NativeMenuItem Header="_Preferences" Clicked="OnPreferencesClicked" />
             <NativeMenuItem Header="_Quit" Clicked="OnQuitClicked" />
         </NativeMenu>
     </NativeMenu.Menu>

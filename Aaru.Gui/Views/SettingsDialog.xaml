@@ -1,0 +1,101 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="675" Height="432" x:Class="Aaru.Gui.Views.SettingsDialog"
+        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <vm:SettingsDialogViewModel />
+    </Design.DataContext>
+    <Border Padding="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TabControl Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        SelectedIndex="{Binding TabControlSelectedIndex}">
+                <TabItem IsVisible="{Binding GdprVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding GdprLabel}" />
+                    </TabItem.Header>
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="{Binding GdprText1}" /> <Border Padding="10" />
+                        <TextBlock Text="{Binding GdprText2}" /> <Border Padding="10" />
+                        <TextBlock Text="{Binding GdprText3}" />
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding ReportsLabel}" />
+                    </TabItem.Header>
+                    <StackPanel Spacing="15">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="{Binding ReportsGloballyText}" />
+                            <CheckBox IsChecked="{Binding SaveReportsGloballyChecked}">
+                                <TextBlock Text="{Binding SaveReportsGloballyText}" />
+                            </CheckBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{Binding ReportsText}" />
+                            <CheckBox IsChecked="{Binding ShareReportsChecked}">
+                                <TextBlock Text="{Binding ShareReportsText}" />
+                            </CheckBox>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding StatisticsLabel}" />
+                    </TabItem.Header>
+                    <StackPanel Spacing="15">
+                        <TextBlock Text="{Binding StatisticsText}" />
+                        <CheckBox IsChecked="{Binding SaveStatsChecked}">
+                            <TextBlock Text="{Binding SaveStatsText}" />
+                        </CheckBox>
+                        <StackPanel IsVisible="{Binding SaveStatsChecked}" Spacing="5">
+                            <CheckBox IsChecked="{Binding ShareStatsChecked}">
+                                <TextBlock Text="{Binding ShareStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding CommandStatsChecked}">
+                                <TextBlock Text="{Binding CommandStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding DeviceStatsChecked}">
+                                <TextBlock Text="{Binding DeviceStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding FilesystemStatsChecked}">
+                                <TextBlock Text="{Binding FilesystemStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding FilesystemStatsChecked}">
+                                <TextBlock Text="{Binding FilterStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding MediaImageStatsChecked}">
+                                <TextBlock Text="{Binding MediaImageStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding MediaScanStatsChecked}">
+                                <TextBlock Text="{Binding MediaScanStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding PartitionStatsChecked}">
+                                <TextBlock Text="{Binding PartitionStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding MediaStatsChecked}">
+                                <TextBlock Text="{Binding MediaStatsText}" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding VerifyStatsChecked}">
+                                <TextBlock Text="{Binding VerifyStatsText}" />
+                            </CheckBox>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal"
+                        Spacing="5">
+                <Button Command="{Binding SaveCommand}">
+                    <TextBlock Text="{Binding SaveLabel}" />
+                </Button>
+                <Button Command="{Binding CancelCommand}">
+                    <TextBlock Text="{Binding CancelLabel}" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

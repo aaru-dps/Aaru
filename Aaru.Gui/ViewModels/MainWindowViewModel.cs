@@ -20,7 +20,8 @@ namespace Aaru.Gui.ViewModels
             EncodingsCommand  = ReactiveCommand.Create(ExecuteEncodingsCommand);
             PluginsCommand    = ReactiveCommand.Create(ExecutePluginsCommand);
             StatisticsCommand = ReactiveCommand.Create(ExecuteStatisticsCommand);
-            ExitCommand = ReactiveCommand.Create(ExecuteExitCommand);
+            ExitCommand       = ReactiveCommand.Create(ExecuteExitCommand);
+            SettingsCommand   = ReactiveCommand.Create(ExecuteSettingsCommand);
             _view             = view;
         }
 
@@ -34,7 +35,8 @@ namespace Aaru.Gui.ViewModels
         public ReactiveCommand<Unit, Unit> EncodingsCommand  { get; }
         public ReactiveCommand<Unit, Unit> PluginsCommand    { get; }
         public ReactiveCommand<Unit, Unit> StatisticsCommand { get; }
-        public ReactiveCommand<Unit, Unit> ExitCommand { get; }
+        public ReactiveCommand<Unit, Unit> ExitCommand       { get; }
+        public ReactiveCommand<Unit, Unit> SettingsCommand   { get; }
 
         internal void ExecuteAboutCommand()
         {
@@ -79,6 +81,14 @@ namespace Aaru.Gui.ViewModels
             dialog.ShowDialog(_view);
         }
 
-        internal void ExecuteExitCommand() => (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown();
+        internal async void ExecuteSettingsCommand()
+        {
+            var dialog = new SettingsDialog();
+            dialog.DataContext = new SettingsDialogViewModel(dialog, false);
+            await dialog.ShowDialog(_view);
+        }
+
+        internal void ExecuteExitCommand() =>
+            (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown();
     }
 }
