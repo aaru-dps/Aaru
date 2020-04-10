@@ -1,0 +1,84 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.AboutDialog"
+        Icon="/Assets/avalonia-logo.ico" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <vm:AboutDialogViewModel />
+    </Design.DataContext>
+    <Border Padding="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" BorderThickness="5">
+                    <Image Source="/Assets/avalonia-logo.ico" Width="48" Height="48" />
+                </Border>
+                <Grid Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="{Binding SoftwareName}" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" FontSize="16" FontWeight="Bold" />
+                    <TextBlock Grid.Row="1" Text="{Binding VersionText}" HorizontalAlignment="Left"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </Grid>
+            <TabControl Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding AboutLabel}" />
+                    </TabItem.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="12" />
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="12" />
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding SuiteName}" />
+                        <TextBlock Grid.Row="2" Text="{Binding Copyright}" />
+                        <Button Grid.Row="4" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left"
+                                VerticalAlignment="Center" Padding="0" Command="{Binding WebsiteCommand}">
+                            <!-- TODO: TextDecorations="Underline" in next Avalonia UI version -->
+                            <TextBlock Text="{Binding Website}" Foreground="Blue" />
+                        </Button>
+                        <Button Grid.Row="5" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left"
+                                VerticalAlignment="Center" Padding="0" Command="{Binding LicenseCommand}">
+                            <!-- TODO: TextDecorations="Underline" in next Avalonia UI version -->
+                            <TextBlock Text="{Binding License}" Foreground="Blue" />
+                        </Button>
+                    </Grid>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding LibrariesLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Assemblies}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Library" Binding="{Binding Name}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
+                                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding AuthorsLabel}" />
+                    </TabItem.Header>
+                    <TextBox IsReadOnly="True" Text="{Binding Authors}" />
+                </TabItem>
+            </TabControl>
+            <Button Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Command="{Binding CloseCommand}">
+                <TextBlock Text="{Binding CloseLabel}" />
+            </Button>
+        </Grid>
+    </Border>
+</Window>

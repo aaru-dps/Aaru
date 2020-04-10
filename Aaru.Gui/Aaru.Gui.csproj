@@ -19,6 +19,7 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.9.7" />
         <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
         <PackageReference Include="Eto.Forms" Version="2.5.0" />
         <PackageReference Include="Eto.Serialization.Xaml" Version="2.5.0" />

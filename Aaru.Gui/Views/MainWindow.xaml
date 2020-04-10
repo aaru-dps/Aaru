@@ -1,41 +1,31 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Aaru.Gui.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Aaru.Gui">
-
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.MainWindow" Icon="/Assets/avalonia-logo.ico" Title="Aaru.Gui">
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open"/>
-                <Separator/>
-                <MenuItem Header="_Settings" IsVisible="{Binding NativeMenuNotSupported}"/>
-                <Separator/>
-                <MenuItem Header="E_xit" IsVisible="{Binding NativeMenuNotSupported}"/>
+                <MenuItem Header="_Open" /> <Separator />
+                <MenuItem Header="_Settings" IsVisible="{Binding NativeMenuNotSupported}" /> <Separator />
+                <MenuItem Header="E_xit" IsVisible="{Binding NativeMenuNotSupported}" />
             </MenuItem>
             <MenuItem Header="_Devices">
-                <MenuItem Header="_Refresh"/>
+                <MenuItem Header="_Refresh" />
             </MenuItem>
             <MenuItem Header="_Window">
-                <MenuItem Header="_Console"/>
+                <MenuItem Header="_Console" />
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_Encodings"/>
-                <MenuItem Header="_Plugins"/>
-                <MenuItem Header="_Statistics"/>
-                <Separator IsVisible="{Binding NativeMenuNotSupported}"/>
-                <MenuItem Header="_About" Name="AboutMenuItem" IsVisible="{Binding NativeMenuNotSupported}"/>
+                <MenuItem Header="_Encodings" /> <MenuItem Header="_Plugins" /> <MenuItem Header="_Statistics" />
+                <Separator IsVisible="{Binding NativeMenuNotSupported}" />
+                <MenuItem Header="_About" Name="AboutMenuItem" IsVisible="{Binding NativeMenuNotSupported}"
+                          Command="{Binding AboutCommand}" />
             </MenuItem>
         </Menu>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </DockPanel>
-
 </Window>

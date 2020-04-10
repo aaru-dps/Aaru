@@ -1,21 +1,17 @@
-﻿<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:gui="clr-namespace:Aaru.Gui"
-             x:Class="Aaru.Gui.App">
+﻿<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gui="clr-namespace:Aaru.Gui" x:Class="Aaru.Gui.App">
     <Application.DataTemplates>
-        <gui:ViewLocator/>
+        <gui:ViewLocator />
     </Application.DataTemplates>
-
     <Application.Styles>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
-        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml" />
+        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml" />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml" />
     </Application.Styles>
-
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="_About"/>
-            <NativeMenuItem Header="_Preferences"/>
-            <NativeMenuItem Header="_Quit"/>
+            <NativeMenuItem Header="_About" Clicked="OnAboutClicked" /> <NativeMenuItem Header="_Preferences" />
+            <NativeMenuItem Header="_Quit" />
         </NativeMenu>
     </NativeMenu.Menu>
 </Application>
