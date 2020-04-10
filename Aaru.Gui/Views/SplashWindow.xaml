@@ -2,7 +2,7 @@
         xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.SplashWindow" Icon="/Assets/avalonia-logo.ico" Title="Aaru"
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.SplashWindow" Icon="/Assets/aaru-logo.png" Title="Aaru"
         HasSystemDecorations="False">
     <Design.DataContext>
         <vm:SplashWindowViewModel />
@@ -11,7 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Source="/Assets/avalonia-logo.ico" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        <Image Source="/Assets/aaru-logo.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                Grid.Row="0" />
         <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
         <ProgressBar Maximum="{Binding MaxProgress}" Minimum="0" Value="{Binding CurrentProgress}"

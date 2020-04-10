@@ -2,7 +2,7 @@
         xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.MainWindow" Icon="/Assets/avalonia-logo.ico" Title="Aaru.Gui">
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.MainWindow" Icon="/Assets/aaru-logo.png" Title="Aaru.Gui">
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>

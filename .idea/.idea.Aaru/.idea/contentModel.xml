@@ -1209,7 +1209,7 @@
               <e p="miniSD.svg" t="Include" />
             </e>
           </e>
-          <e p="avalonia-logo.ico" t="Include" />
+          <e p="aaru-logo.png" t="Include" />
         </e>
         <e p="ConsoleHandler.cs" t="Include" />
         <e p="Controls" t="Include">
