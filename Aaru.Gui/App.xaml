@@ -11,7 +11,7 @@
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="_About" Clicked="OnAboutClicked" /> <NativeMenuItem Header="_Preferences" />
-            <NativeMenuItem Header="_Quit" />
+            <NativeMenuItem Header="_Quit" Clicked="OnQuitClicked" />
         </NativeMenu>
     </NativeMenu.Menu>
 </Application>

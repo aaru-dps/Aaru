@@ -57,5 +57,15 @@ namespace Aaru.Gui
 
             mainWindowViewModel.ExecuteAboutCommand();
         }
+
+        void OnQuitClicked(object sender, EventArgs args)
+        {
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) ||
+               !(desktop.MainWindow is MainWindow mainWindow)                            ||
+               !(mainWindow.DataContext is MainWindowViewModel mainWindowViewModel))
+                return;
+
+            mainWindowViewModel.ExecuteExitCommand();
+        }
     }
 }

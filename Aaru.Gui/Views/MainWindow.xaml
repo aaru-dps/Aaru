@@ -11,7 +11,7 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" /> <Separator />
                 <MenuItem Header="_Settings" IsVisible="{Binding NativeMenuNotSupported}" /> <Separator />
-                <MenuItem Header="E_xit" IsVisible="{Binding NativeMenuNotSupported}" />
+                <MenuItem Header="E_xit" IsVisible="{Binding NativeMenuNotSupported}" Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="_Devices">
                 <MenuItem Header="_Refresh" />
