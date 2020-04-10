@@ -13,8 +13,9 @@ namespace Aaru.Gui.ViewModels
 
         public MainWindowViewModel(MainWindow view)
         {
-            AboutCommand = ReactiveCommand.Create(ExecuteAboutCommand);
-            _view        = view;
+            AboutCommand     = ReactiveCommand.Create(ExecuteAboutCommand);
+            EncodingsCommand = ReactiveCommand.Create(ExecuteEncodingsCommand);
+            _view            = view;
         }
 
         public string Greeting => "Welcome to Aaru!";
@@ -23,12 +24,20 @@ namespace Aaru.Gui.ViewModels
             !NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
                                                      IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
-        public ReactiveCommand<Unit, Unit> AboutCommand { get; }
+        public ReactiveCommand<Unit, Unit> AboutCommand     { get; }
+        public ReactiveCommand<Unit, Unit> EncodingsCommand { get; }
 
         internal void ExecuteAboutCommand()
         {
             var dialog = new AboutDialog();
             dialog.DataContext = new AboutDialogViewModel(dialog);
+            dialog.ShowDialog(_view);
+        }
+
+        internal void ExecuteEncodingsCommand()
+        {
+            var dialog = new EncodingsDialog();
+            dialog.DataContext = new EncodingsDialogViewModel(dialog);
             dialog.ShowDialog(_view);
         }
     }
