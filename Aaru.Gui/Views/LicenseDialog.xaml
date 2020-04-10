@@ -1,0 +1,23 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.LicenseDialog"
+        Icon="/Assets/avalonia-logo.ico" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <vm:LicenseDialogViewModel />
+    </Design.DataContext>
+    <Border Padding="15">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="260" /> <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" IsReadOnly="True" Text="{Binding LicenseText}" />
+            <Border Grid.Row="1" Padding="10">
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding CloseCommand}">
+                    <TextBlock Text="{Binding CloseLabel}" />
+                </Button>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

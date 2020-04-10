@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -122,7 +122,12 @@ Public relations:
             process.Start();
         }
 
-        void ExecuteLicenseCommand() => throw new NotImplementedException();
+        void ExecuteLicenseCommand()
+        {
+            var dialog = new LicenseDialog();
+            dialog.DataContext = new LicenseDialogViewModel(dialog);
+            dialog.ShowDialog(_view);
+        }
 
         void ExecuteCloseCommand() => _view.Close();
     }

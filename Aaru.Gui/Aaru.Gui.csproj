@@ -324,9 +324,20 @@
       <Compile Update="Views\SplashWindow.xaml.cs">
         <DependentUpon>SplashWindow.xaml</DependentUpon>
       </Compile>
+      <AvaloniaResource Update="Views\LicenseDialog.xaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <Compile Update="Views\LicenseDialog.xaml.cs">
+        <DependentUpon>LicenseDialog.xaml</DependentUpon>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <UpToDateCheckInput Remove="Views\MainWindow.xaml" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="..\LICENSE">
+        <Link>LICENSE</Link>
+      </EmbeddedResource>
     </ItemGroup>
     <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
         <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
