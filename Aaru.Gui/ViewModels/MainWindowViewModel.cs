@@ -1,8 +1,11 @@
-﻿using System.Reactive;
+﻿using System.Linq;
+using System.Reactive;
+using Aaru.Database;
 using Aaru.Gui.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using MessageBox.Avalonia;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels
@@ -13,10 +16,11 @@ namespace Aaru.Gui.ViewModels
 
         public MainWindowViewModel(MainWindow view)
         {
-            AboutCommand     = ReactiveCommand.Create(ExecuteAboutCommand);
-            EncodingsCommand = ReactiveCommand.Create(ExecuteEncodingsCommand);
-            PluginsCommand   = ReactiveCommand.Create(ExecutePluginsCommand);
-            _view            = view;
+            AboutCommand      = ReactiveCommand.Create(ExecuteAboutCommand);
+            EncodingsCommand  = ReactiveCommand.Create(ExecuteEncodingsCommand);
+            PluginsCommand    = ReactiveCommand.Create(ExecutePluginsCommand);
+            StatisticsCommand = ReactiveCommand.Create(ExecuteStatisticsCommand);
+            _view             = view;
         }
 
         public string Greeting => "Welcome to Aaru!";
@@ -25,9 +29,10 @@ namespace Aaru.Gui.ViewModels
             !NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
                                                      IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
-        public ReactiveCommand<Unit, Unit> AboutCommand     { get; }
-        public ReactiveCommand<Unit, Unit> EncodingsCommand { get; }
-        public ReactiveCommand<Unit, Unit> PluginsCommand   { get; }
+        public ReactiveCommand<Unit, Unit> AboutCommand      { get; }
+        public ReactiveCommand<Unit, Unit> EncodingsCommand  { get; }
+        public ReactiveCommand<Unit, Unit> PluginsCommand    { get; }
+        public ReactiveCommand<Unit, Unit> StatisticsCommand { get; }
 
         internal void ExecuteAboutCommand()
         {
@@ -47,6 +52,28 @@ namespace Aaru.Gui.ViewModels
         {
             var dialog = new PluginsDialog();
             dialog.DataContext = new PluginsDialogViewModel(dialog);
+            dialog.ShowDialog(_view);
+        }
+
+        internal void ExecuteStatisticsCommand()
+        {
+            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+
+            if(!ctx.Commands.Any()     &&
+               !ctx.Filesystems.Any()  &&
+               !ctx.Filters.Any()      &&
+               !ctx.MediaFormats.Any() &&
+               !ctx.Medias.Any()       &&
+               !ctx.Partitions.Any()   &&
+               !ctx.SeenDevices.Any())
+            {
+                MessageBoxManager.GetMessageBoxStandardWindow("Warning", "There are no statistics.").ShowDialog(_view);
+
+                return;
+            }
+
+            var dialog = new StatisticsDialog();
+            dialog.DataContext = new StatisticsDialogViewModel(dialog);
             dialog.ShowDialog(_view);
         }
     }

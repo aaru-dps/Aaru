@@ -43,7 +43,6 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media.Info;
-using Aaru.Database;
 using Aaru.Devices;
 using Aaru.Gui.Dialogs;
 using Aaru.Gui.Panels;
@@ -293,7 +292,7 @@ namespace Aaru.Gui.Forms
         }
 
         // TODO
-        void CloseAllImages(object sender, EventArgs eventArgs) => MessageBox.Show("Not yet implemented");
+        void CloseAllImages(object sender, EventArgs eventArgs) => Eto.Forms.MessageBox.Show("Not yet implemented");
 
         protected override void OnLoad(EventArgs e)
         {
@@ -331,7 +330,7 @@ namespace Aaru.Gui.Forms
 
             if(inputFilter == null)
             {
-                MessageBox.Show("Cannot open specified file.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Cannot open specified file.", MessageBoxType.Error);
 
                 return;
             }
@@ -342,7 +341,7 @@ namespace Aaru.Gui.Forms
 
                 if(imageFormat == null)
                 {
-                    MessageBox.Show("Image format not identified.", MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show("Image format not identified.", MessageBoxType.Error);
 
                     return;
                 }
@@ -353,7 +352,7 @@ namespace Aaru.Gui.Forms
                 {
                     if(!imageFormat.Open(inputFilter))
                     {
-                        MessageBox.Show("Unable to open image format", MessageBoxType.Error);
+                        Eto.Forms.MessageBox.Show("Unable to open image format", MessageBoxType.Error);
                         AaruConsole.ErrorWriteLine("Unable to open image format");
                         AaruConsole.ErrorWriteLine("No error given");
 
@@ -537,7 +536,7 @@ namespace Aaru.Gui.Forms
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show("Unable to open image format", MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show("Unable to open image format", MessageBoxType.Error);
                     AaruConsole.ErrorWriteLine("Unable to open image format");
                     AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
@@ -545,7 +544,7 @@ namespace Aaru.Gui.Forms
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Exception reading file", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Exception reading file", MessageBoxType.Error);
                 AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
             }
@@ -684,26 +683,6 @@ namespace Aaru.Gui.Forms
 
         protected void OnMenuConsole(object sender, EventArgs e) => new frmConsole().Show();
 
-        protected void OnMenuStatistics(object sender, EventArgs e)
-        {
-            var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-
-            if(!ctx.Commands.Any()     &&
-               !ctx.Filesystems.Any()  &&
-               !ctx.Filters.Any()      &&
-               !ctx.MediaFormats.Any() &&
-               !ctx.Medias.Any()       &&
-               !ctx.Partitions.Any()   &&
-               !ctx.SeenDevices.Any())
-            {
-                MessageBox.Show("There are no statistics.");
-
-                return;
-            }
-
-            new dlgStatistics().ShowModal(this);
-        }
-
         protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
         {
             if(!(sender is TreeGridView tree))
@@ -776,8 +755,8 @@ namespace Aaru.Gui.Forms
 
                     if(errno != Errno.NoError)
                     {
-                        MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
-                                        MessageBoxType.Error);
+                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
+                                                  MessageBoxType.Error);
 
                         break;
                     }
@@ -903,8 +882,8 @@ namespace Aaru.Gui.Forms
 
                     if(errno != Errno.NoError)
                     {
-                        MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
-                                        MessageBoxType.Error);
+                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
+                                                  MessageBoxType.Error);
 
                         return;
                     }
@@ -947,8 +926,8 @@ namespace Aaru.Gui.Forms
 
                     if(errno != Errno.NoError)
                     {
-                        MessageBox.Show($"Error {errno} trying to read root directory of chosen filesystem",
-                                        MessageBoxType.Error);
+                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read root directory of chosen filesystem",
+                                                  MessageBoxType.Error);
 
                         return;
                     }

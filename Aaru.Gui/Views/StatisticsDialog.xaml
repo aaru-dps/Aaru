@@ -1,0 +1,131 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="550" Height="320" x:Class="Aaru.Gui.Views.StatisticsDialog"
+        Icon="/Assets/avalonia-logo.ico" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <vm:StatisticsDialogViewModel />
+    </Design.DataContext>
+    <Border Padding="15">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TabControl Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TabItem IsVisible="{Binding CommandsVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding CommandsLabel}" />
+                    </TabItem.Header>
+                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                        <TextBlock Text="{Binding AnalyzeText}" IsVisible="{Binding AnalyzeVisible}" />
+                        <TextBlock Text="{Binding ChecksumText}" IsVisible="{Binding ChecksumVisible}" />
+                        <TextBlock Text="{Binding CompareText}" IsVisible="{Binding CompareVisible}" />
+                        <TextBlock Text="{Binding ConvertImageText}" IsVisible="{Binding ConvertImageVisible}" />
+                        <TextBlock Text="{Binding CreateSidecarText}" IsVisible="{Binding CreateSidecarVisible}" />
+                        <TextBlock Text="{Binding DecodeText}" IsVisible="{Binding DecodeVisible}" />
+                        <TextBlock Text="{Binding DeviceInfoText}" IsVisible="{Binding DeviceInfoVisible}" />
+                        <TextBlock Text="{Binding DeviceReportText}" IsVisible="{Binding DeviceReportVisible}" />
+                        <TextBlock Text="{Binding DumpMediaText}" IsVisible="{Binding DumpMediaVisible}" />
+                        <TextBlock Text="{Binding EntropyText}" IsVisible="{Binding EntropyVisible}" />
+                        <TextBlock Text="{Binding FormatsCommandText}" IsVisible="{Binding FormatsCommandVisible}" />
+                        <TextBlock Text="{Binding ImageInfoText}" IsVisible="{Binding ImageInfoVisible}" />
+                        <TextBlock Text="{Binding MediaInfoText}" IsVisible="{Binding MediaInfoVisible}" />
+                        <TextBlock Text="{Binding MediaScanText}" IsVisible="{Binding MediaScanVisible}" />
+                        <TextBlock Text="{Binding PrintHexText}" IsVisible="{Binding PrintHexVisible}" />
+                        <TextBlock Text="{Binding VerifyText}" IsVisible="{Binding VerifyVisible}" />
+                    </StackPanel>
+                </TabItem>
+                <TabItem IsVisible="{Binding FiltersVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding FiltersLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Filter" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem IsVisible="{Binding FormatsVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding FormatsLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Formats}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Format" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem IsVisible="{Binding PartitionsVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding PartitionsLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Partitions}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Partition" Binding="{Binding Name}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem IsVisible="{Binding FilesystemsVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding FilesystemsLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Filesystem" Binding="{Binding Name}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                                                IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem IsVisible="{Binding DevicesVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding DevicesLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Devices}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Device" Binding="{Binding Model}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Manufacturer" Binding="{Binding Manufacturer}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Revision" Binding="{Binding Revision}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Bus" Binding="{Binding Bus}" Width="Auto" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem IsVisible="{Binding MediasVisible}">
+                    <TabItem.Header>
+                        <TextBlock Text="{Binding MediasLabel}" />
+                    </TabItem.Header>
+                    <DataGrid Items="{Binding Medias}" HorizontalScrollBarVisibility="Visible">
+                        <DataGrid.Columns>
+                            <!-- TODO: Bind header -->
+                            <DataGridTextColumn Header="Media" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="Times found" Binding="{Binding Count}" Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+            <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Command="{Binding CloseCommand}" Padding="10">
+                <TextBlock Text="{Binding CloseLabel}" />
+            </Button>
+        </Grid>
+    </Border>
+</Window>

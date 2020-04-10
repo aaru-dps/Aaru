@@ -21,7 +21,8 @@
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_Encodings" Command="{Binding EncodingsCommand}" />
-                <MenuItem Header="_Plugins" Command="{Binding PluginsCommand}" /> <MenuItem Header="_Statistics" />
+                <MenuItem Header="_Plugins" Command="{Binding PluginsCommand}" />
+                <MenuItem Header="_Statistics" Command="{Binding StatisticsCommand}" />
                 <Separator IsVisible="{Binding NativeMenuNotSupported}" />
                 <MenuItem Header="_About" Name="AboutMenuItem" IsVisible="{Binding NativeMenuNotSupported}"
                           Command="{Binding AboutCommand}" />

@@ -383,9 +383,9 @@ namespace Aaru.Gui.Panels
 
                         string corrected = new string(chars);
 
-                        result = MessageBox.Show(this, "Unsupported filename",
-                                                 $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
-                                                 MessageBoxButtons.YesNoCancel, MessageBoxType.Warning);
+                        result = Eto.Forms.MessageBox.Show(this, "Unsupported filename",
+                                                           $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
+                                                           MessageBoxButtons.YesNoCancel, MessageBoxType.Warning);
 
                         if(result == DialogResult.Cancel)
                             return;
@@ -400,9 +400,9 @@ namespace Aaru.Gui.Panels
 
                 if(File.Exists(outputPath))
                 {
-                    result = MessageBox.Show(this, "Existing file",
-                                             $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
-                                             MessageBoxButtons.YesNoCancel, MessageBoxType.Question);
+                    result = Eto.Forms.MessageBox.Show(this, "Existing file",
+                                                       $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
+                                                       MessageBoxButtons.YesNoCancel, MessageBoxType.Question);
 
                     if(result == DialogResult.Cancel)
                         return;
@@ -416,9 +416,9 @@ namespace Aaru.Gui.Panels
                     }
                     catch(IOException)
                     {
-                        result = MessageBox.Show(this, "Cannot delete",
-                                                 "Could not delete existing file.\nDo you want to continue?",
-                                                 MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                        result = Eto.Forms.MessageBox.Show(this, "Cannot delete",
+                                                           "Could not delete existing file.\nDo you want to continue?",
+                                                           MessageBoxButtons.YesNo, MessageBoxType.Warning);
 
                         if(result == DialogResult.No)
                             return;
@@ -433,9 +433,9 @@ namespace Aaru.Gui.Panels
 
                     if(error != Errno.NoError)
                     {
-                        result = MessageBox.Show(this, "Error reading file",
-                                                 $"Error {error} reading file.\nDo you want to continue?",
-                                                 MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                        result = Eto.Forms.MessageBox.Show(this, "Error reading file",
+                                                           $"Error {error} reading file.\nDo you want to continue?",
+                                                           MessageBoxButtons.YesNo, MessageBoxType.Warning);
 
                         if(result == DialogResult.No)
                             return;
@@ -482,9 +482,9 @@ namespace Aaru.Gui.Panels
                 }
                 catch(IOException)
                 {
-                    result = MessageBox.Show(this, "Cannot create file",
-                                             "Could not create destination file.\nDo you want to continue?",
-                                             MessageBoxButtons.YesNo, MessageBoxType.Warning);
+                    result = Eto.Forms.MessageBox.Show(this, "Cannot create file",
+                                                       "Could not create destination file.\nDo you want to continue?",
+                                                       MessageBoxButtons.YesNo, MessageBoxType.Warning);
 
                     if(result == DialogResult.No)
                         return;

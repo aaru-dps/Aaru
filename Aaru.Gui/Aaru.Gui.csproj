@@ -23,6 +23,7 @@
     <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
     <PackageReference Include="Eto.Forms" Version="2.5.0" />
     <PackageReference Include="Eto.Serialization.Xaml" Version="2.5.0" />
+    <PackageReference Include="MessageBox.Avalonia" Version="0.9.6.1" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
     <PackageReference Include="Avalonia" Version="0.9.7" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.7" />

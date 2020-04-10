@@ -377,7 +377,7 @@ namespace Aaru.Gui.Forms
             }
             catch
             {
-                MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error);
                 chkExistingMetadata.Checked = false;
             }
         }
@@ -404,7 +404,7 @@ namespace Aaru.Gui.Forms
             }
             catch
             {
-                MessageBox.Show("Incorrect resume file, cannot use it...", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Incorrect resume file, cannot use it...", MessageBoxType.Error);
                 chkResume.Checked = false;
 
                 return;
@@ -415,8 +415,8 @@ namespace Aaru.Gui.Forms
                (_resume.BadBlocks.Count != 0 && !_resume.Tape))
                 return;
 
-            MessageBox.Show("Media already dumped correctly, please choose another destination...",
-                            MessageBoxType.Warning);
+            Eto.Forms.MessageBox.Show("Media already dumped correctly, please choose another destination...",
+                                      MessageBoxType.Warning);
 
             chkResume.Checked = false;
         }
@@ -625,7 +625,7 @@ namespace Aaru.Gui.Forms
         void StoppingErrorMessage(string text) => Application.Instance.Invoke(() =>
         {
             ErrorMessage(text);
-            MessageBox.Show(text, MessageBoxType.Error);
+            Eto.Forms.MessageBox.Show(text, MessageBoxType.Error);
             WorkFinished();
         });
 

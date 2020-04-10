@@ -186,8 +186,8 @@ namespace Aaru.Gui.Forms
             }
             catch(Exception exception)
             {
-                MessageBox.Show("Exception {0} trying to save logfile, details has been sent to console.",
-                                exception.Message);
+                Eto.Forms.MessageBox.Show("Exception {0} trying to save logfile, details has been sent to console.",
+                                          exception.Message);
 
                 AaruConsole.ErrorWriteLine("Console", exception.Message);
                 AaruConsole.ErrorWriteLine("Console", exception.StackTrace);

@@ -107,7 +107,7 @@ namespace Aaru.Gui.Forms
 
             if(dev.Error)
             {
-                MessageBox.Show($"Error {dev.LastError} opening device.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show($"Error {dev.LastError} opening device.", MessageBoxType.Error);
                 btnStop.Visible     = false;
                 btnScan.Visible     = true;
                 btnCancel.Visible   = true;
@@ -334,7 +334,7 @@ namespace Aaru.Gui.Forms
         void StoppingErrorMessage(string text) => Application.Instance.Invoke(() =>
         {
             lblProgress.Text = text;
-            MessageBox.Show(text, MessageBoxType.Error);
+            Eto.Forms.MessageBox.Show(text, MessageBoxType.Error);
             WorkFinished();
         });
 

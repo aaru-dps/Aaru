@@ -112,7 +112,7 @@ namespace Aaru.Gui.Forms
         {
             if(!(cmbFormat.SelectedValue is IWritableImage plugin))
             {
-                MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
 
                 return;
             }
@@ -126,7 +126,7 @@ namespace Aaru.Gui.Forms
 
             if(!(plugin is IWritableImage outputFormat))
             {
-                MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Error trying to find selected plugin", MessageBoxType.Error);
 
                 return;
             }
@@ -236,8 +236,8 @@ namespace Aaru.Gui.Forms
 
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox.Show($"Converting image will lose media tag {mediaTag}, not continuing...",
-                                    MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show($"Converting image will lose media tag {mediaTag}, not continuing...",
+                                              MessageBoxType.Error);
                 });
 
                 return;
@@ -262,8 +262,8 @@ namespace Aaru.Gui.Forms
 
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox.Show($"Converting image will lose sector tag {sectorTag}, not continuing...",
-                                    MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show($"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                              MessageBoxType.Error);
                 });
 
                 return;
@@ -313,7 +313,8 @@ namespace Aaru.Gui.Forms
             {
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox.Show($"Error {outputFormat.ErrorMessage} creating output image.", MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show($"Error {outputFormat.ErrorMessage} creating output image.",
+                                              MessageBoxType.Error);
                 });
 
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
@@ -351,8 +352,9 @@ namespace Aaru.Gui.Forms
                     {
                         Application.Instance.Invoke(() =>
                         {
-                            MessageBox.Show($"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                            MessageBoxType.Error);
+                            Eto.Forms.MessageBox.
+                                Show($"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                     MessageBoxType.Error);
                         });
 
                         AaruConsole.ErrorWriteLine("not continuing...");
@@ -380,8 +382,9 @@ namespace Aaru.Gui.Forms
                 {
                     Application.Instance.Invoke(() =>
                     {
-                        MessageBox.Show($"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
-                                        MessageBoxType.Error);
+                        Eto.Forms.MessageBox.
+                            Show($"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                 MessageBoxType.Error);
                     });
 
                     AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
@@ -422,8 +425,9 @@ namespace Aaru.Gui.Forms
                 {
                     Application.Instance.Invoke(() =>
                     {
-                        MessageBox.Show($"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
-                                        MessageBoxType.Error);
+                        Eto.Forms.MessageBox.
+                            Show($"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                 MessageBoxType.Error);
                     });
 
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
@@ -530,7 +534,7 @@ namespace Aaru.Gui.Forms
                         {
                             Application.Instance.Invoke(() =>
                             {
-                                MessageBox.
+                                Eto.Forms.MessageBox.
                                     Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                          MessageBoxType.Error);
                             });
@@ -636,7 +640,7 @@ namespace Aaru.Gui.Forms
                             {
                                 Application.Instance.Invoke(() =>
                                 {
-                                    MessageBox.
+                                    Eto.Forms.MessageBox.
                                         Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                              MessageBoxType.Error);
                                 });
@@ -745,7 +749,7 @@ namespace Aaru.Gui.Forms
                             {
                                 Application.Instance.Invoke(() =>
                                 {
-                                    MessageBox.
+                                    Eto.Forms.MessageBox.
                                         Show($"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
                                              MessageBoxType.Error);
                                 });
@@ -827,7 +831,7 @@ namespace Aaru.Gui.Forms
                                     {
                                         Application.Instance.Invoke(() =>
                                         {
-                                            MessageBox.
+                                            Eto.Forms.MessageBox.
                                                 Show($"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
                                                      MessageBoxType.Error);
                                         });
@@ -886,7 +890,7 @@ namespace Aaru.Gui.Forms
                                 {
                                     Application.Instance.Invoke(() =>
                                     {
-                                        MessageBox.
+                                        Eto.Forms.MessageBox.
                                             Show($"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
                                                  MessageBoxType.Error);
                                     });
@@ -952,7 +956,9 @@ namespace Aaru.Gui.Forms
             {
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox.Show("Operation canceled, the output file is not correct.", MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show("Operation canceled, the output file is not correct.",
+                                              MessageBoxType.Error);
+
                     btnClose.Visible    = true;
                     btnStop.Visible     = false;
                     stkProgress.Visible = false;
@@ -965,7 +971,7 @@ namespace Aaru.Gui.Forms
             {
                 Application.Instance.Invoke(() =>
                 {
-                    MessageBox.
+                    Eto.Forms.MessageBox.
                         Show($"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
                              MessageBoxType.Error);
                 });
@@ -975,9 +981,9 @@ namespace Aaru.Gui.Forms
 
             Application.Instance.Invoke(() =>
             {
-                MessageBox.Show(warning
-                                    ? "Some warnings happened. Check console for more information. Image should be correct."
-                                    : "Image converted successfully.");
+                Eto.Forms.MessageBox.Show(warning
+                                              ? "Some warnings happened. Check console for more information. Image should be correct."
+                                              : "Image converted successfully.");
 
                 btnClose.Visible    = true;
                 btnStop.Visible     = false;
@@ -1224,7 +1230,7 @@ namespace Aaru.Gui.Forms
             }
             catch
             {
-                MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Incorrect metadata sidecar file...", MessageBoxType.Error);
             }
         }
 
@@ -1265,13 +1271,14 @@ namespace Aaru.Gui.Forms
                     txtResumeFile.Text = dlgMetadata.FileName;
                 }
                 else
-                    MessageBox.Show("Resume file does not contain dump hardware information...", MessageBoxType.Error);
+                    Eto.Forms.MessageBox.Show("Resume file does not contain dump hardware information...",
+                                              MessageBoxType.Error);
 
                 sr.Close();
             }
             catch
             {
-                MessageBox.Show("Incorrect resume file...", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Incorrect resume file...", MessageBoxType.Error);
             }
         }
 

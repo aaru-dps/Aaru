@@ -224,7 +224,7 @@ namespace Aaru.Gui.Panels
             if(scsiInfo.MediaType == MediaType.GDR ||
                scsiInfo.MediaType == MediaType.GDROM)
             {
-                MessageBox.Show("GD-ROM dump support is not yet implemented.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("GD-ROM dump support is not yet implemented.", MessageBoxType.Error);
 
                 return;
             }
@@ -232,7 +232,7 @@ namespace Aaru.Gui.Panels
             if((scsiInfo.MediaType == MediaType.XGD || scsiInfo.MediaType == MediaType.XGD2 ||
                 scsiInfo.MediaType == MediaType.XGD3) &&
                scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
-                MessageBox.Show("Dumping Xbox discs require a Kreon drive.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Dumping Xbox discs require a Kreon drive.", MessageBoxType.Error);
 
             var dumpForm = new frmDump(devicePath, scsiInfo.DeviceInfo, scsiInfo);
             dumpForm.Show();
@@ -243,7 +243,7 @@ namespace Aaru.Gui.Panels
             if(scsiInfo.MediaType == MediaType.GDR ||
                scsiInfo.MediaType == MediaType.GDROM)
             {
-                MessageBox.Show("GD-ROM scan support is not yet implemented.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("GD-ROM scan support is not yet implemented.", MessageBoxType.Error);
 
                 return;
             }
@@ -251,7 +251,7 @@ namespace Aaru.Gui.Panels
             if(scsiInfo.MediaType == MediaType.XGD  ||
                scsiInfo.MediaType == MediaType.XGD2 ||
                scsiInfo.MediaType == MediaType.XGD3)
-                MessageBox.Show("Scanning Xbox discs is not yet supported.", MessageBoxType.Error);
+                Eto.Forms.MessageBox.Show("Scanning Xbox discs is not yet supported.", MessageBoxType.Error);
 
             var scanForm = new frmMediaScan(devicePath, scsiInfo.DeviceInfo, scsiInfo);
             scanForm.Show();
