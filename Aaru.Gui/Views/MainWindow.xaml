@@ -1,4 +1,5 @@
 ﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:Aaru.Gui.Models;assembly=Aaru.Gui"
         xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
@@ -15,7 +16,7 @@
                 <Separator />
                 <MenuItem Header="E_xit" IsVisible="{Binding !NativeMenuSupported}" Command="{Binding ExitCommand}" />
             </MenuItem>
-            <MenuItem Header="_Devices">
+            <MenuItem Header="_Devices" IsVisible="{Binding DevicesSupported}">
                 <MenuItem Header="_Refresh" />
             </MenuItem>
             <MenuItem Header="_Window">
@@ -30,6 +31,29 @@
                           Command="{Binding AboutCommand}" />
             </MenuItem>
         </Menu>
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" /><ColumnDefinition Width="5" /><ColumnDefinition Width="6*" />
+            </Grid.ColumnDefinitions>
+            <TreeView Items="{Binding TreeRoot}">
+                <TreeView.DataTemplates>
+                    <TreeDataTemplate DataType="models:DevicesRootModel" ItemsSource="{Binding Devices}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/computer.png" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:ImagesRootModel" ItemsSource="{Binding Images}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                </TreeView.DataTemplates>
+            </TreeView>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+            <TextBlock Grid.Column="2" Text="{Binding Greeting}" HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+        </Grid>
     </DockPanel>
 </Window>

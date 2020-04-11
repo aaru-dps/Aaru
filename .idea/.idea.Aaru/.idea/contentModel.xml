@@ -1240,11 +1240,16 @@
         </e>
         <e p="Models" t="Include">
           <e p="AssemblyModel.cs" t="Include" />
+          <e p="DeviceModel.cs" t="Include" />
+          <e p="DevicesRootModel.cs" t="Include" />
           <e p="DeviceStatsModel.cs" t="Include" />
           <e p="EncodingModel.cs" t="Include" />
+          <e p="ImageModel.cs" t="Include" />
+          <e p="ImagesRootModel.cs" t="Include" />
           <e p="MediaStatsModel.cs" t="Include" />
           <e p="NameCountModel.cs" t="Include" />
           <e p="PluginModel.cs" t="Include" />
+          <e p="RootModel.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
