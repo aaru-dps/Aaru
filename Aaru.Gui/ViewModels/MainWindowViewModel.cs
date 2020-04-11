@@ -13,6 +13,7 @@ namespace Aaru.Gui.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         readonly MainWindow _view;
+        ConsoleWindow       _consoleWindow;
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -22,6 +23,7 @@ namespace Aaru.Gui.ViewModels
             StatisticsCommand = ReactiveCommand.Create(ExecuteStatisticsCommand);
             ExitCommand       = ReactiveCommand.Create(ExecuteExitCommand);
             SettingsCommand   = ReactiveCommand.Create(ExecuteSettingsCommand);
+            ConsoleCommand    = ReactiveCommand.Create(ExecuteConsoleCommand);
             _view             = view;
         }
 
@@ -29,9 +31,10 @@ namespace Aaru.Gui.ViewModels
 
         public bool NativeMenuSupported =>
             NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
-                                                     IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+                                                    IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
         public ReactiveCommand<Unit, Unit> AboutCommand      { get; }
+        public ReactiveCommand<Unit, Unit> ConsoleCommand    { get; }
         public ReactiveCommand<Unit, Unit> EncodingsCommand  { get; }
         public ReactiveCommand<Unit, Unit> PluginsCommand    { get; }
         public ReactiveCommand<Unit, Unit> StatisticsCommand { get; }
@@ -90,5 +93,16 @@ namespace Aaru.Gui.ViewModels
 
         internal void ExecuteExitCommand() =>
             (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown();
+
+        internal void ExecuteConsoleCommand()
+        {
+            if(_consoleWindow is null)
+            {
+                _consoleWindow             = new ConsoleWindow();
+                _consoleWindow.DataContext = new ConsoleWindowViewModel(_consoleWindow);
+            }
+
+            _consoleWindow.Show();
+        }
     }
 }

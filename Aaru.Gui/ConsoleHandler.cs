@@ -133,7 +133,7 @@ namespace Aaru.Gui
         }
     }
 
-    internal class LogEntry
+    public class LogEntry
     {
         public string   Message   { get; set; }
         public string   Module    { get; set; }

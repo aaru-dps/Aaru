@@ -58,6 +58,7 @@ namespace Aaru.Gui.ViewModels
             Task.Run(() =>
             {
                 ConsoleHandler.Init();
+                AaruConsole.WriteLine("Aaru started!");
 
                 Dispatcher.UIThread.Post(LoadSettings);
             });
@@ -67,6 +68,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Loading settings...";
+            AaruConsole.WriteLine("Loading settings...");
 
             Task.Run(() =>
             {
@@ -81,6 +83,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Migrating local database...";
+            AaruConsole.WriteLine("Migrating local database...");
 
             Task.Run(() =>
             {
@@ -96,6 +99,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Updating master database...";
+            AaruConsole.WriteLine("Updating master database...");
 
             Task.Run(() =>
             {
@@ -138,6 +142,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Checking GDPR compliance...";
+            AaruConsole.WriteLine("Checking GDPR compliance...");
 
             if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
             {
@@ -145,7 +150,6 @@ namespace Aaru.Gui.ViewModels
                 var settingsDialogViewModel = new SettingsDialogViewModel(settingsDialog, true);
                 settingsDialog.DataContext = settingsDialogViewModel;
                 await settingsDialog.ShowDialog(_view);
-                AaruConsole.ErrorWriteLine("Settings window not yet implemented");
             }
 
             LoadStatistics();
@@ -155,6 +159,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Loading statistics...";
+            AaruConsole.WriteLine("Loading statistics...");
 
             Task.Run(() =>
             {
@@ -168,6 +173,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Registering encodings...";
+            AaruConsole.WriteLine("Registering encodings...");
 
             Task.Run(() =>
             {
@@ -181,6 +187,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Saving statistics...";
+            AaruConsole.WriteLine("Saving statistics...");
 
             Task.Run(() =>
             {
@@ -194,6 +201,7 @@ namespace Aaru.Gui.ViewModels
         {
             CurrentProgress++;
             Message = "Loading main window...";
+            AaruConsole.WriteLine("Loading main window...");
             WorkFinished?.Invoke(this, EventArgs.Empty);
         }
 

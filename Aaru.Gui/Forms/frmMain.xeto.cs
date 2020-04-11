@@ -669,8 +669,6 @@ namespace Aaru.Gui.Forms
             }
         }
 
-        protected void OnMenuConsole(object sender, EventArgs e) => new frmConsole().Show();
-
         protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
         {
             if(!(sender is TreeGridView tree))

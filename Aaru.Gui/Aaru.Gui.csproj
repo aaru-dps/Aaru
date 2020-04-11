@@ -343,6 +343,12 @@
     <Compile Update="Views\PluginsDialog.xaml.cs">
       <DependentUpon>PluginsDialog.xaml</DependentUpon>
     </Compile>
+    <AvaloniaResource Update="Views\ConsoleDialog.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <Compile Update="Views\ConsoleDialog.xaml.cs">
+      <DependentUpon>ConsoleDialog.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />
