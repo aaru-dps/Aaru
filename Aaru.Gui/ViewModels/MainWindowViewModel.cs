@@ -27,8 +27,8 @@ namespace Aaru.Gui.ViewModels
 
         public string Greeting => "Welcome to Aaru!";
 
-        public bool NativeMenuNotSupported =>
-            !NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
+        public bool NativeMenuSupported =>
+            NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
                                                      IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
         public ReactiveCommand<Unit, Unit> AboutCommand      { get; }
