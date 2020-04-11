@@ -10,7 +10,7 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Open" /> <Separator />
+                <MenuItem Header="_Open" Command="{Binding OpenCommand}" /> <Separator />
                 <MenuItem Header="_Settings" IsVisible="{Binding !NativeMenuSupported}"
                           Command="{Binding SettingsCommand}" />
                 <Separator />
@@ -47,6 +47,31 @@
                         <StackPanel Orientation="Horizontal">
                             <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
                             <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:ImageModel"
+                                      ItemsSource="{Binding PartitionSchemesOrFileSystems}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding FileName}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:PartitionSchemeModel" ItemsSource="{Binding Partitions}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:PartitionModel" ItemsSource="{Binding FileSystems}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:FileSystemModel" ItemsSource="{Binding Subdirectories}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding VolumeName}" />
                         </StackPanel>
                     </TreeDataTemplate>
                 </TreeView.DataTemplates>
