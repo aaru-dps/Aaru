@@ -148,29 +148,30 @@ namespace Aaru.Gui.Panels
                                  scsiInfo.DecodedXboxSecuritySector);
 
             tabInfos.Pages.Add(tabXboxInfo);
-/*
-            var tabDvdWritableInfo = new tabDvdWritableInfo();
+            /*
+                        var tabDvdWritableInfo = new tabDvdWritableInfo();
 
-            tabDvdWritableInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
-                                        scsiInfo.DvdRamSpareArea, scsiInfo.LastBorderOutRmd,
-                                        scsiInfo.DvdPreRecordedInfo, scsiInfo.DvdrMediaIdentifier,
-                                        scsiInfo.DvdrPhysicalInformation, scsiInfo.HddvdrMediumStatus,
-                                        scsiInfo.HddvdrLastRmd, scsiInfo.DvdrLayerCapacity,
-                                        scsiInfo.DvdrDlMiddleZoneStart, scsiInfo.DvdrDlJumpIntervalSize,
-                                        scsiInfo.DvdrDlManualLayerJumpStartLba, scsiInfo.DvdrDlRemapAnchorPoint,
-                                        scsiInfo.DvdPlusAdip, scsiInfo.DvdPlusDcb);
+                        tabDvdWritableInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
+                                                    scsiInfo.DvdRamSpareArea, scsiInfo.LastBorderOutRmd,
+                                                    scsiInfo.DvdPreRecordedInfo, scsiInfo.DvdrMediaIdentifier,
+                                                    scsiInfo.DvdrPhysicalInformation, scsiInfo.HddvdrMediumStatus,
+                                                    scsiInfo.HddvdrLastRmd, scsiInfo.DvdrLayerCapacity,
+                                                    scsiInfo.DvdrDlMiddleZoneStart, scsiInfo.DvdrDlJumpIntervalSize,
+                                                    scsiInfo.DvdrDlManualLayerJumpStartLba, scsiInfo.DvdrDlRemapAnchorPoint,
+                                                    scsiInfo.DvdPlusAdip, scsiInfo.DvdPlusDcb);
 
-            tabInfos.Pages.Add(tabDvdWritableInfo);
-*/
-            var tabBlurayInfo = new tabBlurayInfo();
+                        tabInfos.Pages.Add(tabDvdWritableInfo);
+            */
+            /*
+                        var tabBlurayInfo = new tabBlurayInfo();
 
-            tabBlurayInfo.LoadData(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea, scsiInfo.BlurayDds,
-                                   scsiInfo.BlurayCartridgeStatus, scsiInfo.BluraySpareAreaInformation,
-                                   scsiInfo.BlurayPowResources, scsiInfo.BlurayTrackResources, scsiInfo.BlurayRawDfl,
-                                   scsiInfo.BlurayPac);
+                        tabBlurayInfo.LoadData(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea, scsiInfo.BlurayDds,
+                                               scsiInfo.BlurayCartridgeStatus, scsiInfo.BluraySpareAreaInformation,
+                                               scsiInfo.BlurayPowResources, scsiInfo.BlurayTrackResources, scsiInfo.BlurayRawDfl,
+                                               scsiInfo.BlurayPac);
 
-            tabInfos.Pages.Add(tabBlurayInfo);
-
+                        tabInfos.Pages.Add(tabBlurayInfo);
+            */
             this.devicePath = devicePath;
         }
 

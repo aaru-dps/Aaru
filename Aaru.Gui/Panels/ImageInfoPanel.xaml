@@ -144,6 +144,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdWritableInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!BlurayInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="Blu-ray" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding BlurayInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

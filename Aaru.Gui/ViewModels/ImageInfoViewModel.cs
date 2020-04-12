@@ -453,8 +453,6 @@ namespace Aaru.Gui.ViewModels
                                                            _view)
             };
 
-            /* TODO: tabBlurayInfo
-
             byte[] blurayBurstCuttingArea     = null;
             byte[] blurayCartridgeStatus      = null;
             byte[] blurayDds                  = null;
@@ -491,13 +489,13 @@ namespace Aaru.Gui.ViewModels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_TrackResourcesInformation))
                 bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.MMC_TrackResourcesInformation);
 
-            var tabBlurayInfo = new tabBlurayInfo();
+            BlurayInfo = new BlurayInfoTab
+            {
+                DataContext = new BlurayInfoViewModel(blurayDiscInformation, blurayBurstCuttingArea, blurayDds,
+                                                      blurayCartridgeStatus, bluraySpareAreaInformation,
+                                                      blurayPowResources, blurayTrackResources, null, null, _view)
+            };
 
-            tabBlurayInfo.LoadData(blurayDiscInformation, blurayBurstCuttingArea, blurayDds, blurayCartridgeStatus,
-                                   bluraySpareAreaInformation, blurayPowResources, blurayTrackResources, null, null);
-
-            tabInfos.Pages.Add(tabBlurayInfo);
-*/
             /* TODO: tabXboxInfo
 
             byte[]             xboxDmi                   = null;
@@ -647,6 +645,7 @@ namespace Aaru.Gui.ViewModels
         public CompactDiscInfoTab                      CompactDiscInfo           { get; }
         public DvdInfoTab                              DvdInfo                   { get; }
         public DvdWritableInfoTab                      DvdWritableInfo           { get; }
+        public BlurayInfoTab                           BlurayInfo                { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }
