@@ -148,7 +148,7 @@ namespace Aaru.Gui.Panels
                                  scsiInfo.DecodedXboxSecuritySector);
 
             tabInfos.Pages.Add(tabXboxInfo);
-
+/*
             var tabDvdWritableInfo = new tabDvdWritableInfo();
 
             tabDvdWritableInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdRamDds, scsiInfo.DvdRamCartridgeStatus,
@@ -161,7 +161,7 @@ namespace Aaru.Gui.Panels
                                         scsiInfo.DvdPlusAdip, scsiInfo.DvdPlusDcb);
 
             tabInfos.Pages.Add(tabDvdWritableInfo);
-
+*/
             var tabBlurayInfo = new tabBlurayInfo();
 
             tabBlurayInfo.LoadData(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea, scsiInfo.BlurayDds,

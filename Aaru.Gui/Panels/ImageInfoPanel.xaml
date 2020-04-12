@@ -138,6 +138,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!DvdWritableInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="DVD-R(W)" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding DvdWritableInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

@@ -371,14 +371,6 @@ namespace Aaru.Gui.ViewModels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_BCA))
                 dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
 
-            DvdInfo = new DvdInfoTab
-            {
-                DataContext = new DvdInfoViewModel(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi,
-                                                   hddvdCopyrightInformation, dvdBca, null, decodedPfi, _view)
-            };
-
-            /* TODO: tabDvdWritableinfo
-
             byte[] dvdRamDds                     = null;
             byte[] dvdRamCartridgeStatus         = null;
             byte[] dvdRamSpareArea               = null;
@@ -450,16 +442,17 @@ namespace Aaru.Gui.ViewModels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DCB))
                 dvdPlusDcb = imageFormat.ReadDiskTag(MediaTagType.DCB);
 
-            var tabDvdWritableInfo = new tabDvdWritableInfo();
+            DvdWritableInfo = new DvdWritableInfoTab
+            {
+                DataContext = new DvdWritableInfoViewModel(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus,
+                                                           dvdRamSpareArea, lastBorderOutRmd, dvdPreRecordedInfo,
+                                                           dvdrMediaIdentifier, dvdrPhysicalInformation,
+                                                           hddvdrMediumStatus, null, dvdrLayerCapacity,
+                                                           dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize,
+                                                           dvdrDlManualLayerJumpStartLba, null, dvdPlusAdip, dvdPlusDcb,
+                                                           _view)
+            };
 
-            tabDvdWritableInfo.LoadData(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus, dvdRamSpareArea,
-                                        lastBorderOutRmd, dvdPreRecordedInfo, dvdrMediaIdentifier,
-                                        dvdrPhysicalInformation, hddvdrMediumStatus, null, dvdrLayerCapacity,
-                                        dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba,
-                                        null, dvdPlusAdip, dvdPlusDcb);
-
-            tabInfos.Pages.Add(tabDvdWritableInfo);
-*/
             /* TODO: tabBlurayInfo
 
             byte[] blurayBurstCuttingArea     = null;
@@ -653,6 +646,7 @@ namespace Aaru.Gui.ViewModels
         public AtaInfoTab                              AtaInfo                   { get; }
         public CompactDiscInfoTab                      CompactDiscInfo           { get; }
         public DvdInfoTab                              DvdInfo                   { get; }
+        public DvdWritableInfoTab                      DvdWritableInfo           { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }

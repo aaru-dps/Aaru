@@ -1281,12 +1281,12 @@
           <e p="CompactDiscInfoTab.xaml.cs" t="Include" />
           <e p="DvdInfoTab.xaml" t="Include" />
           <e p="DvdInfoTab.xaml.cs" t="Include" />
+          <e p="DvdWritableInfoTab.xaml" t="Include" />
+          <e p="DvdWritableInfoTab.xaml.cs" t="Include" />
           <e p="ScsiInfoTab.xaml" t="Include" />
           <e p="ScsiInfoTab.xaml.cs" t="Include" />
           <e p="tabBlurayInfo.xeto" t="Include" />
           <e p="tabBlurayInfo.xeto.cs" t="Include" />
-          <e p="tabDvdWritableInfo.xeto" t="Include" />
-          <e p="tabDvdWritableInfo.xeto.cs" t="Include" />
           <e p="tabPcmciaInfo.xeto" t="Include" />
           <e p="tabPcmciaInfo.xeto.cs" t="Include" />
           <e p="tabSdMmcInfo.xeto" t="Include" />
@@ -1301,6 +1301,7 @@
           <e p="CompactDiscInfoViewModel.cs" t="Include" />
           <e p="ConsoleWindowViewModel.cs" t="Include" />
           <e p="DvdInfoViewModel.cs" t="Include" />
+          <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
