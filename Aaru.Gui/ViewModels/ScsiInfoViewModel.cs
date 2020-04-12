@@ -1,107 +1,65 @@
-// /***************************************************************************
-// Aaru Data Preservation Suite
-// ----------------------------------------------------------------------------
-//
-// Filename       : tabScsiInfo.xeto.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// Component      : Device information.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Implements the SCSI device information.
-//
-// --[ License ] --------------------------------------------------------------
-//
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General public License as
-//     published by the Free Software Foundation, either version 3 of the
-//     License, or (at your option) any later version.
-//
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General public License for more details.
-//
-//     You should have received a copy of the GNU General public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// ----------------------------------------------------------------------------
-// Copyright © 2011-2020 Natalia Portillo
-// ****************************************************************************/
-
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
-using Eto.Forms;
-using Eto.Serialization.Xaml;
+using Aaru.Gui.Models;
+using Avalonia.Controls;
+using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace Aaru.Gui.Tabs
+namespace Aaru.Gui.ViewModels
 {
-    public class tabScsiInfo : TabPage
+    public class ScsiInfoViewModel : ViewModelBase
     {
-        byte[]                   configuration;
-        Dictionary<byte, byte[]> evpdPages;
-        Inquiry?                 inquiry;
-        byte[]                   inquiryData;
-        Modes.DecodedMode?       mode;
-        byte[]                   modeSense10;
-        byte[]                   modeSense6;
-        PeripheralDeviceTypes    type;
+        readonly byte[] _configuration;
+        readonly byte[] _scsiModeSense10;
+        readonly byte[] _scsiModeSense6;
+        string          _evpdPageText;
+        string          _mmcFeatureText;
+        string          _scsiModeSensePageText;
+        object          _selectedEvpdPage;
+        object          _selectedMmcFeature;
+        object          _selectedModeSensePage;
+        Window          _view;
 
-        public tabScsiInfo() => XamlReader.Load(this);
-
-        internal void LoadData(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
-                               Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
-                               byte[] scsiModeSense10, byte[] mmcConfiguration)
+        public ScsiInfoViewModel(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
+                                 Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
+                                 byte[] scsiModeSense10, byte[] mmcConfiguration, Window view)
         {
-            inquiryData   = scsiInquiryData;
-            inquiry       = scsiInquiry;
-            evpdPages     = scsiEvpdPages;
-            mode          = scsiMode;
-            type          = scsiType;
-            modeSense6    = scsiModeSense6;
-            modeSense10   = scsiModeSense10;
-            configuration = mmcConfiguration;
+            InquiryData              = scsiInquiryData;
+            _scsiModeSense6          = scsiModeSense6;
+            _scsiModeSense10         = scsiModeSense10;
+            _configuration           = mmcConfiguration;
+            ModeSensePages           = new ObservableCollection<ScsiPageModel>();
+            EvpdPages                = new ObservableCollection<ScsiPageModel>();
+            MmcFeatures              = new ObservableCollection<ScsiPageModel>();
+            SaveInquiryBinaryCommand = ReactiveCommand.Create(ExecuteSaveInquiryBinaryCommand);
+            SaveInquiryTextCommand   = ReactiveCommand.Create(ExecuteSaveInquiryTextCommand);
+            SaveModeSense6Command    = ReactiveCommand.Create(ExecuteSaveModeSense6Command);
+            SaveModeSense10Command   = ReactiveCommand.Create(ExecuteSaveModeSense10Command);
+            SaveEvpdPageCommand      = ReactiveCommand.Create(ExecuteSaveEvpdPageCommand);
+            SaveMmcFeaturesCommand   = ReactiveCommand.Create(ExecuteSaveMmcFeaturesCommand);
 
-            if(inquiryData == null ||
-               !inquiry.HasValue)
+            if(InquiryData == null ||
+               !scsiInquiry.HasValue)
                 return;
 
-            Visible             = true;
-            txtScsiInquiry.Text = Decoders.SCSI.Inquiry.Prettify(inquiry);
+            ScsiInquiryText = Decoders.SCSI.Inquiry.Prettify(scsiInquiry);
 
-            if(mode.HasValue)
+            if(scsiMode.HasValue)
             {
-                tabScsiModeSense.Visible = true;
-
-                var modePagesList = new TreeGridItemCollection();
-
-                treeModeSensePages.Columns.Add(new GridColumn
+                ModeSensePages.Add(new ScsiPageModel
                 {
-                    HeaderText = "Page", DataCell = new TextBoxCell(0)
+                    Page = "Header", Description = Modes.PrettifyModeHeader(scsiMode.Value.Header, scsiType)
                 });
 
-                treeModeSensePages.AllowMultipleSelection = false;
-                treeModeSensePages.ShowHeader             = false;
-                treeModeSensePages.DataStore              = modePagesList;
-
-                modePagesList.Add(new TreeGridItem
-                {
-                    Values = new object[]
-                    {
-                        "Header", Modes.PrettifyModeHeader(mode.Value.Header, type)
-                    }
-                });
-
-                if(mode.Value.Pages != null)
-                    foreach(Modes.ModePage page in mode.Value.Pages.OrderBy(t => t.Page).ThenBy(t => t.Subpage))
+                if(scsiMode.Value.Pages != null)
+                    foreach(Modes.ModePage page in scsiMode.Value.Pages.OrderBy(t => t.Page).ThenBy(t => t.Subpage))
                     {
                         string pageNumberText = page.Subpage == 0 ? $"MODE {page.Page:X2}h"
                                                     : $"MODE {page.Page:X2} Subpage {page.Subpage:X2}";
@@ -112,7 +70,7 @@ namespace Aaru.Gui.Tabs
                         {
                             case 0x00:
                             {
-                                if(type         == PeripheralDeviceTypes.MultiMediaDevice &&
+                                if(scsiType     == PeripheralDeviceTypes.MultiMediaDevice &&
                                    page.Subpage == 0)
                                     decodedText = Modes.PrettifyModePage_00_SFF(page.PageResponse);
                                 else
@@ -123,7 +81,7 @@ namespace Aaru.Gui.Tabs
                             case 0x01:
                             {
                                 if(page.Subpage == 0)
-                                    decodedText = type == PeripheralDeviceTypes.MultiMediaDevice
+                                    decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                       ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                       : Modes.PrettifyModePage_01(page.PageResponse);
                                 else
@@ -179,7 +137,7 @@ namespace Aaru.Gui.Tabs
                             case 0x07:
                             {
                                 if(page.Subpage == 0)
-                                    decodedText = type == PeripheralDeviceTypes.MultiMediaDevice
+                                    decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                       ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                       : Modes.PrettifyModePage_07(page.PageResponse);
                                 else
@@ -246,7 +204,7 @@ namespace Aaru.Gui.Tabs
                             case 0x10:
                             {
                                 if(page.Subpage == 0)
-                                    decodedText = type == PeripheralDeviceTypes.SequentialAccess
+                                    decodedText = scsiType == PeripheralDeviceTypes.SequentialAccess
                                                       ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                       : Modes.PrettifyModePage_10(page.PageResponse);
                                 else
@@ -297,7 +255,7 @@ namespace Aaru.Gui.Tabs
                             case 0x1C:
                             {
                                 if(page.Subpage == 0)
-                                    decodedText = type == PeripheralDeviceTypes.MultiMediaDevice
+                                    decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                       ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                       : Modes.PrettifyModePage_1C(page.PageResponse);
                                 else if(page.Subpage == 1)
@@ -318,7 +276,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x21:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "CERTANCE")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "CERTANCE")
                                     decodedText = Modes.PrettifyCertanceModePage_21(page.PageResponse);
                                 else
                                     goto default;
@@ -327,7 +285,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x22:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "CERTANCE")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "CERTANCE")
                                     decodedText = Modes.PrettifyCertanceModePage_22(page.PageResponse);
                                 else
                                     goto default;
@@ -336,7 +294,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x24:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_24(page.PageResponse);
                                 else
                                     goto default;
@@ -354,7 +312,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x2F:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_2F(page.PageResponse);
                                 else
                                     goto default;
@@ -372,7 +330,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x3B:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "HP")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3B(page.PageResponse);
                                 else
                                     goto default;
@@ -381,7 +339,7 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x3C:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "HP")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3C(page.PageResponse);
                                 else
                                     goto default;
@@ -390,9 +348,9 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x3D:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_3D(page.PageResponse);
-                                else if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "HP")
+                                else if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3D(page.PageResponse);
                                 else
                                     goto default;
@@ -401,9 +359,9 @@ namespace Aaru.Gui.Tabs
                             }
                             case 0x3E:
                             {
-                                if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "FUJITSU")
+                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "FUJITSU")
                                     decodedText = Modes.PrettifyFujitsuModePage_3E(page.PageResponse);
-                                else if(StringHandlers.CToString(inquiry?.VendorIdentification).Trim() == "HP")
+                                else if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3E(page.PageResponse);
                                 else
                                     goto default;
@@ -422,33 +380,16 @@ namespace Aaru.Gui.Tabs
                         if(decodedText == null)
                             decodedText = "Error decoding page, please open an issue.";
 
-                        modePagesList.Add(new TreeGridItem
+                        ModeSensePages.Add(new ScsiPageModel
                         {
-                            Values = new object[]
-                            {
-                                pageNumberText, decodedText
-                            }
+                            Page = pageNumberText, Description = decodedText
                         });
                     }
             }
 
-            if(evpdPages != null)
+            if(scsiEvpdPages != null)
             {
-                tabScsiEvpd.Visible      = true;
-                treeEvpdPages.ShowHeader = false;
-
-                var evpdPagesList = new TreeGridItemCollection();
-
-                treeEvpdPages.Columns.Add(new GridColumn
-                {
-                    HeaderText = "Page", DataCell = new TextBoxCell(0)
-                });
-
-                treeEvpdPages.AllowMultipleSelection = false;
-                treeEvpdPages.ShowHeader             = false;
-                treeEvpdPages.DataStore              = evpdPagesList;
-
-                foreach(KeyValuePair<byte, byte[]> page in evpdPages.OrderBy(t => t.Key))
+                foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
                 {
                     string evpdPageTitle   = "";
                     string evpdDecodedPage = "";
@@ -525,44 +466,44 @@ namespace Aaru.Gui.Tabs
                         evpdDecodedPage = EVPD.DecodePageB4(page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "quantum")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "quantum")
                     {
                         evpdPageTitle   = "Quantum Firmware Build Information page";
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "seagate")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "seagate")
                     {
                         evpdPageTitle   = "Seagate Firmware Numbers page";
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
                     }
                     else if(page.Key == 0xC0 &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "ibm")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "ibm")
                     {
                         evpdPageTitle   = "IBM Drive Component Revision Levels page";
                         evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
                     }
                     else if(page.Key == 0xC1 &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "ibm")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "ibm")
                     {
                         evpdPageTitle   = "IBM Drive Serial Numbers page";
                         evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
                     }
                     else if((page.Key == 0xC0 || page.Key == 0xC1) &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "certance")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         evpdPageTitle   = "Certance Drive Component Revision Levels page";
                         evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
                     }
                     else if((page.Key == 0xC2 || page.Key == 0xC3 || page.Key == 0xC4 || page.Key == 0xC5 ||
                              page.Key == 0xC6) &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "certance")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         switch(page.Key)
                         {
@@ -592,8 +533,8 @@ namespace Aaru.Gui.Tabs
                     }
                     else if((page.Key == 0xC0 || page.Key == 0xC1 || page.Key == 0xC2 || page.Key == 0xC3 ||
                              page.Key == 0xC4 || page.Key == 0xC5) &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "hp")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "hp")
                     {
                         switch(page.Key)
                         {
@@ -626,8 +567,8 @@ namespace Aaru.Gui.Tabs
                         evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
                     }
                     else if(page.Key == 0xDF &&
-                            StringHandlers.CToString(inquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                            "certance")
+                            StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().
+                                           Trim() == "certance")
                     {
                         evpdPageTitle   = "Certance drive status page";
                         evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
@@ -644,32 +585,16 @@ namespace Aaru.Gui.Tabs
                                                    page.Key);
                     }
 
-                    evpdPagesList.Add(new TreeGridItem
+                    EvpdPages.Add(new ScsiPageModel
                     {
-                        Values = new object[]
-                        {
-                            evpdPageTitle, evpdDecodedPage, page.Value
-                        }
+                        Page = evpdPageTitle, Data = page.Value, Description = evpdDecodedPage
                     });
                 }
             }
 
-            if(configuration != null)
+            if(_configuration != null)
             {
-                tabMmcFeatures.Visible = true;
-
-                var featuresList = new TreeGridItemCollection();
-
-                treeMmcFeatures.Columns.Add(new GridColumn
-                {
-                    HeaderText = "Feature", DataCell = new TextBoxCell(0)
-                });
-
-                treeMmcFeatures.AllowMultipleSelection = false;
-                treeMmcFeatures.ShowHeader             = false;
-                treeMmcFeatures.DataStore              = featuresList;
-
-                Features.SeparatedFeatures ftr = Features.Separate(configuration);
+                Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
                 AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
                                            ftr.DataLength);
@@ -924,219 +849,237 @@ namespace Aaru.Gui.Tabs
                                 break;
                         }
 
-                        featuresList.Add(new TreeGridItem
+                        MmcFeatures.Add(new ScsiPageModel
                         {
-                            Values = new object[]
-                            {
-                                featureNumber, featureDescription
-                            }
+                            Page = featureNumber, Description = featureDescription
                         });
                     }
                 else
                     AaruConsole.DebugWriteLine("Device-Info command",
                                                "GET CONFIGURATION returned no feature descriptors");
             }
-
-            Invalidate();
         }
 
-        protected void OnBtnSaveInquiryBinary(object sender, EventArgs e)
+        public byte[]                              InquiryData              { get; }
+        public string                              ScsiInquiryText          { get; }
+        public ObservableCollection<ScsiPageModel> ModeSensePages           { get; }
+        public ObservableCollection<ScsiPageModel> EvpdPages                { get; }
+        public ObservableCollection<ScsiPageModel> MmcFeatures              { get; }
+        public ReactiveCommand<Unit, Unit>         SaveInquiryBinaryCommand { get; }
+        public ReactiveCommand<Unit, Unit>         SaveInquiryTextCommand   { get; }
+        public ReactiveCommand<Unit, Unit>         SaveModeSense6Command    { get; }
+        public ReactiveCommand<Unit, Unit>         SaveModeSense10Command   { get; }
+        public ReactiveCommand<Unit, Unit>         SaveEvpdPageCommand      { get; }
+        public ReactiveCommand<Unit, Unit>         SaveMmcFeaturesCommand   { get; }
+
+        public object SelectedModeSensePage
+        {
+            get => _selectedModeSensePage;
+            set
+            {
+                if(value == _selectedModeSensePage)
+                    return;
+
+                if(value is ScsiPageModel pageModel)
+                    ModeSensePageText = pageModel.Description;
+
+                this.RaiseAndSetIfChanged(ref _selectedModeSensePage, value);
+            }
+        }
+
+        public string ModeSensePageText
+        {
+            get => _scsiModeSensePageText;
+            set => this.RaiseAndSetIfChanged(ref _scsiModeSensePageText, value);
+        }
+
+        public object SelectedEvpdPage
+        {
+            get => _selectedEvpdPage;
+            set
+            {
+                if(value == _selectedEvpdPage)
+                    return;
+
+                if(value is ScsiPageModel pageModel)
+                    EvpdPageText = pageModel.Description;
+
+                this.RaiseAndSetIfChanged(ref _selectedEvpdPage, value);
+            }
+        }
+
+        public string EvpdPageText
+        {
+            get => _evpdPageText;
+            set => this.RaiseAndSetIfChanged(ref _evpdPageText, value);
+        }
+
+        public object SelectedMmcFeature
+        {
+            get => _selectedMmcFeature;
+            set
+            {
+                if(value == _selectedMmcFeature)
+                    return;
+
+                if(value is ScsiPageModel pageModel)
+                    MmcFeatureText = pageModel.Description;
+
+                this.RaiseAndSetIfChanged(ref _selectedMmcFeature, value);
+            }
+        }
+
+        public string MmcFeatureText
+        {
+            get => _mmcFeatureText;
+            set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
+        }
+
+        protected async void ExecuteSaveInquiryBinaryCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(inquiryData, 0, inquiryData.Length);
+            var saveFs = new FileStream(result, FileMode.Create);
+            saveFs.Write(InquiryData, 0, InquiryData.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveInquiryText(object sender, EventArgs e)
+        protected async void ExecuteSaveInquiryTextCommand()
         {
             var dlgSaveText = new SaveFileDialog();
 
-            dlgSaveText.Filters.Add(new FileFilter
+            dlgSaveText.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.txt"
-                },
+                }),
                 Name = "Text"
             });
 
-            DialogResult result = dlgSaveText.ShowDialog(this);
+            string result = await dlgSaveText.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveText.FileName, FileMode.Create);
+            var saveFs = new FileStream(result, FileMode.Create);
             var saveSw = new StreamWriter(saveFs);
-            saveSw.Write(txtScsiInquiry.Text);
+            saveSw.Write(ScsiInquiryText);
             saveFs.Close();
         }
 
-        protected void OnBtnSaveMode6(object sender, EventArgs e)
+        protected async void ExecuteSaveModeSense6Command()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(modeSense6, 0, modeSense6.Length);
+            var saveFs = new FileStream(result, FileMode.Create);
+            saveFs.Write(_scsiModeSense6, 0, _scsiModeSense6.Length);
 
             saveFs.Close();
         }
 
-        protected void OnBtnSaveMode10(object sender, EventArgs e)
+        protected async void ExecuteSaveModeSense10Command()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(modeSense10, 0, modeSense10.Length);
+            var saveFs = new FileStream(result, FileMode.Create);
+            saveFs.Write(_scsiModeSense10, 0, _scsiModeSense10.Length);
 
             saveFs.Close();
         }
 
-        protected void OnTreeModePagesSelectedItemChanged(object sender, EventArgs e)
+        protected async void ExecuteSaveEvpdPageCommand()
         {
-            if(!(treeModeSensePages.SelectedItem is TreeGridItem item))
-                return;
-
-            txtModeSensePage.Text = item.Values[1] as string;
-        }
-
-        protected void OnTreeEvpdPagesSelectedItemChanged(object sender, EventArgs e)
-        {
-            if(!(treeEvpdPages.SelectedItem is TreeGridItem item))
-                return;
-
-            txtEvpdPage.Text = item.Values[1] as string;
-        }
-
-        protected void OnBtnSaveEvpd(object sender, EventArgs e)
-        {
-            if(!(treeModeSensePages.SelectedItem is TreeGridItem item))
-                return;
-
-            if(!(item.Values[2] is byte[] data))
+            if(!(SelectedEvpdPage is ScsiPageModel pageModel))
                 return;
 
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(data, 0, data.Length);
+            var saveFs = new FileStream(result, FileMode.Create);
+            saveFs.Write(pageModel.Data, 0, pageModel.Data.Length);
 
             saveFs.Close();
         }
 
-        protected void OnTreeMmcFeaturesSelectedItemChanged(object sender, EventArgs e)
-        {
-            if(!(treeMmcFeatures.SelectedItem is TreeGridItem item))
-                return;
-
-            txtMmcFeature.Text = item.Values[1] as string;
-        }
-
-        protected void OnBtnSaveMmcFeatures(object sender, EventArgs e)
+        protected async void ExecuteSaveMmcFeaturesCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
-            saveFs.Write(configuration, 0, configuration.Length);
+            var saveFs = new FileStream(result, FileMode.Create);
+            saveFs.Write(_configuration, 0, _configuration.Length);
 
             saveFs.Close();
         }
-
-        #region XAML controls
-        #pragma warning disable 169
-        #pragma warning disable 649
-        TabPage      tabScsiInquiry;
-        Label        lblScsiInquiry;
-        TextArea     txtScsiInquiry;
-        Button       btnSaveInquiryBinary;
-        Button       btnSaveInquiryText;
-        TabPage      tabScsiModeSense;
-        TreeGridView treeModeSensePages;
-        TextArea     txtModeSensePage;
-        Button       btnSaveMode6;
-        Button       btnSaveMode10;
-        TabPage      tabScsiEvpd;
-        TreeGridView treeEvpdPages;
-        TextArea     txtEvpdPage;
-        Button       btnSaveEvpd;
-        TabPage      tabMmcFeatures;
-        TreeGridView treeMmcFeatures;
-        TextArea     txtMmcFeature;
-        Button       btnSaveMmcFeatures;
-        #pragma warning restore 169
-        #pragma warning restore 649
-        #endregion
     }
 }

@@ -1254,6 +1254,7 @@
           <e p="PartitionSchemeModel.cs" t="Include" />
           <e p="PluginModel.cs" t="Include" />
           <e p="RootModel.cs" t="Include" />
+          <e p="ScsiPageModel.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -1281,6 +1282,8 @@
         </e>
         <e p="ResourceHandler.cs" t="Include" />
         <e p="Tabs" t="Include">
+          <e p="ScsiInfoTab.xaml" t="Include" />
+          <e p="ScsiInfoTab.xaml.cs" t="Include" />
           <e p="tabAtaInfo.xeto" t="Include" />
           <e p="tabAtaInfo.xeto.cs" t="Include" />
           <e p="tabBlurayInfo.xeto" t="Include" />
@@ -1293,8 +1296,6 @@
           <e p="tabDvdWritableInfo.xeto.cs" t="Include" />
           <e p="tabPcmciaInfo.xeto" t="Include" />
           <e p="tabPcmciaInfo.xeto.cs" t="Include" />
-          <e p="tabScsiInfo.xeto" t="Include" />
-          <e p="tabScsiInfo.xeto.cs" t="Include" />
           <e p="tabSdMmcInfo.xeto" t="Include" />
           <e p="tabSdMmcInfo.xeto.cs" t="Include" />
           <e p="tabXboxInfo.xeto" t="Include" />
@@ -1309,6 +1310,7 @@
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
           <e p="PluginsDialogViewModel.cs" t="Include" />
+          <e p="ScsiInfoViewModel.cs" t="Include" />
           <e p="SettingsDialogViewModel.cs" t="Include" />
           <e p="SplashWindowViewModel.cs" t="Include" />
           <e p="StatisticsDialogViewModel.cs" t="Include" />

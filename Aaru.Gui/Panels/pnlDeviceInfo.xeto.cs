@@ -97,6 +97,7 @@ namespace Aaru.Gui.Panels
                 tabInfos.Pages.Add(tabAtaInfo);
             }
 
+            /*
             if(devInfo.ScsiInquiryData != null)
             {
                 var tabScsiInfo = new tabScsiInfo();
@@ -310,6 +311,7 @@ namespace Aaru.Gui.Panels
                     txtMediumDensity.Text    = DensitySupport.PrettifyMediumType(devInfo.MediumDensitySupport);
                 }
             }
+            */
 
             var tabSdMmcInfo = new tabSdMmcInfo();
 

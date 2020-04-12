@@ -114,6 +114,12 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
+            <TabItem IsVisible="{Binding !!ScsiInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="SCSI" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding ScsiInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

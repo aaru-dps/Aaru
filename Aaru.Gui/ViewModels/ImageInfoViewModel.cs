@@ -5,27 +5,34 @@ using System.Reactive;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.SCSI;
 using Aaru.Gui.Models;
+using Aaru.Gui.Tabs;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ReactiveUI;
 using Schemas;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Gui.ViewModels
 {
-    public class ImageInfoViewModel
+    public class ImageInfoViewModel : ViewModelBase
     {
         readonly IMediaImage _imageFormat;
         IFilter              _filter;
         string               _imagePath;
+        readonly Window      _view;
 
-        public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat)
+        public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
         {
             _imagePath   = imagePath;
             _filter      = filter;
             _imageFormat = imageFormat;
+            _view        = view;
             IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             MediaTagsList         = new ObservableCollection<string>();
             SectorTagsList        = new ObservableCollection<string>();
@@ -145,7 +152,6 @@ namespace Aaru.Gui.ViewModels
                 foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
                     SectorTagsList.Add(tag.ToString());
 
-            /* TODO: tabScsiInfo
             PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiInquiryData = null;
             Inquiry?              scsiInquiry     = null;
@@ -177,13 +183,11 @@ namespace Aaru.Gui.ViewModels
                 scsiMode        = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
             }
 
-            var tabScsiInfo = new tabScsiInfo();
-
-            tabScsiInfo.LoadData(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType, scsiModeSense6,
-                                 scsiModeSense10, null);
-
-            tabInfos.Pages.Add(tabScsiInfo);
-*/
+            ScsiInfo = new ScsiInfoTab
+            {
+                DataContext = new ScsiInfoViewModel(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType,
+                                                    scsiModeSense6, scsiModeSense10, null, _view)
+            };
 
             /* TODO: tabAtaInfo
             byte[] ataIdentify   = null;
@@ -643,6 +647,8 @@ namespace Aaru.Gui.ViewModels
                     });
             }
         }
+
+        public ScsiInfoTab ScsiInfo { get; }
 
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }

@@ -352,6 +352,9 @@
     <Compile Update="Panels\ImageInfoPanel.xaml.cs">
       <DependentUpon>ImageInfoPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Tabs\ScsiInfoTab.xaml.cs">
+      <DependentUpon>ScsiInfoTab.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />

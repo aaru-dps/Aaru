@@ -268,7 +268,7 @@ namespace Aaru.Gui.ViewModels
                                                              ? _genericOpticalIcon
                                                              : _genericFolderIcon,
                         FileName  = Path.GetFileName(result[0]), Image = imageFormat,
-                        ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat)
+                        ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view)
                     };
 
                     // TODO: pnlImageInfo
