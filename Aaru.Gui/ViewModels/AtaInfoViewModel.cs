@@ -1,0 +1,146 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Reactive;
+using Aaru.Decoders.ATA;
+using Avalonia.Controls;
+using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels
+{
+    public class AtaInfoViewModel : ViewModelBase
+    {
+        readonly byte[] ata;
+        readonly byte[] atapi;
+        Window          _view;
+
+        public AtaInfoViewModel(byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
+                                Window view)
+        {
+            SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
+            SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
+
+            ata   = ataIdentify;
+            atapi = atapiIdentify;
+
+            if(ataIdentify   == null &&
+               atapiIdentify == null)
+                return;
+
+            if(ataIdentify != null)
+            {
+                AtaMcptVisible = true;
+                AtaMcptChecked = ataMcptError.HasValue;
+                AtaOrAtapiText = "ATA IDENTIFY DEVICE";
+
+                if(ataMcptError.HasValue)
+                {
+                    switch(ataMcptError.Value.DeviceHead & 0x7)
+                    {
+                        case 0:
+                            AtaMcptText = "Device reports incorrect media card type";
+
+                            break;
+                        case 1:
+                            AtaMcptText = "Device contains a Secure Digital card";
+
+                            break;
+                        case 2:
+                            AtaMcptText = "Device contains a MultiMediaCard ";
+
+                            break;
+                        case 3:
+                            AtaMcptText = "Device contains a Secure Digital I/O card";
+
+                            break;
+                        case 4:
+                            AtaMcptText = "Device contains a Smart Media card";
+
+                            break;
+                        default:
+                            AtaMcptText =
+                                $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
+
+                            break;
+                    }
+
+                    AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
+
+                    ushort specificData = (ushort)((ataMcptError.Value.CylinderHigh * 0x100) +
+                                                   ataMcptError.Value.CylinderLow);
+
+                    AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
+                }
+
+                AtaIdentifyText = Identify.Prettify(ata);
+            }
+            else
+            {
+                AtaOrAtapiText  = "ATA PACKET IDENTIFY DEVICE";
+                AtaIdentifyText = Identify.Prettify(atapi);
+            }
+        }
+
+        public string                      AtaIdentifyText               { get; }
+        public string                      AtaMcptText                   { get; }
+        public string                      AtaMcptSpecificDataText       { get; }
+        public bool                        AtaMcptChecked                { get; }
+        public bool                        AtaMcptWriteProtectionChecked { get; }
+        public bool                        AtaMcptVisible                { get; }
+        public ReactiveCommand<Unit, Unit> SaveAtaBinaryCommand          { get; }
+        public ReactiveCommand<Unit, Unit> SaveAtaTextCommand            { get; }
+
+        public string AtaOrAtapiText { get; }
+
+        protected async void ExecuteSaveAtaBinaryCommand()
+        {
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
+            {
+                Extensions = new List<string>(new[]
+                {
+                    "*.bin"
+                }),
+                Name = "Binary"
+            });
+
+            string result = await dlgSaveBinary.ShowAsync(_view);
+
+            if(result is null)
+                return;
+
+            var saveFs = new FileStream(result, FileMode.Create);
+
+            if(ata != null)
+                saveFs.Write(ata, 0, ata.Length);
+            else if(atapi != null)
+                saveFs.Write(atapi, 0, atapi.Length);
+
+            saveFs.Close();
+        }
+
+        protected async void ExecuteSaveAtaTextCommand()
+        {
+            var dlgSaveText = new SaveFileDialog();
+
+            dlgSaveText.Filters.Add(new FileDialogFilter
+            {
+                Extensions = new List<string>(new[]
+                {
+                    "*.txt"
+                }),
+                Name = "Text"
+            });
+
+            string result = await dlgSaveText.ShowAsync(_view);
+
+            if(result is null)
+                return;
+
+            var saveFs = new FileStream(result, FileMode.Create);
+            var saveSw = new StreamWriter(saveFs);
+            saveSw.Write(AtaIdentifyText);
+            saveFs.Close();
+        }
+    }
+}

@@ -120,6 +120,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding ScsiInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!AtaInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="ATA / ATAPI" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding AtaInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

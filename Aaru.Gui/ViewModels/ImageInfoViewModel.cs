@@ -22,9 +22,9 @@ namespace Aaru.Gui.ViewModels
     public class ImageInfoViewModel : ViewModelBase
     {
         readonly IMediaImage _imageFormat;
+        readonly Window      _view;
         IFilter              _filter;
         string               _imagePath;
-        readonly Window      _view;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -189,7 +189,6 @@ namespace Aaru.Gui.ViewModels
                                                     scsiModeSense6, scsiModeSense10, null, _view)
             };
 
-            /* TODO: tabAtaInfo
             byte[] ataIdentify   = null;
             byte[] atapiIdentify = null;
 
@@ -201,10 +200,11 @@ namespace Aaru.Gui.ViewModels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
                 atapiIdentify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
-            var tabAtaInfo = new tabAtaInfo();
-            tabAtaInfo.LoadData(ataIdentify, atapiIdentify, null);
-            tabInfos.Pages.Add(tabAtaInfo);
-*/
+            AtaInfo = new AtaInfoTab
+            {
+                DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, _view)
+            };
+
             /* TODO: tabCompactDiscInfo
             byte[]                 toc                  = null;
             TOC.CDTOC?             decodedToc           = null;
@@ -648,8 +648,8 @@ namespace Aaru.Gui.ViewModels
             }
         }
 
-        public ScsiInfoTab ScsiInfo { get; }
-
+        public ScsiInfoTab                             ScsiInfo                  { get; }
+        public AtaInfoTab                              AtaInfo                   { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }

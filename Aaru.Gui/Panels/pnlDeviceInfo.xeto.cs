@@ -87,7 +87,7 @@ namespace Aaru.Gui.Panels
                 tabPcmciaInfo.LoadData(devInfo.Cis);
                 tabInfos.Pages.Add(tabPcmciaInfo);
             }
-
+/*
             if(devInfo.AtaIdentify   != null ||
                devInfo.AtapiIdentify != null)
             {
@@ -96,7 +96,7 @@ namespace Aaru.Gui.Panels
 
                 tabInfos.Pages.Add(tabAtaInfo);
             }
-
+*/
             /*
             if(devInfo.ScsiInquiryData != null)
             {
