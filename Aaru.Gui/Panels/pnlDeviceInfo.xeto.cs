@@ -32,12 +32,10 @@
 
 using System;
 using System.IO;
-using Aaru.Decoders.SCSI.SSC;
-using Aaru.Devices;
+using Aaru.Core.Devices.Info;
 using Aaru.Gui.Tabs;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
 namespace Aaru.Gui.Panels
 {
@@ -80,23 +78,24 @@ namespace Aaru.Gui.Panels
                 txtFirewireModel.Text        = devInfo.FireWireModelName;
                 txtFirewireGuid.Text         = $"{devInfo.FireWireGuid:X16}";
             }
+            /*
+                        if(devInfo.IsPcmcia)
+                        {
+                            var tabPcmciaInfo = new tabPcmciaInfo();
+                            tabPcmciaInfo.LoadData(devInfo.Cis);
+                            tabInfos.Pages.Add(tabPcmciaInfo);
+                        }
+            */
+            /*
+                        if(devInfo.AtaIdentify   != null ||
+                           devInfo.AtapiIdentify != null)
+                        {
+                            var tabAtaInfo = new tabAtaInfo();
+                            tabAtaInfo.LoadData(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError);
 
-            if(devInfo.IsPcmcia)
-            {
-                var tabPcmciaInfo = new tabPcmciaInfo();
-                tabPcmciaInfo.LoadData(devInfo.Cis);
-                tabInfos.Pages.Add(tabPcmciaInfo);
-            }
-/*
-            if(devInfo.AtaIdentify   != null ||
-               devInfo.AtapiIdentify != null)
-            {
-                var tabAtaInfo = new tabAtaInfo();
-                tabAtaInfo.LoadData(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError);
-
-                tabInfos.Pages.Add(tabAtaInfo);
-            }
-*/
+                            tabInfos.Pages.Add(tabAtaInfo);
+                        }
+            */
             /*
             if(devInfo.ScsiInquiryData != null)
             {

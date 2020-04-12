@@ -1,69 +1,32 @@
-// /***************************************************************************
-// Aaru Data Preservation Suite
-// ----------------------------------------------------------------------------
-//
-// Filename       : tabPcmciaInfo.xeto.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// Component      : Device information.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Implements the PCMCIA device information.
-//
-// --[ License ] --------------------------------------------------------------
-//
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General public License as
-//     published by the Free Software Foundation, either version 3 of the
-//     License, or (at your option) any later version.
-//
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General public License for more details.
-//
-//     You should have received a copy of the GNU General public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// ----------------------------------------------------------------------------
-// Copyright © 2011-2020 Natalia Portillo
-// ****************************************************************************/
-
-using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Reactive;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
-using Eto.Forms;
-using Eto.Serialization.Xaml;
-using Tuple = Aaru.Decoders.PCMCIA.Tuple;
+using Aaru.Gui.Models;
+using Avalonia.Controls;
+using ReactiveUI;
 
-namespace Aaru.Gui.Tabs
+namespace Aaru.Gui.ViewModels
 {
-    public class tabPcmciaInfo : TabPage
+    public class PcmciaInfoViewModel : ViewModelBase
     {
-        byte[] cis;
+        string          _pcmciaCisText;
+        PcmciaCisModel  _selectedCis;
+        readonly Window _view;
+        readonly byte[] cis;
 
-        public tabPcmciaInfo() => XamlReader.Load(this);
-
-        internal void LoadData(byte[] pcmciaCis)
+        internal PcmciaInfoViewModel(byte[] pcmciaCis, Window view)
         {
             if(pcmciaCis == null)
                 return;
 
-            cis     = pcmciaCis;
-            Visible = true;
+            cis                  = pcmciaCis;
+            cisList              = new ObservableCollection<PcmciaCisModel>();
+            SavePcmciaCisCommand = ReactiveCommand.Create(ExecuteSavePcmciaCisCommand);
 
-            var cisList = new TreeGridItemCollection();
-
-            treePcmcia.Columns.Add(new GridColumn
-            {
-                HeaderText = "CIS", DataCell = new TextBoxCell(0)
-            });
-
-            treePcmcia.AllowMultipleSelection = false;
-            treePcmcia.ShowHeader             = false;
-            treePcmcia.DataStore              = cisList;
+            _view = view;
 
             Tuple[] tuples = CIS.GetTuples(cis);
 
@@ -138,58 +101,60 @@ namespace Aaru.Gui.Tabs
                             break;
                     }
 
-                    cisList.Add(new TreeGridItem
+                    cisList.Add(new PcmciaCisModel
                     {
-                        Values = new object[]
-                        {
-                            tupleCode, tupleDescription
-                        }
+                        Code = tupleCode, Description = tupleDescription
                     });
                 }
             else
                 AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
         }
 
-        protected void OnTreePcmciaSelectedItemChanged(object sender, EventArgs e)
-        {
-            if(!(treePcmcia.SelectedItem is TreeGridItem item))
-                return;
+        public ObservableCollection<PcmciaCisModel> cisList { get; }
 
-            txtPcmciaCis.Text = item.Values[1] as string;
+        public string PcmciaCisText
+        {
+            get => _pcmciaCisText;
+            set => this.RaiseAndSetIfChanged(ref _pcmciaCisText, value);
         }
 
-        protected void OnBtnSavePcmciaCis(object sender, EventArgs e)
+        public PcmciaCisModel SelectedCis
+        {
+            get => _selectedCis;
+            set
+            {
+                if(_selectedCis == value)
+                    return;
+
+                PcmciaCisText = value?.Description;
+                this.RaiseAndSetIfChanged(ref _selectedCis, value);
+            }
+        }
+
+        public ReactiveCommand<Unit, Unit> SavePcmciaCisCommand { get; }
+
+        async void ExecuteSavePcmciaCisCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
-            dlgSaveBinary.Filters.Add(new FileFilter
+            dlgSaveBinary.Filters.Add(new FileDialogFilter
             {
-                Extensions = new[]
+                Extensions = new List<string>(new[]
                 {
                     "*.bin"
-                },
+                }),
                 Name = "Binary"
             });
 
-            DialogResult result = dlgSaveBinary.ShowDialog(this);
+            string result = await dlgSaveBinary.ShowAsync(_view);
 
-            if(result != DialogResult.Ok)
+            if(result is null)
                 return;
 
-            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(result, FileMode.Create);
             saveFs.Write(cis, 0, cis.Length);
 
             saveFs.Close();
         }
-
-        #region XAML controls
-        #pragma warning disable 169
-        #pragma warning disable 649
-        TreeGridView treePcmcia;
-        TextArea     txtPcmciaCis;
-        Button       btnSavePcmciaCis;
-        #pragma warning restore 169
-        #pragma warning restore 649
-        #endregion
     }
 }

@@ -150,6 +150,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding BlurayInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!PcmciaInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="PCMCIA" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding PcmciaInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">
