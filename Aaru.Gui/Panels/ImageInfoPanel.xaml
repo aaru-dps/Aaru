@@ -126,6 +126,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding AtaInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!CompactDiscInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="CompactDisc" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding CompactDiscInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

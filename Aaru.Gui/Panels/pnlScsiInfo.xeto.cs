@@ -120,7 +120,7 @@ namespace Aaru.Gui.Panels
 
             tabSsc.Visible = grpDensitySupport.Visible || grpMediumSupport.Visible || btnSaveDensitySupport.Visible ||
                              btnSaveMediumSupport.Visible;
-
+/*
             var tabCompactDiscInfo = new tabCompactDiscInfo();
 
             tabCompactDiscInfo.LoadData(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation, scsiInfo.Session,
@@ -131,7 +131,7 @@ namespace Aaru.Gui.Panels
                                         this.scsiInfo.Mcn, this.scsiInfo.Isrcs);
 
             tabInfos.Pages.Add(tabCompactDiscInfo);
-
+*/
             var tabDvdInfo = new tabDvdInfo();
 
             tabDvdInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,

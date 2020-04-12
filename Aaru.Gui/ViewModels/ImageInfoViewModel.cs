@@ -2,10 +2,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Gui.Models;
 using Aaru.Gui.Tabs;
@@ -16,6 +18,7 @@ using Avalonia.Platform;
 using ReactiveUI;
 using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.Gui.ViewModels
 {
@@ -205,7 +208,6 @@ namespace Aaru.Gui.ViewModels
                 DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, _view)
             };
 
-            /* TODO: tabCompactDiscInfo
             byte[]                 toc                  = null;
             TOC.CDTOC?             decodedToc           = null;
             byte[]                 fullToc              = null;
@@ -331,13 +333,13 @@ namespace Aaru.Gui.ViewModels
                 mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
             }
 
-            var tabCompactDiscInfo = new tabCompactDiscInfo();
+            CompactDiscInfo = new CompactDiscInfoTab
+            {
+                DataContext = new CompactDiscInfoViewModel(toc, atip, null, null, fullToc, pma, cdtext, decodedToc,
+                                                           decodedAtip, null, decodedFullToc, decodedCdText, null,
+                                                           mediaCatalogueNumber, null, _view)
+            };
 
-            tabCompactDiscInfo.LoadData(toc, atip, null, null, fullToc, pma, cdtext, decodedToc, decodedAtip, null,
-                                        decodedFullToc, decodedCdText, null, mediaCatalogueNumber, null);
-
-            tabInfos.Pages.Add(tabCompactDiscInfo);
-*/
             /* TODO: tabDvdInfo
             byte[]                         dvdPfi                    = null;
             byte[]                         dvdDmi                    = null;
@@ -650,6 +652,7 @@ namespace Aaru.Gui.ViewModels
 
         public ScsiInfoTab                             ScsiInfo                  { get; }
         public AtaInfoTab                              AtaInfo                   { get; }
+        public CompactDiscInfoTab                      CompactDiscInfo           { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }

@@ -1250,6 +1250,7 @@
           <e p="FileSystemModel.cs" t="Include" />
           <e p="ImageModel.cs" t="Include" />
           <e p="ImagesRootModel.cs" t="Include" />
+          <e p="IsrcModel.cs" t="Include" />
           <e p="MediaStatsModel.cs" t="Include" />
           <e p="NameCountModel.cs" t="Include" />
           <e p="PartitionModel.cs" t="Include" />
@@ -1276,12 +1277,12 @@
         <e p="Tabs" t="Include">
           <e p="AtaInfoTab.xaml" t="Include" />
           <e p="AtaInfoTab.xaml.cs" t="Include" />
+          <e p="CompactDiscInfoTab.xaml" t="Include" />
+          <e p="CompactDiscInfoTab.xaml.cs" t="Include" />
           <e p="ScsiInfoTab.xaml" t="Include" />
           <e p="ScsiInfoTab.xaml.cs" t="Include" />
           <e p="tabBlurayInfo.xeto" t="Include" />
           <e p="tabBlurayInfo.xeto.cs" t="Include" />
-          <e p="tabCompactDiscInfo.xeto" t="Include" />
-          <e p="tabCompactDiscInfo.xeto.cs" t="Include" />
           <e p="tabDvdInfo.xeto" t="Include" />
           <e p="tabDvdInfo.xeto.cs" t="Include" />
           <e p="tabDvdWritableInfo.xeto" t="Include" />
@@ -1297,6 +1298,7 @@
         <e p="ViewModels" t="Include">
           <e p="AboutDialogViewModel.cs" t="Include" />
           <e p="AtaInfoViewModel.cs" t="Include" />
+          <e p="CompactDiscInfoViewModel.cs" t="Include" />
           <e p="ConsoleWindowViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
