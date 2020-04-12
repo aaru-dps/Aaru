@@ -156,6 +156,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding PcmciaInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!SdMmcInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="SD / MMC" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding SdMmcInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

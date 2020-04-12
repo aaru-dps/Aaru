@@ -535,74 +535,74 @@ namespace Aaru.Gui.ViewModels
                 DataContext = new PcmciaInfoViewModel(pcmciaCis, _view)
             };
 
-            /* TODO: SD/MMC
-                        DeviceType deviceType  = DeviceType.Unknown;
-                        byte[]     cid         = null;
-                        byte[]     csd         = null;
-                        byte[]     ocr         = null;
-                        byte[]     extendedCsd = null;
-                        byte[]     scr         = null;
+            DeviceType deviceType  = DeviceType.Unknown;
+            byte[]     cid         = null;
+            byte[]     csd         = null;
+            byte[]     ocr         = null;
+            byte[]     extendedCsd = null;
+            byte[]     scr         = null;
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CID))
-                        {
-                            cid        = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
-                            deviceType = DeviceType.SecureDigital;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CID))
+            {
+                cid        = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
+                deviceType = DeviceType.SecureDigital;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CSD))
-                        {
-                            csd        = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
-                            deviceType = DeviceType.SecureDigital;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CSD))
+            {
+                csd        = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
+                deviceType = DeviceType.SecureDigital;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_OCR))
-                        {
-                            ocr        = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
-                            deviceType = DeviceType.SecureDigital;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_OCR))
+            {
+                ocr        = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
+                deviceType = DeviceType.SecureDigital;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_SCR))
-                        {
-                            scr        = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
-                            deviceType = DeviceType.SecureDigital;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_SCR))
+            {
+                scr        = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
+                deviceType = DeviceType.SecureDigital;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CID))
-                        {
-                            cid        = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
-                            deviceType = DeviceType.MMC;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CID))
+            {
+                cid        = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
+                deviceType = DeviceType.MMC;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CSD))
-                        {
-                            csd        = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
-                            deviceType = DeviceType.MMC;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CSD))
+            {
+                csd        = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
+                deviceType = DeviceType.MMC;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_OCR))
-                        {
-                            ocr        = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
-                            deviceType = DeviceType.MMC;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_OCR))
+            {
+                ocr        = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
+                deviceType = DeviceType.MMC;
+            }
 
-                        if(imageFormat.Info.ReadableMediaTags != null &&
-                           imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_ExtendedCSD))
-                        {
-                            extendedCsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
-                            deviceType  = DeviceType.MMC;
-                        }
+            if(imageFormat.Info.ReadableMediaTags != null &&
+               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_ExtendedCSD))
+            {
+                extendedCsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
+                deviceType  = DeviceType.MMC;
+            }
 
-                        var tabSdMmcInfo = new tabSdMmcInfo();
-                        tabSdMmcInfo.LoadData(deviceType, cid, csd, ocr, extendedCsd, scr);
-                        tabInfos.Pages.Add(tabSdMmcInfo);
-            */
+            SdMmcInfo = new SdMmcInfoTab
+            {
+                DataContext = new SdMmcInfoViewModel(deviceType, cid, csd, ocr, extendedCsd, scr)
+            };
+
             if(imageFormat is IOpticalMediaImage opticalMediaImage)
             {
                 try
@@ -652,6 +652,7 @@ namespace Aaru.Gui.ViewModels
         public DvdWritableInfoTab                      DvdWritableInfo           { get; }
         public BlurayInfoTab                           BlurayInfo                { get; }
         public PcmciaInfoTab                           PcmciaInfo                { get; }
+        public SdMmcInfoTab                            SdMmcInfo                 { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }

@@ -311,13 +311,14 @@ namespace Aaru.Gui.Panels
                 }
             }
             */
-
+            /*
             var tabSdMmcInfo = new tabSdMmcInfo();
 
             tabSdMmcInfo.LoadData(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR, devInfo.ExtendedCSD,
                                   devInfo.SCR);
 
             tabInfos.Pages.Add(tabSdMmcInfo);
+            */
         }
 
         protected void OnBtnSaveUsbDescriptors(object sender, EventArgs e)
