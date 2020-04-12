@@ -101,10 +101,8 @@ namespace Aaru.Core
 
                     for(ulong i = currentTrack.TrackStartSector; i <= currentTrack.TrackEndSector; i++)
                     {
-                        UpdateProgress2Event?.
-                            Invoke($"Entropying sector {i             + 1} of track {currentTrack.TrackSequence}",
-                                   (long)(currentTrack.TrackEndSector - (i + 1)),
-                                   (long)trackEntropy.Sectors);
+                        UpdateProgress2Event?.Invoke($"Entropying sector {i + 1} of track {currentTrack.TrackSequence}",
+                                                     (long)(i               + 1), (long)currentTrack.TrackEndSector);
 
                         byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.TrackSequence);
 
