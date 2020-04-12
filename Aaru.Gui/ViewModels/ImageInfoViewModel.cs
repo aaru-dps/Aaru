@@ -30,9 +30,9 @@ namespace Aaru.Gui.ViewModels
         readonly IMediaImage _imageFormat;
         readonly Window      _view;
         IFilter              _filter;
-
-        ImageChecksumWindow _imageChecksumWindow;
-        string              _imagePath;
+        ImageChecksumWindow  _imageChecksumWindow;
+        ImageEntropyWindow   _imageEntropyWindow;
+        string               _imagePath;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -705,23 +705,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteEntropyCommand()
         {
-            /* TODO: frmImageEntropy
-            if(frmImageEntropy != null)
+            if(_imageEntropyWindow != null)
             {
-                frmImageEntropy.Show();
+                _imageEntropyWindow.Show();
 
                 return;
             }
 
-            frmImageEntropy = new frmImageEntropy(imageFormat);
+            _imageEntropyWindow             = new ImageEntropyWindow();
+            _imageEntropyWindow.DataContext = new ImageEntropyViewModel(_imageFormat, _imageEntropyWindow);
 
-            frmImageEntropy.Closed += (s, ea) =>
+            _imageEntropyWindow.Closed += (sender, args) =>
             {
-                frmImageEntropy = null;
+                _imageEntropyWindow = null;
             };
 
-            frmImageEntropy.Show();
-            */
+            _imageEntropyWindow.Show();
         }
 
         protected void ExecuteVerifyCommand()

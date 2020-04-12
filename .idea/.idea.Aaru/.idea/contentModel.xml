@@ -1225,8 +1225,6 @@
           <e p="frmDump.xeto.cs" t="Include" />
           <e p="frmImageConvert.xeto" t="Include" />
           <e p="frmImageConvert.xeto.cs" t="Include" />
-          <e p="frmImageEntropy.xeto" t="Include" />
-          <e p="frmImageEntropy.xeto.cs" t="Include" />
           <e p="frmImageSidecar.xeto" t="Include" />
           <e p="frmImageSidecar.xeto.cs" t="Include" />
           <e p="frmImageVerify.xeto" t="Include" />
@@ -1258,6 +1256,7 @@
           <e p="PluginModel.cs" t="Include" />
           <e p="RootModel.cs" t="Include" />
           <e p="ScsiPageModel.cs" t="Include" />
+          <e p="TrackEntropyModel.cs" t="Include" />
         </e>
         <e p="Panels" t="Include">
           <e p="ImageInfoPanel.xaml" t="Include" />
@@ -1305,6 +1304,7 @@
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
           <e p="ImageChecksumViewModel.cs" t="Include" />
+          <e p="ImageEntropyViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
@@ -1327,6 +1327,8 @@
           <e p="EncodingsDialog.xaml.cs" t="Include" />
           <e p="ImageChecksumWindow.xaml" t="Include" />
           <e p="ImageChecksumWindow.xaml.cs" t="Include" />
+          <e p="ImageEntropyWindow.xaml" t="Include" />
+          <e p="ImageEntropyWindow.xaml.cs" t="Include" />
           <e p="LicenseDialog.xaml" t="Include" />
           <e p="LicenseDialog.xaml.cs" t="Include" />
           <e p="MainWindow.xaml" t="Include" />
