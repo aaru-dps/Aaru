@@ -35,7 +35,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" /><ColumnDefinition Width="5" /><ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
-            <TreeView Items="{Binding TreeRoot}">
+            <TreeView Items="{Binding TreeRoot}" SelectedItem="{Binding TreeViewSelectedItem}">
                 <TreeView.DataTemplates>
                     <TreeDataTemplate DataType="models:DevicesRootModel" ItemsSource="{Binding Devices}">
                         <StackPanel Orientation="Horizontal">
@@ -77,8 +77,9 @@
                 </TreeView.DataTemplates>
             </TreeView>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-            <TextBlock Grid.Column="2" Text="{Binding Greeting}" HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
+            <ContentControl Grid.Column="2" Content="{Binding ContentPanel}" HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+                            VerticalContentAlignment="Stretch" />
         </Grid>
     </DockPanel>
 </Window>

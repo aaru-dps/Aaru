@@ -1,294 +1,151 @@
-// /***************************************************************************
-// Aaru Data Preservation Suite
-// ----------------------------------------------------------------------------
-//
-// Filename       : pnlImageInfo.xeto.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// Component      : Image information.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Implements the image information panel.
-//
-// --[ License ] --------------------------------------------------------------
-//
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General public License as
-//     published by the Free Software Foundation, either version 3 of the
-//     License, or (at your option) any later version.
-//
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General public License for more details.
-//
-//     You should have received a copy of the GNU General public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-// ----------------------------------------------------------------------------
-// Copyright © 2011-2020 Natalia Portillo
-// ****************************************************************************/
-
 using System;
-using System.IO;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
+using System.Reactive;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Aaru.CommonTypes.Structs.Devices.SCSI;
-using Aaru.Decoders.CD;
-using Aaru.Decoders.DVD;
-using Aaru.Decoders.SCSI;
-using Aaru.Decoders.Xbox;
-using Aaru.Gui.Controls;
-using Aaru.Gui.Forms;
-using Aaru.Gui.Tabs;
-using Eto.Drawing;
-using Eto.Forms;
-using Eto.Serialization.Xaml;
+using Aaru.Gui.Models;
+using Avalonia;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using ReactiveUI;
 using Schemas;
-using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
-using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.Gui.Panels
+namespace Aaru.Gui.ViewModels
 {
-    public class pnlImageInfo : Panel
+    public class ImageInfoViewModel
     {
-        readonly IFilter     filter;
-        readonly IMediaImage imageFormat;
-        readonly string      imagePath;
-        frmDecodeMediaTags   frmDecodeMediaTags;
-        frmImageChecksum     frmImageChecksum;
-        frmImageConvert      frmImageConvert;
-        frmImageEntropy      frmImageEntropy;
-        frmImageSidecar      frmImageSidecar;
-        frmImageVerify       frmImageVerify;
-        frmPrintHex          frmPrintHex;
+        readonly IMediaImage _imageFormat;
+        IFilter              _filter;
+        string               _imagePath;
 
-        public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
+        public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat)
+
         {
-            this.imagePath   = imagePath;
-            this.filter      = filter;
-            this.imageFormat = imageFormat;
-            XamlReader.Load(this);
+            _imagePath   = imagePath;
+            _filter      = filter;
+            _imageFormat = imageFormat;
+            IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            MediaTagsList         = new ObservableCollection<string>();
+            SectorTagsList        = new ObservableCollection<string>();
+            Sessions              = new ObservableCollection<Session>();
+            Tracks                = new ObservableCollection<Track>();
+            DumpHardwareList      = new ObservableCollection<DumpHardwareModel>();
+            EntropyCommand        = ReactiveCommand.Create(ExecuteEntropyCommand);
+            VerifyCommand         = ReactiveCommand.Create(ExecuteVerifyCommand);
+            ChecksumCommand       = ReactiveCommand.Create(ExecuteChecksumCommand);
+            ConvertCommand        = ReactiveCommand.Create(ExecuteConvertCommand);
+            CreateSidecarCommand  = ReactiveCommand.Create(ExecuteCreateSidecarCommand);
+            ViewSectorsCommand    = ReactiveCommand.Create(ExecuteViewSectorsCommand);
+            DecodeMediaTagCommand = ReactiveCommand.Create(ExecuteDecodeMediaTagCommand);
 
-            Stream logo =
-                ResourceHandler.GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
+            var genericHddIcon =
+                new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
 
-            /*            if(logo != null)
-                        {
-                            svgMediaLogo.SvgStream = logo;
-                            svgMediaLogo.Visible   = true;
-                        }
-                        else
-                        {*/
-            logo = ResourceHandler.GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+            var genericOpticalIcon =
+                new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
 
-            if(logo != null)
-            {
-                imgMediaLogo.Image   = new Bitmap(logo);
-                imgMediaLogo.Visible = true;
-            }
+            var genericFolderIcon =
+                new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
-            //}
+            var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{imageFormat.Info.MediaType}.png");
 
-            lblImagePath.Text   = $"Path: {imagePath}";
-            lblFilter.Text      = $"Filter: {filter.Name}";
-            lblImageFormat.Text = $"Image format identified by {imageFormat.Name} ({imageFormat.Id}).";
+            MediaLogo = assets.Exists(mediaResource)
+                            ? new Bitmap(assets.Open(mediaResource))
+                            : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+                                ? genericHddIcon
+                                : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                                    ? genericOpticalIcon
+                                    : genericFolderIcon;
 
-            lblImageFormat.Text = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
-                                      ? $"Format: {imageFormat.Format} version {imageFormat.Info.Version}"
-                                      : $"Format: {imageFormat.Format}";
+            ImagePathText       = $"Path: {imagePath}";
+            FilterText          = $"Filter: {filter.Name}";
+            ImageIdentifiedText = $"Image format identified by {imageFormat.Name} ({imageFormat.Id}).";
 
-            lblImageSize.Text = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
+            ImageFormatText = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
+                                  ? $"Format: {imageFormat.Format} version {imageFormat.Info.Version}"
+                                  : $"Format: {imageFormat.Format}";
 
-            lblSectors.Text =
+            ImageSizeText = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
+
+            SectorsText =
                 $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
 
-            lblMediaType.Text =
+            MediaTypeText =
                 $"Contains a media of type {imageFormat.Info.MediaType} and XML type {imageFormat.Info.XmlMediaType}";
 
-            lblHasPartitions.Text = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
-            lblHasSessions.Text   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
+            HasPartitionsText = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
+            HasSessionsText   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
-            {
-                lblApplication.Visible = true;
-
-                lblApplication.Text = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
-                                          ? $"Was created with {imageFormat.Info.Application} version {imageFormat.Info.ApplicationVersion}"
-                                          : $"Was created with {imageFormat.Info.Application}";
-            }
+                ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
+                                      ? $"Was created with {imageFormat.Info.Application} version {imageFormat.Info.ApplicationVersion}"
+                                      : $"Was created with {imageFormat.Info.Application}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
-            {
-                lblCreator.Visible = true;
-                lblCreator.Text    = $"Created by: {imageFormat.Info.Creator}";
-            }
+                CreatorText = $"Created by: {imageFormat.Info.Creator}";
 
             if(imageFormat.Info.CreationTime != DateTime.MinValue)
-            {
-                lblCreationTime.Visible = true;
-                lblCreationTime.Text    = $"Created on {imageFormat.Info.CreationTime}";
-            }
+                CreationTimeText = $"Created on {imageFormat.Info.CreationTime}";
 
             if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
-            {
-                lblLastModificationTime.Visible = true;
-                lblLastModificationTime.Text    = $"Last modified on {imageFormat.Info.LastModificationTime}";
-            }
-
-            if(!string.IsNullOrWhiteSpace(imageFormat.Info.Comments))
-            {
-                grpComments.Visible = true;
-                txtComments.Text    = imageFormat.Info.Comments;
-            }
+                LastModificationTimeText = $"Last modified on {imageFormat.Info.LastModificationTime}";
 
             if(imageFormat.Info.MediaSequence     != 0 &&
                imageFormat.Info.LastMediaSequence != 0)
-            {
-                lblMediaSequence.Visible = true;
-
-                lblMediaSequence.Text =
+                MediaSequenceText =
                     $"Media is number {imageFormat.Info.MediaSequence} on a set of {imageFormat.Info.LastMediaSequence} medias";
-            }
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
-            {
-                lblMediaTitle.Visible = true;
-                lblMediaTitle.Text    = $"Media title: {imageFormat.Info.MediaTitle}";
-            }
+                MediaTitleText = $"Media title: {imageFormat.Info.MediaTitle}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
-            {
-                lblMediaManufacturer.Visible = true;
-                lblMediaManufacturer.Text    = $"Media manufacturer: {imageFormat.Info.MediaManufacturer}";
-            }
+                MediaManufacturerText = $"Media manufacturer: {imageFormat.Info.MediaManufacturer}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
-            {
-                lblMediaModel.Visible = true;
-                lblMediaModel.Text    = $"Media model: {imageFormat.Info.MediaModel}";
-            }
+                MediaModelText = $"Media model: {imageFormat.Info.MediaModel}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
-            {
-                lblMediaSerialNumber.Visible = true;
-                lblMediaSerialNumber.Text    = $"Media serial number: {imageFormat.Info.MediaSerialNumber}";
-            }
+                MediaSerialNumberText = $"Media serial number: {imageFormat.Info.MediaSerialNumber}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
-            {
-                lblMediaBarcode.Visible = true;
-                lblMediaBarcode.Text    = $"Media barcode: {imageFormat.Info.MediaBarcode}";
-            }
+                MediaBarcodeText = $"Media barcode: {imageFormat.Info.MediaBarcode}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
-            {
-                lblMediaPartNumber.Visible = true;
-                lblMediaPartNumber.Text    = $"Media part number: {imageFormat.Info.MediaPartNumber}";
-            }
+                MediaPartNumberText = $"Media part number: {imageFormat.Info.MediaPartNumber}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
-            {
-                lblDriveManufacturer.Visible = true;
-                lblDriveManufacturer.Text    = $"Drive manufacturer: {imageFormat.Info.DriveManufacturer}";
-            }
+                DriveManufacturerText = $"Drive manufacturer: {imageFormat.Info.DriveManufacturer}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
-            {
-                lblDriveModel.Visible = true;
-                lblDriveModel.Text    = $"Drive model: {imageFormat.Info.DriveModel}";
-            }
+                DriveModelText = $"Drive model: {imageFormat.Info.DriveModel}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
-            {
-                lblDriveSerialNumber.Visible = true;
-                lblDriveSerialNumber.Text    = $"Drive serial number: {imageFormat.Info.DriveSerialNumber}";
-            }
+                DriveSerialNumberText = $"Drive serial number: {imageFormat.Info.DriveSerialNumber}";
 
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
-            {
-                lblDriveFirmwareRevision.Visible = true;
-                lblDriveFirmwareRevision.Text    = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
-            }
+                DriveFirmwareRevisionText = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
 
             if(imageFormat.Info.Cylinders       > 0                         &&
                imageFormat.Info.Heads           > 0                         &&
                imageFormat.Info.SectorsPerTrack > 0                         &&
                imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
                (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
-            {
-                lblMediaGeometry.Visible = true;
-
-                lblMediaGeometry.Text =
+                MediaGeometryText =
                     $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
-            }
-
-            grpMediaInfo.Visible = lblMediaSequence.Visible     || lblMediaTitle.Visible ||
-                                   lblMediaManufacturer.Visible ||
-                                   lblMediaModel.Visible        || lblMediaSerialNumber.Visible ||
-                                   lblMediaBarcode.Visible      ||
-                                   lblMediaPartNumber.Visible;
-
-            grpDriveInfo.Visible = lblDriveManufacturer.Visible || lblDriveModel.Visible            ||
-                                   lblDriveSerialNumber.Visible || lblDriveFirmwareRevision.Visible ||
-                                   lblMediaGeometry.Visible;
 
             if(imageFormat.Info.ReadableMediaTags       != null &&
                imageFormat.Info.ReadableMediaTags.Count > 0)
-            {
-                var mediaTagList = new TreeGridItemCollection();
-
-                treeMediaTags.Columns.Add(new GridColumn
-                {
-                    HeaderText = "Tag", DataCell = new TextBoxCell(0)
-                });
-
-                treeMediaTags.AllowMultipleSelection = false;
-                treeMediaTags.ShowHeader             = false;
-                treeMediaTags.DataStore              = mediaTagList;
-
                 foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
-                    mediaTagList.Add(new TreeGridItem
-                    {
-                        Values = new object[]
-                        {
-                            tag.ToString()
-                        }
-                    });
-
-                grpMediaTags.Visible = true;
-            }
+                    MediaTagsList.Add(tag.ToString());
 
             if(imageFormat.Info.ReadableSectorTags       != null &&
                imageFormat.Info.ReadableSectorTags.Count > 0)
-            {
-                var sectorTagList = new TreeGridItemCollection();
-
-                treeSectorTags.Columns.Add(new GridColumn
-                {
-                    HeaderText = "Tag", DataCell = new TextBoxCell(0)
-                });
-
-                treeSectorTags.AllowMultipleSelection = false;
-                treeSectorTags.ShowHeader             = false;
-                treeSectorTags.DataStore              = sectorTagList;
-
                 foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
-                    sectorTagList.Add(new TreeGridItem
-                    {
-                        Values = new object[]
-                        {
-                            tag.ToString()
-                        }
-                    });
+                    SectorTagsList.Add(tag.ToString());
 
-                grpSectorTags.Visible = true;
-            }
-
+            /* TODO: tabScsiInfo
             PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiInquiryData = null;
             Inquiry?              scsiInquiry     = null;
@@ -326,7 +183,9 @@ namespace Aaru.Gui.Panels
                                  scsiModeSense10, null);
 
             tabInfos.Pages.Add(tabScsiInfo);
+*/
 
+            /* TODO: tabAtaInfo
             byte[] ataIdentify   = null;
             byte[] atapiIdentify = null;
 
@@ -341,7 +200,8 @@ namespace Aaru.Gui.Panels
             var tabAtaInfo = new tabAtaInfo();
             tabAtaInfo.LoadData(ataIdentify, atapiIdentify, null);
             tabInfos.Pages.Add(tabAtaInfo);
-
+*/
+            /* TODO: tabCompactDiscInfo
             byte[]                 toc                  = null;
             TOC.CDTOC?             decodedToc           = null;
             byte[]                 fullToc              = null;
@@ -473,7 +333,8 @@ namespace Aaru.Gui.Panels
                                         decodedFullToc, decodedCdText, null, mediaCatalogueNumber, null);
 
             tabInfos.Pages.Add(tabCompactDiscInfo);
-
+*/
+            /* TODO: tabDvdInfo
             byte[]                         dvdPfi                    = null;
             byte[]                         dvdDmi                    = null;
             byte[]                         dvdCmi                    = null;
@@ -510,6 +371,8 @@ namespace Aaru.Gui.Panels
                                 null, decodedPfi);
 
             tabInfos.Pages.Add(tabDvdInfo);
+*/
+            /* TODO: tabDvdWritableinfo
 
             byte[] dvdRamDds                     = null;
             byte[] dvdRamCartridgeStatus         = null;
@@ -591,6 +454,8 @@ namespace Aaru.Gui.Panels
                                         null, dvdPlusAdip, dvdPlusDcb);
 
             tabInfos.Pages.Add(tabDvdWritableInfo);
+*/
+            /* TODO: tabBlurayInfo
 
             byte[] blurayBurstCuttingArea     = null;
             byte[] blurayCartridgeStatus      = null;
@@ -634,6 +499,8 @@ namespace Aaru.Gui.Panels
                                    bluraySpareAreaInformation, blurayPowResources, blurayTrackResources, null, null);
 
             tabInfos.Pages.Add(tabBlurayInfo);
+*/
+            /* TODO: tabXboxInfo
 
             byte[]             xboxDmi                   = null;
             byte[]             xboxSecuritySector        = null;
@@ -653,6 +520,8 @@ namespace Aaru.Gui.Panels
             var tabXboxInfo = new tabXboxInfo();
             tabXboxInfo.LoadData(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector);
             tabInfos.Pages.Add(tabXboxInfo);
+*/
+            /* TODO: tabPcmciaInfo
 
             byte[] pcmciaCis = null;
 
@@ -663,6 +532,8 @@ namespace Aaru.Gui.Panels
             var tabPcmciaInfo = new tabPcmciaInfo();
             tabPcmciaInfo.LoadData(pcmciaCis);
             tabInfos.Pages.Add(tabPcmciaInfo);
+*/
+            /* TODO: tabSdMmcInfo
 
             DeviceType deviceType  = DeviceType.Unknown;
             byte[]     cid         = null;
@@ -730,57 +601,15 @@ namespace Aaru.Gui.Panels
             var tabSdMmcInfo = new tabSdMmcInfo();
             tabSdMmcInfo.LoadData(deviceType, cid, csd, ocr, extendedCsd, scr);
             tabInfos.Pages.Add(tabSdMmcInfo);
-
+*/
             if(imageFormat is IOpticalMediaImage opticalMediaImage)
             {
                 try
                 {
                     if(opticalMediaImage.Sessions       != null &&
                        opticalMediaImage.Sessions.Count > 0)
-                    {
-                        var sessionList = new TreeGridItemCollection();
-
-                        treeSessions.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Session", DataCell = new TextBoxCell(0)
-                        });
-
-                        treeSessions.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "First track", DataCell = new TextBoxCell(1)
-                        });
-
-                        treeSessions.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Last track", DataCell = new TextBoxCell(2)
-                        });
-
-                        treeSessions.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Start", DataCell = new TextBoxCell(3)
-                        });
-
-                        treeSessions.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "End", DataCell = new TextBoxCell(4)
-                        });
-
-                        treeSessions.AllowMultipleSelection = false;
-                        treeSessions.ShowHeader             = true;
-                        treeSessions.DataStore              = sessionList;
-
                         foreach(Session session in opticalMediaImage.Sessions)
-                            sessionList.Add(new TreeGridItem
-                            {
-                                Values = new object[]
-                                {
-                                    session.SessionSequence, session.StartTrack, session.EndTrack, session.StartSector,
-                                    session.EndSector
-                                }
-                            });
-
-                        tabSessions.Visible = true;
-                    }
+                            Sessions.Add(session);
                 }
                 catch
                 {
@@ -791,66 +620,8 @@ namespace Aaru.Gui.Panels
                 {
                     if(opticalMediaImage.Tracks       != null &&
                        opticalMediaImage.Tracks.Count > 0)
-                    {
-                        var tracksList = new TreeGridItemCollection();
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Track", DataCell = new TextBoxCell(0)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Type", DataCell = new TextBoxCell(1)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Bps", DataCell = new TextBoxCell(2)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Raw bps", DataCell = new TextBoxCell(3)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Subchannel", DataCell = new TextBoxCell(4)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Pregap", DataCell = new TextBoxCell(5)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "Start", DataCell = new TextBoxCell(6)
-                        });
-
-                        treeTracks.Columns.Add(new GridColumn
-                        {
-                            HeaderText = "End", DataCell = new TextBoxCell(7)
-                        });
-
-                        treeTracks.AllowMultipleSelection = false;
-                        treeTracks.ShowHeader             = true;
-                        treeTracks.DataStore              = tracksList;
-
                         foreach(Track track in opticalMediaImage.Tracks)
-                            tracksList.Add(new TreeGridItem
-                            {
-                                Values = new object[]
-                                {
-                                    track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
-                                    track.TrackRawBytesPerSector, track.TrackSubchannelType, track.TrackPregap,
-                                    track.TrackStartSector, track.TrackEndSector
-                                }
-                            });
-
-                        tabTracks.Visible = true;
-                    }
+                            Tracks.Add(track);
                 }
                 catch
                 {
@@ -858,73 +629,71 @@ namespace Aaru.Gui.Panels
                 }
             }
 
-            if(imageFormat.DumpHardware == null)
+            if(imageFormat.DumpHardware is null)
                 return;
-
-            var dumpHardwareList = new TreeGridItemCollection();
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Manufacturer", DataCell = new TextBoxCell(0)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Model", DataCell = new TextBoxCell(1)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Serial", DataCell = new TextBoxCell(2)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Software", DataCell = new TextBoxCell(3)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Version", DataCell = new TextBoxCell(4)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Operating system", DataCell = new TextBoxCell(5)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "Start", DataCell = new TextBoxCell(6)
-            });
-
-            treeDumpHardware.Columns.Add(new GridColumn
-            {
-                HeaderText = "End", DataCell = new TextBoxCell(7)
-            });
-
-            treeDumpHardware.AllowMultipleSelection = false;
-            treeDumpHardware.ShowHeader             = true;
-            treeDumpHardware.DataStore              = dumpHardwareList;
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
                 foreach(ExtentType extent in dump.Extents)
-                    dumpHardwareList.Add(new TreeGridItem
+                    DumpHardwareList.Add(new DumpHardwareModel
                     {
-                        Values = new object[]
-                        {
-                            dump.Manufacturer, dump.Model, dump.Serial, dump.Software.Name, dump.Software.Version,
-                            dump.Software.OperatingSystem, extent.Start, extent.End
-                        }
+                        Manufacturer    = dump.Manufacturer, Model             = dump.Model, Serial = dump.Serial,
+                        SoftwareName    = dump.Software.Name, SoftwareVersion  = dump.Software.Version,
+                        OperatingSystem = dump.Software.OperatingSystem, Start = extent.Start, End = extent.End
                     });
             }
-
-            tabDumpHardware.Visible = true;
         }
 
-        protected void OnBtnEntropy(object sender, EventArgs e)
+        public Bitmap                                  MediaLogo                 { get; }
+        public string                                  ImagePathText             { get; }
+        public string                                  FilterText                { get; }
+        public string                                  ImageIdentifiedText       { get; }
+        public string                                  MediaTypeText             { get; set; }
+        public string                                  SectorsText               { get; set; }
+        public string                                  HasPartitionsText         { get; set; }
+        public string                                  HasSessionsText           { get; set; }
+        public string                                  ApplicationText           { get; set; }
+        public string                                  CreatorText               { get; set; }
+        public string                                  CreationTimeText          { get; set; }
+        public string                                  LastModificationTimeText  { get; set; }
+        public string                                  MediaSequenceText         { get; set; }
+        public string                                  MediaTitleText            { get; set; }
+        public string                                  MediaManufacturerText     { get; set; }
+        public string                                  MediaModelText            { get; set; }
+        public string                                  MediaSerialNumberText     { get; set; }
+        public string                                  MediaBarcodeText          { get; set; }
+        public string                                  MediaPartNumberText       { get; set; }
+        public string                                  CommentsText              => _imageFormat.Info.Comments;
+        public string                                  DriveManufacturerText     { get; set; }
+        public string                                  DriveModelText            { get; set; }
+        public string                                  DriveSerialNumberText     { get; set; }
+        public string                                  DriveFirmwareRevisionText { get; set; }
+        public string                                  MediaGeometryText         { get; set; }
+        public ObservableCollection<string>            MediaTagsList             { get; }
+        public ObservableCollection<string>            SectorTagsList            { get; }
+        public string                                  ImageSizeText             { get; set; }
+        public string                                  ImageFormatText           { get; set; }
+        public ObservableCollection<Session>           Sessions                  { get; }
+        public ObservableCollection<Track>             Tracks                    { get; }
+        public ObservableCollection<DumpHardwareModel> DumpHardwareList          { get; }
+        public ReactiveCommand<Unit, Unit>             EntropyCommand            { get; }
+        public ReactiveCommand<Unit, Unit>             VerifyCommand             { get; }
+        public ReactiveCommand<Unit, Unit>             ChecksumCommand           { get; }
+        public ReactiveCommand<Unit, Unit>             ConvertCommand            { get; }
+        public ReactiveCommand<Unit, Unit>             CreateSidecarCommand      { get; }
+        public ReactiveCommand<Unit, Unit>             ViewSectorsCommand        { get; }
+        public ReactiveCommand<Unit, Unit>             DecodeMediaTagCommand     { get; }
+        public bool DriveInformationVisible => DriveManufacturerText != null || DriveModelText            != null ||
+                                               DriveSerialNumberText != null || DriveFirmwareRevisionText != null ||
+                                               MediaGeometryText     != null;
+        public bool MediaInformationVisible => MediaSequenceText     != null || MediaTitleText   != null ||
+                                               MediaManufacturerText != null || MediaModelText   != null ||
+                                               MediaSerialNumberText != null || MediaBarcodeText != null ||
+                                               MediaPartNumberText   != null;
+
+        protected void ExecuteEntropyCommand()
         {
+            /* TODO: frmImageEntropy
             if(frmImageEntropy != null)
             {
                 frmImageEntropy.Show();
@@ -940,10 +709,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmImageEntropy.Show();
+            */
         }
 
-        protected void OnBtnVerify(object sender, EventArgs e)
+        protected void ExecuteVerifyCommand()
         {
+            /* TODO: frmImageVerify
             if(frmImageVerify != null)
             {
                 frmImageVerify.Show();
@@ -959,10 +730,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmImageVerify.Show();
+            */
         }
 
-        protected void OnBtnChecksum(object sender, EventArgs e)
+        protected void ExecuteChecksumCommand()
         {
+            /* TODO: frmImageChecksum
             if(frmImageChecksum != null)
             {
                 frmImageChecksum.Show();
@@ -978,10 +751,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmImageChecksum.Show();
+            */
         }
 
-        protected void OnBtnConvert(object sender, EventArgs e)
+        protected void ExecuteConvertCommand()
         {
+            /* TODO: frmImageConvert
             if(frmImageConvert != null)
             {
                 frmImageConvert.Show();
@@ -997,10 +772,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmImageConvert.Show();
+            */
         }
 
-        protected void OnBtnCreateSidecar(object sender, EventArgs e)
+        protected void ExecuteCreateSidecarCommand()
         {
+            /* TODO: frmImageSidecar
             if(frmImageSidecar != null)
             {
                 frmImageSidecar.Show();
@@ -1017,10 +794,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmImageSidecar.Show();
+            */
         }
 
-        protected void OnBtnViewSectors(object sender, EventArgs e)
+        protected void ExecuteViewSectorsCommand()
         {
+            /* TODO: frmPrintHex
             if(frmPrintHex != null)
             {
                 frmPrintHex.Show();
@@ -1036,10 +815,12 @@ namespace Aaru.Gui.Panels
             };
 
             frmPrintHex.Show();
+            */
         }
 
-        protected void OnBtnDecodeMediaTags(object sender, EventArgs e)
+        protected void ExecuteDecodeMediaTagCommand()
         {
+            /* TODO: frmDecodeMediaTags
             if(frmDecodeMediaTags != null)
             {
                 frmDecodeMediaTags.Show();
@@ -1055,61 +836,7 @@ namespace Aaru.Gui.Panels
             };
 
             frmDecodeMediaTags.Show();
+            */
         }
-
-        #region XAML controls
-        #pragma warning disable 169
-        #pragma warning disable 649
-        TabControl   tabInfos;
-        Label        lblImagePath;
-        Label        lblFilter;
-        Label        lblImageFormat;
-        Label        lblApplication;
-        Label        lblImageSize;
-        Label        lblSectors;
-        Label        lblCreator;
-        Label        lblCreationTime;
-        Label        lblLastModificationTime;
-        Label        lblMediaType;
-        Label        lblHasPartitions;
-        Label        lblHasSessions;
-        Label        lblComments;
-        TextArea     txtComments;
-        Label        lblMediaSequence;
-        Label        lblMediaTitle;
-        Label        lblMediaManufacturer;
-        Label        lblMediaModel;
-        Label        lblMediaSerialNumber;
-        Label        lblMediaBarcode;
-        Label        lblMediaPartNumber;
-        Label        lblDriveManufacturer;
-        Label        lblDriveModel;
-        Label        lblDriveSerialNumber;
-        Label        lblDriveFirmwareRevision;
-        Label        lblMediaGeometry;
-        GroupBox     grpComments;
-        GroupBox     grpMediaInfo;
-        GroupBox     grpDriveInfo;
-        GroupBox     grpMediaTags;
-        TreeGridView treeMediaTags;
-        GroupBox     grpSectorTags;
-        TreeGridView treeSectorTags;
-        TabPage      tabSessions;
-        TreeGridView treeSessions;
-        TabPage      tabTracks;
-        TreeGridView treeTracks;
-        TabPage      tabDumpHardware;
-        TreeGridView treeDumpHardware;
-        ImageView    imgMediaLogo;
-        SvgImageView svgMediaLogo;
-        Button       btnEntropy;
-        Button       btnVerify;
-        Button       btnChecksum;
-        Button       btnConvert;
-        Button       btnViewSectors;
-        Button       btnDecodeMediaTags;
-        #pragma warning restore 169
-        #pragma warning restore 649
-        #endregion
     }
 }

@@ -191,102 +191,104 @@ namespace Aaru.Gui.Forms
             if(selectedItem.Values.Length < 4)
                 return;
 
-            if(selectedItem.Values[3] is pnlImageInfo imageInfo)
-            {
-                var image = selectedItem.Values[5] as IMediaImage;
+            /*
+                        if(selectedItem.Values[3] is pnlImageInfo imageInfo)
+                        {
+                            var image = selectedItem.Values[5] as IMediaImage;
 
-                // TODO: Global pool of forms
-                treeImagesMenu.Items.Add(new SeparatorMenuItem());
+                            // TODO: Global pool of forms
+                            treeImagesMenu.Items.Add(new SeparatorMenuItem());
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Calculate entropy"
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Calculate entropy"
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmImageEntropy(image).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmImageEntropy(image).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Verify"
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Verify"
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmImageVerify(image).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmImageVerify(image).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Checksum"
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Checksum"
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmImageChecksum(image).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmImageChecksum(image).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Convert to..."
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Convert to..."
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmImageConvert(image, selectedItem.Values[2] as string).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmImageConvert(image, selectedItem.Values[2] as string).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Create CICM XML sidecar..."
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Create CICM XML sidecar..."
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    // TODO: Pass thru chosen default encoding
-                    new frmImageSidecar(image, selectedItem.Values[2] as string, ((IFilter)selectedItem.Values[4]).Id,
-                                        null).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                // TODO: Pass thru chosen default encoding
+                                new frmImageSidecar(image, selectedItem.Values[2] as string, ((IFilter)selectedItem.Values[4]).Id,
+                                                    null).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "View sectors"
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "View sectors"
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmPrintHex(image).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmPrintHex(image).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
+                            treeImagesMenu.Items.Add(menuItem);
 
-                if(!image.Info.ReadableMediaTags.Any())
-                    return;
+                            if(!image.Info.ReadableMediaTags.Any())
+                                return;
 
-                menuItem = new ButtonMenuItem
-                {
-                    Text = "Decode media tags"
-                };
+                            menuItem = new ButtonMenuItem
+                            {
+                                Text = "Decode media tags"
+                            };
 
-                menuItem.Click += (a, b) =>
-                {
-                    new frmDecodeMediaTags(image).Show();
-                };
+                            menuItem.Click += (a, b) =>
+                            {
+                                new frmDecodeMediaTags(image).Show();
+                            };
 
-                treeImagesMenu.Items.Add(menuItem);
-            }
+                            treeImagesMenu.Items.Add(menuItem);
+                        }
+                        */
         }
 
         // TODO
@@ -360,8 +362,7 @@ namespace Aaru.Gui.Forms
                         {
                             logo == null ? null : new Bitmap(logo),
                             $"{Path.GetFileName(dlgOpenImage.FileName)} ({imageFormat.Info.MediaType})",
-                            dlgOpenImage.FileName, new pnlImageInfo(dlgOpenImage.FileName, inputFilter, imageFormat),
-                            inputFilter, imageFormat
+                            dlgOpenImage.FileName, null, inputFilter, imageFormat
                         }
                     };
 

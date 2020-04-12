@@ -13,6 +13,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
 using Aaru.Gui.Models;
+using Aaru.Gui.Panels;
 using Aaru.Gui.Views;
 using Avalonia;
 using Avalonia.Controls;
@@ -37,7 +38,11 @@ namespace Aaru.Gui.ViewModels
         readonly ImagesRootModel  _imagesRoot;
         readonly MainWindow       _view;
         ConsoleWindow             _consoleWindow;
-        bool                      _devicesSupported;
+
+        public object _contentPanel;
+        bool          _devicesSupported;
+        public object _treeViewSelectedItem;
+        public int    count = 0;
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -52,6 +57,7 @@ namespace Aaru.Gui.ViewModels
             _view             = view;
             TreeRoot          = new ObservableCollection<RootModel>();
             _assets           = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            ContentPanel      = Greeting;
 
             _imagesRoot = new ImagesRootModel
             {
@@ -109,6 +115,30 @@ namespace Aaru.Gui.ViewModels
         public ReactiveCommand<Unit, Unit>     ExitCommand       { get; }
         public ReactiveCommand<Unit, Unit>     SettingsCommand   { get; }
         public ReactiveCommand<Unit, Unit>     OpenCommand       { get; }
+
+        public object ContentPanel
+        {
+            get => _contentPanel;
+            set => this.RaiseAndSetIfChanged(ref _contentPanel, value);
+        }
+
+        public object TreeViewSelectedItem
+        {
+            get => _treeViewSelectedItem;
+            set
+            {
+                if(value == _treeViewSelectedItem)
+                    return;
+
+                if(value is ImageModel imageModel)
+                    ContentPanel = new ImageInfoPanel
+                    {
+                        DataContext = imageModel.ViewModel
+                    };
+
+                this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
+            }
+        }
 
         internal void ExecuteAboutCommand()
         {
@@ -237,7 +267,8 @@ namespace Aaru.Gui.ViewModels
                                                          : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
                                                              ? _genericOpticalIcon
                                                              : _genericFolderIcon,
-                        FileName = Path.GetFileName(result[0]), Image = imageFormat
+                        FileName  = Path.GetFileName(result[0]), Image = imageFormat,
+                        ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat)
                     };
 
                     // TODO: pnlImageInfo

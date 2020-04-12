@@ -349,6 +349,9 @@
     <Compile Update="Views\ConsoleDialog.xaml.cs">
       <DependentUpon>ConsoleDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Panels\ImageInfoPanel.xaml.cs">
+      <DependentUpon>ImageInfoPanel.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />
