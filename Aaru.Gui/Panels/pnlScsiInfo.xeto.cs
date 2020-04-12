@@ -120,26 +120,28 @@ namespace Aaru.Gui.Panels
 
             tabSsc.Visible = grpDensitySupport.Visible || grpMediumSupport.Visible || btnSaveDensitySupport.Visible ||
                              btnSaveMediumSupport.Visible;
-/*
-            var tabCompactDiscInfo = new tabCompactDiscInfo();
 
-            tabCompactDiscInfo.LoadData(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation, scsiInfo.Session,
-                                        scsiInfo.RawToc, this.scsiInfo.Pma, this.scsiInfo.CdTextLeadIn,
-                                        this.scsiInfo.DecodedToc, this.scsiInfo.DecodedAtip,
-                                        this.scsiInfo.DecodedSession, this.scsiInfo.FullToc,
-                                        this.scsiInfo.DecodedCdTextLeadIn, this.scsiInfo.DecodedCompactDiscInformation,
-                                        this.scsiInfo.Mcn, this.scsiInfo.Isrcs);
+            /*
+                        var tabCompactDiscInfo = new tabCompactDiscInfo();
 
-            tabInfos.Pages.Add(tabCompactDiscInfo);
-*/
-            var tabDvdInfo = new tabDvdInfo();
+                        tabCompactDiscInfo.LoadData(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation, scsiInfo.Session,
+                                                    scsiInfo.RawToc, this.scsiInfo.Pma, this.scsiInfo.CdTextLeadIn,
+                                                    this.scsiInfo.DecodedToc, this.scsiInfo.DecodedAtip,
+                                                    this.scsiInfo.DecodedSession, this.scsiInfo.FullToc,
+                                                    this.scsiInfo.DecodedCdTextLeadIn, this.scsiInfo.DecodedCompactDiscInformation,
+                                                    this.scsiInfo.Mcn, this.scsiInfo.Isrcs);
 
-            tabDvdInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
-                                scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
-                                this.scsiInfo.DecodedPfi);
+                        tabInfos.Pages.Add(tabCompactDiscInfo);
+            */
+            /*
+                        var tabDvdInfo = new tabDvdInfo();
 
-            tabInfos.Pages.Add(tabDvdInfo);
+                        tabDvdInfo.LoadData(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
+                                            scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
+                                            this.scsiInfo.DecodedPfi);
 
+                        tabInfos.Pages.Add(tabDvdInfo);
+            */
             var tabXboxInfo = new tabXboxInfo();
 
             tabXboxInfo.LoadData(scsiInfo.XgdInfo, scsiInfo.DvdDmi, scsiInfo.XboxSecuritySector,

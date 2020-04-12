@@ -8,6 +8,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Gui.Models;
 using Aaru.Gui.Tabs;
@@ -340,7 +341,6 @@ namespace Aaru.Gui.ViewModels
                                                            mediaCatalogueNumber, null, _view)
             };
 
-            /* TODO: tabDvdInfo
             byte[]                         dvdPfi                    = null;
             byte[]                         dvdDmi                    = null;
             byte[]                         dvdCmi                    = null;
@@ -371,13 +371,12 @@ namespace Aaru.Gui.ViewModels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_BCA))
                 dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
 
-            var tabDvdInfo = new tabDvdInfo();
+            DvdInfo = new DvdInfoTab
+            {
+                DataContext = new DvdInfoViewModel(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi,
+                                                   hddvdCopyrightInformation, dvdBca, null, decodedPfi, _view)
+            };
 
-            tabDvdInfo.LoadData(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca,
-                                null, decodedPfi);
-
-            tabInfos.Pages.Add(tabDvdInfo);
-*/
             /* TODO: tabDvdWritableinfo
 
             byte[] dvdRamDds                     = null;
@@ -653,6 +652,7 @@ namespace Aaru.Gui.ViewModels
         public ScsiInfoTab                             ScsiInfo                  { get; }
         public AtaInfoTab                              AtaInfo                   { get; }
         public CompactDiscInfoTab                      CompactDiscInfo           { get; }
+        public DvdInfoTab                              DvdInfo                   { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }

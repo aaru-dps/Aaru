@@ -132,6 +132,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding CompactDiscInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!DvdInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="DVD / HD DVD" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding DvdInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">
