@@ -1223,8 +1223,6 @@
           <e p="frmDecodeMediaTags.xeto.cs" t="Include" />
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
-          <e p="frmImageChecksum.xeto" t="Include" />
-          <e p="frmImageChecksum.xeto.cs" t="Include" />
           <e p="frmImageConvert.xeto" t="Include" />
           <e p="frmImageConvert.xeto.cs" t="Include" />
           <e p="frmImageEntropy.xeto" t="Include" />
@@ -1242,6 +1240,7 @@
         </e>
         <e p="Models" t="Include">
           <e p="AssemblyModel.cs" t="Include" />
+          <e p="ChecksumModel.cs" t="Include" />
           <e p="DeviceModel.cs" t="Include" />
           <e p="DeviceStatsModel.cs" t="Include" />
           <e p="DevicesRootModel.cs" t="Include" />
@@ -1305,6 +1304,7 @@
           <e p="DvdInfoViewModel.cs" t="Include" />
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
+          <e p="ImageChecksumViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
@@ -1325,6 +1325,8 @@
           <e p="ConsoleDialog.xaml.cs" t="Include" />
           <e p="EncodingsDialog.xaml" t="Include" />
           <e p="EncodingsDialog.xaml.cs" t="Include" />
+          <e p="ImageChecksumWindow.xaml" t="Include" />
+          <e p="ImageChecksumWindow.xaml.cs" t="Include" />
           <e p="LicenseDialog.xaml" t="Include" />
           <e p="LicenseDialog.xaml.cs" t="Include" />
           <e p="MainWindow.xaml" t="Include" />

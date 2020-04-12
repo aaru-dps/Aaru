@@ -316,40 +316,40 @@ namespace Aaru.Core
                   f16Thread.IsAlive     ||
                   f32Thread.IsAlive) {}
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Adler32))
                 adlerThread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc16))
                 crc16Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc32))
                 crc32Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Crc16))
                 crc64Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Md5))
                 md5Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha1))
                 sha1Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha256))
                 sha256Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha384))
                 sha384Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Sha512))
                 sha512Thread = new Thread(UpdateHash);
 
             if(enabled.HasFlag(EnableChecksum.SpamSum))
                 spamsumThread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Fletcher16))
                 f16Thread = new Thread(UpdateHash);
 
-            if(enabled.HasFlag(EnableChecksum.SpamSum))
+            if(enabled.HasFlag(EnableChecksum.Fletcher32))
                 f32Thread = new Thread(UpdateHash);
         }
 

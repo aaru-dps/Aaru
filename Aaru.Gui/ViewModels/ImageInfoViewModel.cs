@@ -13,6 +13,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
 using Aaru.Gui.Tabs;
+using Aaru.Gui.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -29,7 +30,9 @@ namespace Aaru.Gui.ViewModels
         readonly IMediaImage _imageFormat;
         readonly Window      _view;
         IFilter              _filter;
-        string               _imagePath;
+
+        ImageChecksumWindow _imageChecksumWindow;
+        string              _imagePath;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -744,23 +747,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteChecksumCommand()
         {
-            /* TODO: frmImageChecksum
-            if(frmImageChecksum != null)
+            if(_imageChecksumWindow != null)
             {
-                frmImageChecksum.Show();
+                _imageChecksumWindow.Show();
 
                 return;
             }
 
-            frmImageChecksum = new frmImageChecksum(imageFormat);
+            _imageChecksumWindow             = new ImageChecksumWindow();
+            _imageChecksumWindow.DataContext = new ImageChecksumViewModel(_imageFormat, _imageChecksumWindow);
 
-            frmImageChecksum.Closed += (s, ea) =>
+            _imageChecksumWindow.Closed += (sender, args) =>
             {
-                frmImageChecksum = null;
+                _imageChecksumWindow = null;
             };
 
-            frmImageChecksum.Show();
-            */
+            _imageChecksumWindow.Show();
         }
 
         protected void ExecuteConvertCommand()
