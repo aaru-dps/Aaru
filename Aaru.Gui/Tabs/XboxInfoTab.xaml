@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Aaru.Gui.ViewModels" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Aaru.Gui.Tabs.XboxInfoTab">
+    <Design.DataContext>
+        <vm:XboxInfoViewModel />
+    </Design.DataContext>
+    <StackPanel>
+    <StackPanel IsVisible="{Binding XboxInformationVisible}">
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL0VideoText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxL0VideoText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL1VideoText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxL1VideoText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxMiddleZoneText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxMiddleZoneText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxGameSizeText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxGameSizeText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxTotalSizeText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxTotalSizeText}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxRealBreakText}">
+            <TextBlock Text="Video layer 0 size" /> <TextBox IsReadOnly="True" Text="{Binding XboxRealBreakText}" />
+        </StackPanel>
+    </StackPanel>
+    <StackPanel>
+        <StackPanel IsVisible="{Binding !!XboxDmiText}">
+            <TextBlock Text="Disc Manufacturing Information" />
+            <TextBox IsReadOnly="True" Text="{Binding XboxDmiText}" />
+        </StackPanel>
+        <StackPanel IsVisible="{Binding !!XboxSsText}">
+            <TextBlock Text="Security Sector" /> <TextBox IsReadOnly="True" Text="{Binding XboxSsText}" />
+        </StackPanel>
+        <Button HorizontalAlignment="Right" IsVisible="{Binding SaveXboxSsVisible}"
+                Command="{Binding SaveXboxSsCommand}">
+            <TextBlock Text="Save Xbox Security Sector" />
+        </Button>
+    </StackPanel>
+    </StackPanel>
+</UserControl>

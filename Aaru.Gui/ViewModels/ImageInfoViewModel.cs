@@ -10,6 +10,7 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
+using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
 using Aaru.Gui.Tabs;
 using Avalonia;
@@ -502,8 +503,6 @@ namespace Aaru.Gui.ViewModels
                                                       blurayPowResources, blurayTrackResources, null, null, _view)
             };
 
-            /* TODO: tabXboxInfo
-
             byte[]             xboxDmi                   = null;
             byte[]             xboxSecuritySector        = null;
             SS.SecuritySector? decodedXboxSecuritySector = null;
@@ -519,10 +518,10 @@ namespace Aaru.Gui.ViewModels
                 decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
             }
 
-            var tabXboxInfo = new tabXboxInfo();
-            tabXboxInfo.LoadData(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector);
-            tabInfos.Pages.Add(tabXboxInfo);
-*/
+            XboxInfo = new XboxInfoTab
+            {
+                DataContext = new XboxInfoViewModel(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector, _view)
+            };
 
             byte[] pcmciaCis = null;
 
@@ -651,6 +650,7 @@ namespace Aaru.Gui.ViewModels
         public DvdInfoTab                              DvdInfo                   { get; }
         public DvdWritableInfoTab                      DvdWritableInfo           { get; }
         public BlurayInfoTab                           BlurayInfo                { get; }
+        public XboxInfoTab                             XboxInfo                  { get; }
         public PcmciaInfoTab                           PcmciaInfo                { get; }
         public SdMmcInfoTab                            SdMmcInfo                 { get; }
         public Bitmap                                  MediaLogo                 { get; }

@@ -162,6 +162,12 @@
                 </TabItem.Header>
                 <ContentControl Content="{Binding SdMmcInfo}" />
             </TabItem>
+            <TabItem IsVisible="{Binding !!XboxInfo}">
+                <TabItem.Header>
+                    <TextBlock Text="Xbox" />
+                </TabItem.Header>
+                <ContentControl Content="{Binding XboxInfo}" />
+            </TabItem>
         </TabControl>
         <StackPanel Orientation="Horizontal" Spacing="5">
             <Button Command="{Binding EntropyCommand}">

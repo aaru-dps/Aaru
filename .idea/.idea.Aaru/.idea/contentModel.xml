@@ -1292,8 +1292,8 @@
           <e p="ScsiInfoTab.xaml.cs" t="Include" />
           <e p="SdMmcInfo.xaml" t="Include" />
           <e p="SdMmcInfo.xaml.cs" t="Include" />
-          <e p="tabXboxInfo.xeto" t="Include" />
-          <e p="tabXboxInfo.xeto.cs" t="Include" />
+          <e p="XboxInfoTab.xaml" t="Include" />
+          <e p="XboxInfoTab.xaml.cs" t="Include" />
         </e>
         <e p="ViewLocator.cs" t="Include" />
         <e p="ViewModels" t="Include">
@@ -1316,6 +1316,7 @@
           <e p="SplashWindowViewModel.cs" t="Include" />
           <e p="StatisticsDialogViewModel.cs" t="Include" />
           <e p="ViewModelBase.cs" t="Include" />
+          <e p="XboxInfoViewModel.cs" t="Include" />
         </e>
         <e p="Views" t="Include">
           <e p="AboutDialog.xaml" t="Include" />

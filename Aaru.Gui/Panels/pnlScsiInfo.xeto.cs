@@ -142,12 +142,14 @@ namespace Aaru.Gui.Panels
 
                         tabInfos.Pages.Add(tabDvdInfo);
             */
+            /*
             var tabXboxInfo = new tabXboxInfo();
 
             tabXboxInfo.LoadData(scsiInfo.XgdInfo, scsiInfo.DvdDmi, scsiInfo.XboxSecuritySector,
                                  scsiInfo.DecodedXboxSecuritySector);
 
             tabInfos.Pages.Add(tabXboxInfo);
+            */
             /*
                         var tabDvdWritableInfo = new tabDvdWritableInfo();
 
