@@ -31,9 +31,10 @@ namespace Aaru.Gui.ViewModels
         readonly Window      _view;
         IFilter              _filter;
         ImageChecksumWindow  _imageChecksumWindow;
-        ImageEntropyWindow _imageEntropyWindow;
-        ImageVerifyWindow _imageVerifyWindow;
-        string               _imagePath;
+        ImageConvertWindow   _imageConvertWindow;
+        ImageEntropyWindow   _imageEntropyWindow;
+        readonly string      _imagePath;
+        ImageVerifyWindow    _imageVerifyWindow;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -766,23 +767,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteConvertCommand()
         {
-            /* TODO: frmImageConvert
-            if(frmImageConvert != null)
+            if(_imageConvertWindow != null)
             {
-                frmImageConvert.Show();
+                _imageConvertWindow.Show();
 
                 return;
             }
 
-            frmImageConvert = new frmImageConvert(imageFormat, imagePath);
+            _imageConvertWindow             = new ImageConvertWindow();
+            _imageConvertWindow.DataContext = new ImageConvertViewModel(_imageFormat, _imagePath, _imageConvertWindow);
 
-            frmImageConvert.Closed += (s, ea) =>
+            _imageConvertWindow.Closed += (sender, args) =>
             {
-                frmImageConvert = null;
+                _imageConvertWindow = null;
             };
 
-            frmImageConvert.Show();
-            */
+            _imageConvertWindow.Show();
         }
 
         protected void ExecuteCreateSidecarCommand()

@@ -1221,12 +1221,8 @@
           <e p="frmDecodeMediaTags.xeto.cs" t="Include" />
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
-          <e p="frmImageConvert.xeto" t="Include" />
-          <e p="frmImageConvert.xeto.cs" t="Include" />
           <e p="frmImageSidecar.xeto" t="Include" />
           <e p="frmImageSidecar.xeto.cs" t="Include" />
-          <e p="frmImageVerify.xeto" t="Include" />
-          <e p="frmImageVerify.xeto.cs" t="Include" />
           <e p="frmMain.xeto" t="Include" />
           <e p="frmMain.xeto.cs" t="Include" />
           <e p="frmMediaScan.xeto" t="Include" />
@@ -1244,6 +1240,7 @@
           <e p="EncodingModel.cs" t="Include" />
           <e p="FileSystemModel.cs" t="Include" />
           <e p="ImageModel.cs" t="Include" />
+          <e p="ImagePluginModel.cs" t="Include" />
           <e p="ImagesRootModel.cs" t="Include" />
           <e p="IsrcModel.cs" t="Include" />
           <e p="LbaModel.cs" t="Include" />
@@ -1313,6 +1310,7 @@
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
           <e p="ImageChecksumViewModel.cs" t="Include" />
+          <e p="ImageConvertViewModel.cs" t="Include" />
           <e p="ImageEntropyViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
           <e p="ImageVerifyViewModel.cs" t="Include" />
@@ -1337,6 +1335,8 @@
           <e p="EncodingsDialog.xaml.cs" t="Include" />
           <e p="ImageChecksumWindow.xaml" t="Include" />
           <e p="ImageChecksumWindow.xaml.cs" t="Include" />
+          <e p="ImageConvertWindow.xaml" t="Include" />
+          <e p="ImageConvertWindow.xaml.cs" t="Include" />
           <e p="ImageEntropyWindow.xaml" t="Include" />
           <e p="ImageEntropyWindow.xaml.cs" t="Include" />
           <e p="ImageVerifyWindow.xaml" t="Include" />
