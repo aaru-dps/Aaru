@@ -355,6 +355,9 @@
     <Compile Update="Tabs\ScsiInfoTab.xaml.cs">
       <DependentUpon>ScsiInfoTab.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ViewSectorWindow.xaml.cs">
+      <DependentUpon>ViewSectorWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />

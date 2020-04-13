@@ -28,13 +28,14 @@ namespace Aaru.Gui.ViewModels
     public class ImageInfoViewModel : ViewModelBase
     {
         readonly IMediaImage _imageFormat;
+        readonly string      _imagePath;
         readonly Window      _view;
         IFilter              _filter;
         ImageChecksumWindow  _imageChecksumWindow;
         ImageConvertWindow   _imageConvertWindow;
         ImageEntropyWindow   _imageEntropyWindow;
-        readonly string      _imagePath;
         ImageVerifyWindow    _imageVerifyWindow;
+        ViewSectorWindow     _viewSectorWindow;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -809,23 +810,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteViewSectorsCommand()
         {
-            /* TODO: frmPrintHex
-            if(frmPrintHex != null)
+            if(_viewSectorWindow != null)
             {
-                frmPrintHex.Show();
+                _viewSectorWindow.Show();
 
                 return;
             }
 
-            frmPrintHex = new frmPrintHex(imageFormat);
-
-            frmPrintHex.Closed += (s, ea) =>
+            _viewSectorWindow = new ViewSectorWindow
             {
-                frmPrintHex = null;
+                DataContext = new ViewSectorViewModel(_imageFormat)
             };
 
-            frmPrintHex.Show();
-            */
+            _viewSectorWindow.Closed += (sender, args) =>
+            {
+                _viewSectorWindow = null;
+            };
         }
 
         protected void ExecuteDecodeMediaTagCommand()

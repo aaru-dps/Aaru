@@ -1,16 +1,16 @@
-﻿<?xml version="1.0" encoding="UTF-8"?><!--
+﻿<!--
 // /***************************************************************************
 // The Disc Image Chef
 // ============================================================================
 //
-// Filename       : frmPrintHex.xeto
+// Filename       : dlgEncodings.xeto
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Form to show hexadecimal dumps of sectors.
+// Component      : Encodings dialog.
 //
 // ==[ Description ] ==========================================================
 //
-//     Defines the structure for the print hex GUI window.
+//     Defines the structure for the encodings list dialog.
 //
 // ==[ License ] ==============================================================
 //
@@ -31,16 +31,23 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" Title="Sector viewer" ClientSize="600, 450" Padding="10">
-    <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <Label Text="Sector" ID="lblSector"/>
-            <NumericStepper ID="nmuSector" ValueChanged="OnNmuSectorValueChanged"/>
-            <Label Text="of XXXXX" ID="lblSectors"/>
-        </StackLayout>
-        <CheckBox ID="chkLongSector" Text="Show long sector"/>
-        <StackLayoutItem Expand="True">
-            <TextArea ID="txtPrintHex"/>
-        </StackLayoutItem>
-    </StackLayout>
-</Form>
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.ViewSectorWindow"
+        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <vm:ViewSectorViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Sector" /> <NumericUpDown Value="{Binding SectorNumber}" />
+            <TextBlock Text="{Binding TotalSectorsText}" />
+        </StackPanel>
+        <CheckBox IsChecked="{Binding LongSectorChecked}" IsVisible="{Binding LongSectorVisible}">
+            <TextBlock Text="Show long sector" />
+        </CheckBox>
+        <TextBox IsReadOnly="True" Text="{Binding PrintHexText}" />
+    </StackPanel>
+</Window>
