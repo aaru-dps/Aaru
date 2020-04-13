@@ -31,7 +31,8 @@ namespace Aaru.Gui.ViewModels
         readonly Window      _view;
         IFilter              _filter;
         ImageChecksumWindow  _imageChecksumWindow;
-        ImageEntropyWindow   _imageEntropyWindow;
+        ImageEntropyWindow _imageEntropyWindow;
+        ImageVerifyWindow _imageVerifyWindow;
         string               _imagePath;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
@@ -725,23 +726,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteVerifyCommand()
         {
-            /* TODO: frmImageVerify
-            if(frmImageVerify != null)
+            if(_imageVerifyWindow != null)
             {
-                frmImageVerify.Show();
+                _imageVerifyWindow.Show();
 
                 return;
             }
 
-            frmImageVerify = new frmImageVerify(imageFormat);
+            _imageVerifyWindow             = new ImageVerifyWindow();
+            _imageVerifyWindow.DataContext = new ImageVerifyViewModel(_imageFormat, _imageVerifyWindow);
 
-            frmImageVerify.Closed += (s, ea) =>
+            _imageVerifyWindow.Closed += (sender, args) =>
             {
-                frmImageVerify = null;
+                _imageVerifyWindow = null;
             };
 
-            frmImageVerify.Show();
-            */
+            _imageVerifyWindow.Show();
         }
 
         protected void ExecuteChecksumCommand()

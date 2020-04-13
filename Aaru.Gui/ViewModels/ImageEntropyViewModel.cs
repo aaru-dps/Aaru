@@ -16,6 +16,7 @@ namespace Aaru.Gui.ViewModels
     public class ImageEntropyViewModel : ViewModelBase
     {
         readonly IMediaImage _inputFormat;
+        readonly Window      _view;
         bool                 _closeVisible;
         bool                 _duplicatedSectorsChecked;
         bool                 _duplicatedSectorsEnabled;
@@ -43,7 +44,6 @@ namespace Aaru.Gui.ViewModels
         bool                 _startVisible;
         bool                 _stopVisible;
         EntropyResults[]     _tracksEntropy;
-        readonly Window      _view;
         bool                 _wholeDiscChecked;
         bool                 _wholeDiscEnabled;
         bool                 _wholeDiscVisible;
@@ -334,7 +334,7 @@ namespace Aaru.Gui.ViewModels
 
         void ExecuteCloseCommand() => _view.Close();
 
-        void ExecuteStopCommand() => throw new NotImplementedException();
+        internal void ExecuteStopCommand() => throw new NotImplementedException();
 
         void InitProgress() => Progress1Visible = true;
 

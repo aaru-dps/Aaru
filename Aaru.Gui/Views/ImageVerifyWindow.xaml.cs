@@ -6,9 +6,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views
 {
-    public class ImageEntropyWindow : Window
+    public class ImageVerifyWindow : Window
     {
-        public ImageEntropyWindow()
+        public ImageVerifyWindow()
         {
             InitializeComponent();
         #if DEBUG
@@ -20,7 +20,7 @@ namespace Aaru.Gui.Views
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            (DataContext as ImageEntropyViewModel)?.ExecuteStopCommand();
+            (DataContext as ImageVerifyViewModel)?.ExecuteStopCommand();
             base.OnClosing(e);
         }
     }
