@@ -27,15 +27,16 @@ namespace Aaru.Gui.ViewModels
 {
     public class ImageInfoViewModel : ViewModelBase
     {
-        readonly IMediaImage _imageFormat;
-        readonly string      _imagePath;
-        readonly Window      _view;
-        IFilter              _filter;
-        ImageChecksumWindow  _imageChecksumWindow;
-        ImageConvertWindow   _imageConvertWindow;
-        ImageEntropyWindow   _imageEntropyWindow;
-        ImageVerifyWindow    _imageVerifyWindow;
-        ViewSectorWindow     _viewSectorWindow;
+        readonly IMediaImage  _imageFormat;
+        readonly string       _imagePath;
+        readonly Window       _view;
+        DecodeMediaTagsWindow _decodeMediaTagsWindow;
+        IFilter               _filter;
+        ImageChecksumWindow   _imageChecksumWindow;
+        ImageConvertWindow    _imageConvertWindow;
+        ImageEntropyWindow    _imageEntropyWindow;
+        ImageVerifyWindow     _imageVerifyWindow;
+        ViewSectorWindow      _viewSectorWindow;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -830,23 +831,22 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteDecodeMediaTagCommand()
         {
-            /* TODO: frmDecodeMediaTags
-            if(frmDecodeMediaTags != null)
+            if(_decodeMediaTagsWindow != null)
             {
-                frmDecodeMediaTags.Show();
+                _decodeMediaTagsWindow.Show();
 
                 return;
             }
 
-            frmDecodeMediaTags = new frmDecodeMediaTags(imageFormat);
-
-            frmDecodeMediaTags.Closed += (s, ea) =>
+            _decodeMediaTagsWindow = new DecodeMediaTagsWindow
             {
-                frmDecodeMediaTags = null;
+                DataContext = new DecodeMediaTagsViewModel(_imageFormat)
             };
 
-            frmDecodeMediaTags.Show();
-            */
+            _decodeMediaTagsWindow.Closed += (sender, args) =>
+            {
+                _decodeMediaTagsWindow = null;
+            };
         }
     }
 }

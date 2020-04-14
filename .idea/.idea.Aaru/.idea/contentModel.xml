@@ -1245,6 +1245,7 @@
           <e p="IsrcModel.cs" t="Include" />
           <e p="LbaModel.cs" t="Include" />
           <e p="MediaStatsModel.cs" t="Include" />
+          <e p="MediaTagModel.cs" t="Include" />
           <e p="NameCountModel.cs" t="Include" />
           <e p="PartitionModel.cs" t="Include" />
           <e p="PartitionSchemeModel.cs" t="Include" />
@@ -1296,6 +1297,7 @@
           <e p="BlurayInfoViewModel.cs" t="Include" />
           <e p="CompactDiscInfoViewModel.cs" t="Include" />
           <e p="ConsoleWindowViewModel.cs" t="Include" />
+          <e p="DecodeMediaTagsViewModel.cs" t="Include" />
           <e p="DvdInfoViewModel.cs" t="Include" />
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
@@ -1322,6 +1324,8 @@
           <e p="AboutDialog.xaml.cs" t="Include" />
           <e p="ConsoleDialog.xaml" t="Include" />
           <e p="ConsoleDialog.xaml.cs" t="Include" />
+          <e p="DecodeMediaTagsWindow.xaml" t="Include" />
+          <e p="DecodeMediaTagsWindow.xaml.cs" t="Include" />
           <e p="EncodingsDialog.xaml" t="Include" />
           <e p="EncodingsDialog.xaml.cs" t="Include" />
           <e p="ImageChecksumWindow.xaml" t="Include" />
