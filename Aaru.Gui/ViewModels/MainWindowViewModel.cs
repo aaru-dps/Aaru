@@ -154,6 +154,12 @@ namespace Aaru.Gui.ViewModels
                         DataContext = partitionModel.ViewModel
                     };
 
+                if(value is FileSystemModel fileSystemModel)
+                    ContentPanel = new FileSystemPanel
+                    {
+                        DataContext = fileSystemModel.ViewModel
+                    };
+
                 this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
             }
         }
@@ -464,7 +470,8 @@ namespace Aaru.Gui.ViewModels
                                                 VolumeName =
                                                     plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
                                                         : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                                Filesystem = plugin, ReadOnlyFilesystem = fsPlugin
+                                                Filesystem = plugin, ReadOnlyFilesystem = fsPlugin,
+                                                ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
                                             };
 
                                             /* TODO: Trap expanding item
@@ -520,7 +527,8 @@ namespace Aaru.Gui.ViewModels
                                     {
                                         VolumeName = plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
                                                          : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                        Filesystem = plugin, ReadOnlyFilesystem = fsPlugin
+                                        Filesystem = plugin, ReadOnlyFilesystem = fsPlugin,
+                                        ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
                                     };
 
                                     /* TODO: Trap expanding item

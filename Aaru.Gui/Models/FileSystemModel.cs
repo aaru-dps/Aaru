@@ -1,4 +1,5 @@
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Gui.ViewModels;
 
 namespace Aaru.Gui.Models
 {
@@ -7,5 +8,6 @@ namespace Aaru.Gui.Models
         public string              VolumeName         { get; set; }
         public IFilesystem         Filesystem         { get; set; }
         public IReadOnlyFilesystem ReadOnlyFilesystem { get; set; }
+        public FileSystemViewModel ViewModel          { get; set; }
     }
 }

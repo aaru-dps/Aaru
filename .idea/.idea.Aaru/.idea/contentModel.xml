@@ -1252,14 +1252,14 @@
           <e p="TrackEntropyModel.cs" t="Include" />
         </e>
         <e p="Panels" t="Include">
+          <e p="FileSystemPanel.xaml" t="Include" />
+          <e p="FileSystemPanel.xaml.cs" t="Include" />
           <e p="ImageInfoPanel.xaml" t="Include" />
           <e p="ImageInfoPanel.xaml.cs" t="Include" />
           <e p="PartitionPanel.xaml" t="Include" />
           <e p="PartitionPanel.xaml.cs" t="Include" />
           <e p="pnlDeviceInfo.xeto" t="Include" />
           <e p="pnlDeviceInfo.xeto.cs" t="Include" />
-          <e p="pnlFilesystem.xeto" t="Include" />
-          <e p="pnlFilesystem.xeto.cs" t="Include" />
           <e p="pnlListFiles.xeto" t="Include" />
           <e p="pnlListFiles.xeto.cs" t="Include" />
           <e p="pnlScsiInfo.xeto" t="Include" />
@@ -1297,6 +1297,7 @@
           <e p="DvdInfoViewModel.cs" t="Include" />
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />
+          <e p="FileSystemViewModel.cs" t="Include" />
           <e p="ImageChecksumViewModel.cs" t="Include" />
           <e p="ImageConvertViewModel.cs" t="Include" />
           <e p="ImageEntropyViewModel.cs" t="Include" />
