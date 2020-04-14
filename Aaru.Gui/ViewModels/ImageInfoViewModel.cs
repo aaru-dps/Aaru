@@ -27,14 +27,15 @@ namespace Aaru.Gui.ViewModels
 {
     public class ImageInfoViewModel : ViewModelBase
     {
+        readonly IFilter      _filter;
         readonly IMediaImage  _imageFormat;
         readonly string       _imagePath;
         readonly Window       _view;
         DecodeMediaTagsWindow _decodeMediaTagsWindow;
-        IFilter               _filter;
         ImageChecksumWindow   _imageChecksumWindow;
         ImageConvertWindow    _imageConvertWindow;
         ImageEntropyWindow    _imageEntropyWindow;
+        ImageSidecarWindow    _imageSidecarWindow;
         ImageVerifyWindow     _imageVerifyWindow;
         ViewSectorWindow      _viewSectorWindow;
 
@@ -789,24 +790,25 @@ namespace Aaru.Gui.ViewModels
 
         protected void ExecuteCreateSidecarCommand()
         {
-            /* TODO: frmImageSidecar
-            if(frmImageSidecar != null)
+            if(_imageSidecarWindow != null)
             {
-                frmImageSidecar.Show();
+                _imageSidecarWindow.Show();
 
                 return;
             }
 
-            // TODO: Pass thru chosen default encoding
-            frmImageSidecar = new frmImageSidecar(imageFormat, imagePath, filter.Id, null);
+            _imageSidecarWindow = new ImageSidecarWindow();
 
-            frmImageSidecar.Closed += (s, ea) =>
+            // TODO: Pass thru chosen default encoding
+            _imageSidecarWindow.DataContext =
+                new ImageSidecarViewModel(_imageFormat, _imagePath, _filter.Id, null, _imageSidecarWindow);
+
+            _imageSidecarWindow.Closed += (sender, args) =>
             {
-                frmImageSidecar = null;
+                _imageSidecarWindow = null;
             };
 
-            frmImageSidecar.Show();
-            */
+            _imageSidecarWindow.Show();
         }
 
         protected void ExecuteViewSectorsCommand()

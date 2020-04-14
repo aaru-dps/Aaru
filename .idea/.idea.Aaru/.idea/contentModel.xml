@@ -1219,12 +1219,8 @@
           <e p="SvgImageView.cs" t="Include" />
         </e>
         <e p="Forms" t="Include">
-          <e p="frmDecodeMediaTags.xeto" t="Include" />
-          <e p="frmDecodeMediaTags.xeto.cs" t="Include" />
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
-          <e p="frmImageSidecar.xeto" t="Include" />
-          <e p="frmImageSidecar.xeto.cs" t="Include" />
           <e p="frmMain.xeto" t="Include" />
           <e p="frmMain.xeto.cs" t="Include" />
           <e p="frmMediaScan.xeto" t="Include" />
@@ -1305,6 +1301,7 @@
           <e p="ImageConvertViewModel.cs" t="Include" />
           <e p="ImageEntropyViewModel.cs" t="Include" />
           <e p="ImageInfoViewModel.cs" t="Include" />
+          <e p="ImageSidecarViewModel.cs" t="Include" />
           <e p="ImageVerifyViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
@@ -1334,6 +1331,8 @@
           <e p="ImageConvertWindow.xaml.cs" t="Include" />
           <e p="ImageEntropyWindow.xaml" t="Include" />
           <e p="ImageEntropyWindow.xaml.cs" t="Include" />
+          <e p="ImageSidecarWindow.xaml" t="Include" />
+          <e p="ImageSidecarWindow.xaml.cs" t="Include" />
           <e p="ImageVerifyWindow.xaml" t="Include" />
           <e p="ImageVerifyWindow.xaml.cs" t="Include" />
           <e p="LicenseDialog.xaml" t="Include" />
