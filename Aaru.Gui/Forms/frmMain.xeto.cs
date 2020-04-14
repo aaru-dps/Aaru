@@ -31,14 +31,8 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
-using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Media.Info;
@@ -47,7 +41,7 @@ using Aaru.Gui.Panels;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
 namespace Aaru.Gui.Forms
 {
@@ -180,7 +174,7 @@ namespace Aaru.Gui.Forms
                 Text = "Refresh devices"
             };
 
-            menuItem.Click += OnDeviceRefresh;
+            //            menuItem.Click += OnDeviceRefresh;
             treeImagesMenu.Items.Add(menuItem);
 
             if(!(treeImages.SelectedItem is TreeGridItem selectedItem))
@@ -201,106 +195,6 @@ namespace Aaru.Gui.Forms
 
             closing = true;
             Application.Instance.Quit();
-        }
-
-        protected void OnDeviceRefresh(object sender, EventArgs e) => RefreshDevices();
-
-        protected override void OnLoadComplete(EventArgs e)
-        {
-            base.OnLoadComplete(e);
-
-            RefreshDevices();
-        }
-
-        void RefreshDevices()
-        {
-            try
-            {
-                AaruConsole.WriteLine("Refreshing devices");
-                devicesRoot.Children.Clear();
-
-                foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
-                                                    ThenBy(d => d.Model))
-                {
-                    AaruConsole.DebugWriteLine("Main window",
-                                               "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
-                                               device.Model, device.Vendor, device.Bus, device.Path);
-
-                    var devItem = new TreeGridItem
-                    {
-                        Values = new object[]
-                        {
-                            hardDiskIcon, $"{device.Vendor} {device.Model} ({device.Bus})", device.Path, null
-                        }
-                    };
-
-                    try
-                    {
-                        var dev = new Device(device.Path);
-
-                        if(dev.IsRemote)
-                            Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                                 dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
-
-                        switch(dev.Type)
-                        {
-                            case DeviceType.ATAPI:
-                            case DeviceType.SCSI:
-                                switch(dev.ScsiType)
-                                {
-                                    case PeripheralDeviceTypes.DirectAccess:
-                                    case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                    case PeripheralDeviceTypes.SimplifiedDevice:
-                                        devItem.Values[0] = dev.IsRemovable ? dev.IsUsb
-                                                                                  ? usbIcon
-                                                                                  : removableIcon : hardDiskIcon;
-
-                                        break;
-                                    case PeripheralDeviceTypes.SequentialAccess:
-                                        devItem.Values[0] = tapeIcon;
-
-                                        break;
-                                    case PeripheralDeviceTypes.OpticalDevice:
-                                    case PeripheralDeviceTypes.WriteOnceDevice:
-                                    case PeripheralDeviceTypes.OCRWDevice:
-                                        devItem.Values[0] = removableIcon;
-
-                                        break;
-                                    case PeripheralDeviceTypes.MultiMediaDevice:
-                                        devItem.Values[0] = opticalIcon;
-
-                                        break;
-                                }
-
-                                break;
-                            case DeviceType.SecureDigital:
-                            case DeviceType.MMC:
-                                devItem.Values[0] = sdIcon;
-
-                                break;
-                            case DeviceType.NVMe:
-                                devItem.Values[0] = nullImage;
-
-                                break;
-                        }
-
-                        dev.Close();
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    devItem.Children.Add(placeholderItem);
-                    devicesRoot.Children.Add(devItem);
-                }
-
-                treeImages.ReloadData();
-            }
-            catch(InvalidOperationException ex)
-            {
-                AaruConsole.ErrorWriteLine(ex.Message);
-            }
         }
 
         protected void OnTreeImagesSelectedItemChanged(object sender, EventArgs e)
@@ -342,7 +236,7 @@ namespace Aaru.Gui.Forms
                             return;
                         }
 
-                        var devInfo = new Core.Devices.Info.DeviceInfo(dev);
+                        var devInfo = new DeviceInfo(dev);
 
                         selectedItem.Values[3] = new pnlDeviceInfo(devInfo);
                         splMain.Panel2         = (Panel)selectedItem.Values[3];
@@ -448,116 +342,6 @@ namespace Aaru.Gui.Forms
                 }
 
                 dev.Close();
-            }
-            else if(((TreeGridItem)e.Item).Values[2] is IReadOnlyFilesystem fsPlugin)
-            {
-                var fsItem = (TreeGridItem)e.Item;
-
-                fsItem.Children.Clear();
-
-                if(fsItem.Values.Length == 5 &&
-                   fsItem.Values[4] is string dirPath)
-                {
-                    Errno errno = fsPlugin.ReadDir(dirPath, out List<string> dirents);
-
-                    if(errno != Errno.NoError)
-                    {
-                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
-                                                  MessageBoxType.Error);
-
-                        return;
-                    }
-
-                    List<string> directories = new List<string>();
-
-                    foreach(string dirent in dirents)
-                    {
-                        errno = fsPlugin.Stat(dirPath + "/" + dirent, out FileEntryInfo stat);
-
-                        if(errno != Errno.NoError)
-                        {
-                            AaruConsole.
-                                ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
-
-                            continue;
-                        }
-
-                        if(stat.Attributes.HasFlag(FileAttributes.Directory))
-                            directories.Add(dirent);
-                    }
-
-                    foreach(string directory in directories)
-                    {
-                        var dirItem = new TreeGridItem
-                        {
-                            Values = new object[]
-                            {
-                                imagesIcon, directory, fsPlugin, null, dirPath + "/" + directory
-                            }
-                        };
-
-                        dirItem.Children.Add(placeholderItem);
-                        fsItem.Children.Add(dirItem);
-                    }
-                }
-                else
-                {
-                    Errno errno = fsPlugin.ReadDir("/", out List<string> dirents);
-
-                    if(errno != Errno.NoError)
-                    {
-                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read root directory of chosen filesystem",
-                                                  MessageBoxType.Error);
-
-                        return;
-                    }
-
-                    Dictionary<string, FileEntryInfo> files       = new Dictionary<string, FileEntryInfo>();
-                    List<string>                      directories = new List<string>();
-
-                    foreach(string dirent in dirents)
-                    {
-                        errno = fsPlugin.Stat("/" + dirent, out FileEntryInfo stat);
-
-                        if(errno != Errno.NoError)
-                        {
-                            AaruConsole.
-                                ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
-
-                            continue;
-                        }
-
-                        if(stat.Attributes.HasFlag(FileAttributes.Directory))
-                            directories.Add(dirent);
-                        else
-                            files.Add(dirent, stat);
-                    }
-
-                    var rootDirectoryItem = new TreeGridItem
-                    {
-                        Values = new object[]
-                        {
-                            nullImage, // TODO: Get icon from volume
-                            "/", fsPlugin, files
-                        }
-                    };
-
-                    foreach(string directory in directories)
-                    {
-                        var dirItem = new TreeGridItem
-                        {
-                            Values = new object[]
-                            {
-                                imagesIcon, directory, fsPlugin, null, "/" + directory
-                            }
-                        };
-
-                        dirItem.Children.Add(placeholderItem);
-                        rootDirectoryItem.Children.Add(dirItem);
-                    }
-
-                    fsItem.Children.Add(rootDirectoryItem);
-                }
             }
         }
 

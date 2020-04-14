@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System;
+using Aaru.Gui.ViewModels;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -9,14 +11,18 @@ namespace Aaru.Gui.Views
         public MainWindow()
         {
             InitializeComponent();
-#if DEBUG
+        #if DEBUG
             this.AttachDevTools();
-#endif
+        #endif
         }
 
-        private void InitializeComponent()
+        void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+        protected override void OnOpened(EventArgs e)
         {
-            AvaloniaXamlLoader.Load(this);
+            base.OnOpened(e);
+
+            (DataContext as MainWindowViewModel)?.LoadComplete();
         }
     }
 }

@@ -9,9 +9,11 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
+using Aaru.Devices;
 using Aaru.Gui.Models;
 using Aaru.Gui.Panels;
 using Aaru.Gui.Views;
@@ -31,16 +33,21 @@ namespace Aaru.Gui.ViewModels
     {
         readonly IAssetLoader     _assets;
         readonly DevicesRootModel _devicesRoot;
+        readonly Bitmap           _ejectIcon;
         readonly Bitmap           _genericFolderIcon;
         readonly Bitmap           _genericHddIcon;
         readonly Bitmap           _genericOpticalIcon;
         readonly Bitmap           _genericTapeIcon;
         readonly ImagesRootModel  _imagesRoot;
-        readonly MainWindow       _view;
-        ConsoleWindow             _consoleWindow;
-        public object             _contentPanel;
-        bool                      _devicesSupported;
-        public object             _treeViewSelectedItem;
+        readonly Bitmap           _removableIcon;
+        readonly Bitmap           _sdIcon;
+
+        readonly Bitmap     _usbIcon;
+        readonly MainWindow _view;
+        ConsoleWindow       _consoleWindow;
+        object              _contentPanel;
+        bool                _devicesSupported;
+        object              _treeViewSelectedItem;
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -59,6 +66,7 @@ namespace Aaru.Gui.ViewModels
             CreateSidecarCommand        = ReactiveCommand.Create(ExecuteCreateSidecarCommand);
             ViewImageSectorsCommand     = ReactiveCommand.Create(ExecuteViewImageSectorsCommand);
             DecodeImageMediaTagsCommand = ReactiveCommand.Create(ExecuteDecodeImageMediaTagsCommand);
+            RefreshDevicesCommand       = ReactiveCommand.Create(ExecuteRefreshDevicesCommand);
             _view                       = view;
             TreeRoot                    = new ObservableCollection<RootModel>();
             _assets                     = AvaloniaLocator.Current.GetService<IAssetLoader>();
@@ -98,6 +106,21 @@ namespace Aaru.Gui.ViewModels
 
             _genericFolderIcon =
                 new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
+
+            _usbIcon =
+                new
+                    Bitmap(_assets.Open(new
+                                            Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+
+            _removableIcon =
+                new
+                    Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+
+            _sdIcon =
+                new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
+
+            _ejectIcon =
+                new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
         }
 
         public bool DevicesSupported
@@ -127,6 +150,7 @@ namespace Aaru.Gui.ViewModels
         public ReactiveCommand<Unit, Unit>     CreateSidecarCommand        { get; }
         public ReactiveCommand<Unit, Unit>     ViewImageSectorsCommand     { get; }
         public ReactiveCommand<Unit, Unit>     DecodeImageMediaTagsCommand { get; }
+        public ReactiveCommand<Unit, Unit>     RefreshDevicesCommand       { get; }
 
         public object ContentPanel
         {
@@ -282,21 +306,21 @@ namespace Aaru.Gui.ViewModels
             dialog.ShowDialog(_view);
         }
 
-        internal void ExecuteEncodingsCommand()
+        void ExecuteEncodingsCommand()
         {
             var dialog = new EncodingsDialog();
             dialog.DataContext = new EncodingsDialogViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
-        internal void ExecutePluginsCommand()
+        void ExecutePluginsCommand()
         {
             var dialog = new PluginsDialog();
             dialog.DataContext = new PluginsDialogViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
-        internal void ExecuteStatisticsCommand()
+        void ExecuteStatisticsCommand()
         {
             using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -328,7 +352,7 @@ namespace Aaru.Gui.ViewModels
         internal void ExecuteExitCommand() =>
             (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown();
 
-        internal void ExecuteConsoleCommand()
+        void ExecuteConsoleCommand()
         {
             if(_consoleWindow is null)
             {
@@ -407,12 +431,10 @@ namespace Aaru.Gui.ViewModels
                         Filter    = inputFilter
                     };
 
-                    // TODO: pnlImageInfo
-
                     List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                     Core.Partitions.AddSchemesToStats(partitions);
 
-                    bool         checkraw = false;
+                    bool         checkRaw = false;
                     List<string> idPlugins;
                     IFilesystem  plugin;
                     PluginBase   plugins = GetPluginBase.Instance;
@@ -421,7 +443,7 @@ namespace Aaru.Gui.ViewModels
                     {
                         AaruConsole.DebugWriteLine("Analyze command", "No partitions found");
 
-                        checkraw = true;
+                        checkRaw = true;
                     }
                     else
                     {
@@ -438,7 +460,6 @@ namespace Aaru.Gui.ViewModels
                             foreach(Partition partition in partitions.
                                                            Where(p => p.Scheme == scheme).OrderBy(p => p.Start))
                             {
-                                // TODO: pnlPartition
                                 var partitionModel = new PartitionModel
                                 {
                                     // TODO: Add icons to partition types
@@ -505,7 +526,7 @@ namespace Aaru.Gui.ViewModels
                         }
                     }
 
-                    if(checkraw)
+                    if(checkRaw)
                     {
                         var wholePart = new Partition
                         {
@@ -588,6 +609,99 @@ namespace Aaru.Gui.ViewModels
             }
 
             Statistics.AddCommand("image-info");
+        }
+
+        internal void LoadComplete() => RefreshDevices();
+
+        void ExecuteRefreshDevicesCommand() => RefreshDevices();
+
+        void RefreshDevices()
+        {
+            if(!DevicesSupported)
+                return;
+
+            try
+            {
+                AaruConsole.WriteLine("Refreshing devices");
+                _devicesRoot.Devices.Clear();
+
+                foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
+                                                    ThenBy(d => d.Model))
+                {
+                    AaruConsole.DebugWriteLine("Main window",
+                                               "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
+                                               device.Model, device.Vendor, device.Bus, device.Path);
+
+                    var deviceModel = new DeviceModel
+                    {
+                        Icon = _genericHddIcon, Name = $"{device.Vendor} {device.Model} ({device.Bus})",
+                        Path = device.Path
+                    };
+
+                    try
+                    {
+                        var dev = new Device(device.Path);
+
+                        if(dev.IsRemote)
+                            Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
+                                                 dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
+
+                        switch(dev.Type)
+                        {
+                            case DeviceType.ATAPI:
+                            case DeviceType.SCSI:
+                                switch(dev.ScsiType)
+                                {
+                                    case PeripheralDeviceTypes.DirectAccess:
+                                    case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                                    case PeripheralDeviceTypes.SimplifiedDevice:
+                                        deviceModel.Icon = dev.IsRemovable ? dev.IsUsb
+                                                                                 ? _usbIcon
+                                                                                 : _removableIcon : _genericHddIcon;
+
+                                        break;
+                                    case PeripheralDeviceTypes.SequentialAccess:
+                                        deviceModel.Icon = _genericTapeIcon;
+
+                                        break;
+                                    case PeripheralDeviceTypes.OpticalDevice:
+                                    case PeripheralDeviceTypes.WriteOnceDevice:
+                                    case PeripheralDeviceTypes.OCRWDevice:
+                                        deviceModel.Icon = _removableIcon;
+
+                                        break;
+                                    case PeripheralDeviceTypes.MultiMediaDevice:
+                                        deviceModel.Icon = _genericOpticalIcon;
+
+                                        break;
+                                }
+
+                                break;
+                            case DeviceType.SecureDigital:
+                            case DeviceType.MMC:
+                                deviceModel.Icon = _sdIcon;
+
+                                break;
+                            case DeviceType.NVMe:
+                                deviceModel.Icon = null;
+
+                                break;
+                        }
+
+                        dev.Close();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+
+                    _devicesRoot.Devices.Add(deviceModel);
+                }
+            }
+            catch(InvalidOperationException ex)
+            {
+                AaruConsole.ErrorWriteLine(ex.Message);
+            }
         }
     }
 }

@@ -17,7 +17,7 @@
                 <MenuItem Header="E_xit" IsVisible="{Binding !NativeMenuSupported}" Command="{Binding ExitCommand}" />
             </MenuItem>
             <MenuItem Header="_Devices" IsVisible="{Binding DevicesSupported}">
-                <MenuItem Header="_Refresh" />
+                <MenuItem Header="_Refresh" Command="{Binding RefreshDevicesCommand}" />
             </MenuItem>
             <MenuItem Header="_Window">
                 <MenuItem Header="_Console" Command="{Binding ConsoleCommand}" />
@@ -39,12 +39,22 @@
                 <TreeView.DataTemplates>
                     <TreeDataTemplate DataType="models:DevicesRootModel" ItemsSource="{Binding Devices}">
                         <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="_Refresh devices" Command="{Binding RefreshDevicesCommand}" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/computer.png" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
                     <TreeDataTemplate DataType="models:ImagesRootModel" ItemsSource="{Binding Images}">
                         <StackPanel Orientation="Horizontal">
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="_Close all images" Command="{Binding CloseAllImages}" />
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
@@ -54,27 +64,15 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <Button Command="{Binding CalculateEntropyCommand}">
-                                        <TextBlock Text="Calculate entropy" />
-                                    </Button>
-                                    <Button Command="{Binding VerifyImageCommand}">
-                                        <TextBlock Text="Verify" />
-                                    </Button>
-                                    <Button Command="{Binding ChecksumImageCommand}">
-                                        <TextBlock Text="Checksum" />
-                                    </Button>
-                                    <Button Command="{Binding ConvertImageCommand}">
-                                        <TextBlock Text="Convert to..." />
-                                    </Button>
-                                    <Button Command="{Binding CreateSidecarCommand}">
-                                        <TextBlock Text="Create CICM XML sidecar..." />
-                                    </Button>
-                                    <Button Command="{Binding ViewImageSectorsCommand}">
-                                        <TextBlock Text="View sectors" />
-                                    </Button>
-                                    <Button Command="{Binding DecodeImageMediaTagsCommand}">
-                                        <TextBlock Text="Decode media tags" />
-                                    </Button>
+                                    <MenuItem Command="{Binding CalculateEntropyCommand}" Header="Calculate entropy" />
+                                    <MenuItem Command="{Binding VerifyImageCommand}" Header="Verify" />
+                                    <MenuItem Command="{Binding ChecksumImageCommand}" Header="Checksum" />
+                                    <MenuItem Command="{Binding ConvertImageCommand}" Header="Convert to..." />
+                                    <MenuItem Command="{Binding CreateSidecarCommand}"
+                                              Header="Create CICM XML sidecar..." />
+                                    <MenuItem Command="{Binding ViewImageSectorsCommand}" Header="View sectors" />
+                                    <MenuItem Command="{Binding DecodeImageMediaTagsCommand}"
+                                              Header="Decode media tags" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="{Binding Icon}" />
@@ -100,6 +98,12 @@
                         </StackPanel>
                     </TreeDataTemplate>
                     <TreeDataTemplate DataType="models:SubdirectoryModel" ItemsSource="{Binding Subdirectories}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:DeviceModel">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="24" Height="24" Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
