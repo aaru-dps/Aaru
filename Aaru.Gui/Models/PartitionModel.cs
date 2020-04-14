@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using Aaru.CommonTypes;
+using Aaru.Gui.ViewModels;
 using Avalonia.Media.Imaging;
 
 namespace Aaru.Gui.Models
@@ -12,5 +13,6 @@ namespace Aaru.Gui.Models
         public Bitmap                                Icon        { get; set; }
         public ObservableCollection<FileSystemModel> FileSystems { get; }
         public Partition                             Partition   { get; set; }
+        public PartitionViewModel                    ViewModel   { get; set; }
     }
 }

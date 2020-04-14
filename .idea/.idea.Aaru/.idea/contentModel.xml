@@ -1254,14 +1254,14 @@
         <e p="Panels" t="Include">
           <e p="ImageInfoPanel.xaml" t="Include" />
           <e p="ImageInfoPanel.xaml.cs" t="Include" />
+          <e p="PartitionPanel.xaml" t="Include" />
+          <e p="PartitionPanel.xaml.cs" t="Include" />
           <e p="pnlDeviceInfo.xeto" t="Include" />
           <e p="pnlDeviceInfo.xeto.cs" t="Include" />
           <e p="pnlFilesystem.xeto" t="Include" />
           <e p="pnlFilesystem.xeto.cs" t="Include" />
           <e p="pnlListFiles.xeto" t="Include" />
           <e p="pnlListFiles.xeto.cs" t="Include" />
-          <e p="pnlPartition.xeto" t="Include" />
-          <e p="pnlPartition.xeto.cs" t="Include" />
           <e p="pnlScsiInfo.xeto" t="Include" />
           <e p="pnlScsiInfo.xeto.cs" t="Include" />
         </e>
@@ -1305,6 +1305,7 @@
           <e p="ImageVerifyViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
+          <e p="PartitionViewModel.cs" t="Include" />
           <e p="PcmciaInfoViewModel.cs" t="Include" />
           <e p="PluginsDialogViewModel.cs" t="Include" />
           <e p="ScsiInfoViewModel.cs" t="Include" />
