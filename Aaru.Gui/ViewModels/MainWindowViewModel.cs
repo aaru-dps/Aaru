@@ -160,6 +160,14 @@ namespace Aaru.Gui.ViewModels
                         DataContext = fileSystemModel.ViewModel
                     };
 
+                if(value is SubdirectoryModel subdirectoryModel)
+                {
+                    ContentPanel = new SubdirectoryPanel
+                    {
+                        DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
+                    };
+                }
+
                 this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
             }
         }
@@ -474,10 +482,16 @@ namespace Aaru.Gui.ViewModels
                                                 ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
                                             };
 
-                                            /* TODO: Trap expanding item
+                                            // TODO: Trap expanding item
                                             if(fsPlugin != null)
+                                            {
+                                                filesystemModel.Roots.Add(new SubdirectoryModel
+                                                {
+                                                    Name = "/", Path = "", Plugin = fsPlugin
+                                                });
+
                                                 Statistics.AddCommand("ls");
-                                            */
+                                            }
 
                                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                             partitionModel.FileSystems.Add(filesystemModel);
@@ -531,10 +545,16 @@ namespace Aaru.Gui.ViewModels
                                         ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
                                     };
 
-                                    /* TODO: Trap expanding item
+                                    // TODO: Trap expanding item
                                     if(fsPlugin != null)
+                                    {
+                                        filesystemModel.Roots.Add(new SubdirectoryModel
+                                        {
+                                            Name = "/", Path = "", Plugin = fsPlugin
+                                        });
+
                                         Statistics.AddCommand("ls");
-                                    */
+                                    }
 
                                     Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                     imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);

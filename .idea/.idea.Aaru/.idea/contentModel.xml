@@ -1234,6 +1234,7 @@
           <e p="DevicesRootModel.cs" t="Include" />
           <e p="DumpHardwareModel.cs" t="Include" />
           <e p="EncodingModel.cs" t="Include" />
+          <e p="FileModel.cs" t="Include" />
           <e p="FileSystemModel.cs" t="Include" />
           <e p="ImageModel.cs" t="Include" />
           <e p="ImagePluginModel.cs" t="Include" />
@@ -1249,6 +1250,7 @@
           <e p="PluginModel.cs" t="Include" />
           <e p="RootModel.cs" t="Include" />
           <e p="ScsiPageModel.cs" t="Include" />
+          <e p="SubdirectoryModel.cs" t="Include" />
           <e p="TrackEntropyModel.cs" t="Include" />
         </e>
         <e p="Panels" t="Include">
@@ -1258,10 +1260,10 @@
           <e p="ImageInfoPanel.xaml.cs" t="Include" />
           <e p="PartitionPanel.xaml" t="Include" />
           <e p="PartitionPanel.xaml.cs" t="Include" />
+          <e p="SubdirectoryPanel.xaml" t="Include" />
+          <e p="SubdirectoryPanel.xaml.cs" t="Include" />
           <e p="pnlDeviceInfo.xeto" t="Include" />
           <e p="pnlDeviceInfo.xeto.cs" t="Include" />
-          <e p="pnlListFiles.xeto" t="Include" />
-          <e p="pnlListFiles.xeto.cs" t="Include" />
           <e p="pnlScsiInfo.xeto" t="Include" />
           <e p="pnlScsiInfo.xeto.cs" t="Include" />
         </e>
@@ -1314,6 +1316,7 @@
           <e p="SettingsDialogViewModel.cs" t="Include" />
           <e p="SplashWindowViewModel.cs" t="Include" />
           <e p="StatisticsDialogViewModel.cs" t="Include" />
+          <e p="SubdirectoryViewModel.cs" t="Include" />
           <e p="ViewModelBase.cs" t="Include" />
           <e p="ViewSectorViewModel.cs" t="Include" />
           <e p="XboxInfoViewModel.cs" t="Include" />

@@ -54,13 +54,27 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <Button Command="{Binding CalculateEntropyCommand}"><TextBlock Text="Calculate entropy"/></Button>
-                                    <Button Command="{Binding VerifyImageCommand}"><TextBlock Text="Verify"/></Button>
-                                    <Button Command="{Binding ChecksumImageCommand}"><TextBlock Text="Checksum"/></Button>
-                                    <Button Command="{Binding ConvertImageCommand}"><TextBlock Text="Convert to..."/></Button>
-                                    <Button Command="{Binding CreateSidecarCommand}"><TextBlock Text="Create CICM XML sidecar..."/></Button>
-                                    <Button Command="{Binding ViewImageSectorsCommand}"><TextBlock Text="View sectors"/></Button>
-                                    <Button Command="{Binding DecodeImageMediaTagsCommand}"><TextBlock Text="Decode media tags"/></Button>
+                                    <Button Command="{Binding CalculateEntropyCommand}">
+                                        <TextBlock Text="Calculate entropy" />
+                                    </Button>
+                                    <Button Command="{Binding VerifyImageCommand}">
+                                        <TextBlock Text="Verify" />
+                                    </Button>
+                                    <Button Command="{Binding ChecksumImageCommand}">
+                                        <TextBlock Text="Checksum" />
+                                    </Button>
+                                    <Button Command="{Binding ConvertImageCommand}">
+                                        <TextBlock Text="Convert to..." />
+                                    </Button>
+                                    <Button Command="{Binding CreateSidecarCommand}">
+                                        <TextBlock Text="Create CICM XML sidecar..." />
+                                    </Button>
+                                    <Button Command="{Binding ViewImageSectorsCommand}">
+                                        <TextBlock Text="View sectors" />
+                                    </Button>
+                                    <Button Command="{Binding DecodeImageMediaTagsCommand}">
+                                        <TextBlock Text="Decode media tags" />
+                                    </Button>
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <Image Width="24" Height="24" Source="{Binding Icon}" />
@@ -79,10 +93,16 @@
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:FileSystemModel" ItemsSource="{Binding Subdirectories}">
+                    <TreeDataTemplate DataType="models:FileSystemModel" ItemsSource="{Binding Roots}">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="24" Height="24" Source="{Binding Icon}" />
                             <TextBlock Text="{Binding VolumeName}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:SubdirectoryModel" ItemsSource="{Binding Subdirectories}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
                 </TreeView.DataTemplates>

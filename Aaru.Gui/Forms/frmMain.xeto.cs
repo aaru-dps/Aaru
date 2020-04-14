@@ -363,46 +363,6 @@ namespace Aaru.Gui.Forms
                     splMain.Panel2 = lblError;
 
                     break;
-                case Dictionary<string, FileEntryInfo> files:
-                    splMain.Panel2 = new pnlListFiles(selectedItem.Values[2] as IReadOnlyFilesystem, files,
-                                                      selectedItem.Values[1] as string == "/" ? "/"
-                                                          : selectedItem.Values[4] as string);
-
-                    break;
-                case null when selectedItem.Values.Length >= 5 && selectedItem.Values[4] is string dirPath &&
-                               selectedItem.Values[2] is IReadOnlyFilesystem fsPlugin:
-                    Errno errno = fsPlugin.ReadDir(dirPath, out List<string> dirents);
-
-                    if(errno != Errno.NoError)
-                    {
-                        Eto.Forms.MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
-                                                  MessageBoxType.Error);
-
-                        break;
-                    }
-
-                    Dictionary<string, FileEntryInfo> filesNew = new Dictionary<string, FileEntryInfo>();
-
-                    foreach(string dirent in dirents)
-                    {
-                        errno = fsPlugin.Stat(dirPath + "/" + dirent, out FileEntryInfo stat);
-
-                        if(errno != Errno.NoError)
-                        {
-                            AaruConsole.
-                                ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
-
-                            continue;
-                        }
-
-                        if(!stat.Attributes.HasFlag(FileAttributes.Directory))
-                            filesNew.Add(dirent, stat);
-                    }
-
-                    selectedItem.Values[3] = filesNew;
-                    splMain.Panel2         = new pnlListFiles(fsPlugin, filesNew, dirPath);
-
-                    break;
             }
         }
 
