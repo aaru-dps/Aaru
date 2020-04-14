@@ -133,6 +133,8 @@ namespace Aaru.DiscImages
             public Dictionary<string, string> DiscHashes;
             /// <summary>Aaru media type</summary>
             public string AaruMediaType;
+            /// <summary>Is a GDROM from Redump.org</summary>
+            public bool IsRedumpGigadisc;
         }
     }
 }
