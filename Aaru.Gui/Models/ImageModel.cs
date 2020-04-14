@@ -15,5 +15,6 @@ namespace Aaru.Gui.Models
         public ObservableCollection<RootModel> PartitionSchemesOrFileSystems { get; }
         public IMediaImage                     Image                         { get; set; }
         public ImageInfoViewModel              ViewModel                     { get; set; }
+        public IFilter Filter { get; set; }
     }
 }

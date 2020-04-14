@@ -38,11 +38,109 @@ namespace Aaru.Gui.ViewModels
         readonly ImagesRootModel  _imagesRoot;
         readonly MainWindow       _view;
         ConsoleWindow             _consoleWindow;
-
         public object _contentPanel;
         bool          _devicesSupported;
         public object _treeViewSelectedItem;
-        public int    count = 0;
+
+        void ExecuteCalculateEntropyCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+            var imageEntropyWindow             = new ImageEntropyWindow();
+            imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
+
+            imageEntropyWindow.Closed += (sender, args) =>
+            {
+                imageEntropyWindow = null;
+            };
+
+            imageEntropyWindow.Show();
+        }
+
+        void ExecuteVerifyImageCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+            var imageVerifyWindow             = new ImageVerifyWindow();
+            imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
+
+            imageVerifyWindow.Closed += (sender, args) =>
+            {
+                imageVerifyWindow = null;
+            };
+
+            imageVerifyWindow.Show();
+        }
+
+        void ExecuteChecksumImageCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+           var  imageChecksumWindow             = new ImageChecksumWindow();
+            imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
+
+            imageChecksumWindow.Closed += (sender, args) =>
+            {
+                imageChecksumWindow = null;
+            };
+
+            imageChecksumWindow.Show();
+        }
+
+        void ExecuteConvertImageCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+            var imageConvertWindow = new ImageConvertWindow();
+            imageConvertWindow.DataContext = new ImageConvertViewModel(imageModel.Image, imageModel.Path, imageConvertWindow);
+
+            imageConvertWindow.Closed += (sender, args) =>
+            {
+                imageConvertWindow = null;
+            };
+
+            imageConvertWindow.Show();
+        }
+
+        void ExecuteCreateSidecarCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+       var     imageSidecarWindow = new ImageSidecarWindow();
+
+            // TODO: Pass thru chosen default encoding
+            imageSidecarWindow.DataContext =
+                new ImageSidecarViewModel(imageModel.Image, imageModel.Path, imageModel.Filter.Id, null, imageSidecarWindow);
+
+            imageSidecarWindow.Show();
+        }
+
+        void ExecuteViewImageSectorsCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+         new ViewSectorWindow
+            {
+                DataContext = new ViewSectorViewModel(imageModel.Image)
+            }.Show();
+        }
+
+        void ExecuteDecodeImageMediaTagsCommand()
+        {
+            if(!(TreeViewSelectedItem is ImageModel imageModel))
+                return;
+
+      new DecodeMediaTagsWindow
+            {
+                DataContext = new DecodeMediaTagsViewModel(imageModel.Image)
+            }.Show();
+        }
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -53,7 +151,14 @@ namespace Aaru.Gui.ViewModels
             ExitCommand       = ReactiveCommand.Create(ExecuteExitCommand);
             SettingsCommand   = ReactiveCommand.Create(ExecuteSettingsCommand);
             ConsoleCommand    = ReactiveCommand.Create(ExecuteConsoleCommand);
-            OpenCommand       = ReactiveCommand.Create(ExecuteOpenCommand);
+            OpenCommand = ReactiveCommand.Create(ExecuteOpenCommand);
+            CalculateEntropyCommand = ReactiveCommand.Create(ExecuteCalculateEntropyCommand);
+            VerifyImageCommand = ReactiveCommand.Create(ExecuteVerifyImageCommand);
+            ChecksumImageCommand = ReactiveCommand.Create(ExecuteChecksumImageCommand);
+            ConvertImageCommand = ReactiveCommand.Create(ExecuteConvertImageCommand);
+            CreateSidecarCommand = ReactiveCommand.Create(ExecuteCreateSidecarCommand);
+            ViewImageSectorsCommand = ReactiveCommand.Create(ExecuteViewImageSectorsCommand);
+            DecodeImageMediaTagsCommand = ReactiveCommand.Create(ExecuteDecodeImageMediaTagsCommand);
             _view             = view;
             TreeRoot          = new ObservableCollection<RootModel>();
             _assets           = AvaloniaLocator.Current.GetService<IAssetLoader>();
@@ -115,6 +220,13 @@ namespace Aaru.Gui.ViewModels
         public ReactiveCommand<Unit, Unit>     ExitCommand       { get; }
         public ReactiveCommand<Unit, Unit>     SettingsCommand   { get; }
         public ReactiveCommand<Unit, Unit>     OpenCommand       { get; }
+        public ReactiveCommand<Unit, Unit> CalculateEntropyCommand { get; }
+        public ReactiveCommand<Unit, Unit> VerifyImageCommand { get; }
+        public ReactiveCommand<Unit, Unit> ChecksumImageCommand { get; }
+        public ReactiveCommand<Unit, Unit> ConvertImageCommand { get; }
+        public ReactiveCommand<Unit, Unit> CreateSidecarCommand { get; }
+        public ReactiveCommand<Unit, Unit> ViewImageSectorsCommand { get; }
+        public ReactiveCommand<Unit, Unit> DecodeImageMediaTagsCommand { get; }
 
         public object ContentPanel
         {
@@ -268,7 +380,8 @@ namespace Aaru.Gui.ViewModels
                                                              ? _genericOpticalIcon
                                                              : _genericFolderIcon,
                         FileName  = Path.GetFileName(result[0]), Image = imageFormat,
-                        ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view)
+                        ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view),
+                        Filter = inputFilter
                     };
 
                     // TODO: pnlImageInfo

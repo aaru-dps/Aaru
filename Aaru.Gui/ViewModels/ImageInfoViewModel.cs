@@ -829,6 +829,8 @@ namespace Aaru.Gui.ViewModels
             {
                 _viewSectorWindow = null;
             };
+
+            _viewSectorWindow.Show();
         }
 
         protected void ExecuteDecodeMediaTagCommand()
@@ -849,6 +851,8 @@ namespace Aaru.Gui.ViewModels
             {
                 _decodeMediaTagsWindow = null;
             };
+
+            _decodeMediaTagsWindow.Show();
         }
     }
 }
