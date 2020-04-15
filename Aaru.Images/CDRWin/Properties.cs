@@ -56,14 +56,15 @@ namespace Aaru.DiscImages
 
                 ulong previousStartSector = 0;
                 ulong gdRomSession2Offset = 45000;
+                string previousTrackFile  = "";
 
                 foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
                 {
                     var aaruTrack = new Track
                     {
                         Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
-                        TrackStartSector    = previousStartSector, TrackPregap   = cdrTrack.Pregap,
-                        TrackSession        = cdrTrack.Session, TrackSequence    = cdrTrack.Sequence,
+                        TrackPregap         = cdrTrack.Pregap,
+                        TrackSession        = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
                         TrackType           = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
                         TrackFile           = cdrTrack.TrackFile.DataFilter.GetFilename(),
                         TrackFilter         = cdrTrack.TrackFile.DataFilter,
@@ -71,18 +72,27 @@ namespace Aaru.DiscImages
                         TrackFileType       = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
+
+                    if (previousTrackFile == aaruTrack.TrackFile || previousTrackFile == "")
+                    {
+                        if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
+                            if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
+                                aaruTrack.TrackStartSector += previousStartSector;
+                    }
+                    else
+                        aaruTrack.TrackStartSector += previousStartSector;
                     
                     if(_discImage.IsRedumpGigadisc &&
-                       cdrTrack.Session == 2       &&
+                       cdrTrack.Session    == 2    &&
                        previousStartSector < gdRomSession2Offset)
                     {
                         aaruTrack.TrackStartSector = gdRomSession2Offset;
                     }
 
+                    previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
+
                     aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
-                    /*if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);*/
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
                         aaruTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;

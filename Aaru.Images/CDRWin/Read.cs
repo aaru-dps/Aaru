@@ -125,6 +125,8 @@ namespace Aaru.DiscImages
 
                 int trackCount = 0;
 
+                Dictionary<byte, ulong> leadouts = new Dictionary<byte, ulong>();
+
                 while(_cueStream.Peek() >= 0)
                 {
                     lineNumber++;
@@ -348,8 +350,6 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", lineNumber);
                         currentSession = byte.Parse(matchSession.Groups[1].Value);
-
-                        // What happens between sessions
                     }
                     else if(matchRedumpSdArea.Success)
                         _discImage.IsRedumpGigadisc = true;
@@ -363,6 +363,7 @@ namespace Aaru.DiscImages
                     else if(matchLeadOut.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
+                        leadouts[currentSession] = CdrWinMsfToLba(matchLeadOut.Groups[1].Value);
                     }
                     else if(matchApplication.Success)
                     {
@@ -798,14 +799,14 @@ namespace Aaru.DiscImages
 
                     ulong sessionSectors   = 0;
                     int   lastSessionTrack = 0;
-                    int firstSessionTrack  = 0;
+                    int   firstSessionTra  = 0;
 
                     for(int i = 0; i < cueTracks.Length; i++)
                         if(cueTracks[i].Session == s)
                         {
                             if(!firstTrackRead)
                             {
-                                firstSessionTrack = i;
+                                firstSessionTra = i;
                                 firstTrackRead = true;
                             }                                
                             sessionSectors += cueTracks[i].Sectors;
@@ -814,9 +815,33 @@ namespace Aaru.DiscImages
                                 lastSessionTrack = i;
                         }
 
-                    sessions[s - 1].StartTrack = cueTracks[firstSessionTrack].Sequence;
+                    sessions[s - 1].StartTrack = cueTracks[firstSessionTra].Sequence;
                     sessions[s - 1].EndTrack   = cueTracks[lastSessionTrack].Sequence;
-                    sessions[s - 1].EndSector  = (sessions[s-1].StartSector + sessionSectors) - 1;
+
+                    if(leadouts.TryGetValue((byte)s, out ulong leadout))
+                    {
+                        sessions[s - 1].EndSector = leadout - 1;
+
+                        if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out ulong startSector))
+                            cueTracks[lastSessionTrack].Indexes.TryGetValue(1, out startSector);
+
+                        cueTracks[lastSessionTrack].Sectors = leadout - startSector;
+                    }
+                    else
+                        sessions[s - 1].EndSector = sessionSectors - 1;
+
+                    CdrWinTrack firstSessionTrack = cueTracks.OrderBy(t => t.Sequence).First(t => t.Session == s);
+
+                    if(firstSessionTrack.Indexes.TryGetValue(0, out sessions[s - 1].StartSector))
+                        continue;
+
+                    if(firstSessionTrack.Indexes.TryGetValue(1, out sessions[s - 1].StartSector))
+                        continue;
+
+                    if(s > 1)
+                        sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
+                    else
+                        sessions[s - 1].StartSector = 0;
                 }
 
                 for(int s = 1; s <= sessions.Length; s++)
