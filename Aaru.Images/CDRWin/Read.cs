@@ -352,9 +352,13 @@ namespace Aaru.DiscImages
                         currentSession = byte.Parse(matchSession.Groups[1].Value);
                     }
                     else if(matchRedumpSdArea.Success)
+                    {
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SINGLE-DENSITY AREA at line {0}", lineNumber);
                         _discImage.IsRedumpGigadisc = true;
+                    }                    
                     else if(matchRedumpHdArea.Success)
                     {
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM HIGH-DENSITY AREA at line {0}", lineNumber);
                         _discImage.IsRedumpGigadisc = true;
                         currentSession = 2;
                     }
@@ -799,14 +803,14 @@ namespace Aaru.DiscImages
 
                     ulong sessionSectors   = 0;
                     int   lastSessionTrack = 0;
-                    int   firstSessionTra  = 0;
+                    int   firstSessionTrk  = 0;
 
                     for(int i = 0; i < cueTracks.Length; i++)
                         if(cueTracks[i].Session == s)
                         {
                             if(!firstTrackRead)
                             {
-                                firstSessionTra = i;
+                                firstSessionTrk = i;
                                 firstTrackRead = true;
                             }                                
                             sessionSectors += cueTracks[i].Sectors;
@@ -815,7 +819,7 @@ namespace Aaru.DiscImages
                                 lastSessionTrack = i;
                         }
 
-                    sessions[s - 1].StartTrack = cueTracks[firstSessionTra].Sequence;
+                    sessions[s - 1].StartTrack = cueTracks[firstSessionTrk].Sequence;
                     sessions[s - 1].EndTrack   = cueTracks[lastSessionTrack].Sequence;
 
                     if(leadouts.TryGetValue((byte)s, out ulong leadout))
