@@ -271,7 +271,7 @@
                         <TextBlock Text="Densities supported by device:" />
                         <TextBox Text="{Binding Densities}" IsReadOnly="True" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding !!{Binding MediumTypes}}">
+                    <StackPanel Orientation="Vertical" IsVisible="{Binding !!MediumTypes}">
                         <TextBlock Text="Medium types supported by device:" />
                         <TextBox Text="{Binding MediumTypes}" IsReadOnly="True" />
                     </StackPanel>
