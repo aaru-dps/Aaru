@@ -68,6 +68,7 @@ namespace Aaru.Gui.ViewModels
         public string Authors => @"Developers:
     Natalia Portillo
     Michael Drüing
+    Rebecca Wallander
 
 Testers:
     Silas Laspada
