@@ -103,7 +103,13 @@
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:DeviceModel">
+                    <TreeDataTemplate DataType="models:DeviceModel" ItemsSource="{Binding Media}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
+                    </TreeDataTemplate>
+                    <TreeDataTemplate DataType="models:MediaModel">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="24" Height="24" Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
