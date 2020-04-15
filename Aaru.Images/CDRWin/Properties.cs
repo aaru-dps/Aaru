@@ -55,6 +55,7 @@ namespace Aaru.DiscImages
                 List<Track> tracks = new List<Track>();
 
                 ulong previousStartSector = 0;
+                ulong gdRomSession2Offset = 45000;
                 string previousTrackFile  = "";
 
                 foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
@@ -71,7 +72,7 @@ namespace Aaru.DiscImages
                         TrackFileType       = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
-                    
+
                     if (previousTrackFile == aaruTrack.TrackFile || previousTrackFile == "")
                     {
                         if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
@@ -80,6 +81,13 @@ namespace Aaru.DiscImages
                     }
                     else
                         aaruTrack.TrackStartSector += previousStartSector;
+                    
+                    if(_discImage.IsRedumpGigadisc &&
+                       cdrTrack.Session    == 2    &&
+                       previousStartSector < gdRomSession2Offset)
+                    {
+                        aaruTrack.TrackStartSector = gdRomSession2Offset;
+                    }
 
                     previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
 

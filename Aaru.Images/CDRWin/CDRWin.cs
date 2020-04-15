@@ -55,6 +55,7 @@ namespace Aaru.DiscImages
         string                       _writingBaseName;
         Dictionary<uint, FileStream> _writingStreams;
         List<Track>                  _writingTracks;
+        ulong                        densitySeparationSectors;
 
         public CdrWin() => _imageInfo = new ImageInfo
         {
