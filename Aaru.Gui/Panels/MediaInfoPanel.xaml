@@ -8,7 +8,7 @@
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <TextBlock HorizontalAlignment="Center" Text="Media information" />
-        <Image HorizontalAlignment="Center" Source="{Binding MediaLogo}" />
+        <Image Width="128" Height="128" HorizontalAlignment="Center" Source="{Binding MediaLogo}" />
         <TabControl>
             <TabItem IsVisible="{Binding GeneralVisible}">
                 <TabItem.Header>
