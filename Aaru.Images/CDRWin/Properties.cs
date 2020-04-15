@@ -55,6 +55,7 @@ namespace Aaru.DiscImages
                 List<Track> tracks = new List<Track>();
 
                 ulong previousStartSector = 0;
+                string previousTrackFile  = "";
 
                 foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
                 {
@@ -71,9 +72,16 @@ namespace Aaru.DiscImages
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
                     
-                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                        if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
-                            aaruTrack.TrackStartSector = previousStartSector;
+                    if (previousTrackFile == aaruTrack.TrackFile || previousTrackFile == "")
+                    {
+                        if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
+                            if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
+                                aaruTrack.TrackStartSector += previousStartSector;
+                    }
+                    else
+                        aaruTrack.TrackStartSector += previousStartSector;
+
+                    previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
 
                     aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
