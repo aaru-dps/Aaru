@@ -70,12 +70,12 @@ namespace Aaru.DiscImages
                         TrackFileType       = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
-
-                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
-
+                    
                     if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
                         if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
                             aaruTrack.TrackStartSector = previousStartSector;
+
+                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
