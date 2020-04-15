@@ -810,6 +810,14 @@ namespace Aaru.DiscImages
                             if(i > lastSessionTrack)
                                 lastSessionTrack = i;
                         }
+                    
+                    if(s > 1)
+                        if(_discImage.IsRedumpGigadisc)
+                            sessions[s - 1].StartSector = gdRomSession2Offset;
+                        else
+                            sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
+                    else
+                        sessions[s - 1].StartSector = 0;
 
                     sessions[s - 1].StartTrack = cueTracks[firstSessionTrk].Sequence;
                     sessions[s - 1].EndTrack   = cueTracks[lastSessionTrack].Sequence;
@@ -824,23 +832,18 @@ namespace Aaru.DiscImages
                         cueTracks[lastSessionTrack].Sectors = leadout - startSector;
                     }
                     else
-                        sessions[s - 1].EndSector = sessionSectors - 1;
+                        sessions[s - 1].EndSector = (sessions[s -1].StartSector + sessionSectors) - 1;
 
                     CdrWinTrack firstSessionTrack = cueTracks.OrderBy(t => t.Sequence).First(t => t.Session == s);
 
-                    if(firstSessionTrack.Indexes.TryGetValue(0, out sessions[s - 1].StartSector))
-                        continue;
+                    if (cueTracks.All(i => i.TrackFile.DataFilter.GetFilename() == cueTracks.First().TrackFile.DataFilter.GetFilename()))
+                    {
+                        if(firstSessionTrack.Indexes.TryGetValue(0, out sessions[s - 1].StartSector))
+                            continue;
 
-                    if(firstSessionTrack.Indexes.TryGetValue(1, out sessions[s - 1].StartSector))
-                        continue;
-
-                    if(s > 1)
-                        if(_discImage.IsRedumpGigadisc)
-                            sessions[s - 1].StartSector = gdRomSession2Offset;
-                        else
-                            sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
-                    else
-                        sessions[s - 1].StartSector = 0;
+                        if(firstSessionTrack.Indexes.TryGetValue(1, out sessions[s - 1].StartSector))
+                            continue;
+                    }
                 }
 
                 for(int s = 1; s <= sessions.Length; s++)
