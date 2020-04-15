@@ -1219,8 +1219,6 @@
         <e p="Forms" t="Include">
           <e p="frmDump.xeto" t="Include" />
           <e p="frmDump.xeto.cs" t="Include" />
-          <e p="frmMain.xeto" t="Include" />
-          <e p="frmMain.xeto.cs" t="Include" />
           <e p="frmMediaScan.xeto" t="Include" />
           <e p="frmMediaScan.xeto.cs" t="Include" />
         </e>
@@ -1269,10 +1267,10 @@
           <e p="FileSystemPanel.xaml.cs" t="Include" />
           <e p="ImageInfoPanel.xaml" t="Include" />
           <e p="ImageInfoPanel.xaml.cs" t="Include" />
+          <e p="MediaInfoPanel.xaml" t="Include" />
+          <e p="MediaInfoPanel.xaml.cs" t="Include" />
           <e p="PartitionPanel.xaml" t="Include" />
           <e p="PartitionPanel.xaml.cs" t="Include" />
-          <e p="pnlScsiInfo.xeto" t="Include" />
-          <e p="pnlScsiInfo.xeto.cs" t="Include" />
           <e p="SubdirectoryPanel.xaml" t="Include" />
           <e p="SubdirectoryPanel.xaml.cs" t="Include" />
         </e>
@@ -1318,6 +1316,7 @@
           <e p="ImageVerifyViewModel.cs" t="Include" />
           <e p="LicenseDialogViewModel.cs" t="Include" />
           <e p="MainWindowViewModel.cs" t="Include" />
+          <e p="MediaInfoViewModel.cs" t="Include" />
           <e p="PartitionViewModel.cs" t="Include" />
           <e p="PcmciaInfoViewModel.cs" t="Include" />
           <e p="PluginsDialogViewModel.cs" t="Include" />

@@ -13,6 +13,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Core.Media.Info;
 using Aaru.Database;
 using Aaru.Devices;
 using Aaru.Gui.Models;
@@ -170,74 +171,132 @@ namespace Aaru.Gui.ViewModels
 
                 this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
 
-                if(value is ImageModel imageModel)
-                    ContentPanel = new ImageInfoPanel
-                    {
-                        DataContext = imageModel.ViewModel
-                    };
+                ContentPanel = null;
 
-                if(value is PartitionModel partitionModel)
-                    ContentPanel = new PartitionPanel
-                    {
-                        DataContext = partitionModel.ViewModel
-                    };
-
-                if(value is FileSystemModel fileSystemModel)
-                    ContentPanel = new FileSystemPanel
-                    {
-                        DataContext = fileSystemModel.ViewModel
-                    };
-
-                if(value is SubdirectoryModel subdirectoryModel)
+                switch(value)
                 {
-                    ContentPanel = new SubdirectoryPanel
-                    {
-                        DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
-                    };
-                }
-
-                if(value is DeviceModel deviceModel)
-                {
-                    if(deviceModel.ViewModel is null)
-                    {
-                        try
+                    case ImageModel imageModel:
+                        ContentPanel = new ImageInfoPanel
                         {
-                            var dev = new Device(deviceModel.Path);
+                            DataContext = imageModel.ViewModel
+                        };
 
-                            if(dev.IsRemote)
-                                Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion,
-                                                     dev.RemoteOperatingSystem, dev.RemoteOperatingSystemVersion,
-                                                     dev.RemoteArchitecture);
+                        break;
+                    case PartitionModel partitionModel:
+                        ContentPanel = new PartitionPanel
+                        {
+                            DataContext = partitionModel.ViewModel
+                        };
 
-                            if(dev.Error)
+                        break;
+                    case FileSystemModel fileSystemModel:
+                        ContentPanel = new FileSystemPanel
+                        {
+                            DataContext = fileSystemModel.ViewModel
+                        };
+
+                        break;
+                    case SubdirectoryModel subdirectoryModel:
+                        ContentPanel = new SubdirectoryPanel
+                        {
+                            DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
+                        };
+
+                        break;
+                    case DeviceModel deviceModel:
+                    {
+                        if(deviceModel.ViewModel is null)
+                        {
+                            try
                             {
-                                ContentPanel = $"Error {dev.LastError} opening device";
+                                var dev = new Device(deviceModel.Path);
+
+                                if(dev.IsRemote)
+                                    Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion,
+                                                         dev.RemoteOperatingSystem, dev.RemoteOperatingSystemVersion,
+                                                         dev.RemoteArchitecture);
+
+                                if(dev.Error)
+                                {
+                                    ContentPanel = $"Error {dev.LastError} opening device";
+
+                                    return;
+                                }
+
+                                var devInfo = new DeviceInfo(dev);
+
+                                deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
+
+                                if(!dev.IsRemovable)
+                                    deviceModel.Media.Add(new MediaModel
+                                    {
+                                        NonRemovable = true, Name = "Non-removable device commands not yet implemented"
+                                    });
+                                else
+                                {
+                                    // TODO: Removable non-SCSI?
+                                    var scsiInfo = new ScsiInfo(dev);
+
+                                    if(!scsiInfo.MediaInserted)
+                                        deviceModel.Media.Add(new MediaModel
+                                        {
+                                            NoMediaInserted = true, Icon = _ejectIcon, Name = "No media inserted"
+                                        });
+                                    else
+                                    {
+                                        var mediaResource =
+                                            new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
+
+                                        deviceModel.Media.Add(new MediaModel
+                                        {
+                                            DevicePath = deviceModel.Path,
+                                            Icon = _assets.Exists(mediaResource)
+                                                       ? new Bitmap(_assets.Open(mediaResource)) : null,
+                                            Name      = $"{scsiInfo.MediaType}",
+                                            ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
+                                        });
+                                    }
+                                }
+
+                                dev.Close();
+                            }
+                            catch(SystemException ex)
+                            {
+                                if(Debugger.IsAttached)
+                                    throw;
+
+                                ContentPanel = ex.Message;
+                                AaruConsole.ErrorWriteLine(ex.Message);
 
                                 return;
                             }
-
-                            var devInfo = new DeviceInfo(dev);
-
-                            deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
-
-                            dev.Close();
                         }
-                        catch(SystemException ex)
+
+                        ContentPanel = new DeviceInfoPanel
                         {
-                            if(Debugger.IsAttached)
-                                throw;
+                            DataContext = deviceModel.ViewModel
+                        };
 
-                            ContentPanel = ex.Message;
-                            AaruConsole.ErrorWriteLine(ex.Message);
-
-                            return;
-                        }
+                        break;
                     }
+                    case MediaModel mediaModel when mediaModel.NonRemovable:
+                        ContentPanel = "Non-removable device commands not yet implemented";
 
-                    ContentPanel = new DeviceInfoPanel
+                        break;
+                    case MediaModel mediaModel when mediaModel.NoMediaInserted:
+                        ContentPanel = "No media inserted";
+
+                        break;
+                    case MediaModel mediaModel:
                     {
-                        DataContext = deviceModel.ViewModel
-                    };
+                        if(mediaModel.ViewModel != null)
+                            ContentPanel = new MediaInfoPanel
+                            {
+                                DataContext = mediaModel.ViewModel
+                            };
+
+                        break;
+                    }
                 }
             }
         }
