@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -25,6 +26,7 @@ using Avalonia.Platform;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Gui.ViewModels
@@ -166,6 +168,8 @@ namespace Aaru.Gui.ViewModels
                 if(value == _treeViewSelectedItem)
                     return;
 
+                this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
+
                 if(value is ImageModel imageModel)
                     ContentPanel = new ImageInfoPanel
                     {
@@ -192,7 +196,49 @@ namespace Aaru.Gui.ViewModels
                     };
                 }
 
-                this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
+                if(value is DeviceModel deviceModel)
+                {
+                    if(deviceModel.ViewModel is null)
+                    {
+                        try
+                        {
+                            var dev = new Device(deviceModel.Path);
+
+                            if(dev.IsRemote)
+                                Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion,
+                                                     dev.RemoteOperatingSystem, dev.RemoteOperatingSystemVersion,
+                                                     dev.RemoteArchitecture);
+
+                            if(dev.Error)
+                            {
+                                ContentPanel = $"Error {dev.LastError} opening device";
+
+                                return;
+                            }
+
+                            var devInfo = new DeviceInfo(dev);
+
+                            deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
+
+                            dev.Close();
+                        }
+                        catch(SystemException ex)
+                        {
+                            if(Debugger.IsAttached)
+                                throw;
+
+                            ContentPanel = ex.Message;
+                            AaruConsole.ErrorWriteLine(ex.Message);
+
+                            return;
+                        }
+                    }
+
+                    ContentPanel = new DeviceInfoPanel
+                    {
+                        DataContext = deviceModel.ViewModel
+                    };
+                }
             }
         }
 
@@ -625,8 +671,9 @@ namespace Aaru.Gui.ViewModels
                 AaruConsole.WriteLine("Refreshing devices");
                 _devicesRoot.Devices.Clear();
 
-                foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
-                                                    ThenBy(d => d.Model))
+                foreach(Devices.DeviceInfo device in Device.
+                                                     ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
+                                                     ThenBy(d => d.Model))
                 {
                     AaruConsole.DebugWriteLine("Main window",
                                                "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",

@@ -1263,14 +1263,14 @@
           </e>
         </e>
         <e p="Panels" t="Include">
+          <e p="DeviceInfoPanel.xaml" t="Include" />
+          <e p="DeviceInfoPanel.xaml.cs" t="Include" />
           <e p="FileSystemPanel.xaml" t="Include" />
           <e p="FileSystemPanel.xaml.cs" t="Include" />
           <e p="ImageInfoPanel.xaml" t="Include" />
           <e p="ImageInfoPanel.xaml.cs" t="Include" />
           <e p="PartitionPanel.xaml" t="Include" />
           <e p="PartitionPanel.xaml.cs" t="Include" />
-          <e p="pnlDeviceInfo.xeto" t="Include" />
-          <e p="pnlDeviceInfo.xeto.cs" t="Include" />
           <e p="pnlScsiInfo.xeto" t="Include" />
           <e p="pnlScsiInfo.xeto.cs" t="Include" />
           <e p="SubdirectoryPanel.xaml" t="Include" />
@@ -1305,6 +1305,7 @@
           <e p="CompactDiscInfoViewModel.cs" t="Include" />
           <e p="ConsoleWindowViewModel.cs" t="Include" />
           <e p="DecodeMediaTagsViewModel.cs" t="Include" />
+          <e p="DeviceInfoViewModel.cs" t="Include" />
           <e p="DvdInfoViewModel.cs" t="Include" />
           <e p="DvdWritableInfoViewModel.cs" t="Include" />
           <e p="EncodingsDialogViewModel.cs" t="Include" />

@@ -41,7 +41,6 @@ using Aaru.Gui.Panels;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
 namespace Aaru.Gui.Forms
 {
@@ -220,38 +219,6 @@ namespace Aaru.Gui.Forms
 
             switch(selectedItem.Values[3])
             {
-                case null when selectedItem.Parent == devicesRoot:
-                    try
-                    {
-                        var dev = new Device((string)selectedItem.Values[2]);
-
-                        if(dev.IsRemote)
-                            Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                                 dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
-
-                        if(dev.Error)
-                        {
-                            selectedItem.Values[3] = $"Error {dev.LastError} opening device";
-
-                            return;
-                        }
-
-                        var devInfo = new DeviceInfo(dev);
-
-                        selectedItem.Values[3] = new pnlDeviceInfo(devInfo);
-                        splMain.Panel2         = (Panel)selectedItem.Values[3];
-
-                        dev.Close();
-                    }
-                    catch(SystemException ex)
-                    {
-                        selectedItem.Values[3] = ex.Message;
-                        lblError.Text          = ex.Message;
-                        splMain.Panel2         = lblError;
-                        AaruConsole.ErrorWriteLine(ex.Message);
-                    }
-
-                    break;
                 case string devErrorMessage when selectedItem.Parent == devicesRoot:
                     lblError.Text  = devErrorMessage;
                     splMain.Panel2 = lblError;
