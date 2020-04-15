@@ -793,14 +793,6 @@ namespace Aaru.DiscImages
                     bool firstTrackRead = false;
                     sessions[s - 1].SessionSequence = (ushort)s;
 
-                    if(s > 1)
-                        if(_discImage.IsRedumpGigadisc)
-                            sessions[s - 1].StartSector = gdRomSession2Offset;
-                        else
-                            sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
-                    else
-                        sessions[s - 1].StartSector = 0;
-
                     ulong sessionSectors   = 0;
                     int   lastSessionTrack = 0;
                     int   firstSessionTrk  = 0;
@@ -843,7 +835,10 @@ namespace Aaru.DiscImages
                         continue;
 
                     if(s > 1)
-                        sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
+                        if(_discImage.IsRedumpGigadisc)
+                            sessions[s - 1].StartSector = gdRomSession2Offset;
+                        else
+                            sessions[s - 1].StartSector = sessions[s - 2].EndSector + 1;
                     else
                         sessions[s - 1].StartSector = 0;
                 }
@@ -1841,45 +1836,6 @@ namespace Aaru.DiscImages
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public List<Track> GetSessionTracks(ushort session)
-        {
-            List<Track> tracks = new List<Track>();
-
-            foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
-                if(cdrTrack.Session == session)
-                {
-                    var aaruTrack = new Track
-                    {
-                        Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
-                        TrackPregap         = cdrTrack.Pregap,
-                        TrackSession        = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
-                        TrackType           = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
-                        TrackFile           = cdrTrack.TrackFile.DataFilter.GetFilename(),
-                        TrackFilter         = cdrTrack.TrackFile.DataFilter,
-                        TrackFileOffset     = cdrTrack.TrackFile.Offset,
-                        TrackFileType       = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
-                        TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
-                    };
-
-                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);
-
-                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
-
-                    if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
-                    {
-                        aaruTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
-                        aaruTrack.TrackSubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
-                        aaruTrack.TrackSubchannelOffset = cdrTrack.TrackFile.Offset;
-                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
-                    }
-                    else
-                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
-
-                    tracks.Add(aaruTrack);
-                }
-
-            return tracks;
-        }
+        public List<Track> GetSessionTracks(ushort session) => Tracks.Where(t => t.TrackSession == session).OrderBy(t => t.TrackSequence).ToList();
     }
 }
