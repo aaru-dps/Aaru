@@ -336,25 +336,35 @@ namespace Aaru.Gui.ViewModels
 
         void ExecuteSaveMediumSupportCommand() => SaveElement(_scsiInfo.MediaTypeSupport);
 
-        void ExecuteDumpCommand()
+        async void ExecuteDumpCommand()
         {
-            /* TODO: frmDump
-            if(scsiInfo.MediaType == MediaType.GDR ||
-               scsiInfo.MediaType == MediaType.GDROM)
+            if(_scsiInfo.MediaType == CommonTypes.MediaType.GDR ||
+               _scsiInfo.MediaType == CommonTypes.MediaType.GDROM)
             {
-                Eto.Forms.MessageBox.Show("GD-ROM dump support is not yet implemented.", MessageBoxType.Error);
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
                 return;
             }
 
-            if((scsiInfo.MediaType == MediaType.XGD || scsiInfo.MediaType == MediaType.XGD2 ||
-                scsiInfo.MediaType == MediaType.XGD3) &&
-               scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
-                Eto.Forms.MessageBox.Show("Dumping Xbox discs require a Kreon drive.", MessageBoxType.Error);
+            if((_scsiInfo.MediaType == CommonTypes.MediaType.XGD || _scsiInfo.MediaType == CommonTypes.MediaType.XGD2 ||
+                _scsiInfo.MediaType == CommonTypes.MediaType.XGD3) &&
+               _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
+            {
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error", "Dumping Xbox discs require a Kreon drive.", ButtonEnum.Ok,
+                                                  Icon.Error).ShowDialog(_view);
 
-            var dumpForm = new frmDump(devicePath, scsiInfo.DeviceInfo, scsiInfo);
-            dumpForm.Show();
-            */
+                return;
+            }
+
+            var mediaDumpWindow = new MediaDumpWindow();
+
+            mediaDumpWindow.DataContext =
+                new MediaDumpViewModel(_devicePath, _scsiInfo.DeviceInfo, mediaDumpWindow, _scsiInfo);
+
+            mediaDumpWindow.Show();
         }
 
         async void ExecuteScanCommand()
