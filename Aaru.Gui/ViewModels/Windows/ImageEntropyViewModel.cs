@@ -11,7 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class ImageEntropyViewModel : ViewModelBase
     {

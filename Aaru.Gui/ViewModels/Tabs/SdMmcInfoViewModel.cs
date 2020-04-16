@@ -1,6 +1,6 @@
 using Aaru.CommonTypes.Enums;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class SdMmcInfoViewModel
     {

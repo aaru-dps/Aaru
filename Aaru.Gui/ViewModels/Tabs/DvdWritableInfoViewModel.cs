@@ -6,7 +6,7 @@ using Aaru.Decoders.DVD;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class DvdWritableInfoViewModel
     {

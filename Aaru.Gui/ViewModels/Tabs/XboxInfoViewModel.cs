@@ -6,12 +6,12 @@ using Aaru.Decoders.Xbox;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class XboxInfoViewModel
     {
-        Window          _view;
         readonly byte[] xboxSecuritySector;
+        Window          _view;
 
         public XboxInfoViewModel(XgdInfo xgdInfo, byte[] dmi, byte[] securitySector,
                                  SS.SecuritySector? decodedSecuritySector, Window view)

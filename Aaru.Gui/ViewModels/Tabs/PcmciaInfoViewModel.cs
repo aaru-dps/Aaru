@@ -8,14 +8,14 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class PcmciaInfoViewModel : ViewModelBase
     {
-        string          _pcmciaCisText;
-        PcmciaCisModel  _selectedCis;
         readonly Window _view;
         readonly byte[] cis;
+        string          _pcmciaCisText;
+        PcmciaCisModel  _selectedCis;
 
         internal PcmciaInfoViewModel(byte[] pcmciaCis, Window view)
         {

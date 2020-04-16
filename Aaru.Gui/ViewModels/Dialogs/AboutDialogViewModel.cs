@@ -6,11 +6,11 @@ using System.Reactive;
 using System.Reflection;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using Microsoft.DotNet.PlatformAbstractions;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class AboutDialogViewModel : ViewModelBase
     {

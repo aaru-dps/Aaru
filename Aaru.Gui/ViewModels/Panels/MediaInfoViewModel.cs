@@ -4,8 +4,10 @@ using System.IO;
 using System.Reactive;
 using System.Text;
 using Aaru.Core.Media.Info;
-using Aaru.Gui.Tabs;
-using Aaru.Gui.Views;
+using Aaru.Gui.ViewModels.Tabs;
+using Aaru.Gui.ViewModels.Windows;
+using Aaru.Gui.Views.Tabs;
+using Aaru.Gui.Views.Windows;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -14,7 +16,7 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Panels
 {
     public class MediaInfoViewModel : ViewModelBase
     {

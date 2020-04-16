@@ -1,6 +1,6 @@
 ﻿using System;
-using Aaru.Gui.ViewModels;
-using Aaru.Gui.Views;
+using Aaru.Gui.ViewModels.Windows;
+using Aaru.Gui.Views.Windows;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;

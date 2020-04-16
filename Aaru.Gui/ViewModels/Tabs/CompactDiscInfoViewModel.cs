@@ -8,11 +8,10 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class CompactDiscInfoViewModel : ViewModelBase
     {
-        readonly Window _view;
         readonly byte[] _atipData;
         readonly byte[] _cdTextLeadInData;
         readonly byte[] _compactDiscInformationData;
@@ -20,6 +19,7 @@ namespace Aaru.Gui.ViewModels
         readonly byte[] _rawTocData;
         readonly byte[] _sessionData;
         readonly byte[] _tocData;
+        readonly Window _view;
 
         public CompactDiscInfoViewModel(byte[] toc, byte[] atip, byte[] compactDiscInformation, byte[] session,
                                         byte[] rawToc, byte[] pma, byte[] cdTextLeadIn, TOC.CDTOC? decodedToc,
@@ -35,15 +35,15 @@ namespace Aaru.Gui.ViewModels
             _rawTocData                 = rawToc;
             _pmaData                    = pma;
             _cdTextLeadInData           = cdTextLeadIn;
-            _view                      = view;
-            IsrcList                   = new ObservableCollection<IsrcModel>();
-            SaveCdInformationCommand   = ReactiveCommand.Create(ExecuteSaveCdInformationCommand);
-            SaveCdTocCommand           = ReactiveCommand.Create(ExecuteSaveCdTocCommand);
-            SaveCdFullTocCommand       = ReactiveCommand.Create(ExecuteSaveCdFullTocCommand);
-            SaveCdSessionCommand       = ReactiveCommand.Create(ExecuteSaveCdSessionCommand);
-            SaveCdTextCommand          = ReactiveCommand.Create(ExecuteSaveCdTextCommand);
-            SaveCdAtipCommand          = ReactiveCommand.Create(ExecuteSaveCdAtipCommand);
-            SaveCdPmaCommand           = ReactiveCommand.Create(ExecuteSaveCdPmaCommand);
+            _view                       = view;
+            IsrcList                    = new ObservableCollection<IsrcModel>();
+            SaveCdInformationCommand    = ReactiveCommand.Create(ExecuteSaveCdInformationCommand);
+            SaveCdTocCommand            = ReactiveCommand.Create(ExecuteSaveCdTocCommand);
+            SaveCdFullTocCommand        = ReactiveCommand.Create(ExecuteSaveCdFullTocCommand);
+            SaveCdSessionCommand        = ReactiveCommand.Create(ExecuteSaveCdSessionCommand);
+            SaveCdTextCommand           = ReactiveCommand.Create(ExecuteSaveCdTextCommand);
+            SaveCdAtipCommand           = ReactiveCommand.Create(ExecuteSaveCdAtipCommand);
+            SaveCdPmaCommand            = ReactiveCommand.Create(ExecuteSaveCdPmaCommand);
 
             if(decodedCompactDiscInformation.HasValue)
                 CdInformationText = DiscInformation.Prettify000b(decodedCompactDiscInformation);
@@ -77,7 +77,7 @@ namespace Aaru.Gui.ViewModels
             }
 
             MiscellaneousVisible = McnText != null || isrcs?.Count > 0 || pma != null;
-            CdPmaVisible = pma != null;
+            CdPmaVisible         = pma != null;
         }
 
         public string                          CdInformationText        { get; }

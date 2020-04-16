@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views
+namespace Aaru.Gui.Views.Windows
 {
     public class ImageSidecarWindow : Window
     {

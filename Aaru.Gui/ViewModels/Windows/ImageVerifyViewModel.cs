@@ -12,11 +12,12 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class ImageVerifyViewModel : ViewModelBase
     {
         readonly IMediaImage _inputFormat;
+        readonly Window      _view;
         bool                 _cancel;
         bool                 _closeVisible;
         string               _imageResultText;
@@ -54,7 +55,6 @@ namespace Aaru.Gui.ViewModels
         bool                 _verifySectorsChecked;
         bool                 _verifySectorsEnabled;
         bool                 _verifySectorsVisible;
-        readonly Window _view;
 
         public ImageVerifyViewModel(IMediaImage inputFormat, Window view)
         {
@@ -305,8 +305,7 @@ namespace Aaru.Gui.ViewModels
             ProgressVisible      = true;
             Progress2Visible     = false;
 
-            VerifySectorsVisible = _inputFormat is IOpticalMediaImage ||
-                                   _inputFormat is IVerifiableSectorsImage;
+            VerifySectorsVisible = _inputFormat is IOpticalMediaImage || _inputFormat is IVerifiableSectorsImage;
 
             // TODO: Do not offer the option to use this form if the image does not support any kind of verification
             new Thread(DoWork).Start();
@@ -314,9 +313,9 @@ namespace Aaru.Gui.ViewModels
 
         async void DoWork()
         {
-            bool  formatHasTracks;
-            var inputOptical           = _inputFormat as IOpticalMediaImage;
-            var verifiableSectorsImage = _inputFormat as IVerifiableSectorsImage;
+            bool formatHasTracks;
+            var  inputOptical           = _inputFormat as IOpticalMediaImage;
+            var  verifiableSectorsImage = _inputFormat as IVerifiableSectorsImage;
 
             try
             {
@@ -427,7 +426,7 @@ namespace Aaru.Gui.ViewModels
 
                 if(formatHasTracks)
                 {
-                    ulong       currentSectorAll = 0;
+                    ulong currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
 

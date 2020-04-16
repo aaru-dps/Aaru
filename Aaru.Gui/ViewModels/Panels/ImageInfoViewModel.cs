@@ -12,8 +12,10 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
-using Aaru.Gui.Tabs;
-using Aaru.Gui.Views;
+using Aaru.Gui.ViewModels.Tabs;
+using Aaru.Gui.ViewModels.Windows;
+using Aaru.Gui.Views.Tabs;
+using Aaru.Gui.Views.Windows;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
@@ -23,7 +25,7 @@ using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Panels
 {
     public class ImageInfoViewModel : ViewModelBase
     {

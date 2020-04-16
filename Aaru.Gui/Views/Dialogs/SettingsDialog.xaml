@@ -1,11 +1,11 @@
 ﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="675" Height="432" x:Class="Aaru.Gui.Views.SettingsDialog"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="675" Height="432" x:Class="Aaru.Gui.Views.Dialogs.SettingsDialog"
         Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
     <Design.DataContext>
-        <vm:SettingsDialogViewModel />
+        <dialogs:SettingsDialogViewModel />
     </Design.DataContext>
     <Border Padding="15">
         <Grid>

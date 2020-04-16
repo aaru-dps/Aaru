@@ -4,11 +4,11 @@ using System.Reflection;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using Aaru.Gui.Models;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using Aaru.Partitions;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class PluginsDialogViewModel : ViewModelBase
     {

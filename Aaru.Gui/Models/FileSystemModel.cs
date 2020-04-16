@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Gui.ViewModels;
+using Aaru.Gui.ViewModels.Panels;
 
 namespace Aaru.Gui.Models
 {

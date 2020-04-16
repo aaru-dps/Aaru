@@ -1,4 +1,4 @@
-using Aaru.Gui.ViewModels;
+using Aaru.Gui.ViewModels.Panels;
 using Avalonia.Media.Imaging;
 
 namespace Aaru.Gui.Models

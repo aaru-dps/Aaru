@@ -4,10 +4,10 @@ using System.Reactive;
 using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Gui.Models;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class StatisticsDialogViewModel : ViewModelBase
     {

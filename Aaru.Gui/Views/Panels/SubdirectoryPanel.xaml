@@ -1,10 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Aaru.Gui.ViewModels" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Aaru.Gui.Panels.SubdirectoryPanel">
+             xmlns:vm="clr-namespace:Aaru.Gui.ViewModels" xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.SubdirectoryPanel">
     <Design.DataContext>
-        <vm:SubdirectoryViewModel />
+        <panels:SubdirectoryViewModel />
     </Design.DataContext>
     <DataGrid Items="{Binding Entries}" IsReadOnly="True" SelectionMode="Extended"> <!-- TODO: SelectedItems="{Binding SelectedEntries}" -->
         <DataGrid.ContextMenu>

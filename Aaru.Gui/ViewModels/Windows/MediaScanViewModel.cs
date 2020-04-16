@@ -11,7 +11,7 @@ using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class MediaScanViewModel : ViewModelBase
     {

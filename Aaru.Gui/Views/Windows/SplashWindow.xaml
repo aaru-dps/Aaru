@@ -1,18 +1,17 @@
 ﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.SplashWindow" Icon="/Assets/aaru-logo.png" Title="Aaru"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.SplashWindow" Icon="/Assets/aaru-logo.png" Title="Aaru"
         HasSystemDecorations="False">
     <Design.DataContext>
-        <vm:SplashWindowViewModel />
+        <windows:SplashWindowViewModel />
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Source="/Assets/aaru-logo.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-               Grid.Row="0" />
+        <Image Source="/Assets/aaru-logo.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
         <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
         <ProgressBar Maximum="{Binding MaxProgress}" Minimum="0" Value="{Binding CurrentProgress}"
                      HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2" />

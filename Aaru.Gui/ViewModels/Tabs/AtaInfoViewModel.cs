@@ -5,7 +5,7 @@ using Aaru.Decoders.ATA;
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class AtaInfoViewModel : ViewModelBase
     {

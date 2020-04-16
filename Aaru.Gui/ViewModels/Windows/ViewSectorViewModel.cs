@@ -1,7 +1,7 @@
 using Aaru.CommonTypes.Interfaces;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class ViewSectorViewModel : ViewModelBase
     {

@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Tabs
+namespace Aaru.Gui.Views.Tabs
 {
     public class DvdWritableInfoTab : UserControl
     {

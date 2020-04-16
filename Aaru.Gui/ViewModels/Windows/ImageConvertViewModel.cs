@@ -23,10 +23,11 @@ using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class ImageConvertViewModel : ViewModelBase
     {
+        readonly Window      _view;
         readonly IMediaImage inputFormat;
         bool                 _cicmXmlFromImageVisible;
         string               _cicmXmlText;
@@ -50,46 +51,44 @@ namespace Aaru.Gui.ViewModels
         bool   _driveSerialNumberVisible;
         bool   _forceChecked;
 
-        bool             _formatReadOnly;
-        double           _lastMediaSequenceValue;
-        bool             _lastMediaSequenceVisible;
-        string           _mediaBarcodeText;
-        bool             _mediaBarcodeVisible;
-        string           _mediaManufacturerText;
-        bool             _mediaManufacturerVisible;
-        string           _mediaModelText;
-        bool             _mediaModelVisible;
-        string           _mediaPartNumberText;
-        bool             _mediaPartNumberVisible;
-        double           _mediaSequenceValue;
-        bool             _mediaSequenceVisible;
-        string           _mediaSerialNumberText;
-        bool             _mediaSerialNumberVisible;
-        string           _mediaTitleText;
-        bool             _mediaTitleVisible;
-        bool             _optionsVisible;
-        bool             _progress1Visible;
-        bool             _progress2Indeterminate;
-        double           _progress2MaxValue;
-        string           _progress2Text;
-        double           _progress2Value;
-        bool             _progress2Visible;
-        bool             _progressIndeterminate;
-        double           _progressMaxValue;
-        string           _progressText;
-        double           _progressValue;
-        bool             _progressVisible;
-        bool             _resumeFileFromImageVisible;
-        string           _resumeFileText;
-        double           _sectorsValue;
-        ImagePluginModel _selectedPlugin;
-        string           _sourceText;
-        bool             _startVisible;
-        bool             _stopEnabled;
-        bool             _stopVisible;
-        string           _title;
-
-        readonly Window        _view;
+        bool                   _formatReadOnly;
+        double                 _lastMediaSequenceValue;
+        bool                   _lastMediaSequenceVisible;
+        string                 _mediaBarcodeText;
+        bool                   _mediaBarcodeVisible;
+        string                 _mediaManufacturerText;
+        bool                   _mediaManufacturerVisible;
+        string                 _mediaModelText;
+        bool                   _mediaModelVisible;
+        string                 _mediaPartNumberText;
+        bool                   _mediaPartNumberVisible;
+        double                 _mediaSequenceValue;
+        bool                   _mediaSequenceVisible;
+        string                 _mediaSerialNumberText;
+        bool                   _mediaSerialNumberVisible;
+        string                 _mediaTitleText;
+        bool                   _mediaTitleVisible;
+        bool                   _optionsVisible;
+        bool                   _progress1Visible;
+        bool                   _progress2Indeterminate;
+        double                 _progress2MaxValue;
+        string                 _progress2Text;
+        double                 _progress2Value;
+        bool                   _progress2Visible;
+        bool                   _progressIndeterminate;
+        double                 _progressMaxValue;
+        string                 _progressText;
+        double                 _progressValue;
+        bool                   _progressVisible;
+        bool                   _resumeFileFromImageVisible;
+        string                 _resumeFileText;
+        double                 _sectorsValue;
+        ImagePluginModel       _selectedPlugin;
+        string                 _sourceText;
+        bool                   _startVisible;
+        bool                   _stopEnabled;
+        bool                   _stopVisible;
+        string                 _title;
         bool                   cancel;
         CICMMetadataType       cicmMetadata;
         List<DumpHardwareType> dumpHardware;

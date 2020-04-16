@@ -1,11 +1,11 @@
 ﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:Aaru.Gui.ViewModels;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.MediaScanWindow" Icon="/Assets/aaru-logo.png"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.MediaScanWindow" Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
-        <vm:MediaScanViewModel />
+        <windows:MediaScanViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <TabControl IsVisible="{Binding ResultsVisible}">

@@ -5,10 +5,10 @@ using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class EncodingsDialogViewModel : ViewModelBase
     {

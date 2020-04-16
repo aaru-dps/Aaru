@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
-using Aaru.Gui.Views;
+using Aaru.Gui.ViewModels.Dialogs;
+using Aaru.Gui.Views.Dialogs;
+using Aaru.Gui.Views.Windows;
 using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class SplashWindowViewModel : ViewModelBase
     {

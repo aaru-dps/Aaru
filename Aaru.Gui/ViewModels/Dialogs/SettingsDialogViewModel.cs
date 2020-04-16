@@ -1,9 +1,9 @@
 ﻿using System.Reactive;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using Aaru.Settings;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class SettingsDialogViewModel : ViewModelBase
     {

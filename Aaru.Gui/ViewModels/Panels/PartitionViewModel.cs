@@ -1,6 +1,6 @@
 using Aaru.CommonTypes;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Panels
 {
     public class PartitionViewModel
     {

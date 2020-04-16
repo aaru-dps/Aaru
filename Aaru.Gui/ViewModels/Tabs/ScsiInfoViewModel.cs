@@ -12,7 +12,7 @@ using Avalonia.Controls;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Tabs
 {
     public class ScsiInfoViewModel : ViewModelBase
     {

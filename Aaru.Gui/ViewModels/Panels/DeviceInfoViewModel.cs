@@ -4,12 +4,13 @@ using System.IO;
 using System.Reactive;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
-using Aaru.Gui.Tabs;
+using Aaru.Gui.ViewModels.Tabs;
+using Aaru.Gui.Views.Tabs;
 using Avalonia.Controls;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Panels
 {
     public class DeviceInfoViewModel : ViewModelBase
     {

@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Reactive;
 using System.Reflection;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using ReactiveUI;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class LicenseDialogViewModel : ViewModelBase
     {

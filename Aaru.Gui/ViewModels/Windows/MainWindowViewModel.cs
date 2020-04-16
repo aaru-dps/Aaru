@@ -17,8 +17,11 @@ using Aaru.Core.Media.Info;
 using Aaru.Database;
 using Aaru.Devices;
 using Aaru.Gui.Models;
-using Aaru.Gui.Panels;
-using Aaru.Gui.Views;
+using Aaru.Gui.ViewModels.Dialogs;
+using Aaru.Gui.ViewModels.Panels;
+using Aaru.Gui.Views.Dialogs;
+using Aaru.Gui.Views.Panels;
+using Aaru.Gui.Views.Windows;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -30,7 +33,7 @@ using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class MainWindowViewModel : ViewModelBase
     {

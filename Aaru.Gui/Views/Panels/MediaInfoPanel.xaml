@@ -1,10 +1,10 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Aaru.Gui.ViewModels" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Aaru.Gui.Panels.MediaInfoPanel">
+             xmlns:vm="clr-namespace:Aaru.Gui.ViewModels" xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.MediaInfoPanel">
     <Design.DataContext>
-        <vm:MediaInfoViewModel />
+        <panels:MediaInfoViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <TextBlock HorizontalAlignment="Center" Text="Media information" />

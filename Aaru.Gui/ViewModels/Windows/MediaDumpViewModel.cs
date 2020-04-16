@@ -27,7 +27,7 @@ using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class MediaDumpViewModel : ViewModelBase
     {

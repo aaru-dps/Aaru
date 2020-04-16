@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
-using Aaru.Gui.ViewModels;
+using Aaru.Gui.ViewModels.Windows;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views
+namespace Aaru.Gui.Views.Windows
 {
     public class ImageVerifyWindow : Window
     {

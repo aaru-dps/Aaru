@@ -19,7 +19,7 @@ using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class DecodeMediaTagsViewModel : ViewModelBase
     {

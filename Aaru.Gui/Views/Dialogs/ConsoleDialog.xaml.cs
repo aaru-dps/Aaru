@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views
+namespace Aaru.Gui.Views.Dialogs
 {
     public class ConsoleWindow : Window
     {

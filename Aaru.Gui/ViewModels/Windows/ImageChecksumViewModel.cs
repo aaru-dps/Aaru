@@ -12,7 +12,7 @@ using Avalonia.Threading;
 using ReactiveUI;
 using Schemas;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Windows
 {
     public class ImageChecksumViewModel : ViewModelBase
     {

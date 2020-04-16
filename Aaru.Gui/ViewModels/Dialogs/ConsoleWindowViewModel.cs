@@ -6,18 +6,18 @@ using System.Reactive;
 using System.Reflection;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
-using Aaru.Gui.Views;
+using Aaru.Gui.Views.Dialogs;
 using Avalonia.Controls;
 using ReactiveUI;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Dialogs
 {
     public class ConsoleWindowViewModel : ViewModelBase
     {
-        bool                   _debugChecked;
         readonly ConsoleWindow _view;
+        bool                   _debugChecked;
 
         public ConsoleWindowViewModel(ConsoleWindow view)
         {

@@ -15,7 +15,7 @@ using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Gui.ViewModels
+namespace Aaru.Gui.ViewModels.Panels
 {
     public class SubdirectoryViewModel
     {
