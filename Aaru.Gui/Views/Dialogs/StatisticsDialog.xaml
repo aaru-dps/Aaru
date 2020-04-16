@@ -5,7 +5,7 @@
         d:DesignHeight="450" Width="550" Height="320" x:Class="Aaru.Gui.Views.Dialogs.StatisticsDialog"
         Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
     <Design.DataContext>
-        <dialogs:StatisticsDialogViewModel />
+        <dialogs:StatisticsViewModel />
     </Design.DataContext>
     <Border Padding="15">
         <Grid>

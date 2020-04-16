@@ -3,9 +3,9 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Tabs
 {
-    public class SdMmcInfo : UserControl
+    public class PcmciaInfo : UserControl
     {
-        public SdMmcInfo() => InitializeComponent();
+        public PcmciaInfo() => InitializeComponent();
 
         void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }

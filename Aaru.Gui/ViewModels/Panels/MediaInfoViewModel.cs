@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Text;
-using Aaru.Core.Media.Info;
 using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
@@ -15,36 +14,37 @@ using Avalonia.Platform;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
+using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
     public class MediaInfoViewModel : ViewModelBase
     {
-        readonly string    _devicePath;
-        readonly ScsiInfo  _scsiInfo;
-        readonly Window    _view;
-        BlurayInfoTab      _blurayInfo;
-        CompactDiscInfoTab _compactDiscInfo;
-        string             _densitySupport;
-        DvdInfoTab         _dvdInfo;
-        DvdWritableInfoTab _dvdWritableInfo;
-        string             _generalVisible;
-        Bitmap             _mediaLogo;
-        string             _mediaSerial;
-        string             _mediaSize;
-        string             _mediaType;
-        string             _mediumSupport;
-        bool               _mmcVisible;
-        bool               _saveDensitySupportVisible;
-        bool               _saveGetConfigurationVisible;
-        bool               _saveMediumSupportVisible;
-        bool               _saveReadCapacity16Visible;
-        bool               _saveReadCapacityVisible;
-        bool               _saveReadMediaSerialVisible;
-        bool               _saveRecognizedFormatLayersVisible;
-        bool               _saveWriteProtectionStatusVisible;
-        bool               _sscVisible;
-        XboxInfoTab        _xboxInfo;
+        readonly string   _devicePath;
+        readonly ScsiInfo _scsiInfo;
+        readonly Window   _view;
+        BlurayInfo        _blurayInfo;
+        CompactDiscInfo   _compactDiscInfo;
+        string            _densitySupport;
+        DvdInfo           _dvdInfo;
+        DvdWritableInfo   _dvdWritableInfo;
+        string            _generalVisible;
+        Bitmap            _mediaLogo;
+        string            _mediaSerial;
+        string            _mediaSize;
+        string            _mediaType;
+        string            _mediumSupport;
+        bool              _mmcVisible;
+        bool              _saveDensitySupportVisible;
+        bool              _saveGetConfigurationVisible;
+        bool              _saveMediumSupportVisible;
+        bool              _saveReadCapacity16Visible;
+        bool              _saveReadCapacityVisible;
+        bool              _saveReadMediaSerialVisible;
+        bool              _saveRecognizedFormatLayersVisible;
+        bool              _saveWriteProtectionStatusVisible;
+        bool              _sscVisible;
+        XboxInfo          _xboxInfo;
 
         public MediaInfoViewModel(ScsiInfo scsiInfo, string devicePath, Window view)
         {
@@ -106,7 +106,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
             SscVisible = SaveDensitySupportVisible || SaveMediumSupportVisible;
 
-            CompactDiscInfo = new CompactDiscInfoTab
+            CompactDiscInfo = new CompactDiscInfo
             {
                 DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation,
                                                            scsiInfo.Session, scsiInfo.RawToc, scsiInfo.Pma,
@@ -117,20 +117,20 @@ namespace Aaru.Gui.ViewModels.Panels
                                                            scsiInfo.Isrcs, _view)
             };
 
-            DvdInfo = new DvdInfoTab
+            DvdInfo = new DvdInfo
             {
                 DataContext = new DvdInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi,
                                                    scsiInfo.DvdCmi, scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca,
                                                    scsiInfo.DvdAacs, scsiInfo.DecodedPfi, _view)
             };
 
-            XboxInfo = new XboxInfoTab
+            XboxInfo = new XboxInfo
             {
                 DataContext = new XboxInfoViewModel(scsiInfo.XgdInfo, scsiInfo.DvdDmi, scsiInfo.XboxSecuritySector,
                                                     scsiInfo.DecodedXboxSecuritySector, _view)
             };
 
-            DvdWritableInfo = new DvdWritableInfoTab
+            DvdWritableInfo = new DvdWritableInfo
             {
                 DataContext = new DvdWritableInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdRamDds,
                                                            scsiInfo.DvdRamCartridgeStatus, scsiInfo.DvdRamSpareArea,
@@ -145,7 +145,7 @@ namespace Aaru.Gui.ViewModels.Panels
                                                            scsiInfo.DvdPlusDcb, _view)
             };
 
-            BlurayInfo = new BlurayInfoTab
+            BlurayInfo = new BlurayInfo
             {
                 DataContext = new BlurayInfoViewModel(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea,
                                                       scsiInfo.BlurayDds, scsiInfo.BlurayCartridgeStatus,
@@ -268,31 +268,31 @@ namespace Aaru.Gui.ViewModels.Panels
             set => this.RaiseAndSetIfChanged(ref _saveMediumSupportVisible, value);
         }
 
-        public CompactDiscInfoTab CompactDiscInfo
+        public CompactDiscInfo CompactDiscInfo
         {
             get => _compactDiscInfo;
             set => this.RaiseAndSetIfChanged(ref _compactDiscInfo, value);
         }
 
-        public DvdInfoTab DvdInfo
+        public DvdInfo DvdInfo
         {
             get => _dvdInfo;
             set => this.RaiseAndSetIfChanged(ref _dvdInfo, value);
         }
 
-        public DvdWritableInfoTab DvdWritableInfo
+        public DvdWritableInfo DvdWritableInfo
         {
             get => _dvdWritableInfo;
             set => this.RaiseAndSetIfChanged(ref _dvdWritableInfo, value);
         }
 
-        public XboxInfoTab XboxInfo
+        public XboxInfo XboxInfo
         {
             get => _xboxInfo;
             set => this.RaiseAndSetIfChanged(ref _xboxInfo, value);
         }
 
-        public BlurayInfoTab BlurayInfo
+        public BlurayInfo BlurayInfo
         {
             get => _blurayInfo;
             set => this.RaiseAndSetIfChanged(ref _blurayInfo, value);
@@ -361,7 +361,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 return;
             }
 
-            var mediaDumpWindow = new MediaDumpWindow();
+            var mediaDumpWindow = new MediaDump();
 
             mediaDumpWindow.DataContext =
                 new MediaDumpViewModel(_devicePath, _scsiInfo.DeviceInfo, mediaDumpWindow, _scsiInfo);
@@ -393,7 +393,7 @@ namespace Aaru.Gui.ViewModels.Panels
                     return;
             }
 
-            var mediaScanWindow = new MediaScanWindow();
+            var mediaScanWindow = new MediaScan();
 
             mediaScanWindow.DataContext =
                 new MediaScanViewModel(_devicePath, _scsiInfo.DeviceInfo, mediaScanWindow, _scsiInfo);

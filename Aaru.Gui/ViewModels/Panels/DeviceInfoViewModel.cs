@@ -16,7 +16,7 @@ namespace Aaru.Gui.ViewModels.Panels
     {
         readonly Window     _view;
         readonly DeviceInfo devInfo;
-        AtaInfoTab          _ataInfo;
+        AtaInfo             _ataInfo;
         string              _blockLimits;
         string              _blockSizeGranularity;
         string              _cid;
@@ -48,7 +48,7 @@ namespace Aaru.Gui.ViewModels.Panels
         string              _minBlockSize;
         string              _model;
         string              _ocr;
-        PcmciaInfoTab       _pcmciaInfo;
+        PcmciaInfo          _pcmciaInfo;
         bool                _plextorBitSetting;
         bool                _plextorBitSettingDl;
         string              _plextorCdReadTime;
@@ -91,10 +91,10 @@ namespace Aaru.Gui.ViewModels.Panels
         string              _revision;
         bool                _saveUsbDescriptorsEnabled;
         string              _scr;
-        ScsiInfoTab         _scsiInfo;
+        ScsiInfo            _scsiInfo;
         string              _scsiType;
         string              _sdMm;
-        SdMmcInfoTab        _sdMmcInfo;
+        SdMmcInfo           _sdMmcInfo;
         string              _secureDigital;
         string              _serial;
         bool                _ssc;
@@ -145,7 +145,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(devInfo.IsPcmcia)
             {
-                PcmciaInfo = new PcmciaInfoTab
+                PcmciaInfo = new PcmciaInfo
                 {
                     DataContext = new PcmciaInfoViewModel(devInfo.Cis, _view)
                 };
@@ -154,7 +154,7 @@ namespace Aaru.Gui.ViewModels.Panels
             if(devInfo.AtaIdentify   != null ||
                devInfo.AtapiIdentify != null)
             {
-                AtaInfo = new AtaInfoTab
+                AtaInfo = new AtaInfo
                 {
                     DataContext =
                         new AtaInfoViewModel(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError, _view)
@@ -163,7 +163,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
             if(devInfo.ScsiInquiryData != null)
             {
-                ScsiInfo = new ScsiInfoTab
+                ScsiInfo = new ScsiInfo
                 {
                     DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData, devInfo.ScsiInquiry,
                                                         devInfo.ScsiEvpdPages, devInfo.ScsiMode, devInfo.ScsiType,
@@ -354,7 +354,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 }
             }
 
-            SdMmcInfo = new SdMmcInfoTab
+            SdMmcInfo = new SdMmcInfo
             {
                 DataContext = new SdMmcInfoViewModel(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR,
                                                      devInfo.ExtendedCSD, devInfo.SCR)
@@ -873,25 +873,25 @@ namespace Aaru.Gui.ViewModels.Panels
             set => this.RaiseAndSetIfChanged(ref _scr, value);
         }
 
-        public PcmciaInfoTab PcmciaInfo
+        public PcmciaInfo PcmciaInfo
         {
             get => _pcmciaInfo;
             set => this.RaiseAndSetIfChanged(ref _pcmciaInfo, value);
         }
 
-        public ScsiInfoTab ScsiInfo
+        public ScsiInfo ScsiInfo
         {
             get => _scsiInfo;
             set => this.RaiseAndSetIfChanged(ref _scsiInfo, value);
         }
 
-        public AtaInfoTab AtaInfo
+        public AtaInfo AtaInfo
         {
             get => _ataInfo;
             set => this.RaiseAndSetIfChanged(ref _ataInfo, value);
         }
 
-        public SdMmcInfoTab SdMmcInfo
+        public SdMmcInfo SdMmcInfo
         {
             get => _sdMmcInfo;
             set => this.RaiseAndSetIfChanged(ref _sdMmcInfo, value);

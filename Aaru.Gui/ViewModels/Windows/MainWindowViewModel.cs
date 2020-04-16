@@ -31,6 +31,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using ImageInfo = Aaru.Gui.Views.Panels.ImageInfo;
+using Partition = Aaru.Gui.Views.Panels.Partition;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Gui.ViewModels.Windows
@@ -48,12 +50,12 @@ namespace Aaru.Gui.ViewModels.Windows
         readonly Bitmap           _removableIcon;
         readonly Bitmap           _sdIcon;
 
-        readonly Bitmap     _usbIcon;
-        readonly MainWindow _view;
-        ConsoleWindow       _consoleWindow;
-        object              _contentPanel;
-        bool                _devicesSupported;
-        object              _treeViewSelectedItem;
+        readonly Bitmap       _usbIcon;
+        readonly MainWindow   _view;
+        Views.Dialogs.Console _console;
+        object                _contentPanel;
+        bool                  _devicesSupported;
+        object                _treeViewSelectedItem;
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -179,28 +181,28 @@ namespace Aaru.Gui.ViewModels.Windows
                 switch(value)
                 {
                     case ImageModel imageModel:
-                        ContentPanel = new ImageInfoPanel
+                        ContentPanel = new ImageInfo
                         {
                             DataContext = imageModel.ViewModel
                         };
 
                         break;
                     case PartitionModel partitionModel:
-                        ContentPanel = new PartitionPanel
+                        ContentPanel = new Partition
                         {
                             DataContext = partitionModel.ViewModel
                         };
 
                         break;
                     case FileSystemModel fileSystemModel:
-                        ContentPanel = new FileSystemPanel
+                        ContentPanel = new FileSystem
                         {
                             DataContext = fileSystemModel.ViewModel
                         };
 
                         break;
                     case SubdirectoryModel subdirectoryModel:
-                        ContentPanel = new SubdirectoryPanel
+                        ContentPanel = new Subdirectory
                         {
                             DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
                         };
@@ -275,7 +277,7 @@ namespace Aaru.Gui.ViewModels.Windows
                             }
                         }
 
-                        ContentPanel = new DeviceInfoPanel
+                        ContentPanel = new Views.Panels.DeviceInfo
                         {
                             DataContext = deviceModel.ViewModel
                         };
@@ -293,7 +295,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     case MediaModel mediaModel:
                     {
                         if(mediaModel.ViewModel != null)
-                            ContentPanel = new MediaInfoPanel
+                            ContentPanel = new MediaInfo
                             {
                                 DataContext = mediaModel.ViewModel
                             };
@@ -309,7 +311,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            var imageEntropyWindow = new ImageEntropyWindow();
+            var imageEntropyWindow = new ImageEntropy();
             imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
 
             imageEntropyWindow.Closed += (sender, args) =>
@@ -325,7 +327,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            var imageVerifyWindow = new ImageVerifyWindow();
+            var imageVerifyWindow = new ImageVerify();
             imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
 
             imageVerifyWindow.Closed += (sender, args) =>
@@ -341,7 +343,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            var imageChecksumWindow = new ImageChecksumWindow();
+            var imageChecksumWindow = new ImageChecksum();
             imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
 
             imageChecksumWindow.Closed += (sender, args) =>
@@ -357,7 +359,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            var imageConvertWindow = new ImageConvertWindow();
+            var imageConvertWindow = new ImageConvert();
 
             imageConvertWindow.DataContext =
                 new ImageConvertViewModel(imageModel.Image, imageModel.Path, imageConvertWindow);
@@ -375,7 +377,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            var imageSidecarWindow = new ImageSidecarWindow();
+            var imageSidecarWindow = new ImageSidecar();
 
             // TODO: Pass thru chosen default encoding
             imageSidecarWindow.DataContext =
@@ -390,7 +392,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            new ViewSectorWindow
+            new ViewSector
             {
                 DataContext = new ViewSectorViewModel(imageModel.Image)
             }.Show();
@@ -401,7 +403,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!(TreeViewSelectedItem is ImageModel imageModel))
                 return;
 
-            new DecodeMediaTagsWindow
+            new DecodeMediaTags
             {
                 DataContext = new DecodeMediaTagsViewModel(imageModel.Image)
             }.Show();
@@ -409,22 +411,22 @@ namespace Aaru.Gui.ViewModels.Windows
 
         internal void ExecuteAboutCommand()
         {
-            var dialog = new AboutDialog();
-            dialog.DataContext = new AboutDialogViewModel(dialog);
+            var dialog = new About();
+            dialog.DataContext = new AboutViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
         void ExecuteEncodingsCommand()
         {
-            var dialog = new EncodingsDialog();
-            dialog.DataContext = new EncodingsDialogViewModel(dialog);
+            var dialog = new Encodings();
+            dialog.DataContext = new EncodingsViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
         void ExecutePluginsCommand()
         {
             var dialog = new PluginsDialog();
-            dialog.DataContext = new PluginsDialogViewModel(dialog);
+            dialog.DataContext = new PluginsViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
@@ -446,14 +448,14 @@ namespace Aaru.Gui.ViewModels.Windows
             }
 
             var dialog = new StatisticsDialog();
-            dialog.DataContext = new StatisticsDialogViewModel(dialog);
+            dialog.DataContext = new StatisticsViewModel(dialog);
             dialog.ShowDialog(_view);
         }
 
         internal async void ExecuteSettingsCommand()
         {
             var dialog = new SettingsDialog();
-            dialog.DataContext = new SettingsDialogViewModel(dialog, false);
+            dialog.DataContext = new SettingsViewModel(dialog, false);
             await dialog.ShowDialog(_view);
         }
 
@@ -462,13 +464,13 @@ namespace Aaru.Gui.ViewModels.Windows
 
         void ExecuteConsoleCommand()
         {
-            if(_consoleWindow is null)
+            if(_console is null)
             {
-                _consoleWindow             = new ConsoleWindow();
-                _consoleWindow.DataContext = new ConsoleWindowViewModel(_consoleWindow);
+                _console             = new Views.Dialogs.Console();
+                _console.DataContext = new ConsoleViewModel(_console);
             }
 
-            _consoleWindow.Show();
+            _console.Show();
         }
 
         async void ExecuteOpenCommand()
@@ -539,7 +541,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         Filter    = inputFilter
                     };
 
-                    List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                    List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
                     Core.Partitions.AddSchemesToStats(partitions);
 
                     bool         checkRaw = false;
@@ -565,8 +567,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                 Name = scheme
                             };
 
-                            foreach(Partition partition in partitions.
-                                                           Where(p => p.Scheme == scheme).OrderBy(p => p.Start))
+                            foreach(CommonTypes.Partition partition in partitions.
+                                                                       Where(p => p.Scheme == scheme).
+                                                                       OrderBy(p => p.Start))
                             {
                                 var partitionModel = new PartitionModel
                                 {
@@ -636,7 +639,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     if(checkRaw)
                     {
-                        var wholePart = new Partition
+                        var wholePart = new CommonTypes.Partition
                         {
                             Name = "Whole device", Length = imageFormat.Info.Sectors,
                             Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize

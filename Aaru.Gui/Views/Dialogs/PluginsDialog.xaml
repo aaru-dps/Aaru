@@ -38,7 +38,7 @@
         d:DesignHeight="450" Width="600" Height="450" x:Class="Aaru.Gui.Views.Dialogs.PluginsDialog"
         Icon="/Assets/aaru-logo.png" Title="{Binding Title}" Padding="10">
     <Design.DataContext>
-        <dialogs:PluginsDialogViewModel />
+        <dialogs:PluginsViewModel />
     </Design.DataContext>
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>

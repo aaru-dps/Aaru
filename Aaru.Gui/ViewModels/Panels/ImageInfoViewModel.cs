@@ -29,17 +29,17 @@ namespace Aaru.Gui.ViewModels.Panels
 {
     public class ImageInfoViewModel : ViewModelBase
     {
-        readonly IFilter      _filter;
-        readonly IMediaImage  _imageFormat;
-        readonly string       _imagePath;
-        readonly Window       _view;
-        DecodeMediaTagsWindow _decodeMediaTagsWindow;
-        ImageChecksumWindow   _imageChecksumWindow;
-        ImageConvertWindow    _imageConvertWindow;
-        ImageEntropyWindow    _imageEntropyWindow;
-        ImageSidecarWindow    _imageSidecarWindow;
-        ImageVerifyWindow     _imageVerifyWindow;
-        ViewSectorWindow      _viewSectorWindow;
+        readonly IFilter     _filter;
+        readonly IMediaImage _imageFormat;
+        readonly string      _imagePath;
+        readonly Window      _view;
+        DecodeMediaTags      _decodeMediaTags;
+        ImageChecksum        _imageChecksum;
+        ImageConvert         _imageConvert;
+        ImageEntropy         _imageEntropy;
+        ImageSidecar         _imageSidecar;
+        ImageVerify          _imageVerify;
+        ViewSector           _viewSector;
 
         public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
@@ -198,7 +198,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 scsiMode        = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
             }
 
-            ScsiInfo = new ScsiInfoTab
+            ScsiInfo = new ScsiInfo
             {
                 DataContext = new ScsiInfoViewModel(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType,
                                                     scsiModeSense6, scsiModeSense10, null, _view)
@@ -215,7 +215,7 @@ namespace Aaru.Gui.ViewModels.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
                 atapiIdentify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
-            AtaInfo = new AtaInfoTab
+            AtaInfo = new AtaInfo
             {
                 DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, _view)
             };
@@ -345,7 +345,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
             }
 
-            CompactDiscInfo = new CompactDiscInfoTab
+            CompactDiscInfo = new CompactDiscInfo
             {
                 DataContext = new CompactDiscInfoViewModel(toc, atip, null, null, fullToc, pma, cdtext, decodedToc,
                                                            decodedAtip, null, decodedFullToc, decodedCdText, null,
@@ -382,7 +382,7 @@ namespace Aaru.Gui.ViewModels.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_BCA))
                 dvdBca = imageFormat.ReadDiskTag(MediaTagType.DVD_BCA);
 
-            DvdInfo = new DvdInfoTab
+            DvdInfo = new DvdInfo
             {
                 DataContext = new DvdInfoViewModel(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi,
                                                    hddvdCopyrightInformation, dvdBca, null, decodedPfi, _view)
@@ -459,7 +459,7 @@ namespace Aaru.Gui.ViewModels.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DCB))
                 dvdPlusDcb = imageFormat.ReadDiskTag(MediaTagType.DCB);
 
-            DvdWritableInfo = new DvdWritableInfoTab
+            DvdWritableInfo = new DvdWritableInfo
             {
                 DataContext = new DvdWritableInfoViewModel(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus,
                                                            dvdRamSpareArea, lastBorderOutRmd, dvdPreRecordedInfo,
@@ -506,7 +506,7 @@ namespace Aaru.Gui.ViewModels.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_TrackResourcesInformation))
                 bluraySpareAreaInformation = imageFormat.ReadDiskTag(MediaTagType.MMC_TrackResourcesInformation);
 
-            BlurayInfo = new BlurayInfoTab
+            BlurayInfo = new BlurayInfo
             {
                 DataContext = new BlurayInfoViewModel(blurayDiscInformation, blurayBurstCuttingArea, blurayDds,
                                                       blurayCartridgeStatus, bluraySpareAreaInformation,
@@ -528,7 +528,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
             }
 
-            XboxInfo = new XboxInfoTab
+            XboxInfo = new XboxInfo
             {
                 DataContext = new XboxInfoViewModel(null, xboxDmi, xboxSecuritySector, decodedXboxSecuritySector, _view)
             };
@@ -539,7 +539,7 @@ namespace Aaru.Gui.ViewModels.Panels
                imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
                 pcmciaCis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
 
-            PcmciaInfo = new PcmciaInfoTab
+            PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(pcmciaCis, _view)
             };
@@ -607,7 +607,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 deviceType  = DeviceType.MMC;
             }
 
-            SdMmcInfo = new SdMmcInfoTab
+            SdMmcInfo = new SdMmcInfo
             {
                 DataContext = new SdMmcInfoViewModel(deviceType, cid, csd, ocr, extendedCsd, scr)
             };
@@ -654,15 +654,15 @@ namespace Aaru.Gui.ViewModels.Panels
             }
         }
 
-        public ScsiInfoTab                             ScsiInfo                  { get; }
-        public AtaInfoTab                              AtaInfo                   { get; }
-        public CompactDiscInfoTab                      CompactDiscInfo           { get; }
-        public DvdInfoTab                              DvdInfo                   { get; }
-        public DvdWritableInfoTab                      DvdWritableInfo           { get; }
-        public BlurayInfoTab                           BlurayInfo                { get; }
-        public XboxInfoTab                             XboxInfo                  { get; }
-        public PcmciaInfoTab                           PcmciaInfo                { get; }
-        public SdMmcInfoTab                            SdMmcInfo                 { get; }
+        public ScsiInfo                                ScsiInfo                  { get; }
+        public AtaInfo                                 AtaInfo                   { get; }
+        public CompactDiscInfo                         CompactDiscInfo           { get; }
+        public DvdInfo                                 DvdInfo                   { get; }
+        public DvdWritableInfo                         DvdWritableInfo           { get; }
+        public BlurayInfo                              BlurayInfo                { get; }
+        public XboxInfo                                XboxInfo                  { get; }
+        public PcmciaInfo                              PcmciaInfo                { get; }
+        public SdMmcInfo                               SdMmcInfo                 { get; }
         public Bitmap                                  MediaLogo                 { get; }
         public string                                  ImagePathText             { get; }
         public string                                  FilterText                { get; }
@@ -712,149 +712,149 @@ namespace Aaru.Gui.ViewModels.Panels
 
         protected void ExecuteEntropyCommand()
         {
-            if(_imageEntropyWindow != null)
+            if(_imageEntropy != null)
             {
-                _imageEntropyWindow.Show();
+                _imageEntropy.Show();
 
                 return;
             }
 
-            _imageEntropyWindow             = new ImageEntropyWindow();
-            _imageEntropyWindow.DataContext = new ImageEntropyViewModel(_imageFormat, _imageEntropyWindow);
+            _imageEntropy             = new ImageEntropy();
+            _imageEntropy.DataContext = new ImageEntropyViewModel(_imageFormat, _imageEntropy);
 
-            _imageEntropyWindow.Closed += (sender, args) =>
+            _imageEntropy.Closed += (sender, args) =>
             {
-                _imageEntropyWindow = null;
+                _imageEntropy = null;
             };
 
-            _imageEntropyWindow.Show();
+            _imageEntropy.Show();
         }
 
         protected void ExecuteVerifyCommand()
         {
-            if(_imageVerifyWindow != null)
+            if(_imageVerify != null)
             {
-                _imageVerifyWindow.Show();
+                _imageVerify.Show();
 
                 return;
             }
 
-            _imageVerifyWindow             = new ImageVerifyWindow();
-            _imageVerifyWindow.DataContext = new ImageVerifyViewModel(_imageFormat, _imageVerifyWindow);
+            _imageVerify             = new ImageVerify();
+            _imageVerify.DataContext = new ImageVerifyViewModel(_imageFormat, _imageVerify);
 
-            _imageVerifyWindow.Closed += (sender, args) =>
+            _imageVerify.Closed += (sender, args) =>
             {
-                _imageVerifyWindow = null;
+                _imageVerify = null;
             };
 
-            _imageVerifyWindow.Show();
+            _imageVerify.Show();
         }
 
         protected void ExecuteChecksumCommand()
         {
-            if(_imageChecksumWindow != null)
+            if(_imageChecksum != null)
             {
-                _imageChecksumWindow.Show();
+                _imageChecksum.Show();
 
                 return;
             }
 
-            _imageChecksumWindow             = new ImageChecksumWindow();
-            _imageChecksumWindow.DataContext = new ImageChecksumViewModel(_imageFormat, _imageChecksumWindow);
+            _imageChecksum             = new ImageChecksum();
+            _imageChecksum.DataContext = new ImageChecksumViewModel(_imageFormat, _imageChecksum);
 
-            _imageChecksumWindow.Closed += (sender, args) =>
+            _imageChecksum.Closed += (sender, args) =>
             {
-                _imageChecksumWindow = null;
+                _imageChecksum = null;
             };
 
-            _imageChecksumWindow.Show();
+            _imageChecksum.Show();
         }
 
         protected void ExecuteConvertCommand()
         {
-            if(_imageConvertWindow != null)
+            if(_imageConvert != null)
             {
-                _imageConvertWindow.Show();
+                _imageConvert.Show();
 
                 return;
             }
 
-            _imageConvertWindow             = new ImageConvertWindow();
-            _imageConvertWindow.DataContext = new ImageConvertViewModel(_imageFormat, _imagePath, _imageConvertWindow);
+            _imageConvert             = new ImageConvert();
+            _imageConvert.DataContext = new ImageConvertViewModel(_imageFormat, _imagePath, _imageConvert);
 
-            _imageConvertWindow.Closed += (sender, args) =>
+            _imageConvert.Closed += (sender, args) =>
             {
-                _imageConvertWindow = null;
+                _imageConvert = null;
             };
 
-            _imageConvertWindow.Show();
+            _imageConvert.Show();
         }
 
         protected void ExecuteCreateSidecarCommand()
         {
-            if(_imageSidecarWindow != null)
+            if(_imageSidecar != null)
             {
-                _imageSidecarWindow.Show();
+                _imageSidecar.Show();
 
                 return;
             }
 
-            _imageSidecarWindow = new ImageSidecarWindow();
+            _imageSidecar = new ImageSidecar();
 
             // TODO: Pass thru chosen default encoding
-            _imageSidecarWindow.DataContext =
-                new ImageSidecarViewModel(_imageFormat, _imagePath, _filter.Id, null, _imageSidecarWindow);
+            _imageSidecar.DataContext =
+                new ImageSidecarViewModel(_imageFormat, _imagePath, _filter.Id, null, _imageSidecar);
 
-            _imageSidecarWindow.Closed += (sender, args) =>
+            _imageSidecar.Closed += (sender, args) =>
             {
-                _imageSidecarWindow = null;
+                _imageSidecar = null;
             };
 
-            _imageSidecarWindow.Show();
+            _imageSidecar.Show();
         }
 
         protected void ExecuteViewSectorsCommand()
         {
-            if(_viewSectorWindow != null)
+            if(_viewSector != null)
             {
-                _viewSectorWindow.Show();
+                _viewSector.Show();
 
                 return;
             }
 
-            _viewSectorWindow = new ViewSectorWindow
+            _viewSector = new ViewSector
             {
                 DataContext = new ViewSectorViewModel(_imageFormat)
             };
 
-            _viewSectorWindow.Closed += (sender, args) =>
+            _viewSector.Closed += (sender, args) =>
             {
-                _viewSectorWindow = null;
+                _viewSector = null;
             };
 
-            _viewSectorWindow.Show();
+            _viewSector.Show();
         }
 
         protected void ExecuteDecodeMediaTagCommand()
         {
-            if(_decodeMediaTagsWindow != null)
+            if(_decodeMediaTags != null)
             {
-                _decodeMediaTagsWindow.Show();
+                _decodeMediaTags.Show();
 
                 return;
             }
 
-            _decodeMediaTagsWindow = new DecodeMediaTagsWindow
+            _decodeMediaTags = new DecodeMediaTags
             {
                 DataContext = new DecodeMediaTagsViewModel(_imageFormat)
             };
 
-            _decodeMediaTagsWindow.Closed += (sender, args) =>
+            _decodeMediaTags.Closed += (sender, args) =>
             {
-                _decodeMediaTagsWindow = null;
+                _decodeMediaTags = null;
             };
 
-            _decodeMediaTagsWindow.Show();
+            _decodeMediaTags.Show();
         }
     }
 }

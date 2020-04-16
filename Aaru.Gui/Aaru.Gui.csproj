@@ -334,6 +334,84 @@
     <AvaloniaResource Update="Views\ConsoleDialog.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
+    <Compile Update="Views\Dialogs\About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Dialogs\Console.xaml.cs">
+      <DependentUpon>Console.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Dialogs\Encodings.xaml.cs">
+      <DependentUpon>Encodings.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\DeviceInfo.xaml.cs">
+      <DependentUpon>DeviceInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\FileSystem.xaml.cs">
+      <DependentUpon>FileSystem.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\ImageInfo.xaml.cs">
+      <DependentUpon>ImageInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\MediaInfo.xaml.cs">
+      <DependentUpon>MediaInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\Partition.xaml.cs">
+      <DependentUpon>Partition.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Panels\Subdirectory.xaml.cs">
+      <DependentUpon>Subdirectory.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\AtaInfo.xaml.cs">
+      <DependentUpon>AtaInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\BlurayInfo.xaml.cs">
+      <DependentUpon>BlurayInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\CompactDiscInfo.xaml.cs">
+      <DependentUpon>CompactDiscInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\DvdInfo.xaml.cs">
+      <DependentUpon>DvdInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\DvdWritableInfo.xaml.cs">
+      <DependentUpon>DvdWritableInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\PcmciaInfo.xaml.cs">
+      <DependentUpon>PcmciaInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\ScsiInfo.xaml.cs">
+      <DependentUpon>ScsiInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Tabs\XboxInfo.xaml.cs">
+      <DependentUpon>XboxInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\DecodeMediaTags.xaml.cs">
+      <DependentUpon>DecodeMediaTags.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImageChecksum.xaml.cs">
+      <DependentUpon>ImageChecksum.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImageConvert.xaml.cs">
+      <DependentUpon>ImageConvert.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImageEntropy.xaml.cs">
+      <DependentUpon>ImageEntropy.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImageSidecar.xaml.cs">
+      <DependentUpon>ImageSidecar.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ImageVerify.xaml.cs">
+      <DependentUpon>ImageVerify.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\MediaDump.xaml.cs">
+      <DependentUpon>MediaDump.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\MediaScan.xaml.cs">
+      <DependentUpon>MediaScan.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ViewSector.xaml.cs">
+      <DependentUpon>ViewSector.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />

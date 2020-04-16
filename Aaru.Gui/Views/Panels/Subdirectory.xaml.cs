@@ -1,11 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace Aaru.Gui.Views.Tabs
+namespace Aaru.Gui.Views.Panels
 {
-    public class SdMmcInfo : UserControl
+    public class Subdirectory : UserControl
     {
-        public SdMmcInfo() => InitializeComponent();
+        public Subdirectory() => InitializeComponent();
 
         void InitializeComponent() => AvaloniaXamlLoader.Load(this);
     }

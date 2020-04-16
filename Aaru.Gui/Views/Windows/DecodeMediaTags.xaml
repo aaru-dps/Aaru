@@ -1,0 +1,36 @@
+﻿<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
+        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Windows.DecodeMediaTags"
+        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+    <Design.DataContext>
+        <windows:DecodeMediaTagsViewModel />
+    </Design.DataContext>
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Tag:" />
+            <ComboBox Items="{Binding TagsList}" SelectedItem="{Binding SelectedTag}">
+                <ComboBox.DataTemplates>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.DataTemplates>
+            </ComboBox>
+        </StackPanel>
+        <TabControl>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="HexView" />
+                </TabItem.Header>
+                <TextBox IsReadOnly="True" Text="{Binding HexViewText}" />
+            </TabItem>
+            <TabItem IsVisible="{Binding DecodedVisible}">
+                <TabItem.Header>
+                    <TextBlock Text="Decoded" />
+                </TabItem.Header>
+                <TextBox IsReadOnly="True" Text="{Binding DecodedText}" />
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</Window>

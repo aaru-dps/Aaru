@@ -149,7 +149,7 @@ namespace Aaru.Gui.ViewModels.Windows
             if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
             {
                 var settingsDialog          = new SettingsDialog();
-                var settingsDialogViewModel = new SettingsDialogViewModel(settingsDialog, true);
+                var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);
                 settingsDialog.DataContext = settingsDialogViewModel;
                 await settingsDialog.ShowDialog(_view);
             }
