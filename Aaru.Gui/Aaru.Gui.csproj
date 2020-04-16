@@ -322,42 +322,18 @@
     <AvaloniaResource Update="Views\SplashWindow.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <Compile Update="Views\SplashWindow.xaml.cs">
-      <DependentUpon>SplashWindow.xaml</DependentUpon>
-    </Compile>
     <AvaloniaResource Update="Views\LicenseDialog.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <Compile Update="Views\LicenseDialog.xaml.cs">
-      <DependentUpon>LicenseDialog.xaml</DependentUpon>
-    </Compile>
     <AvaloniaResource Update="Views\EncodingsDialog.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <Compile Update="Views\EncodingsDialog.xaml.cs">
-      <DependentUpon>EncodingsDialog.xaml</DependentUpon>
-    </Compile>
     <AvaloniaResource Update="Views\PluginsDialog.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <Compile Update="Views\PluginsDialog.xaml.cs">
-      <DependentUpon>PluginsDialog.xaml</DependentUpon>
-    </Compile>
     <AvaloniaResource Update="Views\ConsoleDialog.xaml">
       <SubType>Designer</SubType>
     </AvaloniaResource>
-    <Compile Update="Views\ConsoleDialog.xaml.cs">
-      <DependentUpon>ConsoleDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Panels\ImageInfoPanel.xaml.cs">
-      <DependentUpon>ImageInfoPanel.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Tabs\ScsiInfoTab.xaml.cs">
-      <DependentUpon>ScsiInfoTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\ViewSectorWindow.xaml.cs">
-      <DependentUpon>ViewSectorWindow.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\MainWindow.xaml" />
