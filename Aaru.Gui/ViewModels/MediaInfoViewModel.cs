@@ -5,10 +5,13 @@ using System.Reactive;
 using System.Text;
 using Aaru.Core.Media.Info;
 using Aaru.Gui.Tabs;
+using Aaru.Gui.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels
@@ -354,25 +357,36 @@ namespace Aaru.Gui.ViewModels
             */
         }
 
-        void ExecuteScanCommand()
+        async void ExecuteScanCommand()
         {
-            /* TODO: frmMediaScan
-            if(scsiInfo.MediaType == MediaType.GDR ||
-               scsiInfo.MediaType == MediaType.GDROM)
+            switch(_scsiInfo.MediaType)
             {
-                Eto.Forms.MessageBox.Show("GD-ROM scan support is not yet implemented.", MessageBoxType.Error);
+                // TODO: GD-ROM
+                case CommonTypes.MediaType.GDR:
+                case CommonTypes.MediaType.GDROM:
+                    await MessageBoxManager.
+                          GetMessageBoxStandardWindow("Error", "GD-ROM scan support is not yet implemented.",
+                                                      ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
-                return;
+                    return;
+
+                // TODO: Xbox
+                case CommonTypes.MediaType.XGD:
+                case CommonTypes.MediaType.XGD2:
+                case CommonTypes.MediaType.XGD3:
+                    await MessageBoxManager.
+                          GetMessageBoxStandardWindow("Error", "Scanning Xbox discs is not yet supported.",
+                                                      ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+
+                    return;
             }
 
-            if(scsiInfo.MediaType == MediaType.XGD  ||
-               scsiInfo.MediaType == MediaType.XGD2 ||
-               scsiInfo.MediaType == MediaType.XGD3)
-                Eto.Forms.MessageBox.Show("Scanning Xbox discs is not yet supported.", MessageBoxType.Error);
+            var mediaScanWindow = new MediaScanWindow();
 
-            var scanForm = new frmMediaScan(devicePath, scsiInfo.DeviceInfo, scsiInfo);
-            scanForm.Show();
-            */
+            mediaScanWindow.DataContext =
+                new MediaScanViewModel(_devicePath, _scsiInfo.DeviceInfo, mediaScanWindow, _scsiInfo);
+
+            mediaScanWindow.Show();
         }
     }
 }
