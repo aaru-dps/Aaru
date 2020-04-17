@@ -60,6 +60,7 @@ do
  gpg --armor --detach-sign "$i"
 done
 
+cd ..
 rm -Rf build/macos/Aaru.app
 mkdir -p build/macos/Aaru.app/Contents/Resources
 mkdir -p build/macos/Aaru.app/Contents/MacOS
