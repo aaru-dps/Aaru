@@ -33,6 +33,7 @@
     <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
     <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
     <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
+    <ProjectReference Include="..\oxyplot-avalonia\Source\OxyPlot.Avalonia\OxyPlot.Avalonia.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\Logos\Media\AIT1.png" />

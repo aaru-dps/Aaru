@@ -2,8 +2,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" xmlns:controls="clr-namespace:Aaru.Gui.Controls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.MediaScan"
-        Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
+        xmlns:avalonia="http://oxyplot.org/avalonia" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.MediaScan" Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
     <Design.DataContext>
         <windows:MediaScanViewModel />
     </Design.DataContext>
@@ -33,7 +33,21 @@
                 <TabItem.Header>
                     <TextBlock Text="Chart" />
                 </TabItem.Header>
-                <!-- TODO: Chart -->
+                <avalonia:Plot Height="300" PlotMargins="50 0 0 0" PlotAreaBorderColor="#999999"
+                               PlotAreaBackground="#2974c1">
+                    <avalonia:Plot.Series>
+                        <avalonia:LineSeries DataFieldX="Index" DataFieldY="Value" Items="{Binding Path=ChartPoints}"
+                                             Color="{Binding LineColor}" />
+                    </avalonia:Plot.Series>
+                    <avalonia:Plot.Axes>
+                        <avalonia:LinearAxis Position="Left" Maximum="{Binding MaxY}" Minimum="{Binding MinY}"
+                                             MajorStep="{Binding StepsY}" Title="Speed" Unit="Kb/s"
+                                             AxislineColor="{Binding AxesColor}" />
+                        <avalonia:LinearAxis Position="Bottom" Maximum="{Binding MaxX}" Minimum="{Binding MinX}"
+                                             MajorStep="{Binding StepsX}" Title="Block"
+                                             AxislineColor="{Binding AxesColor}" />
+                    </avalonia:Plot.Axes>
+                </avalonia:Plot>
             </TabItem>
         </TabControl>
         <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">

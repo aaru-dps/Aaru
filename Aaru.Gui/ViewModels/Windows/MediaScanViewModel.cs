@@ -6,9 +6,11 @@ using Aaru.Core.Devices.Scanning;
 using Aaru.Core.Media.Info;
 using Aaru.Devices;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Threading;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
+using OxyPlot;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
@@ -19,37 +21,44 @@ namespace Aaru.Gui.ViewModels.Windows
         readonly Window _view;
         string          _a;
         string          _avgSpeed;
+        Color           _axesColor;
         string          _b;
-
-        ulong       _blocks;
-        ulong       _blocksToRead;
-        string      _c;
-        bool        _closeVisible;
-        string      _d;
-        string      _devicePath;
-        string      _e;
-        string      _f;
-        ScanResults _localResults;
-        string      _maxSpeed;
-        string      _minSpeed;
-        bool        _progress1Visible;
-        string      _progress2Indeterminate;
-        string      _progress2MaxValue;
-        string      _progress2Text;
-        string      _progress2Value;
-        string      _progress2Visible;
-        bool        _progressIndeterminate;
-        double      _progressMaxValue;
-        string      _progressText;
-        double      _progressValue;
-        bool        _progressVisible;
-        bool        _resultsVisible;
-        MediaScan   _scanner;
-        bool        _startVisible;
-        string      _stopEnabled;
-        bool        _stopVisible;
-        string      _totalTime;
-        string      _unreadableSectors;
+        ulong           _blocks;
+        ulong           _blocksToRead;
+        string          _c;
+        bool            _closeVisible;
+        string          _d;
+        string          _devicePath;
+        string          _e;
+        string          _f;
+        Color           _lineColor;
+        ScanResults     _localResults;
+        string          _maxSpeed;
+        double          _maxX;
+        double          _maxY;
+        string          _minSpeed;
+        double          _minX;
+        double          _minY;
+        bool            _progress1Visible;
+        string          _progress2Indeterminate;
+        string          _progress2MaxValue;
+        string          _progress2Text;
+        string          _progress2Value;
+        string          _progress2Visible;
+        bool            _progressIndeterminate;
+        double          _progressMaxValue;
+        string          _progressText;
+        double          _progressValue;
+        bool            _progressVisible;
+        bool            _resultsVisible;
+        MediaScan       _scanner;
+        bool            _startVisible;
+        double          _stepsX;
+        double          _stepsY;
+        string          _stopEnabled;
+        bool            _stopVisible;
+        string          _totalTime;
+        string          _unreadableSectors;
 
         public MediaScanViewModel(string devicePath, DeviceInfo deviceInfo, Window view, ScsiInfo scsiInfo = null)
         {
@@ -62,30 +71,27 @@ namespace Aaru.Gui.ViewModels.Windows
             StartVisible = true;
             CloseVisible = true;
             BlockMapList = new ObservableCollection<(ulong block, double duration)>();
-
-            /*
-            lineChart.AbsoluteMargins = true;
-            lineChart.MarginX         = 5;
-            lineChart.MarginY         = 5;
-            lineChart.DrawAxes        = true;
-            lineChart.AxesColor       = Colors.Black;
-            lineChart.ColorX          = Colors.Gray;
-            lineChart.ColorY          = Colors.Gray;
-            lineChart.BackgroundColor = Color.FromRgb(0x2974c1);
-            lineChart.LineColor       = Colors.Yellow;
-            */
+            ChartPoints  = new ObservableCollection<DataPoint>();
+            StepsX       = double.NaN;
+            StepsY       = double.NaN;
+            AxesColor    = Colors.Black;
+            LineColor    = Colors.Yellow;
         }
-        /*
-        static readonly Color LightGreen = Color.FromRgb(0x00FF00);
-        static readonly Color Green      = Color.FromRgb(0x006400);
-        static readonly Color DarkGreen  = Color.FromRgb(0x003200);
-        static readonly Color Yellow     = Color.FromRgb(0xFFA500);
-        static readonly Color Orange     = Color.FromRgb(0xFF4500);
-        static readonly Color Red        = Color.FromRgb(0x800000);
-        static          Color LightRed   = Color.FromRgb(0xFF0000);
-        */
+
+        public Color AxesColor
+        {
+            get => _axesColor;
+            set => this.RaiseAndSetIfChanged(ref _axesColor, value);
+        }
+
+        public Color LineColor
+        {
+            get => _lineColor;
+            set => this.RaiseAndSetIfChanged(ref _lineColor, value);
+        }
 
         public ObservableCollection<(ulong block, double duration)> BlockMapList { get; }
+        public ObservableCollection<DataPoint>                      ChartPoints  { get; }
 
         public ulong Blocks
         {
@@ -225,6 +231,42 @@ namespace Aaru.Gui.ViewModels.Windows
             set => this.RaiseAndSetIfChanged(ref _resultsVisible, value);
         }
 
+        public double MaxY
+        {
+            get => _maxY;
+            set => this.RaiseAndSetIfChanged(ref _maxY, value);
+        }
+
+        public double MaxX
+        {
+            get => _maxX;
+            set => this.RaiseAndSetIfChanged(ref _maxX, value);
+        }
+
+        public double MinY
+        {
+            get => _minY;
+            set => this.RaiseAndSetIfChanged(ref _minY, value);
+        }
+
+        public double MinX
+        {
+            get => _minX;
+            set => this.RaiseAndSetIfChanged(ref _minX, value);
+        }
+
+        public double StepsY
+        {
+            get => _stepsY;
+            set => this.RaiseAndSetIfChanged(ref _stepsY, value);
+        }
+
+        public double StepsX
+        {
+            get => _stepsX;
+            set => this.RaiseAndSetIfChanged(ref _stepsX, value);
+        }
+
         public string Title { get; }
 
         public ReactiveCommand<Unit, Unit> StartCommand { get; }
@@ -242,6 +284,7 @@ namespace Aaru.Gui.ViewModels.Windows
             CloseVisible    = false;
             ProgressVisible = true;
             ResultsVisible  = true;
+            ChartPoints.Clear();
             new Thread(DoWork).Start();
         }
 
@@ -330,25 +373,25 @@ namespace Aaru.Gui.ViewModels.Windows
             WorkFinished();
         }
 
-        async void ScanSpeed(ulong sector, double currentspeed) => await Dispatcher.UIThread.InvokeAsync(() =>
+        async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            /* TODO: Chart
-            if(currentspeed > lineChart.MaxY)
-                lineChart.MaxY = (float)(currentspeed + (currentspeed / 10));
+            if(ChartPoints.Count == 0)
+                ChartPoints.Add(new DataPoint(0, currentSpeed));
 
-            lineChart.Values.Add(new PointF(sector, (float)currentspeed));
-            */
+            ChartPoints.Add(new DataPoint(sector, currentSpeed));
+
+            if(currentSpeed > MaxY)
+                MaxY = currentSpeed + (currentSpeed / 10d);
         });
 
-        async void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread, ushort currentProfile) =>
+        async void InitBlockMap(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile) =>
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Blocks        = blocks / blockstoread;
-                _blocksToRead = blockstoread;
+                Blocks        = blocks / blocksToRead;
+                _blocksToRead = blocksToRead;
 
-                /* TODO: Chart
-                lineChart.MinX         = 0;
-                lineChart.MinY         = 0;
+                MinX = 0;
+                MinY = 0;
 
                 switch(currentProfile)
                 {
@@ -360,17 +403,17 @@ namespace Aaru.Gui.ViewModels.Windows
                     case 0x0021:
                     case 0x0022:
                         if(blocks <= 360000)
-                            lineChart.MaxX = 360000;
+                            MaxX = 360000;
                         else if(blocks <= 405000)
-                            lineChart.MaxX = 405000;
+                            MaxX = 405000;
                         else if(blocks <= 445500)
-                            lineChart.MaxX = 445500;
+                            MaxX = 445500;
                         else
-                            lineChart.MaxX = blocks;
+                            MaxX = blocks;
 
-                        lineChart.StepsX = lineChart.MaxX   / 10f;
-                        lineChart.StepsY = 150              * 4;
-                        lineChart.MaxY   = lineChart.StepsY * 12.5f;
+                        StepsX = MaxX   / 10;
+                        StepsY = 150    * 4;
+                        MaxY   = StepsY * 12.5;
 
                         break;
                     case 0x0010: // DVD SL
@@ -381,10 +424,10 @@ namespace Aaru.Gui.ViewModels.Windows
                     case 0x0018:
                     case 0x001A:
                     case 0x001B:
-                        lineChart.MaxX   = 2298496;
-                        lineChart.StepsX = lineChart.MaxX / 10f;
-                        lineChart.StepsY = 1352.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 26;
+                        MaxX   = 2298496;
+                        StepsX = MaxX / 10;
+                        StepsY = 1352.5;
+                        MaxY   = StepsY * 26;
 
                         break;
                     case 0x0015: // DVD DL
@@ -392,10 +435,10 @@ namespace Aaru.Gui.ViewModels.Windows
                     case 0x0017:
                     case 0x002A:
                     case 0x002B:
-                        lineChart.MaxX   = 4173824;
-                        lineChart.StepsX = lineChart.MaxX / 10f;
-                        lineChart.StepsY = 1352.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 26;
+                        MaxX   = 4173824;
+                        StepsX = MaxX / 10;
+                        StepsY = 1352.5;
+                        MaxY   = StepsY * 26;
 
                         break;
                     case 0x0041:
@@ -403,19 +446,19 @@ namespace Aaru.Gui.ViewModels.Windows
                     case 0x0043:
                     case 0x0040: // BD
                         if(blocks <= 12219392)
-                            lineChart.MaxX = 12219392;
+                            MaxX = 12219392;
                         else if(blocks <= 24438784)
-                            lineChart.MaxX = 24438784;
+                            MaxX = 24438784;
                         else if(blocks <= 48878592)
-                            lineChart.MaxX = 48878592;
+                            MaxX = 48878592;
                         else if(blocks <= 62500864)
-                            lineChart.MaxX = 62500864;
+                            MaxX = 62500864;
                         else
-                            lineChart.MaxX = blocks;
+                            MaxX = blocks;
 
-                        lineChart.StepsX = lineChart.MaxX / 10f;
-                        lineChart.StepsY = 4394.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 18;
+                        StepsX = MaxX / 10;
+                        StepsY = 4394.5;
+                        MaxY   = StepsY * 18;
 
                         break;
                     case 0x0050: // HD DVD
@@ -425,26 +468,25 @@ namespace Aaru.Gui.ViewModels.Windows
                     case 0x0058:
                     case 0x005A:
                         if(blocks <= 7361599)
-                            lineChart.MaxX = 7361599;
+                            MaxX = 7361599;
                         else if(blocks <= 16305407)
-                            lineChart.MaxX = 16305407;
+                            MaxX = 16305407;
                         else
-                            lineChart.MaxX = blocks;
+                            MaxX = blocks;
 
-                        lineChart.StepsX = lineChart.MaxX / 10f;
-                        lineChart.StepsY = 4394.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 8;
+                        StepsX = MaxX / 10;
+                        StepsY = 4394.5;
+                        MaxY   = StepsY * 8;
 
                         break;
                     default:
-                        lineChart.MaxX   = blocks;
-                        lineChart.StepsX = lineChart.MaxX / 10f;
-                        lineChart.StepsY = 625f;
-                        lineChart.MaxY   = lineChart.StepsY;
+                        MaxX   = blocks;
+                        StepsX = MaxX / 10;
+                        StepsY = 625;
+                        MaxY   = StepsY;
 
                         break;
                 }
-                */
             });
 
         async void WorkFinished() => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -501,9 +543,6 @@ namespace Aaru.Gui.ViewModels.Windows
             _localResults.Errored += _blocksToRead;
             UnreadableSectors     =  $"{_localResults.Errored} sectors could not be read.";
             BlockMapList.Add((sector / _blocksToRead, double.NaN));
-            /* TODO: Blockmap
-            blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
-            */
         });
 
         async void OnScanTime(ulong sector, double duration) => await Dispatcher.UIThread.InvokeAsync(() =>
@@ -511,51 +550,21 @@ namespace Aaru.Gui.ViewModels.Windows
             BlockMapList.Add((sector / _blocksToRead, duration));
 
             if(duration < 3)
-            {
                 _localResults.A += _blocksToRead;
-                /* TODO: Blockmap
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
-                */
-            }
             else if(duration >= 3 &&
                     duration < 10)
-            {
                 _localResults.B += _blocksToRead;
-                /* TODO: Blockmap
-                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Green));
-                */
-            }
             else if(duration >= 10 &&
                     duration < 50)
-            {
                 _localResults.C += _blocksToRead;
-                /* TODO: Blockmap
-                blockMap.ColoredSectors.Add(new ColoredBlock(sector, DarkGreen));
-                */
-            }
             else if(duration >= 50 &&
                     duration < 150)
-            {
                 _localResults.D += _blocksToRead;
-                /* TODO: Blockmap
-                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Yellow));
-                */
-            }
             else if(duration >= 150 &&
                     duration < 500)
-            {
                 _localResults.E += _blocksToRead;
-                /* TODO: Blockmap
-                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Orange));
-                */
-            }
             else if(duration >= 500)
-            {
                 _localResults.F += _blocksToRead;
-                /* TODO: Blockmap
-                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Red));
-                */
-            }
 
             A = $"{_localResults.A} sectors took less than 3 ms.";
             B = $"{_localResults.B} sectors took less than 10 ms but more than 3 ms.";

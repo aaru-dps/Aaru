@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Dto", "Aaru.Dto\Aaru.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aaru.Gui", "Aaru.Gui\Aaru.Gui.csproj", "{18C4C44D-2562-4B6D-8181-32D7EA067D96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxyPlot.Avalonia", "oxyplot-avalonia\Source\OxyPlot.Avalonia\OxyPlot.Avalonia.csproj", "{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +182,14 @@ Global
 		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|Any CPU.Build.0 = Release|Any CPU
 		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|x86.ActiveCfg = Release|Any CPU
 		{18C4C44D-2562-4B6D-8181-32D7EA067D96}.Release|x86.Build.0 = Release|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Debug|x86.Build.0 = Debug|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Release|x86.ActiveCfg = Release|Any CPU
+		{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
