@@ -23,6 +23,7 @@
       <e p=".travis.yml" t="Include" />
       <e p="Aaru" t="IncludeRecursive">
         <e p="Aaru.csproj" t="IncludeRecursive" />
+        <e p="Aaru.icns" t="Include" />
         <e p="Commands" t="Include">
           <e p="Configure.cs" t="Include" />
           <e p="Database" t="Include">
@@ -69,7 +70,6 @@
         </e>
         <e p="Directory.Build.props" t="Include" />
         <e p="Info.plist" t="Include" />
-        <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
         <e p="Properties" t="Include">
@@ -2186,6 +2186,7 @@
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>
+              <e p="OxyPlot.Avalonia.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
