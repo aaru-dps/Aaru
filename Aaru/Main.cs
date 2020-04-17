@@ -44,12 +44,7 @@ using Aaru.Commands.Media;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
-using Aaru.Gui;
 using Aaru.Settings;
-using Avalonia;
-using Avalonia.Dialogs;
-using Avalonia.Logging.Serilog;
-using Avalonia.ReactiveUI;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aaru
@@ -75,7 +70,7 @@ namespace Aaru
             if(args.Length                == 1 &&
                args[0].ToLowerInvariant() == "gui")
             {
-                return BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+                return Gui.Main.Start(args);
             }
 
             AaruConsole.WriteLineEvent      += System.Console.WriteLine;
@@ -167,10 +162,5 @@ namespace Aaru
             AaruConsole.WriteLine("{0}", _assemblyCopyright);
             AaruConsole.WriteLine();
         }
-
-        // Avalonia configuration, don't remove; also used by visual designer.
-        public static AppBuilder BuildAvaloniaApp() => AppBuilder.
-                                                       Configure<App>().UsePlatformDetect().LogToDebug().
-                                                       UseReactiveUI().UseManagedSystemDialogs();
     }
 }

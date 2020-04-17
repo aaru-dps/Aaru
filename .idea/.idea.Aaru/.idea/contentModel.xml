@@ -82,9 +82,6 @@
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
               <e p="Aaru.AssemblyInfo.cs" t="Include" />
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
             </e>
           </e>
         </e>
@@ -1215,6 +1212,7 @@
         <e p="Controls" t="Include">
           <e p="BlockMap.cs" t="Include" />
         </e>
+        <e p="Main.cs" t="Include" />
         <e p="Models" t="Include">
           <e p="AssemblyModel.cs" t="Include" />
           <e p="ChecksumModel.cs" t="Include" />
@@ -2186,7 +2184,6 @@
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>
-              <e p="OxyPlot.Avalonia.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
