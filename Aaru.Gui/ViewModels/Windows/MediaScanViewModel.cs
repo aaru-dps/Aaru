@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading;
 using Aaru.Core;
@@ -19,43 +20,36 @@ namespace Aaru.Gui.ViewModels.Windows
         string          _a;
         string          _avgSpeed;
         string          _b;
-        ulong           _blocksToRead;
-        string          _c;
-        bool            _closeVisible;
-        string          _d;
-        string          _devicePath;
-        string          _e;
-        string          _f;
-        ScanResults     _localResults;
-        string          _maxSpeed;
-        string          _minSpeed;
-        bool            _progress1Visible;
-        string          _progress2Indeterminate;
-        string          _progress2MaxValue;
-        string          _progress2Text;
-        string          _progress2Value;
-        string          _progress2Visible;
-        bool            _progressIndeterminate;
-        double          _progressMaxValue;
-        string          _progressText;
-        double          _progressValue;
-        bool            _progressVisible;
-        bool            _resultsVisible;
-        MediaScan       _scanner;
-        bool            _startVisible;
-        string          _stopEnabled;
-        bool            _stopVisible;
-        string          _totalTime;
-        string          _unreadableSectors;
-        /*
-        static readonly Color LightGreen = Color.FromRgb(0x00FF00);
-        static readonly Color Green      = Color.FromRgb(0x006400);
-        static readonly Color DarkGreen  = Color.FromRgb(0x003200);
-        static readonly Color Yellow     = Color.FromRgb(0xFFA500);
-        static readonly Color Orange     = Color.FromRgb(0xFF4500);
-        static readonly Color Red        = Color.FromRgb(0x800000);
-        static          Color LightRed   = Color.FromRgb(0xFF0000);
-        */
+
+        ulong       _blocks;
+        ulong       _blocksToRead;
+        string      _c;
+        bool        _closeVisible;
+        string      _d;
+        string      _devicePath;
+        string      _e;
+        string      _f;
+        ScanResults _localResults;
+        string      _maxSpeed;
+        string      _minSpeed;
+        bool        _progress1Visible;
+        string      _progress2Indeterminate;
+        string      _progress2MaxValue;
+        string      _progress2Text;
+        string      _progress2Value;
+        string      _progress2Visible;
+        bool        _progressIndeterminate;
+        double      _progressMaxValue;
+        string      _progressText;
+        double      _progressValue;
+        bool        _progressVisible;
+        bool        _resultsVisible;
+        MediaScan   _scanner;
+        bool        _startVisible;
+        string      _stopEnabled;
+        bool        _stopVisible;
+        string      _totalTime;
+        string      _unreadableSectors;
 
         public MediaScanViewModel(string devicePath, DeviceInfo deviceInfo, Window view, ScsiInfo scsiInfo = null)
         {
@@ -67,6 +61,7 @@ namespace Aaru.Gui.ViewModels.Windows
             StopCommand  = ReactiveCommand.Create(ExecuteStopCommand);
             StartVisible = true;
             CloseVisible = true;
+            BlockMapList = new ObservableCollection<(ulong block, double duration)>();
 
             /*
             lineChart.AbsoluteMargins = true;
@@ -79,6 +74,23 @@ namespace Aaru.Gui.ViewModels.Windows
             lineChart.BackgroundColor = Color.FromRgb(0x2974c1);
             lineChart.LineColor       = Colors.Yellow;
             */
+        }
+        /*
+        static readonly Color LightGreen = Color.FromRgb(0x00FF00);
+        static readonly Color Green      = Color.FromRgb(0x006400);
+        static readonly Color DarkGreen  = Color.FromRgb(0x003200);
+        static readonly Color Yellow     = Color.FromRgb(0xFFA500);
+        static readonly Color Orange     = Color.FromRgb(0xFF4500);
+        static readonly Color Red        = Color.FromRgb(0x800000);
+        static          Color LightRed   = Color.FromRgb(0xFF0000);
+        */
+
+        public ObservableCollection<(ulong block, double duration)> BlockMapList { get; }
+
+        public ulong Blocks
+        {
+            get => _blocks;
+            set => this.RaiseAndSetIfChanged(ref _blocks, value);
         }
 
         public string A
@@ -331,10 +343,10 @@ namespace Aaru.Gui.ViewModels.Windows
         async void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread, ushort currentProfile) =>
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                /* TODO: BlockMap
-                blockMap.Sectors       = blocks;
-                blockMap.SectorsToRead = (uint)blockstoread;
-                blocksToRead           = blockstoread;
+                Blocks        = blocks / blockstoread;
+                _blocksToRead = blockstoread;
+
+                /* TODO: Chart
                 lineChart.MinX         = 0;
                 lineChart.MinY         = 0;
 
@@ -488,6 +500,7 @@ namespace Aaru.Gui.ViewModels.Windows
         {
             _localResults.Errored += _blocksToRead;
             UnreadableSectors     =  $"{_localResults.Errored} sectors could not be read.";
+            BlockMapList.Add((sector / _blocksToRead, double.NaN));
             /* TODO: Blockmap
             blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
             */
@@ -495,6 +508,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
         async void OnScanTime(ulong sector, double duration) => await Dispatcher.UIThread.InvokeAsync(() =>
         {
+            BlockMapList.Add((sector / _blocksToRead, duration));
+
             if(duration < 3)
             {
                 _localResults.A += _blocksToRead;

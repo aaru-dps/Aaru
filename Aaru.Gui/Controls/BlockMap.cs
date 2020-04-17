@@ -31,124 +31,435 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.LogicalTree;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using Avalonia.Threading;
 
 namespace Aaru.Gui.Controls
 {
-    public class BlockMap : ColoredGrid
+    // TODO: Partially fill clusters
+    // TODO: React to size changes
+    // TODO: Optimize block size to viewport
+    // TODO: Writing one more than it should
+    public class BlockMap : ItemsControl
     {
-        ulong       _sectors;
-        public uint blocksToRead;
+        const int _blockSize = 15;
+        public static readonly StyledProperty<ulong> BlocksProperty =
+            AvaloniaProperty.Register<Border, ulong>(nameof(Blocks));
 
-        public uint sectorsToRead;
+        public static readonly StyledProperty<IBrush> SuperFastColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(SuperFastColor), Brushes.LightGreen);
 
-        public BlockMap()
+        public static readonly StyledProperty<IBrush> FastColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(FastColor), Brushes.Green);
+
+        public static readonly StyledProperty<IBrush> AverageColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(AverageColor), Brushes.DarkGreen);
+
+        public static readonly StyledProperty<IBrush> SlowColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(SlowColor), Brushes.Yellow);
+
+        public static readonly StyledProperty<IBrush> SuperSlowColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(SuperSlowColor), Brushes.Orange);
+
+        public static readonly StyledProperty<IBrush> ProblematicColorProperty =
+            AvaloniaProperty.Register<Border, IBrush>(nameof(ProblematicColor), Brushes.Red);
+
+        public static readonly StyledProperty<double> SuperFastMaxTimeProperty =
+            AvaloniaProperty.Register<Border, double>(nameof(SuperFastMaxTime), 3);
+
+        public static readonly StyledProperty<double> FastMaxTimeProperty =
+            AvaloniaProperty.Register<Border, double>(nameof(FastMaxTime), 10);
+
+        public static readonly StyledProperty<double> AverageMaxTimeProperty =
+            AvaloniaProperty.Register<Border, double>(nameof(AverageMaxTime), 50);
+
+        public static readonly StyledProperty<double> SlowMaxTimeProperty =
+            AvaloniaProperty.Register<Border, double>(nameof(SlowMaxTime), 150);
+
+        public static readonly StyledProperty<double> SuperSlowMaxTimeProperty =
+            AvaloniaProperty.Register<Border, double>(nameof(SuperSlowMaxTime), 500);
+        RenderTargetBitmap _bitmap;
+        ulong              _clusterSize;
+        ulong              _maxBlocks;
+
+        public double SuperFastMaxTime
         {
-            ColoredSectors                   =  new ObservableCollection<ColoredBlock>();
-            ColoredSectors.CollectionChanged += OnColoredSectorsChanged;
+            get => GetValue(SuperFastMaxTimeProperty);
+            set => SetValue(SuperFastMaxTimeProperty, value);
         }
 
-        public ulong Sectors
+        public double FastMaxTime
         {
-            get => _sectors;
-            set
+            get => GetValue(FastMaxTimeProperty);
+            set => SetValue(FastMaxTimeProperty, value);
+        }
+
+        public double AverageMaxTime
+        {
+            get => GetValue(AverageMaxTimeProperty);
+            set => SetValue(AverageMaxTimeProperty, value);
+        }
+
+        public double SlowMaxTime
+        {
+            get => GetValue(SlowMaxTimeProperty);
+            set => SetValue(SlowMaxTimeProperty, value);
+        }
+
+        public double SuperSlowMaxTime
+        {
+            get => GetValue(SuperSlowMaxTimeProperty);
+            set => SetValue(SuperSlowMaxTimeProperty, value);
+        }
+
+        public IBrush SuperFastColor
+        {
+            get => GetValue(SuperFastColorProperty);
+            set => SetValue(SuperFastColorProperty, value);
+        }
+
+        public IBrush FastColor
+        {
+            get => GetValue(FastColorProperty);
+            set => SetValue(FastColorProperty, value);
+        }
+
+        public IBrush AverageColor
+        {
+            get => GetValue(AverageColorProperty);
+            set => SetValue(AverageColorProperty, value);
+        }
+
+        public IBrush SlowColor
+        {
+            get => GetValue(SlowColorProperty);
+            set => SetValue(SlowColorProperty, value);
+        }
+
+        public IBrush SuperSlowColor
+        {
+            get => GetValue(SuperSlowColorProperty);
+            set => SetValue(SuperSlowColorProperty, value);
+        }
+
+        public IBrush ProblematicColor
+        {
+            get => GetValue(ProblematicColorProperty);
+            set => SetValue(ProblematicColorProperty, value);
+        }
+
+        public ulong Blocks
+        {
+            get => GetValue(BlocksProperty);
+            set => SetValue(BlocksProperty, value);
+        }
+
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            switch(e.Property.Name)
             {
-                _sectors = value;
-                CalculateBoundaries();
-                Invalidate();
+                case nameof(Blocks):
+                    if(_maxBlocks == 0)
+                        _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+
+                    if(Blocks > _maxBlocks)
+                    {
+                        _clusterSize = Blocks / _maxBlocks;
+
+                        if(Blocks % _maxBlocks > 0)
+                            _clusterSize++;
+
+                        if(Blocks / _clusterSize < _maxBlocks)
+                        {
+                            _maxBlocks = Blocks / _clusterSize;
+
+                            if(Blocks % _clusterSize > 0)
+                                _maxBlocks++;
+                        }
+                    }
+                    else
+                    {
+                        _clusterSize = 1;
+                        _maxBlocks   = Blocks;
+                    }
+
+                    CreateBitmap();
+                    DrawGrid();
+                    RedrawAll();
+                    Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+
+                    break;
+                case nameof(SuperFastMaxTime):
+                case nameof(FastMaxTime):
+                case nameof(AverageMaxTime):
+                case nameof(SlowMaxTime):
+                case nameof(SuperSlowMaxTime):
+                case nameof(SuperFastColor):
+                case nameof(FastColor):
+                case nameof(AverageColor):
+                case nameof(SlowColor):
+                case nameof(SuperSlowColor):
+                case nameof(ProblematicColor):
+
+                    CreateBitmap();
+                    DrawGrid();
+                    RedrawAll();
+                    Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+
+                    break;
             }
         }
 
-        public ulong SectorsPerBlock { get; private set; }
-
-        public uint SectorsToRead
+        public override void Render(DrawingContext context)
         {
-            get => sectorsToRead;
-            set
+            if((int?)_bitmap?.Size.Height != (int)Height ||
+               (int?)_bitmap?.Size.Width  != (int)Width)
             {
-                sectorsToRead = value;
-                blocksToRead  = (uint)(sectorsToRead / SectorsPerBlock);
-
-                if(sectorsToRead % SectorsPerBlock > 0)
-                    blocksToRead++;
+                _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+                CreateBitmap();
             }
+
+            context.DrawImage(_bitmap, 1, new Rect(0, 0, Width, Height), new Rect(0, 0, Width, Height));
+            Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+            base.Render(context);
         }
 
-        public ObservableCollection<ColoredBlock> ColoredSectors { get; }
-
-        void OnColoredSectorsChanged(object sender, NotifyCollectionChangedEventArgs args)
+        protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            switch(args.Action)
+            base.ItemsCollectionChanged(sender, e);
+
+            switch(e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach(object item in args.NewItems)
-                    {
-                        if(!(item is ColoredBlock block))
-                            continue;
-
-                        for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Add(new ColoredBlock((block.Block / SectorsPerBlock) + i, block.Color));
-                    }
-
-                    break;
-                case NotifyCollectionChangedAction.Move: break;
-                case NotifyCollectionChangedAction.Remove:
-                    foreach(object item in args.OldItems)
-                    {
-                        if(!(item is ColoredBlock block))
-                            continue;
-
-                        for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == (block.Block /
-                                                                                               SectorsPerBlock) + i));
-                    }
-
-                    break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach(object item in args.OldItems)
-                    {
-                        if(!(item is ColoredBlock block))
-                            continue;
+                {
+                    if(!(e.NewItems is { } items))
+                        throw new ArgumentException("Invalid list of items");
 
-                        for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Remove(ColoredBlocks.FirstOrDefault(t => t.Block == (block.Block /
-                                                                                               SectorsPerBlock) + i));
+                    using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+                    using var                 ctx  = new DrawingContext(ctxi, false);
+
+                    foreach(object item in items)
+                    {
+                        if(!(item is ValueTuple<ulong, double> block))
+                            throw new ArgumentException("Invalid item in list", nameof(Items));
+
+                        DrawCluster(block.Item1, block.Item2, false, ctx);
                     }
 
-                    foreach(object item in args.NewItems)
-                    {
-                        if(!(item is ColoredBlock block))
-                            continue;
-
-                        for(ulong i = 0; i < blocksToRead; i++)
-                            ColoredBlocks.Add(new ColoredBlock((block.Block / SectorsPerBlock) + i, block.Color));
-                    }
+                    Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
 
                     break;
+                }
+                case NotifyCollectionChangedAction.Remove:
+                case NotifyCollectionChangedAction.Move:
+                {
+                    if(!(e.NewItems is { } newItems) ||
+                       !(e.OldItems is { } oldItems))
+                        throw new ArgumentException("Invalid list of items");
+
+                    using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+                    using var                 ctx  = new DrawingContext(ctxi, false);
+
+                    foreach(object item in oldItems)
+                    {
+                        if(!(item is ValueTuple<ulong, double> block))
+                            throw new ArgumentException("Invalid item in list", nameof(Items));
+
+                        DrawCluster(block.Item1, block.Item2, false, ctx);
+                    }
+
+                    foreach(object item in newItems)
+                    {
+                        if(!(item is ValueTuple<ulong, double> block))
+                            throw new ArgumentException("Invalid item in list", nameof(Items));
+
+                        DrawCluster(block.Item1, block.Item2, false, ctx);
+                    }
+
+                    Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+
+                    break;
+                }
                 case NotifyCollectionChangedAction.Reset:
-                    ColoredBlocks.Clear();
+                    CreateBitmap();
+                    DrawGrid();
+                    Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
 
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
         }
 
-        void CalculateBoundaries()
+        void RedrawAll()
         {
-            SectorsPerBlock = Blocks == 0 ? 0 : _sectors / Blocks;
-            ColoredBlocks.Clear();
-
-            if(SectorsPerBlock > 0)
+            if(Items is null)
                 return;
 
-            SectorsPerBlock = 1;
+            using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+            using var                 ctx  = new DrawingContext(ctxi, false);
 
-            for(ulong i = Sectors; i < Blocks; i++)
-                ColoredBlocks.Add(new ColoredBlock(i, GridColor));
+            foreach(object item in Items)
+            {
+                if(!(item is ValueTuple<ulong, double> block))
+                    throw new ArgumentException("Invalid item in list", nameof(Items));
+
+                DrawCluster(block.Item1, block.Item2, false, ctx);
+            }
+
+            Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
         }
 
-        public void Clear() => ColoredSectors.Clear();
+        void DrawCluster(ulong block, double duration, bool clear = false, DrawingContext ctx = null)
+        {
+            if(double.IsNegative(duration) ||
+               double.IsInfinity(duration))
+                throw new ArgumentException("Duration cannot be negative or infinite", nameof(duration));
+
+            bool  newContext     = ctx is null;
+            ulong clustersPerRow = (ulong)Width / _blockSize;
+            ulong cluster        = block        / _clusterSize;
+            ulong row            = cluster      / clustersPerRow;
+            ulong column         = cluster      % clustersPerRow;
+            ulong x              = column       * _blockSize;
+            ulong y              = row          * _blockSize;
+            var   pen            = new Pen(Foreground);
+
+            IBrush brush;
+
+            if(clear)
+                brush = Background;
+            else if(duration < SuperFastMaxTime)
+                brush = SuperFastColor;
+            else if(duration >= SuperFastMaxTime &&
+                    duration < FastMaxTime)
+                brush = FastColor;
+            else if(duration >= FastMaxTime &&
+                    duration < AverageMaxTime)
+                brush = AverageColor;
+            else if(duration >= AverageMaxTime &&
+                    duration < SlowMaxTime)
+                brush = SlowColor;
+            else if(duration >= SlowMaxTime &&
+                    duration < SuperSlowMaxTime)
+                brush = SuperSlowColor;
+            else if(duration >= SuperSlowMaxTime ||
+                    double.IsNaN(duration))
+                brush = ProblematicColor;
+            else
+                brush = Background;
+
+            if(newContext)
+            {
+                using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+                ctx = new DrawingContext(ctxi, false);
+            }
+
+            ctx.FillRectangle(brush, new Rect(x, y, _blockSize, _blockSize));
+            ctx.DrawRectangle(pen, new Rect(x, y, _blockSize, _blockSize));
+
+            if(double.IsNaN(duration))
+            {
+                ctx.DrawLine(pen, new Point(x, y), new Point(x + _blockSize, y            + _blockSize));
+                ctx.DrawLine(pen, new Point(x, y               + _blockSize), new Point(x + _blockSize, y));
+            }
+
+            if(newContext)
+                Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+        }
+
+        protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            if(e.NewValue != null &&
+               !(e.NewValue is IList<(ulong, double)>))
+            {
+                throw new
+                    ArgumentException("Items must be a IList<(ulong, double)> with ulong being the block and double being the time spent reading it, or NaN for an error.");
+            }
+
+            base.ItemsChanged(e);
+
+            CreateBitmap();
+            DrawGrid();
+            RedrawAll();
+            Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+        }
+
+        void CreateBitmap()
+        {
+            if(_maxBlocks == 0)
+                _maxBlocks = (ulong)((Width / _blockSize) * (Height / _blockSize));
+
+            _bitmap?.Dispose();
+
+            _bitmap = new RenderTargetBitmap(new PixelSize((int)Width, (int)Height), new Vector(96, 96));
+
+            using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+            using var                 ctx  = new DrawingContext(ctxi, false);
+
+            ctx.FillRectangle(Background, new Rect(0, 0, Width, Height));
+        }
+
+        void DrawGrid()
+        {
+            using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
+            using var                 ctx  = new DrawingContext(ctxi, false);
+
+            ulong clustersPerRow = (ulong)Width / _blockSize;
+
+            bool allBlocksDrawn = false;
+
+            for(ulong y = 0; y < Height && !allBlocksDrawn; y += _blockSize)
+            {
+                for(ulong x = 0; x < Width; x += _blockSize)
+                {
+                    ulong currentBlockValue = ((y * clustersPerRow) / _blockSize) + (x / _blockSize);
+
+                    if(currentBlockValue >= _maxBlocks ||
+                       currentBlockValue >= Blocks)
+                    {
+                        allBlocksDrawn = true;
+
+                        break;
+                    }
+
+                    ctx.DrawRectangle(new Pen(Foreground), new Rect(x, y, _blockSize, _blockSize));
+                }
+            }
+        }
+
+        protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            if(Width  < 1          ||
+               Height < 1          ||
+               double.IsNaN(Width) ||
+               double.IsNaN(Height))
+            {
+                base.OnAttachedToLogicalTree(e);
+
+                return;
+            }
+
+            CreateBitmap();
+            DrawGrid();
+
+            base.OnAttachedToLogicalTree(e);
+        }
+
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            _bitmap.Dispose();
+            _bitmap = null;
+            base.OnDetachedFromLogicalTree(e);
+        }
     }
 }

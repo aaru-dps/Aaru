@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
-    <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
-    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
-    <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p=".git/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Checksums/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.CommonTypes/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Console/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Decoders/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Dto/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Helpers/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
-      <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
-      <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
-      <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
+    <e p="C:\Users\claunia\AppData\Local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\claunia\AppData\Local\JetBrains\Rider2020.1\resharper-host\Local\Transient\ReSharperHost\v201\SolutionCaches\_Aaru.795230756.00" t="ExcludeRecursive" />
+    <e p="C:\Users\claunia\AppData\Local\JetBrains\Toolbox\apps\Rider\ch-0\201.6668.197.plugins\puppet\lib\stubs" t="IncludeRecursive" />
+    <e p="C:\Users\claunia\Development\Aaru\Aaru" t="IncludeFlat">
+      <e p=".git\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.Checksums\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.CommonTypes\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.Console\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.Decoders\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.Dto\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\Aaru.Helpers\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\CICMMetadata\info\exclude" t="IncludeRecursive" />
+      <e p=".git\modules\cuetoolsnet\info\exclude" t="IncludeRecursive" />
+      <e p=".github\CODE_OF_CONDUCT.md" t="Include" />
+      <e p=".github\ISSUE_TEMPLATE.md" t="Include" />
+      <e p=".github\PULL_REQUEST_TEMPLATE.md" t="Include" />
       <e p=".travis.yml" t="Include" />
       <e p="Aaru" t="IncludeRecursive">
         <e p="Aaru.csproj" t="IncludeRecursive" />
+        <e p="aaruformat.xml" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Commands" t="Include">
           <e p="Configure.cs" t="Include" />
           <e p="Database" t="Include">
@@ -71,13 +70,6 @@
         <e p="Info.plist" t="Include" />
         <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
-        <e p="Progress.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-        </e>
-        <e p="Settings.StyleCop" t="Include" />
-        <e p="aaruformat.xml" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -88,12 +80,18 @@
             </e>
           </e>
         </e>
+        <e p="Progress.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
+        <e p="Settings.StyleCop" t="Include" />
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Checksums.csproj" t="IncludeRecursive" />
         <e p="Adler32Context.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="CDChecksums.cs" t="Include" />
         <e p="CRC16CCITTContext.cs" t="Include" />
         <e p="CRC16Context.cs" t="Include" />
@@ -102,14 +100,6 @@
         <e p="CRC64Context.cs" t="Include" />
         <e p="FletcherContext.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
-        <e p="ReedSolomon.cs" t="Include" />
-        <e p="Register.cs" t="Include" />
-        <e p="SHA1Context.cs" t="Include" />
-        <e p="SHA256Context.cs" t="Include" />
-        <e p="SHA384Context.cs" t="Include" />
-        <e p="SHA512Context.cs" t="Include" />
-        <e p="SpamSumContext.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -117,11 +107,19 @@
             </e>
           </e>
         </e>
+        <e p="ReedSolomon.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
+        <e p="SHA1Context.cs" t="Include" />
+        <e p="SHA256Context.cs" t="Include" />
+        <e p="SHA384Context.cs" t="Include" />
+        <e p="SHA512Context.cs" t="Include" />
+        <e p="SpamSumContext.cs" t="Include" />
       </e>
       <e p="Aaru.CommonTypes" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.CommonTypes.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Enums" t="Include">
           <e p="DeviceType.cs" t="Include" />
           <e p="ErrorNumber.cs" t="Include" />
@@ -180,6 +178,13 @@
           <e p="Statistics.cs" t="Include" />
           <e p="Version.cs" t="Include" />
         </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="Partition.cs" t="Include" />
         <e p="PluginBase.cs" t="Include" />
         <e p="Structs" t="Include">
@@ -200,19 +205,10 @@
           <e p="TapeFile.cs" t="Include" />
           <e p="TapePartition.cs" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.CommonTypes.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Compression" t="IncludeRecursive">
         <e p="Aaru.Compression.csproj" t="IncludeRecursive" />
         <e p="AppleRle.cs" t="Include" />
-        <e p="TeleDiskLzh.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -221,6 +217,7 @@
             </e>
           </e>
         </e>
+        <e p="TeleDiskLzh.cs" t="Include" />
       </e>
       <e p="Aaru.Console" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -238,6 +235,7 @@
       </e>
       <e p="Aaru.Core" t="IncludeRecursive">
         <e p="Aaru.Core.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Checksum.cs" t="Include" />
         <e p="DataFile.cs" t="Include" />
         <e p="Delegates.cs" t="Include" />
@@ -258,8 +256,8 @@
               <e p="Trim.cs" t="Include" />
             </e>
             <e p="Dump.cs" t="Include" />
-            <e p="MMC.cs" t="Include" />
             <e p="Metadata.cs" t="Include" />
+            <e p="MMC.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="PlayStationPortable" t="Include">
               <e p="MemoryStick.cs" t="Include" />
@@ -269,11 +267,11 @@
             <e p="ResumeSupport.cs" t="Include" />
             <e p="SBC.cs" t="Include" />
             <e p="SCSI.cs" t="Include" />
-            <e p="SSC.cs" t="Include" />
             <e p="SecureDigital.cs" t="Include" />
+            <e p="SSC.cs" t="Include" />
             <e p="XGD.cs" t="Include" />
           </e>
-          <e p="Info" t="Include">
+          <e p="info" t="Include">
             <e p="DeviceInfo.cs" t="Include" />
             <e p="Plextor.cs" t="Include" />
             <e p="Properties.cs" t="Include" />
@@ -287,17 +285,17 @@
             <e p="FireWire.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="PCMCIA.cs" t="Include" />
-            <e p="SSC.cs" t="Include" />
-            <e p="Scsi.cs" t="Include" />
+            <e p="SCSI.cs" t="Include" />
             <e p="SecureDigital.cs" t="Include" />
+            <e p="SSC.cs" t="Include" />
             <e p="USB.cs" t="Include" />
           </e>
           <e p="Scanning" t="Include">
             <e p="ATA.cs" t="Include" />
             <e p="MediaScan.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
-            <e p="SCSI.cs" t="Include" />
             <e p="ScanResults.cs" t="Include" />
+            <e p="SCSI.cs" t="Include" />
             <e p="SecureDigital.cs" t="Include" />
           </e>
         </e>
@@ -317,10 +315,17 @@
           <e p="Detection" t="Include">
             <e p="MMC.cs" t="Include" />
           </e>
-          <e p="Info" t="Include">
+          <e p="info" t="Include">
             <e p="CompactDisc.cs" t="Include" />
             <e p="ScsiInfo.cs" t="Include" />
             <e p="XgdInfo.cs" t="Include" />
+          </e>
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Core.AssemblyInfo.cs" t="Include" />
+            </e>
           </e>
         </e>
         <e p="Options.cs" t="Include" />
@@ -339,68 +344,61 @@
           <e p="Sidecar.cs" t="Include" />
         </e>
         <e p="Statistics.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Core.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Database" t="IncludeRecursive">
         <e p="Aaru.Database.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Context.cs" t="Include" />
         <e p="ContextFactory.cs" t="Include" />
         <e p="Migrations" t="Include">
-          <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
           <e p="20181126222301_DeviceReportV2.cs" t="Include" />
-          <e p="20181127001622_AddDeviceBasicFields.Designer.cs" t="Include" />
+          <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
           <e p="20181127001622_AddDeviceBasicFields.cs" t="Include" />
-          <e p="20181127013131_CorrectReportsDbSet.Designer.cs" t="Include" />
+          <e p="20181127001622_AddDeviceBasicFields.Designer.cs" t="Include" />
           <e p="20181127013131_CorrectReportsDbSet.cs" t="Include" />
-          <e p="20181221015906_NameValueStatistics.Designer.cs" t="Include" />
+          <e p="20181127013131_CorrectReportsDbSet.Designer.cs" t="Include" />
           <e p="20181221015906_NameValueStatistics.cs" t="Include" />
-          <e p="20181221032605_MediaStatistics.Designer.cs" t="Include" />
+          <e p="20181221015906_NameValueStatistics.Designer.cs" t="Include" />
           <e p="20181221032605_MediaStatistics.cs" t="Include" />
-          <e p="20181221034941_SeenDevicesStatistics.Designer.cs" t="Include" />
+          <e p="20181221032605_MediaStatistics.Designer.cs" t="Include" />
           <e p="20181221034941_SeenDevicesStatistics.cs" t="Include" />
-          <e p="20181221040408_OperatingSystemStatistics.Designer.cs" t="Include" />
+          <e p="20181221034941_SeenDevicesStatistics.Designer.cs" t="Include" />
           <e p="20181221040408_OperatingSystemStatistics.cs" t="Include" />
-          <e p="20181221041242_VersionStatistics.Designer.cs" t="Include" />
+          <e p="20181221040408_OperatingSystemStatistics.Designer.cs" t="Include" />
           <e p="20181221041242_VersionStatistics.cs" t="Include" />
-          <e p="20181221125353_AddStatsCounters.Designer.cs" t="Include" />
+          <e p="20181221041242_VersionStatistics.Designer.cs" t="Include" />
           <e p="20181221125353_AddStatsCounters.cs" t="Include" />
-          <e p="20181223183913_FixUnsignedFields.Designer.cs" t="Include" />
+          <e p="20181221125353_AddStatsCounters.Designer.cs" t="Include" />
           <e p="20181223183913_FixUnsignedFields.cs" t="Include" />
-          <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
+          <e p="20181223183913_FixUnsignedFields.Designer.cs" t="Include" />
           <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
-          <e p="20181224044809_StoreUsbIdsInDatabase.Designer.cs" t="Include" />
+          <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
           <e p="20181224044809_StoreUsbIdsInDatabase.cs" t="Include" />
-          <e p="20181224172147_FixUsbIdsAndIndexes.Designer.cs" t="Include" />
+          <e p="20181224044809_StoreUsbIdsInDatabase.Designer.cs" t="Include" />
           <e p="20181224172147_FixUsbIdsAndIndexes.cs" t="Include" />
-          <e p="20181225002740_AddCdOffsets.Designer.cs" t="Include" />
+          <e p="20181224172147_FixUsbIdsAndIndexes.Designer.cs" t="Include" />
           <e p="20181225002740_AddCdOffsets.cs" t="Include" />
-          <e p="20181225152947_StoreMmcGetConfigurationResponse.Designer.cs" t="Include" />
+          <e p="20181225002740_AddCdOffsets.Designer.cs" t="Include" />
           <e p="20181225152947_StoreMmcGetConfigurationResponse.cs" t="Include" />
-          <e p="20181225214500_StoreReadResultsInReportDatabase.Designer.cs" t="Include" />
+          <e p="20181225152947_StoreMmcGetConfigurationResponse.Designer.cs" t="Include" />
           <e p="20181225214500_StoreReadResultsInReportDatabase.cs" t="Include" />
-          <e p="20190102061236_AddMultisessionLeadTest.Designer.cs" t="Include" />
+          <e p="20181225214500_StoreReadResultsInReportDatabase.Designer.cs" t="Include" />
           <e p="20190102061236_AddMultisessionLeadTest.cs" t="Include" />
-          <e p="20190102230036_AddOptimalReadMultipleCount.Designer.cs" t="Include" />
+          <e p="20190102061236_AddMultisessionLeadTest.Designer.cs" t="Include" />
           <e p="20190102230036_AddOptimalReadMultipleCount.cs" t="Include" />
-          <e p="20190108013456_AddChangeableScsiModes.Designer.cs" t="Include" />
+          <e p="20190102230036_AddOptimalReadMultipleCount.Designer.cs" t="Include" />
           <e p="20190108013456_AddChangeableScsiModes.cs" t="Include" />
-          <e p="20190525183723_IdForDensityCode.Designer.cs" t="Include" />
+          <e p="20190108013456_AddChangeableScsiModes.Designer.cs" t="Include" />
           <e p="20190525183723_IdForDensityCode.cs" t="Include" />
-          <e p="20191103000828_MakeFieldsUnsigned.Designer.cs" t="Include" />
+          <e p="20190525183723_IdForDensityCode.Designer.cs" t="Include" />
           <e p="20191103000828_MakeFieldsUnsigned.cs" t="Include" />
-          <e p="20191207175444_SyncWithServerChanges.Designer.cs" t="Include" />
+          <e p="20191103000828_MakeFieldsUnsigned.Designer.cs" t="Include" />
           <e p="20191207175444_SyncWithServerChanges.cs" t="Include" />
-          <e p="20191207183522_AddNameCountModel.Designer.cs" t="Include" />
+          <e p="20191207175444_SyncWithServerChanges.Designer.cs" t="Include" />
           <e p="20191207183522_AddNameCountModel.cs" t="Include" />
-          <e p="20191207184342_AddRemoteStats.Designer.cs" t="Include" />
+          <e p="20191207183522_AddNameCountModel.Designer.cs" t="Include" />
           <e p="20191207184342_AddRemoteStats.cs" t="Include" />
+          <e p="20191207184342_AddRemoteStats.Designer.cs" t="Include" />
           <e p="AaruContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -425,7 +423,6 @@
           <e p="UsbVendor.cs" t="Include" />
           <e p="Version.cs" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -437,11 +434,12 @@
       <e p="Aaru.Decoders" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
+        <e p="Aaru.Decoders.csproj" t="IncludeRecursive" />
         <e p="ATA" t="Include">
           <e p="Identify.cs" t="Include" />
           <e p="Registers.cs" t="Include" />
         </e>
-        <e p="Aaru.Decoders.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Blu-ray" t="Include">
           <e p="BCA.cs" t="Include" />
           <e p="Cartridge.cs" t="Include" />
@@ -463,9 +461,9 @@
           <e p="AACS.cs" t="Include" />
           <e p="ADIP.cs" t="Include" />
           <e p="BCA.cs" t="Include" />
+          <e p="Cartridge.cs" t="Include" />
           <e p="CPRM.cs" t="Include" />
           <e p="CSS&amp;CPRM.cs" t="Include" />
-          <e p="Cartridge.cs" t="Include" />
           <e p="DDS.cs" t="Include" />
           <e p="DMI.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
@@ -494,6 +492,13 @@
           <e p="ExtendedCSD.cs" t="Include" />
           <e p="OCR.cs" t="Include" />
           <e p="VendorString.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
         </e>
         <e p="PCMCIA" t="Include">
           <e p="CIS.cs" t="Include" />
@@ -558,11 +563,11 @@
             <e p="Mode6.cs" t="Include" />
             <e p="Structs.cs" t="Include" />
           </e>
+          <e p="Sense.cs" t="Include" />
           <e p="SSC" t="Include">
             <e p="BlockLimits.cs" t="Include" />
             <e p="DensitySupport.cs" t="Include" />
           </e>
-          <e p="Sense.cs" t="Include" />
           <e p="Types.cs" t="Include" />
           <e p="VendorString.cs" t="Include" />
         </e>
@@ -582,17 +587,10 @@
           <e p="DMI.cs" t="Include" />
           <e p="SS.cs" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Decoders.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Devices" t="IncludeRecursive">
         <e p="Aaru.Devices.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="Command.cs" t="Include" />
         <e p="Device" t="Include">
           <e p="AtaCommands" t="Include">
@@ -649,6 +647,13 @@
           <e p="ListDevices.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
         </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Devices.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="Remote" t="Include">
           <e p="Consts.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
@@ -661,28 +666,17 @@
           <e p="Extern.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
-          <e p="Usb.cs" t="Include" />
+          <e p="USB.cs" t="Include" />
           <e p="UsbFunctions.cs" t="Include" />
-        </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Devices.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
         </e>
       </e>
       <e p="Aaru.Dto" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Dto.csproj" t="IncludeRecursive" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="CdOffsetDto.cs" t="Include" />
         <e p="DeviceDto.cs" t="Include" />
-        <e p="SyncDto.cs" t="Include" />
-        <e p="UsbProductDto.cs" t="Include" />
-        <e p="UsbVendorDto.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -690,13 +684,16 @@
             </e>
           </e>
         </e>
+        <e p="SyncDto.cs" t="Include" />
+        <e p="UsbProductDto.cs" t="Include" />
+        <e p="UsbVendorDto.cs" t="Include" />
       </e>
       <e p="Aaru.Filesystems" t="IncludeRecursive">
-        <e p="AODOS.cs" t="Include" />
-        <e p="APFS.cs" t="Include" />
         <e p="Aaru.Filesystems.csproj" t="IncludeRecursive" />
         <e p="Acorn.cs" t="Include" />
         <e p="AmigaDOS.cs" t="Include" />
+        <e p="AODOS.cs" t="Include" />
+        <e p="APFS.cs" t="Include" />
         <e p="AppleCommon" t="Include">
           <e p="Consts.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
@@ -732,11 +729,13 @@
         </e>
         <e p="AtheOS.cs" t="Include" />
         <e p="BFS.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="BTRFS.cs" t="Include" />
         <e p="CBM.cs" t="Include" />
         <e p="CPM" t="Include">
-          <e p="CPM.cs" t="Include" />
           <e p="Consts.cs" t="Include" />
+          <e p="CPM.cs" t="Include" />
+          <e p="cpmdefs.xml" t="Include" />
           <e p="Definitions.cs" t="Include" />
           <e p="Dir.cs" t="Include" />
           <e p="File.cs" t="Include" />
@@ -744,11 +743,14 @@
           <e p="Structs.cs" t="Include" />
           <e p="Super.cs" t="Include" />
           <e p="Xattr.cs" t="Include" />
-          <e p="cpmdefs.xml" t="Include" />
         </e>
         <e p="Cram.cs" t="Include" />
+        <e p="Dump.cs" t="Include" />
         <e p="ECMA67.cs" t="Include" />
         <e p="EFS.cs" t="Include" />
+        <e p="exFAT.cs" t="Include" />
+        <e p="ext2FS.cs" t="Include" />
+        <e p="extFS.cs" t="Include" />
         <e p="F2FS.cs" t="Include" />
         <e p="FAT" t="Include">
           <e p="BPB.cs" t="Include" />
@@ -788,8 +790,8 @@
             <e p="CDi.cs" t="Include" />
             <e p="ElTorito.cs" t="Include" />
             <e p="HighSierra.cs" t="Include" />
-            <e p="ISO.cs" t="Include" />
             <e p="Internal.cs" t="Include" />
+            <e p="ISO.cs" t="Include" />
             <e p="RRIP.cs" t="Include" />
             <e p="SUSP.cs" t="Include" />
             <e p="XA.cs" t="Include" />
@@ -798,8 +800,8 @@
           <e p="Date.cs" t="Include" />
           <e p="Dir.cs" t="Include" />
           <e p="File.cs" t="Include" />
-          <e p="ISO9660.cs" t="Include" />
           <e p="Info.cs" t="Include" />
+          <e p="ISO9660.cs" t="Include" />
           <e p="Mode2.cs" t="Include" />
           <e p="PathTable.cs" t="Include" />
           <e p="Structs" t="Include">
@@ -808,8 +810,8 @@
             <e p="CDi.cs" t="Include" />
             <e p="ElTorito.cs" t="Include" />
             <e p="HighSierra.cs" t="Include" />
-            <e p="ISO.cs" t="Include" />
             <e p="Internal.cs" t="Include" />
+            <e p="ISO.cs" t="Include" />
             <e p="Joliet.cs" t="Include" />
             <e p="RRIP.cs" t="Include" />
             <e p="SUSP.cs" t="Include" />
@@ -836,8 +838,15 @@
         <e p="MicroDOS.cs" t="Include" />
         <e p="MinixFS.cs" t="Include" />
         <e p="NILFS2.cs" t="Include" />
-        <e p="NTFS.cs" t="Include" />
         <e p="Nintendo.cs" t="Include" />
+        <e p="NTFS.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Filesystems.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="ODS.cs" t="Include" />
         <e p="Opera" t="Include">
           <e p="Consts.cs" t="Include" />
@@ -855,11 +864,11 @@
         <e p="QNX4.cs" t="Include" />
         <e p="QNX6.cs" t="Include" />
         <e p="RBF.cs" t="Include" />
-        <e p="RT11.cs" t="Include" />
         <e p="ReFS.cs" t="Include" />
         <e p="Register.cs" t="Include" />
         <e p="Reiser.cs" t="Include" />
         <e p="Reiser4.cs" t="Include" />
+        <e p="RT11.cs" t="Include" />
         <e p="SFS.cs" t="Include" />
         <e p="SolarFS.cs" t="Include" />
         <e p="Squash.cs" t="Include" />
@@ -882,34 +891,17 @@
         <e p="XFS.cs" t="Include" />
         <e p="Xia.cs" t="Include" />
         <e p="ZFS.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="dump.cs" t="Include" />
-        <e p="exFAT.cs" t="Include" />
-        <e p="ext2FS.cs" t="Include" />
-        <e p="extFS.cs" t="Include" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Filesystems.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Filters" t="IncludeRecursive">
         <e p="Aaru.Filters.csproj" t="IncludeRecursive" />
         <e p="AppleDouble.cs" t="Include" />
         <e p="AppleSingle.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="BZip2.cs" t="Include" />
         <e p="ForcedSeekStream.cs" t="Include" />
         <e p="GZip.cs" t="Include" />
         <e p="LZip.cs" t="Include" />
         <e p="MacBinary.cs" t="Include" />
-        <e p="OffsetStream.cs" t="Include" />
-        <e p="PCExchange.cs" t="Include" />
-        <e p="Register.cs" t="Include" />
-        <e p="XZ.cs" t="Include" />
-        <e p="ZZZNoFilter.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -917,12 +909,18 @@
             </e>
           </e>
         </e>
+        <e p="OffsetStream.cs" t="Include" />
+        <e p="PCExchange.cs" t="Include" />
+        <e p="Register.cs" t="Include" />
+        <e p="XZ.cs" t="Include" />
+        <e p="ZZZNoFilter.cs" t="Include" />
       </e>
       <e p="Aaru.Gui" t="IncludeRecursive">
         <e p="Aaru.Gui.csproj" t="IncludeRecursive" />
         <e p="App.xaml" t="Include" />
         <e p="App.xaml.cs" t="Include" />
         <e p="Assets" t="Include">
+          <e p="aaru-logo.png" t="Include" />
           <e p="Icons" t="Include">
             <e p="oxygen" t="Include">
               <e p="32x32" t="Include">
@@ -1016,6 +1014,12 @@
               <e p="DDS3.svg" t="Include" />
               <e p="DDS4.png" t="Include" />
               <e p="DDS4.svg" t="Include" />
+              <e p="DigitalAudioTape.png" t="Include" />
+              <e p="DigitalAudioTape.svg" t="Include" />
+              <e p="Ditto.png" t="Include" />
+              <e p="Ditto.svg" t="Include" />
+              <e p="DittoMax.png" t="Include" />
+              <e p="DittoMax.svg" t="Include" />
               <e p="DLTtapeIII.png" t="Include" />
               <e p="DLTtapeIII.svg" t="Include" />
               <e p="DLTtapeIIIxt.png" t="Include" />
@@ -1040,12 +1044,6 @@
               <e p="DVDROM.svg" t="Include" />
               <e p="DVDRW.png" t="Include" />
               <e p="DVDRW.svg" t="Include" />
-              <e p="DigitalAudioTape.png" t="Include" />
-              <e p="DigitalAudioTape.svg" t="Include" />
-              <e p="Ditto.png" t="Include" />
-              <e p="Ditto.svg" t="Include" />
-              <e p="DittoMax.png" t="Include" />
-              <e p="DittoMax.svg" t="Include" />
               <e p="ExpressCard34.png" t="Include" />
               <e p="ExpressCard34.svg" t="Include" />
               <e p="ExpressCard54.png" t="Include" />
@@ -1128,6 +1126,8 @@
               <e p="MemoryStickProDuo.svg" t="Include" />
               <e p="MilCD.png" t="Include" />
               <e p="MilCD.svg" t="Include" />
+              <e p="miniSD.png" t="Include" />
+              <e p="miniSD.svg" t="Include" />
               <e p="NeoGeoCD.png" t="Include" />
               <e p="NeoGeoCD.svg" t="Include" />
               <e p="Nintendo3DSGameCard.png" t="Include" />
@@ -1143,6 +1143,18 @@
               <e p="PD650.svg" t="Include" />
               <e p="PD650_WORM.png" t="Include" />
               <e p="PD650_WORM.svg" t="Include" />
+              <e p="Pippin.png" t="Include" />
+              <e p="Pippin.svg" t="Include" />
+              <e p="Playdia.png" t="Include" />
+              <e p="Playdia.svg" t="Include" />
+              <e p="PlayStationMemoryCard.png" t="Include" />
+              <e p="PlayStationMemoryCard.svg" t="Include" />
+              <e p="PlayStationMemoryCard2.png" t="Include" />
+              <e p="PlayStationMemoryCard2.svg" t="Include" />
+              <e p="PlayStationVitaGameCard.png" t="Include" />
+              <e p="PlayStationVitaGameCard.svg" t="Include" />
+              <e p="PocketZip.png" t="Include" />
+              <e p="PocketZip.svg" t="Include" />
               <e p="PS1CD.png" t="Include" />
               <e p="PS1CD.svg" t="Include" />
               <e p="PS2CD.png" t="Include" />
@@ -1155,18 +1167,6 @@
               <e p="PS3DVD.svg" t="Include" />
               <e p="PS4BD.png" t="Include" />
               <e p="PS4BD.svg" t="Include" />
-              <e p="Pippin.png" t="Include" />
-              <e p="Pippin.svg" t="Include" />
-              <e p="PlayStationMemoryCard.png" t="Include" />
-              <e p="PlayStationMemoryCard.svg" t="Include" />
-              <e p="PlayStationMemoryCard2.png" t="Include" />
-              <e p="PlayStationMemoryCard2.svg" t="Include" />
-              <e p="PlayStationVitaGameCard.png" t="Include" />
-              <e p="PlayStationVitaGameCard.svg" t="Include" />
-              <e p="Playdia.png" t="Include" />
-              <e p="Playdia.svg" t="Include" />
-              <e p="PocketZip.png" t="Include" />
-              <e p="PocketZip.svg" t="Include" />
               <e p="SACD.png" t="Include" />
               <e p="SACD.svg" t="Include" />
               <e p="SAIT1.png" t="Include" />
@@ -1175,14 +1175,14 @@
               <e p="SAIT2.svg" t="Include" />
               <e p="SATURNCD.png" t="Include" />
               <e p="SATURNCD.svg" t="Include" />
-              <e p="SVCD.png" t="Include" />
-              <e p="SVCD.svg" t="Include" />
               <e p="SecureDigital.png" t="Include" />
               <e p="SecureDigital.svg" t="Include" />
               <e p="SmartMedia.png" t="Include" />
               <e p="SmartMedia.svg" t="Include" />
               <e p="SuperCDROM2.png" t="Include" />
               <e p="SuperCDROM2.svg" t="Include" />
+              <e p="SVCD.png" t="Include" />
+              <e p="SVCD.svg" t="Include" />
               <e p="SwitchGameCard.png" t="Include" />
               <e p="SwitchGameCard.svg" t="Include" />
               <e p="ThreeDO.png" t="Include" />
@@ -1205,12 +1205,10 @@
               <e p="ZIP100.svg" t="Include" />
               <e p="ZIP250.png" t="Include" />
               <e p="ZIP250.svg" t="Include" />
-              <e p="miniSD.png" t="Include" />
-              <e p="miniSD.svg" t="Include" />
             </e>
           </e>
-          <e p="aaru-logo.png" t="Include" />
         </e>
+        <e p="bin" t="ExcludeRecursive" />
         <e p="ConsoleHandler.cs" t="Include" />
         <e p="Controls" t="Include">
           <e p="BlockMap.cs" t="Include" />
@@ -1222,8 +1220,8 @@
           <e p="AssemblyModel.cs" t="Include" />
           <e p="ChecksumModel.cs" t="Include" />
           <e p="DeviceModel.cs" t="Include" />
-          <e p="DeviceStatsModel.cs" t="Include" />
           <e p="DevicesRootModel.cs" t="Include" />
+          <e p="DeviceStatsModel.cs" t="Include" />
           <e p="DumpHardwareModel.cs" t="Include" />
           <e p="EncodingModel.cs" t="Include" />
           <e p="FileModel.cs" t="Include" />
@@ -1245,6 +1243,16 @@
           <e p="ScsiPageModel.cs" t="Include" />
           <e p="SubdirectoryModel.cs" t="Include" />
           <e p="TrackEntropyModel.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
+              <e p="Avalonia" t="Include">
+                <e p="resources" t="Include" />
+              </e>
+            </e>
+          </e>
         </e>
         <e p="ResourceHandler.cs" t="Include" />
         <e p="ViewLocator.cs" t="Include" />
@@ -1368,17 +1376,6 @@
             <e p="ViewSector.xaml.cs" t="Include" />
           </e>
         </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -1387,6 +1384,7 @@
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />
         <e p="BigEndianBitConverter.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="BitEndian.cs" t="Include" />
         <e p="CHS.cs" t="Include" />
         <e p="CompareBytes.cs" t="Include" />
@@ -1394,10 +1392,6 @@
         <e p="DateHandlers.cs" t="Include" />
         <e p="Marshal.cs" t="Include" />
         <e p="MarshallingPropertiesAttribute.cs" t="Include" />
-        <e p="PrintHex.cs" t="Include" />
-        <e p="StringHandlers.cs" t="Include" />
-        <e p="Swapping.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
@@ -1405,6 +1399,9 @@
             </e>
           </e>
         </e>
+        <e p="PrintHex.cs" t="Include" />
+        <e p="StringHandlers.cs" t="Include" />
+        <e p="Swapping.cs" t="Include" />
       </e>
       <e p="Aaru.Images" t="IncludeRecursive">
         <e p="Aaru.Images.csproj" t="IncludeRecursive" />
@@ -1487,16 +1484,7 @@
           <e p="Unsupported.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
-        <e p="BLU" t="Include">
-          <e p="BLU.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
+        <e p="bin" t="ExcludeRecursive" />
         <e p="BlindWrite4" t="Include">
           <e p="BlindWrite4.cs" t="Include" />
           <e p="Constants.cs" t="Include" />
@@ -1517,6 +1505,16 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="BLU" t="Include">
+          <e p="BLU.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
         </e>
         <e p="CDRDAO" t="Include">
           <e p="CDRDAO.cs" t="Include" />
@@ -1550,16 +1548,6 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="CPCDSK" t="Include">
-          <e p="CPCDSK.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
         </e>
         <e p="CisCopy" t="Include">
           <e p="CisCopy.cs" t="Include" />
@@ -1597,6 +1585,16 @@
           <e p="Read.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
           <e p="Write.cs" t="Include" />
+        </e>
+        <e p="CPCDSK" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="CPCDSK.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
         </e>
         <e p="D88" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -1688,8 +1686,8 @@
         <e p="IMD" t="Include">
           <e p="Constants.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
-          <e p="IMD.cs" t="Include" />
           <e p="Identify.cs" t="Include" />
+          <e p="IMD.cs" t="Include" />
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
@@ -1723,16 +1721,6 @@
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
         </e>
-        <e p="NHDr0" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="NHDr0.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
         <e p="Nero" t="Include">
           <e p="Constants.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
@@ -1743,6 +1731,23 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="NHDr0" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="NHDr0.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
         </e>
         <e p="Parallels" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -1926,16 +1931,6 @@
           <e p="Unsupported.cs" t="Include" />
           <e p="VHDX.cs" t="Include" />
         </e>
-        <e p="VMware" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="VMware.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
         <e p="Virtual98" t="Include">
           <e p="Constants.cs" t="Include" />
           <e p="Identify.cs" t="Include" />
@@ -1944,6 +1939,16 @@
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
           <e p="Virtual98.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="VMware" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="VMware.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="WCDiskImage" t="Include">
@@ -1964,14 +1969,6 @@
           <e p="Write.cs" t="Include" />
           <e p="ZZZRawImage.cs" t="Include" />
         </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
       </e>
       <e p="Aaru.Partitions" t="IncludeRecursive">
         <e p="Aaru.Partitions.csproj" t="IncludeRecursive" />
@@ -1979,6 +1976,7 @@
         <e p="AppleMap.cs" t="Include" />
         <e p="Apricot.cs" t="Include" />
         <e p="Atari.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
         <e p="BSD.cs" t="Include" />
         <e p="DEC.cs" t="Include" />
         <e p="DragonFlyBSD.cs" t="Include" />
@@ -1986,6 +1984,13 @@
         <e p="Human68k.cs" t="Include" />
         <e p="MBR.cs" t="Include" />
         <e p="NeXT.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.Partitions.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
         <e p="PC98.cs" t="Include" />
         <e p="Plan9.cs" t="Include" />
         <e p="RDB.cs" t="Include" />
@@ -1995,20 +2000,11 @@
         <e p="Sun.cs" t="Include" />
         <e p="UNIX.cs" t="Include" />
         <e p="VTOC.cs" t="Include" />
-        <e p="XENIX.cs" t="Include" />
         <e p="Xbox.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Partitions.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="XENIX.cs" t="Include" />
       </e>
       <e p="Aaru.Settings" t="IncludeRecursive">
         <e p="Aaru.Settings.csproj" t="IncludeRecursive" />
-        <e p="Settings.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -2017,19 +2013,13 @@
             </e>
           </e>
         </e>
+        <e p="Settings.cs" t="Include" />
       </e>
       <e p="Aaru.sln" t="IncludeFlat" />
-      <e p="CICMMetadata/dotnet/cicm.cs" t="Include" />
-      <e p="CONTRIBUTING.md" t="Include" />
       <e p="Changelog.md" t="Include" />
-      <e p="LICENSE" t="Include" />
-      <e p="LICENSE.LGPL" t="Include" />
-      <e p="LICENSE.MIT" t="Include" />
-      <e p="NEEDED.md" t="Include" />
-      <e p="NEEDINFO.md" t="Include" />
-      <e p="README.md" t="Include" />
-      <e p="TODO.md" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs" t="Include">
+      <e p="CICMMetadata\dotnet\cicm.cs" t="Include" />
+      <e p="CONTRIBUTING.md" t="Include" />
+      <e p="cuetoolsnet\CUETools.Codecs" t="Include">
         <e p="AudioBuffer.cs" t="Include" />
         <e p="AudioDecoderClass.cs" t="Include" />
         <e p="AudioEncoderClass.cs" t="Include" />
@@ -2063,8 +2053,8 @@
         <e p="LpcContext.cs" t="Include" />
         <e p="NullStream.cs" t="Include" />
         <e p="PlaybackState.cs" t="Include" />
-        <e p="SRDescriptionAttribute.cs" t="Include" />
         <e p="SilenceGenerator.cs" t="Include" />
+        <e p="SRDescriptionAttribute.cs" t="Include" />
         <e p="UserDefinedEncoderSettings.cs" t="Include" />
         <e p="UserDefinedReader.cs" t="Include" />
         <e p="UserDefinedWriter.cs" t="Include" />
@@ -2072,7 +2062,7 @@
         <e p="WAVWriter.cs" t="Include" />
         <e p="WAVWriterSettings.cs" t="Include" />
       </e>
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE" t="Include">
+      <e p="cuetoolsnet\CUETools.Codecs.FLAKE" t="Include">
         <e p="ChannelMode.cs" t="Include" />
         <e p="FlacFrame.cs" t="Include" />
         <e p="FlacSubframe.cs" t="Include" />
@@ -2095,7 +2085,14 @@
         <e p="WindowFunction.cs" t="Include" />
         <e p="WindowMethod.cs" t="Include" />
       </e>
+      <e p="LICENSE" t="Include" />
+      <e p="LICENSE.LGPL" t="Include" />
+      <e p="LICENSE.MIT" t="Include" />
+      <e p="NEEDED.md" t="Include" />
+      <e p="NEEDINFO.md" t="Include" />
       <e p="packages" t="ExcludeRecursive" />
+      <e p="README.md" t="Include" />
+      <e p="TODO.md" t="Include" />
     </e>
   </component>
 </project>
