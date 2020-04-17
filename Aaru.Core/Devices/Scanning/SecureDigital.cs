@@ -54,11 +54,11 @@ namespace Aaru.Core.Devices.Scanning
             uint         blockSize     = 512;
             bool         byteAddressed = true;
 
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.MMC:
                 {
-                    sense = dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
+                    sense = _dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
 
                     if(!sense)
                     {
@@ -73,7 +73,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     if(sense || results.Blocks == 0)
                     {
-                        sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+                        sense = _dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
 
                         if(!sense)
                         {
@@ -88,7 +88,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 case DeviceType.SecureDigital:
                 {
-                    sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+                    sense = _dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
 
                     if(!sense)
                     {
@@ -117,7 +117,7 @@ namespace Aaru.Core.Devices.Scanning
 
             while(true)
             {
-                sense = dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
+                sense = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
 
                 if(sense)
                     blocksToRead /= 2;
@@ -129,7 +129,7 @@ namespace Aaru.Core.Devices.Scanning
 
             if(sense)
             {
-                StoppingErrorMessage?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
 
                 return results;
             }
@@ -158,8 +158,8 @@ namespace Aaru.Core.Devices.Scanning
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, SD_PROFILE);
-            var mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
-            var ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
+            var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+            var ibgLog  = new IbgLog(_ibgLogPath, SD_PROFILE);
 
             start = DateTime.UtcNow;
             DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -168,7 +168,7 @@ namespace Aaru.Core.Devices.Scanning
 
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
             {
-                if(aborted)
+                if(_aborted)
                     break;
 
                 if(results.Blocks - i < blocksToRead)
@@ -187,8 +187,8 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)results.Blocks);
 
-                bool error = dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
-                                      out duration);
+                bool error = _dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                                       out duration);
 
                 if(!error)
                 {
@@ -239,24 +239,24 @@ namespace Aaru.Core.Devices.Scanning
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+            ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                          (results.ProcessingTime / 1000),
-                         devicePath);
+                         _devicePath);
 
             InitProgress?.Invoke();
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {
-                if(aborted)
+                if(_aborted || !_seekTest)
                     break;
 
                 uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
                 PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
-                dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
-                         out double seekCur);
+                _dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                          out double seekCur);
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax &&

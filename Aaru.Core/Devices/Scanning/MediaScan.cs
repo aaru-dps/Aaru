@@ -38,28 +38,30 @@ namespace Aaru.Core.Devices.Scanning
 {
     public partial class MediaScan
     {
-        readonly Device dev;
-        readonly string devicePath;
-        readonly string ibgLogPath;
-        readonly string mhddLogPath;
-        bool            aborted;
+        readonly Device _dev;
+        readonly string _devicePath;
+        readonly string _ibgLogPath;
+        readonly string _mhddLogPath;
+        readonly bool   _seekTest;
+        bool            _aborted;
 
         /// <param name="mhddLogPath">Path to a MHDD log file</param>
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
         /// <param name="devicePath">Device path</param>
         /// <param name="dev">Device</param>
-        public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
+        public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev, bool seekTest = true)
         {
-            this.mhddLogPath = mhddLogPath;
-            this.ibgLogPath  = ibgLogPath;
-            this.devicePath  = devicePath;
-            this.dev         = dev;
-            aborted          = false;
+            _mhddLogPath = mhddLogPath;
+            _ibgLogPath  = ibgLogPath;
+            _devicePath  = devicePath;
+            _dev         = dev;
+            _aborted     = false;
+            _seekTest    = seekTest;
         }
 
         public ScanResults Scan()
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return Ata();
                 case DeviceType.MMC:
@@ -71,7 +73,7 @@ namespace Aaru.Core.Devices.Scanning
             }
         }
 
-        public void Abort() => aborted = true;
+        public void Abort() => _aborted = true;
 
         /// <summary>Event raised when the progress bar is not longer needed</summary>
         public event EndProgressHandler EndProgress;

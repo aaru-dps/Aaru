@@ -57,9 +57,9 @@ namespace Aaru.Core.Devices.Scanning
             uint   blockSize      = 0;
             ushort currentProfile = 0x0001;
 
-            if(dev.IsRemovable)
+            if(_dev.IsRemovable)
             {
-                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
                 if(sense)
                 {
@@ -75,7 +75,7 @@ namespace Aaru.Core.Devices.Scanning
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
                                 if(!sense)
                                     break;
@@ -99,7 +99,7 @@ namespace Aaru.Core.Devices.Scanning
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
                                 if(!sense)
                                     break;
@@ -125,7 +125,7 @@ namespace Aaru.Core.Devices.Scanning
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
                                 if(!sense)
                                     break;
@@ -161,7 +161,7 @@ namespace Aaru.Core.Devices.Scanning
 
             Reader scsiReader = null;
 
-            switch(dev.ScsiType)
+            switch(_dev.ScsiType)
             {
                 case PeripheralDeviceTypes.DirectAccess:
                 case PeripheralDeviceTypes.MultiMediaDevice:
@@ -169,7 +169,7 @@ namespace Aaru.Core.Devices.Scanning
                 case PeripheralDeviceTypes.OpticalDevice:
                 case PeripheralDeviceTypes.SimplifiedDevice:
                 case PeripheralDeviceTypes.WriteOnceDevice:
-                    scsiReader     = new Reader(dev, dev.Timeout, null);
+                    scsiReader     = new Reader(_dev, _dev.Timeout, null);
                     results.Blocks = scsiReader.GetDeviceBlocks();
 
                     if(scsiReader.FindReadCommand())
@@ -209,10 +209,10 @@ namespace Aaru.Core.Devices.Scanning
             bool               compactDisc = true;
             FullTOC.CDFullTOC? toc         = null;
 
-            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+            if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
-                sense = dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current,
-                                             dev.Timeout, out _);
+                sense = _dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current,
+                                              _dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -242,7 +242,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     // We discarded all discs that falsify a TOC before requesting a real TOC
                     // No TOC, no CD (or an empty one)
-                    bool tocSense = dev.ReadRawToc(out cmdBuf, out senseBuf, 1, dev.Timeout, out _);
+                    bool tocSense = _dev.ReadRawToc(out cmdBuf, out senseBuf, 1, _dev.Timeout, out _);
 
                     if(!tocSense)
                         toc = FullTOC.Decode(cmdBuf);
@@ -278,9 +278,9 @@ namespace Aaru.Core.Devices.Scanning
                     return results;
                 }
 
-                bool readcd = !dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                          MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                          dev.Timeout, out _);
+                bool readcd = !_dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, _dev.Timeout, out _);
 
                 if(readcd)
                     UpdateStatus?.Invoke("Using MMC READ CD command.");
@@ -291,23 +291,23 @@ namespace Aaru.Core.Devices.Scanning
                 {
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes, false,
-                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                        sense = _dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes, false,
+                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                            MmcSubchannel.None, _dev.Timeout, out _);
 
-                        if(dev.Error)
+                        if(_dev.Error)
                             blocksToRead /= 2;
                     }
 
-                    if(!dev.Error ||
+                    if(!_dev.Error ||
                        blocksToRead == 1)
                         break;
                 }
 
-                if(dev.Error)
+                if(_dev.Error)
                 {
                     StoppingErrorMessage?.
-                        Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
+                        Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
 
                     return results;
                 }
@@ -315,8 +315,8 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
-                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
-                ibgLog  = new IbgLog(ibgLogPath, currentProfile);
+                mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+                ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
 
@@ -324,7 +324,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
-                    if(aborted)
+                    if(_aborted)
                         break;
 
                     double cmdDuration = 0;
@@ -347,9 +347,9 @@ namespace Aaru.Core.Devices.Scanning
 
                     if(readcd)
                     {
-                        sense = dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead, MmcSectorTypes.AllTypes,
-                                           false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out cmdDuration);
+                        sense = _dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead, MmcSectorTypes.AllTypes,
+                                            false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                            MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out cmdDuration);
 
                         results.ProcessingTime += cmdDuration;
                     }
@@ -431,10 +431,10 @@ namespace Aaru.Core.Devices.Scanning
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                              (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                              (results.ProcessingTime / 1000),
-                             devicePath);
+                             _devicePath);
             }
             else
             {
@@ -443,8 +443,8 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
-                mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
-                ibgLog  = new IbgLog(ibgLogPath, currentProfile);
+                mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+                ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
 
@@ -452,7 +452,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
-                    if(aborted)
+                    if(_aborted)
                         break;
 
                     if(results.Blocks - i < blocksToRead)
@@ -475,7 +475,7 @@ namespace Aaru.Core.Devices.Scanning
                     results.ProcessingTime += cmdDuration;
 
                     if(!sense &&
-                       !dev.Error)
+                       !_dev.Error)
                     {
                         if(cmdDuration >= 500)
                             results.F += blocksToRead;
@@ -525,10 +525,10 @@ namespace Aaru.Core.Devices.Scanning
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                              (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                              (results.ProcessingTime / 1000),
-                             devicePath);
+                             _devicePath);
             }
 
             results.SeekMax   = double.MinValue;
@@ -542,7 +542,7 @@ namespace Aaru.Core.Devices.Scanning
 
             for(int i = 0; i < SEEK_TIMES; i++)
             {
-                if(aborted)
+                if(_aborted || !_seekTest)
                     break;
 
                 uint seekPos = (uint)rnd.Next((int)results.Blocks);

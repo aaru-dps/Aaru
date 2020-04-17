@@ -50,13 +50,13 @@ namespace Aaru.Core.Devices.Scanning
             const ushort ATA_PROFILE = 0x0001;
             const uint   TIMEOUT     = 5;
 
-            sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
+            sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
 
             if(!sense &&
                Identify.Decode(cmdBuf).HasValue)
             {
                 // Initializate reader
-                var ataReader = new Reader(dev, TIMEOUT, cmdBuf);
+                var ataReader = new Reader(_dev, TIMEOUT, cmdBuf);
 
                 // Fill reader blocks
                 results.Blocks = ataReader.GetDeviceBlocks();
@@ -123,8 +123,8 @@ namespace Aaru.Core.Devices.Scanning
                     UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                     InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
-                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
-                    ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
+                    mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+                    ibgLog  = new IbgLog(_ibgLogPath, ATA_PROFILE);
 
                     start = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -133,7 +133,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                     {
-                        if(aborted)
+                        if(_aborted)
                             break;
 
                         if(results.Blocks - i < blocksToRead)
@@ -203,17 +203,17 @@ namespace Aaru.Core.Devices.Scanning
                     EndProgress?.Invoke();
                     mhddLog.Close();
 
-                    ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                    ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                  (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                                  (results.ProcessingTime / 1000),
-                                 devicePath);
+                                 _devicePath);
 
                     InitProgress?.Invoke();
 
-                    if(ataReader.CanSeekLba)
+                    if(ataReader.CanSeekLba && _seekTest)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
-                            if(aborted)
+                            if(_aborted)
                                 break;
 
                             uint seekPos = (uint)rnd.Next((int)results.Blocks);
@@ -241,8 +241,8 @@ namespace Aaru.Core.Devices.Scanning
                 else
                 {
                     InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
-                    mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead, false);
-                    ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
+                    mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
+                    ibgLog  = new IbgLog(_ibgLogPath, ATA_PROFILE);
 
                     ulong currentBlock = 0;
                     results.Blocks = (ulong)(cylinders * heads * sectors);
@@ -257,7 +257,7 @@ namespace Aaru.Core.Devices.Scanning
                         {
                             for(byte sc = 1; sc < sectors; sc++)
                             {
-                                if(aborted)
+                                if(_aborted)
                                     break;
 
                                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
@@ -324,17 +324,17 @@ namespace Aaru.Core.Devices.Scanning
                     EndProgress?.Invoke();
                     mhddLog.Close();
 
-                    ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                    ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                  (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                                  (results.ProcessingTime / 1000),
-                                 devicePath);
+                                 _devicePath);
 
                     InitProgress?.Invoke();
 
                     if(ataReader.CanSeek)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
-                            if(aborted)
+                            if(_aborted)
                                 break;
 
                             ushort seekCy = (ushort)rnd.Next(cylinders);
