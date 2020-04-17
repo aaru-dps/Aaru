@@ -320,7 +320,7 @@ namespace Aaru.Gui.ViewModels.Windows
             Statistics.AddDevice(dev);
 
             _localResults                 =  new ScanResults();
-            _scanner                      =  new MediaScan(null, null, _devicePath, dev);
+            _scanner                      =  new MediaScan(null, null, _devicePath, dev, false);
             _scanner.ScanTime             += OnScanTime;
             _scanner.ScanUnreadable       += OnScanUnreadable;
             _scanner.UpdateStatus         += UpdateStatus;
@@ -427,7 +427,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         MaxX   = 2298496;
                         StepsX = MaxX / 10;
                         StepsY = 1352.5;
-                        MaxY   = StepsY * 26;
+                        MaxY   = StepsY * 18;
 
                         break;
                     case 0x0015: // DVD DL
@@ -438,7 +438,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         MaxX   = 4173824;
                         StepsX = MaxX / 10;
                         StepsY = 1352.5;
-                        MaxY   = StepsY * 26;
+                        MaxY   = StepsY * 18;
 
                         break;
                     case 0x0041:
