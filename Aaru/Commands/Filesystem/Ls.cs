@@ -332,7 +332,7 @@ namespace Aaru.Commands.Filesystem
                             AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}", entry.Value.CreationTimeUtc,
                                                   "<DIR>", entry.Key);
                         else
-                            AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:##,#}  {3}",
+                            AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:N0}  {3}",
                                                   entry.Value.CreationTimeUtc, entry.Value.Inode, entry.Value.Length,
                                                   entry.Key);
 
