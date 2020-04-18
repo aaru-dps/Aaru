@@ -721,7 +721,7 @@ namespace Aaru.DiscImages
                             alcTrackExtras.Add((int)(track.TrackSequence    - 1), previousExtra);
                         }
                         else
-                            trkExtra.pregap = 0;
+                            trkExtra.pregap = (uint)track.TrackPregap;
 
                         alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
                     }
