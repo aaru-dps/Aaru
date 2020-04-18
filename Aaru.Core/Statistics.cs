@@ -1341,6 +1341,12 @@ namespace Aaru.Core
 
             using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
+            if(ctx.SeenDevices.Any(d => d.Manufacturer == dev.Manufacturer &&
+                                        d.Model        == dev.Model        &&
+                                        d.Revision     == dev.FirmwareRevision &&
+                                        d.Bus          == deviceBus))
+                return;
+
             ctx.SeenDevices.Add(new DeviceStat
             {
                 Bus          = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model,
