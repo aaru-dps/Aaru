@@ -412,7 +412,8 @@ namespace Aaru.Filesystems.ISO9660
                             entries[entry.Filename].XattrLength          = entry.XattrLength;
                         }
 
-                        entries[entry.Filename].Extents.Add(entry.Extents[0]);
+                        if(entry.Extents?.Count > 0)
+                            entries[entry.Filename].Extents.Add(entry.Extents[0]);
                     }
                     else
                         entries[entry.Filename] = entry;
