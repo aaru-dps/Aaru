@@ -384,7 +384,7 @@ namespace Aaru.Filesystems.FAT
                     break;
             }
 
-            if(fat2SectorNo > partition.End)
+            if(fat2SectorNo > partition.End || fat2SectorNo == 0)
                 return false;
 
             AaruConsole.DebugWriteLine("FAT plugin", "2nd fat starts at = {0}", fat2SectorNo);
