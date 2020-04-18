@@ -158,7 +158,7 @@ namespace Aaru.DiscImages
                 var  filtersList       = new FiltersList();
                 bool inTruripDiscHash  = false;
                 bool inTruripTrackHash = false;
-                
+
                 ulong gdRomSession2Offset = 45000;
                 densitySeparationSectors  = 0;
 
@@ -355,7 +355,7 @@ namespace Aaru.DiscImages
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SINGLE-DENSITY AREA at line {0}", lineNumber);
                         _discImage.IsRedumpGigadisc = true;
-                    }                    
+                    }
                     else if(matchRedumpHdArea.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM HIGH-DENSITY AREA at line {0}", lineNumber);
@@ -763,7 +763,7 @@ namespace Aaru.DiscImages
 
                             currentFile.Sequence   = currentTrack.Sequence;
                             currentTrack.Bps       = CdrWinTrackTypeToBytesPerSector(matchTrack.Groups[2].Value);
-                            currentTrack.TrackType = matchTrack.Groups[2].Value;
+                            currentTrack.TrackType = matchTrack.Groups[2].Value.ToUpperInvariant();
                             currentTrack.Session   = currentSession;
                             inTrack                = true;
                         }
@@ -804,13 +804,13 @@ namespace Aaru.DiscImages
                             {
                                 firstSessionTrk = i;
                                 firstTrackRead = true;
-                            }                                
+                            }
                             sessionSectors += cueTracks[i].Sectors;
 
                             if(i > lastSessionTrack)
                                 lastSessionTrack = i;
                         }
-                    
+
                     if(s > 1)
                         if(_discImage.IsRedumpGigadisc)
                             sessions[s - 1].StartSector = gdRomSession2Offset;
@@ -865,7 +865,7 @@ namespace Aaru.DiscImages
                 }
                 else if(_discImage.IsRedumpGigadisc)
                     _discImage.MediaType = MediaType.GDROM;
-                else 
+                else
                     _discImage.MediaType = CdrWinIsoBusterDiscTypeToMediaType(_discImage.OriginalMediaType);
 
                 if(_discImage.MediaType == MediaType.Unknown ||
@@ -1205,7 +1205,7 @@ namespace Aaru.DiscImages
                 {
                     if(_discImage.IsTrurip)
                         _imageInfo.Application = "trurip";
-                    
+
                     else if(_discImage.IsRedumpGigadisc)
                         _imageInfo.Application = "Redump.org";
                     // Detect ISOBuster extensions
