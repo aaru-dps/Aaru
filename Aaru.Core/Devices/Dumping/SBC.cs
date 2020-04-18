@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
+using Aaru.Core.Media.Detection;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -176,6 +177,9 @@ namespace Aaru.Core.Devices.Dumping
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
                                                           scsiMediumType, scsiDensityCode, blocks + 1, blockSize);
+
+            if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+                MMC.DetectDiscType(ref dskType, 1, null, _dev, out _, out _, 0);
 
             switch(dskType)
             {
