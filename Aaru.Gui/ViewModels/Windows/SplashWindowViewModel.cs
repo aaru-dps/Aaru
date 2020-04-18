@@ -123,6 +123,22 @@ namespace Aaru.Gui.ViewModels.Windows
             {
                 var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.Migrate();
+
+                // Remove duplicates
+                foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
+                {
+                    a.Manufacturer, a.Model, a.Revision, a.Bus
+                }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
+                    ctx.RemoveRange(ctx.SeenDevices.
+                                        Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                                   d.Model        == duplicate.Model        &&
+                                                   d.Revision     == duplicate.Revision     &&
+                                                   d.Bus          == duplicate.Bus).Skip(1));
+
+                // Remove nulls
+                ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&
+                                                           d.Revision     == null));
+
                 ctx.SaveChanges();
 
                 Dispatcher.UIThread.Post(UpdateMasterDatabase);
