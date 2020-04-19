@@ -854,18 +854,19 @@ namespace Aaru.DiscImages
                     long position = descriptorStream.Position;
                     descriptorStream.Seek(track.extraOffset, SeekOrigin.Begin);
 
+                    block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
+
                     if(alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
                     {
-                        block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
-
                         blockPtr =
                             System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholTrackExtra>());
 
                         System.Runtime.InteropServices.Marshal.StructureToPtr(extra, blockPtr, true);
                         System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
                         System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-                        descriptorStream.Write(block, 0, block.Length);
                     }
+
+                    descriptorStream.Write(block, 0, block.Length);
 
                     descriptorStream.Seek(position, SeekOrigin.Begin);
                 }
