@@ -491,23 +491,34 @@ namespace Aaru.DiscImages
             FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(tmpToc);
 
             long currentExtraOffset = currentTrackOffset;
+            int  extraCount         = 0;
 
             for(int i = 1; i <= sessions; i++)
                 if(decodedToc.HasValue)
+                {
+                    extraCount += decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
+
                     currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() *
                                           decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
+                }
                 else
                 {
                     currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() * 3;
+                    extraCount         += 3;
 
                     currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() *
                                           writingTracks.Count(t => t.TrackSession == i);
 
+                    extraCount += writingTracks.Count(t => t.TrackSession == i);
+
                     if(i < sessions)
+                    {
                         currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() * 2;
+                        extraCount         += 2;
+                    }
                 }
 
-            long footerOffset = currentExtraOffset + (Marshal.SizeOf<AlcoholTrackExtra>() * writingTracks.Count);
+            long footerOffset = currentExtraOffset + (Marshal.SizeOf<AlcoholTrackExtra>() * extraCount);
 
             if(bca != null)
             {
@@ -581,16 +592,18 @@ namespace Aaru.DiscImages
                         {
                             thisSessionTracks.Add(tocTrk.POINT, new AlcoholTrack
                             {
-                                adrCtl   = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
-                                point    = tocTrk.POINT, min                               = tocTrk.Min,
-                                sec      = tocTrk.Sec, frame                               = tocTrk.Frame,
-                                zero     = tocTrk.Zero, pmin                               = tocTrk.PMIN,
-                                psec     = tocTrk.PSEC, pframe                             = tocTrk.PFRAME,
-                                mode     = AlcoholTrackMode.NoData, unknown                = new byte[18],
-                                unknown2 = new byte[24]
+                                adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
+                                point       = tocTrk.POINT, min                               = tocTrk.Min,
+                                sec         = tocTrk.Sec, frame                               = tocTrk.Frame,
+                                zero        = tocTrk.Zero, pmin                               = tocTrk.PMIN,
+                                psec        = tocTrk.PSEC, pframe                             = tocTrk.PFRAME,
+                                mode        = AlcoholTrackMode.NoData, unknown                = new byte[18],
+                                unknown2    = new byte[24],
+                                extraOffset = (uint)currentExtraOffset
                             });
 
                             currentTrackOffset += Marshal.SizeOf<AlcoholTrack>();
+                            currentExtraOffset += Marshal.SizeOf<AlcoholTrackExtra>();
                         }
                     else
                     {
@@ -610,26 +623,30 @@ namespace Aaru.DiscImages
                                                                                                 TrackType.
                                                                                                     CdMode2Formless)
                                                                            ? 0x20
-                                                                           : 0)
+                                                                           : 0),
+                            extraOffset = (uint)currentExtraOffset
                         });
 
                         thisSessionTracks.Add(0xA1, new AlcoholTrack
                         {
                             adrCtl   = (byte)((1 << 4) + lastTrackControl), pmin = (byte)lastTrack.TrackSequence,
                             mode     = AlcoholTrackMode.NoData, point            = 0xA1, unknown = new byte[18],
-                            unknown2 = new byte[24]
+                            unknown2 = new byte[24], extraOffset                 = (uint)currentExtraOffset
                         });
 
                         thisSessionTracks.Add(0xA2, new AlcoholTrack
                         {
-                            adrCtl = (byte)((1 << 4) + firstTrackControl), zero = 0,
-                            pmin   = leadinPmsf.minute,
-                            psec   = leadinPmsf.second, pframe = leadinPmsf.frame,
-                            mode   = AlcoholTrackMode.NoData,
-                            point  = 0xA2, unknown = new byte[18], unknown2 = new byte[24]
+                            adrCtl      = (byte)((1 << 4) + firstTrackControl), zero = 0,
+                            pmin        = leadinPmsf.minute,
+                            psec        = leadinPmsf.second, pframe = leadinPmsf.frame,
+                            mode        = AlcoholTrackMode.NoData,
+                            point       = 0xA2, unknown = new byte[18],
+                            unknown2    = new byte[24],
+                            extraOffset = (uint)currentExtraOffset
                         });
 
-                        currentTrackOffset += Marshal.SizeOf<AlcoholTrack>() * 3;
+                        currentExtraOffset += Marshal.SizeOf<AlcoholTrackExtra>() * 3;
+                        currentTrackOffset += Marshal.SizeOf<AlcoholTrack>()      * 3;
                     }
 
                     foreach(Track track in writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
@@ -680,8 +697,8 @@ namespace Aaru.DiscImages
                         alcTrk.sectorSize = (ushort)(track.TrackRawBytesPerSector +
                                                      (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0));
 
-                        alcTrk.startLba     = (uint)track.TrackStartSector;
-                        alcTrk.startOffset  = track.TrackFileOffset;
+                        alcTrk.startLba     = (uint)(track.TrackStartSector + track.TrackPregap);
+                        alcTrk.startOffset  = track.TrackFileOffset + (alcTrk.sectorSize * track.TrackPregap);
                         alcTrk.files        = 1;
                         alcTrk.extraOffset  = (uint)currentExtraOffset;
                         alcTrk.footerOffset = (uint)footerOffset;
@@ -706,9 +723,13 @@ namespace Aaru.DiscImages
                             sectors = (uint)((track.TrackEndSector - track.TrackStartSector) + 1)
                         };
 
-                        // When track mode changes there's a mandatory gap, Alcohol needs it
                         if(track.TrackSequence == firstTrack.TrackSequence)
-                            trkExtra.pregap = 150;
+                        {
+                            trkExtra.pregap  =  150;
+                            trkExtra.sectors += 150;
+                        }
+
+                        // When track mode changes there's a mandatory gap, Alcohol needs it
                         else if(thisSessionTracks.TryGetValue((int)(track.TrackSequence - 1),
                                                               out AlcoholTrack previousTrack) &&
                                 alcTrackExtras.TryGetValue((int)(track.TrackSequence - 1),
@@ -721,7 +742,10 @@ namespace Aaru.DiscImages
                             alcTrackExtras.Add((int)(track.TrackSequence    - 1), previousExtra);
                         }
                         else
-                            trkExtra.pregap = (uint)track.TrackPregap;
+                            trkExtra.pregap = 0;
+
+                        if(track.TrackSequence == lastTrack.TrackSequence)
+                            trkExtra.sectors -= 150;
 
                         alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
                     }
@@ -733,15 +757,17 @@ namespace Aaru.DiscImages
                         {
                             thisSessionTracks.Add(tocTrk.POINT, new AlcoholTrack
                             {
-                                adrCtl   = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
-                                point    = tocTrk.POINT, min                               = tocTrk.Min,
-                                sec      = tocTrk.Sec, frame                               = tocTrk.Frame,
-                                zero     = tocTrk.Zero, pmin                               = tocTrk.PMIN,
-                                psec     = tocTrk.PSEC, pframe                             = tocTrk.PFRAME,
-                                mode     = AlcoholTrackMode.NoData, unknown                = new byte[18],
-                                unknown2 = new byte[24]
+                                adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
+                                point       = tocTrk.POINT, min                               = tocTrk.Min,
+                                sec         = tocTrk.Sec, frame                               = tocTrk.Frame,
+                                zero        = tocTrk.Zero, pmin                               = tocTrk.PMIN,
+                                psec        = tocTrk.PSEC, pframe                             = tocTrk.PFRAME,
+                                mode        = AlcoholTrackMode.NoData, unknown                = new byte[18],
+                                unknown2    = new byte[24],
+                                extraOffset = (uint)currentExtraOffset
                             });
 
+                            currentExtraOffset += Marshal.SizeOf<AlcoholTrackExtra>();
                             currentTrackOffset += Marshal.SizeOf<AlcoholTrack>();
                         }
                     else if(i < sessions)
@@ -840,35 +866,40 @@ namespace Aaru.DiscImages
 
                 foreach(AlcoholTrack track in kvp.Value.Values)
                 {
+                    AlcoholTrack alcoholTrack = track;
+
+                    // Write extra
+                    if(!isDvd)
+                    {
+                        long position = descriptorStream.Position;
+                        descriptorStream.Seek(alcoholTrack.extraOffset, SeekOrigin.Begin);
+
+                        block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
+
+                        if(alcTrackExtras.TryGetValue(alcoholTrack.point, out AlcoholTrackExtra extra))
+                        {
+                            blockPtr =
+                                System.Runtime.InteropServices.Marshal.
+                                       AllocHGlobal(Marshal.SizeOf<AlcoholTrackExtra>());
+
+                            System.Runtime.InteropServices.Marshal.StructureToPtr(extra, blockPtr, true);
+                            System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+                            System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
+                        }
+                        else
+                            alcoholTrack.extraOffset = 0;
+
+                        descriptorStream.Write(block, 0, block.Length);
+
+                        descriptorStream.Seek(position, SeekOrigin.Begin);
+                    }
+
                     block    = new byte[Marshal.SizeOf<AlcoholTrack>()];
                     blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholTrack>());
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(track, blockPtr, true);
+                    System.Runtime.InteropServices.Marshal.StructureToPtr(alcoholTrack, blockPtr, true);
                     System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
                     System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
                     descriptorStream.Write(block, 0, block.Length);
-
-                    if(isDvd)
-                        continue;
-
-                    // Write extra
-                    long position = descriptorStream.Position;
-                    descriptorStream.Seek(track.extraOffset, SeekOrigin.Begin);
-
-                    block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
-
-                    if(alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
-                    {
-                        blockPtr =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholTrackExtra>());
-
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(extra, blockPtr, true);
-                        System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-                    }
-
-                    descriptorStream.Write(block, 0, block.Length);
-
-                    descriptorStream.Seek(position, SeekOrigin.Begin);
                 }
             }
 
