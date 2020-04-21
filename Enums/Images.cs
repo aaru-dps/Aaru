@@ -329,4 +329,19 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>Extended density coercitivity (about 750Oe as found in 3.5" ED disks).</summary>
         Extended
     }
+
+    [Flags]
+    public enum OpticalImageCapabilities : ulong
+    {
+        CanStoreAudioTracks = 0x01, CanStoreVideoTracks = 0x02, CanStoreDataTracks = 0x03,
+        CanStorePregaps     = 0x04,
+
+        // TODO: Implement
+        CanStoreIndexes  = 0x08, CanStoreSubchannelPq = 0x10, CanStoreSubchannelRw = 0x20,
+        CanStoreSessions = 0x40, CanStoreIsrc         = 0x80, CanStoreCdText       = 0x100,
+        CanStoreMcn      = 0x200, CanStoreRawData     = 0x400,
+
+        // TODO: Implement
+        CanStoreScrambledData = 0x800, CanStoreCookedData = 0x1000, CanStoreMultipleTracks = 0x2000
+    }
 }
