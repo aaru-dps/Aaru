@@ -148,8 +148,8 @@ namespace Aaru.Core.Media.Info
                         if(!offsetFound &&
                            (debug || dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
                             dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled           == true) == true ||
-                            dev.Manufacturer.ToLowerInvariant() ==
-                            "hl-dt-st"))
+                            dbDev?.SCSI?.MultiMediaDevice?.TestedMedia?.Any(d => d.CanReadCdScrambled == true) ==
+                            true || dev.Manufacturer.ToLowerInvariant() == "hl-dt-st"))
                         {
                             sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
                                                false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
