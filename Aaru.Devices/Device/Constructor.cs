@@ -834,7 +834,7 @@ namespace Aaru.Devices
                         else
                         {
                             Manufacturer = separated[0];
-                            Model        = separated[separated.Length - 1];
+                            Model        = separated[^1];
                         }
 
                         FirmwareRevision = ataid.Value.FirmwareRevision;

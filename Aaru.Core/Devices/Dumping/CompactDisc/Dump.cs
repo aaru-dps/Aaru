@@ -372,8 +372,8 @@ namespace Aaru.Core.Devices.Dumping
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
-            tracks[tracks.Length - 1].TrackEndSector = (ulong)lastSector;
-            blocks                                   = (ulong)(lastSector + 1);
+            tracks[^1].TrackEndSector = (ulong)lastSector;
+            blocks                    = (ulong)(lastSector + 1);
 
             if(blocks == 0)
             {

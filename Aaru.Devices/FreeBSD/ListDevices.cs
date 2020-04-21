@@ -117,7 +117,7 @@ namespace Aaru.Devices.FreeBSD
                             else
                             {
                                 deviceInfo.Vendor = separated[0];
-                                deviceInfo.Model  = separated[separated.Length - 1];
+                                deviceInfo.Model  = separated[^1];
                             }
 
                             deviceInfo.Serial    = idt.Value.SerialNumber;

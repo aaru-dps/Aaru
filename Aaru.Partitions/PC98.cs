@@ -58,8 +58,8 @@ namespace Aaru.Partitions
             byte[] bootSector = imagePlugin.ReadSector(0);
             byte[] sector     = imagePlugin.ReadSector(1);
 
-            if(bootSector[bootSector.Length - 2] != 0x55 ||
-               bootSector[bootSector.Length - 1] != 0xAA)
+            if(bootSector[^2] != 0x55 ||
+               bootSector[^1] != 0xAA)
                 return false;
 
             // Prevent false positives with some FAT BPBs

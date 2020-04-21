@@ -70,11 +70,9 @@ namespace Aaru.Filters
 
         public bool HasResourceFork() => false;
 
-        public bool Identify(byte[] buffer) => buffer[0]                 == 0xFD && buffer[1] == 0x37 &&
-                                               buffer[2]                 == 0x7A &&
-                                               buffer[3]                 == 0x58 && buffer[4] == 0x5A &&
-                                               buffer[5]                 == 0x00 &&
-                                               buffer[buffer.Length - 2] == 0x59 && buffer[buffer.Length - 1] == 0x5A;
+        public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
+                                               buffer[3]  == 0x58 && buffer[4]  == 0x5A && buffer[5] == 0x00 &&
+                                               buffer[^2] == 0x59 && buffer[^1] == 0x5A;
 
         public bool Identify(Stream stream)
         {

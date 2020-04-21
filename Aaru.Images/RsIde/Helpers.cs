@@ -45,8 +45,8 @@ namespace Aaru.DiscImages
             {
                 byte[] tmpbuf = new byte[inbuf.Length + 1];
                 Array.Copy(inbuf, 0, tmpbuf, 0, inbuf.Length);
-                tmpbuf[tmpbuf.Length - 1] = 0x20;
-                inbuf                     = tmpbuf;
+                tmpbuf[^1] = 0x20;
+                inbuf      = tmpbuf;
             }
 
             byte[] outbuf = new byte[inbuf.Length];

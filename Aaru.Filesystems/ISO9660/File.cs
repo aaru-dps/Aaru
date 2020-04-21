@@ -465,15 +465,15 @@ namespace Aaru.Filesystems.ISO9660
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DecodedDirectoryEntry> dirent =
-                parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[pieces.Length - 1]);
+                parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
             {
                 if(!joliet &&
-                   !pieces[pieces.Length - 1].EndsWith(";1", StringComparison.Ordinal))
+                   !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
                 {
                     dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) ==
-                                                        pieces[pieces.Length - 1] + ";1");
+                                                        pieces[^1] + ";1");
 
                     if(string.IsNullOrEmpty(dirent.Key))
                         return Errno.NoSuchFile;

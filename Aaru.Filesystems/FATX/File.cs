@@ -264,7 +264,7 @@ namespace Aaru.Filesystems.FATX
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntry> dirent =
-                parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[pieces.Length - 1]);
+                parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
                 return Errno.NoSuchFile;

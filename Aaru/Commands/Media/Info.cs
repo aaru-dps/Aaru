@@ -568,7 +568,7 @@ namespace Aaru.Commands.Media
                     for(int t = 1; t < tracks.Length; t++)
                         tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
-                    tracks[tracks.Length - 1].TrackEndSector = (ulong)lastSector;
+                    tracks[^1].TrackEndSector = (ulong)lastSector;
 
                     AaruConsole.WriteLine();
                     AaruConsole.WriteLine("Track calculations:");

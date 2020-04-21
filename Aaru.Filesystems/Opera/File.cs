@@ -201,7 +201,7 @@ namespace Aaru.Filesystems
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntryWithPointers> dirent =
-                parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[pieces.Length - 1]);
+                parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
                 return Errno.NoSuchFile;

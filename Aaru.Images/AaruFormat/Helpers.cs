@@ -127,7 +127,7 @@ namespace Aaru.DiscImages
                         imageInfo.DriveManufacturer = separated[0];
 
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                        imageInfo.DriveModel = separated[separated.Length - 1];
+                        imageInfo.DriveModel = separated[^1];
                 }
 
             if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))

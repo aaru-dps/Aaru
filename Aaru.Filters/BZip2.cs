@@ -83,8 +83,7 @@ namespace Aaru.Filters
             if(buffer.Length <= 512)
                 return true;
 
-            return buffer[buffer.Length - 512] != 0x6B || buffer[buffer.Length - 511] != 0x6F ||
-                   buffer[buffer.Length - 510] != 0x6C || buffer[buffer.Length - 509] != 0x79;
+            return buffer[^512] != 0x6B || buffer[^511] != 0x6F || buffer[^510] != 0x6C || buffer[^509] != 0x79;
         }
 
         public bool Identify(Stream stream)

@@ -160,7 +160,7 @@ namespace Aaru.DiscImages
                 bool inTruripTrackHash = false;
 
                 ulong gdRomSession2Offset = 45000;
-                densitySeparationSectors  = 0;
+                densitySeparationSectors = 0;
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -353,14 +353,18 @@ namespace Aaru.DiscImages
                     }
                     else if(matchRedumpSdArea.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SINGLE-DENSITY AREA at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SINGLE-DENSITY AREA at line {0}",
+                                                   lineNumber);
+
                         _discImage.IsRedumpGigadisc = true;
                     }
                     else if(matchRedumpHdArea.Success)
                     {
-                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM HIGH-DENSITY AREA at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM HIGH-DENSITY AREA at line {0}",
+                                                   lineNumber);
+
                         _discImage.IsRedumpGigadisc = true;
-                        currentSession = 2;
+                        currentSession              = 2;
                     }
                     else if(matchLba.Success)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
@@ -499,8 +503,8 @@ namespace Aaru.DiscImages
                             currentFile.FileType = matchFile.Groups[2].Value;
 
                             // Check if file path is quoted
-                            if(datafile[0]                   == '"' &&
-                               datafile[datafile.Length - 1] == '"')
+                            if(datafile[0]  == '"' &&
+                               datafile[^1] == '"')
                                 datafile = datafile.Substring(1, datafile.Length - 2); // Unquote it
 
                             currentFile.DataFilter = filtersList.GetFilter(datafile);
@@ -803,8 +807,9 @@ namespace Aaru.DiscImages
                             if(!firstTrackRead)
                             {
                                 firstSessionTrk = i;
-                                firstTrackRead = true;
+                                firstTrackRead  = true;
                             }
+
                             sessionSectors += cueTracks[i].Sectors;
 
                             if(i > lastSessionTrack)
@@ -832,11 +837,12 @@ namespace Aaru.DiscImages
                         cueTracks[lastSessionTrack].Sectors = leadout - startSector;
                     }
                     else
-                        sessions[s - 1].EndSector = (sessions[s -1].StartSector + sessionSectors) - 1;
+                        sessions[s - 1].EndSector = (sessions[s - 1].StartSector + sessionSectors) - 1;
 
                     CdrWinTrack firstSessionTrack = cueTracks.OrderBy(t => t.Sequence).First(t => t.Session == s);
 
-                    if (cueTracks.All(i => i.TrackFile.DataFilter.GetFilename() == cueTracks.First().TrackFile.DataFilter.GetFilename()))
+                    if(cueTracks.All(i => i.TrackFile.DataFilter.GetFilename() ==
+                                          cueTracks.First().TrackFile.DataFilter.GetFilename()))
                     {
                         if(firstSessionTrack.Indexes.TryGetValue(0, out sessions[s - 1].StartSector))
                             continue;
@@ -1121,9 +1127,9 @@ namespace Aaru.DiscImages
                     if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out ulong _))
                         throw new ImageNotSupportedException($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
 
-                    if(_discImage.IsRedumpGigadisc &&
+                    if(_discImage.IsRedumpGigadisc       &&
                        _discImage.Tracks[i].Session != 1 &&
-                       sectorOffset < gdRomSession2Offset)
+                       sectorOffset                 < gdRomSession2Offset)
                     {
                         _offsetMap.Add(0, sectorOffset);
                         densitySeparationSectors = gdRomSession2Offset - sectorOffset;
@@ -1208,6 +1214,7 @@ namespace Aaru.DiscImages
 
                     else if(_discImage.IsRedumpGigadisc)
                         _imageInfo.Application = "Redump.org";
+
                     // Detect ISOBuster extensions
                     else if(_discImage.OriginalMediaType != null               ||
                             _discImage.Comment.ToLower().Contains("isobuster") ||
@@ -1839,6 +1846,7 @@ namespace Aaru.DiscImages
             throw new ImageNotSupportedException("Session does not exist in disc image");
         }
 
-        public List<Track> GetSessionTracks(ushort session) => Tracks.Where(t => t.TrackSession == session).OrderBy(t => t.TrackSequence).ToList();
+        public List<Track> GetSessionTracks(ushort session) =>
+            Tracks.Where(t => t.TrackSession == session).OrderBy(t => t.TrackSequence).ToList();
     }
 }
