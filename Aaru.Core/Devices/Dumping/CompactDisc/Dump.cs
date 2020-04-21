@@ -338,6 +338,37 @@ namespace Aaru.Core.Devices.Dumping
                     Invoke("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
             }
 
+            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                                                                                         CanStorePregaps))
+            {
+                foreach(Track track in tracks)
+                {
+                    if(track.TrackSequence == tracks.First(t => t.TrackSession == track.TrackSession).TrackSequence)
+                        continue;
+
+                    if(track.TrackPregap <= 0)
+                        continue;
+
+                    if(_force)
+                    {
+                        _dumpLog.
+                            WriteLine("Output format does not support pregaps, this may end in a loss of data, continuing...");
+
+                        ErrorMessage?.
+                            Invoke("Output format does not support pregaps, this may end in a loss of data, continuing...");
+
+                        break;
+                    }
+
+                    _dumpLog.WriteLine("Output format does not support pregaps, this may end in a loss of data, not continuing...");
+
+                    StoppingErrorMessage?.
+                        Invoke("Output format does not support pregaps, this may end in a loss of data, not continuing...");
+
+                    return;
+                }
+            }
+
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
 
