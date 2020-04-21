@@ -41,6 +41,16 @@ namespace Aaru.DiscImages
 {
     public partial class Cdrdao
     {
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
+                                                               OpticalImageCapabilities.CanStoreDataTracks   |
+                                                               OpticalImageCapabilities.CanStorePregaps      |
+                                                               OpticalImageCapabilities.CanStoreSubchannelRw |
+                                                               OpticalImageCapabilities.CanStoreIsrc         |
+                                                               OpticalImageCapabilities.CanStoreCdText       |
+                                                               OpticalImageCapabilities.CanStoreMcn          |
+                                                               OpticalImageCapabilities.CanStoreRawData      |
+                                                               OpticalImageCapabilities.CanStoreCookedData   |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
         public ImageInfo       Info       => imageInfo;
         public string          Name       => "CDRDAO tocfile";
         public Guid            Id         => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");

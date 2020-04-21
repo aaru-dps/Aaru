@@ -42,6 +42,16 @@ namespace Aaru.DiscImages
 {
     public partial class Alcohol120
     {
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
+                                                               OpticalImageCapabilities.CanStoreDataTracks   |
+                                                               OpticalImageCapabilities.CanStoreSubchannelRw |
+                                                               OpticalImageCapabilities.CanStoreSessions     |
+                                                               OpticalImageCapabilities.CanStoreIsrc         |
+                                                               OpticalImageCapabilities.CanStoreCdText       |
+                                                               OpticalImageCapabilities.CanStoreMcn          |
+                                                               OpticalImageCapabilities.CanStoreRawData      |
+                                                               OpticalImageCapabilities.CanStoreCookedData   |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
         public ImageInfo Info   => imageInfo;
         public string    Name   => "Alcohol 120% Media Descriptor Structure";
         public Guid      Id     => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");

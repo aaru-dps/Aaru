@@ -44,6 +44,10 @@ namespace Aaru.DiscImages
 {
     public partial class ZZZRawImage
     {
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks |
+                                                               OpticalImageCapabilities.CanStoreDataTracks  |
+                                                               OpticalImageCapabilities.CanStoreRawData     |
+                                                               OpticalImageCapabilities.CanStoreCookedData;
         public string Name => "Raw Disk Image";
 
         // Non-random UUID to recognize this specific plugin

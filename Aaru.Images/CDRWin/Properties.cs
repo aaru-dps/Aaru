@@ -41,6 +41,16 @@ namespace Aaru.DiscImages
 {
     public partial class CdrWin
     {
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks |
+                                                               OpticalImageCapabilities.CanStoreDataTracks  |
+                                                               OpticalImageCapabilities.CanStorePregaps     |
+                                                               OpticalImageCapabilities.CanStoreSessions    |
+                                                               OpticalImageCapabilities.CanStoreIsrc        |
+                                                               OpticalImageCapabilities.CanStoreCdText      |
+                                                               OpticalImageCapabilities.CanStoreMcn         |
+                                                               OpticalImageCapabilities.CanStoreRawData     |
+                                                               OpticalImageCapabilities.CanStoreCookedData  |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
         public ImageInfo       Info       => _imageInfo;
         public string          Name       => "CDRWin cuesheet";
         public Guid            Id         => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
@@ -54,9 +64,9 @@ namespace Aaru.DiscImages
             {
                 List<Track> tracks = new List<Track>();
 
-                ulong previousStartSector = 0;
-                ulong gdRomSession2Offset = 45000;
-                string previousTrackFile  = "";
+                ulong  previousStartSector = 0;
+                ulong  gdRomSession2Offset = 45000;
+                string previousTrackFile   = "";
 
                 foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
                 {
@@ -73,7 +83,8 @@ namespace Aaru.DiscImages
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
-                    if (previousTrackFile == aaruTrack.TrackFile || previousTrackFile == "")
+                    if(previousTrackFile == aaruTrack.TrackFile ||
+                       previousTrackFile == "")
                     {
                         if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
                             if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
@@ -81,7 +92,7 @@ namespace Aaru.DiscImages
                     }
                     else
                         aaruTrack.TrackStartSector += previousStartSector;
-                    
+
                     if(_discImage.IsRedumpGigadisc &&
                        cdrTrack.Session    == 2    &&
                        previousStartSector < gdRomSession2Offset)

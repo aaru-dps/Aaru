@@ -41,6 +41,17 @@ namespace Aaru.DiscImages
 {
     public partial class CloneCd
     {
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
+                                                               OpticalImageCapabilities.CanStoreDataTracks   |
+                                                               OpticalImageCapabilities.CanStorePregaps      |
+                                                               OpticalImageCapabilities.CanStoreSubchannelRw |
+                                                               OpticalImageCapabilities.CanStoreSessions     |
+                                                               OpticalImageCapabilities.CanStoreIsrc         |
+                                                               OpticalImageCapabilities.CanStoreCdText       |
+                                                               OpticalImageCapabilities.CanStoreMcn          |
+                                                               OpticalImageCapabilities.CanStoreRawData      |
+                                                               OpticalImageCapabilities.CanStoreCookedData   |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "CloneCD";
         public Guid                   Id           => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
