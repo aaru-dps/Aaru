@@ -1054,7 +1054,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             if(bytes.Length % 2 != 0)
             {
                 byte[] tmp = new byte[bytes.Length + 1];
-                tmp[tmp.Length                     - 1] = 0x20;
+                tmp[^1] = 0x20;
                 Array.Copy(bytes, 0, tmp, 0, bytes.Length);
                 bytes = tmp;
             }
