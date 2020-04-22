@@ -536,7 +536,7 @@
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>Aaru.Filters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\cuetools.net\CUETools.Codecs.FLAKE\CUETools.Codecs.FLAKE.csproj" />
+    <ProjectReference Include="..\cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.FLAKE.csproj" />
     <ProjectReference Include="..\cuetools.net\CUETools.Codecs\CUETools.Codecs.csproj" />
   </ItemGroup>
   <ItemGroup>
