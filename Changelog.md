@@ -1,3 +1,6 @@
+# [5.0.1.2884] - 2020-04-23
+- Fixes data loss on certain Compact Disc audio tracks when dumping in Aaru Format with compression enabled.
+
 # [5.0.0.2879] - 2020-03-15
 - First and most importantly, we got a rename. We're now Aaru, part of the Aaru Data Preservation Suite, that encompasses Aaru (previously DiscImageChef), 
 Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat) and aaruremote.
@@ -1139,6 +1142,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[5.0.1.2884]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.1.2884
 [5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
 [4.5.1.1692]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.1.1692
 [4.5.0.1663]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.0.1663
