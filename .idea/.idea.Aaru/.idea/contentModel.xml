@@ -2119,12 +2119,6 @@
         <e p="NullStream.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="net20" t="Include">
-              <e p="CUETools.Codecs.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="net47" t="Include">
-              <e p="CUETools.Codecs.AssemblyInfo.cs" t="Include" />
-            </e>
             <e p="netstandard2.0" t="Include">
               <e p="CUETools.Codecs.AssemblyInfo.cs" t="Include" />
             </e>
@@ -2160,12 +2154,6 @@
         <e p="MetadataType.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="net20" t="Include">
-              <e p="CUETools.Codecs.FLAKE.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="net47" t="Include">
-              <e p="CUETools.Codecs.FLAKE.AssemblyInfo.cs" t="Include" />
-            </e>
             <e p="netstandard2.0" t="Include">
               <e p="CUETools.Codecs.FLAKE.AssemblyInfo.cs" t="Include" />
             </e>
