@@ -76,7 +76,6 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 using SharpCompress.Compressors.LZMA;
 
@@ -90,7 +89,7 @@ namespace Aaru.DiscImages
         /// <summary>Cache of block headers.</summary>
         Dictionary<ulong, BlockHeader> blockHeaderCache;
         /// <summary>Stream used for writing blocks.</summary>
-        MemoryStream blockStream;
+        NonClosableStream blockStream;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
         SHA256 checksumProvider;
         bool compress;
@@ -104,8 +103,8 @@ namespace Aaru.DiscImages
         uint currentCacheSize;
         /// <summary>Cache of DDT entries.</summary>
         Dictionary<ulong, ulong> ddtEntryCache;
-        MemoryStream decompressedStream;
-        bool         deduplicate;
+        NonClosableStream decompressedStream;
+        bool              deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> deduplicationTable;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
@@ -138,16 +137,16 @@ namespace Aaru.DiscImages
         bool rewinded;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] sectorPrefix;
-        uint[]       sectorPrefixDdt;
-        MemoryStream sectorPrefixMs;
+        uint[]            sectorPrefixDdt;
+        NonClosableStream sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
         byte[] sectorSubchannel;
         /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
         byte[] sectorSuffix;
-        uint[]        sectorSuffixDdt;
-        MemoryStream  sectorSuffixMs;
-        Sha1Context   sha1Provider;
-        Sha256Context sha256Provider;
+        uint[]            sectorSuffixDdt;
+        NonClosableStream sectorSuffixMs;
+        Sha1Context       sha1Provider;
+        Sha256Context     sha256Provider;
         /// <summary>Shift for calculating number of sectors in a block.</summary>
         byte shift;
         SpamSumContext spamsumProvider;
@@ -168,14 +167,10 @@ namespace Aaru.DiscImages
         public AaruFormat() => imageInfo = new ImageInfo
         {
             ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions      = false, HasSessions                           = false, Version = null,
-            Application        = "Aaru",
-            ApplicationVersion = null, Creator = null, Comments = null,
-            MediaManufacturer  = null,
-            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
-            MediaPartNumber    = null,
-            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
-            DriveModel         = null,
+            HasPartitions      = false, HasSessions = false, Version = null, Application = "Aaru",
+            ApplicationVersion = null, Creator = null, Comments = null, MediaManufacturer = null,
+            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null, MediaPartNumber = null,
+            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null, DriveModel = null,
             DriveSerialNumber  = null, DriveFirmwareRevision = null
         };
     }

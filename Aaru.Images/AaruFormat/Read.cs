@@ -243,7 +243,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorPrefixCorrected:
                                 if(entry.dataType == DataType.CdSectorPrefixCorrected)
                                 {
-                                    sectorPrefixMs = new MemoryStream();
+                                    sectorPrefixMs = new NonClosableStream();
                                     sectorPrefixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -263,7 +263,7 @@ namespace Aaru.DiscImages
                             case DataType.CdSectorSuffixCorrected:
                                 if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                 {
-                                    sectorSuffixMs = new MemoryStream();
+                                    sectorSuffixMs = new NonClosableStream();
                                     sectorSuffixMs.Write(data, 0, data.Length);
                                 }
                                 else
@@ -1010,14 +1010,11 @@ namespace Aaru.DiscImages
                     {
                         new Track
                         {
-                            Indexes                = new Dictionary<int, ulong>(),
-                            TrackBytesPerSector    = (int)imageInfo.SectorSize,
-                            TrackEndSector         = imageInfo.Sectors - 1,
-                            TrackFile              = imageFilter.GetFilename(),
-                            TrackFileType          = "BINARY", TrackFilter                   = imageFilter,
-                            TrackRawBytesPerSector = (int)imageInfo.SectorSize, TrackSession = 1,
-                            TrackSequence          = 1,
-                            TrackType              = TrackType.Data
+                            Indexes = new Dictionary<int, ulong>(), TrackBytesPerSector = (int)imageInfo.SectorSize,
+                            TrackEndSector = imageInfo.Sectors - 1, TrackFile = imageFilter.GetFilename(),
+                            TrackFileType = "BINARY", TrackFilter = imageFilter,
+                            TrackRawBytesPerSector = (int)imageInfo.SectorSize, TrackSession = 1, TrackSequence = 1,
+                            TrackType = TrackType.Data
                         }
                     };
 
@@ -1056,13 +1053,11 @@ namespace Aaru.DiscImages
                 {
                     Partitions.Add(new Partition
                     {
-                        Sequence = track.TrackSequence, Type              = track.TrackType.ToString(),
-                        Name     = $"Track {track.TrackSequence}", Offset = currentTrackOffset,
-                        Start    = track.TrackStartSector,
-                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) *
-                                   (ulong)track.TrackBytesPerSector,
-                        Length = (track.TrackEndSector - track.TrackStartSector) + 1,
-                        Scheme = "Optical disc track"
+                        Sequence = track.TrackSequence, Type = track.TrackType.ToString(),
+                        Name = $"Track {track.TrackSequence}", Offset = currentTrackOffset,
+                        Start = track.TrackStartSector,
+                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) * (ulong)track.TrackBytesPerSector,
+                        Length = (track.TrackEndSector - track.TrackStartSector) + 1, Scheme = "Optical disc track"
                     });
 
                     currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *
