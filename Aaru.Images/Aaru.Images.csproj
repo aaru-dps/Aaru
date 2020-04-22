@@ -58,6 +58,7 @@
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AaruFormat\NonClosableStream.cs" />
     <Compile Include="Alcohol120\Alcohol120.cs" />
     <Compile Include="Alcohol120\Constants.cs" />
     <Compile Include="Alcohol120\Enums.cs" />
