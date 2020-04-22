@@ -47,7 +47,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
 using CUETools.Codecs;
-using CUETools.Codecs.FLAKE;
+using CUETools.Codecs.Flake;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
@@ -904,7 +904,7 @@ namespace Aaru.DiscImages
             // Initialize compressors properties (all maxed)
             lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 273);
 
-            flakeWriterSettings = new FlakeWriterSettings
+            flakeWriterSettings = new EncoderSettings()
             {
                 PCM                = AudioPCMConfig.RedBook, DoMD5 = false,
                 BlockSize          = (1 << shift) * SAMPLES_PER_SECTOR,
@@ -926,7 +926,7 @@ namespace Aaru.DiscImages
             if(flakeWriterSettings.BlockSize < MIN_FLAKE_BLOCK)
                 flakeWriterSettings.BlockSize = MIN_FLAKE_BLOCK;
 
-            FlakeWriter.Vendor = "Aaru";
+            AudioEncoder.Vendor = "Aaru";
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -1152,7 +1152,7 @@ namespace Aaru.DiscImages
                 switch(currentBlockHeader.compression)
                 {
                     case CompressionType.Flac:
-                        flakeWriter = new FlakeWriter("", blockStream, flakeWriterSettings)
+                        flakeWriter = new AudioEncoder(flakeWriterSettings, "", blockStream)
                         {
                             DoSeekTable = false
                         };

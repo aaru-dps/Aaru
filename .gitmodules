@@ -1,9 +1,6 @@
 [submodule "CICMMetadata"]
 	path = CICMMetadata
 	url = https://github.com/claunia/CICMMetadata
-[submodule "cuetoolsnet"]
-	path = cuetoolsnet
-	url = https://github.com/claunia/cuetoolsnet.git
 [submodule "Aaru.Checksums"]
 	path = Aaru.Checksums
 	url = https://github.com/aaru-dps/Aaru.Checksums
@@ -22,3 +19,6 @@
 [submodule "Aaru.Helpers"]
 	path = Aaru.Helpers
 	url = https://github.com/aaru-dps/Aaru.Helpers
+[submodule "cuetools.net"]
+	path = cuetools.net
+	url = https://github.com/gchudov/cuetools.net

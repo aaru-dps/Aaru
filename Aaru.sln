@@ -35,6 +35,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Database", "Aaru.Datab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Dto", "Aaru.Dto\Aaru.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUETools.Codecs.FLAKE", "cuetools.net\CUETools.Codecs.FLAKE\CUETools.Codecs.FLAKE.csproj", "{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUETools.Codecs", "cuetools.net\CUETools.Codecs\CUETools.Codecs.csproj", "{D1F69B02-A6A4-4EF2-A916-815BACC18F71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +175,22 @@ Global
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.ActiveCfg = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.Build.0 = Release|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Debug|x86.Build.0 = Debug|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Release|x86.ActiveCfg = Release|Any CPU
+		{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}.Release|x86.Build.0 = Release|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1F69B02-A6A4-4EF2-A916-815BACC18F71}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
