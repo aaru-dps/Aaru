@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aaru.Gui", "Aaru.Gui\Aaru.G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OxyPlot.Avalonia", "oxyplot-avalonia\Source\OxyPlot.Avalonia\OxyPlot.Avalonia.csproj", "{FF61D39C-BBA1-4FB7-AAC5-AD2D30418F4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUETools.Codecs.Flake", "cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.Flake.csproj", "{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUETools.Codecs.FLAKE", "cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.FLAKE.csproj", "{A6E2C380-F8CB-4873-8DA6-0BB027C48EBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUETools.Codecs", "cuetools.net\CUETools.Codecs\CUETools.Codecs.csproj", "{D1F69B02-A6A4-4EF2-A916-815BACC18F71}"
 EndProject
