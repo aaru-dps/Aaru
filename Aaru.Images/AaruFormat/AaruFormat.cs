@@ -76,7 +76,8 @@ using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using CUETools.Codecs.FLAKE;
+using CUETools.Codecs;
+using CUETools.Codecs.Flake;
 using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
@@ -108,9 +109,9 @@ namespace Aaru.DiscImages
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> deduplicationTable;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
-        FlakeWriter flakeWriter;
+        AudioEncoder flakeWriter;
         /// <summary><see cref="CUETools.Codecs.FLAKE" /> settings.</summary>
-        FlakeWriterSettings flakeWriterSettings;
+        EncoderSettings flakeWriterSettings;
         /// <summary>Block with logical geometry.</summary>
         GeometryBlock geometryBlock;
         /// <summary>Image header.</summary>

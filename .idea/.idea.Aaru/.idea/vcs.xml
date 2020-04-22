@@ -14,7 +14,7 @@
     <mapping directory="$PROJECT_DIR$/Aaru.Dto" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Aaru.Helpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CICMMetadata" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cuetoolsnet" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cuetools.net" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/oxyplot-avalonia" vcs="Git" />
   </component>
 </project>

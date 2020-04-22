@@ -1,9 +1,6 @@
 [submodule "CICMMetadata"]
 	path = CICMMetadata
 	url = https://github.com/claunia/CICMMetadata
-[submodule "cuetoolsnet"]
-	path = cuetoolsnet
-	url = https://github.com/claunia/cuetoolsnet.git
 [submodule "Aaru.Checksums"]
 	path = Aaru.Checksums
 	url = https://github.com/aaru-dps/Aaru.Checksums
@@ -25,3 +22,6 @@
 [submodule "oxyplot-avalonia"]
 	path = oxyplot-avalonia
 	url = https://github.com/oxyplot/oxyplot-avalonia.git
+[submodule "cuetools.net"]
+	path = cuetools.net
+	url = https://github.com/gchudov/cuetools.net

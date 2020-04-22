@@ -46,7 +46,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using CUETools.Codecs;
-using CUETools.Codecs.FLAKE;
+using CUETools.Codecs.Flake;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
 using Marshal = Aaru.Helpers.Marshal;
@@ -1224,7 +1224,7 @@ namespace Aaru.DiscImages
                     byte[] flacBlock = new byte[blockHeader.cmpLength];
                     imageStream.Read(flacBlock, 0, flacBlock.Length);
                     var flacMs      = new MemoryStream(flacBlock);
-                    var flakeReader = new FlakeReader("", flacMs);
+                    var flakeReader = new AudioDecoder(new DecoderSettings(), "", flacMs);
                     block = new byte[blockHeader.length];
                     int samples     = (int)((block.Length / blockHeader.sectorSize) * 588);
                     var audioBuffer = new AudioBuffer(AudioPCMConfig.RedBook, block, samples);
