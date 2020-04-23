@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.1.99.2990</Version>
+    <Version>5.0.99.2991</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -299,7 +299,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>5.1.99.2990-1</PackageVersion>
+    <PackageVersion>5.0.99.2991-1</PackageVersion>
     <PackagePrefix>aaru</PackagePrefix>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <Section>net</Section>
