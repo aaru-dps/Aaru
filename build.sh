@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-AARU_VERSION=5.1.99.2967
+AARU_VERSION=5.1.99.2990
 OS_NAME=`uname`
 
 mkdir -p build
