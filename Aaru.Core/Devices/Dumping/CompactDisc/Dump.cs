@@ -447,11 +447,10 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     new Track
                     {
-                        TrackSequence          = 0, TrackSession = 1,
-                        TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
-                        TrackStartSector       = 0, TrackBytesPerSector               = (int)sectorSize,
+                        TrackSequence = 0, TrackSession = 1, TrackType = hiddenData ? TrackType.Data : TrackType.Audio,
+                        TrackStartSector = 0, TrackBytesPerSector = (int)sectorSize,
                         TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType = subType,
-                        TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
+                        TrackEndSector = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
                     }
                 };
 
@@ -484,16 +483,28 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
                 UpdateStatus?.Invoke($"Checking mode for track {tracks[t].TrackSequence}...");
 
-                sense = !_dev.ReadCd(out cmdBuf, out _, (uint)tracks[t].TrackStartSector, blockSize, 1,
-                                     MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                     MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
+                sense = _dev.ReadCd(out cmdBuf, out _, (uint)tracks[t].TrackStartSector, blockSize, 1,
+                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                    MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
-                if(!sense)
+                if(sense)
                 {
-                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", tracks[t].TrackSequence);
-                    UpdateStatus?.Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
+                    if(tracks[t].TrackPregap != 0)
+                        sense = _dev.ReadCd(out cmdBuf, out _,
+                                            (uint)(tracks[t].TrackStartSector + tracks[t].TrackPregap), blockSize, 1,
+                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                            true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
-                    continue;
+                    if(sense)
+                    {
+                        _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...",
+                                           tracks[t].TrackSequence);
+
+                        UpdateStatus?.
+                            Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
+
+                        continue;
+                    }
                 }
 
                 switch(cmdBuf[15])
@@ -717,8 +728,7 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." +
-                                             Environment.NewLine                                     +
-                                             _outputPlugin.ErrorMessage);
+                                             Environment.NewLine + _outputPlugin.ErrorMessage);
 
                 return;
             }
@@ -745,14 +755,12 @@ namespace Aaru.Core.Devices.Dumping
                         _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                         ErrorMessage?.Invoke("Error writing subchannel to output image, continuing..." +
-                                             Environment.NewLine                                       +
-                                             _outputPlugin.ErrorMessage);
+                                             Environment.NewLine + _outputPlugin.ErrorMessage);
                     }
                     else
                     {
                         StoppingErrorMessage?.Invoke("Error writing subchannel to output image, not continuing..." +
-                                                     Environment.NewLine                                           +
-                                                     _outputPlugin.ErrorMessage);
+                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                         return;
                     }
@@ -772,8 +780,7 @@ namespace Aaru.Core.Devices.Dumping
                         _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                         StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing..." +
-                                                     Environment.NewLine                                       +
-                                                     _outputPlugin.ErrorMessage);
+                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                         return;
                     }
@@ -1007,8 +1014,7 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
-                         _devicePath);
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
