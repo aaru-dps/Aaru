@@ -238,6 +238,13 @@ namespace Aaru.Core.Devices.Dumping
                     _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
                 }
 
+                if(inData && crossingLeadOut)
+                {
+                    firstSectorToRead = (uint)i;
+                    blocksToRead      = (uint)(lastSector - firstSectorToRead) + 1;
+                    crossingLeadOut   = false;
+                }
+
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 
                 // ReSharper disable CompareOfFloatsByEqualityOperator
