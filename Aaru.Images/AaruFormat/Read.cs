@@ -1597,8 +1597,13 @@ namespace Aaru.DiscImages
                                 }
                                 else
                                 {
-                                    sectorPrefixMs.Position =
-                                        ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+                                    uint prefixPosition = ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+
+                                    if(prefixPosition > sectorPrefixMs.Length)
+                                        throw new
+                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+
+                                    sectorPrefixMs.Position = prefixPosition;
 
                                     sectorPrefixMs.Read(sector, 0, 16);
                                 }
@@ -1618,8 +1623,13 @@ namespace Aaru.DiscImages
                                 }
                                 else
                                 {
-                                    sectorSuffixMs.Position =
-                                        ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
+                                    uint suffixPosition = ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
+
+                                    if(suffixPosition > sectorSuffixMs.Length)
+                                        throw new
+                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+
+                                    sectorSuffixMs.Position = suffixPosition;
 
                                     sectorSuffixMs.Read(sector, 2064, 288);
                                 }
@@ -1643,8 +1653,13 @@ namespace Aaru.DiscImages
                                 }
                                 else
                                 {
-                                    sectorPrefixMs.Position =
-                                        ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+                                    uint prefixPosition = ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+
+                                    if(prefixPosition > sectorPrefixMs.Length)
+                                        throw new
+                                            InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+
+                                    sectorPrefixMs.Position = prefixPosition;
 
                                     sectorPrefixMs.Read(sector, 0, 16);
                                 }
@@ -1687,8 +1702,14 @@ namespace Aaru.DiscImages
                                     {
                                         bool form2 = (sector[18] & 0x20) == 0x20 || (sector[22] & 0x20) == 0x20;
 
-                                        sectorSuffixMs.Position =
+                                        uint suffixPosition =
                                             ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
+
+                                        if(suffixPosition > sectorSuffixMs.Length)
+                                            throw new
+                                                InvalidProgramException("Incorrect data found in image, please re-dump. If issue persists, please open a bug report.");
+
+                                        sectorSuffixMs.Position = suffixPosition;
 
                                         sectorSuffixMs.Read(sector, form2 ? 2348 : 2072, form2 ? 4 : 280);
                                         Array.Copy(data, 0, sector, 24, form2 ? 2324 : 2048);
