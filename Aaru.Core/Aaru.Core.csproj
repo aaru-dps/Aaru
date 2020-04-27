@@ -74,6 +74,7 @@
     <Compile Include="Entropy.cs" />
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
+    <Compile Include="Logging\SubchannelLog.cs" />
     <Compile Include="Media\Detection\MMC.cs" />
     <Compile Include="Media\Info\CompactDisc.cs" />
     <Compile Include="Media\Info\ScsiInfo.cs" />

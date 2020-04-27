@@ -311,6 +311,7 @@
           <e p="DumpLog.cs" t="Include" />
           <e p="IBGLog.cs" t="Include" />
           <e p="MHDDLog.cs" t="Include" />
+          <e p="SubchannelLog.cs" t="Include" />
         </e>
         <e p="Media" t="Include">
           <e p="Detection" t="Include">
@@ -1369,7 +1370,6 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>

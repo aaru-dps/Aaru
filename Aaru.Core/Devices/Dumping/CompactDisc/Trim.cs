@@ -33,6 +33,7 @@
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
 
@@ -47,7 +48,8 @@ namespace Aaru.Core.Devices.Dumping
         void TrimCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                             ExtentsULong extents, bool newTrim, int offsetBytes, bool read6, bool read10, bool read12,
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
-                            MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration)
+                            MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
+                            SubchannelLog subLog)
         {
             DateTime          start;
             DateTime          end;
@@ -177,13 +179,12 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
                     _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+                    subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                 }
                 else
                 {
                     if(supportsLongSectors)
-                    {
                         _outputPlugin.WriteSectorLong(cmdBuf, badSector);
-                    }
                     else
                     {
                         if(cmdBuf.Length % sectorSize == 0)
@@ -194,9 +195,7 @@ namespace Aaru.Core.Devices.Dumping
                             _outputPlugin.WriteSector(data, badSector);
                         }
                         else
-                        {
                             _outputPlugin.WriteSectorLong(cmdBuf, badSector);
-                        }
                     }
                 }
             }

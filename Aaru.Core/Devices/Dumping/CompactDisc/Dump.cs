@@ -97,6 +97,7 @@ namespace Aaru.Core.Devices.Dumping
             bool                   sense            = true;                      // Sense indicator
             int                    sessions;                                     // Number of sessions in disc
             DateTime               start;                                        // Start of operation
+            SubchannelLog          subLog = null;                                // Subchannel log
             uint                   subSize;                                      // Subchannel size in bytes
             TrackSubchannelType    subType;                                      // Track subchannel type
             bool                   supportsLongSectors = true;                   // Supports reading EDC and ECC
@@ -787,6 +788,12 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
+            if(supportedSubchannel != MmcSubchannel.None)
+            {
+                _dumpLog.WriteLine($"Creating subchannel log in {_outputPrefix + ".sub.log"}");
+                subLog = new SubchannelLog(_outputPrefix + ".sub.log");
+            }
+
             // Set track flags
             foreach(KeyValuePair<byte, byte> kvp in trackFlags)
             {
@@ -1001,17 +1008,18 @@ namespace Aaru.Core.Devices.Dumping
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
-                       tracks);
+                       tracks, subLog);
 
             // TODO: Enable when underlying images support lead-outs
             /*
             DumpCdLeadOuts(blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                            leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                           supportedSubchannel, subSize, ref totalDuration);
+                           supportedSubchannel, subSize, ref totalDuration, subLog);
             */
 
             end = DateTime.UtcNow;
             mhddLog.Close();
+            subLog?.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
@@ -1034,10 +1042,10 @@ namespace Aaru.Core.Devices.Dumping
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
-                           ref totalDuration);
+                           ref totalDuration, subLog);
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
-                            subSize, supportedSubchannel, ref totalDuration);
+                            subSize, supportedSubchannel, ref totalDuration, subLog);
 
             // Write media tags to image
             if(!_aborted)

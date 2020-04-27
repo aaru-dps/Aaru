@@ -83,7 +83,7 @@ namespace Aaru.Core.Devices.Dumping
                         ref double minSpeed, out bool newTrim, bool nextData, int offsetBytes, bool read6, bool read10,
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                        Track[] tracks)
+                        Track[] tracks, SubchannelLog subLog)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -385,6 +385,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
                                 _outputPlugin.WriteSectorsTag(sub, i   + r, 1, SectorTagType.CdSectorSubchannel);
+                                subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)(i + r), 1);
                             }
                             else
                             {
@@ -496,6 +497,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
                         _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+                        subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i, blocksToRead);
                     }
                     else
                     {

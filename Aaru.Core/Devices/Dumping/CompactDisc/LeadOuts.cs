@@ -69,7 +69,8 @@ namespace Aaru.Core.Devices.Dumping
                             ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
                             ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
                             bool read6, bool read10, bool read12, bool read16, bool readcd,
-                            MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration)
+                            MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
+                            SubchannelLog subLog)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -152,6 +153,9 @@ namespace Aaru.Core.Devices.Dumping
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
                             _outputPlugin.WriteSectorsTag(sub, i, _maximumReadable, SectorTagType.CdSectorSubchannel);
+
+                            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i,
+                                               _maximumReadable);
                         }
                         else
                             _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);
@@ -219,7 +223,8 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
                              ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
                              bool read6, bool read10, bool read12, bool read16, bool readcd,
-                             MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration)
+                             MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
+                             SubchannelLog subLog)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -302,6 +307,9 @@ namespace Aaru.Core.Devices.Dumping
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
                             _outputPlugin.WriteSectorsTag(sub, i, _maximumReadable, SectorTagType.CdSectorSubchannel);
+
+                            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i,
+                                               _maximumReadable);
                         }
                         else
                             _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);
