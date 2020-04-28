@@ -623,6 +623,7 @@
             <e p="Kreon.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="NEC.cs" t="Include" />
+            <e p="Optical.cs" t="Include" />
             <e p="Pioneer.cs" t="Include" />
             <e p="Plasmon.cs" t="Include" />
             <e p="Plextor.cs" t="Include" />
