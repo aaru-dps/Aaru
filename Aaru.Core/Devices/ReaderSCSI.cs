@@ -63,8 +63,18 @@ namespace Aaru.Core.Devices
                 GetDeviceBlocks();
 
             byte[] senseBuf;
-            int    tries = 0;
-            uint   lba   = 0;
+            int    tries      = 0;
+            uint   lba        = 0;
+            bool   mediumScan = false;
+
+            if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+            {
+                mediumScan = !_dev.MediumScan(out _, true, false, false, false, false, lba, 1, (uint)Blocks,
+                                              out uint foundLba, out _, _timeout, out _);
+
+                if(mediumScan)
+                    lba = foundLba;
+            }
 
             var rnd = new Random();
 
@@ -90,6 +100,16 @@ namespace Aaru.Core.Devices
                 }
 
                 lba = (uint)rnd.Next(1, (int)Blocks);
+
+                if(mediumScan)
+                {
+                    mediumScan = !_dev.MediumScan(out _, true, false, false, false, false, lba, 1, (uint)Blocks,
+                                                  out uint foundLba, out _, _timeout, out _);
+
+                    if(mediumScan)
+                        lba = foundLba;
+                }
+
                 tries++;
             }
 
