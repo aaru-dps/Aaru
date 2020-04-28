@@ -40,19 +40,19 @@ namespace Aaru.Core.Devices
 {
     internal partial class Reader
     {
-        Identify.IdentifyDevice ataId;
-        bool                    ataRead;
-        bool                    ataReadDma;
-        bool                    ataReadDmaLba;
-        bool                    ataReadDmaLba48;
-        bool                    ataReadDmaRetry;
-        bool                    ataReadDmaRetryLba;
-        bool                    ataReadLba;
-        bool                    ataReadLba48;
-        bool                    ataReadRetry;
-        bool                    ataReadRetryLba;
-        bool                    ataSeek;
-        bool                    ataSeekLba;
+        Identify.IdentifyDevice _ataId;
+        bool                    _ataRead;
+        bool                    _ataReadDma;
+        bool                    _ataReadDmaLba;
+        bool                    _ataReadDmaLba48;
+        bool                    _ataReadDmaRetry;
+        bool                    _ataReadDmaRetryLba;
+        bool                    _ataReadLba;
+        bool                    _ataReadLba48;
+        bool                    _ataReadRetry;
+        bool                    _ataReadRetryLba;
+        bool                    _ataSeek;
+        bool                    _ataSeekLba;
 
         internal bool   IsLba     { get; private set; }
         internal ushort Cylinders { get; private set; }
@@ -61,28 +61,28 @@ namespace Aaru.Core.Devices
 
         (uint, byte, byte) GetDeviceChs()
         {
-            if(dev.Type != DeviceType.ATA)
+            if(_dev.Type != DeviceType.ATA)
                 return (0, 0, 0);
 
-            if(ataId.CurrentCylinders       > 0 &&
-               ataId.CurrentHeads           > 0 &&
-               ataId.CurrentSectorsPerTrack > 0)
+            if(_ataId.CurrentCylinders       > 0 &&
+               _ataId.CurrentHeads           > 0 &&
+               _ataId.CurrentSectorsPerTrack > 0)
             {
-                Cylinders = ataId.CurrentCylinders;
-                Heads     = (byte)ataId.CurrentHeads;
-                Sectors   = (byte)ataId.CurrentSectorsPerTrack;
+                Cylinders = _ataId.CurrentCylinders;
+                Heads     = (byte)_ataId.CurrentHeads;
+                Sectors   = (byte)_ataId.CurrentSectorsPerTrack;
                 Blocks    = (ulong)(Cylinders * Heads * Sectors);
             }
 
-            if((ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0) ||
-               ataId.Cylinders       <= 0                                                                    ||
-               ataId.Heads           <= 0                                                                    ||
-               ataId.SectorsPerTrack <= 0)
+            if((_ataId.CurrentCylinders != 0 && _ataId.CurrentHeads != 0 && _ataId.CurrentSectorsPerTrack != 0) ||
+               _ataId.Cylinders       <= 0                                                                      ||
+               _ataId.Heads           <= 0                                                                      ||
+               _ataId.SectorsPerTrack <= 0)
                 return (Cylinders, Heads, Sectors);
 
-            Cylinders = ataId.Cylinders;
-            Heads     = (byte)ataId.Heads;
-            Sectors   = (byte)ataId.SectorsPerTrack;
+            Cylinders = _ataId.Cylinders;
+            Heads     = (byte)_ataId.Heads;
+            Sectors   = (byte)_ataId.SectorsPerTrack;
             Blocks    = (ulong)(Cylinders * Heads * Sectors);
 
             return (Cylinders, Heads, Sectors);
@@ -92,16 +92,16 @@ namespace Aaru.Core.Devices
         {
             GetDeviceChs();
 
-            if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
+            if(_ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
             {
-                Blocks = ataId.LBASectors;
+                Blocks = _ataId.LBASectors;
                 IsLba  = true;
             }
 
-            if(!ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
+            if(!_ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
                 return Blocks;
 
-            Blocks = ataId.LBA48Sectors;
+            Blocks = _ataId.LBA48Sectors;
             IsLba  = true;
 
             return Blocks;
@@ -109,51 +109,89 @@ namespace Aaru.Core.Devices
 
         bool AtaFindReadCommand()
         {
-            bool sense = dev.Read(out byte[] cmdBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, timeout,
-                                  out _);
+            if(Blocks == 0)
+                GetDeviceBlocks();
 
-            ataRead         = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
-            sense           = dev.Read(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out _);
-            ataReadRetry    = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
-            sense           = dev.ReadDma(out cmdBuf, out errorChs, false, 0, 0, 1, 1, timeout, out _);
-            ataReadDma      = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
-            sense           = dev.ReadDma(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out _);
-            ataReadDmaRetry = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
+            bool                   sense;
+            int                    tries  = 0;
+            uint                   lba    = 0;
+            ushort                 cyl    = 0;
+            byte                   head   = 0;
+            byte                   sector = 1;
+            AtaErrorRegistersChs   errorChs;
+            AtaErrorRegistersLba28 errorLba;
+            var                    rnd = new Random();
 
-            sense              = dev.Read(out cmdBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, timeout, out _);
-            ataReadLba         = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
-            sense              = dev.Read(out cmdBuf, out errorLba, true, 0, 1, timeout, out _);
-            ataReadRetryLba    = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
-            sense              = dev.ReadDma(out cmdBuf, out errorLba, false, 0, 1, timeout, out _);
-            ataReadDmaLba      = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
-            sense              = dev.ReadDma(out cmdBuf, out errorLba, true, 0, 1, timeout, out _);
-            ataReadDmaRetryLba = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+            while(tries < 10)
+            {
+                sense = _dev.Read(out byte[] cmdBuf, out errorChs, false, cyl, head, sector, 1, _timeout, out _);
+                _ataRead = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
+                sense = _dev.Read(out cmdBuf, out errorChs, true, cyl, head, sector, 1, _timeout, out _);
+                _ataReadRetry = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
+                sense = _dev.ReadDma(out cmdBuf, out errorChs, false, cyl, head, sector, 1, _timeout, out _);
+                _ataReadDma = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
+                sense = _dev.ReadDma(out cmdBuf, out errorChs, true, cyl, head, sector, 1, _timeout, out _);
+                _ataReadDmaRetry = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
 
-            sense           = dev.Read(out cmdBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, timeout, out _);
-            ataReadLba48    = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0;
-            sense           = dev.ReadDma(out cmdBuf, out errorLba48, 0, 1, timeout, out _);
-            ataReadDmaLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0;
+                sense            = _dev.Read(out cmdBuf, out errorLba, false, lba, 1, _timeout, out _);
+                _ataReadLba      = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+                sense            = _dev.Read(out cmdBuf, out errorLba, true, lba, 1, _timeout, out _);
+                _ataReadRetryLba = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+                sense            = _dev.ReadDma(out cmdBuf, out errorLba, false, lba, 1, _timeout, out _);
+                _ataReadDmaLba   = !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+                sense            = _dev.ReadDma(out cmdBuf, out errorLba, true, lba, 1, _timeout, out _);
 
-            sense      = dev.Seek(out errorChs, 0, 0, 1, timeout, out _);
-            ataSeek    = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0;
-            sense      = dev.Seek(out errorLba, 0, timeout, out _);
-            ataSeekLba = !sense && (errorLba.Status & 0x27) == 0 && errorChs.Error == 0;
+                _ataReadDmaRetryLba =
+                    !sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0;
+
+                sense         = _dev.Read(out cmdBuf, out AtaErrorRegistersLba48 errorLba48, lba, 1, _timeout, out _);
+                _ataReadLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0;
+                sense         = _dev.ReadDma(out cmdBuf, out errorLba48, lba, 1, _timeout, out _);
+
+                _ataReadDmaLba48 = !sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 &&
+                                   cmdBuf.Length                        > 0;
+
+                if(_ataRead            ||
+                   _ataReadRetry       ||
+                   _ataReadDma         ||
+                   _ataReadDmaRetry    ||
+                   _ataReadLba         ||
+                   _ataReadRetryLba    ||
+                   _ataReadDmaLba      ||
+                   _ataReadDmaRetryLba ||
+                   _ataReadLba48       ||
+                   _ataReadDmaLba48)
+                {
+                    break;
+                }
+
+                lba    = (uint)rnd.Next(1, (int)Blocks);
+                cyl    = (ushort)rnd.Next(0, Cylinders);
+                head   = (byte)rnd.Next(0, Heads);
+                sector = (byte)rnd.Next(1, Sectors);
+                tries++;
+            }
+
+            sense       = _dev.Seek(out errorChs, 0, 0, 1, _timeout, out _);
+            _ataSeek    = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0;
+            sense       = _dev.Seek(out errorLba, 0, _timeout, out _);
+            _ataSeekLba = !sense && (errorLba.Status & 0x27) == 0 && errorChs.Error == 0;
 
             if(IsLba)
             {
                 if(Blocks > 0xFFFFFFF &&
-                   !ataReadLba48      &&
-                   !ataReadDmaLba48)
+                   !_ataReadLba48     &&
+                   !_ataReadDmaLba48)
                 {
                     ErrorMessage = "Device needs 48-bit LBA commands but I can't issue them... Aborting.";
 
                     return true;
                 }
 
-                if(!ataReadLba      &&
-                   !ataReadRetryLba &&
-                   !ataReadDmaLba   &&
-                   !ataReadDmaRetryLba)
+                if(!_ataReadLba      &&
+                   !_ataReadRetryLba &&
+                   !_ataReadDmaLba   &&
+                   !_ataReadDmaRetryLba)
                 {
                     ErrorMessage = "Device needs 28-bit LBA commands but I can't issue them... Aborting.";
 
@@ -162,10 +200,10 @@ namespace Aaru.Core.Devices
             }
             else
             {
-                if(!ataRead      &&
-                   !ataReadRetry &&
-                   !ataReadDma   &&
-                   !ataReadDmaRetry)
+                if(!_ataRead      &&
+                   !_ataReadRetry &&
+                   !_ataReadDma   &&
+                   !_ataReadDmaRetry)
                 {
                     ErrorMessage = "Device needs CHS commands but I can't issue them... Aborting.";
 
@@ -173,25 +211,25 @@ namespace Aaru.Core.Devices
                 }
             }
 
-            if(ataReadDmaLba48)
+            if(_ataReadDmaLba48)
                 AaruConsole.WriteLine("Using ATA READ DMA EXT command.");
-            else if(ataReadLba48)
+            else if(_ataReadLba48)
                 AaruConsole.WriteLine("Using ATA READ EXT command.");
-            else if(ataReadDmaRetryLba)
+            else if(_ataReadDmaRetryLba)
                 AaruConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
-            else if(ataReadDmaLba)
+            else if(_ataReadDmaLba)
                 AaruConsole.WriteLine("Using ATA READ DMA command (LBA).");
-            else if(ataReadRetryLba)
+            else if(_ataReadRetryLba)
                 AaruConsole.WriteLine("Using ATA READ command with retries (LBA).");
-            else if(ataReadLba)
+            else if(_ataReadLba)
                 AaruConsole.WriteLine("Using ATA READ command (LBA).");
-            else if(ataReadDmaRetry)
+            else if(_ataReadDmaRetry)
                 AaruConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
-            else if(ataReadDma)
+            else if(_ataReadDma)
                 AaruConsole.WriteLine("Using ATA READ DMA command (CHS).");
-            else if(ataReadRetry)
+            else if(_ataReadRetry)
                 AaruConsole.WriteLine("Using ATA READ command with retries (CHS).");
-            else if(ataRead)
+            else if(_ataRead)
                 AaruConsole.WriteLine("Using ATA READ command (CHS).");
             else
             {
@@ -205,20 +243,20 @@ namespace Aaru.Core.Devices
 
         bool AtaGetBlockSize()
         {
-            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-               (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+            if((_ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+               (_ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
-                if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                    if(ataId.LogicalSectorWords <= 255 ||
-                       ataId.LogicalAlignment   == 0xFFFF)
+                if((_ataId.PhysLogSectorSize & 0x1000) == 0x1000)
+                    if(_ataId.LogicalSectorWords <= 255 ||
+                       _ataId.LogicalAlignment   == 0xFFFF)
                         LogicalBlockSize = 512;
                     else
-                        LogicalBlockSize = ataId.LogicalSectorWords * 2;
+                        LogicalBlockSize = _ataId.LogicalSectorWords * 2;
                 else
                     LogicalBlockSize = 512;
 
-                if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
+                if((_ataId.PhysLogSectorSize & 0x2000) == 0x2000)
+                    PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, _ataId.PhysLogSectorSize & 0xF);
                 else
                     PhysicalBlockSize = LogicalBlockSize;
             }
@@ -253,38 +291,38 @@ namespace Aaru.Core.Devices
                 bool                   sense;
                 AtaErrorRegistersLba48 errorLba48;
 
-                if(ataReadDmaLba48)
+                if(_ataReadDmaLba48)
                 {
-                    sense = dev.ReadDma(out cmdBuf, out errorLba48, 0, (byte)BlocksToRead, timeout, out _);
+                    sense = _dev.ReadDma(out cmdBuf, out errorLba48, 0, (byte)BlocksToRead, _timeout, out _);
                     error = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0);
                 }
-                else if(ataReadLba48)
+                else if(_ataReadLba48)
                 {
-                    sense = dev.Read(out cmdBuf, out errorLba48, 0, (byte)BlocksToRead, timeout, out _);
+                    sense = _dev.Read(out cmdBuf, out errorLba48, 0, (byte)BlocksToRead, _timeout, out _);
                     error = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && cmdBuf.Length > 0);
                 }
                 else
                 {
                     AtaErrorRegistersLba28 errorLba;
 
-                    if(ataReadDmaRetryLba)
+                    if(_ataReadDmaRetryLba)
                     {
-                        sense = dev.ReadDma(out cmdBuf, out errorLba, true, 0, (byte)BlocksToRead, timeout, out _);
+                        sense = _dev.ReadDma(out cmdBuf, out errorLba, true, 0, (byte)BlocksToRead, _timeout, out _);
                         error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0);
                     }
-                    else if(ataReadDmaLba)
+                    else if(_ataReadDmaLba)
                     {
-                        sense = dev.ReadDma(out cmdBuf, out errorLba, false, 0, (byte)BlocksToRead, timeout, out _);
+                        sense = _dev.ReadDma(out cmdBuf, out errorLba, false, 0, (byte)BlocksToRead, _timeout, out _);
                         error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0);
                     }
-                    else if(ataReadRetryLba)
+                    else if(_ataReadRetryLba)
                     {
-                        sense = dev.Read(out cmdBuf, out errorLba, true, 0, (byte)BlocksToRead, timeout, out _);
+                        sense = _dev.Read(out cmdBuf, out errorLba, true, 0, (byte)BlocksToRead, _timeout, out _);
                         error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0);
                     }
-                    else if(ataReadLba)
+                    else if(_ataReadLba)
                     {
-                        sense = dev.Read(out cmdBuf, out errorLba, false, 0, (byte)BlocksToRead, timeout, out _);
+                        sense = _dev.Read(out cmdBuf, out errorLba, false, 0, (byte)BlocksToRead, _timeout, out _);
                         error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && cmdBuf.Length > 0);
                     }
                 }
@@ -302,7 +340,7 @@ namespace Aaru.Core.Devices
                 return false;
 
             BlocksToRead = 1;
-            ErrorMessage = $"Device error {dev.LastError} trying to guess ideal transfer length.";
+            ErrorMessage = $"Device error {_dev.LastError} trying to guess ideal transfer length.";
 
             return true;
         }
@@ -317,48 +355,48 @@ namespace Aaru.Core.Devices
             buffer   = null;
             duration = 0;
 
-            if(ataReadDmaLba48)
+            if(_ataReadDmaLba48)
             {
-                sense     = dev.ReadDma(out buffer, out errorLba48, block, (byte)count, timeout, out duration);
+                sense     = _dev.ReadDma(out buffer, out errorLba48, block, (byte)count, _timeout, out duration);
                 error     = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && buffer.Length > 0);
                 status    = errorLba48.Status;
                 errorByte = errorLba48.Error;
             }
-            else if(ataReadLba48)
+            else if(_ataReadLba48)
             {
-                sense     = dev.Read(out buffer, out errorLba48, block, (byte)count, timeout, out duration);
+                sense     = _dev.Read(out buffer, out errorLba48, block, (byte)count, _timeout, out duration);
                 error     = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && buffer.Length > 0);
                 status    = errorLba48.Status;
                 errorByte = errorLba48.Error;
             }
-            else if(ataReadDmaRetryLba)
+            else if(_ataReadDmaRetryLba)
             {
-                sense = dev.ReadDma(out buffer, out errorLba, true, (uint)block, (byte)count, timeout, out duration);
+                sense = _dev.ReadDma(out buffer, out errorLba, true, (uint)block, (byte)count, _timeout, out duration);
 
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
             }
-            else if(ataReadDmaLba)
+            else if(_ataReadDmaLba)
             {
-                sense = dev.ReadDma(out buffer, out errorLba, false, (uint)block, (byte)count, timeout, out duration);
+                sense = _dev.ReadDma(out buffer, out errorLba, false, (uint)block, (byte)count, _timeout, out duration);
 
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
             }
-            else if(ataReadRetryLba)
+            else if(_ataReadRetryLba)
             {
-                sense     = dev.Read(out buffer, out errorLba, true, (uint)block, (byte)count, timeout, out duration);
+                sense     = _dev.Read(out buffer, out errorLba, true, (uint)block, (byte)count, _timeout, out duration);
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
             }
-            else if(ataReadLba)
+            else if(_ataReadLba)
             {
-                sense     = dev.Read(out buffer, out errorLba, false, (uint)block, (byte)count, timeout, out duration);
-                error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
-                status    = errorLba.Status;
+                sense = _dev.Read(out buffer, out errorLba, false, (uint)block, (byte)count, _timeout, out duration);
+                error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
+                status = errorLba.Status;
                 errorByte = errorLba.Error;
             }
 
@@ -368,7 +406,7 @@ namespace Aaru.Core.Devices
             return error;
         }
 
-        bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sectir, out double duration)
+        bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
         {
             bool                 error = true;
             bool                 sense;
@@ -377,34 +415,35 @@ namespace Aaru.Core.Devices
             buffer   = null;
             duration = 0;
 
-            if(ataReadDmaRetry)
+            if(_ataReadDmaRetry)
             {
-                sense = dev.ReadDma(out buffer, out errorChs, true, cylinder, head, sectir, 1, timeout, out duration);
+                sense = _dev.ReadDma(out buffer, out errorChs, true, cylinder, head, sector, 1, _timeout, out duration);
 
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
             }
-            else if(ataReadDma)
+            else if(_ataReadDma)
             {
-                sense = dev.ReadDma(out buffer, out errorChs, false, cylinder, head, sectir, 1, timeout, out duration);
+                sense = _dev.ReadDma(out buffer, out errorChs, false, cylinder, head, sector, 1, _timeout,
+                                     out duration);
 
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
             }
-            else if(ataReadRetry)
+            else if(_ataReadRetry)
             {
-                sense     = dev.Read(out buffer, out errorChs, true, cylinder, head, sectir, 1, timeout, out duration);
-                error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
-                status    = errorChs.Status;
+                sense = _dev.Read(out buffer, out errorChs, true, cylinder, head, sector, 1, _timeout, out duration);
+                error = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
+                status = errorChs.Status;
                 errorByte = errorChs.Error;
             }
-            else if(ataRead)
+            else if(_ataRead)
             {
-                sense     = dev.Read(out buffer, out errorChs, false, cylinder, head, sectir, 1, timeout, out duration);
-                error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
-                status    = errorChs.Status;
+                sense = _dev.Read(out buffer, out errorChs, false, cylinder, head, sector, 1, _timeout, out duration);
+                error = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
+                status = errorChs.Status;
                 errorByte = errorChs.Error;
             }
 
@@ -416,14 +455,14 @@ namespace Aaru.Core.Devices
 
         bool AtaSeek(ulong block, out double duration)
         {
-            bool sense = dev.Seek(out AtaErrorRegistersLba28 errorLba, (uint)block, timeout, out duration);
+            bool sense = _dev.Seek(out AtaErrorRegistersLba28 errorLba, (uint)block, _timeout, out duration);
 
             return !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0);
         }
 
         bool AtaSeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
-            bool sense = dev.Seek(out AtaErrorRegistersChs errorChs, cylinder, head, sector, timeout, out duration);
+            bool sense = _dev.Seek(out AtaErrorRegistersChs errorChs, cylinder, head, sector, _timeout, out duration);
 
             return !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0);
         }

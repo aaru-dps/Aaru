@@ -40,13 +40,13 @@ namespace Aaru.Core.Devices
     /// <summary>Reduces common code used for scanning and dumping</summary>
     internal partial class Reader
     {
-        readonly Device dev;
-        readonly uint   timeout;
+        readonly Device _dev;
+        readonly uint   _timeout;
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
-            this.dev     = dev;
-            this.timeout = timeout;
+            _dev         = dev;
+            _timeout     = timeout;
             BlocksToRead = 64;
             CanReadRaw   = raw;
 
@@ -56,7 +56,7 @@ namespace Aaru.Core.Devices
                     Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
 
                     if(ataIdNullable.HasValue)
-                        ataId = ataIdNullable.Value;
+                        _ataId = ataIdNullable.Value;
 
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
@@ -70,18 +70,18 @@ namespace Aaru.Core.Devices
         internal uint   PhysicalBlockSize { get; private set; }
         internal uint   LongBlockSize     { get; private set; }
         internal bool   CanReadRaw        { get; private set; }
-        internal bool   CanSeek           => ataSeek || seek6    || seek10;
-        internal bool   CanSeekLba        => ataSeekLba || seek6 || seek10;
+        internal bool   CanSeek           => _ataSeek || _seek6    || _seek10;
+        internal bool   CanSeekLba        => _ataSeekLba || _seek6 || _seek10;
 
         internal ulong GetDeviceBlocks()
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaGetBlocks();
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocks();
                 default:
-                    ErrorMessage = $"Unknown device type {dev.Type}.";
+                    ErrorMessage = $"Unknown device type {_dev.Type}.";
 
                     return 0;
             }
@@ -89,13 +89,13 @@ namespace Aaru.Core.Devices
 
         internal bool FindReadCommand()
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaFindReadCommand();
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiFindReadCommand();
                 default:
-                    ErrorMessage = $"Unknown device type {dev.Type}.";
+                    ErrorMessage = $"Unknown device type {_dev.Type}.";
 
                     return true;
             }
@@ -103,13 +103,13 @@ namespace Aaru.Core.Devices
 
         internal bool GetBlockSize()
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaGetBlockSize();
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlockSize();
                 default:
-                    ErrorMessage = $"Unknown device type {dev.Type}.";
+                    ErrorMessage = $"Unknown device type {_dev.Type}.";
 
                     return true;
             }
@@ -117,13 +117,13 @@ namespace Aaru.Core.Devices
 
         internal bool GetBlocksToRead(uint startWithBlocks = 64)
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
                 default:
-                    ErrorMessage = $"Unknown device type {dev.Type}.";
+                    ErrorMessage = $"Unknown device type {_dev.Type}.";
 
                     return true;
             }
@@ -137,7 +137,7 @@ namespace Aaru.Core.Devices
 
         internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaReadBlocks(out buffer, block, count, out duration);
                 case DeviceType.ATAPI:
@@ -152,7 +152,7 @@ namespace Aaru.Core.Devices
 
         internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaReadChs(out buffer, cylinder, head, sector, out duration);
                 default:
@@ -165,7 +165,7 @@ namespace Aaru.Core.Devices
 
         internal bool Seek(ulong block, out double duration)
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaSeek(block, out duration);
                 case DeviceType.ATAPI:
@@ -179,7 +179,7 @@ namespace Aaru.Core.Devices
 
         internal bool SeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
                 default:

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
@@ -40,53 +41,72 @@ namespace Aaru.Core.Devices
     internal partial class Reader
     {
         // TODO: Raw reading
-        bool hldtstReadRaw;
-        bool plextorReadRaw;
-        bool read10;
-        bool read12;
-        bool read16;
-        bool read6;
-        bool readLong10;
-        bool readLong16;
-        bool readLongDvd;
-        bool seek10;
-        bool seek6;
-        bool syqReadLong10;
-        bool syqReadLong6;
+        bool _hldtstReadRaw;
+        bool _plextorReadRaw;
+        bool _read10;
+        bool _read12;
+        bool _read16;
+        bool _read6;
+        bool _readLong10;
+        bool _readLong16;
+        bool _readLongDvd;
+        bool _seek10;
+        bool _seek6;
+        bool _syqReadLong10;
+        bool _syqReadLong6;
 
         ulong ScsiGetBlocks() => ScsiGetBlockSize() ? 0 : Blocks;
 
         bool ScsiFindReadCommand()
         {
-            read6 = !dev.Read6(out _, out byte[] senseBuf, 0, LogicalBlockSize, timeout, out _);
+            if(Blocks == 0)
+                GetDeviceBlocks();
 
-            read10 = !dev.Read10(out _, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0, 1, timeout,
-                                 out _);
+            byte[] senseBuf;
+            int    tries = 0;
+            uint   lba   = 0;
 
-            read12 = !dev.Read12(out _, out senseBuf, 0, false, true, false, false, 0, LogicalBlockSize, 0, 1, false,
-                                 timeout, out _);
+            var rnd = new Random();
 
-            read16 = !dev.Read16(out _, out senseBuf, 0, false, true, false, 0, LogicalBlockSize, 0, 1, false, timeout,
-                                 out _);
+            while(tries < 10)
+            {
+                _read6 = !_dev.Read6(out _, out senseBuf, lba, LogicalBlockSize, _timeout, out _);
 
-            seek6 = !dev.Seek6(out senseBuf, 0, timeout, out _);
+                _read10 = !_dev.Read10(out _, out senseBuf, 0, false, true, false, false, lba, LogicalBlockSize, 0, 1,
+                                       _timeout, out _);
 
-            seek10 = !dev.Seek10(out senseBuf, 0, timeout, out _);
+                _read12 = !_dev.Read12(out _, out senseBuf, 0, false, true, false, false, lba, LogicalBlockSize, 0, 1,
+                                       false, _timeout, out _);
 
-            if(!read6  &&
-               !read10 &&
-               !read12 &&
-               !read16)
+                _read16 = !_dev.Read16(out _, out senseBuf, 0, false, true, false, lba, LogicalBlockSize, 0, 1, false,
+                                       _timeout, out _);
+
+                if(_read6  ||
+                   _read10 ||
+                   _read12 ||
+                   _read16)
+                {
+                    break;
+                }
+
+                lba = (uint)rnd.Next(1, (int)Blocks);
+                tries++;
+            }
+
+            if(!_read6  &&
+               !_read10 &&
+               !_read12 &&
+               !_read16)
             {
                 ErrorMessage = "Cannot read medium, aborting scan...";
 
                 return true;
             }
 
-            if(read6   &&
-               !read10 &&
-               !read12 &&
-               !read16 &&
+            if(_read6   &&
+               !_read10 &&
+               !_read12 &&
+               !_read16 &&
                Blocks > 0x001FFFFF + 1)
             {
                 ErrorMessage =
@@ -95,7 +115,7 @@ namespace Aaru.Core.Devices
                 return true;
             }
 
-            if(!read16 &&
+            if(!_read16 &&
                Blocks > 0xFFFFFFFF + (long)1)
             {
                 ErrorMessage =
@@ -104,12 +124,16 @@ namespace Aaru.Core.Devices
                 return true;
             }
 
+            _seek6 = !_dev.Seek6(out senseBuf, lba, _timeout, out _);
+
+            _seek10 = !_dev.Seek10(out senseBuf, lba, _timeout, out _);
+
             if(CanReadRaw)
             {
                 bool testSense;
                 CanReadRaw = false;
 
-                if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+                if(_dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 {
                     /*testSense = dev.ReadLong16(out readBuffer, out senseBuf, false, 0, 0xFFFF, timeout, out duration);
                     if (testSense && !dev.Error)
@@ -130,10 +154,10 @@ namespace Aaru.Core.Devices
                         }
                     }*/
 
-                    testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 0xFFFF, timeout, out _);
+                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 0xFFFF, _timeout, out _);
                     FixedSense? decSense;
 
-                    if(testSense && !dev.Error)
+                    if(testSense && !_dev.Error)
                     {
                         decSense = Sense.DecodeFixed(senseBuf);
 
@@ -149,8 +173,8 @@ namespace Aaru.Core.Devices
                                 {
                                     LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
 
-                                    readLong10 = !dev.ReadLong10(out _, out senseBuf, false, false, 0,
-                                                                 (ushort)LongBlockSize, timeout, out _);
+                                    _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0,
+                                                                   (ushort)LongBlockSize, _timeout, out _);
                                 }
                             }
                     }
@@ -170,60 +194,59 @@ namespace Aaru.Core.Devices
                             })
                             {
                                 ushort testSize = (ushort)i;
-                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
                                 if(!testSense &&
-                                   !dev.Error)
+                                   !_dev.Error)
                                 {
-                                    readLong16    = true;
+                                    _readLong16   = true;
                                     LongBlockSize = testSize;
                                     CanReadRaw    = true;
 
                                     break;
                                 }
 
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, timeout,
-                                                           out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                                            out _);
 
-                                if(testSense || dev.Error)
+                                if(testSense || _dev.Error)
                                     continue;
 
-                                readLong10    = true;
+                                _readLong10   = true;
                                 LongBlockSize = testSize;
                                 CanReadRaw    = true;
 
                                 break;
                             }
                         else if(LogicalBlockSize == 1024)
-                            foreach(int i in new[]
+                            foreach(ushort testSize in new[]
                             {
                                 // Long sector sizes for floppies
                                 1026,
 
                                 // Long sector sizes for 1024-byte magneto-opticals
                                 1200
-                            })
+                            }.Select(i => (ushort)i))
                             {
-                                ushort testSize = (ushort)i;
-                                testSense = dev.ReadLong16(out _, out senseBuf, false, 0, testSize, timeout, out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
                                 if(!testSense &&
-                                   !dev.Error)
+                                   !_dev.Error)
                                 {
-                                    readLong16    = true;
+                                    _readLong16   = true;
                                     LongBlockSize = testSize;
                                     CanReadRaw    = true;
 
                                     break;
                                 }
 
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, timeout,
-                                                           out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                                            out _);
 
-                                if(testSense || dev.Error)
+                                if(testSense || _dev.Error)
                                     continue;
 
-                                readLong10    = true;
+                                _readLong10   = true;
                                 LongBlockSize = testSize;
                                 CanReadRaw    = true;
 
@@ -231,23 +254,24 @@ namespace Aaru.Core.Devices
                             }
                         else if(LogicalBlockSize == 2048)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 2380, timeout, out _);
+                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 2380, _timeout, out _);
 
                             if(!testSense &&
-                               !dev.Error)
+                               !_dev.Error)
                             {
-                                readLong16    = true;
+                                _readLong16   = true;
                                 LongBlockSize = 2380;
                                 CanReadRaw    = true;
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, timeout, out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, _timeout,
+                                                            out _);
 
                                 if(!testSense &&
-                                   !dev.Error)
+                                   !_dev.Error)
                                 {
-                                    readLong10    = true;
+                                    _readLong10   = true;
                                     LongBlockSize = 2380;
                                     CanReadRaw    = true;
                                 }
@@ -255,23 +279,24 @@ namespace Aaru.Core.Devices
                         }
                         else if(LogicalBlockSize == 4096)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 4760, timeout, out _);
+                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 4760, _timeout, out _);
 
                             if(!testSense &&
-                               !dev.Error)
+                               !_dev.Error)
                             {
-                                readLong16    = true;
+                                _readLong16   = true;
                                 LongBlockSize = 4760;
                                 CanReadRaw    = true;
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, timeout, out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, _timeout,
+                                                            out _);
 
                                 if(!testSense &&
-                                   !dev.Error)
+                                   !_dev.Error)
                                 {
-                                    readLong10    = true;
+                                    _readLong10   = true;
                                     LongBlockSize = 4760;
                                     CanReadRaw    = true;
                                 }
@@ -279,23 +304,24 @@ namespace Aaru.Core.Devices
                         }
                         else if(LogicalBlockSize == 8192)
                         {
-                            testSense = dev.ReadLong16(out _, out senseBuf, false, 0, 9424, timeout, out _);
+                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 9424, _timeout, out _);
 
                             if(!testSense &&
-                               !dev.Error)
+                               !_dev.Error)
                             {
-                                readLong16    = true;
+                                _readLong16   = true;
                                 LongBlockSize = 9424;
                                 CanReadRaw    = true;
                             }
                             else
                             {
-                                testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, timeout, out _);
+                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, _timeout,
+                                                            out _);
 
                                 if(!testSense &&
-                                   !dev.Error)
+                                   !_dev.Error)
                                 {
-                                    readLong10    = true;
+                                    _readLong10   = true;
                                     LongBlockSize = 9424;
                                     CanReadRaw    = true;
                                 }
@@ -303,9 +329,9 @@ namespace Aaru.Core.Devices
                         }
 
                     if(!CanReadRaw &&
-                       dev.Manufacturer == "SYQUEST")
+                       _dev.Manufacturer == "SYQUEST")
                     {
-                        testSense = dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, timeout, out _);
+                        testSense = _dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, _timeout, out _);
 
                         if(testSense)
                         {
@@ -323,14 +349,14 @@ namespace Aaru.Core.Devices
                                     {
                                         LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
 
-                                        syqReadLong10 =
-                                            !dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, timeout,
-                                                                   out _);
+                                        _syqReadLong10 =
+                                            !_dev.SyQuestReadLong10(out _, out senseBuf, 0, LongBlockSize, _timeout,
+                                                                    out _);
                                     }
                                 }
                                 else
                                 {
-                                    testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 0xFFFF, timeout, out _);
+                                    testSense = _dev.SyQuestReadLong6(out _, out senseBuf, 0, 0xFFFF, _timeout, out _);
 
                                     if(testSense)
                                     {
@@ -348,9 +374,9 @@ namespace Aaru.Core.Devices
                                                 {
                                                     LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
 
-                                                    syqReadLong6 =
-                                                        !dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
-                                                                              timeout, out _);
+                                                    _syqReadLong6 =
+                                                        !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
+                                                                               _timeout, out _);
                                                 }
                                             }
                                     }
@@ -360,12 +386,12 @@ namespace Aaru.Core.Devices
                         if(!CanReadRaw &&
                            LogicalBlockSize == 256)
                         {
-                            testSense = dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, timeout, out _);
+                            testSense = _dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, _timeout, out _);
 
                             if(!testSense &&
-                               !dev.Error)
+                               !_dev.Error)
                             {
-                                syqReadLong6  = true;
+                                _syqReadLong6 = true;
                                 LongBlockSize = 262;
                                 CanReadRaw    = true;
                             }
@@ -374,19 +400,19 @@ namespace Aaru.Core.Devices
                 }
                 else
                 {
-                    switch(dev.Manufacturer)
+                    switch(_dev.Manufacturer)
                     {
                         case "HL-DT-ST":
-                            hldtstReadRaw = !dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
+                            _hldtstReadRaw = !_dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
 
                             break;
                         case "PLEXTOR":
-                            plextorReadRaw = !dev.PlextorReadRawDvd(out _, out senseBuf, 0, 1, timeout, out _);
+                            _plextorReadRaw = !_dev.PlextorReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
 
                             break;
                     }
 
-                    if(hldtstReadRaw || plextorReadRaw)
+                    if(_hldtstReadRaw || _plextorReadRaw)
                     {
                         CanReadRaw    = true;
                         LongBlockSize = 2064;
@@ -394,14 +420,14 @@ namespace Aaru.Core.Devices
 
                     // READ LONG (10) for some DVD drives
                     if(!CanReadRaw &&
-                       dev.Manufacturer == "MATSHITA")
+                       _dev.Manufacturer == "MATSHITA")
                     {
-                        testSense = dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, timeout, out _);
+                        testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, _timeout, out _);
 
                         if(!testSense &&
-                           !dev.Error)
+                           !_dev.Error)
                         {
-                            readLongDvd   = true;
+                            _readLongDvd  = true;
                             LongBlockSize = 37856;
                             CanReadRaw    = true;
                         }
@@ -411,26 +437,26 @@ namespace Aaru.Core.Devices
 
             if(CanReadRaw)
             {
-                if(readLong16)
+                if(_readLong16)
                     AaruConsole.WriteLine("Using SCSI READ LONG (16) command.");
-                else if(readLong10 || readLongDvd)
+                else if(_readLong10 || _readLongDvd)
                     AaruConsole.WriteLine("Using SCSI READ LONG (10) command.");
-                else if(syqReadLong10)
+                else if(_syqReadLong10)
                     AaruConsole.WriteLine("Using SyQuest READ LONG (10) command.");
-                else if(syqReadLong6)
+                else if(_syqReadLong6)
                     AaruConsole.WriteLine("Using SyQuest READ LONG (6) command.");
-                else if(hldtstReadRaw)
+                else if(_hldtstReadRaw)
                     AaruConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
-                else if(plextorReadRaw)
+                else if(_plextorReadRaw)
                     AaruConsole.WriteLine("Using Plextor raw DVD reading.");
             }
-            else if(read16)
+            else if(_read16)
                 AaruConsole.WriteLine("Using SCSI READ (16) command.");
-            else if(read12)
+            else if(_read12)
                 AaruConsole.WriteLine("Using SCSI READ (12) command.");
-            else if(read10)
+            else if(_read10)
                 AaruConsole.WriteLine("Using SCSI READ (10) command.");
-            else if(read6)
+            else if(_read6)
                 AaruConsole.WriteLine("Using SCSI READ (6) command.");
 
             return false;
@@ -441,7 +467,7 @@ namespace Aaru.Core.Devices
             bool sense;
             Blocks = 0;
 
-            sense = dev.ReadCapacity(out byte[] cmdBuf, out byte[] senseBuf, timeout, out _);
+            sense = _dev.ReadCapacity(out byte[] cmdBuf, out byte[] senseBuf, _timeout, out _);
 
             if(!sense)
             {
@@ -451,10 +477,10 @@ namespace Aaru.Core.Devices
 
             if(sense || Blocks == 0xFFFFFFFF)
             {
-                sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, timeout, out _);
+                sense = _dev.ReadCapacity16(out cmdBuf, out senseBuf, _timeout, out _);
 
                 if(sense && Blocks == 0)
-                    if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+                    if(_dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         ErrorMessage = "Unable to get media capacity\n" + $"{Sense.PrettifySense(senseBuf)}";
 
@@ -484,48 +510,48 @@ namespace Aaru.Core.Devices
 
             while(true)
             {
-                if(read16)
+                if(_read16)
                 {
-                    dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
-                               timeout, out _);
+                    _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
+                                _timeout, out _);
 
-                    if(dev.Error)
+                    if(_dev.Error)
                         BlocksToRead /= 2;
                 }
-                else if(read12)
+                else if(_read12)
                 {
-                    dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
-                               timeout, out _);
+                    _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead,
+                                false, _timeout, out _);
 
-                    if(dev.Error)
+                    if(_dev.Error)
                         BlocksToRead /= 2;
                 }
-                else if(read10)
+                else if(_read10)
                 {
-                    dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0, (ushort)BlocksToRead,
-                               timeout, out _);
+                    _dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0,
+                                (ushort)BlocksToRead, _timeout, out _);
 
-                    if(dev.Error)
+                    if(_dev.Error)
                         BlocksToRead /= 2;
                 }
-                else if(read6)
+                else if(_read6)
                 {
-                    dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, timeout, out _);
+                    _dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, _timeout, out _);
 
-                    if(dev.Error)
+                    if(_dev.Error)
                         BlocksToRead /= 2;
                 }
 
-                if(!dev.Error ||
+                if(!_dev.Error ||
                    BlocksToRead == 1)
                     break;
             }
 
-            if(!dev.Error)
+            if(!_dev.Error)
                 return false;
 
             BlocksToRead = 1;
-            ErrorMessage = $"Device error {dev.LastError} trying to guess ideal transfer length.";
+            ErrorMessage = $"Device error {_dev.LastError} trying to guess ideal transfer length.";
 
             return true;
         }
@@ -538,46 +564,46 @@ namespace Aaru.Core.Devices
             duration = 0;
 
             if(CanReadRaw)
-                if(readLong16)
-                    sense = dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, timeout,
-                                           out duration);
-                else if(readLong10)
-                    sense = dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)LongBlockSize,
-                                           timeout, out duration);
-                else if(syqReadLong10)
-                    sense = dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, LongBlockSize, timeout,
+                if(_readLong16)
+                    sense = _dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, _timeout,
+                                            out duration);
+                else if(_readLong10)
+                    sense = _dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)LongBlockSize,
+                                            _timeout, out duration);
+                else if(_syqReadLong10)
+                    sense = _dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
+                                                   out duration);
+                else if(_syqReadLong6)
+                    sense = _dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                                   out duration);
-                else if(syqReadLong6)
-                    sense = dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, LongBlockSize, timeout,
-                                                 out duration);
-                else if(hldtstReadRaw)
-                    sense = dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, timeout,
-                                                 out duration);
-                else if(plextorReadRaw)
-                    sense = dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, timeout,
+                else if(_hldtstReadRaw)
+                    sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
                                                   out duration);
+                else if(_plextorReadRaw)
+                    sense = _dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
+                                                   out duration);
                 else
                     return true;
             else
             {
-                if(read16)
-                    sense = dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, LogicalBlockSize, 0,
-                                       count, false, timeout, out duration);
-                else if(read12)
-                    sense = dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
-                                       LogicalBlockSize, 0, count, false, timeout, out duration);
-                else if(read10)
-                    sense = dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block,
-                                       LogicalBlockSize, 0, (ushort)count, timeout, out duration);
-                else if(read6)
-                    sense = dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, timeout,
-                                      out duration);
+                if(_read16)
+                    sense = _dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, LogicalBlockSize, 0,
+                                        count, false, _timeout, out duration);
+                else if(_read12)
+                    sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
+                                        LogicalBlockSize, 0, count, false, _timeout, out duration);
+                else if(_read10)
+                    sense = _dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block,
+                                        LogicalBlockSize, 0, (ushort)count, _timeout, out duration);
+                else if(_read6)
+                    sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,
+                                       out duration);
                 else
                     return true;
             }
 
             if(!sense &&
-               !dev.Error)
+               !_dev.Error)
                 return false;
 
             AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
@@ -590,10 +616,10 @@ namespace Aaru.Core.Devices
             bool sense = true;
             duration = 0;
 
-            if(seek6)
-                sense = dev.Seek6(out _, (uint)block, timeout, out duration);
-            else if(seek10)
-                sense = dev.Seek10(out _, (uint)block, timeout, out duration);
+            if(_seek6)
+                sense = _dev.Seek6(out _, (uint)block, _timeout, out duration);
+            else if(_seek10)
+                sense = _dev.Seek10(out _, (uint)block, _timeout, out duration);
 
             return sense;
         }
