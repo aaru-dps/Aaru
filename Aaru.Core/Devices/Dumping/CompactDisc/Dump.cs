@@ -1019,7 +1019,6 @@ namespace Aaru.Core.Devices.Dumping
 
             end = DateTime.UtcNow;
             mhddLog.Close();
-            subLog?.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
@@ -1098,6 +1097,8 @@ namespace Aaru.Core.Devices.Dumping
             _outputPlugin.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
+
+            subLog?.Close();
 
             if(_aborted)
             {
