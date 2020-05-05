@@ -46,6 +46,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CD\Subchannel.cs" />
     <Compile Include="SCSI\Inquiry.cs" />
     <Compile Include="Floppy\Enums.cs" />
     <Compile Include="Floppy\System3740.cs" />
