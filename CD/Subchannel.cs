@@ -21,27 +21,37 @@ namespace Aaru.Decoders.CD
 
         public static void BinaryToBcdQ(byte[] q)
         {
-            q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
-            q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
-            q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
-            q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
-            q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
-            q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
-            q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
-            q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
+            if((q[0] & 0xF) == 1 ||
+               (q[0] & 0xF) == 5)
+            {
+                q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
+                q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
+                q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
+                q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
+                q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
+                q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
+                q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
+                q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
+            }
+
             q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
         }
 
         public static void BcdToBinaryQ(byte[] q)
         {
-            q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));
-            q[2] = (byte)(((q[2] / 16) * 10) + (q[2] & 0x0F));
-            q[3] = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
-            q[4] = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
-            q[5] = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
-            q[6] = (byte)(((q[6] / 16) * 10) + (q[6] & 0x0F));
-            q[7] = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
-            q[8] = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+            if((q[0] & 0xF) == 1 ||
+               (q[0] & 0xF) == 5)
+            {
+                q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));
+                q[2] = (byte)(((q[2] / 16) * 10) + (q[2] & 0x0F));
+                q[3] = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
+                q[4] = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
+                q[5] = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
+                q[6] = (byte)(((q[6] / 16) * 10) + (q[6] & 0x0F));
+                q[7] = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
+                q[8] = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+            }
+
             q[9] = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
         }
 
@@ -417,10 +427,13 @@ namespace Aaru.Decoders.CD
                 2 =>
                 $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} MCN: {subBuf[1]:X2}{subBuf[2]:X2}{subBuf[3]:X2}{subBuf[4]:X2}{subBuf[5]:X2}{subBuf[6]:X2}{subBuf[7] / 8:X} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
                 3 =>
-                $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {_isrcTable[subBuf[1] / 4]}{_isrcTable[((subBuf[1] & 3) * 16) + (subBuf[2] / 16)]}{_isrcTable[((subBuf[2] & 0xF) * 4) + (subBuf[3] / 64)]}{_isrcTable[subBuf[3] & 0x3F]}{_isrcTable[subBuf[4] / 4]}{subBuf[5]:X2}{subBuf[6]:X2}{subBuf[7]:X2}{subBuf[8] / 16:X2} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
+                $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q mode {adr} ISRC: {DecodeIsrc(subBuf)} frame {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}",
                 _ =>
                 $"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {(corruptedPause ? "corrupted pause" : pause ? "pause" : "not pause")}, {controlInfo}, {copy}, Q: {subBuf[0]:X2} {subBuf[1]:X2} {subBuf[2]:X2} {subBuf[3]:X2} {subBuf[4]:X2} {subBuf[5]:X2} {subBuf[6]:X2} {subBuf[7]:X2} {subBuf[8]:X2} {subBuf[9]:X2} CRC 0x{subBuf[10]:X2}{subBuf[11]:X2} ({(crcOk ? "OK" : "BAD")}), R-W {(rwEmpty ? "empty" : "not empty")}"
             };
         }
+
+        public static string DecodeIsrc(byte[] q) =>
+            $"{_isrcTable[q[1] / 4]}{_isrcTable[((q[1] & 3) * 16) + (q[2] / 16)]}{_isrcTable[((q[2] & 0xF) * 4) + (q[3] / 64)]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]:X2}{q[8] / 16:X1}";
     }
 }
