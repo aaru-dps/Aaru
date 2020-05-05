@@ -337,11 +337,11 @@ namespace Aaru.CommonTypes.Enums
         CanStorePregaps     = 0x04,
 
         // TODO: Implement
-        CanStoreIndexes  = 0x08, CanStoreSubchannelPq = 0x10, CanStoreSubchannelRw = 0x20,
-        CanStoreSessions = 0x40, CanStoreIsrc         = 0x80, CanStoreCdText       = 0x100,
-        CanStoreMcn      = 0x200, CanStoreRawData     = 0x400,
+        CanStoreIndexes = 0x08, CanStoreSubchannelRw = 0x10, CanStoreSessions = 0x20,
+        CanStoreIsrc    = 0x40, CanStoreCdText       = 0x80, CanStoreMcn      = 0x100,
+        CanStoreRawData = 0x200,
 
         // TODO: Implement
-        CanStoreScrambledData = 0x800, CanStoreCookedData = 0x1000, CanStoreMultipleTracks = 0x2000
+        CanStoreScrambledData = 0x400, CanStoreCookedData = 0x800, CanStoreMultipleTracks = 0x1000
     }
 }
