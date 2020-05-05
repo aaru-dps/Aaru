@@ -98,91 +98,93 @@ namespace Aaru.Decoders.CD
         {
             byte[] subBuf = new byte[subchannel.Length];
 
-            int pos = 0;
+            int outPos = 0;
 
-            while(pos < subBuf.Length)
+            for(int inPos = 0; inPos < subchannel.Length; inPos += 96)
             {
-                // P
-                subBuf[pos + 0] += (byte)(subchannel[pos + 0] & 0x80);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 0] & 0x40) << 1);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 0] & 0x20) << 2);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 0] & 0x10) << 3);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 0] & 0x08) << 4);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 0] & 0x04) << 5);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 0] & 0x02) << 6);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 0] & 0x01) << 7);
+                for(int i = 0; i < 12; i++)
+                {
+                    // P
+                    subBuf[outPos + 0] += (byte)(subchannel[inPos + i + 0] & 0x80);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 0] & 0x40) << 1);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 0] & 0x20) << 2);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 0] & 0x10) << 3);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 0] & 0x08) << 4);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 0] & 0x04) << 5);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 0] & 0x02) << 6);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 0] & 0x01) << 7);
 
-                // Q
-                subBuf[pos + 0] += (byte)((subchannel[pos + 1] & 0x80) >> 1);
-                subBuf[pos + 1] += (byte)(subchannel[pos + 1] & 0x40);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 1] & 0x20) << 1);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 1] & 0x10) << 2);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 1] & 0x08) << 3);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 1] & 0x04) << 4);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 1] & 0x02) << 5);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 1] & 0x01) << 6);
+                    // Q
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 12] & 0x80) >> 1);
+                    subBuf[outPos + 1] += (byte)(subchannel[inPos + i + 12] & 0x40);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 12] & 0x20) << 1);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 12] & 0x10) << 2);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 12] & 0x08) << 3);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 12] & 0x04) << 4);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 12] & 0x02) << 5);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 12] & 0x01) << 6);
 
-                // R
-                subBuf[pos + 0] += (byte)((subchannel[pos + 2] & 0x80) >> 2);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 2] & 0x40) >> 1);
-                subBuf[pos + 2] += (byte)(subchannel[pos + 2] & 0x20);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 2] & 0x10) << 1);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 2] & 0x08) << 2);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 2] & 0x04) << 3);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 2] & 0x02) << 4);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 2] & 0x01) << 5);
+                    // R
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 24] & 0x80) >> 2);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 24] & 0x40) >> 1);
+                    subBuf[outPos + 2] += (byte)(subchannel[inPos + i + 24] & 0x20);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 24] & 0x10) << 1);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 24] & 0x08) << 2);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 24] & 0x04) << 3);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 24] & 0x02) << 4);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 24] & 0x01) << 5);
 
-                // S
-                subBuf[pos + 0] += (byte)((subchannel[pos + 3] & 0x80) >> 3);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 3] & 0x40) >> 2);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 3] & 0x20) >> 1);
-                subBuf[pos + 3] += (byte)(subchannel[pos + 3] & 0x10);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 3] & 0x08) << 1);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 3] & 0x04) << 2);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 3] & 0x02) << 3);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 3] & 0x01) << 4);
+                    // S
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 36] & 0x80) >> 3);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 36] & 0x40) >> 2);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 36] & 0x20) >> 1);
+                    subBuf[outPos + 3] += (byte)(subchannel[inPos + i + 36] & 0x10);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 36] & 0x08) << 1);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 36] & 0x04) << 2);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 36] & 0x02) << 3);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 36] & 0x01) << 4);
 
-                // T
-                subBuf[pos + 0] += (byte)((subchannel[pos + 4] & 0x80) >> 4);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 4] & 0x40) >> 3);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 4] & 0x20) >> 2);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 4] & 0x10) >> 1);
-                subBuf[pos + 4] += (byte)(subchannel[pos + 4] & 0x08);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 4] & 0x04) << 1);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 4] & 0x02) << 2);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 4] & 0x01) << 3);
+                    // T
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 48] & 0x80) >> 4);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 48] & 0x40) >> 3);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 48] & 0x20) >> 2);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 48] & 0x10) >> 1);
+                    subBuf[outPos + 4] += (byte)(subchannel[inPos + i + 48] & 0x08);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 48] & 0x04) << 1);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 48] & 0x02) << 2);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 48] & 0x01) << 3);
 
-                // U
-                subBuf[pos + 0] += (byte)((subchannel[pos + 5] & 0x80) >> 5);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 5] & 0x40) >> 4);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 5] & 0x20) >> 3);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 5] & 0x10) >> 2);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 5] & 0x08) >> 1);
-                subBuf[pos + 5] += (byte)(subchannel[pos + 5] & 0x04);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 5] & 0x02) << 1);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 5] & 0x01) << 2);
+                    // U
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 60] & 0x80) >> 5);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 60] & 0x40) >> 4);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 60] & 0x20) >> 3);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 60] & 0x10) >> 2);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 60] & 0x08) >> 1);
+                    subBuf[outPos + 5] += (byte)(subchannel[inPos + i + 60] & 0x04);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 60] & 0x02) << 1);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 60] & 0x01) << 2);
 
-                // V
-                subBuf[pos + 0] += (byte)((subchannel[pos + 6] & 0x80) >> 6);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 6] & 0x40) >> 5);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 6] & 0x20) >> 4);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 6] & 0x10) >> 3);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 6] & 0x08) >> 2);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 6] & 0x04) >> 1);
-                subBuf[pos + 6] += (byte)(subchannel[pos + 6] & 0x02);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 6] & 0x01) << 1);
+                    // V
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 72] & 0x80) >> 6);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 72] & 0x40) >> 5);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 72] & 0x20) >> 4);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 72] & 0x10) >> 3);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 72] & 0x08) >> 2);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 72] & 0x04) >> 1);
+                    subBuf[outPos + 6] += (byte)(subchannel[inPos + i + 72] & 0x02);
+                    subBuf[outPos + 7] += (byte)((subchannel[inPos + i + 72] & 0x01) << 1);
 
-                // W
-                subBuf[pos + 0] += (byte)((subchannel[pos + 7] & 0x80) >> 7);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 7] & 0x40) >> 6);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 7] & 0x20) >> 5);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 7] & 0x10) >> 4);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 7] & 0x08) >> 3);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 7] & 0x04) >> 2);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 7] & 0x02) >> 1);
-                subBuf[pos + 7] += (byte)(subchannel[pos + 7] & 0x01);
-
-                pos += 8;
+                    // W
+                    subBuf[outPos + 0] += (byte)((subchannel[inPos + i + 84] & 0x80) >> 7);
+                    subBuf[outPos + 1] += (byte)((subchannel[inPos + i + 84] & 0x40) >> 6);
+                    subBuf[outPos + 2] += (byte)((subchannel[inPos + i + 84] & 0x20) >> 5);
+                    subBuf[outPos + 3] += (byte)((subchannel[inPos + i + 84] & 0x10) >> 4);
+                    subBuf[outPos + 4] += (byte)((subchannel[inPos + i + 84] & 0x08) >> 3);
+                    subBuf[outPos + 5] += (byte)((subchannel[inPos + i + 84] & 0x04) >> 2);
+                    subBuf[outPos + 6] += (byte)((subchannel[inPos + i + 84] & 0x02) >> 1);
+                    subBuf[outPos + 7] += (byte)(subchannel[inPos + i + 84] & 0x01);
+                    outPos             += 8;
+                }
             }
 
             return subBuf;
@@ -191,91 +193,94 @@ namespace Aaru.Decoders.CD
         public static byte[] Deinterleave(byte[] subchannel)
         {
             byte[] subBuf = new byte[subchannel.Length];
-            int    pos    = 0;
+            int    inPos  = 0;
 
-            while(pos < subchannel.Length)
+            for(int outPos = 0; outPos < subchannel.Length; outPos += 96)
             {
-                // P
-                subBuf[pos + 0] += (byte)((subchannel[pos + 0] & 0x80) >> 0);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 1] & 0x80) >> 1);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 2] & 0x80) >> 2);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 3] & 0x80) >> 3);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 4] & 0x80) >> 4);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 5] & 0x80) >> 5);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 6] & 0x80) >> 6);
-                subBuf[pos + 0] += (byte)((subchannel[pos + 7] & 0x80) >> 7);
+                for(int i = 0; i < 12; i++)
+                {
+                    // P
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 0] & 0x80) >> 0);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 1] & 0x80) >> 1);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 2] & 0x80) >> 2);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 3] & 0x80) >> 3);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 4] & 0x80) >> 4);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 5] & 0x80) >> 5);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 6] & 0x80) >> 6);
+                    subBuf[outPos + i + 0] += (byte)((subchannel[inPos + 7] & 0x80) >> 7);
 
-                // Q
-                subBuf[pos + 1] += (byte)((subchannel[pos + 0] & 0x40) >> 1);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 1] & 0x40) >> 0);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 2] & 0x40) >> 1);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 3] & 0x40) >> 2);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 4] & 0x40) >> 3);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 5] & 0x40) >> 4);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 6] & 0x40) >> 5);
-                subBuf[pos + 1] += (byte)((subchannel[pos + 7] & 0x40) >> 6);
+                    // Q
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 0] & 0x40) << 1);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 1] & 0x40) >> 0);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 2] & 0x40) >> 1);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 3] & 0x40) >> 2);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 4] & 0x40) >> 3);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 5] & 0x40) >> 4);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 6] & 0x40) >> 5);
+                    subBuf[outPos + i + 12] += (byte)((subchannel[inPos + 7] & 0x40) >> 6);
 
-                // R
-                subBuf[pos + 2] += (byte)((subchannel[pos + 0] & 0x20) >> 2);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 1] & 0x20) >> 1);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 2] & 0x20) >> 0);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 3] & 0x20) >> 1);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 4] & 0x20) >> 2);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 5] & 0x20) >> 3);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 6] & 0x20) >> 4);
-                subBuf[pos + 2] += (byte)((subchannel[pos + 7] & 0x20) >> 5);
+                    // R
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 0] & 0x20) << 2);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 1] & 0x20) << 1);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 2] & 0x20) >> 0);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 3] & 0x20) >> 1);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 4] & 0x20) >> 2);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 5] & 0x20) >> 3);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 6] & 0x20) >> 4);
+                    subBuf[outPos + i + 24] += (byte)((subchannel[inPos + 7] & 0x20) >> 5);
 
-                // S
-                subBuf[pos + 3] += (byte)((subchannel[pos + 0] & 0x10) >> 3);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 1] & 0x10) >> 2);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 2] & 0x10) >> 1);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 3] & 0x10) >> 0);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 4] & 0x10) >> 1);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 5] & 0x10) >> 2);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 6] & 0x10) >> 3);
-                subBuf[pos + 3] += (byte)((subchannel[pos + 7] & 0x10) >> 4);
+                    // S
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 0] & 0x10) << 3);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 1] & 0x10) << 2);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 2] & 0x10) << 1);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 3] & 0x10) >> 0);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 4] & 0x10) >> 1);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 5] & 0x10) >> 2);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 6] & 0x10) >> 3);
+                    subBuf[outPos + i + 36] += (byte)((subchannel[inPos + 7] & 0x10) >> 4);
 
-                // T
-                subBuf[pos + 4] += (byte)((subchannel[pos + 0] & 0x8) >> 4);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 1] & 0x8) >> 3);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 2] & 0x8) >> 2);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 3] & 0x8) >> 1);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 4] & 0x8) >> 0);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 5] & 0x8) >> 1);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 6] & 0x8) >> 2);
-                subBuf[pos + 4] += (byte)((subchannel[pos + 7] & 0x8) >> 3);
+                    // T
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 0] & 0x8) << 4);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 1] & 0x8) << 3);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 2] & 0x8) << 2);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 3] & 0x8) << 1);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 4] & 0x8) >> 0);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 5] & 0x8) >> 1);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 6] & 0x8) >> 2);
+                    subBuf[outPos + i + 48] += (byte)((subchannel[inPos + 7] & 0x8) >> 3);
 
-                // U
-                subBuf[pos + 5] += (byte)((subchannel[pos + 0] & 0x4) >> 5);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 1] & 0x4) >> 4);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 2] & 0x4) >> 3);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 3] & 0x4) >> 2);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 4] & 0x4) >> 1);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 5] & 0x4) >> 0);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 6] & 0x4) >> 1);
-                subBuf[pos + 5] += (byte)((subchannel[pos + 7] & 0x4) >> 2);
+                    // U
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 0] & 0x4) << 5);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 1] & 0x4) << 4);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 2] & 0x4) << 3);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 3] & 0x4) << 2);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 4] & 0x4) << 1);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 5] & 0x4) >> 0);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 6] & 0x4) >> 1);
+                    subBuf[outPos + i + 60] += (byte)((subchannel[inPos + 7] & 0x4) >> 2);
 
-                // V
-                subBuf[pos + 6] += (byte)((subchannel[pos + 0] & 0x2) >> 6);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 1] & 0x2) >> 5);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 2] & 0x2) >> 4);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 3] & 0x2) >> 3);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 4] & 0x2) >> 2);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 5] & 0x2) >> 1);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 6] & 0x2) >> 0);
-                subBuf[pos + 6] += (byte)((subchannel[pos + 7] & 0x2) >> 1);
+                    // V
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 0] & 0x2) << 6);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 1] & 0x2) << 5);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 2] & 0x2) << 4);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 3] & 0x2) << 3);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 4] & 0x2) << 2);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 5] & 0x2) << 1);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 6] & 0x2) >> 0);
+                    subBuf[outPos + i + 72] += (byte)((subchannel[inPos + 7] & 0x2) >> 1);
 
-                // W
-                subBuf[pos + 7] += (byte)((subchannel[pos + 0] & 0x1) >> 7);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 1] & 0x1) >> 6);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 2] & 0x1) >> 5);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 3] & 0x1) >> 4);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 4] & 0x1) >> 3);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 5] & 0x1) >> 2);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 6] & 0x1) >> 1);
-                subBuf[pos + 7] += (byte)((subchannel[pos + 7] & 0x1) >> 0);
+                    // W
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 0] & 0x1) << 7);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 1] & 0x1) << 6);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 2] & 0x1) << 5);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 3] & 0x1) << 4);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 4] & 0x1) << 3);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 5] & 0x1) << 2);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 6] & 0x1) << 1);
+                    subBuf[outPos + i + 84] += (byte)((subchannel[inPos + 7] & 0x1) >> 0);
 
-                pos += 8;
+                    inPos += 8;
+                }
             }
 
             return subBuf;
