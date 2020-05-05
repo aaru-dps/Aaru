@@ -6,6 +6,7 @@ namespace Aaru.Core.Logging
 {
     public class SubchannelLog
     {
+        const    int          _subSize = 96;
         readonly bool         _bcd;
         readonly StreamWriter _logSw;
 
@@ -35,9 +36,7 @@ namespace Aaru.Core.Logging
 
         public void WriteEntry(byte[] subchannel, bool raw, long startingLba, uint blocks)
         {
-            int subSize = raw ? 96 : 16;
-
-            if(subchannel.Length / subSize != blocks)
+            if(subchannel.Length / _subSize != blocks)
             {
                 _logSw.WriteLine("Data length is invalid!");
                 _logSw.Flush();
@@ -53,9 +52,6 @@ namespace Aaru.Core.Logging
             int[] u = new int[subchannel.Length / 8];
             int[] v = new int[subchannel.Length / 8];
             int[] w = new int[subchannel.Length / 8];
-
-            if(!raw)
-                subchannel = Subchannel.ConvertQToRaw(subchannel);
 
             for(int i = 0; i < subchannel.Length; i += 8)
             {
