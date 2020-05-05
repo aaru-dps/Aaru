@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.Core.Logging;
@@ -225,7 +226,7 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
                              bool read6, bool read10, bool read12, bool read16, bool readcd,
                              MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
-                             SubchannelLog subLog, MmcSubchannel desiredSubchannel)
+                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -307,6 +308,9 @@ namespace Aaru.Core.Devices.Dumping
                             }
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
+
+                            WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i, _maximumReadable,
+                                                   subLog, isrcs, 0xAA);
 
                             if(desiredSubchannel != MmcSubchannel.None)
                             {

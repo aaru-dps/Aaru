@@ -31,8 +31,11 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
@@ -50,7 +53,8 @@ namespace Aaru.Core.Devices.Dumping
                             ExtentsULong extents, bool newTrim, int offsetBytes, bool read6, bool read10, bool read12,
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                            SubchannelLog subLog, MmcSubchannel desiredSubchannel)
+                            SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
+                            Dictionary<byte, string> isrcs)
         {
             DateTime          start;
             DateTime          end;
@@ -109,6 +113,9 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 PulseProgress?.Invoke($"Trimming sector {badSector}");
+
+                Track track = tracks.OrderBy(t => t.TrackStartSector).
+                                     LastOrDefault(t => badSector >= t.TrackStartSector);
 
                 byte sectorsToTrim   = 1;
                 uint badSectorToRead = (uint)badSector;
@@ -179,6 +186,9 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
+
+                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog, isrcs,
+                                           (byte)track.TrackSequence);
 
                     if(desiredSubchannel != MmcSubchannel.None)
                     {

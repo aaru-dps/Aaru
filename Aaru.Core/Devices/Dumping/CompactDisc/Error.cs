@@ -32,12 +32,12 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes.Enums;
+using System.Linq;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
-using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -53,7 +53,7 @@ namespace Aaru.Core.Devices.Dumping
         void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
-                             MmcSubchannel desiredSubchannel)
+                             MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -207,6 +207,9 @@ namespace Aaru.Core.Devices.Dumping
                                                     forward ? "forward" : "reverse",
                                                     runningPersistent ? "recovering partial data, " : ""));
 
+                Track track = tracks.OrderBy(t => t.TrackStartSector).
+                                     LastOrDefault(t => badSector >= t.TrackStartSector);
+
                 byte sectorsToReRead   = 1;
                 uint badSectorToReRead = (uint)badSector;
 
@@ -281,15 +284,8 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
 
-                    if(desiredSubchannel != MmcSubchannel.None)
-                    {
-                        if(supportedSubchannel == MmcSubchannel.Q16)
-                            sub = Subchannel.ConvertQToRaw(sub);
-
-                        _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
-                    }
-
-                    subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
+                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog, isrcs,
+                                           (byte)track.TrackSequence);
                 }
                 else
                 {
@@ -364,6 +360,9 @@ namespace Aaru.Core.Devices.Dumping
 
                         PulseProgress?.Invoke($"Trying to get partial data for sector {badSector}");
 
+                        Track track = tracks.OrderBy(t => t.TrackStartSector).
+                                             LastOrDefault(t => badSector >= t.TrackStartSector);
+
                         if(readcd)
                         {
                             sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)badSector, blockSize, 1,
@@ -387,15 +386,8 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                             _outputPlugin.WriteSectorLong(data, badSector);
 
-                            if(desiredSubchannel != MmcSubchannel.None)
-                            {
-                                if(supportedSubchannel == MmcSubchannel.Q16)
-                                    sub = Subchannel.ConvertQToRaw(sub);
-
-                                _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
-                            }
-
-                            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
+                            WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog,
+                                                   isrcs, (byte)track.TrackSequence);
                         }
                         else
                         {

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -83,7 +84,8 @@ namespace Aaru.Core.Devices.Dumping
                         ref double minSpeed, out bool newTrim, bool nextData, int offsetBytes, bool read6, bool read10,
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                        Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel)
+                        Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
+                        Dictionary<byte, string> isrcs)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -385,15 +387,8 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
-                                if(desiredSubchannel != MmcSubchannel.None)
-                                {
-                                    if(supportedSubchannel == MmcSubchannel.Q16)
-                                        sub = Subchannel.ConvertQToRaw(sub);
-
-                                    _outputPlugin.WriteSectorsTag(sub, i + r, 1, SectorTagType.CdSectorSubchannel);
-                                }
-
-                                subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)(i + r), 1);
+                                WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1, subLog,
+                                                       isrcs, (byte)track.TrackSequence);
                             }
                             else
                             {
@@ -506,15 +501,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
-                        if(desiredSubchannel != MmcSubchannel.None)
-                        {
-                            if(supportedSubchannel == MmcSubchannel.Q16)
-                                sub = Subchannel.ConvertQToRaw(sub);
-
-                            _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
-                        }
-
-                        subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i, blocksToRead);
+                        WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i, blocksToRead, subLog,
+                                               isrcs, (byte)track.TrackSequence);
                     }
                     else
                     {

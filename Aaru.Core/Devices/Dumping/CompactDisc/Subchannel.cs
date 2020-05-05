@@ -30,7 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Collections.Generic;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -59,6 +64,61 @@ namespace Aaru.Core.Devices.Dumping
             return !dev.ReadCd(out _, out _, 0, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
                                dev.Timeout, out _);
+        }
+
+        void WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel, byte[] sub,
+                                    ulong sectorAddress, uint length, SubchannelLog subLog,
+                                    Dictionary<byte, string> isrcs, byte currentTrack)
+        {
+            if(supportedSubchannel == MmcSubchannel.Q16)
+                sub = Subchannel.ConvertQToRaw(sub);
+
+            if(desiredSubchannel != MmcSubchannel.None)
+                _outputPlugin.WriteSectorsTag(sub, sectorAddress, 1, SectorTagType.CdSectorSubchannel);
+
+            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, 1);
+
+            byte[] deSub = Subchannel.Deinterleave(sub);
+
+            // Check subchannel
+            for(int subPos = 0; subPos < deSub.Length; subPos += 96)
+            {
+                // ISRC
+                if((deSub[subPos + 12] & 0x3) == 3)
+                {
+                    byte[] q = new byte[12];
+                    Array.Copy(deSub, subPos + 12, q, 0, 12);
+                    string isrc = Subchannel.DecodeIsrc(q);
+
+                    if(isrc == null ||
+                       isrc == "000000000000")
+                        continue;
+
+                    if(!isrcs.ContainsKey(currentTrack))
+                    {
+                        _dumpLog?.WriteLine($"Found new ISRC {isrc} for track {currentTrack}.");
+                        UpdateStatus?.Invoke($"Found new ISRC {isrc} for track {currentTrack}.");
+                    }
+                    else if(isrcs[currentTrack] != isrc)
+                    {
+                        CRC16CCITTContext.Data(q, 10, out byte[] crc);
+
+                        if(crc[0] != q[10] ||
+                           crc[1] != q[11])
+                        {
+                            continue;
+                        }
+
+                        _dumpLog?.
+                            WriteLine($"ISRC for track {currentTrack} changed from {isrcs[currentTrack]} to {isrc}.");
+
+                        UpdateStatus?.
+                            Invoke($"ISRC for track {currentTrack} changed from {isrcs[currentTrack]} to {isrc}.");
+                    }
+
+                    isrcs[currentTrack] = isrc;
+                }
+            }
         }
     }
 }
