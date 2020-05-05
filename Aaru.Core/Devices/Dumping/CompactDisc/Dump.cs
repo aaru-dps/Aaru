@@ -112,6 +112,7 @@ namespace Aaru.Core.Devices.Dumping
             bool                   hiddenTrack; // Disc has a hidden track before track 1
             MmcSubchannel          supportedSubchannel; // Drive's maximum supported subchannel
             MmcSubchannel          desiredSubchannel; // User requested subchannel
+            bool                   bcdSubchannel = false; // Subchannel positioning is in BCD
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -331,6 +332,41 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             blockSize = sectorSize + subSize;
+
+            // Check if subchannel is BCD
+            if(supportedSubchannel != MmcSubchannel.None)
+            {
+                sense = _dev.ReadCd(out cmdBuf, out _, 0, blockSize, 35, MmcSectorTypes.AllTypes, false, false, true,
+                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
+                                    _dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    tmpBuf = new byte[subSize];
+                    Array.Copy(cmdBuf, sectorSize, tmpBuf, 0, subSize);
+
+                    if(supportedSubchannel == MmcSubchannel.Q16)
+                        tmpBuf = Subchannel.ConvertQToRaw(tmpBuf);
+
+                    tmpBuf = Subchannel.Deinterleave(tmpBuf);
+
+                    // 9th Q subchannel is always FRAME when in user data area
+                    // LBA 35 => MSF 00:02:35 => FRAME 35 (in hexadecimal 0x23)
+                    // Sometimes drive returns a pregap here but MSF 00:02:3x => FRAME 3x (hexadecimal 0x20 to 0x27)
+                    bcdSubchannel = (tmpBuf[21] & 0x30) > 0;
+
+                    if(bcdSubchannel)
+                    {
+                        _dumpLog.WriteLine("Drive returns subchannel in BCD...");
+                        UpdateStatus?.Invoke("Drive returns subchannel in BCD...");
+                    }
+                    else
+                    {
+                        _dumpLog.WriteLine("Drive does not returns subchannel in BCD...");
+                        UpdateStatus?.Invoke("Drive does not returns subchannel in BCD...");
+                    }
+                }
+            }
 
             tracks = GetCdTracks(ref blockSize, _dev, dskType, _dumpLog, _force, out lastSector, leadOutStarts,
                                  mediaTags, StoppingErrorMessage, subType, out toc, trackFlags, UpdateStatus);
@@ -764,7 +800,7 @@ namespace Aaru.Core.Devices.Dumping
             if(supportedSubchannel != MmcSubchannel.None)
             {
                 _dumpLog.WriteLine($"Creating subchannel log in {_outputPrefix + ".sub.log"}");
-                subLog = new SubchannelLog(_outputPrefix + ".sub.log");
+                subLog = new SubchannelLog(_outputPrefix + ".sub.log", bcdSubchannel);
             }
 
             // Set track flags

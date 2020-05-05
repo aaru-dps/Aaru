@@ -6,15 +6,17 @@ namespace Aaru.Core.Logging
 {
     public class SubchannelLog
     {
+        readonly bool         _bcd;
         readonly StreamWriter _logSw;
-        bool?                 _bcd;
 
         /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
-        public SubchannelLog(string outputFile)
+        public SubchannelLog(string outputFile, bool bcd)
         {
             if(string.IsNullOrEmpty(outputFile))
                 return;
+
+            _bcd = bcd;
 
             _logSw = new StreamWriter(outputFile, true);
 
@@ -130,17 +132,6 @@ namespace Aaru.Core.Logging
                 w[i / 8] += subchannel[i + 7] & 0x01;
             }
 
-            if(_bcd is null)
-            {
-                _bcd = (q[9] & 0x10) > 0;
-
-                _logSw.WriteLine(_bcd switch
-                {
-                    true  => "Subchannel is BCD",
-                    false => "Subchannel is not BCD"
-                });
-            }
-
             for(uint block = 0; block < blocks; block++)
             {
                 bool rwEmpty = true;
@@ -192,7 +183,7 @@ namespace Aaru.Core.Logging
                 subBuf[10] = (byte)q[10 + (block * 12)];
                 subBuf[11] = (byte)q[11 + (block * 12)];
 
-                _logSw.WriteLine(Subchannel.PrettifyQ(subBuf, _bcd == true, startingLba + block, corruptedPause, pause,
+                _logSw.WriteLine(Subchannel.PrettifyQ(subBuf, _bcd, startingLba + block, corruptedPause, pause,
                                                       rwEmpty));
             }
 
