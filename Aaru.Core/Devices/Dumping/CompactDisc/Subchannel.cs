@@ -74,9 +74,9 @@ namespace Aaru.Core.Devices.Dumping
                 sub = Subchannel.ConvertQToRaw(sub);
 
             if(desiredSubchannel != MmcSubchannel.None)
-                _outputPlugin.WriteSectorsTag(sub, sectorAddress, 1, SectorTagType.CdSectorSubchannel);
+                _outputPlugin.WriteSectorsTag(sub, sectorAddress, length, SectorTagType.CdSectorSubchannel);
 
-            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, 1);
+            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, length);
 
             byte[] deSub = Subchannel.Deinterleave(sub);
 
