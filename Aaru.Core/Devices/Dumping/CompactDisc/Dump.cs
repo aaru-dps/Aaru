@@ -755,7 +755,9 @@ namespace Aaru.Core.Devices.Dumping
                 tmpBuf = new byte[subSize];
                 Array.Copy(cmdBuf, sectorSize, tmpBuf, 0, subSize);
 
-                // TODO: Convert Q16 to RAW
+                if(supportedSubchannel == MmcSubchannel.Q16)
+                    tmpBuf = Subchannel.ConvertQToRaw(tmpBuf);
+
                 ret = _outputPlugin.WriteSectorTag(tmpBuf, 0, SectorTagType.CdSectorSubchannel);
 
                 if(!ret)

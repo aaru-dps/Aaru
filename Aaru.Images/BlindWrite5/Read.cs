@@ -1670,6 +1670,10 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
+            if(tag              == SectorTagType.CdSectorSubchannel &&
+               chars.Subchannel == TrackSubchannelType.Q16Interleaved)
+                return Subchannel.ConvertQToRaw(buffer);
+
             return buffer;
         }
 

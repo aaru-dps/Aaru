@@ -34,6 +34,7 @@ using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Schemas;
 
@@ -307,10 +308,14 @@ namespace Aaru.Core.Devices.Dumping
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
 
-                            // TODO: Convert Q16 to RAW
                             if(desiredSubchannel != MmcSubchannel.None)
+                            {
+                                if(supportedSubchannel == MmcSubchannel.Q16)
+                                    sub = Subchannel.ConvertQToRaw(sub);
+
                                 _outputPlugin.WriteSectorsTag(sub, i, _maximumReadable,
                                                               SectorTagType.CdSectorSubchannel);
+                            }
 
                             subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i,
                                                _maximumReadable);

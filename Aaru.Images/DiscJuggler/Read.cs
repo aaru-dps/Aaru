@@ -535,8 +535,7 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = track.TrackDescription, Size = (ulong)(trackLen * track.TrackBytesPerSector),
-                        Length      = trackLen, Sequence           = track.TrackSequence,
-                        Offset      = track.TrackFileOffset,
+                        Length      = trackLen, Sequence = track.TrackSequence, Offset = track.TrackFileOffset,
                         Start       = track.TrackStartSector, Type = track.TrackType.ToString()
                     };
 
@@ -705,10 +704,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress <
-                                                           track.TrackEndSector select kvp)
+                                                     where sectorAddress < track.TrackEndSector select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -720,8 +718,7 @@ namespace Aaru.DiscImages
                                                      Where(kvp => sectorAddress >= kvp.Value).
                                                      Where(kvp => Tracks.
                                                                   Where(track => track.TrackSequence == kvp.Key).
-                                                                  Any(track => sectorAddress <
-                                                                               track.TrackEndSector)))
+                                                                  Any(track => sectorAddress < track.TrackEndSector)))
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -959,11 +956,17 @@ namespace Aaru.DiscImages
                                     throw new ArgumentException("Unsupported tag requested for this track",
                                                                 nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved:
-                                    throw new ArgumentException("Q16 subchannel not yet supported");
+
+                                    sectorSize = 16;
+
+                                    break;
+                                default:
+                                    sectorSize = 96;
+
+                                    break;
                             }
 
                             sectorOffset = 2352;
-                            sectorSize   = 96;
                             sectorSkip   = 0;
 
                             break;
@@ -1007,11 +1010,16 @@ namespace Aaru.DiscImages
                                     throw new ArgumentException("Unsupported tag requested for this track",
                                                                 nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved:
-                                    throw new ArgumentException("Q16 subchannel not yet supported");
+                                    sectorSize = 16;
+
+                                    break;
+                                default:
+                                    sectorSize = 96;
+
+                                    break;
                             }
 
                             sectorOffset = 2352;
-                            sectorSize   = 96;
                             sectorSkip   = 0;
 
                             break;
@@ -1031,11 +1039,16 @@ namespace Aaru.DiscImages
                                     throw new ArgumentException("Unsupported tag requested for this track",
                                                                 nameof(tag));
                                 case TrackSubchannelType.Q16Interleaved:
-                                    throw new ArgumentException("Q16 subchannel not yet supported");
+                                    sectorSize = 16;
+
+                                    break;
+                                default:
+                                    sectorSize = 96;
+
+                                    break;
                             }
 
                             sectorOffset = 2352;
-                            sectorSize   = 96;
                             sectorSkip   = 0;
 
                             break;
@@ -1082,6 +1095,10 @@ namespace Aaru.DiscImages
                     imageStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
+
+            if(aaruTrack.TrackSubchannelType == TrackSubchannelType.Q16Interleaved &&
+               tag                           == SectorTagType.CdSectorSubchannel)
+                return Subchannel.ConvertQToRaw(buffer);
 
             return buffer;
         }

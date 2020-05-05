@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -280,9 +281,13 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
 
-                    // TODO: Convert Q16 to RAW
                     if(desiredSubchannel != MmcSubchannel.None)
+                    {
+                        if(supportedSubchannel == MmcSubchannel.Q16)
+                            sub = Subchannel.ConvertQToRaw(sub);
+
                         _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+                    }
 
                     subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                 }
@@ -382,9 +387,13 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                             _outputPlugin.WriteSectorLong(data, badSector);
 
-                            // TODO: Convert Q16 to RAW
                             if(desiredSubchannel != MmcSubchannel.None)
+                            {
+                                if(supportedSubchannel == MmcSubchannel.Q16)
+                                    sub = Subchannel.ConvertQToRaw(sub);
+
                                 _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+                            }
 
                             subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                         }

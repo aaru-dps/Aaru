@@ -385,9 +385,13 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
-                                // TODO: Convert Q16 to RAW
                                 if(desiredSubchannel != MmcSubchannel.None)
+                                {
+                                    if(supportedSubchannel == MmcSubchannel.Q16)
+                                        sub = Subchannel.ConvertQToRaw(sub);
+
                                     _outputPlugin.WriteSectorsTag(sub, i + r, 1, SectorTagType.CdSectorSubchannel);
+                                }
 
                                 subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)(i + r), 1);
                             }
@@ -502,9 +506,13 @@ namespace Aaru.Core.Devices.Dumping
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
-                        // TODO: Convert Q16 to RAW
                         if(desiredSubchannel != MmcSubchannel.None)
+                        {
+                            if(supportedSubchannel == MmcSubchannel.Q16)
+                                sub = Subchannel.ConvertQToRaw(sub);
+
                             _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+                        }
 
                         subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i, blocksToRead);
                     }
