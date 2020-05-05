@@ -64,54 +64,54 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Dumps a compact disc</summary>
         void CompactDisc()
         {
-            ExtentsULong           audioExtents;                                 // Extents with audio sectors
-            ulong                  blocks;                                       // Total number of positive sectors
-            uint                   blockSize;                                    // Size of the read sector in bytes
-            CdOffset               cdOffset;                                     // Read offset from database
-            byte[]                 cmdBuf;                                       // Data buffer
-            DumpHardwareType       currentTry   = null;                          // Current dump hardware try
-            double                 currentSpeed = 0;                             // Current read speed
-            int?                   discOffset   = null;                          // Disc write offset
-            DateTime               dumpStart    = DateTime.UtcNow;               // Time of dump start
-            DateTime               end;                                          // Time of operation end
-            ExtentsULong           extents = null;                               // Extents
-            bool                   hiddenData;                                   // Hidden track is data
-            IbgLog                 ibgLog;                                       // IMGBurn log
-            double                 imageWriteDuration = 0;                       // Duration of image write
-            long                   lastSector;                                   // Last sector number
-            var                    leadOutExtents = new ExtentsULong();          // Lead-out extents
+            ExtentsULong           audioExtents; // Extents with audio sectors
+            ulong                  blocks; // Total number of positive sectors
+            uint                   blockSize; // Size of the read sector in bytes
+            CdOffset               cdOffset; // Read offset from database
+            byte[]                 cmdBuf; // Data buffer
+            DumpHardwareType       currentTry   = null; // Current dump hardware try
+            double                 currentSpeed = 0; // Current read speed
+            int?                   discOffset   = null; // Disc write offset
+            DateTime               dumpStart    = DateTime.UtcNow; // Time of dump start
+            DateTime               end; // Time of operation end
+            ExtentsULong           extents = null; // Extents
+            bool                   hiddenData; // Hidden track is data
+            IbgLog                 ibgLog; // IMGBurn log
+            double                 imageWriteDuration = 0; // Duration of image write
+            long                   lastSector; // Last sector number
+            var                    leadOutExtents = new ExtentsULong(); // Lead-out extents
             Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>(); // Lead-out starts
-            double                 maxSpeed       = double.MinValue;             // Maximum speed
-            MhddLog                mhddLog;                                      // MHDD log
-            double                 minSpeed = double.MaxValue;                   // Minimum speed
-            bool                   newTrim;                                      // Is trim a new one?
-            int                    offsetBytes = 0;                              // Read offset
-            bool                   read6       = false;                          // Device supports READ(6)
-            bool                   read10      = false;                          // Device supports READ(10)
-            bool                   read12      = false;                          // Device supports READ(12)
-            bool                   read16      = false;                          // Device supports READ(16)
-            bool                   readcd;                                       // Device supports READ CD
-            bool                   ret;                                          // Image writing return status
-            const uint             sectorSize       = 2352;                      // Full sector size
-            int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
-            bool                   sense            = true;                      // Sense indicator
-            int                    sessions;                                     // Number of sessions in disc
-            DateTime               start;                                        // Start of operation
-            SubchannelLog          subLog = null;                                // Subchannel log
-            uint                   subSize;                                      // Subchannel size in bytes
-            TrackSubchannelType    subType;                                      // Track subchannel type
-            bool                   supportsLongSectors = true;                   // Supports reading EDC and ECC
-            bool                   supportsPqSubchannel;                         // Supports reading PQ subchannel
-            bool                   supportsRwSubchannel;                         // Supports reading RW subchannel
-            byte[]                 tmpBuf;                                       // Temporary buffer
-            FullTOC.CDFullTOC?     toc;                                          // Full CD TOC
-            double                 totalDuration = 0;                            // Total commands duration
+            double                 maxSpeed       = double.MinValue; // Maximum speed
+            MhddLog                mhddLog; // MHDD log
+            double                 minSpeed = double.MaxValue; // Minimum speed
+            bool                   newTrim; // Is trim a new one?
+            int                    offsetBytes = 0; // Read offset
+            bool                   read6       = false; // Device supports READ(6)
+            bool                   read10      = false; // Device supports READ(10)
+            bool                   read12      = false; // Device supports READ(12)
+            bool                   read16      = false; // Device supports READ(16)
+            bool                   readcd; // Device supports READ CD
+            bool                   ret; // Image writing return status
+            const uint             sectorSize       = 2352; // Full sector size
+            int                    sectorsForOffset = 0; // Sectors needed to fix offset
+            bool                   sense            = true; // Sense indicator
+            int                    sessions; // Number of sessions in disc
+            DateTime               start; // Start of operation
+            SubchannelLog          subLog = null; // Subchannel log
+            uint                   subSize; // Subchannel size in bytes
+            TrackSubchannelType    subType; // Track subchannel type
+            bool                   supportsLongSectors = true; // Supports reading EDC and ECC
+            bool                   supportsPqSubchannel; // Supports reading PQ subchannel
+            bool                   supportsRwSubchannel; // Supports reading RW subchannel
+            byte[]                 tmpBuf; // Temporary buffer
+            FullTOC.CDFullTOC?     toc; // Full CD TOC
+            double                 totalDuration = 0; // Total commands duration
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>(); // Track flags
-            Track[]                tracks;                                       // Tracks in disc
-
-            int           firstTrackLastSession; // Number of first track in last session
-            bool          hiddenTrack;           // Disc has a hidden track before track 1
-            MmcSubchannel supportedSubchannel;   // Drive's maximum supported subchannel
+            Track[]                tracks; // Tracks in disc
+            int                    firstTrackLastSession; // Number of first track in last session
+            bool                   hiddenTrack; // Disc has a hidden track before track 1
+            MmcSubchannel          supportedSubchannel; // Drive's maximum supported subchannel
+            MmcSubchannel          desiredSubchannel; // User requested subchannel
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -129,20 +129,27 @@ namespace Aaru.Core.Devices.Dumping
             supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus);
             supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus);
 
+            if(supportsRwSubchannel)
+                supportedSubchannel = MmcSubchannel.Raw;
+            else if(supportsPqSubchannel)
+                supportedSubchannel = MmcSubchannel.Q16;
+            else
+                supportedSubchannel = MmcSubchannel.None;
+
             switch(_subchannel)
             {
                 case DumpSubchannel.Any:
                     if(supportsRwSubchannel)
-                        supportedSubchannel = MmcSubchannel.Raw;
+                        desiredSubchannel = MmcSubchannel.Raw;
                     else if(supportsPqSubchannel)
-                        supportedSubchannel = MmcSubchannel.Q16;
+                        desiredSubchannel = MmcSubchannel.Q16;
                     else
-                        supportedSubchannel = MmcSubchannel.None;
+                        desiredSubchannel = MmcSubchannel.None;
 
                     break;
                 case DumpSubchannel.Rw:
                     if(supportsRwSubchannel)
-                        supportedSubchannel = MmcSubchannel.Raw;
+                        desiredSubchannel = MmcSubchannel.Raw;
                     else
                     {
                         _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
@@ -156,9 +163,9 @@ namespace Aaru.Core.Devices.Dumping
                     break;
                 case DumpSubchannel.RwOrPq:
                     if(supportsRwSubchannel)
-                        supportedSubchannel = MmcSubchannel.Raw;
+                        desiredSubchannel = MmcSubchannel.Raw;
                     else if(supportsPqSubchannel)
-                        supportedSubchannel = MmcSubchannel.Q16;
+                        desiredSubchannel = MmcSubchannel.Q16;
                     else
                     {
                         _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
@@ -172,7 +179,7 @@ namespace Aaru.Core.Devices.Dumping
                     break;
                 case DumpSubchannel.Pq:
                     if(supportsPqSubchannel)
-                        supportedSubchannel = MmcSubchannel.Q16;
+                        desiredSubchannel = MmcSubchannel.Q16;
                     else
                     {
                         _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
@@ -185,15 +192,18 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case DumpSubchannel.None:
-                    supportedSubchannel = MmcSubchannel.None;
+                    desiredSubchannel = MmcSubchannel.None;
 
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
+            if(desiredSubchannel == MmcSubchannel.Q16 && supportsPqSubchannel)
+                supportedSubchannel = MmcSubchannel.Q16;
+
             // Check if output format supports subchannels
             if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-               supportedSubchannel != MmcSubchannel.None)
+               desiredSubchannel != MmcSubchannel.None)
             {
                 if(_force || _subchannel == DumpSubchannel.None)
                 {
@@ -208,7 +218,7 @@ namespace Aaru.Core.Devices.Dumping
                     return;
                 }
 
-                supportedSubchannel = MmcSubchannel.None;
+                desiredSubchannel = MmcSubchannel.None;
             }
 
             switch(supportedSubchannel)
@@ -460,7 +470,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(tracks.Any(t => t.TrackType == TrackType.Audio) &&
-               supportedSubchannel != MmcSubchannel.Raw)
+               desiredSubchannel != MmcSubchannel.Raw)
             {
                 _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
 
@@ -723,7 +733,7 @@ namespace Aaru.Core.Devices.Dumping
             ret = (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
 
             if(!ret &&
-               supportedSubchannel == MmcSubchannel.None)
+               desiredSubchannel == MmcSubchannel.None)
             {
                 _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
                 _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
@@ -735,7 +745,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // If a subchannel is supported, check if output plugin allows us to write it.
-            if(supportedSubchannel != MmcSubchannel.None)
+            // TODO: Use image characteristics
+            if(desiredSubchannel != MmcSubchannel.None)
             {
                 _dev.ReadCd(out cmdBuf, out _, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
                             MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
@@ -744,6 +755,7 @@ namespace Aaru.Core.Devices.Dumping
                 tmpBuf = new byte[subSize];
                 Array.Copy(cmdBuf, sectorSize, tmpBuf, 0, subSize);
 
+                // TODO: Convert Q16 to RAW
                 ret = _outputPlugin.WriteSectorTag(tmpBuf, 0, SectorTagType.CdSectorSubchannel);
 
                 if(!ret)
@@ -766,9 +778,9 @@ namespace Aaru.Core.Devices.Dumping
                         return;
                     }
 
-                    supportedSubchannel = MmcSubchannel.None;
-                    subSize             = 0;
-                    blockSize           = sectorSize + subSize;
+                    desiredSubchannel = MmcSubchannel.None;
+                    subSize           = 0;
+                    blockSize         = sectorSize + subSize;
 
                     for(int t = 0; t < tracks.Length; t++)
                         tracks[t].TrackSubchannelType = TrackSubchannelType.None;
@@ -812,6 +824,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Set MCN
+            // TODO: Use subchannels
             sense = _dev.ReadMcn(out string mcn, out _, out _, _dev.Timeout, out _);
 
             if(!sense                 &&
@@ -824,6 +837,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Set ISRCs
+            // TODO: Use subchannels
             foreach(Track trk in tracks)
             {
                 sense = _dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, _dev.Timeout, out _);
@@ -1008,13 +1022,13 @@ namespace Aaru.Core.Devices.Dumping
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
-                       tracks, subLog);
+                       tracks, subLog, desiredSubchannel);
 
             // TODO: Enable when underlying images support lead-outs
             /*
             DumpCdLeadOuts(blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                            leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                           supportedSubchannel, subSize, ref totalDuration, subLog);
+                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel);
             */
 
             end = DateTime.UtcNow;
@@ -1041,10 +1055,10 @@ namespace Aaru.Core.Devices.Dumping
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
-                           ref totalDuration, subLog);
+                           ref totalDuration, subLog, desiredSubchannel);
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
-                            subSize, supportedSubchannel, ref totalDuration, subLog);
+                            subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel);
 
             // Write media tags to image
             if(!_aborted)

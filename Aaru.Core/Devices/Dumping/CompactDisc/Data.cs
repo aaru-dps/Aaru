@@ -83,7 +83,7 @@ namespace Aaru.Core.Devices.Dumping
                         ref double minSpeed, out bool newTrim, bool nextData, int offsetBytes, bool read6, bool read10,
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                        Track[] tracks, SubchannelLog subLog)
+                        Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -384,7 +384,11 @@ namespace Aaru.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
-                                _outputPlugin.WriteSectorsTag(sub, i   + r, 1, SectorTagType.CdSectorSubchannel);
+
+                                // TODO: Convert Q16 to RAW
+                                if(desiredSubchannel != MmcSubchannel.None)
+                                    _outputPlugin.WriteSectorsTag(sub, i + r, 1, SectorTagType.CdSectorSubchannel);
+
                                 subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)(i + r), 1);
                             }
                             else
@@ -421,8 +425,9 @@ namespace Aaru.Core.Devices.Dumping
                             {
                                 _outputPlugin.WriteSectorsLong(new byte[sectorSize], i + r, 1);
 
-                                _outputPlugin.WriteSectorsTag(new byte[subSize], i + r, 1,
-                                                              SectorTagType.CdSectorSubchannel);
+                                if(desiredSubchannel != MmcSubchannel.None)
+                                    _outputPlugin.WriteSectorsTag(new byte[subSize], i + r, 1,
+                                                                  SectorTagType.CdSectorSubchannel);
                             }
                             else
                             {
@@ -496,7 +501,11 @@ namespace Aaru.Core.Devices.Dumping
                         }
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
-                        _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+
+                        // TODO: Convert Q16 to RAW
+                        if(desiredSubchannel != MmcSubchannel.None)
+                            _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
+
                         subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i, blocksToRead);
                     }
                     else
@@ -549,8 +558,9 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, _skip);
 
-                        _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, _skip,
-                                                      SectorTagType.CdSectorSubchannel);
+                        if(desiredSubchannel != MmcSubchannel.None)
+                            _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, _skip,
+                                                          SectorTagType.CdSectorSubchannel);
                     }
                     else
                     {

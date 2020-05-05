@@ -49,7 +49,7 @@ namespace Aaru.Core.Devices.Dumping
                             ExtentsULong extents, bool newTrim, int offsetBytes, bool read6, bool read10, bool read12,
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
-                            SubchannelLog subLog)
+                            SubchannelLog subLog, MmcSubchannel desiredSubchannel)
         {
             DateTime          start;
             DateTime          end;
@@ -178,7 +178,11 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
-                    _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
+                    // TODO: Convert Q16 to RAW
+                    if(desiredSubchannel != MmcSubchannel.None)
+                        _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
                     subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                 }
                 else

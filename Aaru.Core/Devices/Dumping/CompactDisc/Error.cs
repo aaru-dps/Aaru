@@ -51,7 +51,8 @@ namespace Aaru.Core.Devices.Dumping
     {
         void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
-                             MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog)
+                             MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
+                             MmcSubchannel desiredSubchannel)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -278,7 +279,11 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
-                    _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
+                    // TODO: Convert Q16 to RAW
+                    if(desiredSubchannel != MmcSubchannel.None)
+                        _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
                     subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                 }
                 else
@@ -376,7 +381,11 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                             _outputPlugin.WriteSectorLong(data, badSector);
-                            _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
+                            // TODO: Convert Q16 to RAW
+                            if(desiredSubchannel != MmcSubchannel.None)
+                                _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
+
                             subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
                         }
                         else

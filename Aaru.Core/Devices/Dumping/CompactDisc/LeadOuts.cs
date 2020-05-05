@@ -224,7 +224,7 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
                              bool read6, bool read10, bool read12, bool read16, bool readcd,
                              MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
-                             SubchannelLog subLog)
+                             SubchannelLog subLog, MmcSubchannel desiredSubchannel)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -306,7 +306,11 @@ namespace Aaru.Core.Devices.Dumping
                             }
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
-                            _outputPlugin.WriteSectorsTag(sub, i, _maximumReadable, SectorTagType.CdSectorSubchannel);
+
+                            // TODO: Convert Q16 to RAW
+                            if(desiredSubchannel != MmcSubchannel.None)
+                                _outputPlugin.WriteSectorsTag(sub, i, _maximumReadable,
+                                                              SectorTagType.CdSectorSubchannel);
 
                             subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)i,
                                                _maximumReadable);
@@ -329,8 +333,9 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
-                            _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, 1,
-                                                          SectorTagType.CdSectorSubchannel);
+                            if(desiredSubchannel != MmcSubchannel.None)
+                                _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                                                              SectorTagType.CdSectorSubchannel);
                         }
                         else
                             _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, 1);
