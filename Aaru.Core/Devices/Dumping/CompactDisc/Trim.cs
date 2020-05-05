@@ -33,11 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
-using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Schemas;
 
@@ -101,8 +100,10 @@ namespace Aaru.Core.Devices.Dumping
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
             InitProgress?.Invoke();
 
-            foreach(ulong badSector in tmpArray)
+            for(int b = 0; b < tmpArray.Length; b++)
             {
+                ulong badSector = tmpArray[b];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -187,35 +188,33 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
 
-                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog, isrcs,
-                                           (byte)track.TrackSequence, ref mcn);
+                    bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector,
+                                                                 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                                                                 tracks);
 
-                    if(desiredSubchannel != MmcSubchannel.None)
-                    {
-                        if(supportedSubchannel == MmcSubchannel.Q16)
-                            sub = Subchannel.ConvertQToRaw(sub);
+                    // Set tracks and go back
+                    if(!indexesChanged)
+                        continue;
 
-                        _outputPlugin.WriteSectorTag(sub, badSector, SectorTagType.CdSectorSubchannel);
-                    }
+                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                    b--;
 
-                    subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)badSector, 1);
+                    continue;
                 }
+
+                if(supportsLongSectors)
+                    _outputPlugin.WriteSectorLong(cmdBuf, badSector);
                 else
                 {
-                    if(supportsLongSectors)
-                        _outputPlugin.WriteSectorLong(cmdBuf, badSector);
-                    else
+                    if(cmdBuf.Length % sectorSize == 0)
                     {
-                        if(cmdBuf.Length % sectorSize == 0)
-                        {
-                            byte[] data = new byte[2048];
-                            Array.Copy(cmdBuf, 16, data, 0, 2048);
+                        byte[] data = new byte[2048];
+                        Array.Copy(cmdBuf, 16, data, 0, 2048);
 
-                            _outputPlugin.WriteSector(data, badSector);
-                        }
-                        else
-                            _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                        _outputPlugin.WriteSector(data, badSector);
                     }
+                    else
+                        _outputPlugin.WriteSectorLong(cmdBuf, badSector);
                 }
             }
 

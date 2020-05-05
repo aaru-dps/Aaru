@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core.Logging;
@@ -387,8 +388,18 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
-                                WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1, subLog,
-                                                       isrcs, (byte)track.TrackSequence, ref mcn);
+                                bool indexesChanged =
+                                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1,
+                                                           subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks);
+
+                                // Set tracks and go back
+                                if(indexesChanged)
+                                {
+                                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                    i -= blocksToRead;
+
+                                    continue;
+                                }
                             }
                             else
                             {
@@ -501,8 +512,18 @@ namespace Aaru.Core.Devices.Dumping
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
-                        WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i, blocksToRead, subLog,
-                                               isrcs, (byte)track.TrackSequence, ref mcn);
+                        bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
+                                                                     blocksToRead, subLog, isrcs,
+                                                                     (byte)track.TrackSequence, ref mcn, tracks);
+
+                        // Set tracks and go back
+                        if(indexesChanged)
+                        {
+                            (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                            i -= blocksToRead;
+
+                            continue;
+                        }
                     }
                     else
                     {

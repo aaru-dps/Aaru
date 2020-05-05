@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
@@ -194,8 +195,10 @@ namespace Aaru.Core.Devices.Dumping
             ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
             List<ulong> sectorsNotEvenPartial = new List<ulong>();
 
-            foreach(ulong badSector in tmpArray)
+            for(int i = 0; i < tmpArray.Length; i++)
             {
+                ulong badSector = tmpArray[i];
+
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -285,8 +288,16 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
 
-                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog, isrcs,
-                                           (byte)track.TrackSequence, ref mcn);
+                    bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector,
+                                                                 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                                                                 tracks);
+
+                    // Set tracks and go back
+                    if(indexesChanged)
+                    {
+                        (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                        i--;
+                    }
                 }
                 else
                 {
@@ -349,8 +360,10 @@ namespace Aaru.Core.Devices.Dumping
 
                     InitProgress?.Invoke();
 
-                    foreach(ulong badSector in sectorsNotEvenPartial)
+                    for(int i = 0; i < sectorsNotEvenPartial.Count; i++)
                     {
+                        ulong badSector = sectorsNotEvenPartial[i];
+
                         if(_aborted)
                         {
                             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
@@ -387,8 +400,16 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                             _outputPlugin.WriteSectorLong(data, badSector);
 
-                            WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog,
-                                                   isrcs, (byte)track.TrackSequence, ref mcn);
+                            bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub,
+                                                                         badSector, 1, subLog, isrcs,
+                                                                         (byte)track.TrackSequence, ref mcn, tracks);
+
+                            // Set tracks and go back
+                            if(indexesChanged)
+                            {
+                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                i--;
+                            }
                         }
                         else
                         {

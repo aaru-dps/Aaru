@@ -32,8 +32,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 using Schemas;
@@ -72,7 +75,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool read6, bool read10, bool read12, bool read16, bool readcd,
                             MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                            ref string mcn)
+                            ref string mcn, Track[] tracks)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -155,8 +158,18 @@ namespace Aaru.Core.Devices.Dumping
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
 
-                            WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i, _maximumReadable,
-                                                   subLog, isrcs, 0xAA, ref mcn);
+                            bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
+                                                                         _maximumReadable, subLog, isrcs, 0xAA, ref mcn,
+                                                                         tracks);
+
+                            // Set tracks and go back
+                            if(indexesChanged)
+                            {
+                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                i--;
+
+                                continue;
+                            }
                         }
                         else
                             _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);
@@ -226,7 +239,7 @@ namespace Aaru.Core.Devices.Dumping
                              bool read6, bool read10, bool read12, bool read16, bool readcd,
                              MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
                              SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                             ref string mcn)
+                             ref string mcn, Track[] tracks)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -309,8 +322,18 @@ namespace Aaru.Core.Devices.Dumping
 
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
 
-                            WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i, _maximumReadable,
-                                                   subLog, isrcs, 0xAA, ref mcn);
+                            bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
+                                                                         _maximumReadable, subLog, isrcs, 0xAA, ref mcn,
+                                                                         tracks);
+
+                            // Set tracks and go back
+                            if(indexesChanged)
+                            {
+                                (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                                i--;
+
+                                continue;
+                            }
                         }
                         else
                             _outputPlugin.WriteSectors(cmdBuf, i, _maximumReadable);

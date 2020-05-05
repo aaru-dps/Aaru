@@ -376,6 +376,9 @@ namespace Aaru.Core.Devices.Dumping
             if(tracks is null)
                 return;
 
+            _dumpLog.WriteLine("Calculating pregaps, can take some time...");
+            UpdateStatus?.Invoke("Calculating pregaps, can take some time...");
+
             SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev,
                               out bool inexactPositioning);
 
@@ -532,28 +535,18 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
                 UpdateStatus?.Invoke($"Checking mode for track {tracks[t].TrackSequence}...");
 
-                sense = _dev.ReadCd(out cmdBuf, out _, (uint)tracks[t].TrackStartSector, blockSize, 1,
-                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                    MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
+                sense = _dev.ReadCd(out cmdBuf, out _, (uint)(tracks[t].TrackStartSector + tracks[t].TrackPregap),
+                                    blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
+                                    _dev.Timeout, out _);
 
                 if(sense)
                 {
-                    if(tracks[t].TrackPregap != 0)
-                        sense = _dev.ReadCd(out cmdBuf, out _,
-                                            (uint)(tracks[t].TrackStartSector + tracks[t].TrackPregap), blockSize, 1,
-                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                            true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
+                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", tracks[t].TrackSequence);
 
-                    if(sense)
-                    {
-                        _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...",
-                                           tracks[t].TrackSequence);
+                    UpdateStatus?.Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
 
-                        UpdateStatus?.
-                            Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
-
-                        continue;
-                    }
+                    continue;
                 }
 
                 switch(cmdBuf[15])
@@ -1028,7 +1021,7 @@ namespace Aaru.Core.Devices.Dumping
             /*
             DumpCdLeadOuts(blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                            leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs, ref mcn);
+                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs, ref mcn, tracks);
             */
 
             end = DateTime.UtcNow;
