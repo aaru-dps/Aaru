@@ -336,7 +336,7 @@ namespace Aaru.Core.Devices.Dumping
             // Check if subchannel is BCD
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                sense = _dev.ReadCd(out cmdBuf, out _, 0, blockSize, 35, MmcSectorTypes.AllTypes, false, false, true,
+                sense = _dev.ReadCd(out cmdBuf, out _, 35, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
                                     MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
                                     _dev.Timeout, out _);
 
