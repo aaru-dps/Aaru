@@ -822,10 +822,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress <=
-                                                           track.TrackEndSector select kvp)
+                                                     where sectorAddress <= track.TrackEndSector select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -833,10 +832,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress <=
-                                                           track.TrackEndSector select kvp)
+                                                     where sectorAddress <= track.TrackEndSector select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -984,7 +982,7 @@ namespace Aaru.DiscImages
                     subStream.Seek((long)(aaruTrack.TrackSubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
                     subStream.Read(buffer, 0, buffer.Length);
 
-                    return buffer;
+                    return Subchannel.Interleave(buffer);
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 

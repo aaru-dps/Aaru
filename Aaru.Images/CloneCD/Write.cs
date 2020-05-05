@@ -616,7 +616,7 @@ namespace Aaru.DiscImages
                     subStream.Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
                                    SeekOrigin.Begin);
 
-                    subStream.Write(data, 0, data.Length);
+                    subStream.Write(Decoders.CD.Subchannel.Deinterleave(data), 0, data.Length);
 
                     return true;
                 }
