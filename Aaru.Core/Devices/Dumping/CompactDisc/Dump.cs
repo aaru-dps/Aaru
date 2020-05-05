@@ -745,60 +745,19 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // If a subchannel is supported, check if output plugin allows us to write it.
-            // TODO: Use image characteristics
-            if(desiredSubchannel != MmcSubchannel.None)
+            if(desiredSubchannel != MmcSubchannel.None &&
+               !(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                                                                                         CanStoreSubchannelRw))
             {
-                _dev.ReadCd(out cmdBuf, out _, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
-                            MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
-                            _dev.Timeout, out _);
+                _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
 
-                tmpBuf = new byte[subSize];
-                Array.Copy(cmdBuf, sectorSize, tmpBuf, 0, subSize);
-
-                if(supportedSubchannel == MmcSubchannel.Q16)
-                    tmpBuf = Subchannel.ConvertQToRaw(tmpBuf);
-
-                ret = _outputPlugin.WriteSectorTag(tmpBuf, 0, SectorTagType.CdSectorSubchannel);
-
-                if(!ret)
+                if(_force)
+                    ErrorMessage?.Invoke("Output image does not support subchannels, continuing...");
+                else
                 {
-                    if(_force)
-                    {
-                        _dumpLog.WriteLine("Error writing subchannel to output image, {0}continuing...",
-                                           _force ? "" : "not ");
+                    StoppingErrorMessage?.Invoke("Output image does not support subchannels, not continuing...");
 
-                        _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
-
-                        ErrorMessage?.Invoke("Error writing subchannel to output image, continuing..." +
-                                             Environment.NewLine + _outputPlugin.ErrorMessage);
-                    }
-                    else
-                    {
-                        StoppingErrorMessage?.Invoke("Error writing subchannel to output image, not continuing..." +
-                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-
-                    desiredSubchannel = MmcSubchannel.None;
-                    subSize           = 0;
-                    blockSize         = sectorSize + subSize;
-
-                    for(int t = 0; t < tracks.Length; t++)
-                        tracks[t].TrackSubchannelType = TrackSubchannelType.None;
-
-                    ret = (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
-
-                    if(!ret)
-                    {
-                        _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
-                        _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
-
-                        StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing..." +
-                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
+                    return;
                 }
             }
 
