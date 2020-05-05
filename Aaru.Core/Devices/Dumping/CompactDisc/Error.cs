@@ -53,7 +53,8 @@ namespace Aaru.Core.Devices.Dumping
         void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
-                             MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs)
+                             MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
+                             ref string mcn)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -285,7 +286,7 @@ namespace Aaru.Core.Devices.Dumping
                     _outputPlugin.WriteSectorLong(data, badSector);
 
                     WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog, isrcs,
-                                           (byte)track.TrackSequence);
+                                           (byte)track.TrackSequence, ref mcn);
                 }
                 else
                 {
@@ -387,7 +388,7 @@ namespace Aaru.Core.Devices.Dumping
                             _outputPlugin.WriteSectorLong(data, badSector);
 
                             WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector, 1, subLog,
-                                                   isrcs, (byte)track.TrackSequence);
+                                                   isrcs, (byte)track.TrackSequence, ref mcn);
                         }
                         else
                         {

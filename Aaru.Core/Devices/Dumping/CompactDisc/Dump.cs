@@ -114,6 +114,7 @@ namespace Aaru.Core.Devices.Dumping
             MmcSubchannel            desiredSubchannel; // User requested subchannel
             bool                     bcdSubchannel = false; // Subchannel positioning is in BCD
             Dictionary<byte, string> isrcs         = new Dictionary<byte, string>();
+            string                   mcn           = null;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -822,16 +823,19 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Set MCN
-            // TODO: Use subchannels
-            sense = _dev.ReadMcn(out string mcn, out _, out _, _dev.Timeout, out _);
-
-            if(!sense                 &&
-               mcn != null            &&
-               mcn != "0000000000000" &&
-               _outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
+            if(supportedSubchannel == MmcSubchannel.None)
             {
-                UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
-                _dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
+                sense = _dev.ReadMcn(out mcn, out _, out _, _dev.Timeout, out _);
+
+                if(!sense      &&
+                   mcn != null &&
+                   mcn != "0000000000000")
+                {
+                    UpdateStatus?.Invoke($"Found Media Catalogue Number: {mcn}");
+                    _dumpLog.WriteLine("Found Media Catalogue Number: {0}", mcn);
+                }
+                else
+                    mcn = null;
             }
 
             // Set ISRCs
@@ -846,6 +850,9 @@ namespace Aaru.Core.Devices.Dumping
                         continue;
 
                     isrcs[(byte)trk.TrackSequence] = isrc;
+
+                    UpdateStatus?.Invoke($"Found ISRC for track {trk.TrackSequence}: {mcn}");
+                    _dumpLog.WriteLine($"Found ISRC for track {trk.TrackSequence}: {mcn}");
                 }
 
             if(_resume.NextBlock > 0)
@@ -1015,13 +1022,13 @@ namespace Aaru.Core.Devices.Dumping
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
-                       tracks, subLog, desiredSubchannel, isrcs);
+                       tracks, subLog, desiredSubchannel, isrcs, ref mcn);
 
             // TODO: Enable when underlying images support lead-outs
             /*
             DumpCdLeadOuts(blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                            leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs);
+                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs, ref mcn);
             */
 
             end = DateTime.UtcNow;
@@ -1048,10 +1055,11 @@ namespace Aaru.Core.Devices.Dumping
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
-                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs);
+                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn);
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
-                            subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs);
+                            subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs,
+                            ref mcn);
 
             // Write media tags to image
             if(!_aborted)
@@ -1109,6 +1117,13 @@ namespace Aaru.Core.Devices.Dumping
 
                 UpdateStatus?.Invoke($"Setting ISRC for track {isrc.Key} to {isrc.Value}");
                 _dumpLog.WriteLine("Setting ISRC for track {0} to {1}", isrc.Key, isrc.Value);
+            }
+
+            if(mcn != null &&
+               _outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
+            {
+                UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
+                _dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
             }
 
             _dumpLog.WriteLine("Closing output file.");

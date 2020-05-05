@@ -68,7 +68,7 @@ namespace Aaru.Core.Devices.Dumping
 
         void WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel, byte[] sub,
                                     ulong sectorAddress, uint length, SubchannelLog subLog,
-                                    Dictionary<byte, string> isrcs, byte currentTrack)
+                                    Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn)
         {
             if(supportedSubchannel == MmcSubchannel.Q16)
                 sub = Subchannel.ConvertQToRaw(sub);
@@ -83,11 +83,12 @@ namespace Aaru.Core.Devices.Dumping
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
             {
+                byte[] q = new byte[12];
+                Array.Copy(deSub, subPos + 12, q, 0, 12);
+
                 // ISRC
-                if((deSub[subPos + 12] & 0x3) == 3)
+                if((q[0] & 0x3) == 3)
                 {
-                    byte[] q = new byte[12];
-                    Array.Copy(deSub, subPos + 12, q, 0, 12);
                     string isrc = Subchannel.DecodeIsrc(q);
 
                     if(isrc == null ||
@@ -117,6 +118,36 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     isrcs[currentTrack] = isrc;
+                }
+                else if((q[0] & 0x3) == 2)
+                {
+                    string newMcn = Subchannel.DecodeMcn(q);
+
+                    if(newMcn == null ||
+                       newMcn == "0000000000000")
+                        continue;
+
+                    if(mcn is null)
+                    {
+                        _dumpLog?.WriteLine($"Found new MCN {newMcn}.");
+                        UpdateStatus?.Invoke($"Found new MCN {newMcn}.");
+                    }
+                    else if(mcn != newMcn)
+                    {
+                        CRC16CCITTContext.Data(q, 10, out byte[] crc);
+
+                        if(crc[0] != q[10] ||
+                           crc[1] != q[11])
+                        {
+                            continue;
+                        }
+
+                        _dumpLog?.WriteLine($"MCN changed from {mcn} to {newMcn}.");
+
+                        UpdateStatus?.Invoke($"MCN changed from {mcn} to {newMcn}.");
+                    }
+
+                    mcn = newMcn;
                 }
             }
         }
