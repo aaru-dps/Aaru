@@ -457,6 +457,7 @@
           <e p="PMA.cs" t="Include" />
           <e p="Sector.cs" t="Include" />
           <e p="Session.cs" t="Include" />
+          <e p="Subchannel.cs" t="Include" />
           <e p="TOC.cs" t="Include" />
         </e>
         <e p="DVD" t="Include">
