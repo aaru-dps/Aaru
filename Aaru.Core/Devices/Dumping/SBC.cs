@@ -347,10 +347,9 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         new Track
                         {
-                            TrackBytesPerSector    = (int)blockSize, TrackEndSector = blocks - 1,
-                            TrackSequence          = 1,
+                            TrackBytesPerSector    = (int)blockSize, TrackEndSector = blocks - 1, TrackSequence = 1,
                             TrackRawBytesPerSector = (int)blockSize, TrackSubchannelType = TrackSubchannelType.None,
-                            TrackSession           = 1, TrackType                        = TrackType.Data
+                            TrackSession           = 1, TrackType = TrackType.Data
                         }
                     });
                 }
@@ -492,6 +491,21 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
+                    if(_dev.Manufacturer.ToLowerInvariant() == "insite")
+                    {
+                        _resume.BadBlocks.Add(i);
+                        _resume.NextBlock++;
+                        _aborted = true;
+
+                        _dumpLog?.
+                            WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
+
+                        UpdateStatus?.
+                            Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropraitely");
+
+                        continue;
+                    }
+
                     // TODO: Reset device after X errors
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
@@ -533,8 +547,7 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
-                         _devicePath);
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
@@ -888,8 +901,7 @@ namespace Aaru.Core.Devices.Dumping
                                     _dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
 
                                     StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
-                                                                 Environment.NewLine                          +
-                                                                 _outputPlugin.ErrorMessage);
+                                                                 Environment.NewLine + _outputPlugin.ErrorMessage);
 
                                     return;
                                 }
@@ -941,8 +953,7 @@ namespace Aaru.Core.Devices.Dumping
                                         _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
 
                                         StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
-                                                                     Environment.NewLine                  +
-                                                                     _outputPlugin.ErrorMessage);
+                                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                                         return;
                                     }
@@ -974,8 +985,7 @@ namespace Aaru.Core.Devices.Dumping
                                         _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
 
                                         StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
-                                                                     Environment.NewLine                 +
-                                                                     _outputPlugin.ErrorMessage);
+                                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                                         return;
                                     }
