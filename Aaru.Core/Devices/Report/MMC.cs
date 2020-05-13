@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -1109,7 +1109,7 @@ namespace Aaru.Core.Devices.Report
                 {
                     AaruConsole.WriteLine("Trying to read CD Track 1 pre-gap...");
 
-                    for(int i = -150; i < 0; i++)
+                    for(int i = -10; i < 0; i++)
                     {
                         if(mediaType == "Audio CD")
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.Cdda,
