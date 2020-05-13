@@ -1132,6 +1132,8 @@ namespace Aaru.Core.Devices.Report
                         break;
                     }
 
+                    mediaTest.CanReadFirstTrackPreGap ??= false;
+
                     AaruConsole.WriteLine("Trying to read CD Lead-In...");
 
                     foreach(int i in new[]
@@ -1159,6 +1161,8 @@ namespace Aaru.Core.Devices.Report
 
                         break;
                     }
+
+                    mediaTest.CanReadLeadIn ??= false;
 
                     AaruConsole.WriteLine("Trying to read CD Lead-Out...");
 
