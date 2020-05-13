@@ -446,7 +446,8 @@ namespace Aaru.CommonTypes
                             }
 
                             return MediaType.Unknown;
-                        case 0x1E: return MediaType.DOS_35_DS_DD_9;
+                        case 0x20 when blockSize == 512 && blocks == 40662: return MediaType.Floptical;
+                        case 0x1E:                                          return MediaType.DOS_35_DS_DD_9;
                         case 0x41:
                             switch(blocks)
                             {
