@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -1189,14 +1189,14 @@ namespace Aaru.Core.Devices.Report
                 {
                     AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
-                    mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1,
+                    mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2646, 1,
                                                                MmcSectorTypes.Cdda, false, false, false,
                                                                MmcHeaderCodes.None, true, false,
                                                                MmcErrorField.C2Pointers, MmcSubchannel.None,
                                                                _dev.Timeout, out _);
 
                     if(!mediaTest.CanReadC2Pointers == true)
-                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2648, 1,
+                        mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2648, 1,
                                                                    MmcSectorTypes.Cdda, false, false, false,
                                                                    MmcHeaderCodes.None, true, false,
                                                                    MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
@@ -1208,7 +1208,7 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels...");
 
-                    mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2368, 1,
+                    mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2368, 1,
                                                                  MmcSectorTypes.Cdda, false, false, false,
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Q16, _dev.Timeout, out _);
@@ -1217,7 +1217,7 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.PQSubchannelData = buffer;
 
-                    mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2448, 1,
+                    mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2448, 1,
                                                                  MmcSectorTypes.Cdda, false, false, false,
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Raw, _dev.Timeout, out _);
@@ -1226,7 +1226,7 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.RWSubchannelData = buffer;
 
-                    mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2448, 1,
+                    mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2448, 1,
                                                                         MmcSectorTypes.Cdda, false, false, false,
                                                                         MmcHeaderCodes.None, true, false,
                                                                         MmcErrorField.None, MmcSubchannel.Rw,
@@ -1238,14 +1238,14 @@ namespace Aaru.Core.Devices.Report
 
                     AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
-                    mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2662, 1,
+                    mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2662, 1,
                                                                        MmcSectorTypes.Cdda, false, false, false,
                                                                        MmcHeaderCodes.None, true, false,
                                                                        MmcErrorField.C2Pointers, MmcSubchannel.Q16,
                                                                        _dev.Timeout, out _);
 
                     if(mediaTest.CanReadPQSubchannelWithC2 == false)
-                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2664, 1,
+                        mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2664, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
                                                                            MmcErrorField.C2PointersAndBlock,
@@ -1255,14 +1255,14 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.PQSubchannelWithC2Data = buffer;
 
-                    mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1,
+                    mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
                                                                        MmcSectorTypes.Cdda, false, false, false,
                                                                        MmcHeaderCodes.None, true, false,
                                                                        MmcErrorField.C2Pointers, MmcSubchannel.Raw,
                                                                        _dev.Timeout, out _);
 
                     if(mediaTest.CanReadRWSubchannelWithC2 == false)
-                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1,
+                        mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714, 1,
                                                                            MmcSectorTypes.Cdda, false, false, false,
                                                                            MmcHeaderCodes.None, true, false,
                                                                            MmcErrorField.C2PointersAndBlock,
@@ -1272,14 +1272,14 @@ namespace Aaru.Core.Devices.Report
 
                     mediaTest.RWSubchannelWithC2Data = buffer;
 
-                    mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1,
+                    mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2712, 1,
                                                                               MmcSectorTypes.Cdda, false, false, false,
                                                                               MmcHeaderCodes.None, true, false,
                                                                               MmcErrorField.C2Pointers,
                                                                               MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2714,
+                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714,
                                                                                   1, MmcSectorTypes.Cdda, false, false,
                                                                                   false, MmcHeaderCodes.None, true,
                                                                                   false,
