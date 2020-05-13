@@ -92,8 +92,7 @@ namespace Aaru.Devices
                     case PlatformID.Win32NT:
                     {
                         FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                                       FileShare.Read                     | FileShare.Write,
-                                                       IntPtr.Zero,
+                                                       FileShare.Read | FileShare.Write, IntPtr.Zero,
                                                        FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
 
                         if(((SafeFileHandle)FileHandle).IsInvalid)
@@ -204,19 +203,16 @@ namespace Aaru.Devices
                         {
                             var descriptor = new StorageDeviceDescriptor
                             {
-                                Version            = BitConverter.ToUInt32(descriptorB, 0),
-                                Size               = BitConverter.ToUInt32(descriptorB, 4),
-                                DeviceType         = descriptorB[8],
-                                DeviceTypeModifier = descriptorB[9],
-                                RemovableMedia     = descriptorB[10] > 0,
-                                CommandQueueing =
-                                    descriptorB[11] > 0,
-                                VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
-                                ProductIdOffset       = BitConverter.ToInt32(descriptorB, 16),
+                                Version = BitConverter.ToUInt32(descriptorB, 0),
+                                Size = BitConverter.ToUInt32(descriptorB, 4), DeviceType = descriptorB[8],
+                                DeviceTypeModifier = descriptorB[9], RemovableMedia = descriptorB[10] > 0,
+                                CommandQueueing = descriptorB[11] > 0,
+                                VendorIdOffset = BitConverter.ToInt32(descriptorB, 12),
+                                ProductIdOffset = BitConverter.ToInt32(descriptorB, 16),
                                 ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
-                                SerialNumberOffset    = BitConverter.ToInt32(descriptorB, 24),
-                                BusType               = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
-                                RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
+                                SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24),
+                                BusType = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
+                                RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32)
                             };
 
                             descriptor.RawDeviceProperties = new byte[descriptor.RawPropertiesLength];
@@ -466,6 +462,8 @@ namespace Aaru.Devices
 
                     Serial = $"{decoded.ProductSerialNumber}";
                 }
+
+                return;
             }
             #endregion SecureDigital / MultiMediaCard
 
