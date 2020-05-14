@@ -66,7 +66,13 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="aaruformat.xml" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Aaru.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -1284,7 +1290,15 @@
           </e>
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Avalonia" t="Include">
+                <e p="resources" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -2101,6 +2115,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.0" t="Include">
+              <e p="Avalonia" t="Include">
+                <e p="resources" t="Include" />
+              </e>
               <e p="OxyPlot.Avalonia.AssemblyInfo.cs" t="Include" />
             </e>
           </e>

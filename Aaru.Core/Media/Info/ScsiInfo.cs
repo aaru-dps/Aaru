@@ -269,6 +269,19 @@ namespace Aaru.Core.Media.Info
                 }
                 */
                     break;
+                case PeripheralDeviceTypes.BridgingExpander
+                    when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                         dev.Model.StartsWith("MDH", StringComparison.Ordinal):
+                    sense = dev.ReadCapacity(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                    if(!sense)
+                    {
+                        ReadCapacity = cmdBuf;
+                        Blocks       = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
+                        BlockSize    = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8)  + cmdBuf[7]);
+                    }
+
+                    break;
             }
 
             if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
@@ -1390,17 +1403,15 @@ namespace Aaru.Core.Media.Info
                                                        totalSize);
 
                             ulong middleZone =
-                                (totalSize -
-                                 ((PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                   PFI.Decode(cmdBuf).Value.DataAreaStartPSN) + 1) - gameSize) + 1;
+                                (totalSize - ((PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                                               PFI.Decode(cmdBuf).Value.DataAreaStartPSN) + 1) - gameSize) + 1;
 
                             totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
                             ulong layerBreak = l0Video + middleZone + (gameSize / 2);
 
                             XgdInfo = new XgdInfo
                             {
-                                L0Video   = l0Video, L1Video = l1Video, MiddleZone = middleZone,
-                                GameSize  = gameSize,
+                                L0Video   = l0Video, L1Video = l1Video, MiddleZone = middleZone, GameSize = gameSize,
                                 TotalSize = totalSize, LayerBreak = layerBreak
                             };
                         }

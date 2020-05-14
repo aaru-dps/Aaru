@@ -186,6 +186,9 @@ namespace Aaru.Commands.Media
                 case PeripheralDeviceTypes.OpticalDevice:
                 case PeripheralDeviceTypes.SimplifiedDevice:
                 case PeripheralDeviceTypes.WriteOnceDevice:
+                case PeripheralDeviceTypes.BridgingExpander
+                    when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                         dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                     if(scsiInfo.ReadCapacity != null)
                         DataFile.WriteTo("Media-Info command", outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
                                          scsiInfo.ReadCapacity);
