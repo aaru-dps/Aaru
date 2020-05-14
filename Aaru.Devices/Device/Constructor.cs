@@ -359,7 +359,8 @@ namespace Aaru.Devices
                     case PlatformID.Linux:
                         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
                            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
-                           devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                           devicePath.StartsWith("/dev/st", StringComparison.Ordinal) ||
+                           devicePath.StartsWith("/dev/sg", StringComparison.Ordinal))
                         {
                             scsiSense = ScsiInquiry(out inqBuf, out _);
                         }
