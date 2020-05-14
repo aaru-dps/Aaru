@@ -60,6 +60,7 @@
     <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\Metadata.cs" />
+    <Compile Include="Devices\Dumping\MiniDisc.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs" />

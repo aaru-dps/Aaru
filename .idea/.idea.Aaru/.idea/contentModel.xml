@@ -3,22 +3,8 @@
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/resharper-host/local/Transient/ReSharperHost/v201/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
-    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
-    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
-    <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/rust_expanded_macros/VvnQaUBm/expansions" t="IncludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p=".git/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Checksums/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.CommonTypes/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Console/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Decoders/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Dto/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/Aaru.Helpers/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/cuetools.net/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/oxyplot-avalonia/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
@@ -80,13 +66,7 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="aaruformat.xml" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -109,13 +89,7 @@
         <e p="SHA512Context.cs" t="Include" />
         <e p="SpamSumContext.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Checksums.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.CommonTypes" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -200,26 +174,14 @@
           <e p="TapePartition.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.CommonTypes.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Compression" t="IncludeRecursive">
         <e p="Aaru.Compression.csproj" t="IncludeRecursive" />
         <e p="AppleRle.cs" t="Include" />
         <e p="TeleDiskLzh.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Compression.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Console" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -227,13 +189,7 @@
         <e p="Aaru.Console.csproj" t="IncludeRecursive" />
         <e p="AaruConsole.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Console.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Core" t="IncludeRecursive">
         <e p="Aaru.Core.csproj" t="IncludeRecursive" />
@@ -259,6 +215,7 @@
             <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="Metadata.cs" t="Include" />
+            <e p="MiniDisc.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="PlayStationPortable" t="Include">
               <e p="MemoryStick.cs" t="Include" />
@@ -340,13 +297,7 @@
         </e>
         <e p="Statistics.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Core.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Database" t="IncludeRecursive">
         <e p="Aaru.Database.csproj" t="IncludeRecursive" />
@@ -426,13 +377,7 @@
           <e p="Version.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Database.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Decoders" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -584,13 +529,7 @@
           <e p="SS.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Decoders.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Devices" t="IncludeRecursive">
         <e p="Aaru.Devices.csproj" t="IncludeRecursive" />
@@ -667,13 +606,7 @@
           <e p="UsbFunctions.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Devices.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Dto" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -685,13 +618,7 @@
         <e p="UsbProductDto.cs" t="Include" />
         <e p="UsbVendorDto.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Dto.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Filesystems" t="IncludeRecursive">
         <e p="AODOS.cs" t="Include" />
@@ -889,13 +816,7 @@
         <e p="exFAT.cs" t="Include" />
         <e p="ext2FS.cs" t="Include" />
         <e p="extFS.cs" t="Include" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Filesystems.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Filters" t="IncludeRecursive">
         <e p="Aaru.Filters.csproj" t="IncludeRecursive" />
@@ -912,13 +833,7 @@
         <e p="XZ.cs" t="Include" />
         <e p="ZZZNoFilter.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Filters.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Gui" t="IncludeRecursive">
         <e p="Aaru.Gui.csproj" t="IncludeRecursive" />
@@ -1369,15 +1284,7 @@
           </e>
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
@@ -1397,13 +1304,7 @@
         <e p="StringHandlers.cs" t="Include" />
         <e p="Swapping.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Helpers.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Images" t="IncludeRecursive">
         <e p="Aaru.Images.csproj" t="IncludeRecursive" />
@@ -1965,13 +1866,7 @@
           <e p="ZZZRawImage.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Partitions" t="IncludeRecursive">
         <e p="Aaru.Partitions.csproj" t="IncludeRecursive" />
@@ -1998,25 +1893,13 @@
         <e p="XENIX.cs" t="Include" />
         <e p="Xbox.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Partitions.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.Settings" t="IncludeRecursive">
         <e p="Aaru.Settings.csproj" t="IncludeRecursive" />
         <e p="Settings.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Settings.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="Aaru.sln" t="IncludeFlat" />
       <e p="CICMMetadata/dotnet/cicm.cs" t="Include" />
@@ -2218,9 +2101,6 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netstandard2.0" t="Include">
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
               <e p="OxyPlot.Avalonia.AssemblyInfo.cs" t="Include" />
             </e>
           </e>

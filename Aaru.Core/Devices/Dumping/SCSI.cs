@@ -240,6 +240,11 @@ namespace Aaru.Core.Devices.Dumping
                             Invoke("The specified plugin does not support storing optical disc images.");
 
                     return;
+                case PeripheralDeviceTypes.BridgingExpander
+                    when _dev.Model.StartsWith("MDM") || _dev.Model.StartsWith("MDH"):
+                    MiniDisc();
+
+                    break;
                 default:
                     Sbc(null, MediaType.Unknown, false);
 
