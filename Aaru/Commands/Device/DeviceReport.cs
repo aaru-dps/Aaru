@@ -337,6 +337,25 @@ namespace Aaru.Commands.Device
 
                     goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
+                    switch(dev.ScsiType)
+                    {
+                        case PeripheralDeviceTypes.DirectAccess:
+                        case PeripheralDeviceTypes.SequentialAccess:
+                        case PeripheralDeviceTypes.WriteOnceDevice:
+                        case PeripheralDeviceTypes.MultiMediaDevice:
+                        case PeripheralDeviceTypes.OpticalDevice:
+                        case PeripheralDeviceTypes.BridgingExpander
+                            when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                                 dev.Model.StartsWith("MDH", StringComparison.Ordinal):
+                        case PeripheralDeviceTypes.SCSIZonedBlockDevice: break;
+                        default:
+                        {
+                            AaruConsole.ErrorWriteLine("Unsupported device type, report cannot be created");
+
+                            throw new IOException();
+                        }
+                    }
+
                     if(!dev.IsUsb      &&
                        !dev.IsFireWire &&
                        dev.IsRemovable)
@@ -361,6 +380,9 @@ namespace Aaru.Commands.Device
                         switch(dev.ScsiType)
                         {
                             case PeripheralDeviceTypes.MultiMediaDevice:
+                            case PeripheralDeviceTypes.BridgingExpander
+                                when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                                     dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                                 dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
                                 dev.EjectTray(out buffer, dev.Timeout, out _);
 
@@ -1042,6 +1064,234 @@ namespace Aaru.Commands.Device
                         }
 
                             break;
+                        case PeripheralDeviceTypes.BridgingExpander
+                            when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
+                                 dev.Model.StartsWith("MDH", StringComparison.Ordinal):
+                        {
+                            List<string> mediaTypes = new List<string>();
+
+                            mediaTypes.Add("MD DATA (140Mb data MiniDisc)");
+                            mediaTypes.Add("60 minutes rewritable MiniDisc");
+                            mediaTypes.Add("74 minutes rewritable MiniDisc");
+                            mediaTypes.Add("80 minutes rewritable MiniDisc");
+                            mediaTypes.Add("Embossed Audio MiniDisc");
+
+                            mediaTypes.Sort();
+
+                            List<TestedMedia> mediaTests = new List<TestedMedia>();
+
+                            foreach(string mediaType in mediaTypes)
+                            {
+                                pressedKey = new ConsoleKeyInfo();
+
+                                while(pressedKey.Key != ConsoleKey.Y &&
+                                      pressedKey.Key != ConsoleKey.N)
+                                {
+                                    AaruConsole.
+                                        Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
+                                              mediaType);
+
+                                    pressedKey = System.Console.ReadKey();
+                                    AaruConsole.WriteLine();
+                                }
+
+                                if(pressedKey.Key != ConsoleKey.Y)
+                                    continue;
+
+                                AaruConsole.
+                                    WriteLine("Please insert it in the drive and press any key when it is ready.");
+
+                                System.Console.ReadKey(true);
+
+                                bool mediaIsRecognized = true;
+
+                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                if(sense)
+                                {
+                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+
+                                    if(decSense.HasValue)
+                                    {
+                                        if(decSense.Value.ASC == 0x3A)
+                                        {
+                                            int leftRetries = 50;
+
+                                            while(leftRetries > 0)
+                                            {
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                                if(!sense)
+                                                    break;
+
+                                                leftRetries--;
+                                            }
+
+                                            AaruConsole.WriteLine();
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else if(decSense.Value.ASC  == 0x04 &&
+                                                decSense.Value.ASCQ == 0x01)
+                                        {
+                                            int leftRetries = 50;
+
+                                            while(leftRetries > 0)
+                                            {
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                                if(!sense)
+                                                    break;
+
+                                                leftRetries--;
+                                            }
+
+                                            AaruConsole.WriteLine();
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+
+                                        // These should be trapped by the OS but seems in some cases they're not
+                                        else if(decSense.Value.ASC == 0x28)
+                                        {
+                                            int leftRetries = 50;
+
+                                            while(leftRetries > 0)
+                                            {
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                                if(!sense)
+                                                    break;
+
+                                                leftRetries--;
+                                            }
+
+                                            AaruConsole.WriteLine();
+
+                                            mediaIsRecognized &= !sense;
+                                        }
+                                        else
+                                        {
+                                            AaruConsole.DebugWriteLine("Device-Report command",
+                                                                       "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.ASCQ);
+
+                                            mediaIsRecognized = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        AaruConsole.DebugWriteLine("Device-Report command",
+                                                                   "Got sense status but no sense buffer");
+
+                                        mediaIsRecognized = false;
+                                    }
+                                }
+
+                                var mediaTest = new TestedMedia();
+
+                                if(mediaIsRecognized)
+                                {
+                                    mediaTest = reporter.ReportScsiMedia();
+
+                                    if(mediaTest is null)
+                                        continue;
+
+                                    if(mediaTest.SupportsReadLong == true &&
+                                       mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                    {
+                                        pressedKey = new ConsoleKeyInfo();
+
+                                        while(pressedKey.Key != ConsoleKey.Y &&
+                                              pressedKey.Key != ConsoleKey.N)
+                                        {
+                                            AaruConsole.
+                                                Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+
+                                            pressedKey = System.Console.ReadKey();
+                                            AaruConsole.WriteLine();
+                                        }
+
+                                        if(pressedKey.Key == ConsoleKey.Y)
+                                        {
+                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                            {
+                                                AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
+                                                                  i);
+
+                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
+                                                                       dev.Timeout, out _);
+
+                                                if(!sense)
+                                                {
+                                                    mediaTest.ReadLong10Data = buffer;
+                                                    mediaTest.LongBlockSize  = i;
+
+                                                    break;
+                                                }
+
+                                                if(i == ushort.MaxValue)
+                                                    break;
+                                            }
+
+                                            AaruConsole.WriteLine();
+                                        }
+                                    }
+
+                                    if(mediaTest.SupportsReadLong == true &&
+                                       mediaTest.LongBlockSize    != mediaTest.BlockSize)
+                                    {
+                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+
+                                        if(!sense)
+                                            mediaTest.ReadLong10Data = buffer;
+                                    }
+                                }
+
+                                switch(mediaType)
+                                {
+                                    case "MD DATA (140Mb data MiniDisc)":
+                                        mediaTest.MediumTypeName = "MMD-140A";
+
+                                        break;
+                                    case "60 minutes rewritable MiniDisc":
+                                        mediaTest.MediumTypeName = "MDW-60";
+
+                                        break;
+                                    case "74 minutes rewritable MiniDisc":
+                                        mediaTest.MediumTypeName = "MDW-74";
+
+                                        break;
+                                    case "80 minutes rewritable MiniDisc":
+                                        mediaTest.MediumTypeName = "MDW-80";
+
+                                        break;
+                                    case "Embossed Audio MiniDisc":
+                                        mediaTest.MediumTypeName = "MiniDisc";
+
+                                        break;
+                                }
+
+                                mediaTest.Manufacturer      = "SONY";
+                                mediaTest.MediaIsRecognized = mediaIsRecognized;
+                                mediaTests.Add(mediaTest);
+
+                                dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                dev.EjectTray(out buffer, dev.Timeout, out _);
+                            }
+
+                            report.SCSI.RemovableMedias = mediaTests;
+                        }
+
+                            break;
                         default:
                         {
                             if(removable)
@@ -1212,8 +1462,7 @@ namespace Aaru.Commands.Device
                                 report.SCSI.ReadCapabilities = reporter.ReportScsi();
 
                                 if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
-                                   report.SCSI.ReadCapabilities.LongBlockSize ==
-                                   report.SCSI.ReadCapabilities.BlockSize)
+                                   report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
 
@@ -1253,8 +1502,7 @@ namespace Aaru.Commands.Device
                                 }
 
                                 if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
-                                   report.SCSI.ReadCapabilities.LongBlockSize !=
-                                   report.SCSI.ReadCapabilities.BlockSize)
+                                   report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                            (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
