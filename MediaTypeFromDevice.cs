@@ -1721,6 +1721,22 @@ namespace Aaru.CommonTypes
 
                     break;
 
+                // MD DATA drives
+                case 0x10 when model.StartsWith("MDM", StringComparison.Ordinal) ||
+                               model.StartsWith("MDH", StringComparison.Ordinal):
+                    if(mediumType == 3)
+                        return MediaType.MDData;
+
+                    // TODO: Check validity
+                    switch(blocks)
+                    {
+                        case 112311: return MediaType.MD60;
+                        case 138363: return MediaType.MD74;
+                        case 149373: return MediaType.MD80;
+                    }
+
+                    return MediaType.MD;
+
                 // Host managed zoned block device
                 case 0x14:
                 {
