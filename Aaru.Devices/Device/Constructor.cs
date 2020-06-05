@@ -918,6 +918,10 @@ namespace Aaru.Devices
         {
             var    sr  = new StreamReader(file);
             string ins = sr.ReadToEnd().Trim();
+
+            if(ins.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+                ins = ins.Substring(2);
+
             outBuf = new byte[ins.Length / 2];
             int count = 0;
 
