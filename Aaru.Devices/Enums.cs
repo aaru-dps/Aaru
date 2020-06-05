@@ -1816,8 +1816,25 @@ namespace Aaru.Devices
         KreonCommand = 0xFF,
 
         /// <summary>Kreon extract Security Sectors command start with this</summary>
-        KreonSsCommand = 0xAD
+        KreonSsCommand = 0xAD,
         #endregion Kreon vendor commands
+
+        #region MiniDisc vendor commands
+        /// <summary>Gets some list of pointers only present on MD-DATA discs</summary>
+        MiniDiscReadDTOC = 0xD1,
+        /// <summary>Writes some list of pointers only present on MD-DATA discs</summary>
+        MiniDiscWriteDTOC = 0xD2,
+        /// <summary>Reads UTOC</summary>
+        MiniDiscReadUTOC = 0xD4,
+        /// <summary>Unknown, returns 4 empty bytes</summary>
+        MiniDiscD5 = 0xD5,
+        /// <summary>Stops playing audio</summary>
+        MiniDiscStopPlay = 0xD6,
+        /// <summary>Gets current audio playing position</summary>
+        MiniDiscReadPosition = 0xD7,
+        /// <summary>Gets some values that are identical amongst audio discs and data discs, different between them</summary>
+        MiniDiscGetType = 0xD8
+        #endregion
     }
     #endregion SCSI Commands
 
@@ -2650,31 +2667,20 @@ namespace Aaru.Devices
     [Flags]
     public enum MmcFlags : uint
     {
-        ResponsePresent = 1 << 0, Response136     = 1 << 1, ResponseCrc   = 1 << 2,
-        ResponseBusy    = 1 << 3, ResponseOpcode  = 1 << 4, CommandMask   = 3 << 5,
-        CommandAc       = 0 << 5, CommandAdtc     = 1 << 5, CommandBc     = 2 << 5,
-        CommandBcr      = 3 << 5, ResponseSpiS1   = 1 << 7, ResponseSpiS2 = 1 << 8,
+        ResponsePresent = 1 << 0, Response136 = 1 << 1, ResponseCrc = 1 << 2,
+        ResponseBusy    = 1 << 3, ResponseOpcode = 1 << 4, CommandMask = 3 << 5,
+        CommandAc       = 0 << 5, CommandAdtc = 1 << 5, CommandBc = 2 << 5,
+        CommandBcr      = 3 << 5, ResponseSpiS1 = 1 << 7, ResponseSpiS2 = 1 << 8,
         ResponseSpiB4   = 1 << 9, ResponseSpiBusy = 1 << 10, ResponseNone = 0,
         ResponseR1      = ResponsePresent | ResponseCrc                  | ResponseOpcode,
         ResponseR1B     = ResponsePresent | ResponseCrc | ResponseOpcode | ResponseBusy,
         ResponseR2      = ResponsePresent | Response136                  | ResponseCrc, ResponseR3 = ResponsePresent,
-        ResponseR4      = ResponsePresent,
-        ResponseR5      = ResponsePresent | ResponseCrc | ResponseOpcode,
-        ResponseR6 = ResponsePresent  |
-                          ResponseCrc |
-                          ResponseOpcode,
-        ResponseR7 = ResponsePresent  |
-                          ResponseCrc |
-                          ResponseOpcode, ResponseSpiR1 = ResponseSpiS1,
-        ResponseSpiR1B =
-            ResponseSpiS1 |
-            ResponseSpiBusy, ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
-        ResponseSpiR3 =
-            ResponseSpiS1 |
-            ResponseSpiB4, ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
-        ResponseSpiR5 =
-            ResponseSpiS1 |
-            ResponseSpiS2, ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
+        ResponseR4      = ResponsePresent, ResponseR5 = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR6      = ResponsePresent | ResponseCrc | ResponseOpcode,
+        ResponseR7      = ResponsePresent | ResponseCrc | ResponseOpcode, ResponseSpiR1 = ResponseSpiS1,
+        ResponseSpiR1B  = ResponseSpiS1 | ResponseSpiBusy, ResponseSpiR2 = ResponseSpiS1 | ResponseSpiS2,
+        ResponseSpiR3   = ResponseSpiS1 | ResponseSpiB4, ResponseSpiR4 = ResponseSpiS1 | ResponseSpiB4,
+        ResponseSpiR5   = ResponseSpiS1 | ResponseSpiS2, ResponseSpiR7 = ResponseSpiS1 | ResponseSpiB4
     }
 
     [Flags]
