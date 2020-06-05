@@ -73,7 +73,7 @@ namespace Aaru.Core.Devices.Dumping
             const uint   TIMEOUT    = 5;
             double       duration;
 
-            uint   blocksToRead      = 128;
+            uint   blocksToRead      = 1;
             uint   blockSize         = 512;
             ulong  blocks            = 0;
             byte[] csd               = null;
