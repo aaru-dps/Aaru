@@ -58,7 +58,7 @@ namespace Aaru.Core.Devices.Dumping
         {
             bool                             sense;
             byte                             scsiMediumType = 0;
-            const ushort                     sbcProfile    = 0x0001;
+            const ushort                     sbcProfile     = 0x0001;
             DateTime                         start;
             DateTime                         end;
             double                           totalDuration = 0;
@@ -89,8 +89,7 @@ namespace Aaru.Core.Devices.Dumping
             if(decMode.HasValue)
                 scsiMediumType = (byte)decMode.Value.Header.MediumType;
 
-            // TODO: Supposedly audio discs can be read from MD DATA drives but how it is not yet known
-            if(scsiMediumType != 3)
+            if(blockSize != 2048)
             {
                 _dumpLog.WriteLine("MiniDisc albums, NetMD discs or user-written audio MiniDisc cannot be dumped.");
 
@@ -157,7 +156,39 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumType);
             _dumpLog.WriteLine("Media identified as {0}.", dskType);
 
-            // TODO: TOC, UTOC, etc
+            sense = _dev.MiniDiscGetType(out cmdBuf, out _, _dev.Timeout, out _);
+
+            if(!sense &&
+               !_dev.Error)
+                mediaTags.Add(MediaTagType.MiniDiscType, cmdBuf);
+
+            sense = _dev.MiniDiscD5(out cmdBuf, out _, _dev.Timeout, out _);
+
+            if(!sense &&
+               !_dev.Error)
+                mediaTags.Add(MediaTagType.MiniDiscD5, cmdBuf);
+
+            sense = _dev.MiniDiscReadDataTOC(out cmdBuf, out _, _dev.Timeout, out _);
+
+            if(!sense &&
+               !_dev.Error)
+                mediaTags.Add(MediaTagType.MiniDiscDTOC, cmdBuf);
+
+            var utocMs = new MemoryStream();
+
+            for(uint i = 0; i < 3; i++)
+            {
+                sense = _dev.MiniDiscReadUserTOC(out cmdBuf, out _, i, _dev.Timeout, out _);
+
+                if(sense || _dev.Error)
+                    break;
+
+                utocMs.Write(cmdBuf, 0, 2336);
+            }
+
+            if(utocMs.Length > 0)
+                mediaTags.Add(MediaTagType.MiniDiscUTOC, utocMs.ToArray());
+
             ret = true;
 
             foreach(MediaTagType tag in mediaTags.Keys)
