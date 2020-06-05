@@ -252,7 +252,15 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>XDG unlocked PFI</summary>
         Xbox_PFI = 67,
         /// <summary>Compact Disc Lead-in</summary>
-        CD_LeadIn = 68
+        CD_LeadIn = 68,
+        /// <summary>8 bytes response that seems to define type of MiniDisc</summary>
+        MiniDiscType = 69,
+        /// <summary>4 bytes response to vendor command D5h</summary>
+        MiniDiscD5 = 70,
+        /// <summary>User TOC, contains fragments, track names, and can be from 1 to 3 sectors of 2336 bytes</summary>
+        MiniDiscUTOC = 71,
+        /// <summary>Not entirely clear kind of TOC that only appears on MD-DATA discs</summary>
+        MiniDiscDTOC = 72
     }
 
     /// <summary>Enumeration of media types defined in CICM metadata</summary>
