@@ -96,7 +96,8 @@ namespace Aaru.Core.Devices.Dumping
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
             {
-                byte[] q = new byte[12];
+                bool   @fixed = false;
+                byte[] q      = new byte[12];
                 Array.Copy(deSub, subPos + 12, q, 0, 12);
 
                 CRC16CCITTContext.Data(q, 10, out byte[] crc);
@@ -124,12 +125,15 @@ namespace Aaru.Core.Devices.Dumping
                     if(deSub[rw] != 0)
                         rwOk = false;
 
+                bool rwPacket     = false;
+                bool cdtextPacket = false;
+
                 if(!rwOk)
                 {
                     byte[] sectorSub = new byte[96];
                     Array.Copy(sub, subPos, sectorSub, 0, 96);
 
-                    DetectRwPackets(sectorSub, out _, out bool rwPacket, out bool cdtextPacket);
+                    DetectRwPackets(sectorSub, out _, out rwPacket, out cdtextPacket);
 
                     // TODO: CD+G reed solomon
                     if(rwPacket && !cdtextPacket)
@@ -139,30 +143,103 @@ namespace Aaru.Core.Devices.Dumping
                         rwOk = CheckCdTextPackets(sectorSub);
                 }
 
-                // TODO: Fix
+                if(!pOk && _fixSubchannel)
+                {
+                    if(pWeight >= 48)
+                        for(int p = subPos; p < subPos + 12; p++)
+                            deSub[p] = 255;
+                    else
+                        for(int p = subPos; p < subPos + 12; p++)
+                            deSub[p] = 0;
+
+                    pOk    = true;
+                    @fixed = true;
+
+                    subLog.WritePFix();
+                }
+
+                if(!rwOk         &&
+                   !rwPacket     &&
+                   !cdtextPacket &&
+                   _fixSubchannel)
+                {
+                    for(int rw = subPos + 24; rw < subPos + 96; rw++)
+                        deSub[rw] = 0;
+
+                    rwOk   = true;
+                    @fixed = true;
+
+                    subLog.WriteRwFix();
+                }
+
+                byte smin, ssec, sframe, amin, asec, aframe, pmin, psec, pframe;
+                byte rmin, rsec, rframe;
+                int  aPos;
+
+                if(!crcOk         &&
+                   _fixSubchannel &&
+                   subPos > 0     &&
+                   subPos < deSub.Length - 96)
+                {
+                    crcOk = FixQSubchannel(deSub, q, subPos, sectorAddress, _fixSubchannelCrc, out bool fixedAdr,
+                                           out bool controlFix, out bool fixedZero, out bool fixedTno,
+                                           out bool fixedIndex, out bool fixedRelPos, out bool fixedAbsPos,
+                                           out bool fixedCrc);
+
+                    if(crcOk)
+                    {
+                        Array.Copy(q, 0, deSub, subPos + 12, 12);
+                        @fixed = true;
+
+                        if(fixedAdr)
+                            subLog.WriteQAdrFix();
+
+                        if(controlFix)
+                            subLog.WriteQCtrlFix();
+
+                        if(fixedZero)
+                            subLog.WriteQZeroFix();
+
+                        if(fixedTno)
+                            subLog.WriteQTnoFix();
+
+                        if(fixedIndex)
+                            subLog.WriteQIndexFix();
+
+                        if(fixedRelPos)
+                            subLog.WriteQRelPosFix();
+
+                        if(fixedAbsPos)
+                            subLog.WriteQAbsPosFix();
+
+                        if(fixedCrc)
+                            subLog.WriteQCrcFix();
+                    }
+                }
+
                 if(!pOk   ||
                    !crcOk ||
                    !rwOk)
                     continue;
 
-                int aPos = int.MinValue;
+                aPos = int.MinValue;
 
-                byte aframe = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
+                aframe = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
 
                 if((q[0] & 0x3) == 1)
                 {
-                    byte amin = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
-                    byte asec = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+                    amin = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                    asec = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
                     aPos = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
                 }
                 else
                 {
                     ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
-                    byte  smin                  = (byte)(expectedSectorAddress / 60 / 75);
-                    expectedSectorAddress -= (ulong)(smin * 60 * 75);
-                    byte ssec = (byte)(expectedSectorAddress / 75);
-                    expectedSectorAddress -= (ulong)(smin * 75);
-                    byte sframe = (byte)(expectedSectorAddress - ((ulong)ssec * 75));
+                    smin                  =  (byte)(expectedSectorAddress / 60 / 75);
+                    expectedSectorAddress -= (ulong)(smin * 60                 * 75);
+                    ssec                  =  (byte)(expectedSectorAddress      / 75);
+                    expectedSectorAddress -= (ulong)(smin                      * 75);
+                    sframe                =  (byte)(expectedSectorAddress - ((ulong)ssec * 75));
 
                     aPos = ((smin * 60 * 75) + (ssec * 75) + aframe) - 150;
 
@@ -183,6 +260,10 @@ namespace Aaru.Core.Devices.Dumping
                 _outputPlugin.WriteSectorTag(posSub, (ulong)aPos, SectorTagType.CdSectorSubchannel);
 
                 subchannelExtents.Remove(aPos);
+
+                if(@fixed)
+                    subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw,
+                                       (long)sectorAddress + (subPos / 96), 1);
             }
 
             return indexesChanged;
@@ -632,6 +713,530 @@ namespace Aaru.Core.Devices.Dumping
             if(cdTextPack4Crc == calculatedCdtp4Crc ||
                cdTextPack4Crc == 0)
                 return status;
+
+            return false;
+        }
+
+        bool FixQSubchannel(byte[] deSub, byte[] q, int subPos, ulong sectorAddress, bool fixCrc, out bool fixedAdr,
+                            out bool controlFix, out bool fixedZero, out bool fixedTno, out bool fixedIndex,
+                            out bool fixedRelPos, out bool fixedAbsPos, out bool fixedCrc)
+        {
+            byte smin, ssec, sframe, amin, asec, aframe, pmin, psec, pframe;
+            byte rmin, rsec, rframe;
+            int  aPos, rPos, pPos, dPos;
+            controlFix  = false;
+            fixedZero   = false;
+            fixedTno    = false;
+            fixedIndex  = false;
+            fixedRelPos = false;
+            fixedAbsPos = false;
+            fixedCrc    = false;
+
+            ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
+            smin                  =  (byte)(expectedSectorAddress / 60 / 75);
+            expectedSectorAddress -= (ulong)(smin * 60                 * 75);
+            ssec                  =  (byte)(expectedSectorAddress      / 75);
+            expectedSectorAddress -= (ulong)(smin                      * 75);
+            sframe                =  (byte)(expectedSectorAddress - ((ulong)ssec * 75));
+
+            byte[] preQ  = new byte[12];
+            byte[] nextQ = new byte[12];
+            Array.Copy(deSub, (subPos + 12) - 96, preQ, 0, 12);
+            Array.Copy(deSub, subPos + 12   + 96, nextQ, 0, 12);
+            bool status;
+
+            CRC16CCITTContext.Data(preQ, 10, out byte[] preCrc);
+            bool preCrcOk = preCrc[0] == preQ[10] && preCrc[1] == preQ[11];
+
+            CRC16CCITTContext.Data(nextQ, 10, out byte[] nextCrc);
+            bool nextCrcOk = nextCrc[0] == nextQ[10] && nextCrc[1] == nextQ[11];
+
+            fixedAdr = false;
+
+            // Extraneous bits in ADR
+            if((q[0] & 0xC) != 0)
+            {
+                q[0]     &= 0xF3;
+                fixedAdr =  true;
+            }
+
+            CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
+            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+            if(fixedAdr && status)
+                return true;
+
+            int oldAdr = q[0] & 0x3;
+
+            // Try Q-Mode 1
+            q[0] = (byte)((q[0] & 0xF0) + 1);
+            CRC16CCITTContext.Data(q, 10, out qCrc);
+            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+            if(status)
+            {
+                fixedAdr = true;
+
+                return true;
+            }
+
+            // Try Q-Mode 2
+            q[0] = (byte)((q[0] & 0xF0) + 2);
+            CRC16CCITTContext.Data(q, 10, out qCrc);
+            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+            if(status)
+            {
+                fixedAdr = true;
+
+                return true;
+            }
+
+            // Try Q-Mode 3
+            q[0] = (byte)((q[0] & 0xF0) + 3);
+            CRC16CCITTContext.Data(q, 10, out qCrc);
+            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+            if(status)
+            {
+                fixedAdr = true;
+
+                return true;
+            }
+
+            q[0] = (byte)((q[0] & 0xF0) + oldAdr);
+
+            oldAdr = q[0];
+
+            // Try using previous control
+            if(preCrcOk && (q[0] & 0xF0) != (preQ[0] & 0xF0))
+            {
+                q[0] = (byte)((q[0] & 0x03) + (preQ[0] & 0xF0));
+
+                CRC16CCITTContext.Data(q, 10, out qCrc);
+                status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                if(status)
+                {
+                    controlFix = true;
+
+                    return true;
+                }
+
+                q[0] = (byte)oldAdr;
+            }
+
+            // Try using next control
+            if(nextCrcOk && (q[0] & 0xF0) != (nextQ[0] & 0xF0))
+            {
+                q[0] = (byte)((q[0] & 0x03) + (nextQ[0] & 0xF0));
+
+                CRC16CCITTContext.Data(q, 10, out qCrc);
+                status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                if(status)
+                {
+                    controlFix = true;
+
+                    return true;
+                }
+
+                q[0] = (byte)oldAdr;
+            }
+
+            if(preCrcOk                               &&
+               nextCrcOk                              &&
+               (nextQ[0] & 0xF0) == (preQ[0]  & 0xF0) &&
+               (q[0]     & 0xF0) != (nextQ[0] & 0xF0))
+            {
+                q[0] = (byte)((q[0] & 0x03) + (nextQ[0] & 0xF0));
+
+                controlFix = true;
+            }
+
+            if((q[0] & 0x3) == 1)
+            {
+                // ZERO not zero
+                if(q[6] != 0)
+                {
+                    q[6]      = 0;
+                    fixedZero = true;
+
+                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                    if(status)
+                        return true;
+                }
+
+                if(preCrcOk && nextCrcOk)
+                {
+                    if(preQ[1] == nextQ[1] &&
+                       preQ[1] != q[1])
+                    {
+                        q[1]     = preQ[1];
+                        fixedTno = true;
+
+                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                        if(status)
+                            return true;
+                    }
+                }
+
+                if(preCrcOk && nextCrcOk)
+                {
+                    if(preQ[2] == nextQ[2] &&
+                       preQ[2] != q[2])
+                    {
+                        q[2]       = preQ[2];
+                        fixedIndex = true;
+
+                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                        if(status)
+                            return true;
+                    }
+                }
+
+                amin   = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                asec   = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
+                aframe = (byte)(((q[9] / 16) * 10)       + (q[9] & 0x0F));
+                aPos   = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
+
+                pmin   = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
+                psec   = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
+                pframe = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
+                pPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
+
+                // TODO: pregap
+                // Not pregap
+                if(q[2] > 0)
+                {
+                    // Previous was not pregap either
+                    if(preQ[2] > 0 && preCrcOk)
+                    {
+                        rmin   = (byte)(((preQ[3] / 16) * 10) + (preQ[3] & 0x0F));
+                        rsec   = (byte)(((preQ[4] / 16) * 10) + (preQ[4] & 0x0F));
+                        rframe = (byte)(((preQ[5] / 16) * 10) + (preQ[5] & 0x0F));
+                        rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
+
+                        dPos = pPos - rPos;
+
+                        if(dPos != 1)
+                        {
+                            q[3] = preQ[3];
+                            q[4] = preQ[4];
+                            q[5] = preQ[5];
+
+                            // BCD add 1, so 0x39 becomes 0x40
+                            if((q[5] & 0xF) == 9)
+                                q[5] += 7;
+                            else
+                                q[5]++;
+
+                            // 74 frames, so from 0x00 to 0x74, BCD
+                            if(q[5] >= 0x74)
+                            {
+                                // 0 frames
+                                q[5] = 0;
+
+                                // Add 1 second
+                                if((q[4] & 0xF) == 9)
+                                    q[4] += 7;
+                                else
+                                    q[4]++;
+
+                                // 60 seconds, so from 0x00 to 0x59, BCD
+                                if(q[4] >= 0x59)
+                                {
+                                    // 0 seconds
+                                    q[4] = 0;
+
+                                    // Add 1 minute
+                                    q[3]++;
+                                }
+                            }
+
+                            fixedRelPos = true;
+
+                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                            if(status)
+                                return true;
+                        }
+                    }
+
+                    // Next is not pregap and we didn't fix relative position with previous
+                    if(nextQ[2] > 0 &&
+                       nextCrcOk    &&
+                       !fixedRelPos)
+                    {
+                        rmin   = (byte)(((nextQ[3] / 16) * 10) + (nextQ[3] & 0x0F));
+                        rsec   = (byte)(((nextQ[4] / 16) * 10) + (nextQ[4] & 0x0F));
+                        rframe = (byte)(((nextQ[5] / 16) * 10) + (nextQ[5] & 0x0F));
+                        rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
+
+                        dPos = rPos - pPos;
+
+                        if(dPos != 1)
+                        {
+                            q[3] = nextQ[3];
+                            q[4] = nextQ[4];
+                            q[5] = nextQ[5];
+
+                            // If frames is 0
+                            if(q[5] == 0)
+                            {
+                                // If seconds is 0
+                                if(q[4] == 0)
+                                {
+                                    // BCD decrease minutes
+                                    if((q[3] & 0xF) == 0)
+                                        q[3] = (byte)((q[3] & 0xF0) - 0x10);
+                                    else
+                                        q[3]--;
+
+                                    q[4] = 0x59;
+                                    q[5] = 0x73;
+                                }
+                                else
+                                {
+                                    // BCD decrease seconds
+                                    if((q[4] & 0xF) == 0)
+                                        q[4] = (byte)((q[4] & 0xF0) - 0x10);
+                                    else
+                                        q[4]--;
+
+                                    q[5] = 0x73;
+                                }
+                            }
+
+                            // BCD decrease frames
+                            else if((q[5] & 0xF) == 0)
+                                q[5] = (byte)((q[5] & 0xF0) - 0x10);
+                            else
+                                q[5]--;
+
+                            fixedRelPos = true;
+
+                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                            if(status)
+                                return true;
+                        }
+                    }
+                }
+
+                if(preCrcOk)
+                {
+                    rmin   = (byte)(((preQ[7] / 16) * 10)    + (preQ[7] & 0x0F));
+                    rsec   = (byte)(((preQ[8] / 16) * 10)    + (preQ[8] & 0x0F));
+                    rframe = (byte)(((preQ[9] / 16) * 10)    + (preQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
+
+                    dPos = aPos - rPos;
+
+                    if(dPos != 1)
+                    {
+                        q[7] = preQ[7];
+                        q[8] = preQ[8];
+                        q[9] = preQ[9];
+
+                        // BCD add 1, so 0x39 becomes 0x40
+                        if((q[9] & 0xF) == 9)
+                            q[9] += 7;
+                        else
+                            q[9]++;
+
+                        // 74 frames, so from 0x00 to 0x74, BCD
+                        if(q[9] >= 0x74)
+                        {
+                            // 0 frames
+                            q[9] = 0;
+
+                            // Add 1 second
+                            if((q[8] & 0xF) == 9)
+                                q[8] += 7;
+                            else
+                                q[8]++;
+
+                            // 60 seconds, so from 0x00 to 0x59, BCD
+                            if(q[8] >= 0x59)
+                            {
+                                // 0 seconds
+                                q[8] = 0;
+
+                                // Add 1 minute
+                                q[7]++;
+                            }
+                        }
+
+                        fixedAbsPos = true;
+
+                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                        if(status)
+                            return true;
+                    }
+                }
+
+                // Next is not pregap and we didn't fix relative position with previous
+                if(nextQ[2] > 0 &&
+                   nextCrcOk    &&
+                   !fixedAbsPos)
+                {
+                    rmin   = (byte)(((nextQ[7] / 16) * 10)   + (nextQ[7] & 0x0F));
+                    rsec   = (byte)(((nextQ[8] / 16) * 10)   + (nextQ[8] & 0x0F));
+                    rframe = (byte)(((nextQ[9] / 16) * 10)   + (nextQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
+
+                    dPos = rPos - pPos;
+
+                    if(dPos != 1)
+                    {
+                        q[7] = nextQ[7];
+                        q[8] = nextQ[8];
+                        q[9] = nextQ[9];
+
+                        // If frames is 0
+                        if(q[9] == 0)
+                        {
+                            // If seconds is 0
+                            if(q[8] == 0)
+                            {
+                                // BCD decrease minutes
+                                if((q[7] & 0xF) == 0)
+                                    q[7] = (byte)((q[7] & 0xF0) - 0x10);
+                                else
+                                    q[7]--;
+
+                                q[8] = 0x59;
+                                q[9] = 0x73;
+                            }
+                            else
+                            {
+                                // BCD decrease seconds
+                                if((q[8] & 0xF) == 0)
+                                    q[8] = (byte)((q[8] & 0xF0) - 0x10);
+                                else
+                                    q[8]--;
+
+                                q[9] = 0x73;
+                            }
+                        }
+
+                        // BCD decrease frames
+                        else if((q[9] & 0xF) == 0)
+                            q[9] = (byte)((q[9] & 0xF0) - 0x10);
+                        else
+                            q[9]--;
+
+                        fixedAbsPos = true;
+
+                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                        if(status)
+                            return true;
+                    }
+                }
+
+                CRC16CCITTContext.Data(q, 10, out qCrc);
+                status = qCrc[0] == q[10] && qCrc[1] == q[11];
+
+                // Game Over
+                if(!fixCrc || status)
+                    return false;
+
+                if(preCrcOk)
+                {
+                    rmin   = (byte)(((preQ[7] / 16) * 10)    + (preQ[7] & 0x0F));
+                    rsec   = (byte)(((preQ[8] / 16) * 10)    + (preQ[8] & 0x0F));
+                    rframe = (byte)(((preQ[9] / 16) * 10)    + (preQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
+
+                    dPos = aPos - rPos;
+
+                    bool absOk = dPos == 1;
+
+                    rmin   = (byte)(((preQ[3] / 16) * 10) + (preQ[3] & 0x0F));
+                    rsec   = (byte)(((preQ[4] / 16) * 10) + (preQ[4] & 0x0F));
+                    rframe = (byte)(((preQ[5] / 16) * 10) + (preQ[5] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
+
+                    dPos = pPos - rPos;
+
+                    bool relOk = dPos == 1;
+
+                    if(q[0] != preQ[0] ||
+                       q[1] != preQ[1] ||
+                       q[2] != preQ[2] ||
+                       q[6] != 0       ||
+                       !absOk          ||
+                       !relOk)
+                        return false;
+
+                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    q[10] = qCrc[0];
+                    q[11] = qCrc[1];
+
+                    fixedCrc = true;
+
+                    return true;
+                }
+                else if(nextCrcOk)
+                {
+                    rmin   = (byte)(((nextQ[7] / 16) * 10)   + (nextQ[7] & 0x0F));
+                    rsec   = (byte)(((nextQ[8] / 16) * 10)   + (nextQ[8] & 0x0F));
+                    rframe = (byte)(((nextQ[9] / 16) * 10)   + (nextQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
+
+                    dPos = rPos - aPos;
+
+                    bool absOk = dPos == 1;
+
+                    rmin   = (byte)(((nextQ[3] / 16) * 10) + (nextQ[3] & 0x0F));
+                    rsec   = (byte)(((nextQ[4] / 16) * 10) + (nextQ[4] & 0x0F));
+                    rframe = (byte)(((nextQ[5] / 16) * 10) + (nextQ[5] & 0x0F));
+                    rPos   = (rmin * 60 * 75) + (rsec * 75) + rframe;
+
+                    dPos = rPos - pPos;
+
+                    bool relOk = dPos == 1;
+
+                    if(q[0] != nextQ[0] ||
+                       q[1] != nextQ[1] ||
+                       q[2] != nextQ[2] ||
+                       q[6] != 0        ||
+                       !absOk           ||
+                       !relOk)
+                        return false;
+
+                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    q[10] = qCrc[0];
+                    q[11] = qCrc[1];
+
+                    fixedCrc = true;
+
+                    return true;
+                }
+
+                // Ok if previous and next are both BAD I won't rewrite the CRC at all
+            }
+            else if((q[0] & 0x3) == 2)
+            {
+                // TODO: MCN
+            }
+            else if((q[0] & 0x3) == 3)
+            {
+                // TODO: ISRC
+            }
 
             return false;
         }

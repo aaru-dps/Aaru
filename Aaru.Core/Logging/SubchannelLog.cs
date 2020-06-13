@@ -185,5 +185,75 @@ namespace Aaru.Core.Logging
 
             _logSw.Flush();
         }
+
+        public void WritePFix()
+        {
+            _logSw.WriteLine("Fixed P subchannel using weight average.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteRwFix()
+        {
+            _logSw.WriteLine("Fixed R-W subchannels writing empty data.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQAdrFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct ADR.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQCtrlFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct CONTROL.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQZeroFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct ZERO.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQTnoFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct TNO.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQIndexFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct INDEX.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQRelPosFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct RELATIVE POSITION.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQAbsPosFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct ABSOLUTE POSITION.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQCrcFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with correct CRC.");
+
+            _logSw.Flush();
+        }
     }
 }

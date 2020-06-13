@@ -72,6 +72,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly CICMMetadataType           _preSidecar;
         readonly bool                       _private;
         readonly ushort                     _retryPasses;
+        readonly bool                       _retrySubchannel;
         readonly bool                       _stopOnError;
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _trim;
@@ -80,9 +81,10 @@ namespace Aaru.Core.Devices.Dumping
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
+        readonly bool                       _fixSubchannel;
+        readonly bool                       _fixSubchannelCrc;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
         Resume                              _resume;
-        readonly bool                       _retrySubchannel;
         Sidecar                             _sidecarClass;
         uint                                _skip;
         int                                 _speed;
@@ -115,7 +117,7 @@ namespace Aaru.Core.Devices.Dumping
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
-                    bool fixSubchannelPosition, bool retrySubchannel)
+                    bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -147,6 +149,8 @@ namespace Aaru.Core.Devices.Dumping
             _private               = @private;
             _fixSubchannelPosition = fixSubchannelPosition;
             _retrySubchannel       = retrySubchannel;
+            _fixSubchannel         = fixSubchannel;
+            _fixSubchannelCrc      = fixSubchannelCrc;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
