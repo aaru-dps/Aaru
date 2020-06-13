@@ -56,6 +56,8 @@ namespace Aaru.CommonTypes.Metadata
         public ulong NextBlock;
         public bool  Removable;
         public bool  Tape;
+        [XmlArrayItem("Block")]
+        public List<int> BadSubchannels;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
