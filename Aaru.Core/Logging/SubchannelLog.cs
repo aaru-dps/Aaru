@@ -255,5 +255,19 @@ namespace Aaru.Core.Logging
 
             _logSw.Flush();
         }
+
+        public void WriteQMcnFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with known good MCN.");
+
+            _logSw.Flush();
+        }
+
+        public void WriteQIsrcFix()
+        {
+            _logSw.WriteLine("Fixed Q subchannel with known good ISRC.");
+
+            _logSw.Flush();
+        }
     }
 }
