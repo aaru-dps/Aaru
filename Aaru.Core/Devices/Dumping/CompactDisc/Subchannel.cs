@@ -102,10 +102,26 @@ namespace Aaru.Core.Devices.Dumping
                 CRC16CCITTContext.Data(q, 10, out byte[] crc);
                 bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
+                bool pOk     = true;
+                int  pWeight = 0;
+
+                for(int p = subPos; p < subPos + 12; p++)
+                {
+                    if(deSub[p] != 0 &&
+                       deSub[p] != 255)
+                        pOk = false;
+
+                    for(int w = 0; w < 8; w++)
+                    {
+                        if(((deSub[p] >> w) & 1) > 0)
+                            pWeight++;
+                    }
+                }
+
                 // TODO: Fix
-                // TODO: Check P
                 // TODO: Check R-W
-                if(!crcOk)
+                if(!pOk ||
+                   !crcOk)
                     continue;
 
                 int aPos = int.MinValue;
