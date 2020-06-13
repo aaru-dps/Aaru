@@ -438,5 +438,49 @@ namespace Aaru.Decoders.CD
 
         public static string DecodeMcn(byte[] q) =>
             $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] / 8:X}";
+
+        public static byte GetIsrcCode(char c)
+        {
+            switch(c)
+            {
+                case '0': return 0x00;
+                case '1': return 0x01;
+                case '2': return 0x02;
+                case '3': return 0x03;
+                case '4': return 0x04;
+                case '5': return 0x05;
+                case '6': return 0x06;
+                case '7': return 0x07;
+                case '8': return 0x08;
+                case '9': return 0x09;
+                case 'A': return 0x11;
+                case 'B': return 0x12;
+                case 'C': return 0x13;
+                case 'D': return 0x14;
+                case 'E': return 0x15;
+                case 'F': return 0x16;
+                case 'G': return 0x17;
+                case 'H': return 0x18;
+                case 'I': return 0x19;
+                case 'J': return 0x1A;
+                case 'K': return 0x1B;
+                case 'L': return 0x1C;
+                case 'M': return 0x1D;
+                case 'N': return 0x1E;
+                case 'O': return 0x1F;
+                case 'P': return 0x20;
+                case 'Q': return 0x21;
+                case 'R': return 0x22;
+                case 'S': return 0x23;
+                case 'T': return 0x24;
+                case 'U': return 0x25;
+                case 'V': return 0x26;
+                case 'W': return 0x27;
+                case 'X': return 0x28;
+                case 'Y': return 0x29;
+                case 'Z': return 0x2A;
+                default:  return 0x00;
+            }
+        }
     }
 }
