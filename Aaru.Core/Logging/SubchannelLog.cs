@@ -186,87 +186,42 @@ namespace Aaru.Core.Logging
             _logSw.Flush();
         }
 
-        public void WritePFix()
+        public void WritePFix(long lba) => WriteMessageWithPosition(lba, "fixed P subchannel using weight average.");
+
+        public void WriteRwFix(long lba) => WriteMessageWithPosition(lba, "fixed R-W subchannels writing empty data.");
+
+        public void WriteQAdrFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ADR.");
+
+        public void WriteQCtrlFix(long lba) =>
+            WriteMessageWithPosition(lba, "fixed Q subchannel with correct CONTROL.");
+
+        public void WriteQZeroFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ZERO.");
+
+        public void WriteQTnoFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct TNO.");
+
+        public void WriteQIndexFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct INDEX.");
+
+        public void WriteQRelPosFix(long lba) =>
+            WriteMessageWithPosition(lba, "fixed Q subchannel with correct RELATIVE POSITION.");
+
+        public void WriteQAbsPosFix(long lba) =>
+            WriteMessageWithPosition(lba, "fixed Q subchannel with correct ABSOLUTE POSITION.");
+
+        public void WriteQCrcFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct CRC.");
+
+        public void WriteQMcnFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with known good MCN.");
+
+        public void WriteQIsrcFix(long lba) =>
+            WriteMessageWithPosition(lba, "fixed Q subchannel with known good ISRC.");
+
+        public void WriteMessageWithPosition(long lba, string message)
         {
-            _logSw.WriteLine("Fixed P subchannel using weight average.");
+            long   minute = (lba + 150)          / 4500;
+            long   second = ((lba + 150) % 4500) / 75;
+            long   frame  = (lba + 150) % 4500   % 75;
+            string area   = lba < 0 ? "Lead-In" : "Program";
 
-            _logSw.Flush();
-        }
-
-        public void WriteRwFix()
-        {
-            _logSw.WriteLine("Fixed R-W subchannels writing empty data.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQAdrFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct ADR.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQCtrlFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct CONTROL.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQZeroFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct ZERO.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQTnoFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct TNO.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQIndexFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct INDEX.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQRelPosFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct RELATIVE POSITION.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQAbsPosFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct ABSOLUTE POSITION.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQCrcFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with correct CRC.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQMcnFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with known good MCN.");
-
-            _logSw.Flush();
-        }
-
-        public void WriteQIsrcFix()
-        {
-            _logSw.WriteLine("Fixed Q subchannel with known good ISRC.");
-
+            _logSw.WriteLine($"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {message}");
             _logSw.Flush();
         }
     }

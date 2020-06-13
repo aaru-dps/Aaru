@@ -96,6 +96,7 @@ namespace Aaru.Core.Devices.Dumping
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
             {
+                long   lba    = (long)sectorAddress + (subPos / 96);
                 bool   @fixed = false;
                 byte[] q      = new byte[12];
                 Array.Copy(deSub, subPos + 12, q, 0, 12);
@@ -155,7 +156,7 @@ namespace Aaru.Core.Devices.Dumping
                     pOk    = true;
                     @fixed = true;
 
-                    subLog.WritePFix();
+                    subLog.WritePFix(lba);
                 }
 
                 if(!rwOk         &&
@@ -169,7 +170,7 @@ namespace Aaru.Core.Devices.Dumping
                     rwOk   = true;
                     @fixed = true;
 
-                    subLog.WriteRwFix();
+                    subLog.WriteRwFix(lba);
                 }
 
                 byte smin, ssec, amin, asec, aframe;
@@ -193,34 +194,34 @@ namespace Aaru.Core.Devices.Dumping
                         @fixed = true;
 
                         if(fixedAdr)
-                            subLog.WriteQAdrFix();
+                            subLog.WriteQAdrFix(lba);
 
                         if(controlFix)
-                            subLog.WriteQCtrlFix();
+                            subLog.WriteQCtrlFix(lba);
 
                         if(fixedZero)
-                            subLog.WriteQZeroFix();
+                            subLog.WriteQZeroFix(lba);
 
                         if(fixedTno)
-                            subLog.WriteQTnoFix();
+                            subLog.WriteQTnoFix(lba);
 
                         if(fixedIndex)
-                            subLog.WriteQIndexFix();
+                            subLog.WriteQIndexFix(lba);
 
                         if(fixedRelPos)
-                            subLog.WriteQRelPosFix();
+                            subLog.WriteQRelPosFix(lba);
 
                         if(fixedAbsPos)
-                            subLog.WriteQAbsPosFix();
+                            subLog.WriteQAbsPosFix(lba);
 
                         if(fixedCrc)
-                            subLog.WriteQCrcFix();
+                            subLog.WriteQCrcFix(lba);
 
                         if(fixedMcn)
-                            subLog.WriteQMcnFix();
+                            subLog.WriteQMcnFix(lba);
 
                         if(fixedIsrc)
-                            subLog.WriteQIsrcFix();
+                            subLog.WriteQIsrcFix(lba);
                     }
                 }
 
@@ -265,8 +266,7 @@ namespace Aaru.Core.Devices.Dumping
                 subchannelExtents.Remove(aPos);
 
                 if(@fixed)
-                    subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw,
-                                       (long)sectorAddress + (subPos / 96), 1);
+                    subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1);
             }
 
             return indexesChanged;
