@@ -75,13 +75,80 @@ namespace Aaru.Core.Devices.Dumping
             if(supportedSubchannel == MmcSubchannel.Q16)
                 sub = Subchannel.ConvertQToRaw(sub);
 
-            if(desiredSubchannel != MmcSubchannel.None)
+            if(!_fixSubchannelPosition &&
+               desiredSubchannel != MmcSubchannel.None)
                 _outputPlugin.WriteSectorsTag(sub, sectorAddress, length, SectorTagType.CdSectorSubchannel);
 
             subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, length);
 
             byte[] deSub = Subchannel.Deinterleave(sub);
 
+            bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks);
+
+            int prePos = int.MinValue;
+
+            // Check subchannel
+            for(int subPos = 0; subPos < deSub.Length; subPos += 96)
+            {
+                byte[] q = new byte[12];
+                Array.Copy(deSub, subPos + 12, q, 0, 12);
+
+                CRC16CCITTContext.Data(q, 10, out byte[] crc);
+                bool crcOk = crc[0] == q[10] && crc[1] == q[11];
+
+                if(!_fixSubchannelPosition ||
+                   desiredSubchannel == MmcSubchannel.None)
+                    continue;
+
+                // TODO: Check CRC OK
+
+                int aPos = int.MinValue;
+
+                byte aframe = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
+
+                if((q[0] & 0x3) == 1)
+                {
+                    byte amin = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
+                    byte asec = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+                    aPos = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
+                }
+                else
+                {
+                    ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
+                    byte  smin                  = (byte)(expectedSectorAddress / 60 / 75);
+                    expectedSectorAddress -= (ulong)(smin * 60 * 75);
+                    byte ssec = (byte)(expectedSectorAddress / 75);
+                    expectedSectorAddress -= (ulong)(smin * 75);
+                    byte sframe = (byte)(expectedSectorAddress - ((ulong)ssec * 75));
+
+                    aPos = ((smin * 60 * 75) + (ssec * 75) + aframe) - 150;
+
+                    // Next second
+                    if(aPos < prePos)
+                        aPos += 75;
+                }
+
+                // TODO: Negative sectors
+                if(aPos < 0)
+                    continue;
+
+                prePos = aPos;
+
+                byte[] posSub = new byte[96];
+                Array.Copy(deSub, subPos, posSub, 0, 96);
+                posSub = Subchannel.Interleave(posSub);
+
+                if(!_fixSubchannelPosition &&
+                   desiredSubchannel != MmcSubchannel.None)
+                    _outputPlugin.WriteSectorTag(posSub, (ulong)aPos, SectorTagType.CdSectorSubchannel);
+            }
+
+            return indexesChanged;
+        }
+
+        bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn,
+                                        Track[] tracks)
+        {
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
             {

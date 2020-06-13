@@ -183,6 +183,14 @@ namespace Aaru.Commands.Media
                     Argument = new Argument<bool>(() => false), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--fix-subchannel-position"
+                }, "Store subchannel according to the sector they describe.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -190,7 +198,7 @@ namespace Aaru.Commands.Media
                                  string encoding, bool firstPregap, bool fixOffset, bool force, bool metadata,
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
-                                 bool @private)
+                                 bool @private, bool fixSubchannelPosition)
         {
             MainClass.PrintCopyright();
 
@@ -222,6 +230,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", verbose);
             AaruConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", subchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--private={0}", @private);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel-position={0}", fixSubchannelPosition);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -419,7 +428,7 @@ namespace Aaru.Commands.Media
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
                                   parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
-                                  wantedSubchannel, speed, @private);
+                                  wantedSubchannel, speed, @private, fixSubchannelPosition);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

@@ -69,6 +69,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly string                     _outputPrefix;
         readonly bool                       _persistent;
         readonly CICMMetadataType           _preSidecar;
+        readonly bool                       _private;
         readonly ushort                     _retryPasses;
         readonly bool                       _stopOnError;
         readonly DumpSubchannel             _subchannel;
@@ -78,8 +79,8 @@ namespace Aaru.Core.Devices.Dumping
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
+        readonly bool                       _fixSubchannelPosition;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
-        readonly bool                       _private;
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
@@ -112,36 +113,38 @@ namespace Aaru.Core.Devices.Dumping
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
-                    bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private)
+                    bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
+                    bool fixSubchannelPosition)
         {
-            _doResume             = doResume;
-            _dev                  = dev;
-            _devicePath           = devicePath;
-            _outputPlugin         = outputPlugin;
-            _retryPasses          = retryPasses;
-            _force                = force;
-            _dumpRaw              = dumpRaw;
-            _persistent           = persistent;
-            _stopOnError          = stopOnError;
-            _resume               = resume;
-            _dumpLog              = dumpLog;
-            _encoding             = encoding;
-            _outputPrefix         = outputPrefix;
-            _outputPath           = outputPath;
-            _formatOptions        = formatOptions;
-            _preSidecar           = preSidecar;
-            _skip                 = skip;
-            _metadata             = metadata;
-            _trim                 = trim;
-            _dumpFirstTrackPregap = dumpFirstTrackPregap;
-            _aborted              = false;
-            _fixOffset            = fixOffset;
-            _debug                = debug;
-            _maximumReadable      = 64;
-            _subchannel           = subchannel;
-            _speedMultiplier      = -1;
-            _speed                = speed;
-            _private              = @private;
+            _doResume              = doResume;
+            _dev                   = dev;
+            _devicePath            = devicePath;
+            _outputPlugin          = outputPlugin;
+            _retryPasses           = retryPasses;
+            _force                 = force;
+            _dumpRaw               = dumpRaw;
+            _persistent            = persistent;
+            _stopOnError           = stopOnError;
+            _resume                = resume;
+            _dumpLog               = dumpLog;
+            _encoding              = encoding;
+            _outputPrefix          = outputPrefix;
+            _outputPath            = outputPath;
+            _formatOptions         = formatOptions;
+            _preSidecar            = preSidecar;
+            _skip                  = skip;
+            _metadata              = metadata;
+            _trim                  = trim;
+            _dumpFirstTrackPregap  = dumpFirstTrackPregap;
+            _aborted               = false;
+            _fixOffset             = fixOffset;
+            _debug                 = debug;
+            _maximumReadable       = 64;
+            _subchannel            = subchannel;
+            _speedMultiplier       = -1;
+            _speed                 = speed;
+            _private               = @private;
+            _fixSubchannelPosition = fixSubchannelPosition;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
