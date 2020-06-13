@@ -105,6 +105,8 @@ namespace Aaru.Core.Devices.Dumping
                 bool pOk     = true;
                 int  pWeight = 0;
 
+                bool rwOk = true;
+
                 for(int p = subPos; p < subPos + 12; p++)
                 {
                     if(deSub[p] != 0 &&
@@ -118,10 +120,29 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
+                for(int rw = subPos + 24; rw < subPos + 96; rw++)
+                    if(deSub[rw] != 0)
+                        rwOk = false;
+
+                if(!rwOk)
+                {
+                    byte[] sectorSub = new byte[96];
+                    Array.Copy(sub, subPos, sectorSub, 0, 96);
+
+                    DetectRwPackets(sectorSub, out _, out bool rwPacket, out bool cdtextPacket);
+
+                    // TODO: CD+G reed solomon
+                    if(rwPacket && !cdtextPacket)
+                        rwOk = true;
+
+                    if(cdtextPacket)
+                        rwOk = CheckCdTextPackets(sectorSub);
+                }
+
                 // TODO: Fix
-                // TODO: Check R-W
-                if(!pOk ||
-                   !crcOk)
+                if(!pOk   ||
+                   !crcOk ||
+                   !rwOk)
                     continue;
 
                 int aPos = int.MinValue;
@@ -273,6 +294,344 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
             }
+
+            return false;
+        }
+
+        void DetectRwPackets(byte[] subchannel, out bool zero, out bool rwPacket, out bool cdtextPacket)
+        {
+            zero         = false;
+            rwPacket     = false;
+            cdtextPacket = false;
+
+            byte[] cdTextPack1  = new byte[18];
+            byte[] cdTextPack2  = new byte[18];
+            byte[] cdTextPack3  = new byte[18];
+            byte[] cdTextPack4  = new byte[18];
+            byte[] cdSubRwPack1 = new byte[24];
+            byte[] cdSubRwPack2 = new byte[24];
+            byte[] cdSubRwPack3 = new byte[24];
+            byte[] cdSubRwPack4 = new byte[24];
+
+            int i = 0;
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+            }
+
+            i = 0;
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
+
+            switch(cdSubRwPack1[0])
+            {
+                case 0x00:
+                    zero = true;
+
+                    break;
+                case 0x08:
+                case 0x09:
+                case 0x0A:
+                case 0x18:
+                case 0x38:
+                    rwPacket = true;
+
+                    break;
+                case 0x14:
+                    cdtextPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack2[0])
+            {
+                case 0x00:
+                    zero = true;
+
+                    break;
+                case 0x08:
+                case 0x09:
+                case 0x0A:
+                case 0x18:
+                case 0x38:
+                    rwPacket = true;
+
+                    break;
+                case 0x14:
+                    cdtextPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack3[0])
+            {
+                case 0x00:
+                    zero = true;
+
+                    break;
+                case 0x08:
+                case 0x09:
+                case 0x0A:
+                case 0x18:
+                case 0x38:
+                    rwPacket = true;
+
+                    break;
+                case 0x14:
+                    cdtextPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack4[0])
+            {
+                case 0x00:
+                    zero = true;
+
+                    break;
+                case 0x08:
+                case 0x09:
+                case 0x0A:
+                case 0x18:
+                case 0x38:
+                    rwPacket = true;
+
+                    break;
+                case 0x14:
+                    cdtextPacket = true;
+
+                    break;
+            }
+
+            if((cdTextPack1[0] & 0x80) == 0x80)
+                cdtextPacket = true;
+
+            if((cdTextPack2[0] & 0x80) == 0x80)
+                cdtextPacket = true;
+
+            if((cdTextPack3[0] & 0x80) == 0x80)
+                cdtextPacket = true;
+
+            if((cdTextPack4[0] & 0x80) == 0x80)
+                cdtextPacket = true;
+        }
+
+        bool CheckCdTextPackets(byte[] subchannel)
+        {
+            byte[] cdTextPack1 = new byte[18];
+            byte[] cdTextPack2 = new byte[18];
+            byte[] cdTextPack3 = new byte[18];
+            byte[] cdTextPack4 = new byte[18];
+
+            int i = 0;
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+            }
+
+            for(int j = 0; j < 18; j++)
+            {
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
+
+                cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
+
+                if(j < 18)
+                    cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+            }
+
+            bool status = true;
+
+            if((cdTextPack1[0] & 0x80) == 0x80)
+            {
+                ushort cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
+                byte[] cdTextPack1ForCrc = new byte[16];
+                Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
+                ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
+
+                if(cdTextPack1Crc != calculatedCdtp1Crc &&
+                   cdTextPack1Crc != 0)
+                    status = false;
+            }
+
+            if((cdTextPack2[0] & 0x80) == 0x80)
+            {
+                ushort cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
+                byte[] cdTextPack2ForCrc = new byte[16];
+                Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
+                ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
+
+                if(cdTextPack2Crc != calculatedCdtp2Crc &&
+                   cdTextPack2Crc != 0)
+                    status = false;
+            }
+
+            if((cdTextPack3[0] & 0x80) == 0x80)
+            {
+                ushort cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
+                byte[] cdTextPack3ForCrc = new byte[16];
+                Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
+                ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
+
+                if(cdTextPack3Crc != calculatedCdtp3Crc &&
+                   cdTextPack3Crc != 0)
+                    status = false;
+            }
+
+            if((cdTextPack4[0] & 0x80) != 0x80)
+                return status;
+
+            ushort cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
+            byte[] cdTextPack4ForCrc = new byte[16];
+            Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
+            ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
+
+            if(cdTextPack4Crc == calculatedCdtp4Crc ||
+               cdTextPack4Crc == 0)
+                return status;
 
             return false;
         }
