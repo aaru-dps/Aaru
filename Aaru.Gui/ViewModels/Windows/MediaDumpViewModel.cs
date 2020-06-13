@@ -800,7 +800,7 @@ namespace Aaru.Gui.ViewModels.Windows
             _dumper = new Dump(Resume, _dev, _devicePath, SelectedPlugin.Plugin, (ushort)Retries, Force, false,
                                Persistent, StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination,
                                parsedOptions, _sidecar, (uint)Skipped, ExistingMetadata == false, Trim == false,
-                               Track1Pregap, true, false, DumpSubchannel.Any, 0, false, false);
+                               Track1Pregap, true, false, DumpSubchannel.Any, 0, false, false, false);
 
             new Thread(DoWork).Start();
         }

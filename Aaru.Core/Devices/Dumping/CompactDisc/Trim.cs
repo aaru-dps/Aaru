@@ -53,7 +53,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
-                            Dictionary<byte, string> isrcs, ref string mcn)
+                            Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
         {
             DateTime          start;
             DateTime          end;
@@ -190,7 +190,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector,
                                                                  1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
-                                                                 tracks);
+                                                                 tracks, subchannelExtents);
 
                     // Set tracks and go back
                     if(!indexesChanged)

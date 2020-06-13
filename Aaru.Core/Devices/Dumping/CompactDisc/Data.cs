@@ -86,7 +86,7 @@ namespace Aaru.Core.Devices.Dumping
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                         Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
-                        Dictionary<byte, string> isrcs, ref string mcn)
+                        Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -390,7 +390,8 @@ namespace Aaru.Core.Devices.Dumping
 
                                 bool indexesChanged =
                                     WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1,
-                                                           subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks);
+                                                           subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
+                                                           subchannelExtents);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -514,7 +515,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
                                                                      blocksToRead, subLog, isrcs,
-                                                                     (byte)track.TrackSequence, ref mcn, tracks);
+                                                                     (byte)track.TrackSequence, ref mcn, tracks,
+                                                                     subchannelExtents);
 
                         // Set tracks and go back
                         if(indexesChanged)

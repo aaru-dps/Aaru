@@ -55,7 +55,7 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                              MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
-                             ref string mcn)
+                             ref string mcn, ExtentsInt subchannelExtents)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -290,7 +290,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector,
                                                                  1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
-                                                                 tracks);
+                                                                 tracks, subchannelExtents);
 
                     // Set tracks and go back
                     if(indexesChanged)
@@ -402,7 +402,8 @@ namespace Aaru.Core.Devices.Dumping
 
                             bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub,
                                                                          badSector, 1, subLog, isrcs,
-                                                                         (byte)track.TrackSequence, ref mcn, tracks);
+                                                                         (byte)track.TrackSequence, ref mcn, tracks,
+                                                                         subchannelExtents);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -439,6 +440,136 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(sense)
                     _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
+            }
+
+            EndProgress?.Invoke();
+        }
+
+        void RetrySubchannel(bool readcd, uint subSize, MmcSubchannel supportedSubchannel, ref double totalDuration,
+                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
+                             Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
+        {
+            bool              sense  = true;     // Sense indicator
+            byte[]            cmdBuf = null;     // Data buffer
+            double            cmdDuration;       // Command execution time
+            const uint        sectorSize = 2352; // Full sector size
+            byte[]            senseBuf   = null; // Sense buffer
+            PlextorSubchannel supportedPlextorSubchannel;
+
+            if(supportedSubchannel == MmcSubchannel.None ||
+               desiredSubchannel   == MmcSubchannel.None)
+                return;
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    supportedPlextorSubchannel = PlextorSubchannel.All;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    supportedPlextorSubchannel = PlextorSubchannel.Q16;
+
+                    break;
+                case MmcSubchannel.Rw:
+                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
+
+                    break;
+                default:
+                    supportedPlextorSubchannel = PlextorSubchannel.None;
+
+                    break;
+            }
+
+            if(_aborted)
+                return;
+
+            int  pass    = 1;
+            bool forward = true;
+
+            InitProgress?.Invoke();
+
+            cdRepeatRetry:
+
+            _resume.BadSubchannels = new List<int>();
+
+            foreach(Tuple<int, int> extent in subchannelExtents.ToArray())
+            {
+                for(int sub = extent.Item1; sub <= extent.Item2; sub++)
+                {
+                    if(sub >= (int)_resume.NextBlock)
+                        continue;
+
+                    _resume.BadSubchannels.Add(sub);
+                }
+            }
+
+            _resume.BadSubchannels.Sort();
+
+            if(!forward)
+                _resume.BadSubchannels.Reverse();
+
+            int[] tmpArray = _resume.BadSubchannels.ToArray();
+
+            for(int i = 0; i < tmpArray.Length; i++)
+            {
+                uint badSector = (uint)tmpArray[i];
+
+                Track track = tracks.OrderBy(t => t.TrackStartSector).
+                                     LastOrDefault(t => badSector >= t.TrackStartSector);
+
+                if(_aborted)
+                {
+                    _dumpLog.WriteLine("Aborted!");
+
+                    break;
+                }
+
+                PulseProgress?.
+                    Invoke($"Retrying sector {badSector} subchannel, pass {pass}, {(forward ? "forward" : "reverse")}");
+
+                uint startSector = badSector - 2;
+
+                if(_supportsPlextorD8)
+                {
+                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, startSector, subSize, 5,
+                                                 supportedPlextorSubchannel, 0, out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+                else if(readcd)
+                {
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, startSector, subSize, 5, MmcSectorTypes.AllTypes,
+                                        false, false, false, MmcHeaderCodes.None, false, false, MmcErrorField.None,
+                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+
+                if(sense || _dev.Error)
+                    continue;
+
+                WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, cmdBuf, badSector, 5, subLog, isrcs,
+                                       (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents);
+
+                if(subchannelExtents.Contains(tmpArray[i]))
+                    continue;
+
+                UpdateStatus?.Invoke($"Correctly retried sector {badSector} subchannel in pass {pass}.");
+                _dumpLog.WriteLine("Correctly retried sector {0} subchannel in pass {1}.", badSector, pass);
+            }
+
+            if(pass < _retryPasses &&
+               !_aborted           &&
+               subchannelExtents.Count > 0)
+            {
+                pass++;
+                forward = !forward;
+
+                goto cdRepeatRetry;
             }
 
             EndProgress?.Invoke();

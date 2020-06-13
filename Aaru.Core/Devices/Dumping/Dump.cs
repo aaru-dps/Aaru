@@ -61,6 +61,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpLog                    _dumpLog;
         readonly bool                       _dumpRaw;
         readonly Encoding                   _encoding;
+        readonly bool                       _fixSubchannelPosition;
         readonly bool                       _force;
         readonly Dictionary<string, string> _formatOptions;
         readonly bool                       _metadata;
@@ -79,9 +80,9 @@ namespace Aaru.Core.Devices.Dumping
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
-        readonly bool                       _fixSubchannelPosition;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
         Resume                              _resume;
+        readonly bool                       _retrySubchannel;
         Sidecar                             _sidecarClass;
         uint                                _skip;
         int                                 _speed;
@@ -114,7 +115,7 @@ namespace Aaru.Core.Devices.Dumping
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
-                    bool fixSubchannelPosition)
+                    bool fixSubchannelPosition, bool retrySubchannel)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -145,6 +146,7 @@ namespace Aaru.Core.Devices.Dumping
             _speed                 = speed;
             _private               = @private;
             _fixSubchannelPosition = fixSubchannelPosition;
+            _retrySubchannel       = retrySubchannel;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>

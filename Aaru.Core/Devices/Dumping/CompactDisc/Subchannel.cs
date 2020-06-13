@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
@@ -70,7 +71,8 @@ namespace Aaru.Core.Devices.Dumping
         // Return true if indexes have changed
         bool WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel, byte[] sub,
                                     ulong sectorAddress, uint length, SubchannelLog subLog,
-                                    Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn, Track[] tracks)
+                                    Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn, Track[] tracks,
+                                    ExtentsInt subchannelExtents)
         {
             if(supportedSubchannel == MmcSubchannel.Q16)
                 sub = Subchannel.ConvertQToRaw(sub);
@@ -85,6 +87,10 @@ namespace Aaru.Core.Devices.Dumping
 
             bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks);
 
+            if(!_fixSubchannelPosition ||
+               desiredSubchannel == MmcSubchannel.None)
+                return indexesChanged;
+
             int prePos = int.MinValue;
 
             // Check subchannel
@@ -96,11 +102,11 @@ namespace Aaru.Core.Devices.Dumping
                 CRC16CCITTContext.Data(q, 10, out byte[] crc);
                 bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
-                if(!_fixSubchannelPosition ||
-                   desiredSubchannel == MmcSubchannel.None)
+                // TODO: Fix
+                // TODO: Check P
+                // TODO: Check R-W
+                if(!crcOk)
                     continue;
-
-                // TODO: Check CRC OK
 
                 int aPos = int.MinValue;
 
@@ -137,10 +143,9 @@ namespace Aaru.Core.Devices.Dumping
                 byte[] posSub = new byte[96];
                 Array.Copy(deSub, subPos, posSub, 0, 96);
                 posSub = Subchannel.Interleave(posSub);
+                _outputPlugin.WriteSectorTag(posSub, (ulong)aPos, SectorTagType.CdSectorSubchannel);
 
-                if(!_fixSubchannelPosition &&
-                   desiredSubchannel != MmcSubchannel.None)
-                    _outputPlugin.WriteSectorTag(posSub, (ulong)aPos, SectorTagType.CdSectorSubchannel);
+                subchannelExtents.Remove(aPos);
             }
 
             return indexesChanged;

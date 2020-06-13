@@ -75,7 +75,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool read6, bool read10, bool read12, bool read16, bool readcd,
                             MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                            ref string mcn, Track[] tracks)
+                            ref string mcn, Track[] tracks, ExtentsInt subchannelExtents)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -160,7 +160,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
                                                                          _maximumReadable, subLog, isrcs, 0xAA, ref mcn,
-                                                                         tracks);
+                                                                         tracks, subchannelExtents);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -239,7 +239,7 @@ namespace Aaru.Core.Devices.Dumping
                              bool read6, bool read10, bool read12, bool read16, bool readcd,
                              MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
                              SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                             ref string mcn, Track[] tracks)
+                             ref string mcn, Track[] tracks, ExtentsInt subchannelExtents)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -324,7 +324,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
                                                                          _maximumReadable, subLog, isrcs, 0xAA, ref mcn,
-                                                                         tracks);
+                                                                         tracks, subchannelExtents);
 
                             // Set tracks and go back
                             if(indexesChanged)

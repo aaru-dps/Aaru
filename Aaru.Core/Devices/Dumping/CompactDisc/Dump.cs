@@ -112,9 +112,10 @@ namespace Aaru.Core.Devices.Dumping
             bool                     hiddenTrack; // Disc has a hidden track before track 1
             MmcSubchannel            supportedSubchannel; // Drive's maximum supported subchannel
             MmcSubchannel            desiredSubchannel; // User requested subchannel
-            bool                     bcdSubchannel = false; // Subchannel positioning is in BCD
-            Dictionary<byte, string> isrcs         = new Dictionary<byte, string>();
-            string                   mcn           = null;
+            bool                     bcdSubchannel     = false; // Subchannel positioning is in BCD
+            Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
+            string                   mcn               = null;
+            var                      subchannelExtents = new ExtentsInt();
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -848,6 +849,20 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine($"Found ISRC for track {trk.TrackSequence}: {mcn}");
                 }
 
+            if(supportedSubchannel != MmcSubchannel.None &&
+               desiredSubchannel   != MmcSubchannel.None)
+            {
+                subchannelExtents = new ExtentsInt();
+
+                _resume.BadSubchannels ??= new List<int>();
+
+                foreach(int sub in _resume.BadSubchannels)
+                    subchannelExtents.Add(sub);
+
+                if(_resume.NextBlock < blocks)
+                    subchannelExtents.Add((int)_resume.NextBlock, (int)(blocks - 1));
+            }
+
             if(_resume.NextBlock > 0)
             {
                 UpdateStatus?.Invoke($"Resuming from block {_resume.NextBlock}.");
@@ -1015,7 +1030,7 @@ namespace Aaru.Core.Devices.Dumping
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
-                       tracks, subLog, desiredSubchannel, isrcs, ref mcn);
+                       tracks, subLog, desiredSubchannel, isrcs, ref mcn, subchannelExtents);
 
             // TODO: Enable when underlying images support lead-outs
             /*
@@ -1048,11 +1063,17 @@ namespace Aaru.Core.Devices.Dumping
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
-                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn);
+                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn, subchannelExtents);
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
                             subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs,
-                            ref mcn);
+                            ref mcn, subchannelExtents);
+
+            if(subchannelExtents.Count > 0 &&
+               _retryPasses            > 0 &&
+               _retrySubchannel)
+                RetrySubchannel(readcd, subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel,
+                                tracks, isrcs, ref mcn, subchannelExtents);
 
             // Write media tags to image
             if(!_aborted)
@@ -1083,6 +1104,21 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine("Sector {0} could not be read.", bad);
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+
+            _resume.BadSubchannels = new List<int>();
+
+            foreach(Tuple<int, int> extent in subchannelExtents.ToArray())
+            {
+                for(int sub = extent.Item1; sub <= extent.Item2; sub++)
+                {
+                    if(sub >= (int)_resume.NextBlock)
+                        continue;
+
+                    _resume.BadSubchannels.Add(sub);
+                }
+            }
+
+            _resume.BadSubchannels.Sort();
 
             // TODO: Disc ID
             var metadata = new CommonTypes.Structs.ImageInfo
@@ -1153,6 +1189,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
             UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
             UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
+            UpdateStatus?.Invoke($"{_resume.BadSubchannels.Count} subchannels could not be read.");
             UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
