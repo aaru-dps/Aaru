@@ -368,8 +368,10 @@ namespace Aaru.Core.Devices.Dumping
                         if(tracks[i].TrackPregap >= (ulong)(qPos + 1))
                             continue;
 
+                        ulong oldPregap = tracks[i].TrackPregap;
+
                         tracks[i].TrackPregap      =  (ulong)(qPos + 1);
-                        tracks[i].TrackStartSector -= tracks[i].TrackPregap;
+                        tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
 
                         if(i > 0)
                             tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
