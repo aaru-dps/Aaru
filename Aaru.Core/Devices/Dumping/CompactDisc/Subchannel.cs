@@ -116,15 +116,19 @@ namespace Aaru.Core.Devices.Dumping
                         pOk = false;
 
                     for(int w = 0; w < 8; w++)
-                    {
                         if(((deSub[p] >> w) & 1) > 0)
                             pWeight++;
-                    }
                 }
 
                 for(int rw = subPos + 24; rw < subPos + 96; rw++)
-                    if(deSub[rw] != 0)
-                        rwOk = false;
+                {
+                    if(deSub[rw] == 0)
+                        continue;
+
+                    rwOk = false;
+
+                    break;
+                }
 
                 bool rwPacket     = false;
                 bool cdtextPacket = false;
