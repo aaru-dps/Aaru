@@ -1375,7 +1375,6 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.0" t="Include">
-              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>

@@ -117,9 +117,8 @@ namespace Aaru.Filesystems.FAT
 
             statfs = new FileSystemInfo
             {
-                Blocks    = XmlFsType.Clusters, FilenameLength = 11,
-                Files     = 0,                               // Requires traversing all directories
-                FreeFiles = 0, PluginId = Id, FreeBlocks = 0 // Requires traversing the FAT
+                Blocks    = XmlFsType.Clusters, FilenameLength = 11, Files = 0, // Requires traversing all directories
+                FreeFiles = 0, PluginId                        = Id, FreeBlocks = 0 // Requires traversing the FAT
             };
 
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
@@ -774,8 +773,9 @@ namespace Aaru.Filesystems.FAT
                 eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
 
             // Check OS/2 .LONGNAME
-            if(eaCache != null &&
-               (this.@namespace == Namespace.Os2 || this.@namespace == Namespace.Ecs))
+            if(eaCache != null                                                        &&
+               (this.@namespace == Namespace.Os2 || this.@namespace == Namespace.Ecs) &&
+               !fat32)
             {
                 List<KeyValuePair<string, CompleteDirectoryEntry>> rootFilesWithEas =
                     rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();

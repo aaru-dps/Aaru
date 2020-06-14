@@ -273,8 +273,9 @@ namespace Aaru.Filesystems.FAT
                 }
 
                 // Check OS/2 .LONGNAME
-                if(eaCache != null &&
-                   (@namespace == Namespace.Os2 || @namespace == Namespace.Ecs))
+                if(eaCache != null                                              &&
+                   (@namespace == Namespace.Os2 || @namespace == Namespace.Ecs) &&
+                   !fat32)
                 {
                     List<KeyValuePair<string, CompleteDirectoryEntry>> filesWithEas =
                         currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
