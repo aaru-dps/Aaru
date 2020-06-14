@@ -266,6 +266,11 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
+                if(crossingLeadOut       &&
+                   failedCrossingLeadOut &&
+                   blocksToRead > 1)
+                    blocksToRead--;
+
                 if(_supportsPlextorD8 && !inData)
                 {
                     sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, firstSectorToRead, blockSize,
@@ -487,6 +492,12 @@ namespace Aaru.Core.Devices.Dumping
                 if(!sense &&
                    !_dev.Error)
                 {
+                    if(crossingLeadOut && failedCrossingLeadOut)
+                    {
+                        byte[] tmp = new byte[cmdBuf.Length + blockSize];
+                        Array.Copy(cmdBuf, 0, tmp, 0, cmdBuf.Length);
+                    }
+
                     // Because one block has been partially used to fix the offset
                     if(_fixOffset &&
                        !inData    &&
