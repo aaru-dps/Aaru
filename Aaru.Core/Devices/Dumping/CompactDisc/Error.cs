@@ -312,7 +312,9 @@ namespace Aaru.Core.Devices.Dumping
                 pass++;
                 forward = !forward;
                 _resume.BadBlocks.Sort();
-                _resume.BadBlocks.Reverse();
+
+                if(!forward)
+                    _resume.BadBlocks.Reverse();
 
                 goto cdRepeatRetry;
             }

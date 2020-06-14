@@ -168,8 +168,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(sense)
                     {
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine                                        +
-                                                     strSense);
+                                                     Environment.NewLine + strSense);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
@@ -197,8 +196,7 @@ namespace Aaru.Core.Devices.Dumping
                         fxSense?.ASC != 0x00))
                     {
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine                                        +
-                                                     strSense);
+                                                     Environment.NewLine + strSense);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
@@ -216,8 +214,7 @@ namespace Aaru.Core.Devices.Dumping
                         fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                     Environment.NewLine                                        +
-                                                     strSense);
+                                                     Environment.NewLine + strSense);
 
                         _dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
 
@@ -356,8 +353,7 @@ namespace Aaru.Core.Devices.Dumping
                                !fxSense?.EOM == true)
                             {
                                 StoppingErrorMessage?.Invoke("Drive could not return back. Sense follows..." +
-                                                             Environment.NewLine                             +
-                                                             strSense);
+                                                             Environment.NewLine + strSense);
 
                                 _dumpLog.WriteLine("Drive could not return back. Sense follows...");
 
@@ -411,8 +407,7 @@ namespace Aaru.Core.Devices.Dumping
                             fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                             StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
-                                                         Environment.NewLine                                   +
-                                                         strSense);
+                                                         Environment.NewLine + strSense);
 
                             _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
 
@@ -744,8 +739,7 @@ namespace Aaru.Core.Devices.Dumping
                 _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error setting output image in tape mode, not continuing." +
-                                             Environment.NewLine                                        +
-                                             _outputPlugin.ErrorMessage);
+                                             Environment.NewLine + _outputPlugin.ErrorMessage);
 
                 return;
             }
@@ -902,8 +896,7 @@ namespace Aaru.Core.Devices.Dumping
                             fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                             StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
-                                                         Environment.NewLine                                   +
-                                                         strSense);
+                                                         Environment.NewLine + strSense);
 
                             _outputPlugin.Close();
                             _dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
@@ -944,8 +937,7 @@ namespace Aaru.Core.Devices.Dumping
                             continue;
                     }
 
-                    if((fxSense?.SenseKey == SenseKeys.NoSense ||
-                        fxSense?.SenseKey == SenseKeys.RecoveredError) &&
+                    if((fxSense?.SenseKey == SenseKeys.NoSense || fxSense?.SenseKey == SenseKeys.RecoveredError) &&
                        (fxSense?.ASCQ == 0x02 || fxSense?.ASCQ == 0x05 || fxSense?.EOM == true))
                     {
                         // TODO: Detect end of partition
@@ -1048,8 +1040,7 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
-                         _devicePath);
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
@@ -1200,7 +1191,9 @@ namespace Aaru.Core.Devices.Dumping
                     pass++;
                     forward = !forward;
                     _resume.BadBlocks.Sort();
-                    _resume.BadBlocks.Reverse();
+
+                    if(!forward)
+                        _resume.BadBlocks.Reverse();
 
                     goto repeatRetry;
                 }

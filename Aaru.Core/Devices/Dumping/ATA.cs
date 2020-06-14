@@ -228,8 +228,7 @@ namespace Aaru.Core.Devices.Dumping
                         _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                         StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
-                                                     Environment.NewLine                            +
-                                                     _outputPlugin.ErrorMessage);
+                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                         return;
                     }
@@ -337,8 +336,7 @@ namespace Aaru.Core.Devices.Dumping
                         mhddLog.Close();
 
                         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                     (blockSize     * (double)(blocks + 1)) / 1024 /
-                                     (totalDuration / 1000), _devicePath);
+                                     (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
                         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
@@ -451,7 +449,9 @@ namespace Aaru.Core.Devices.Dumping
                                 pass++;
                                 forward = !forward;
                                 _resume.BadBlocks.Sort();
-                                _resume.BadBlocks.Reverse();
+
+                                if(!forward)
+                                    _resume.BadBlocks.Reverse();
 
                                 goto repeatRetryLba;
                             }
@@ -557,8 +557,7 @@ namespace Aaru.Core.Devices.Dumping
                         mhddLog.Close();
 
                         ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                     (blockSize     * (double)(blocks + 1)) / 1024 /
-                                     (totalDuration / 1000), _devicePath);
+                                     (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
                         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 

@@ -255,8 +255,7 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (BLOCK_SIZE * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
-                         _devicePath);
+                         (BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
@@ -444,7 +443,9 @@ namespace Aaru.Core.Devices.Dumping
                     pass++;
                     forward = !forward;
                     _resume.BadBlocks.Sort();
-                    _resume.BadBlocks.Reverse();
+
+                    if(!forward)
+                        _resume.BadBlocks.Reverse();
 
                     goto repeatRetry;
                 }

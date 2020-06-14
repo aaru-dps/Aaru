@@ -394,8 +394,7 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
-                         _devicePath);
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
@@ -511,7 +510,9 @@ namespace Aaru.Core.Devices.Dumping
                     pass++;
                     forward = !forward;
                     _resume.BadBlocks.Sort();
-                    _resume.BadBlocks.Reverse();
+
+                    if(!forward)
+                        _resume.BadBlocks.Reverse();
 
                     goto repeatRetryLba;
                 }
@@ -686,8 +687,7 @@ namespace Aaru.Core.Devices.Dumping
                         _dumpLog.WriteLine("Cannot write Extended CSD to output image.");
 
                         StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image." +
-                                                     Environment.NewLine                          +
-                                                     _outputPlugin.ErrorMessage);
+                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
 
                         return;
                     }
