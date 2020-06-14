@@ -86,7 +86,7 @@ namespace Aaru.Core.Devices.Dumping
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                         Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
-                        Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
+                        Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation

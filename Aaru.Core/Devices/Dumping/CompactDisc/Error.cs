@@ -55,7 +55,7 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                              MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
-                             ref string mcn, ExtentsInt subchannelExtents)
+                             ref string mcn, HashSet<int> subchannelExtents)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -447,7 +447,7 @@ namespace Aaru.Core.Devices.Dumping
 
         void RetrySubchannel(bool readcd, uint subSize, MmcSubchannel supportedSubchannel, ref double totalDuration,
                              SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
-                             Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
+                             Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -495,18 +495,7 @@ namespace Aaru.Core.Devices.Dumping
             cdRepeatRetry:
 
             _resume.BadSubchannels = new List<int>();
-
-            foreach(Tuple<int, int> extent in subchannelExtents.ToArray())
-            {
-                for(int sub = extent.Item1; sub <= extent.Item2; sub++)
-                {
-                    if(sub >= (int)_resume.NextBlock)
-                        continue;
-
-                    _resume.BadSubchannels.Add(sub);
-                }
-            }
-
+            _resume.BadSubchannels.AddRange(subchannelExtents);
             _resume.BadSubchannels.Sort();
 
             if(!forward)

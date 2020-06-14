@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
-using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
@@ -72,7 +71,7 @@ namespace Aaru.Core.Devices.Dumping
         bool WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel, byte[] sub,
                                     ulong sectorAddress, uint length, SubchannelLog subLog,
                                     Dictionary<byte, string> isrcs, byte currentTrack, ref string mcn, Track[] tracks,
-                                    ExtentsInt subchannelExtents)
+                                    HashSet<int> subchannelExtents)
         {
             if(supportedSubchannel == MmcSubchannel.Q16)
                 sub = Subchannel.ConvertQToRaw(sub);

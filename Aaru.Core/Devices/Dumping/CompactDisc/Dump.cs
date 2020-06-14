@@ -115,7 +115,7 @@ namespace Aaru.Core.Devices.Dumping
             bool                     bcdSubchannel     = false; // Subchannel positioning is in BCD
             Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
             string                   mcn               = null;
-            var                      subchannelExtents = new ExtentsInt();
+            HashSet<int>             subchannelExtents = new HashSet<int>();
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -852,7 +852,7 @@ namespace Aaru.Core.Devices.Dumping
             if(supportedSubchannel != MmcSubchannel.None &&
                desiredSubchannel   != MmcSubchannel.None)
             {
-                subchannelExtents = new ExtentsInt();
+                subchannelExtents = new HashSet<int>();
 
                 _resume.BadSubchannels ??= new List<int>();
 
@@ -860,7 +860,8 @@ namespace Aaru.Core.Devices.Dumping
                     subchannelExtents.Add(sub);
 
                 if(_resume.NextBlock < blocks)
-                    subchannelExtents.Add((int)_resume.NextBlock, (int)(blocks - 1));
+                    for(ulong i = _resume.NextBlock; i < blocks; i++)
+                        subchannelExtents.Add((int)i);
             }
 
             if(_resume.NextBlock > 0)
@@ -1106,18 +1107,7 @@ namespace Aaru.Core.Devices.Dumping
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             _resume.BadSubchannels = new List<int>();
-
-            foreach(Tuple<int, int> extent in subchannelExtents.ToArray())
-            {
-                for(int sub = extent.Item1; sub <= extent.Item2; sub++)
-                {
-                    if(sub >= (int)_resume.NextBlock)
-                        continue;
-
-                    _resume.BadSubchannels.Add(sub);
-                }
-            }
-
+            _resume.BadSubchannels.AddRange(subchannelExtents);
             _resume.BadSubchannels.Sort();
 
             // TODO: Disc ID

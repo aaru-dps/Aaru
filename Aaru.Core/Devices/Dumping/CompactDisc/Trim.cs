@@ -53,7 +53,7 @@ namespace Aaru.Core.Devices.Dumping
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
-                            Dictionary<byte, string> isrcs, ref string mcn, ExtentsInt subchannelExtents)
+                            Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
         {
             DateTime          start;
             DateTime          end;
