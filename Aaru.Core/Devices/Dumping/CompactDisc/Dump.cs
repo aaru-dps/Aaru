@@ -341,11 +341,8 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case MmcSubchannel.Raw:
-                    subType = TrackSubchannelType.Raw;
-
-                    break;
                 case MmcSubchannel.Q16:
-                    subType = TrackSubchannelType.Q16;
+                    subType = TrackSubchannelType.Raw;
 
                     break;
             }
