@@ -1155,6 +1155,9 @@ namespace Aaru.Commands.Device
                     AaruConsole.WriteLine($"Optimal multiple read is {dbDev.LastSynchronized} sectors.");
             }
 
+            if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+                return (int)ErrorNumber.NoError;
+
             // Search for read offset in master database
             CdOffset cdOffset =
                 ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model);
