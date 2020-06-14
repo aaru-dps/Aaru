@@ -50,10 +50,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.2" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>

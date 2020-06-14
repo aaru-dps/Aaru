@@ -39,6 +39,8 @@ using System.Reflection;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using Avalonia.Controls;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.Enums;
 using ReactiveUI;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -139,8 +141,10 @@ namespace Aaru.Gui.ViewModels.Dialogs
             }
             catch(Exception exception)
             {
-                Eto.Forms.MessageBox.Show("Exception {0} trying to save logfile, details has been sent to console.",
-                                          exception.Message);
+                await MessageBoxManager.
+                      GetMessageBoxStandardWindow("Error",
+                                                  $"Exception {exception.Message} trying to save logfile, details has been sent to console.",
+                                                  ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
 
                 AaruConsole.ErrorWriteLine("Console", exception.Message);
                 AaruConsole.ErrorWriteLine("Console", exception.StackTrace);

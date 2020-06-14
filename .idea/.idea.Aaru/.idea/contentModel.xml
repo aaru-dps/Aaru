@@ -5,6 +5,8 @@
     <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/resharper-host/local/Transient/ReSharperHost/v201/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -1373,7 +1375,6 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
-              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>
@@ -2129,104 +2130,6 @@
         </e>
       </e>
       <e p="cuetools.net/bin" t="ExcludeRecursive" />
-      <e p="oxyplot-avalonia/Source/OxyPlot.Avalonia" t="IncludeRecursive">
-        <e p="Annotations" t="Include">
-          <e p="Annotation.cs" t="Include" />
-          <e p="ArrowAnnotation.cs" t="Include" />
-          <e p="EllipseAnnotation.cs" t="Include" />
-          <e p="FunctionAnnotation.cs" t="Include" />
-          <e p="LineAnnotation.cs" t="Include" />
-          <e p="PathAnnotation.cs" t="Include" />
-          <e p="PointAnnotation.cs" t="Include" />
-          <e p="PolygonAnnotation.cs" t="Include" />
-          <e p="PolylineAnnotation.cs" t="Include" />
-          <e p="RectangleAnnotation.cs" t="Include" />
-          <e p="ShapeAnnotation.cs" t="Include" />
-          <e p="TextAnnotation.cs" t="Include" />
-          <e p="TextualAnnotation.cs" t="Include" />
-        </e>
-        <e p="Axes" t="Include">
-          <e p="AngleAxis.cs" t="Include" />
-          <e p="Axis.cs" t="Include" />
-          <e p="CategoryAxis.cs" t="Include" />
-          <e p="DateTimeAxis.cs" t="Include" />
-          <e p="LinearAxis.cs" t="Include" />
-          <e p="LinearColorAxis.cs" t="Include" />
-          <e p="LogarithmicAxis.cs" t="Include" />
-          <e p="MagnitudeAxis.cs" t="Include" />
-          <e p="TimeSpanAxis.cs" t="Include" />
-        </e>
-        <e p="CanvasRenderContext.cs" t="Include" />
-        <e p="Converters" t="Include">
-          <e p="OxyColorConverter.cs" t="Include" />
-          <e p="ThicknessConverter.cs" t="Include" />
-        </e>
-        <e p="Extensions" t="Include">
-          <e p="DataPointExtension.cs" t="Include" />
-        </e>
-        <e p="MoreColors.cs" t="Include" />
-        <e p="NamespaceDoc.cs" t="Include" />
-        <e p="OxyPlot.Avalonia.csproj" t="IncludeRecursive" />
-        <e p="OxyPlot.Avalonia.csproj.DotSettings" t="Include" />
-        <e p="OxyPlotModule.cs" t="Include" />
-        <e p="Plot.Properties.cs" t="Include" />
-        <e p="Plot.cs" t="Include" />
-        <e p="PlotBase.Events.cs" t="Include" />
-        <e p="PlotBase.Export.cs" t="Include" />
-        <e p="PlotBase.Properties.cs" t="Include" />
-        <e p="PlotBase.cs" t="Include" />
-        <e p="PlotView.cs" t="Include" />
-        <e p="PngExporter.cs" t="Include" />
-        <e p="Series" t="Include">
-          <e p="AreaSeries.cs" t="Include" />
-          <e p="BarSeries" t="Include">
-            <e p="BarSeries.cs" t="Include" />
-            <e p="BarSeriesBase.cs" t="Include" />
-            <e p="BarSeriesBase{T}.cs" t="Include" />
-            <e p="CategorizedSeries.cs" t="Include" />
-            <e p="ColumnSeries.cs" t="Include" />
-            <e p="LinearBarSeries.cs" t="Include" />
-          </e>
-          <e p="BoxPlotSeries.cs" t="Include" />
-          <e p="DataPointSeries.cs" t="Include" />
-          <e p="HeatMapSeries.cs" t="Include" />
-          <e p="ItemsSeries.cs" t="Include" />
-          <e p="LineSeries.cs" t="Include" />
-          <e p="PieSeries.cs" t="Include" />
-          <e p="ScatterErrorSeries.cs" t="Include" />
-          <e p="ScatterSeries.cs" t="Include" />
-          <e p="ScatterSeries{T}.cs" t="Include" />
-          <e p="Series.cs" t="Include" />
-          <e p="StairStepSeries.cs" t="Include" />
-          <e p="ThreeColorLineSeries.cs" t="Include" />
-          <e p="TwoColorAreaSeries.cs" t="Include" />
-          <e p="TwoColorLineSeries.cs" t="Include" />
-          <e p="XYAxisSeries.cs" t="Include" />
-        </e>
-        <e p="SvgExporter.cs" t="Include" />
-        <e p="Themes" t="Include">
-          <e p="Default.xaml" t="Include" />
-          <e p="Default.xaml.cs" t="Include" />
-        </e>
-        <e p="Tracker" t="Include">
-          <e p="TrackerControl.cs" t="Include" />
-          <e p="TrackerDefinition.cs" t="Include" />
-        </e>
-        <e p="Utilities" t="Include">
-          <e p="ConverterExtensions.cs" t="Include" />
-          <e p="Keyboard.cs" t="Include" />
-        </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netstandard2.0" t="Include">
-              <e p="Avalonia" t="Include">
-                <e p="resources" t="Include" />
-              </e>
-            </e>
-          </e>
-        </e>
-      </e>
       <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>

@@ -19,9 +19,6 @@
 [submodule "Aaru.Helpers"]
 	path = Aaru.Helpers
 	url = https://github.com/aaru-dps/Aaru.Helpers
-[submodule "oxyplot-avalonia"]
-	path = oxyplot-avalonia
-	url = https://github.com/oxyplot/oxyplot-avalonia.git
 [submodule "cuetools.net"]
 	path = cuetools.net
 	url = https://github.com/claunia/cuetools.net
