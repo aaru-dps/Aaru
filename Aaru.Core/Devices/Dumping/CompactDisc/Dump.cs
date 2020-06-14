@@ -334,6 +334,22 @@ namespace Aaru.Core.Devices.Dumping
                     return;
             }
 
+            switch(desiredSubchannel)
+            {
+                case MmcSubchannel.None:
+                    subType = TrackSubchannelType.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    subType = TrackSubchannelType.Raw;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    subType = TrackSubchannelType.Q16;
+
+                    break;
+            }
+
             blockSize = sectorSize + subSize;
 
             // Check if subchannel is BCD
