@@ -10,7 +10,7 @@
     <AssemblyName>aaru</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>5.0.99.2991</Version>
     <Company>Claunia.com</Company>
