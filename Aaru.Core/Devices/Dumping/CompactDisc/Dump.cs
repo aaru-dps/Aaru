@@ -829,7 +829,7 @@ namespace Aaru.Core.Devices.Dumping
                 _outputPlugin.WriteSectorTag(new[]
                 {
                     kvp.Value
-                }, track.TrackStartSector, SectorTagType.CdTrackFlags);
+                }, kvp.Key, SectorTagType.CdTrackFlags);
             }
 
             // Set MCN
@@ -1144,9 +1144,7 @@ namespace Aaru.Core.Devices.Dumping
             foreach(KeyValuePair<byte, string> isrc in isrcs)
             {
                 // TODO: Track tags
-                Track track = tracks.First(t => t.TrackSequence == isrc.Key);
-
-                if(!_outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value), track.TrackStartSector,
+                if(!_outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value), isrc.Key,
                                                  SectorTagType.CdTrackIsrc))
                     continue;
 

@@ -981,7 +981,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+                    trackFlags.Add((byte)sectorAddress, data[0]);
 
                     return true;
                 }

@@ -659,14 +659,14 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+                    trackFlags.Add((byte)sectorAddress, data[0]);
 
                     return true;
                 }
                 case SectorTagType.CdTrackIsrc:
                 {
                     if(data != null)
-                        trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+                        trackIsrcs.Add((byte)sectorAddress, Encoding.UTF8.GetString(data));
 
                     return true;
                 }

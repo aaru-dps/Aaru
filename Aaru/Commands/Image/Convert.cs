@@ -526,22 +526,20 @@ namespace Aaru.Commands.Image
 
             var metadata = new ImageInfo
             {
-                Application           = "Aaru",
-                ApplicationVersion    = Version.GetVersion(),
-                Comments              = comments              ?? inputFormat.Info.Comments,
-                Creator               = creator               ?? inputFormat.Info.Creator,
+                Application = "Aaru", ApplicationVersion = Version.GetVersion(),
+                Comments = comments ?? inputFormat.Info.Comments, Creator = creator ?? inputFormat.Info.Creator,
                 DriveFirmwareRevision = driveFirmwareRevision ?? inputFormat.Info.DriveFirmwareRevision,
-                DriveManufacturer     = driveManufacturer     ?? inputFormat.Info.DriveManufacturer,
-                DriveModel            = driveModel            ?? inputFormat.Info.DriveModel,
-                DriveSerialNumber     = driveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
-                LastMediaSequence     = lastMediaSequence != 0 ? lastMediaSequence : inputFormat.Info.LastMediaSequence,
-                MediaBarcode          = mediaBarcode      ?? inputFormat.Info.MediaBarcode,
-                MediaManufacturer     = mediaManufacturer ?? inputFormat.Info.MediaManufacturer,
-                MediaModel            = mediaModel        ?? inputFormat.Info.MediaModel,
-                MediaPartNumber       = mediaPartNumber   ?? inputFormat.Info.MediaPartNumber,
-                MediaSequence         = mediaSequence != 0 ? mediaSequence : inputFormat.Info.MediaSequence,
-                MediaSerialNumber     = mediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
-                MediaTitle            = mediaTitle        ?? inputFormat.Info.MediaTitle
+                DriveManufacturer = driveManufacturer ?? inputFormat.Info.DriveManufacturer,
+                DriveModel = driveModel ?? inputFormat.Info.DriveModel,
+                DriveSerialNumber = driveSerialNumber ?? inputFormat.Info.DriveSerialNumber,
+                LastMediaSequence = lastMediaSequence != 0 ? lastMediaSequence : inputFormat.Info.LastMediaSequence,
+                MediaBarcode = mediaBarcode ?? inputFormat.Info.MediaBarcode,
+                MediaManufacturer = mediaManufacturer ?? inputFormat.Info.MediaManufacturer,
+                MediaModel = mediaModel ?? inputFormat.Info.MediaModel,
+                MediaPartNumber = mediaPartNumber ?? inputFormat.Info.MediaPartNumber,
+                MediaSequence = mediaSequence != 0 ? mediaSequence : inputFormat.Info.MediaSequence,
+                MediaSerialNumber = mediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
+                MediaTitle = mediaTitle ?? inputFormat.Info.MediaTitle
             };
 
             if(!outputFormat.SetMetadata(metadata))
@@ -729,8 +727,8 @@ namespace Aaru.Commands.Image
                                                   track.TrackSequence,
                                                   track.TrackSequence / (double)inputOptical.Tracks.Count);
 
-                                sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
-                                result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
+                                sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                                result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
 
                                 if(!result)
                                     if(force)

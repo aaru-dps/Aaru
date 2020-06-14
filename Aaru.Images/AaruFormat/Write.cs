@@ -3461,6 +3461,25 @@ namespace Aaru.DiscImages
             {
                 case SectorTagType.CdTrackFlags:
                 case SectorTagType.CdTrackIsrc:
+                    if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                    {
+                        ErrorMessage = "Incorrect tag for disk type";
+
+                        return false;
+                    }
+
+                    track = Tracks.FirstOrDefault(trk => sectorAddress == trk.TrackSequence);
+
+                    if(track.TrackSequence    == 0 &&
+                       track.TrackStartSector == 0 &&
+                       track.TrackEndSector   == 0)
+                    {
+                        ErrorMessage = $"Can't find track {sectorAddress}";
+
+                        return false;
+                    }
+
+                    break;
                 case SectorTagType.CdSectorSubchannel:
                     if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     {
@@ -3495,7 +3514,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags.Add((byte)track.TrackSequence, data[0]);
+                    trackFlags.Add((byte)sectorAddress, data[0]);
 
                     return true;
                 }
@@ -3503,7 +3522,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdTrackIsrc:
                 {
                     if(data != null)
-                        trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+                        trackIsrcs.Add((byte)sectorAddress, Encoding.UTF8.GetString(data));
 
                     return true;
                 }

@@ -902,6 +902,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags)
+                track = (uint)sectorAddress;
+
             if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
                !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
@@ -1399,13 +1402,10 @@ namespace Aaru.DiscImages
                             1, alcTrack.startLba
                         }
                     },
-                    TrackStartSector    = alcTrack.startLba,
-                    TrackEndSector      = alcExtra.sectors - 1,
-                    TrackPregap         = alcExtra.pregap, TrackSession = sessionNo,
-                    TrackSequence       = alcTrack.point,
+                    TrackStartSector    = alcTrack.startLba, TrackEndSector = alcExtra.sectors - 1,
+                    TrackPregap         = alcExtra.pregap, TrackSession = sessionNo, TrackSequence = alcTrack.point,
                     TrackType           = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
-                    TrackFile           = alcImage.GetFilename(),
-                    TrackFileOffset     = alcTrack.startOffset,
+                    TrackFile           = alcImage.GetFilename(), TrackFileOffset = alcTrack.startOffset,
                     TrackFileType       = "BINARY", TrackRawBytesPerSector = alcTrack.sectorSize,
                     TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
                 };

@@ -1518,6 +1518,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags ||
+               tag == SectorTagType.CdTrackIsrc)
+                track = (uint)sectorAddress;
+
             var aaruTrack = new CdrWinTrack
             {
                 Sequence = 0

@@ -1337,12 +1337,12 @@ namespace Aaru.DiscImages
                     case SectorTagType.CdSectorSubHeader:
                     case SectorTagType.CdSectorSync: break;
                     case SectorTagType.CdTrackFlags:
-                        return trackFlags.TryGetValue((byte)trk.TrackSequence, out byte flags) ? new[]
+                        return trackFlags.TryGetValue((byte)sectorAddress, out byte flags) ? new[]
                         {
                             flags
                         } : null;
                     case SectorTagType.CdTrackIsrc:
-                        return trackIsrcs.TryGetValue((byte)trk.TrackSequence, out string isrc)
+                        return trackIsrcs.TryGetValue((byte)sectorAddress, out string isrc)
                                    ? Encoding.UTF8.GetBytes(isrc) : null;
                     default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 }

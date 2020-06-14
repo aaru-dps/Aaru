@@ -844,6 +844,9 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags)
+                track = (uint)sectorAddress;
+
             var aaruTrack = new Track
             {
                 TrackSequence = 0

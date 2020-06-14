@@ -790,15 +790,13 @@ namespace Aaru.Gui.ViewModels.Windows
 
             var metadata = new ImageInfo
             {
-                Application       = "Aaru", ApplicationVersion = Version.GetVersion(),
-                Comments          = CommentsText,
-                Creator           = CreatorText, DriveFirmwareRevision       = DriveFirmwareRevisionText,
-                DriveManufacturer = DriveManufacturerText, DriveModel        = DriveModelText,
+                Application = "Aaru", ApplicationVersion = Version.GetVersion(), Comments = CommentsText,
+                Creator = CreatorText, DriveFirmwareRevision = DriveFirmwareRevisionText,
+                DriveManufacturer = DriveManufacturerText, DriveModel = DriveModelText,
                 DriveSerialNumber = DriveSerialNumberText, LastMediaSequence = (int)LastMediaSequenceValue,
-                MediaBarcode      = MediaBarcodeText, MediaManufacturer      = MediaManufacturerText,
-                MediaModel        = MediaModelText,
-                MediaPartNumber   = MediaPartNumberText, MediaSequence = (int)MediaSequenceValue,
-                MediaSerialNumber = MediaSerialNumberText, MediaTitle  = MediaTitleText
+                MediaBarcode = MediaBarcodeText, MediaManufacturer = MediaManufacturerText, MediaModel = MediaModelText,
+                MediaPartNumber = MediaPartNumberText, MediaSequence = (int)MediaSequenceValue,
+                MediaSerialNumber = MediaSerialNumberText, MediaTitle = MediaTitleText
             };
 
             if(!cancel)
@@ -1275,8 +1273,8 @@ namespace Aaru.Gui.ViewModels.Windows
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
 
-                                sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
-                                result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
+                                sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                                result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
 
                                 if(!result)
                                     if(ForceChecked)

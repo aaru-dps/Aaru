@@ -359,8 +359,7 @@ namespace Aaru.DiscImages
                             string[] lengthString = matchPregap.Groups["address"].Value.Split(':');
 
                             currenttrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                                  (ulong.Parse(lengthString[1])      * 75) +
-                                                  ulong.Parse(lengthString[2]);
+                                                  (ulong.Parse(lengthString[1]) * 75) + ulong.Parse(lengthString[2]);
                         }
                         else
                             currenttrack.Pregap = currenttrack.Sectors;
@@ -1058,6 +1057,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags ||
+               tag == SectorTagType.CdTrackIsrc)
+                track = (uint)sectorAddress;
+
             var aaruTrack = new CdrdaoTrack
             {
                 Sequence = 0

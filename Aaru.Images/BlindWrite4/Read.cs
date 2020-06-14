@@ -992,7 +992,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    if(trackFlags.TryGetValue(track, out byte flag))
+                    if(trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
                         return new[]
                         {
                             flag

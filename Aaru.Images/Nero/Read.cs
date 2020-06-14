@@ -314,12 +314,10 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack = entry.EndOfTrack, Isrc                = entry.Isrc,
-                                    Length     = entry.EndOfTrack - entry.Index0, Mode = entry.Mode,
-                                    Offset     = entry.Index0,
-                                    SectorSize = entry.SectorSize, StartLba = imageInfo.Sectors,
-                                    Index0     = entry.Index0,
-                                    Index1     = entry.Index1, Sequence = currenttrack
+                                    EndOfTrack = entry.EndOfTrack, Isrc = entry.Isrc,
+                                    Length = entry.EndOfTrack - entry.Index0, Mode = entry.Mode, Offset = entry.Index0,
+                                    SectorSize = entry.SectorSize, StartLba = imageInfo.Sectors, Index0 = entry.Index0,
+                                    Index1 = entry.Index1, Sequence = currenttrack
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
@@ -425,12 +423,10 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack = entry.EndOfTrack, Isrc                = entry.Isrc,
-                                    Length     = entry.EndOfTrack - entry.Index0, Mode = entry.Mode,
-                                    Offset     = entry.Index0,
-                                    SectorSize = entry.SectorSize, StartLba = imageInfo.Sectors,
-                                    Index0     = entry.Index0,
-                                    Index1     = entry.Index1, Sequence = currenttrack
+                                    EndOfTrack = entry.EndOfTrack, Isrc = entry.Isrc,
+                                    Length = entry.EndOfTrack - entry.Index0, Mode = entry.Mode, Offset = entry.Index0,
+                                    SectorSize = entry.SectorSize, StartLba = imageInfo.Sectors, Index0 = entry.Index0,
+                                    Index1 = entry.Index1, Sequence = currenttrack
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
@@ -960,11 +956,9 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = $"Track {track.TrackSequence} Index 1",
-                        Size        = neroTrack.EndOfTrack - neroTrack.Index1,
-                        Name        = StringHandlers.CToString(neroTrack.Isrc),
-                        Sequence    = partitionSequence, Offset = partitionStartByte,
-                        Start = neroTrack.StartLba +
-                                      ((neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize),
+                        Size = neroTrack.EndOfTrack - neroTrack.Index1, Name = StringHandlers.CToString(neroTrack.Isrc),
+                        Sequence = partitionSequence, Offset = partitionStartByte,
+                        Start = neroTrack.StartLba + ((neroTrack.Index1 - neroTrack.Index0) / neroTrack.SectorSize),
                         Type = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).ToString()
                     };
 
@@ -992,13 +986,11 @@ namespace Aaru.DiscImages
                                                  (DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
                         // First track is data
-                        firstdata |= i                                           == 0             &&
-                                     (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                        firstdata |= i == 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
                                      (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is data
-                        data |= i                                           != 0             &&
-                                (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                        data |= i != 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
                                 (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is audio
@@ -1226,6 +1218,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags ||
+               tag == SectorTagType.CdTrackIsrc)
+                track = (uint)sectorAddress;
+
             if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
