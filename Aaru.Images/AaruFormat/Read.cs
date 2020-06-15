@@ -1591,7 +1591,8 @@ namespace Aaru.DiscImages
                             {
                                 if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
-                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped ||
+                                        sectorPrefixDdt[sectorAddress]                  == 0)
                                 {
                                     // Do nothing
                                 }
@@ -1617,7 +1618,8 @@ namespace Aaru.DiscImages
                             {
                                 if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructEcc(ref sector, trk.TrackType);
-                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped ||
+                                        sectorSuffixDdt[sectorAddress]                  == 0)
                                 {
                                     // Do nothing
                                 }
@@ -1647,7 +1649,8 @@ namespace Aaru.DiscImages
                             {
                                 if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Correct)
                                     ReconstructPrefix(ref sector, trk.TrackType, (long)sectorAddress);
-                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
+                                else if((sectorPrefixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped ||
+                                        sectorPrefixDdt[sectorAddress]                  == 0)
                                 {
                                     // Do nothing
                                 }
@@ -1687,7 +1690,8 @@ namespace Aaru.DiscImages
                                     if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2Ok)
                                         ReconstructEcc(ref sector, TrackType.CdMode2Form2);
                                 }
-                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped ||
+                                        sectorSuffixDdt[sectorAddress]                  == 0)
                                 {
                                     // Do nothing
                                 }
