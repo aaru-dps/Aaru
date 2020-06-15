@@ -529,14 +529,24 @@ namespace Aaru.DiscImages
 
                     if(tmpTracks[i].TrackType == TrackType.Data)
                     {
-                        byte[] syncTest = new byte[12];
-                        byte[] sectTest = new byte[2352];
-                        dataStream.Seek((long)tmpTracks[i].TrackFileOffset, SeekOrigin.Begin);
-                        dataStream.Read(sectTest, 0, 2352);
-                        Array.Copy(sectTest, 0, syncTest, 0, 12);
-
-                        if(Sector.SyncMark.SequenceEqual(syncTest))
+                        for(int s = 0; s < 750; s++)
                         {
+                            byte[] syncTest = new byte[12];
+                            byte[] sectTest = new byte[2352];
+
+                            long pos = (long)tmpTracks[i].TrackFileOffset + (s * 2352);
+
+                            if(pos >= dataStream.Length + 2352 ||
+                               s   >= (int)(tmpTracks[i].TrackEndSector - tmpTracks[i].TrackStartSector))
+                                break;
+
+                            dataStream.Seek(pos, SeekOrigin.Begin);
+                            dataStream.Read(sectTest, 0, 2352);
+                            Array.Copy(sectTest, 0, syncTest, 0, 12);
+
+                            if(!Sector.SyncMark.SequenceEqual(syncTest))
+                                continue;
+
                             if(scrambled)
                                 sectTest = Sector.Scramble(sectTest);
 
@@ -565,8 +575,11 @@ namespace Aaru.DiscImages
 
                                 if(imageInfo.SectorSize < 2048)
                                     imageInfo.SectorSize = 2048;
+
+                                break;
                             }
-                            else if(sectTest[15] == 2)
+
+                            if(sectTest[15] == 2)
                             {
                                 byte[] subHdr1 = new byte[4];
                                 byte[] subHdr2 = new byte[4];
@@ -596,6 +609,8 @@ namespace Aaru.DiscImages
 
                                         if(imageInfo.SectorSize < 2324)
                                             imageInfo.SectorSize = 2324;
+
+                                        break;
                                     }
                                     else
                                     {
@@ -625,21 +640,23 @@ namespace Aaru.DiscImages
 
                                         if(imageInfo.SectorSize < 2048)
                                             imageInfo.SectorSize = 2048;
+
+                                        break;
                                     }
-                                else
-                                {
-                                    tmpTracks[i].TrackBytesPerSector = 2336;
-                                    tmpTracks[i].TrackType           = TrackType.CdMode2Formless;
 
-                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                tmpTracks[i].TrackBytesPerSector = 2336;
+                                tmpTracks[i].TrackType           = TrackType.CdMode2Formless;
 
-                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                    if(imageInfo.SectorSize < 2336)
-                                        imageInfo.SectorSize = 2336;
-                                }
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                if(imageInfo.SectorSize < 2336)
+                                    imageInfo.SectorSize = 2336;
+
+                                break;
                             }
                         }
                     }
