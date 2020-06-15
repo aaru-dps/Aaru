@@ -447,8 +447,6 @@ namespace Aaru.DiscImages
                                             TrackSession = descriptor.SessionNumber
                                         };
 
-                                        currentTrack.TrackFileOffset = currentTrack.TrackStartSector * 2352;
-
                                         // Need to check exact data type later
                                         if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
                                            (TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
@@ -463,169 +461,10 @@ namespace Aaru.DiscImages
                                         {
                                             currentTrack.TrackSubchannelFile   = subFilter.GetFilename();
                                             currentTrack.TrackSubchannelFilter = subFilter;
-                                            currentTrack.TrackSubchannelOffset = currentTrack.TrackStartSector * 96;
                                             currentTrack.TrackSubchannelType   = TrackSubchannelType.Raw;
                                         }
                                         else
                                             currentTrack.TrackSubchannelType = TrackSubchannelType.None;
-
-                                        if(currentTrack.TrackType == TrackType.Data)
-                                        {
-                                            byte[] syncTest = new byte[12];
-                                            byte[] sectTest = new byte[2352];
-                                            dataStream.Seek((long)currentTrack.TrackFileOffset, SeekOrigin.Begin);
-                                            dataStream.Read(sectTest, 0, 2352);
-                                            Array.Copy(sectTest, 0, syncTest, 0, 12);
-
-                                            if(Sector.SyncMark.SequenceEqual(syncTest))
-                                            {
-                                                if(scrambled)
-                                                    sectTest = Sector.Scramble(sectTest);
-
-                                                if(sectTest[15] == 1)
-                                                {
-                                                    currentTrack.TrackBytesPerSector = 2048;
-                                                    currentTrack.TrackType           = TrackType.CdMode1;
-
-                                                    if(!imageInfo.ReadableSectorTags.
-                                                                  Contains(SectorTagType.CdSectorSync))
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
-
-                                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                  CdSectorHeader))
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-
-                                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc)
-                                                    )
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
-
-                                                    if(!imageInfo.ReadableSectorTags.
-                                                                  Contains(SectorTagType.CdSectorEccP))
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
-
-                                                    if(!imageInfo.ReadableSectorTags.
-                                                                  Contains(SectorTagType.CdSectorEccQ))
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
-
-                                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc)
-                                                    )
-                                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-
-                                                    if(imageInfo.SectorSize < 2048)
-                                                        imageInfo.SectorSize = 2048;
-                                                }
-                                                else if(sectTest[15] == 2)
-                                                {
-                                                    byte[] subHdr1 = new byte[4];
-                                                    byte[] subHdr2 = new byte[4];
-                                                    byte[] empHdr  = new byte[4];
-
-                                                    Array.Copy(sectTest, 16, subHdr1, 0, 4);
-                                                    Array.Copy(sectTest, 20, subHdr2, 0, 4);
-
-                                                    if(subHdr1.SequenceEqual(subHdr2) &&
-                                                       !empHdr.SequenceEqual(subHdr1))
-                                                        if((subHdr1[2] & 0x20) == 0x20)
-                                                        {
-                                                            currentTrack.TrackBytesPerSector = 2324;
-                                                            currentTrack.TrackType           = TrackType.CdMode2Form2;
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorSync))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorSync);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorHeader)
-                                                            )
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorHeader);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorSubHeader)
-                                                            )
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorSubHeader);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorEdc))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorEdc);
-
-                                                            if(imageInfo.SectorSize < 2324)
-                                                                imageInfo.SectorSize = 2324;
-                                                        }
-                                                        else
-                                                        {
-                                                            currentTrack.TrackBytesPerSector = 2048;
-                                                            currentTrack.TrackType           = TrackType.CdMode2Form1;
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorSync))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorSync);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorHeader)
-                                                            )
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorHeader);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorSubHeader)
-                                                            )
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorSubHeader);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorEcc))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorEcc);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorEccP))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorEccP);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorEccQ))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorEccQ);
-
-                                                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                          CdSectorEdc))
-                                                                imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                     CdSectorEdc);
-
-                                                            if(imageInfo.SectorSize < 2048)
-                                                                imageInfo.SectorSize = 2048;
-                                                        }
-                                                    else
-                                                    {
-                                                        currentTrack.TrackBytesPerSector = 2336;
-                                                        currentTrack.TrackType           = TrackType.CdMode2Formless;
-
-                                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                      CdSectorSync))
-                                                            imageInfo.ReadableSectorTags.
-                                                                      Add(SectorTagType.CdSectorSync);
-
-                                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.
-                                                                                                      CdSectorHeader))
-                                                            imageInfo.ReadableSectorTags.Add(SectorTagType.
-                                                                                                 CdSectorHeader);
-
-                                                        if(imageInfo.SectorSize < 2336)
-                                                            imageInfo.SectorSize = 2336;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if(imageInfo.SectorSize < 2352)
-                                                imageInfo.SectorSize = 2352;
-                                        }
                                     }
 
                                     break;
@@ -668,6 +507,150 @@ namespace Aaru.DiscImages
                     currentTrack.TrackEndSector = leadOutStart - 1;
                     Tracks.Add(currentTrack);
                 }
+
+                Track[] tmpTracks = Tracks.OrderBy(t => t.TrackSequence).ToArray();
+
+                ulong currentDataOffset       = 0;
+                ulong currentSubchannelOffset = 0;
+
+                for(int i = 0; i < tmpTracks.Length; i++)
+                {
+                    tmpTracks[i].TrackFileOffset = currentDataOffset;
+
+                    currentDataOffset += 2352 * ((tmpTracks[i].TrackEndSector - tmpTracks[i].TrackStartSector) + 1);
+
+                    if(subFilter != null)
+                    {
+                        tmpTracks[i].TrackSubchannelOffset = currentSubchannelOffset;
+
+                        currentSubchannelOffset +=
+                            96 * ((tmpTracks[i].TrackEndSector - tmpTracks[i].TrackStartSector) + 1);
+                    }
+
+                    if(tmpTracks[i].TrackType == TrackType.Data)
+                    {
+                        byte[] syncTest = new byte[12];
+                        byte[] sectTest = new byte[2352];
+                        dataStream.Seek((long)tmpTracks[i].TrackFileOffset, SeekOrigin.Begin);
+                        dataStream.Read(sectTest, 0, 2352);
+                        Array.Copy(sectTest, 0, syncTest, 0, 12);
+
+                        if(Sector.SyncMark.SequenceEqual(syncTest))
+                        {
+                            if(scrambled)
+                                sectTest = Sector.Scramble(sectTest);
+
+                            if(sectTest[15] == 1)
+                            {
+                                tmpTracks[i].TrackBytesPerSector = 2048;
+                                tmpTracks[i].TrackType           = TrackType.CdMode1;
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+
+                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+
+                                if(imageInfo.SectorSize < 2048)
+                                    imageInfo.SectorSize = 2048;
+                            }
+                            else if(sectTest[15] == 2)
+                            {
+                                byte[] subHdr1 = new byte[4];
+                                byte[] subHdr2 = new byte[4];
+                                byte[] empHdr  = new byte[4];
+
+                                Array.Copy(sectTest, 16, subHdr1, 0, 4);
+                                Array.Copy(sectTest, 20, subHdr2, 0, 4);
+
+                                if(subHdr1.SequenceEqual(subHdr2) &&
+                                   !empHdr.SequenceEqual(subHdr1))
+                                    if((subHdr1[2] & 0x20) == 0x20)
+                                    {
+                                        tmpTracks[i].TrackBytesPerSector = 2324;
+                                        tmpTracks[i].TrackType           = TrackType.CdMode2Form2;
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+
+                                        if(imageInfo.SectorSize < 2324)
+                                            imageInfo.SectorSize = 2324;
+                                    }
+                                    else
+                                    {
+                                        tmpTracks[i].TrackBytesPerSector = 2048;
+                                        tmpTracks[i].TrackType           = TrackType.CdMode2Form1;
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+
+                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+
+                                        if(imageInfo.SectorSize < 2048)
+                                            imageInfo.SectorSize = 2048;
+                                    }
+                                else
+                                {
+                                    tmpTracks[i].TrackBytesPerSector = 2336;
+                                    tmpTracks[i].TrackType           = TrackType.CdMode2Formless;
+
+                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                                    if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                        imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                    if(imageInfo.SectorSize < 2336)
+                                        imageInfo.SectorSize = 2336;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(imageInfo.SectorSize < 2352)
+                            imageInfo.SectorSize = 2352;
+                    }
+                }
+
+                Tracks = tmpTracks.ToList();
 
                 if(subFilter != null &&
                    !imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
