@@ -428,9 +428,33 @@ namespace Aaru.DiscImages
 
             for(int i = 1; i <= toc.LastCompleteSession; i++)
             {
-                // TODO: Use first track of session info
                 descriptorStream.WriteLine("[Session {0}]", i);
-                descriptorStream.WriteLine("PreGapMode=0");
+
+                Track firstSessionTrack = Tracks.FirstOrDefault(t => t.TrackSession == i);
+
+                switch(firstSessionTrack.TrackType)
+                {
+                    case TrackType.Audio:
+                        // CloneCD always writes this value for first track in disc, however the Rainbow Books
+                        // say the first track pregap is no different from other session pregaps, same mode as
+                        // the track they belong to.
+                        descriptorStream.WriteLine("PreGapMode=0");
+
+                        break;
+                    case TrackType.Data:
+                    case TrackType.CdMode1:
+                        descriptorStream.WriteLine("PreGapMode=1");
+
+                        break;
+                    case TrackType.CdMode2Formless:
+                    case TrackType.CdMode2Form1:
+                    case TrackType.CdMode2Form2:
+                        descriptorStream.WriteLine("PreGapMode=2");
+
+                        break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+
                 descriptorStream.WriteLine("PreGapSubC=0");
             }
 
