@@ -190,6 +190,14 @@ namespace Aaru.Core.Devices.Dumping
                     continue;
                 }
 
+                if(t                       > 0 &&
+                   tracks[t - 1].TrackType == tracks[t].TrackType)
+                {
+                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
+
+                    continue;
+                }
+
                 AaruConsole.DebugWriteLine("Pregap calculator", "Track {0}", track.TrackSequence);
 
                 int   lba           = (int)track.TrackStartSector - 1;
