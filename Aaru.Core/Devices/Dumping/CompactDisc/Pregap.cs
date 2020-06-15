@@ -142,8 +142,8 @@ namespace Aaru.Core.Devices.Dumping
             // Check if subchannel is BCD
             for(retries = 0; retries < 10; retries++)
             {
-                sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf)
-                            : GetSectorForPregapQ16(dev, 11, dbDev, out subBuf);
+                sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf, false)
+                            : GetSectorForPregapQ16(dev, 11, dbDev, out subBuf, false);
 
                 if(sense)
                     continue;
@@ -173,9 +173,10 @@ namespace Aaru.Core.Devices.Dumping
             for(int i = 0; i < tracks.Length; i++)
                 pregaps[tracks[i].TrackSequence] = 0;
 
-            foreach(Track track in tracks)
+            for(int t = 0; t < tracks.Length; t++)
             {
-                int trackRetries = 0;
+                Track track        = tracks[t];
+                int   trackRetries = 0;
 
                 // First track of each session has at least 150 sectors of pregap and is not readable always
                 if(tracks.Where(t => t.TrackSession == track.TrackSession).OrderBy(t => t.TrackSequence).
@@ -204,8 +205,11 @@ namespace Aaru.Core.Devices.Dumping
                 // Check if pregap is 0
                 for(retries = 0; retries < 10 && !pregapFound; retries++)
                 {
-                    sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
-                                : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
+                    sense = supportsRwSubchannel
+                                ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
+                                                        track.TrackType == TrackType.Audio)
+                                : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf,
+                                                        track.TrackType == TrackType.Audio);
 
                     if(sense)
                     {
@@ -300,13 +304,19 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     // Some drives crash if you try to read just before the previous read, so seek away first
                     if(!forward)
-                        sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf)
-                                    : GetSectorForPregapQ16(dev, (uint)lba                  - 10, dbDev, out subBuf);
+                        sense = supportsRwSubchannel
+                                    ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf,
+                                                            track.TrackType == TrackType.Audio)
+                                    : GetSectorForPregapQ16(dev, (uint)lba - 10, dbDev, out subBuf,
+                                                            track.TrackType == TrackType.Audio);
 
                     for(retries = 0; retries < 10; retries++)
                     {
-                        sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
-                                    : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
+                        sense = supportsRwSubchannel
+                                    ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
+                                                            track.TrackType == TrackType.Audio)
+                                    : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf,
+                                                            track.TrackType == TrackType.Audio);
 
                         if(sense)
                             continue;
@@ -554,20 +564,35 @@ namespace Aaru.Core.Devices.Dumping
             }
         }
 
-        static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf,
+                                          bool audioTrack)
         {
             byte[] cmdBuf;
             bool   sense;
             subBuf = null;
 
-            sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
-                               dev.Timeout, out _);
-
-            if(sense)
+            if(audioTrack)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
                                    out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
+                                       dev.Timeout, out _);
+            }
+            else
+            {
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
+                                   dev.Timeout, out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.Cdda, false, false, false,
+                                       MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Raw,
+                                       dev.Timeout, out _);
+            }
 
             if(!sense)
             {
@@ -605,20 +630,35 @@ namespace Aaru.Core.Devices.Dumping
             return sense;
         }
 
-        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf,
+                                          bool audioTrack)
         {
             byte[] cmdBuf;
             bool   sense;
             subBuf = null;
 
-            sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
-                               dev.Timeout, out _);
-
-            if(sense)
+            if(audioTrack)
+            {
                 sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.Cdda, false, false, false,
                                    MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
                                    out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
+                                       dev.Timeout, out _);
+            }
+            else
+            {
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
+                                   dev.Timeout, out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.Cdda, false, false, false,
+                                       MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Q16,
+                                       dev.Timeout, out _);
+            }
 
             if(!sense)
             {
