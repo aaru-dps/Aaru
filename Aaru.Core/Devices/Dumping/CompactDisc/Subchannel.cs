@@ -365,12 +365,12 @@ namespace Aaru.Core.Devices.Dumping
                         byte pframe = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
                         int  qPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
 
-                        if(tracks[i].TrackPregap >= (ulong)(qPos + 1))
+                        if(tracks[i].TrackPregap >= (ulong)qPos)
                             continue;
 
                         ulong oldPregap = tracks[i].TrackPregap;
 
-                        tracks[i].TrackPregap      =  (ulong)(qPos + 1);
+                        tracks[i].TrackPregap      =  (ulong)qPos;
                         tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
 
                         if(i > 0)
