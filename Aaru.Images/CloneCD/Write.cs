@@ -229,9 +229,22 @@ namespace Aaru.DiscImages
             foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
             {
                 Track newTrack = track;
-                uint  subchannelSize;
 
-                switch(track.TrackSubchannelType)
+                if(newTrack.TrackSession > 1)
+                {
+                    Track firstSessionTrack = tracks.FirstOrDefault(t => t.TrackSession == newTrack.TrackSession);
+
+                    if(firstSessionTrack.TrackSequence == newTrack.TrackSequence &&
+                       newTrack.TrackPregap            >= 150)
+                    {
+                        newTrack.TrackPregap      -= 150;
+                        newTrack.TrackStartSector += 150;
+                    }
+                }
+
+                uint subchannelSize;
+
+                switch(newTrack.TrackSubchannelType)
                 {
                     case TrackSubchannelType.None:
                         subchannelSize = 0;
@@ -243,7 +256,7 @@ namespace Aaru.DiscImages
 
                         break;
                     default:
-                        ErrorMessage = $"Unsupported subchannel type {track.TrackSubchannelType}";
+                        ErrorMessage = $"Unsupported subchannel type {newTrack.TrackSubchannelType}";
 
                         return false;
                 }
