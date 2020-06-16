@@ -68,4 +68,10 @@ namespace Aaru.Decoders.SCSI.MMC
         /// <summary>Also valid for CD-DA, DVD and BD</summary>
         CDROM = 0x00, CDi = 0x10, CDROMXA = 0x20, Undefined = 0xFF
     }
+
+    public enum LayerJumpRecordingStatus : byte
+    {
+        Incremental     = 0, Unspecified = 1, Manual = 2,
+        RegularInterval = 3
+    }
 }

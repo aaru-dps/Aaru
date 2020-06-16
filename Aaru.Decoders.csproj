@@ -83,6 +83,7 @@
     <Compile Include="SCSI\MMC\CPRM.cs" />
     <Compile Include="SCSI\MMC\Enums.cs" />
     <Compile Include="SCSI\MMC\Hybrid.cs" />
+    <Compile Include="SCSI\MMC\TrackInformation.cs" />
     <Compile Include="SCSI\MMC\WriteProtect.cs" />
     <Compile Include="SCSI\MMC\DiscInformation.cs" />
     <Compile Include="SCSI\Modes\00_SFF.cs" />
