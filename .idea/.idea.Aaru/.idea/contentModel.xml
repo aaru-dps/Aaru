@@ -515,6 +515,7 @@
             <e p="Enums.cs" t="Include" />
             <e p="Features.cs" t="Include" />
             <e p="Hybrid.cs" t="Include" />
+            <e p="TrackInformation.cs" t="Include" />
             <e p="WriteProtect.cs" t="Include" />
           </e>
           <e p="Modes" t="Include">
