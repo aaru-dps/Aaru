@@ -101,7 +101,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
             MediaType = scsiInfo.MediaType.ToString();
 
-            if(scsiInfo.Blocks    != 0 &&
+            if(scsiInfo.Blocks != 0 &&
                scsiInfo.BlockSize != 0)
                 MediaSize =
                     $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {scsiInfo.Blocks * scsiInfo.BlockSize} bytes)";
@@ -140,12 +140,12 @@ namespace Aaru.Gui.ViewModels.Panels
 
             CompactDiscInfo = new CompactDiscInfo
             {
-                DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.CompactDiscInformation,
+                DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.DiscInformation,
                                                            scsiInfo.Session, scsiInfo.RawToc, scsiInfo.Pma,
                                                            scsiInfo.CdTextLeadIn, scsiInfo.DecodedToc,
                                                            scsiInfo.DecodedAtip, scsiInfo.DecodedSession,
                                                            scsiInfo.FullToc, scsiInfo.DecodedCdTextLeadIn,
-                                                           scsiInfo.DecodedCompactDiscInformation, scsiInfo.Mcn,
+                                                           scsiInfo.DecodedDiscInformation, scsiInfo.Mcn,
                                                            scsiInfo.Isrcs, _view)
             };
 

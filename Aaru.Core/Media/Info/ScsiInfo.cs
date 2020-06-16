@@ -1101,35 +1101,6 @@ namespace Aaru.Core.Media.Info
                         // We got a TOC, get information about a recorded/mastered CD
                         if(!tocSense)
                         {
-                            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf,
-                                                            MmcDiscInformationDataTypes.DiscInformation, dev.Timeout,
-                                                            out _);
-
-                            if(sense)
-                            {
-                                AaruConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 000b\n{0}",
-                                                           Sense.PrettifySense(senseBuf));
-                            }
-                            else
-                            {
-                                CompactDiscInformation        = cmdBuf;
-                                DecodedCompactDiscInformation = DiscInformation.Decode000b(cmdBuf);
-
-                                if(DecodedCompactDiscInformation.HasValue)
-                                    if(MediaType == MediaType.CD)
-                                        switch(DecodedCompactDiscInformation.Value.DiscType)
-                                        {
-                                            case 0x10:
-                                                MediaType = MediaType.CDI;
-
-                                                break;
-                                            case 0x20:
-                                                MediaType = MediaType.CDROMXA;
-
-                                                break;
-                                        }
-                            }
-
                             sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
 
                             if(sense)
@@ -1435,6 +1406,34 @@ namespace Aaru.Core.Media.Info
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 return;
 
+            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
+                                            dev.Timeout, out _);
+
+            if(sense)
+            {
+                AaruConsole.DebugWriteLine("Media-Info command", "READ DISC INFORMATION 000b\n{0}",
+                                           Sense.PrettifySense(senseBuf));
+            }
+            else
+            {
+                DiscInformation        = cmdBuf;
+                DecodedDiscInformation = Decoders.SCSI.MMC.DiscInformation.Decode000b(cmdBuf);
+
+                if(DecodedDiscInformation.HasValue)
+                    if(MediaType == MediaType.CD)
+                        switch(DecodedDiscInformation.Value.DiscType)
+                        {
+                            case 0x10:
+                                MediaType = MediaType.CDI;
+
+                                break;
+                            case 0x20:
+                                MediaType = MediaType.CDROMXA;
+
+                                break;
+                        }
+            }
+
             MediaType tmpType = MediaType;
             MMC.DetectDiscType(ref tmpType, sessions, FullToc, dev, out _, out _, firstTrackLastSession);
 
@@ -1481,7 +1480,7 @@ namespace Aaru.Core.Media.Info
         public byte[]                                   BlurayPowResources            { get; }
         public byte[]                                   Toc                           { get; }
         public byte[]                                   Atip                          { get; }
-        public byte[]                                   CompactDiscInformation        { get; }
+        public byte[]                                   DiscInformation               { get; }
         public byte[]                                   Session                       { get; }
         public byte[]                                   RawToc                        { get; }
         public byte[]                                   Pma                           { get; }
@@ -1492,7 +1491,7 @@ namespace Aaru.Core.Media.Info
         public FullTOC.CDFullTOC?                       FullToc                       { get; }
         public CDTextOnLeadIn.CDText?                   DecodedCdTextLeadIn           { get; }
         public byte[]                                   BlurayTrackResources          { get; }
-        public DiscInformation.StandardDiscInformation? DecodedCompactDiscInformation { get; }
+        public DiscInformation.StandardDiscInformation? DecodedDiscInformation        { get; }
         public string                                   Mcn                           { get; }
         public Dictionary<byte, string>                 Isrcs                         { get; }
         public bool                                     MediaInserted                 { get; }

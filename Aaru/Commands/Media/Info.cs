@@ -454,14 +454,14 @@ namespace Aaru.Commands.Media
                         AaruConsole.WriteLine("ATIP:\n{0}", ATIP.Prettify(scsiInfo.DecodedAtip));
                 }
 
-                if(scsiInfo.CompactDiscInformation != null)
+                if(scsiInfo.DiscInformation != null)
                 {
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscinformation_000b.bin",
-                                     "SCSI READ DISC INFORMATION", scsiInfo.CompactDiscInformation);
+                                     "SCSI READ DISC INFORMATION", scsiInfo.DiscInformation);
 
-                    if(scsiInfo.DecodedCompactDiscInformation.HasValue)
+                    if(scsiInfo.DecodedDiscInformation.HasValue)
                         AaruConsole.WriteLine("Standard Disc Information:\n{0}",
-                                              DiscInformation.Prettify000b(scsiInfo.DecodedCompactDiscInformation));
+                                              DiscInformation.Prettify000b(scsiInfo.DecodedDiscInformation));
                 }
 
                 if(scsiInfo.Session != null)
