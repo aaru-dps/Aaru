@@ -413,6 +413,16 @@ namespace Aaru.DiscImages
 
                 for(int i = 1; i < tmpTracks.Length; i++)
                 {
+                    Track firstTrackInSession = tracks.FirstOrDefault(t => t.TrackSession == tmpTracks[i].TrackSession);
+
+                    if(tmpTracks[i].TrackSequence == firstTrackInSession.TrackSequence)
+                    {
+                        if(tmpTracks[i].TrackSequence > 1)
+                            tmpTracks[i].TrackStartSector += 150;
+
+                        continue;
+                    }
+
                     tmpTracks[i - 1].TrackEndSector += tmpTracks[i].TrackPregap;
                     tmpTracks[i].TrackPregap        =  0;
                     tmpTracks[i].TrackStartSector   =  tmpTracks[i - 1].TrackEndSector + 1;
@@ -710,6 +720,13 @@ namespace Aaru.DiscImages
                         alcTrk.extraOffset  = (uint)currentExtraOffset;
                         alcTrk.footerOffset = (uint)footerOffset;
 
+                        if(track.TrackSequence == firstTrack.TrackSequence &&
+                           track.TrackSequence > 1)
+                        {
+                            alcTrk.startLba    -= 150;
+                            alcTrk.startOffset -= (ulong)(alcTrk.sectorSize * 150);
+                        }
+
                         // Alcohol seems to set that for all CD tracks
                         // Daemon Tools expect it to be like this
                         alcTrk.unknown = new byte[]
@@ -731,12 +748,7 @@ namespace Aaru.DiscImages
                         };
 
                         if(track.TrackSequence == firstTrack.TrackSequence)
-                        {
                             trkExtra.pregap = 150;
-
-                            if(track.TrackSequence > 1)
-                                trkExtra.sectors += 150;
-                        }
 
                         // When track mode changes there's a mandatory gap, Alcohol needs it
                         else if(thisSessionTracks.TryGetValue((int)(track.TrackSequence - 1),
