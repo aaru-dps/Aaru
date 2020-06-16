@@ -2873,4 +2873,9 @@ namespace Aaru.Devices
     {
         ClvAndImpureCav = 0, PureCav = 1
     }
+
+    public enum TrackInformationType : byte
+    {
+        LogicalBlockAddress = 0, LogicalTrackNumber = 1, SessionNumber = 2
+    }
 }

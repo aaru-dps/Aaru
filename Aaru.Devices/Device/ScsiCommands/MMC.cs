@@ -703,5 +703,42 @@ namespace Aaru.Devices
 
             return sense;
         }
+
+        /// <summary>Sends the MMC READ TRACK INFORMATION command</summary>
+        /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+        /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
+        /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="timeout">Timeout in seconds.</param>
+        /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        public bool ReadTrackInformation(out byte[] buffer, out byte[] senseBuffer, bool open,
+                                         TrackInformationType type, uint address, uint timeout, out double duration)
+        {
+            senseBuffer = new byte[32];
+            byte[] cdb = new byte[10];
+            buffer = new byte[48];
+
+            cdb[0] = (byte)ScsiCommands.ReadTrackInformation;
+            cdb[1] = (byte)((byte)type & 0x3);
+            cdb[2] = (byte)((address & 0xFF000000) >> 24);
+            cdb[3] = (byte)((address & 0xFF0000)   >> 16);
+            cdb[4] = (byte)((address & 0xFF00)     >> 8);
+            cdb[5] = (byte)(address & 0xFF);
+            cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+            cdb[8] = (byte)(buffer.Length & 0xFF);
+
+            if(open)
+                cdb[1] += 4;
+
+            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+                                        out bool sense);
+
+            Error = LastError != 0;
+
+            AaruConsole.DebugWriteLine("SCSI Device",
+                                       "READ TRACK INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
+                                       duration, type, sense, LastError);
+
+            return sense;
+        }
     }
 }
