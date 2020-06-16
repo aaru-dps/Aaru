@@ -42,17 +42,19 @@ namespace Aaru.DiscImages
 {
     public partial class AaruFormat
     {
-        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
-                                                               OpticalImageCapabilities.CanStoreDataTracks   |
-                                                               OpticalImageCapabilities.CanStorePregaps      |
-                                                               OpticalImageCapabilities.CanStoreSubchannelRw |
-                                                               OpticalImageCapabilities.CanStoreSessions     |
-                                                               OpticalImageCapabilities.CanStoreIsrc         |
-                                                               OpticalImageCapabilities.CanStoreCdText       |
-                                                               OpticalImageCapabilities.CanStoreMcn          |
-                                                               OpticalImageCapabilities.CanStoreRawData      |
-                                                               OpticalImageCapabilities.CanStoreCookedData   |
-                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
+                                                               OpticalImageCapabilities.CanStoreDataTracks     |
+                                                               OpticalImageCapabilities.CanStorePregaps        |
+                                                               OpticalImageCapabilities.CanStoreSubchannelRw   |
+                                                               OpticalImageCapabilities.CanStoreSessions       |
+                                                               OpticalImageCapabilities.CanStoreIsrc           |
+                                                               OpticalImageCapabilities.CanStoreCdText         |
+                                                               OpticalImageCapabilities.CanStoreMcn            |
+                                                               OpticalImageCapabilities.CanStoreRawData        |
+                                                               OpticalImageCapabilities.CanStoreCookedData     |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks |
+                                                               OpticalImageCapabilities.CanStoreNotCdSessions  |
+                                                               OpticalImageCapabilities.CanStoreNotCdTracks;
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Aaru Format";
         public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");

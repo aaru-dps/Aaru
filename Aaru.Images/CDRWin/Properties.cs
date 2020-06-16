@@ -41,16 +41,18 @@ namespace Aaru.DiscImages
 {
     public partial class CdrWin
     {
-        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks |
-                                                               OpticalImageCapabilities.CanStoreDataTracks  |
-                                                               OpticalImageCapabilities.CanStorePregaps     |
-                                                               OpticalImageCapabilities.CanStoreSessions    |
-                                                               OpticalImageCapabilities.CanStoreIsrc        |
-                                                               OpticalImageCapabilities.CanStoreCdText      |
-                                                               OpticalImageCapabilities.CanStoreMcn         |
-                                                               OpticalImageCapabilities.CanStoreRawData     |
-                                                               OpticalImageCapabilities.CanStoreCookedData  |
-                                                               OpticalImageCapabilities.CanStoreMultipleTracks;
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
+                                                               OpticalImageCapabilities.CanStoreDataTracks     |
+                                                               OpticalImageCapabilities.CanStorePregaps        |
+                                                               OpticalImageCapabilities.CanStoreSessions       |
+                                                               OpticalImageCapabilities.CanStoreIsrc           |
+                                                               OpticalImageCapabilities.CanStoreCdText         |
+                                                               OpticalImageCapabilities.CanStoreMcn            |
+                                                               OpticalImageCapabilities.CanStoreRawData        |
+                                                               OpticalImageCapabilities.CanStoreCookedData     |
+                                                               OpticalImageCapabilities.CanStoreMultipleTracks |
+                                                               OpticalImageCapabilities.CanStoreNotCdSessions  |
+                                                               OpticalImageCapabilities.CanStoreNotCdTracks;
         public ImageInfo       Info       => _imageInfo;
         public string          Name       => "CDRWin cuesheet";
         public Guid            Id         => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
@@ -72,14 +74,12 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
-                        TrackPregap         = cdrTrack.Pregap,
-                        TrackSession        = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
-                        TrackType           = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
-                        TrackFile           = cdrTrack.TrackFile.DataFilter.GetFilename(),
-                        TrackFilter         = cdrTrack.TrackFile.DataFilter,
-                        TrackFileOffset     = cdrTrack.TrackFile.Offset,
-                        TrackFileType       = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
+                        Indexes = cdrTrack.Indexes, TrackDescription = cdrTrack.Title, TrackPregap = cdrTrack.Pregap,
+                        TrackSession = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
+                        TrackType = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
+                        TrackFile = cdrTrack.TrackFile.DataFilter.GetFilename(),
+                        TrackFilter = cdrTrack.TrackFile.DataFilter, TrackFileOffset = cdrTrack.TrackFile.Offset,
+                        TrackFileType = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 

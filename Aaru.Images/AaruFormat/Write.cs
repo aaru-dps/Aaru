@@ -1025,8 +1025,7 @@ namespace Aaru.DiscImages
                 if(trk.TrackSequence    == 0 &&
                    trk.TrackStartSector == 0 &&
                    trk.TrackEndSector   == 0)
-                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
-                                                          "Can't found track containing requested sector");
+                    trk.TrackType = TrackType.Data; // TODO: Check intersession data type
             }
 
             // Close current block first
@@ -1239,11 +1238,7 @@ namespace Aaru.DiscImages
                     if(track.TrackSequence    == 0 &&
                        track.TrackStartSector == 0 &&
                        track.TrackEndSector   == 0)
-                    {
-                        ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                        return false;
-                    }
+                        track.TrackType = TrackType.Data;
 
                     if(data.Length != 2352)
                     {
@@ -1672,8 +1667,10 @@ namespace Aaru.DiscImages
                     if(track.TrackSequence    == 0 &&
                        track.TrackStartSector == 0 &&
                        track.TrackEndSector   == 0)
+                        track.TrackType = TrackType.Data; // TODO: Check intersession data type
+                    else if(sectorAddress + length > track.TrackEndSector + 1)
                     {
-                        ErrorMessage = $"Can't found track containing {sectorAddress}";
+                        ErrorMessage = "Can't cross tracks";
 
                         return false;
                     }
@@ -1681,13 +1678,6 @@ namespace Aaru.DiscImages
                     if(data.Length % 2352 != 0)
                     {
                         ErrorMessage = "Incorrect data size";
-
-                        return false;
-                    }
-
-                    if(sectorAddress + length > track.TrackEndSector + 1)
-                    {
-                        ErrorMessage = "Can't cross tracks";
 
                         return false;
                     }
@@ -3494,11 +3484,7 @@ namespace Aaru.DiscImages
                     if(track.TrackSequence    == 0 &&
                        track.TrackStartSector == 0 &&
                        track.TrackEndSector   == 0)
-                    {
-                        ErrorMessage = $"Can't found track containing {sectorAddress}";
-
-                        return false;
-                    }
+                        track.TrackType = TrackType.Data;
 
                     break;
             }
