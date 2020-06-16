@@ -518,6 +518,21 @@ namespace Aaru.DiscImages
                 else
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
+
+                ushort lastSession = _writingTracks.Max(t => t.TrackSession);
+
+                if(currentSession >= lastSession)
+                    continue;
+
+                Track lastTrackInSession = _writingTracks.
+                                           Where(t => t.TrackSession == currentSession).OrderBy(t => t.TrackSequence).
+                                           LastOrDefault();
+
+                if(track.TrackSequence != lastTrackInSession.TrackSequence)
+                    continue;
+
+                msf = LbaToMsf(track.TrackEndSector + 1);
+                _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
             }
 
             _descriptorStream.Flush();
