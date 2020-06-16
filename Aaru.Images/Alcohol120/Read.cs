@@ -160,7 +160,9 @@ namespace Aaru.DiscImages
                         oldIncorrectImage = true;
 
                     // Solve our own mistake here, sorry, but anyway seems Alcohol doesn't support DDCD
-                    if(track.zero > 0)
+                    if(track.zero  > 0  &&
+                       track.point >= 1 &&
+                       track.point <= 99)
                     {
                         track.pmin        += (byte)(track.zero * 60);
                         track.zero        =  0;
