@@ -369,7 +369,6 @@ namespace Aaru.DiscImages
                 foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
                     oldTrack.Close();
 
-            ulong currentOffset = 0;
             _writingTracks = new List<Track>();
 
             foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
@@ -379,11 +378,8 @@ namespace Aaru.DiscImages
                 newTrack.TrackFile = _separateTracksWriting ? _writingBaseName + $"_track{track.TrackSequence:D2}.bin"
                                          : _writingBaseName                    + ".bin";
 
-                newTrack.TrackFileOffset = _separateTracksWriting ? 0 : currentOffset;
+                newTrack.TrackFileOffset = _separateTracksWriting ? 0 : track.TrackStartSector * 2352;
                 _writingTracks.Add(newTrack);
-
-                currentOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                 ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
             }
 
             _writingStreams = new Dictionary<uint, FileStream>();
