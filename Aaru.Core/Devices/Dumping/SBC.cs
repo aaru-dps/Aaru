@@ -46,6 +46,7 @@ using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Core.Media.Detection;
 using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Schemas;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
@@ -77,6 +78,7 @@ namespace Aaru.Core.Devices.Dumping
             double             minSpeed      = double.MaxValue;
             byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
+            bool               ret;
 
             if(opticalDisc)
                 switch(dskType)
@@ -289,7 +291,7 @@ namespace Aaru.Core.Devices.Dumping
                     blockSize         = longBlockSize;
                 }
 
-            bool ret = true;
+            ret = true;
 
             foreach(MediaTagType tag in mediaTags.Keys)
             {
@@ -343,15 +345,141 @@ namespace Aaru.Core.Devices.Dumping
             {
                 if(_outputPlugin is IWritableOpticalImage opticalPlugin)
                 {
-                    opticalPlugin.SetTracks(new List<Track>
+                    sense = _dev.ReadDiscInformation(out readBuffer, out _, MmcDiscInformationDataTypes.DiscInformation,
+                                                     _dev.Timeout, out _);
+
+                    if(!sense)
                     {
-                        new Track
+                        DiscInformation.StandardDiscInformation? discInformation =
+                            DiscInformation.Decode000b(readBuffer);
+
+                        // This means the output image can store sessions that are not on a CD, like on a DVD or Blu-ray
+                        bool canStoreNotCdSessions =
+                            opticalPlugin.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreNotCdSessions);
+
+                        // This means the output image can store tracks that are not on a CD, like on a DVD or Blu-ray
+                        bool canStoreNotCdTracks =
+                            opticalPlugin.OpticalCapabilities.HasFlag(OpticalImageCapabilities.CanStoreNotCdTracks);
+
+                        if(discInformation.HasValue)
                         {
-                            TrackBytesPerSector    = (int)blockSize, TrackEndSector = blocks - 1, TrackSequence = 1,
-                            TrackRawBytesPerSector = (int)blockSize, TrackSubchannelType = TrackSubchannelType.None,
-                            TrackSession           = 1, TrackType = TrackType.Data
+                            if(discInformation?.Sessions > 1 &&
+                               !canStoreNotCdSessions)
+                            {
+                                if(_force)
+                                {
+                                    _dumpLog.
+                                        WriteLine("Image does not support multiple sessions in non Compact Disc dumps, continuing...");
+
+                                    ErrorMessage?.
+                                        Invoke("Image does not support multiple sessions in non Compact Disc dumps, continuing...");
+                                }
+                                else
+                                {
+                                    _dumpLog.
+                                        WriteLine("Image does not support multiple sessions in non Compact Disc dumps, not continuing...");
+
+                                    StoppingErrorMessage?.
+                                        Invoke("Image does not support multiple sessions in non Compact Disc dumps, not continuing...");
+
+                                    return;
+                                }
+                            }
+
+                            if((discInformation?.LastTrackLastSession - discInformation?.FirstTrackNumber > 0 ||
+                                discInformation?.FirstTrackNumber                                         != 1) &&
+                               !canStoreNotCdTracks)
+                            {
+                                if(_force)
+                                {
+                                    _dumpLog.
+                                        WriteLine("Image does not support multiple tracks in non Compact Disc dumps, continuing...");
+
+                                    ErrorMessage?.
+                                        Invoke("Image does not support multiple tracks in non Compact Disc dumps, continuing...");
+                                }
+                                else
+                                {
+                                    _dumpLog.
+                                        WriteLine("Image does not support multiple tracks in non Compact Disc dumps, not continuing...");
+
+                                    StoppingErrorMessage?.
+                                        Invoke("Image does not support multiple tracks in non Compact Disc dumps, not continuing...");
+
+                                    return;
+                                }
+                            }
+
+                            UpdateStatus?.Invoke("Building track map...");
+                            _dumpLog.WriteLine("Building track map...");
+
+                            List<Track> tracks = new List<Track>();
+
+                            for(ushort tno = discInformation.Value.FirstTrackNumber;
+                                tno <= discInformation?.LastTrackLastSession; tno++)
+                            {
+                                sense = _dev.ReadTrackInformation(out readBuffer, out _, false,
+                                                                  TrackInformationType.LogicalTrackNumber, tno,
+                                                                  _dev.Timeout, out _);
+
+                                if(sense)
+                                    continue;
+
+                                var trkInfo = TrackInformation.Decode(readBuffer);
+
+                                if(trkInfo is null)
+                                    continue;
+
+                                var track = new Track
+                                {
+                                    TrackSequence = trkInfo.LogicalTrackNumber,
+                                    TrackSession = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
+                                    TrackType = TrackType.Data, TrackStartSector = trkInfo.LogicalTrackStartAddress,
+                                    TrackEndSector = (trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress) - 1,
+                                    TrackRawBytesPerSector = (int)blockSize, TrackBytesPerSector = (int)blockSize,
+                                    TrackSubchannelType = TrackSubchannelType.None
+                                };
+
+                                tracks.Add(track);
+                            }
+
+                            tracks = tracks.OrderBy(t => t.TrackSequence).ToList();
+
+                        #if DEBUG
+                            foreach(Track trk in tracks)
+                                UpdateStatus?.
+                                    Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
+                        #endif
+
+                            if(canStoreNotCdTracks)
+                            {
+                                ret = opticalPlugin.SetTracks(tracks);
+
+                                if(!ret)
+                                {
+                                    _dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
+                                    _dumpLog.WriteLine(opticalPlugin.ErrorMessage);
+
+                                    StoppingErrorMessage?.
+                                        Invoke("Error sending tracks to output image, not continuing." +
+                                               Environment.NewLine + opticalPlugin.ErrorMessage);
+
+                                    return;
+                                }
+                            }
+                            else
+                                opticalPlugin.SetTracks(new List<Track>
+                                {
+                                    new Track
+                                    {
+                                        TrackBytesPerSector = (int)blockSize, TrackEndSector         = blocks - 1,
+                                        TrackSequence       = 1, TrackRawBytesPerSector              = (int)blockSize,
+                                        TrackSubchannelType = TrackSubchannelType.None, TrackSession = 1,
+                                        TrackType           = TrackType.Data
+                                    }
+                                });
                         }
-                    });
+                    }
                 }
                 else
                 {
