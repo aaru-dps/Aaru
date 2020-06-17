@@ -128,44 +128,46 @@ namespace Aaru.CommonTypes.Structs
     }
 
     /// <summary>Track defining structure.</summary>
-    public struct Track
+    public class Track
     {
-        /// <summary>Track number, 1-started</summary>
-        public uint TrackSequence;
-        /// <summary>Partition type</summary>
-        public TrackType TrackType;
-        /// <summary>Track starting sector</summary>
-        public ulong TrackStartSector;
-        /// <summary>Track ending sector</summary>
-        public ulong TrackEndSector;
-        /// <summary>Track pre-gap</summary>
-        public ulong TrackPregap;
-        /// <summary>Session this track belongs to</summary>
-        public ushort TrackSession;
+        /// <summary>Indexes, 00 to 99 and sector offset</summary>
+        public Dictionary<ushort, int> Indexes;
+        /// <summary>How many main channel / user data bytes are per sector in this track</summary>
+        public int TrackBytesPerSector;
         /// <summary>Information that does not find space in this struct</summary>
         public string TrackDescription;
-        /// <summary>Indexes, 00 to 99 and sector offset</summary>
-        public Dictionary<int, ulong> Indexes;
-        /// <summary>Which filter stores this track</summary>
-        public IFilter TrackFilter;
+        /// <summary>Track ending sector</summary>
+        public ulong TrackEndSector;
         /// <summary>Which file stores this track</summary>
         public string TrackFile;
         /// <summary>Starting at which byte is this track stored</summary>
         public ulong TrackFileOffset;
         /// <summary>What kind of file is storing this track</summary>
         public string TrackFileType;
-        /// <summary>How many main channel / user data bytes are per sector in this track</summary>
-        public int TrackBytesPerSector;
+        /// <summary>Which filter stores this track</summary>
+        public IFilter TrackFilter;
+        /// <summary>Track pre-gap</summary>
+        public ulong TrackPregap;
         /// <summary>How many main channel bytes per sector are in the file with this track</summary>
         public int TrackRawBytesPerSector;
-        /// <summary>Which filter stores this track's subchannel</summary>
-        public IFilter TrackSubchannelFilter;
+        /// <summary>Track number, 1-started</summary>
+        public uint TrackSequence;
+        /// <summary>Session this track belongs to</summary>
+        public ushort TrackSession;
+        /// <summary>Track starting sector</summary>
+        public ulong TrackStartSector;
         /// <summary>Which file stores this track's subchannel</summary>
         public string TrackSubchannelFile;
+        /// <summary>Which filter stores this track's subchannel</summary>
+        public IFilter TrackSubchannelFilter;
         /// <summary>Starting at which byte are this track's subchannel stored</summary>
         public ulong TrackSubchannelOffset;
         /// <summary>Type of subchannel stored for this track</summary>
         public TrackSubchannelType TrackSubchannelType;
+        /// <summary>Partition type</summary>
+        public TrackType TrackType;
+
+        public Track() => Indexes = new Dictionary<ushort, int>();
     }
 
     /// <summary>Floppy physical characteristics structure.</summary>
