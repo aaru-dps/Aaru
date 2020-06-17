@@ -79,22 +79,19 @@ namespace Aaru.DiscImages
 
                     var aaruTrack = new Track
                     {
-                        Indexes = new Dictionary<int, ulong>
-                        {
-                            {
-                                1, alcTrack.startLba
-                            }
-                        },
-                        TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1, TrackPregap = alcExtra.pregap,
-                        TrackSession           = sessionNo, TrackSequence                                = alcTrack.point,
-                        TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
-                        TrackFile              = alcImage.GetFilename(),
-                        TrackFileOffset        = alcTrack.startOffset,
-                        TrackFileType          = "BINARY",
-                        TrackRawBytesPerSector = alcTrack.sectorSize,
-                        TrackBytesPerSector    = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                        TrackStartSector    = alcTrack.startLba,
+                        TrackEndSector      = (alcTrack.startLba + alcExtra.sectors) - 1, TrackPregap = alcExtra.pregap,
+                        TrackSession        = sessionNo, TrackSequence = alcTrack.point,
+                        TrackType           = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
+                        TrackFile           = alcImage.GetFilename(), TrackFileOffset = alcTrack.startOffset,
+                        TrackFileType       = "BINARY", TrackRawBytesPerSector = alcTrack.sectorSize,
+                        TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
                     };
+
+                    if(alcExtra.pregap > 0)
+                        aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
+
+                    aaruTrack.Indexes.Add(1, (int)alcTrack.startLba);
 
                     switch(alcTrack.subMode)
                     {

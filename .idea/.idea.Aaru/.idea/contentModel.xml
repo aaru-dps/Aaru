@@ -19,7 +19,6 @@
       <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
       <e p=".git/modules/cuetools.net/info/exclude" t="IncludeRecursive" />
       <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/oxyplot-avalonia/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
@@ -1377,6 +1376,7 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
+              <e p="Aaru.Gui.AssemblyInfo.cs" t="Include" />
               <e p="Avalonia" t="Include">
                 <e p="resources" t="Include" />
               </e>

@@ -509,10 +509,9 @@ namespace Aaru.Core
                 xmlTrk.StartSector = trk.TrackStartSector;
                 xmlTrk.EndSector   = trk.TrackEndSector;
 
-                if(trk.Indexes != null &&
-                   trk.Indexes.ContainsKey(0))
-                    if(trk.Indexes.TryGetValue(0, out ulong idx0))
-                        xmlTrk.StartSector = idx0;
+                if(trk.Indexes?.ContainsKey(0) == true)
+                    if(trk.Indexes.TryGetValue(0, out int idx0))
+                        xmlTrk.StartSector = (ulong)idx0;
 
                 switch(sidecar.OpticalDisc[0].DiscType)
                 {
@@ -877,9 +876,8 @@ namespace Aaru.Core
                                 Start = 0, End = image.Info.Sectors
                             }
                         },
-                        Manufacturer = image.Info.DriveManufacturer, Model      = image.Info.DriveModel,
-                        Firmware     = image.Info.DriveFirmwareRevision, Serial = image.Info.DriveSerialNumber,
-                        Software =
+                        Manufacturer = image.Info.DriveManufacturer, Model = image.Info.DriveModel,
+                        Firmware = image.Info.DriveFirmwareRevision, Serial = image.Info.DriveSerialNumber, Software =
                             new SoftwareType
                             {
                                 Name = image.Info.Application, Version = image.Info.ApplicationVersion

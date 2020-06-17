@@ -74,7 +74,7 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        Indexes = cdrTrack.Indexes, TrackDescription = cdrTrack.Title, TrackPregap = cdrTrack.Pregap,
+                        TrackDescription = cdrTrack.Title, TrackPregap = cdrTrack.Pregap,
                         TrackSession = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
                         TrackType = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
                         TrackFile = cdrTrack.TrackFile.DataFilter.GetFilename(),

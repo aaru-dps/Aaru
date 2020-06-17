@@ -1044,9 +1044,8 @@ namespace Aaru.DiscImages
                     {
                         new Track
                         {
-                            Indexes = new Dictionary<int, ulong>(), TrackBytesPerSector = (int)imageInfo.SectorSize,
-                            TrackEndSector = imageInfo.Sectors - 1, TrackFile = imageFilter.GetFilename(),
-                            TrackFileType = "BINARY", TrackFilter = imageFilter,
+                            TrackBytesPerSector = (int)imageInfo.SectorSize, TrackEndSector = imageInfo.Sectors - 1,
+                            TrackFile = imageFilter.GetFilename(), TrackFileType = "BINARY", TrackFilter = imageFilter,
                             TrackRawBytesPerSector = (int)imageInfo.SectorSize, TrackSession = 1, TrackSequence = 1,
                             TrackType = TrackType.Data
                         }

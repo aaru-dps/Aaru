@@ -147,14 +147,13 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmediumType = {0}", mediumType);
 
                     // Read indices
-                    track.Indexes = new Dictionary<int, ulong>();
                     ushort maxI = BitConverter.ToUInt16(descriptor, position);
                     position += 2;
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxI = {0}", maxI);
 
                     for(ushort i = 0; i < maxI; i++)
                     {
-                        uint index = BitConverter.ToUInt32(descriptor, position);
+                        int index = BitConverter.ToInt32(descriptor, position);
                         track.Indexes.Add(i, index);
                         position += 4;
                         AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tindex[{1}] = {0}", index, i);

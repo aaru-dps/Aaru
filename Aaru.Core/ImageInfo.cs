@@ -656,7 +656,7 @@ namespace Aaru.Core
                         AaruConsole.WriteLine("=======================");
 
                         foreach(Track track in opticalImage.Tracks)
-                            foreach(KeyValuePair<int, ulong> index in track.Indexes)
+                            foreach(KeyValuePair<ushort, int> index in track.Indexes)
                                 AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", track.TrackSequence, index.Key,
                                                       index.Value);
                     }

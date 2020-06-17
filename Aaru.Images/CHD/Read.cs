@@ -588,7 +588,6 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
                                 }
 
-                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
                                 aaruTrack.TrackDescription =  $"Track {i     + 1}";
                                 aaruTrack.TrackEndSector   =  (currentSector + chdTrack.frames) - 1;
                                 aaruTrack.TrackFile        =  imageFilter.GetFilename();
@@ -710,7 +709,6 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
                                 aaruTrack.TrackDescription =  $"Track {trackNo}";
                                 aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 aaruTrack.TrackFile        =  imageFilter.GetFilename();
@@ -837,7 +835,6 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
                                 aaruTrack.TrackDescription =  $"Track {trackNo}";
                                 aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 aaruTrack.TrackFile        =  imageFilter.GetFilename();
@@ -970,7 +967,6 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
                                 aaruTrack.TrackDescription =  $"Track {trackNo}";
                                 aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 aaruTrack.TrackFile        =  imageFilter.GetFilename();

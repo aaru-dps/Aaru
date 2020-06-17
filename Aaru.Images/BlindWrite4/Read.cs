@@ -665,12 +665,10 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                    track.Indexes = new Dictionary<int, ulong>();
-
                     if(bwTrack.pregap > 0)
-                        track.Indexes.Add(0, (ulong)bwTrack.pregap);
+                        track.Indexes.Add(0, bwTrack.pregap);
 
-                    track.Indexes.Add(1, (ulong)bwTrack.startSector);
+                    track.Indexes.Add(1, bwTrack.startSector);
 
                     var partition = new Partition();
 

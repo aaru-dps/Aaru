@@ -814,12 +814,10 @@ namespace Aaru.DiscImages
                     if(neroTrack.Sequence == 1)
                         neroTrack.Index0 = neroTrack.Index1;
 
-                    track.Indexes = new Dictionary<int, ulong>();
-
                     if(neroTrack.Index0 < neroTrack.Index1)
-                        track.Indexes.Add(0, neroTrack.Index0 / neroTrack.SectorSize);
+                        track.Indexes.Add(0, (int)(neroTrack.Index0 / neroTrack.SectorSize));
 
-                    track.Indexes.Add(1, neroTrack.Index1 / neroTrack.SectorSize);
+                    track.Indexes.Add(1, (int)(neroTrack.Index1 / neroTrack.SectorSize));
                     track.TrackDescription = StringHandlers.CToString(neroTrack.Isrc);
                     track.TrackEndSector   = ((neroTrack.Length / neroTrack.SectorSize) + neroTrack.StartLba) - 1;
 
