@@ -1092,6 +1092,12 @@ namespace Aaru.Core.Devices.Dumping
                             subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs,
                             ref mcn, subchannelExtents);
 
+            foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
+            {
+                for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++)
+                    subchannelExtents.Remove((int)e);
+            }
+
             if(subchannelExtents.Count > 0 &&
                _retryPasses            > 0 &&
                _retrySubchannel)
