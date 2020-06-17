@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -582,7 +582,7 @@ namespace Aaru.DiscImages
                                     {
                                         AaruConsole.ErrorWriteLine("Cannot find data file {0}", dataFile.Filename);
 
-                                        return false;
+                                        continue;
                                     }
                                 }
                             }
@@ -797,6 +797,13 @@ namespace Aaru.DiscImages
                         }
 
                         break;
+                    }
+
+                    if(track.TrackFilter is null)
+                    {
+                        AaruConsole.ErrorWriteLine("Could not find image for track {0}", trk.point);
+
+                        return false;
                     }
 
                     track.TrackPregap   = trk.pregap;
