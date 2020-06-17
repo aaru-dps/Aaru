@@ -215,6 +215,14 @@ namespace Aaru.Commands.Media
                     Argument = new Argument<bool>(() => false), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--skip-cdiready-hole"
+                }, "Skip the whole between data and audio in a CD-i Ready disc.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -223,7 +231,7 @@ namespace Aaru.Commands.Media
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
-                                 bool fixSubchannelCrc)
+                                 bool fixSubchannelCrc, bool skipCdireadyHole)
         {
             MainClass.PrintCopyright();
 
@@ -265,6 +273,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--retry-subchannel={0}", retrySubchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel={0}", fixSubchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdireadyHole);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -464,7 +473,7 @@ namespace Aaru.Commands.Media
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
                                   parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
                                   wantedSubchannel, speed, @private, fixSubchannelPosition, retrySubchannel,
-                                  fixSubchannel, fixSubchannelCrc);
+                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

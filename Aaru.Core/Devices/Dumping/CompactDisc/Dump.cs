@@ -892,7 +892,8 @@ namespace Aaru.Core.Devices.Dumping
                     Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
         #endif
 
-            if(dskType == MediaType.CDIREADY)
+            if(dskType == MediaType.CDIREADY &&
+               !_skipCdireadyHole)
             {
                 _dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
 
@@ -1039,6 +1040,14 @@ namespace Aaru.Core.Devices.Dumping
 
             // Start reading
             start = DateTime.UtcNow;
+
+            if(dskType == MediaType.CDIREADY && _skipCdireadyHole)
+            {
+                ReadCdiReady(blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
+                             leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
+                             subSize, supportedSubchannel, supportsLongSectors, ref totalDuration, tracks, subLog,
+                             desiredSubchannel, isrcs, ref mcn, subchannelExtents, blocks);
+            }
 
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,

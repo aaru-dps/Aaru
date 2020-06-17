@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Devices\Dumping\CompactDisc\CdiReady.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Data.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Error.cs" />

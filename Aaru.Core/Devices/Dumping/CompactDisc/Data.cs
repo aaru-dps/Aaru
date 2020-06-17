@@ -316,7 +316,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     for(uint r = 0; r < blocksToRead; r++)
                     {
-                        UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
+                        UpdateProgress?.Invoke($"Reading sector {i + r} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i + r, (long)blocks);
 
                         if(_supportsPlextorD8)
@@ -472,9 +472,9 @@ namespace Aaru.Core.Devices.Dumping
                             newTrim = true;
                         }
 
-                        sectorSpeedStart += blocksToRead;
+                        sectorSpeedStart += r;
 
-                        _resume.NextBlock = i + blocksToRead;
+                        _resume.NextBlock = i + r;
 
                         elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
