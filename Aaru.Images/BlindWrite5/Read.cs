@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -1037,7 +1037,12 @@ namespace Aaru.DiscImages
 
             if(atip != null)
             {
-                ATIP.CDATIP atip0 = ATIP.Decode(atip).Value;
+                byte[] atipTmp = new byte[atip.Length + 4];
+                Array.Copy(atip, 0, atipTmp, 4, atip.Length);
+                atipTmp[0] = (byte)((atip.Length & 0xFF00) >> 8);
+                atipTmp[1] = (byte)(atip.Length & 0xFF);
+
+                ATIP.CDATIP atip0 = ATIP.Decode(atipTmp).Value;
 
                 imageInfo.MediaType = atip0.DiscType ? MediaType.CDRW : MediaType.CDR;
 
