@@ -605,7 +605,7 @@ namespace Aaru.DiscImages
                     if(subFilter          != null &&
                        bwTrack.subchannel > 0)
                     {
-                        track.TrackSubchannelType = TrackSubchannelType.Raw;
+                        track.TrackSubchannelType = TrackSubchannelType.Packed;
 
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
@@ -1063,7 +1063,13 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            sectorOffset = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1095,7 +1101,13 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            sectorOffset = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1106,20 +1118,30 @@ namespace Aaru.DiscImages
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            sectorOffset = 0;
+                            sectorSize   = 96;
+                            sectorSkip   = 0;
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
+
+                    break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            imageStream = tag == SectorTagType.CdSectorSubchannel ? aaruTrack.TrackSubchannelFilter.GetDataForkStream()
+                              : aaruTrack.TrackFilter.GetDataForkStream();
+
             var br = new BinaryReader(imageStream);
 
             br.BaseStream.
-               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)(tag == SectorTagType.CdSectorSubchannel ? aaruTrack.TrackSubchannelOffset : aaruTrack.TrackFileOffset) + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1134,7 +1156,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            return buffer;
+            return tag == SectorTagType.CdSectorSubchannel ? Subchannel.Interleave(buffer) : buffer;
         }
 
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
