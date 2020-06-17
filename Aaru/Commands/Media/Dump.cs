@@ -218,7 +218,7 @@ namespace Aaru.Commands.Media
             Add(new Option(new[]
                 {
                     "--skip-cdiready-hole"
-                }, "Skip the whole between data and audio in a CD-i Ready disc.")
+                }, "Skip the hole between data and audio in a CD-i Ready disc.")
                 {
                     Argument = new Argument<bool>(() => true), Required = false
                 });
