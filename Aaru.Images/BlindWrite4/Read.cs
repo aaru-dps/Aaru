@@ -575,11 +575,23 @@ namespace Aaru.DiscImages
 
                     track.TrackFile = dataFilter.GetFilename();
 
-                    if(bwTrack.pregap != 0)
-                        track.TrackFileOffset += (ulong)(bwTrack.startSector - bwTrack.pregap) * 2352;
+                    track.TrackFileOffset       = currentPos * 2352;
+                    track.TrackSubchannelOffset = currentPos * 96;
+
+                    if(bwTrack.pregap > 0)
+                    {
+                        track.TrackPregap      = (ulong)(bwTrack.startSector - bwTrack.pregap);
+                        track.TrackStartSector = (ulong)bwTrack.pregap;
+                    }
+                    else
+                    {
+                        track.TrackPregap      = 0;
+                        track.TrackStartSector = (ulong)bwTrack.startSector;
+                    }
+
+                    currentPos += bwTrack.lastSector - track.TrackStartSector;
 
                     track.TrackFileType          = "BINARY";
-                    track.TrackPregap            = (ulong)(bwTrack.startSector - bwTrack.pregap);
                     track.TrackRawBytesPerSector = 2352;
                     track.TrackSequence          = bwTrack.point;
                     track.TrackSession           = bwTrack.session;
@@ -587,15 +599,13 @@ namespace Aaru.DiscImages
                     if(track.TrackSession > maxSession)
                         maxSession = track.TrackSession;
 
-                    track.TrackStartSector      = (ulong)bwTrack.startSector;
                     track.TrackSubchannelFilter = subFilter;
-                    track.TrackSubchannelFile   = subFilter.GetFilename();
-                    track.TrackSubchannelOffset = (track.TrackStartSector * 96) + (track.TrackPregap * 96);
+                    track.TrackSubchannelFile   = subFilter?.GetFilename();
 
                     if(subFilter          != null &&
                        bwTrack.subchannel > 0)
                     {
-                        track.TrackSubchannelType = TrackSubchannelType.Packed;
+                        track.TrackSubchannelType = TrackSubchannelType.Raw;
 
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
@@ -670,22 +680,19 @@ namespace Aaru.DiscImages
 
                     track.Indexes.Add(1, bwTrack.startSector);
 
-                    var partition = new Partition();
+                    var partition = new Partition
+                    {
+                        Description = track.TrackDescription,
+                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) * 2352,
+                        Length = (track.TrackEndSector - track.TrackStartSector) + 1, Sequence = track.TrackSequence,
+                        Start = track.TrackStartSector + track.TrackPregap
+                    };
 
-                    if(bwTrack.pregap > 0)
-                        currentPos += (ulong)(bwTrack.startSector - bwTrack.pregap) * 2352;
-
-                    partition.Description = track.TrackDescription;
-                    partition.Size        = ((track.TrackEndSector - track.TrackStartSector) + 1) * 2352;
-                    partition.Length      = track.TrackEndSector - track.TrackStartSector;
-                    partition.Sequence    = track.TrackSequence;
-                    partition.Offset      = currentPos;
-                    partition.Start       = track.TrackStartSector;
-                    partition.Type        = track.TrackType.ToString();
+                    partition.Offset = partition.Start * 2352;
+                    partition.Type   = track.TrackType.ToString();
 
                     Partitions.Add(partition);
                     Tracks.Add(track);
-                    currentPos += partition.Size;
 
                     if(!offsetmap.ContainsKey(track.TrackSequence))
                         offsetmap.Add(track.TrackSequence, track.TrackStartSector);
