@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Enums;
@@ -647,11 +648,26 @@ namespace Aaru.Core
                                                   track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
 
                         AaruConsole.WriteLine();
+
+                        AaruConsole.WriteLine("Track indexes:");
+
+                        AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", "Track", "Index", "Start");
+
+                        AaruConsole.WriteLine("=======================");
+
+                        foreach(Track track in opticalImage.Tracks)
+                            foreach(KeyValuePair<int, ulong> index in track.Indexes)
+                                AaruConsole.WriteLine("{0,-7}{1,-7}{2,-12}", track.TrackSequence, index.Key,
+                                                      index.Value);
                     }
                 }
                 catch
                 {
                     // ignored
+                }
+                finally
+                {
+                    AaruConsole.WriteLine();
                 }
             }
 
