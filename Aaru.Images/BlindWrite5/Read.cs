@@ -1012,10 +1012,10 @@ namespace Aaru.DiscImages
             imageInfo.DriveFirmwareRevision = StringHandlers.CToString(header.revision);
             imageInfo.Application           = "BlindWrite";
 
-            if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B5T",
+            if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
                               StringComparison.OrdinalIgnoreCase) == 0)
                 imageInfo.ApplicationVersion = "5";
-            else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), "B6T",
+            else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B6T",
                                    StringComparison.OrdinalIgnoreCase) == 0)
                 imageInfo.ApplicationVersion = "6";
 
