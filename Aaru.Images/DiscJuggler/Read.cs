@@ -787,7 +787,7 @@ namespace Aaru.DiscImages
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
-            bool mode2 = true;
+            bool mode2 = false;
 
             switch(aaruTrack.TrackType)
             {
