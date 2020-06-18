@@ -199,7 +199,7 @@ namespace Aaru.DiscImages
                     position += 4;
 
                     session.SessionSequence = (ushort)(BitConverter.ToUInt32(descriptor, position) + 1);
-                    track.TrackSession      = (ushort)(session.SessionSequence                     + 1);
+                    track.TrackSession      = session.SessionSequence;
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tsession = {0}", session.SessionSequence);
                     position            += 4;
                     track.TrackSequence =  BitConverter.ToUInt32(descriptor, position) + lastSessionTrack + 1;
