@@ -615,6 +615,7 @@ namespace Aaru.DiscImages
                 chars.SectorSize = sectorSize;
                 chars.StartLba   = dataFile.StartLba;
                 chars.Sectors    = dataFile.Sectors;
+                chars.Offset     = dataFile.Offset;
 
                 filePaths.Add(chars);
             }
@@ -778,7 +779,8 @@ namespace Aaru.DiscImages
                         track.TrackFile   = chars.FileFilter.GetFilename();
 
                         if(trk.startLba >= 0)
-                            track.TrackFileOffset = (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize);
+                            track.TrackFileOffset =
+                                (ulong)((trk.startLba - chars.StartLba) * chars.SectorSize) + chars.Offset;
                         else
                             track.TrackFileOffset = (ulong)(trk.startLba * -1 * chars.SectorSize);
 
@@ -827,6 +829,9 @@ namespace Aaru.DiscImages
                     partition.Type     = track.TrackType.ToString();
 
                     offsetBytes += partition.Size;
+
+                    if(track.TrackStartSector >= trk.pregap)
+                        track.TrackStartSector -= trk.pregap;
 
                     Tracks.Add(track);
                     Partitions.Add(partition);
@@ -1230,7 +1235,6 @@ namespace Aaru.DiscImages
         {
             // TODO: Cross data files
             var aaruTrack = new Track();
-            var chars     = new DataFileCharacteristics();
 
             aaruTrack.TrackSequence = 0;
 
@@ -1248,16 +1252,12 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
-                                                                                   (long)sectorAddress >=
-                                                                                   characteristics.StartLba &&
-                                                                                   length < (ulong)characteristics.
-                                                                                       Sectors - sectorAddress))
-            {
-                chars = characteristics;
-
-                break;
-            }
+            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+                                                 characteristics.StartLba let lastSector =
+                                                 (firstSector + characteristics.Sectors) - 1 let wantedSector =
+                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                             where wantedSector >= firstSector && wantedSector <= lastSector
+                                             select characteristics).FirstOrDefault();
 
             if(string.IsNullOrEmpty(chars.FilePath) ||
                chars.FileFilter == null)
@@ -1369,7 +1369,6 @@ namespace Aaru.DiscImages
         {
             // TODO: Cross data files
             var aaruTrack = new Track();
-            var chars     = new DataFileCharacteristics();
 
             aaruTrack.TrackSequence = 0;
 
@@ -1387,16 +1386,12 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
-                                                                                   (long)sectorAddress >=
-                                                                                   characteristics.StartLba &&
-                                                                                   length < (ulong)characteristics.
-                                                                                       Sectors - sectorAddress))
-            {
-                chars = characteristics;
-
-                break;
-            }
+            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+                                                 characteristics.StartLba let lastSector =
+                                                 (firstSector + characteristics.Sectors) - 1 let wantedSector =
+                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                             where wantedSector >= firstSector && wantedSector <= lastSector
+                                             select characteristics).FirstOrDefault();
 
             if(string.IsNullOrEmpty(chars.FilePath) ||
                chars.FileFilter == null)
@@ -1706,7 +1701,6 @@ namespace Aaru.DiscImages
         {
             // TODO: Cross data files
             var aaruTrack = new Track();
-            var chars     = new DataFileCharacteristics();
 
             aaruTrack.TrackSequence = 0;
 
@@ -1724,16 +1718,12 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
-                                                                                   (long)sectorAddress >=
-                                                                                   characteristics.StartLba &&
-                                                                                   length < (ulong)characteristics.
-                                                                                       Sectors - sectorAddress))
-            {
-                chars = characteristics;
-
-                break;
-            }
+            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+                                                 characteristics.StartLba let lastSector =
+                                                 (firstSector + characteristics.Sectors) - 1 let wantedSector =
+                                                 (int)(sectorAddress + aaruTrack.TrackStartSector)
+                                             where wantedSector >= firstSector && wantedSector <= lastSector
+                                             select characteristics).FirstOrDefault();
 
             if(string.IsNullOrEmpty(chars.FilePath) ||
                chars.FileFilter == null)
