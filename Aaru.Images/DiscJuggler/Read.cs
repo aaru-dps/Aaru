@@ -151,6 +151,7 @@ namespace Aaru.DiscImages
                     position += 2;
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\tmaxI = {0}", maxI);
 
+                    // This is not really the index position, but, the index length, go figure
                     for(ushort i = 0; i < maxI; i++)
                     {
                         int index = BitConverter.ToInt32(descriptor, position);
@@ -208,11 +209,41 @@ namespace Aaru.DiscImages
                                                track.TrackSequence, BitConverter.ToUInt32(descriptor, position),
                                                lastSessionTrack);
 
+                    // There's always an index 0 in the image
+                    track.TrackPregap = (ulong)track.Indexes[0];
+
+                    if(track.TrackSequence == 1)
+                        track.Indexes[0] = -150;
+
+                    if(track.Indexes[0] == 0)
+                        track.Indexes.Remove(0);
+
                     position               += 4;
                     track.TrackStartSector =  BitConverter.ToUInt32(descriptor, position);
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackStart = {0}", track.TrackStartSector);
                     position += 4;
                     uint trackLen = BitConverter.ToUInt32(descriptor, position);
+
+                    // DiscJuggler counts the first track pregap start as 0 instead of -150, we need to adjust appropriately
+                    if(track.TrackStartSector == 0)
+                        trackLen -= 150;
+                    else
+                        track.TrackStartSector -= 150;
+
+                    int leftLen = (int)trackLen;
+
+                    // Convert index length to index position
+                    foreach(KeyValuePair<ushort, int> idx in track.Indexes.Reverse())
+                    {
+                        leftLen -= idx.Value;
+
+                        if(idx.Key             == 0 &&
+                           track.TrackSequence == 1)
+                            continue;
+
+                        track.Indexes[idx.Key] = (int)track.TrackStartSector + leftLen;
+                    }
+
                     track.TrackEndSector = (track.TrackStartSector + trackLen) - 1;
                     AaruConsole.DebugWriteLine("DiscJuggler plugin", "\ttrackEnd = {0}", track.TrackEndSector);
                     position += 4;
