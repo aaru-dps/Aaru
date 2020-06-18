@@ -564,10 +564,19 @@ namespace Aaru.DiscImages
 
                     var partition = new Partition
                     {
-                        Description = track.TrackDescription, Size = (ulong)(trackLen * track.TrackBytesPerSector),
-                        Length      = trackLen, Sequence = track.TrackSequence, Offset = track.TrackFileOffset,
-                        Start       = track.TrackStartSector, Type = track.TrackType.ToString()
+                        Description = track.TrackDescription, Length = trackLen, Sequence = track.TrackSequence,
+                        Offset      = track.TrackFileOffset, Start   = track.TrackStartSector,
+                        Type        = track.TrackType.ToString()
                     };
+
+                    if(track.TrackSequence > 1 &&
+                       track.TrackPregap   > 0)
+                    {
+                        partition.Start  += track.TrackPregap;
+                        partition.Length -= track.TrackPregap;
+                    }
+
+                    partition.Size = partition.Length * (ulong)track.TrackBytesPerSector;
 
                     imageInfo.Sectors += partition.Length;
                     Partitions.Add(partition);
