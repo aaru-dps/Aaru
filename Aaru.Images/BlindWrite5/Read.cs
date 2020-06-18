@@ -1513,7 +1513,32 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            switch(chars.Subchannel)
+                            {
+                                case TrackSubchannelType.PackedInterleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 96;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                case TrackSubchannelType.Q16Interleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 16;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1579,7 +1604,32 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            switch(chars.Subchannel)
+                            {
+                                case TrackSubchannelType.PackedInterleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 96;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                case TrackSubchannelType.Q16Interleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 16;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1620,7 +1670,32 @@ namespace Aaru.DiscImages
                             break;
                         }
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            switch(chars.Subchannel)
+                            {
+                                case TrackSubchannelType.PackedInterleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 96;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                case TrackSubchannelType.Q16Interleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 16;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1630,29 +1705,57 @@ namespace Aaru.DiscImages
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSubchannel:
-                            throw new NotImplementedException("Packed subchannel not yet supported");
+                        {
+                            switch(chars.Subchannel)
+                            {
+                                case TrackSubchannelType.PackedInterleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 96;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                case TrackSubchannelType.Q16Interleaved:
+                                {
+                                    sectorOffset = 2352;
+                                    sectorSize   = 16;
+                                    sectorSkip   = 0;
+
+                                    break;
+                                }
+
+                                default: throw new ArgumentOutOfRangeException();
+                            }
+
+                            break;
+                        }
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
+
+                    break;
                 }
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            switch(chars.Subchannel)
-            {
-                case TrackSubchannelType.None:
-                    sectorSkip += 0;
+            if(tag != SectorTagType.CdSectorSubchannel)
+                switch(chars.Subchannel)
+                {
+                    case TrackSubchannelType.None:
+                        sectorSkip += 0;
 
-                    break;
-                case TrackSubchannelType.Q16Interleaved:
-                    sectorSkip += 16;
+                        break;
+                    case TrackSubchannelType.Q16Interleaved:
+                        sectorSkip += 16;
 
-                    break;
-                case TrackSubchannelType.PackedInterleaved:
-                    sectorSkip += 96;
+                        break;
+                    case TrackSubchannelType.PackedInterleaved:
+                        sectorSkip += 96;
 
-                    break;
-                default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
-            }
+                        break;
+                    default: throw new FeatureSupportedButNotImplementedImageException("Unsupported subchannel type");
+                }
 
             byte[] buffer = new byte[sectorSize * length];
 
@@ -1675,11 +1778,15 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            if(tag              == SectorTagType.CdSectorSubchannel &&
-               chars.Subchannel == TrackSubchannelType.Q16Interleaved)
-                return Subchannel.ConvertQToRaw(buffer);
+            if(tag != SectorTagType.CdSectorSubchannel)
+                return buffer;
 
-            return buffer;
+            return chars.Subchannel switch
+            {
+                TrackSubchannelType.Q16Interleaved    => Subchannel.ConvertQToRaw(buffer),
+                TrackSubchannelType.PackedInterleaved => Subchannel.Interleave(buffer),
+                _                                     => buffer
+            };
         }
 
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
