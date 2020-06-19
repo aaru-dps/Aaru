@@ -588,15 +588,20 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
                                 }
 
-                                aaruTrack.TrackDescription =  $"Track {i     + 1}";
-                                aaruTrack.TrackEndSector   =  (currentSector + chdTrack.frames) - 1;
-                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
-                                aaruTrack.TrackFileType    =  "BINARY";
-                                aaruTrack.TrackFilter      =  imageFilter;
-                                aaruTrack.TrackStartSector =  currentSector;
-                                aaruTrack.TrackSequence    =  i + 1;
-                                aaruTrack.TrackSession     =  1;
-                                currentSector              += chdTrack.frames + chdTrack.extraFrames;
+                                aaruTrack.TrackDescription = $"Track {i     + 1}";
+                                aaruTrack.TrackEndSector   = (currentSector + chdTrack.frames) - 1;
+                                aaruTrack.TrackFile        = imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    = "BINARY";
+                                aaruTrack.TrackFilter      = imageFilter;
+                                aaruTrack.TrackStartSector = currentSector;
+                                aaruTrack.TrackSequence    = i + 1;
+                                aaruTrack.TrackSession     = 1;
+
+                                if(aaruTrack.TrackSequence == 1)
+                                    aaruTrack.Indexes.Add(0, -150);
+
+                                aaruTrack.Indexes.Add(1, (int)currentSector);
+                                currentSector += chdTrack.frames + chdTrack.extraFrames;
                                 tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
@@ -709,15 +714,20 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.TrackDescription =  $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
-                                aaruTrack.TrackFileType    =  "BINARY";
-                                aaruTrack.TrackFilter      =  imageFilter;
-                                aaruTrack.TrackStartSector =  currentSector;
-                                aaruTrack.TrackSequence    =  trackNo;
-                                aaruTrack.TrackSession     =  1;
-                                currentSector              += frames;
+                                aaruTrack.TrackDescription = $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        = imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    = "BINARY";
+                                aaruTrack.TrackFilter      = imageFilter;
+                                aaruTrack.TrackStartSector = currentSector;
+                                aaruTrack.TrackSequence    = trackNo;
+                                aaruTrack.TrackSession     = 1;
+
+                                if(aaruTrack.TrackSequence == 1)
+                                    aaruTrack.Indexes.Add(0, -150);
+
+                                aaruTrack.Indexes.Add(1, (int)currentSector);
+                                currentSector += frames;
                                 currentTrack++;
                                 tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
@@ -747,11 +757,19 @@ namespace Aaru.DiscImages
                                 string subtype   = cht2Match.Groups["sub_type"].Value;
                                 string tracktype = cht2Match.Groups["track_type"].Value;
 
-                                // TODO: Check pregap and postgap behaviour
-                                uint   pregap        = uint.Parse(cht2Match.Groups["pregap"].Value);
-                                string pregapType    = cht2Match.Groups["pgtype"].Value;
+                                uint pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
+
+                                // What is this, really? Same as track type?
+                                string pregapType = cht2Match.Groups["pgtype"].Value;
+
+                                // Read above, but for subchannel
                                 string pregapSubType = cht2Match.Groups["pgsub"].Value;
-                                uint   postgap       = uint.Parse(cht2Match.Groups["postgap"].Value);
+
+                                // This is a recommendation (shall) of 150 sectors at the end of the last data track,
+                                // or of any data track followed by an audio track, according to Yellow Book.
+                                // It is undistinguishible from normal data.
+                                // TODO: Does CHD store it, or like CDRWin, ignores it?
+                                uint postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
@@ -835,15 +853,40 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.TrackDescription =  $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
-                                aaruTrack.TrackFileType    =  "BINARY";
-                                aaruTrack.TrackFilter      =  imageFilter;
-                                aaruTrack.TrackStartSector =  currentSector;
-                                aaruTrack.TrackSequence    =  trackNo;
-                                aaruTrack.TrackSession     =  1;
-                                currentSector              += frames;
+                                aaruTrack.TrackDescription = $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        = imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    = "BINARY";
+                                aaruTrack.TrackFilter      = imageFilter;
+                                aaruTrack.TrackStartSector = currentSector;
+                                aaruTrack.TrackSequence    = trackNo;
+                                aaruTrack.TrackSession     = 1;
+
+                                if(aaruTrack.TrackSequence == 1)
+                                {
+                                    if(pregap <= 150)
+                                    {
+                                        aaruTrack.Indexes.Add(0, -150);
+                                        aaruTrack.TrackPregap = 150;
+                                    }
+                                    else
+                                    {
+                                        aaruTrack.Indexes.Add(0, -1 * (int)pregap);
+                                        aaruTrack.TrackPregap = pregap;
+                                    }
+
+                                    aaruTrack.Indexes.Add(1, (int)currentSector);
+                                }
+                                else if(pregap > 0)
+                                {
+                                    aaruTrack.Indexes.Add(0, (int)currentSector);
+                                    aaruTrack.TrackPregap = pregap;
+                                    aaruTrack.Indexes.Add(1, (int)(currentSector + pregap));
+                                }
+                                else
+                                    aaruTrack.Indexes.Add(1, (int)currentSector);
+
+                                currentSector += frames;
                                 currentTrack++;
                                 tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
@@ -967,15 +1010,40 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                aaruTrack.TrackDescription =  $"Track {trackNo}";
-                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
-                                aaruTrack.TrackFileType    =  "BINARY";
-                                aaruTrack.TrackFilter      =  imageFilter;
-                                aaruTrack.TrackStartSector =  currentSector;
-                                aaruTrack.TrackSequence    =  trackNo;
-                                aaruTrack.TrackSession     =  (ushort)(trackNo > 2 ? 2 : 1);
-                                currentSector              += frames;
+                                aaruTrack.TrackDescription = $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   = (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        = imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    = "BINARY";
+                                aaruTrack.TrackFilter      = imageFilter;
+                                aaruTrack.TrackStartSector = currentSector;
+                                aaruTrack.TrackSequence    = trackNo;
+                                aaruTrack.TrackSession     = (ushort)(trackNo > 2 ? 2 : 1);
+
+                                if(aaruTrack.TrackSequence == 1)
+                                {
+                                    if(pregap <= 150)
+                                    {
+                                        aaruTrack.Indexes.Add(0, -150);
+                                        aaruTrack.TrackPregap = 150;
+                                    }
+                                    else
+                                    {
+                                        aaruTrack.Indexes.Add(0, -1 * (int)pregap);
+                                        aaruTrack.TrackPregap = pregap;
+                                    }
+
+                                    aaruTrack.Indexes.Add(1, (int)currentSector);
+                                }
+                                else if(pregap > 0)
+                                {
+                                    aaruTrack.Indexes.Add(0, (int)currentSector);
+                                    aaruTrack.TrackPregap = pregap;
+                                    aaruTrack.Indexes.Add(1, (int)(currentSector + pregap));
+                                }
+                                else
+                                    aaruTrack.Indexes.Add(1, (int)currentSector);
+
+                                currentSector += frames;
                                 currentTrack++;
                                 tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
@@ -1070,10 +1138,10 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = aaruTrack.TrackDescription,
-                        Size = ((aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1) *
+                        Size = ((aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1) *
                                (ulong)aaruTrack.TrackRawBytesPerSector,
-                        Length   = (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1,
-                        Sequence = aaruTrack.TrackSequence, Offset = partPos, Start = aaruTrack.TrackStartSector,
+                        Length   = (aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1,
+                        Sequence = aaruTrack.TrackSequence, Offset = partPos, Start = (ulong)aaruTrack.Indexes[1],
                         Type     = aaruTrack.TrackType.ToString()
                     };
 
