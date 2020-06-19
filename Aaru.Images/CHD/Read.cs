@@ -337,6 +337,9 @@ namespace Aaru.DiscImages
 
                 case 5:
                 {
+                    // TODO: Check why reading is misaligned
+                    throw new ImageNotSupportedException("CHD version 5 is not yet supported.");
+
                     ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"",
