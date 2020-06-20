@@ -51,48 +51,48 @@ namespace Aaru.DiscImages
             public string FileType;
         }
 
-        struct CdrWinTrack
+        class CdrWinTrack
         {
-            /// <summary>Track #</summary>
-            public uint Sequence;
-            /// <summary>Track title (from CD-Text)</summary>
-            public string Title;
-            /// <summary>Track genre (from CD-Text)</summary>
-            public string Genre;
             /// <summary>Track arranger (from CD-Text)</summary>
             public string Arranger;
+            /// <summary>Bytes per sector</summary>
+            public ushort Bps;
             /// <summary>Track composer (from CD-Text)</summary>
             public string Composer;
-            /// <summary>Track performer (from CD-Text)</summary>
-            public string Performer;
-            /// <summary>Track song writer (from CD-Text)</summary>
-            public string Songwriter;
-            /// <summary>Track ISRC</summary>
-            public string Isrc;
-            /// <summary>File struct for this track</summary>
-            public CdrWinTrackFile TrackFile;
-            /// <summary>Indexes on this track</summary>
-            public Dictionary<int, ulong> Indexes;
-            /// <summary>Track pre-gap in sectors</summary>
-            public ulong Pregap;
-            /// <summary>Track post-gap in sectors</summary>
-            public ulong Postgap;
-            /// <summary>Digital Copy Permitted</summary>
-            public bool FlagDcp;
             /// <summary>Track is quadraphonic</summary>
             public bool Flag4ch;
+            /// <summary>Digital Copy Permitted</summary>
+            public bool FlagDcp;
             /// <summary>Track has pre-emphasis</summary>
             public bool FlagPre;
             /// <summary>Track has SCMS</summary>
             public bool FlagScms;
-            /// <summary>Bytes per sector</summary>
-            public ushort Bps;
+            /// <summary>Track genre (from CD-Text)</summary>
+            public string Genre;
+            /// <summary>Indexes on this track</summary>
+            public Dictionary<ushort, int> Indexes;
+            /// <summary>Track ISRC</summary>
+            public string Isrc;
+            /// <summary>Track performer (from CD-Text)</summary>
+            public string Performer;
+            /// <summary>Track post-gap in sectors</summary>
+            public int Postgap;
+            /// <summary>Track pre-gap in sectors</summary>
+            public int Pregap;
             /// <summary>Sectors in track</summary>
             public ulong Sectors;
-            /// <summary>Track type</summary>
-            public string TrackType;
+            /// <summary>Track #</summary>
+            public uint Sequence;
             /// <summary>Track session</summary>
             public ushort Session;
+            /// <summary>Track song writer (from CD-Text)</summary>
+            public string Songwriter;
+            /// <summary>Track title (from CD-Text)</summary>
+            public string Title;
+            /// <summary>File struct for this track</summary>
+            public CdrWinTrackFile TrackFile;
+            /// <summary>Track type</summary>
+            public string TrackType;
         }
 
         struct CdrWinDisc

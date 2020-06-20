@@ -38,14 +38,14 @@ namespace Aaru.DiscImages
 {
     public partial class CdrWin
     {
-        static ulong CdrWinMsfToLba(string msf)
+        static int CdrWinMsfToLba(string msf)
         {
             string[] msfElements = msf.Split(':');
-            ulong    minute      = ulong.Parse(msfElements[0]);
-            ulong    second      = ulong.Parse(msfElements[1]);
-            ulong    frame       = ulong.Parse(msfElements[2]);
+            int      minute      = int.Parse(msfElements[0]);
+            int      second      = int.Parse(msfElements[1]);
+            int      frame       = int.Parse(msfElements[2]);
 
-            ulong sectors = (minute * 60 * 75) + (second * 75) + frame;
+            int sectors = (minute * 60 * 75) + (second * 75) + frame;
 
             return sectors;
         }

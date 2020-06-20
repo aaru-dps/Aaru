@@ -117,15 +117,15 @@ namespace Aaru.DiscImages
 
                 var currentTrack = new CdrWinTrack
                 {
-                    Indexes = new Dictionary<int, ulong>()
+                    Indexes = new Dictionary<ushort, int>()
                 };
 
-                var   currentFile             = new CdrWinTrackFile();
-                ulong currentFileOffsetSector = 0;
+                var  currentFile             = new CdrWinTrackFile();
+                long currentFileOffsetSector = 0;
 
                 int trackCount = 0;
 
-                Dictionary<byte, ulong> leadouts = new Dictionary<byte, ulong>();
+                Dictionary<byte, int> leadouts = new Dictionary<byte, int>();
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -627,8 +627,8 @@ namespace Aaru.DiscImages
                             if(!inTrack)
                                 throw new FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
 
-                            int   index  = int.Parse(matchIndex.Groups[1].Value);
-                            ulong offset = CdrWinMsfToLba(matchIndex.Groups[2].Value);
+                            ushort index  = ushort.Parse(matchIndex.Groups[1].Value);
+                            int    offset = CdrWinMsfToLba(matchIndex.Groups[2].Value);
 
                             if(index                      != 0 &&
                                index                      != 1 &&
@@ -641,7 +641,8 @@ namespace Aaru.DiscImages
                                 if((int)(currentTrack.Sequence - 2) >= 0 &&
                                    offset                           > 1)
                                 {
-                                    cueTracks[currentTrack.Sequence - 2].Sectors = offset - currentFileOffsetSector;
+                                    cueTracks[currentTrack.Sequence - 2].Sectors =
+                                        (ulong)(offset - (int)currentFileOffsetSector);
 
                                     currentFile.Offset +=
                                         cueTracks[currentTrack.Sequence - 2].Sectors *
@@ -665,7 +666,7 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
                                                            offset * currentTrack.Bps);
 
-                                currentFile.Offset = offset * currentTrack.Bps;
+                                currentFile.Offset = (ulong)(offset * currentTrack.Bps);
                             }
 
                             currentFileOffsetSector = offset;
@@ -758,7 +759,7 @@ namespace Aaru.DiscImages
 
                             currentTrack = new CdrWinTrack
                             {
-                                Indexes  = new Dictionary<int, ulong>(),
+                                Indexes  = new Dictionary<ushort, int>(),
                                 Sequence = uint.Parse(matchTrack.Groups[1].Value)
                             };
 
@@ -827,28 +828,39 @@ namespace Aaru.DiscImages
                     sessions[s - 1].StartTrack = cueTracks[firstSessionTrk].Sequence;
                     sessions[s - 1].EndTrack   = cueTracks[lastSessionTrack].Sequence;
 
-                    if(leadouts.TryGetValue((byte)s, out ulong leadout))
+                    if(leadouts.TryGetValue((byte)s, out int leadout))
                     {
-                        sessions[s - 1].EndSector = leadout - 1;
+                        sessions[s - 1].EndSector = (ulong)(leadout - 1);
 
-                        if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out ulong startSector))
+                        if(!cueTracks[lastSessionTrack].Indexes.TryGetValue(0, out int startSector))
                             cueTracks[lastSessionTrack].Indexes.TryGetValue(1, out startSector);
 
-                        cueTracks[lastSessionTrack].Sectors = leadout - startSector;
+                        cueTracks[lastSessionTrack].Sectors = (ulong)(leadout - startSector);
                     }
                     else
                         sessions[s - 1].EndSector = (sessions[s - 1].StartSector + sessionSectors) - 1;
 
                     CdrWinTrack firstSessionTrack = cueTracks.OrderBy(t => t.Sequence).First(t => t.Session == s);
 
+                    firstSessionTrack.Indexes.TryGetValue(0, out firstSessionTrack.Pregap);
+
+                    if(firstSessionTrack.Pregap < 150)
+                        firstSessionTrack.Pregap = 150;
+
                     if(cueTracks.All(i => i.TrackFile.DataFilter.GetFilename() ==
                                           cueTracks.First().TrackFile.DataFilter.GetFilename()))
                     {
-                        if(firstSessionTrack.Indexes.TryGetValue(0, out sessions[s - 1].StartSector))
-                            continue;
+                        if(firstSessionTrack.Indexes.TryGetValue(0, out int sessionStart))
+                        {
+                            sessions[s - 1].StartSector = (ulong)sessionStart;
 
-                        if(firstSessionTrack.Indexes.TryGetValue(1, out sessions[s - 1].StartSector))
                             continue;
+                        }
+
+                        if(firstSessionTrack.Indexes.TryGetValue(1, out sessionStart))
+                        {
+                            sessions[s - 1].StartSector = (ulong)sessionStart;
+                        }
                     }
                 }
 
@@ -857,8 +869,8 @@ namespace Aaru.DiscImages
 
                 for(int t = 1; t <= cueTracks.Length; t++)
                 {
-                    if(cueTracks[t - 1].Indexes.TryGetValue(0, out ulong idx0) &&
-                       cueTracks[t - 1].Indexes.TryGetValue(1, out ulong idx1))
+                    if(cueTracks[t - 1].Indexes.TryGetValue(0, out int idx0) &&
+                       cueTracks[t - 1].Indexes.TryGetValue(1, out int idx1))
                         cueTracks[t - 1].Pregap = idx1 - idx0;
 
                     _discImage.Tracks.Add(cueTracks[t - 1]);
@@ -1064,7 +1076,7 @@ namespace Aaru.DiscImages
 
                     AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
 
-                    foreach(KeyValuePair<int, ulong> kvp in _discImage.Tracks[i].Indexes)
+                    foreach(KeyValuePair<ushort, int> kvp in _discImage.Tracks[i].Indexes)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
                                                    kvp.Value);
 
@@ -1124,7 +1136,7 @@ namespace Aaru.DiscImages
 
                     var partition = new Partition();
 
-                    if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out ulong _))
+                    if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out _))
                         throw new ImageNotSupportedException($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
 
                     if(_discImage.IsRedumpGigadisc       &&

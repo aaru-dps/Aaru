@@ -74,7 +74,7 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        TrackDescription = cdrTrack.Title, TrackPregap = cdrTrack.Pregap,
+                        TrackDescription = cdrTrack.Title, TrackPregap = (ulong)cdrTrack.Pregap,
                         TrackSession = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
                         TrackType = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
                         TrackFile = cdrTrack.TrackFile.DataFilter.GetFilename(),
@@ -83,22 +83,33 @@ namespace Aaru.DiscImages
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
+                    if(aaruTrack.TrackSequence == 1)
+                    {
+                        aaruTrack.TrackPregap = 150;
+                        aaruTrack.Indexes[0]  = -150;
+                    }
+
                     if(previousTrackFile == aaruTrack.TrackFile ||
                        previousTrackFile == "")
-                    {
-                        if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
-                            if(!cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector))
-                                aaruTrack.TrackStartSector += previousStartSector;
-                    }
+                        if(cdrTrack.Indexes.TryGetValue(0, out int idx0))
+                            if(idx0 > 0)
+                                aaruTrack.TrackStartSector = (ulong)idx0;
+                            else
+                                aaruTrack.TrackStartSector = 0;
+                        else if(cdrTrack.Indexes.TryGetValue(1, out int idx1))
+                            aaruTrack.TrackStartSector = (ulong)idx1;
+                        else
+                            aaruTrack.TrackStartSector += previousStartSector;
                     else
                         aaruTrack.TrackStartSector += previousStartSector;
+
+                    foreach((ushort index, int position) in cdrTrack.Indexes)
+                        aaruTrack.Indexes[index] = position;
 
                     if(_discImage.IsRedumpGigadisc &&
                        cdrTrack.Session    == 2    &&
                        previousStartSector < gdRomSession2Offset)
-                    {
                         aaruTrack.TrackStartSector = gdRomSession2Offset;
-                    }
 
                     previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
 
