@@ -155,9 +155,10 @@ namespace Aaru.DiscImages
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
                 _cueStream = new StreamReader(imageFilter.GetDataForkStream());
 
-                var  filtersList       = new FiltersList();
-                bool inTruripDiscHash  = false;
-                bool inTruripTrackHash = false;
+                var  filtersList         = new FiltersList();
+                bool inTruripDiscHash    = false;
+                bool inTruripTrackHash   = false;
+                bool firstTrackInSession = false;
 
                 ulong gdRomSession2Offset = 45000;
                 densitySeparationSectors = 0;
@@ -349,7 +350,8 @@ namespace Aaru.DiscImages
                     else if(matchSession.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", lineNumber);
-                        currentSession = byte.Parse(matchSession.Groups[1].Value);
+                        currentSession      = byte.Parse(matchSession.Groups[1].Value);
+                        firstTrackInSession = true;
                     }
                     else if(matchRedumpSdArea.Success)
                     {
@@ -669,7 +671,21 @@ namespace Aaru.DiscImages
                                 currentFile.Offset = (ulong)(offset * currentTrack.Bps);
                             }
 
-                            currentFileOffsetSector = offset;
+                            if(currentTrack.Indexes.Count == 0)
+                            {
+                                if(firstTrackInSession &&
+                                   index  != 0         &&
+                                   offset > 150)
+                                {
+                                    currentTrack.Indexes[0] =  offset - 150;
+                                    firstTrackInSession     =  false;
+                                    currentFileOffsetSector =  offset - 150;
+                                    currentFile.Offset      -= (ulong)(150 * currentTrack.Bps);
+                                }
+                                else
+                                    currentFileOffsetSector = offset;
+                            }
+
                             currentTrack.Indexes.Add(index, offset);
                         }
                         else if(matchIsrc.Success)
@@ -1122,8 +1138,6 @@ namespace Aaru.DiscImages
 
                 Partitions = new List<Partition>();
 
-                ulong byteOffset        = 0;
-                ulong sectorOffset      = 0;
                 ulong partitionSequence = 0;
 
                 _offsetMap = new Dictionary<uint, ulong>();
@@ -1139,41 +1153,25 @@ namespace Aaru.DiscImages
                     if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out _))
                         throw new ImageNotSupportedException($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
 
-                    if(_discImage.IsRedumpGigadisc       &&
-                       _discImage.Tracks[i].Session != 1 &&
-                       sectorOffset                 < gdRomSession2Offset)
-                    {
-                        _offsetMap.Add(0, sectorOffset);
-                        densitySeparationSectors = gdRomSession2Offset - sectorOffset;
-                        sectorOffset             = gdRomSession2Offset;
-                    }
-
                     // Index 01
                     partition.Description = $"Track {_discImage.Tracks[i].Sequence}.";
                     partition.Name        = _discImage.Tracks[i].Title;
-                    partition.Start       = sectorOffset;
+                    partition.Start       = (ulong)_discImage.Tracks[i].Indexes[1];
                     partition.Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps;
                     partition.Length      = _discImage.Tracks[i].Sectors;
                     partition.Sequence    = partitionSequence;
-                    partition.Offset      = byteOffset;
+                    partition.Offset      = partition.Start * 2352;
                     partition.Type        = _discImage.Tracks[i].TrackType;
 
-                    sectorOffset += partition.Length;
-                    byteOffset   += partition.Size;
                     partitionSequence++;
 
-                    if(!_offsetMap.ContainsKey(_discImage.Tracks[i].Sequence))
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence, partition.Start);
+                    if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
+                    else if(_discImage.Tracks[i].Sequence > 1)
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence,
+                                       (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap));
                     else
-                    {
-                        _offsetMap.TryGetValue(_discImage.Tracks[i].Sequence, out ulong oldStart);
-
-                        if(partition.Start < oldStart)
-                        {
-                            _offsetMap.Remove(_discImage.Tracks[i].Sequence);
-                            _offsetMap.Add(_discImage.Tracks[i].Sequence, partition.Start);
-                        }
-                    }
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)_discImage.Tracks[i].Indexes[1]);
 
                     Partitions.Add(partition);
                 }
