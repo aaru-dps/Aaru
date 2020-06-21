@@ -1536,8 +1536,18 @@ namespace Aaru.DiscImages
                             {
                                 sectorOffset = 12;
                                 sectorSize   = 4;
-                                sectorSkip   = 2336;
+                                sectorSkip   = 0;
                                 dataSource   = sectorPrefix;
+
+                                break;
+                            }
+
+                            case SectorTagType.CdSectorSubHeader:
+                            {
+                                sectorOffset = 0;
+                                sectorSize   = 8;
+                                sectorSkip   = 0;
+                                dataSource   = mode2Subheaders;
 
                                 break;
                             }
@@ -1546,7 +1556,6 @@ namespace Aaru.DiscImages
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
                             case SectorTagType.CdSectorEccQ:
-                            case SectorTagType.CdSectorSubHeader:
                             case SectorTagType.CdSectorEdc:
                                 throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CdSectorSubchannel:
