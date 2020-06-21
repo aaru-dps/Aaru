@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.Checksums;
@@ -375,8 +376,7 @@ namespace Aaru.Core.Media.Detection
 
                 uint firstSectorSecondSessionFirstTrack =
                     (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
-                            (secondSessionFirstTrackTrack.PMIN * 60    * 75) +
-                            (secondSessionFirstTrackTrack.PSEC         * 75) +
+                            (secondSessionFirstTrackTrack.PMIN * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
                             secondSessionFirstTrackTrack.PFRAME) - 150);
 
                 sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
@@ -869,9 +869,6 @@ namespace Aaru.Core.Media.Detection
                 case MediaType.CDPLUS:
                 case MediaType.CDROM:
                 case MediaType.CDROMXA:
-                    // TODO: CDTV requires reading the filesystem, searching for a file called "/CDTV.TM"
-                    // TODO: CD32 requires reading the filesystem, searching for a file called "/CD32.TM"
-                    // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
                     // TODO: Pippin requires interpreting Apple Partition Map, reading HFS and checking for Pippin signatures
                 {
                     if(CD.DecodeIPBin(sector0).HasValue)
@@ -882,11 +879,19 @@ namespace Aaru.Core.Media.Detection
                     }
 
                     if(Saturn.DecodeIPBin(sector0).HasValue)
+                    {
                         mediaType = MediaType.SATURNCD;
+
+                        return;
+                    }
 
                     // Are GDR detectable ???
                     if(Dreamcast.DecodeIPBin(sector0).HasValue)
+                    {
                         mediaType = MediaType.GDROM;
+
+                        return;
+                    }
 
                     if(ps2BootSectors        != null &&
                        ps2BootSectors.Length == 0x6000)
@@ -905,7 +910,11 @@ namespace Aaru.Core.Media.Detection
                         if(ps2BootSectorsHash == PS2_PAL_HASH  ||
                            ps2BootSectorsHash == PS2_NTSC_HASH ||
                            ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                        {
                             mediaType = MediaType.PS2CD;
+
+                            return;
+                        }
                     }
 
                     if(sector0 != null)
@@ -914,10 +923,18 @@ namespace Aaru.Core.Media.Detection
                         Array.Copy(sector0, 0, syncBytes, 0, 7);
 
                         if(_operaId.SequenceEqual(syncBytes))
+                        {
                             mediaType = MediaType.ThreeDO;
 
+                            return;
+                        }
+
                         if(_fmTownsBootId.SequenceEqual(syncBytes))
+                        {
                             mediaType = MediaType.FMTOWNS;
+
+                            return;
+                        }
                     }
 
                     if(playdia1 != null &&
@@ -931,7 +948,11 @@ namespace Aaru.Core.Media.Detection
 
                         if(_playdiaCopyright.SequenceEqual(pd1) &&
                            _playdiaCopyright.SequenceEqual(pd2))
+                        {
                             mediaType = MediaType.Playdia;
+
+                            return;
+                        }
                     }
 
                     if(secondDataSectorNotZero != null)
@@ -940,7 +961,11 @@ namespace Aaru.Core.Media.Detection
                         Array.Copy(secondDataSectorNotZero, 32, pce, 0, pce.Length);
 
                         if(_pcEngineSignature.SequenceEqual(pce))
+                        {
                             mediaType = MediaType.SuperCDROM2;
+
+                            return;
+                        }
                     }
 
                     if(firstDataSectorNotZero != null)
@@ -949,7 +974,11 @@ namespace Aaru.Core.Media.Detection
                         Array.Copy(firstDataSectorNotZero, 0, pcfx, 0, pcfx.Length);
 
                         if(_pcFxSignature.SequenceEqual(pcfx))
+                        {
                             mediaType = MediaType.PCFX;
+
+                            return;
+                        }
                     }
 
                     if(firstTrackSecondSessionAudio != null)
@@ -976,13 +1005,140 @@ namespace Aaru.Core.Media.Detection
                             Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
 
                             if(Dreamcast.DecodeIPBin(milcd).HasValue)
+                            {
                                 mediaType = MediaType.MilCD;
+
+                                return;
+                            }
                         }
 
                     // TODO: Detect black and white VideoNow
                     // TODO: Detect VideoNow XP
                     if(IsVideoNowColor(videoNowColorFrame))
+                    {
                         mediaType = MediaType.VideoNowColor;
+
+                        return;
+                    }
+
+                    // Check if ISO9660
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
+                                       dev.Timeout, out _);
+
+                    // Sector 16 reads, and contains "CD001" magic?
+                    if(sense                ||
+                       isoSector[1] != 0x43 ||
+                       isoSector[2] != 0x44 ||
+                       isoSector[3] != 0x30 ||
+                       isoSector[4] != 0x30 ||
+                       isoSector[5] != 0x31)
+                        return;
+
+                    // From sectors 16 to 31
+                    uint isoSectorPosition = 16;
+
+                    while(isoSectorPosition < 32)
+                    {
+                        sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, isoSectorPosition, 2048,
+                                           0, 1, false, dev.Timeout, out _);
+
+                        // If sector cannot be read, break here
+                        if(sense)
+                            break;
+
+                        // If sector does not contain "CD001" magic, break
+                        if(isoSector[1] != 0x43 ||
+                           isoSector[2] != 0x44 ||
+                           isoSector[3] != 0x30 ||
+                           isoSector[4] != 0x30 ||
+                           isoSector[5] != 0x31)
+                            break;
+
+                        // If it is PVD or end of descriptor chain, break
+                        if(isoSector[0] == 1 ||
+                           isoSector[0] == 255)
+                            break;
+
+                        isoSectorPosition++;
+                    }
+
+                    // If it's not an ISO9660 PVD, return
+                    if(isoSector[0] != 1    ||
+                       isoSector[1] != 0x43 ||
+                       isoSector[2] != 0x44 ||
+                       isoSector[3] != 0x30 ||
+                       isoSector[4] != 0x30 ||
+                       isoSector[5] != 0x31)
+                        return;
+
+                    uint rootStart  = BitConverter.ToUInt32(isoSector, 158);
+                    uint rootLength = BitConverter.ToUInt32(isoSector, 166);
+
+                    if(rootStart  == 0 ||
+                       rootLength == 0)
+                        return;
+
+                    rootLength /= 2048;
+
+                    try
+                    {
+                        using var rootMs = new MemoryStream();
+
+                        for(uint i = 0; i < rootLength; i++)
+                        {
+                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, rootStart + i, 2048,
+                                               0, 1, false, dev.Timeout, out _);
+
+                            if(sense)
+                                break;
+
+                            rootMs.Write(isoSector, 0, 2048);
+                        }
+
+                        isoSector = rootMs.ToArray();
+                    }
+                    catch
+                    {
+                        return;
+                    }
+
+                    if(isoSector.Length < 2048)
+                        break;
+
+                    List<string> rootEntries = new List<string>();
+                    int          rootPos     = 0;
+
+                    while(isoSector[rootPos]           > 0                &&
+                          rootPos                      < isoSector.Length &&
+                          rootPos + isoSector[rootPos] <= isoSector.Length)
+                    {
+                        int    nameLen = isoSector[rootPos + 32];
+                        byte[] tmpName = new byte[nameLen];
+                        Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
+                        string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+
+                        if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                            name = name.Substring(0, name.Length - 2);
+
+                        // TODO: Video CD and Super Video CD
+                        // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
+                        rootEntries.Add(name);
+
+                        rootPos += isoSector[rootPos];
+                    }
+
+                    if(rootEntries.Count == 0)
+                        return;
+
+                    if(rootEntries.Contains("CD32.TM"))
+                    {
+                        mediaType = MediaType.CD32;
+
+                        return;
+                    }
+
+                    if(rootEntries.Contains("CDTV.TM"))
+                        mediaType = MediaType.CDTV;
 
                     break;
                 }
