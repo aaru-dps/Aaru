@@ -833,8 +833,196 @@ namespace Aaru.Core.Media.Detection
 
                     break;
 
-                // Recordables will not be checked
+                // Recordables will be checked for PhotoCD only
                 case MediaType.CDR:
+                    // Check if ISO9660
+                    sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
+                                       dev.Timeout, out _);
+
+                    // Sector 16 reads, and contains "CD001" magic?
+                    if(sense                ||
+                       isoSector[1] != 0x43 ||
+                       isoSector[2] != 0x44 ||
+                       isoSector[3] != 0x30 ||
+                       isoSector[4] != 0x30 ||
+                       isoSector[5] != 0x31)
+                        return;
+
+                    // From sectors 16 to 31
+                    uint isoSectorPosition = 16;
+
+                    while(isoSectorPosition < 32)
+                    {
+                        sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, isoSectorPosition, 2048,
+                                           0, 1, false, dev.Timeout, out _);
+
+                        // If sector cannot be read, break here
+                        if(sense)
+                            break;
+
+                        // If sector does not contain "CD001" magic, break
+                        if(isoSector[1] != 0x43 ||
+                           isoSector[2] != 0x44 ||
+                           isoSector[3] != 0x30 ||
+                           isoSector[4] != 0x30 ||
+                           isoSector[5] != 0x31)
+                            break;
+
+                        // If it is PVD or end of descriptor chain, break
+                        if(isoSector[0] == 1 ||
+                           isoSector[0] == 255)
+                            break;
+
+                        isoSectorPosition++;
+                    }
+
+                    // If it's not an ISO9660 PVD, return
+                    if(isoSector[0] != 1    ||
+                       isoSector[1] != 0x43 ||
+                       isoSector[2] != 0x44 ||
+                       isoSector[3] != 0x30 ||
+                       isoSector[4] != 0x30 ||
+                       isoSector[5] != 0x31)
+                        return;
+
+                    uint rootStart  = BitConverter.ToUInt32(isoSector, 158);
+                    uint rootLength = BitConverter.ToUInt32(isoSector, 166);
+
+                    if(rootStart  == 0 ||
+                       rootLength == 0)
+                        return;
+
+                    rootLength /= 2048;
+
+                    try
+                    {
+                        using var rootMs = new MemoryStream();
+
+                        for(uint i = 0; i < rootLength; i++)
+                        {
+                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, rootStart + i, 2048,
+                                               0, 1, false, dev.Timeout, out _);
+
+                            if(sense)
+                                break;
+
+                            rootMs.Write(isoSector, 0, 2048);
+                        }
+
+                        isoSector = rootMs.ToArray();
+                    }
+                    catch
+                    {
+                        return;
+                    }
+
+                    if(isoSector.Length < 2048)
+                        return;
+
+                    int  rootPos   = 0;
+                    uint pcdStart  = 0;
+                    uint pcdLength = 0;
+
+                    while(isoSector[rootPos]           > 0                &&
+                          rootPos                      < isoSector.Length &&
+                          rootPos + isoSector[rootPos] <= isoSector.Length)
+                    {
+                        int    nameLen = isoSector[rootPos + 32];
+                        byte[] tmpName = new byte[nameLen];
+                        Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
+                        string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+
+                        if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                            name = name.Substring(0, name.Length - 2);
+
+                        if(name                             == "PHOTO_CD" &&
+                           (isoSector[rootPos + 25] & 0x02) == 0x02)
+                        {
+                            pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                            pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+                        }
+
+                        rootPos += isoSector[rootPos];
+                    }
+
+                    if(pcdLength > 0)
+                    {
+                        try
+                        {
+                            using var pcdMs = new MemoryStream();
+
+                            for(uint i = 0; i < pcdLength; i++)
+                            {
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, pcdStart + i,
+                                                   2048, 0, 1, false, dev.Timeout, out _);
+
+                                if(sense)
+                                    break;
+
+                                pcdMs.Write(isoSector, 0, 2048);
+                            }
+
+                            isoSector = pcdMs.ToArray();
+                        }
+                        catch
+                        {
+                            return;
+                        }
+
+                        if(isoSector.Length < 2048)
+                            return;
+
+                        int  pcdPos  = 0;
+                        uint infoPos = 0;
+
+                        while(isoSector[pcdPos]          > 0                &&
+                              pcdPos                     < isoSector.Length &&
+                              pcdPos + isoSector[pcdPos] <= isoSector.Length)
+                        {
+                            int    nameLen = isoSector[pcdPos + 32];
+                            byte[] tmpName = new byte[nameLen];
+                            Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
+                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                name = name.Substring(0, name.Length - 2);
+
+                            if(name == "INFO.PCD")
+                            {
+                                infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+
+                                break;
+                            }
+
+                            pcdPos += isoSector[pcdPos];
+                        }
+
+                        if(infoPos > 0)
+                        {
+                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
+                                               false, dev.Timeout, out _);
+
+                            if(sense)
+                                break;
+
+                            byte[] systemId = new byte[8];
+                            Array.Copy(isoSector, 0, systemId, 0, 8);
+
+                            string id = StringHandlers.CToString(systemId).TrimEnd();
+
+                            switch(id)
+                            {
+                                case "PHOTO_CD":
+                                    mediaType = MediaType.PCD;
+
+                                    return;
+                            }
+                        }
+                    }
+
+                    break;
+
+                // Other recordables will not be checked
                 case MediaType.CDRW:
                 case MediaType.CDMRW:
                 case MediaType.DDCDR:
@@ -1112,6 +1300,8 @@ namespace Aaru.Core.Media.Detection
                     uint         ngcdIplLength = 0;
                     uint         vcdStart      = 0;
                     uint         vcdLength     = 0;
+                    uint         pcdStart      = 0;
+                    uint         pcdLength     = 0;
 
                     while(isoSector[rootPos]           > 0                &&
                           rootPos                      < isoSector.Length &&
@@ -1138,6 +1328,13 @@ namespace Aaru.Core.Media.Detection
                         {
                             vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
                             vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+                        }
+
+                        if(name                             == "PHOTO_CD" &&
+                           (isoSector[rootPos + 25] & 0x02) == 0x02)
+                        {
+                            pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                            pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
                         }
 
                         rootPos += isoSector[rootPos];
@@ -1376,6 +1573,81 @@ namespace Aaru.Core.Media.Detection
                                     mediaType = MediaType.SVCD;
 
                                     break;
+                            }
+                        }
+                    }
+
+                    if(pcdLength > 0)
+                    {
+                        try
+                        {
+                            using var pcdMs = new MemoryStream();
+
+                            for(uint i = 0; i < pcdLength; i++)
+                            {
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, pcdStart + i,
+                                                   2048, 0, 1, false, dev.Timeout, out _);
+
+                                if(sense)
+                                    break;
+
+                                pcdMs.Write(isoSector, 0, 2048);
+                            }
+
+                            isoSector = pcdMs.ToArray();
+                        }
+                        catch
+                        {
+                            return;
+                        }
+
+                        if(isoSector.Length < 2048)
+                            return;
+
+                        int  pcdPos  = 0;
+                        uint infoPos = 0;
+
+                        while(isoSector[pcdPos]          > 0                &&
+                              pcdPos                     < isoSector.Length &&
+                              pcdPos + isoSector[pcdPos] <= isoSector.Length)
+                        {
+                            int    nameLen = isoSector[pcdPos + 32];
+                            byte[] tmpName = new byte[nameLen];
+                            Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
+                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                name = name.Substring(0, name.Length - 2);
+
+                            if(name == "INFO.PCD")
+                            {
+                                infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+
+                                break;
+                            }
+
+                            pcdPos += isoSector[pcdPos];
+                        }
+
+                        if(infoPos > 0)
+                        {
+                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
+                                               false, dev.Timeout, out _);
+
+                            if(sense)
+                                break;
+
+                            byte[] systemId = new byte[8];
+                            Array.Copy(isoSector, 0, systemId, 0, 8);
+
+                            string id = StringHandlers.CToString(systemId).TrimEnd();
+
+                            switch(id)
+                            {
+                                case "PHOTO_CD":
+                                    mediaType = MediaType.PCD;
+
+                                    return;
                             }
                         }
                     }
