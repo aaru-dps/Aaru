@@ -1104,12 +1104,14 @@ namespace Aaru.Core.Media.Detection
                     }
 
                     if(isoSector.Length < 2048)
-                        break;
+                        return;
 
                     List<string> rootEntries   = new List<string>();
                     int          rootPos       = 0;
                     uint         ngcdIplStart  = 0;
                     uint         ngcdIplLength = 0;
+                    uint         vcdStart      = 0;
+                    uint         vcdLength     = 0;
 
                     while(isoSector[rootPos]           > 0                &&
                           rootPos                      < isoSector.Length &&
@@ -1123,13 +1125,19 @@ namespace Aaru.Core.Media.Detection
                         if(name.EndsWith(";1", StringComparison.InvariantCulture))
                             name = name.Substring(0, name.Length - 2);
 
-                        // TODO: Video CD and Super Video CD
                         rootEntries.Add(name);
 
                         if(name == "IPL.TXT")
                         {
                             ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
                             ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
+                        }
+
+                        if((name == "VCD" || name == "SVCD") &&
+                           (isoSector[rootPos + 25] & 0x02) == 0x02)
+                        {
+                            vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                            vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
                         }
 
                         rootPos += isoSector[rootPos];
@@ -1285,6 +1293,89 @@ namespace Aaru.Core.Media.Detection
                             if(correctNeoGeoCd)
                             {
                                 mediaType = MediaType.NeoGeoCD;
+
+                                return;
+                            }
+                        }
+                    }
+
+                    if(vcdLength > 0)
+                    {
+                        try
+                        {
+                            using var vcdMs = new MemoryStream();
+
+                            for(uint i = 0; i < vcdLength; i++)
+                            {
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, vcdStart + i,
+                                                   2048, 0, 1, false, dev.Timeout, out _);
+
+                                if(sense)
+                                    break;
+
+                                vcdMs.Write(isoSector, 0, 2048);
+                            }
+
+                            isoSector = vcdMs.ToArray();
+                        }
+                        catch
+                        {
+                            return;
+                        }
+
+                        if(isoSector.Length < 2048)
+                            return;
+
+                        int  vcdPos  = 0;
+                        uint infoPos = 0;
+
+                        while(isoSector[vcdPos]          > 0                &&
+                              vcdPos                     < isoSector.Length &&
+                              vcdPos + isoSector[vcdPos] <= isoSector.Length)
+                        {
+                            int    nameLen = isoSector[vcdPos + 32];
+                            byte[] tmpName = new byte[nameLen];
+                            Array.Copy(isoSector, vcdPos + 33, tmpName, 0, nameLen);
+                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                name = name.Substring(0, name.Length - 2);
+
+                            if(name == "INFO.VCD" ||
+                               name == "INFO.SVD")
+                            {
+                                infoPos = BitConverter.ToUInt32(isoSector, vcdPos + 2);
+
+                                break;
+                            }
+
+                            vcdPos += isoSector[vcdPos];
+                        }
+
+                        if(infoPos > 0)
+                        {
+                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
+                                               false, dev.Timeout, out _);
+
+                            if(sense)
+                                break;
+
+                            byte[] systemId = new byte[8];
+                            Array.Copy(isoSector, 0, systemId, 0, 8);
+
+                            string id = StringHandlers.CToString(systemId).TrimEnd();
+
+                            switch(id)
+                            {
+                                case "VIDEO_CD":
+                                    mediaType = MediaType.VCD;
+
+                                    return;
+                                case "SUPERVCD":
+                                case "HQ-VCD":
+                                    mediaType = MediaType.SVCD;
+
+                                    break;
                             }
                         }
                     }
@@ -1345,7 +1436,6 @@ namespace Aaru.Core.Media.Detection
                             mediaType = MediaType.PS4BD;
                     }
 
-                    // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
                     break;
             }
         }
