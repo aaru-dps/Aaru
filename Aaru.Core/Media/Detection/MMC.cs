@@ -1210,6 +1210,58 @@ namespace Aaru.Core.Media.Detection
                         return;
                     }
 
+                    // Check CD+G, CD+EG and CD+MIDI
+                    if(mediaType == MediaType.CDDA)
+                    {
+                        sense = dev.ReadCd(out byte[] subBuf, out _, 150, 96, 8, MmcSectorTypes.Cdda, false, false,
+                                           false, MmcHeaderCodes.None, false, false, MmcErrorField.None,
+                                           MmcSubchannel.Raw, dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            bool cdg    = false;
+                            bool cdeg   = false;
+                            bool cdmidi = false;
+
+                            for(int i = 0; i < 8; i++)
+                            {
+                                byte[] tmpSub = new byte[96];
+                                Array.Copy(subBuf, i * 96, tmpSub, 0, 96);
+                                DetectRwPackets(tmpSub, out bool cdgPacket, out bool cdegPacket, out bool cdmidiPacket);
+
+                                if(cdgPacket)
+                                    cdg = true;
+
+                                if(cdegPacket)
+                                    cdeg = true;
+
+                                if(cdmidiPacket)
+                                    cdmidi = true;
+                            }
+
+                            if(cdeg)
+                            {
+                                mediaType = MediaType.CDEG;
+
+                                return;
+                            }
+
+                            if(cdg)
+                            {
+                                mediaType = MediaType.CDG;
+
+                                return;
+                            }
+
+                            if(cdmidi)
+                            {
+                                mediaType = MediaType.CDMIDI;
+
+                                return;
+                            }
+                        }
+                    }
+
                     // Check if ISO9660
                     sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
                                        dev.Timeout, out _);
@@ -1707,6 +1759,100 @@ namespace Aaru.Core.Media.Detection
                            mediaType == MediaType.BDROM)
                             mediaType = MediaType.PS4BD;
                     }
+
+                    break;
+            }
+        }
+
+        static void DetectRwPackets(byte[] subchannel, out bool cdgPacket, out bool cdegPacket, out bool cdmidiPacket)
+        {
+            cdgPacket    = false;
+            cdegPacket   = false;
+            cdmidiPacket = false;
+
+            byte[] cdSubRwPack1 = new byte[24];
+            byte[] cdSubRwPack2 = new byte[24];
+            byte[] cdSubRwPack3 = new byte[24];
+            byte[] cdSubRwPack4 = new byte[24];
+
+            int i = 0;
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+
+            for(int j = 0; j < 24; j++)
+                cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
+
+            switch(cdSubRwPack1[0])
+            {
+                case 0x08:
+                case 0x09:
+                    cdgPacket = true;
+
+                    break;
+                case 0x0A:
+                    cdegPacket = true;
+
+                    break;
+                case 0x38:
+                    cdmidiPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack2[0])
+            {
+                case 0x08:
+                case 0x09:
+                    cdgPacket = true;
+
+                    break;
+                case 0x0A:
+                    cdegPacket = true;
+
+                    break;
+                case 0x38:
+                    cdmidiPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack3[0])
+            {
+                case 0x08:
+                case 0x09:
+                    cdgPacket = true;
+
+                    break;
+                case 0x0A:
+                    cdegPacket = true;
+
+                    break;
+                case 0x38:
+                    cdmidiPacket = true;
+
+                    break;
+            }
+
+            switch(cdSubRwPack4[0])
+            {
+                case 0x08:
+                case 0x09:
+                    cdgPacket = true;
+
+                    break;
+                case 0x0A:
+                    cdegPacket = true;
+
+                    break;
+                case 0x38:
+                    cdmidiPacket = true;
 
                     break;
             }
