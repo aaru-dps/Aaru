@@ -341,12 +341,6 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if((q[0] & 0x3) == 1)
                 {
-                    // TODO: Indexes
-
-                    // Pregap
-                    if(q[2] != 0)
-                        continue;
-
                     if(!crcOk)
                         continue;
 
@@ -356,28 +350,46 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         if(tracks[i].TrackSequence != trackNo ||
                            trackNo                 == 1)
-                        {
                             continue;
+
+                        // Pregap
+                        if(q[2] == 0)
+                        {
+                            byte pmin   = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
+                            byte psec   = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
+                            byte pframe = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
+                            int  qPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
+
+                            if(tracks[i].TrackPregap >= (ulong)qPos)
+                                continue;
+
+                            ulong oldPregap = tracks[i].TrackPregap;
+
+                            tracks[i].TrackPregap      =  (ulong)qPos;
+                            tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
+
+                            if(i > 0)
+                                tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
+
+                            _dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                            UpdateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+
+                            return true;
                         }
 
-                        byte pmin   = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
-                        byte psec   = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
-                        byte pframe = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
-                        int  qPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
+                        byte amin   = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                        byte asec   = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
+                        byte aframe = (byte)(((q[9] / 16) * 10)       + (q[9] & 0x0F));
+                        int  aPos   = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
 
-                        if(tracks[i].TrackPregap >= (ulong)qPos)
-                            continue;
+                        if(tracks[i].Indexes.ContainsKey(q[2]) &&
+                           aPos >= tracks[i].Indexes[q[2]])
+                            return false;
 
-                        ulong oldPregap = tracks[i].TrackPregap;
+                        _dumpLog?.WriteLine($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
+                        UpdateStatus?.Invoke($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
 
-                        tracks[i].TrackPregap      =  (ulong)qPos;
-                        tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
-
-                        if(i > 0)
-                            tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
-
-                        _dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
-                        UpdateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+                        tracks[i].Indexes[q[2]] = aPos;
 
                         return true;
                     }
