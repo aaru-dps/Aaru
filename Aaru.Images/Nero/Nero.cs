@@ -37,6 +37,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
+using Session = Aaru.CommonTypes.Structs.Session;
 
 #pragma warning disable 414
 #pragma warning disable 169
@@ -67,6 +69,7 @@ namespace Aaru.DiscImages
         readonly Dictionary<uint, ulong>     offsetmap;
         Dictionary<uint, byte[]>             trackIsrCs;
         byte[]                               upc;
+        SectorBuilder                        _sectorBuilder;
 
         public Nero()
         {

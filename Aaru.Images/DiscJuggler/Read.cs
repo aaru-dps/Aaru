@@ -712,6 +712,8 @@ namespace Aaru.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
+            _sectorBuilder = new SectorBuilder();
+
             return true;
         }
 
@@ -1217,6 +1219,45 @@ namespace Aaru.DiscImages
                     imageStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
+
+            switch(aaruTrack.TrackType)
+            {
+                case TrackType.CdMode1 when aaruTrack.TrackRawBytesPerSector == 2048:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 16, 2048);
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case TrackType.CdMode2Formless when aaruTrack.TrackRawBytesPerSector == 2336:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
+                                                         (long)(sectorAddress + i));
+
+                        Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+            }
 
             return buffer;
         }

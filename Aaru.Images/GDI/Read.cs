@@ -41,6 +41,8 @@ using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Decoders.CD;
+using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
@@ -302,6 +304,8 @@ namespace Aaru.DiscImages
                 imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                 AaruConsole.VerboseWriteLine("GDI image describes a disc of type {0}", imageInfo.MediaType);
+
+                _sectorBuilder = new SectorBuilder();
 
                 return true;
             }
@@ -791,6 +795,27 @@ namespace Aaru.DiscImages
                     br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
                     bufferPos += (int)sectorSize;
+                }
+            }
+
+            switch(aaruTrack.Tracktype)
+            {
+                case TrackType.CdMode1 when aaruTrack.Bps == 2048:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 16, 2048);
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
                 }
             }
 

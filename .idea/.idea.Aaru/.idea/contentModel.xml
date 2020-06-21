@@ -458,6 +458,7 @@
           <e p="FullTOC.cs" t="Include" />
           <e p="PMA.cs" t="Include" />
           <e p="Sector.cs" t="Include" />
+          <e p="SectorBuilder.cs" t="Include" />
           <e p="Session.cs" t="Include" />
           <e p="Subchannel.cs" t="Include" />
           <e p="TOC.cs" t="Include" />

@@ -45,6 +45,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Schemas;
 using Session = Aaru.CommonTypes.Structs.Session;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
@@ -1326,6 +1327,8 @@ namespace Aaru.DiscImages
                 if(!string.IsNullOrEmpty(_imageInfo.Comments))
                     AaruConsole.VerboseWriteLine("CDRWIN comments: {0}", _imageInfo.Comments);
 
+                _sectorBuilder = new SectorBuilder();
+
                 return true;
             }
             catch(Exception ex)
@@ -1848,6 +1851,86 @@ namespace Aaru.DiscImages
 
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
+
+            switch(aaruTrack.TrackType)
+            {
+                case CDRWIN_TRACK_TYPE_MODE1:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 16, 2048);
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRWIN_TRACK_TYPE_MODE2_FORM1:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 24, 2048);
+
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1,
+                                                         (long)(sectorAddress + i));
+
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRWIN_TRACK_TYPE_MODE2_FORM2:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2324, fullSector, 24, 2324);
+
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2,
+                                                         (long)(sectorAddress + i));
+
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form2);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
+                case CDRWIN_TRACK_TYPE_CDI:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
+                                                         (long)(sectorAddress + i));
+
+                        Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+            }
 
             return buffer;
         }

@@ -858,6 +858,8 @@ namespace Aaru.DiscImages
                 if(!string.IsNullOrEmpty(imageInfo.Comments))
                     AaruConsole.VerboseWriteLine("CDRDAO comments: {0}", imageInfo.Comments);
 
+                _sectorBuilder = new SectorBuilder();
+
                 return true;
             }
             catch(Exception ex)
@@ -1362,19 +1364,103 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            // cdrdao audio tracks are endian swapped corresponding to Aaru
-            if(aaruTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO)
-                return buffer;
-
-            byte[] swapped = new byte[buffer.Length];
-
-            for(long i = 0; i < buffer.Length; i += 2)
+            switch(aaruTrack.Tracktype)
             {
-                swapped[i] = buffer[i + 1];
-                swapped[i             + 1] = buffer[i];
+                case CDRDAO_TRACK_TYPE_MODE1:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 16, 2048);
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRDAO_TRACK_TYPE_MODE2_FORM1:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 24, 2048);
+
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1,
+                                                         (long)(sectorAddress + i));
+
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRDAO_TRACK_TYPE_MODE2_FORM2:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2324, fullSector, 24, 2324);
+
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2,
+                                                         (long)(sectorAddress + i));
+
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form2);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case CDRDAO_TRACK_TYPE_MODE2:
+                case CDRDAO_TRACK_TYPE_MODE2_MIX:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
+                                                         (long)(sectorAddress + i));
+
+                        Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+
+                // cdrdao audio tracks are endian swapped corresponding to Aaru
+                case CDRDAO_TRACK_TYPE_AUDIO:
+                {
+                    byte[] swapped = new byte[buffer.Length];
+
+                    for(long i = 0; i < buffer.Length; i += 2)
+                    {
+                        swapped[i] = buffer[i + 1];
+                        swapped[i             + 1] = buffer[i];
+                    }
+
+                    buffer = swapped;
+
+                    break;
+                }
             }
 
-            return swapped;
+            return buffer;
         }
 
         public List<Track> GetSessionTracks(Session session) => GetSessionTracks(session.SessionSequence);

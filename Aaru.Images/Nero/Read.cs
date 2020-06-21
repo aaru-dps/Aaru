@@ -1088,6 +1088,8 @@ namespace Aaru.DiscImages
                 imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
                 AaruConsole.VerboseWriteLine("Nero image contains a disc of type {0}", imageInfo.MediaType);
 
+                _sectorBuilder = new SectorBuilder();
+
                 return true;
             }
             catch
@@ -1640,6 +1642,65 @@ namespace Aaru.DiscImages
 
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
+
+            switch((DaoMode)aaruTrack.Mode)
+            {
+                case DaoMode.Data:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 16, 2048);
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case DaoMode.DataM2F1:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        Array.Copy(buffer, i * 2048, fullSector, 24, 2048);
+
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1,
+                                                         (long)(sectorAddress + i));
+
+                        _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+                case DaoMode.DataM2F2:
+                {
+                    byte[] fullSector = new byte[2352];
+                    byte[] fullBuffer = new byte[2352 * length];
+
+                    for(uint i = 0; i < length; i++)
+                    {
+                        _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless,
+                                                         (long)(sectorAddress + i));
+
+                        Array.Copy(buffer, i                    * 2336, fullSector, 16, 2336);
+                        Array.Copy(fullSector, 0, fullBuffer, i * 2352, 2352);
+                    }
+
+                    buffer = fullBuffer;
+
+                    break;
+                }
+            }
 
             return buffer;
         }

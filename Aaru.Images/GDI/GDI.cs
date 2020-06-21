@@ -35,6 +35,7 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
 
 namespace Aaru.DiscImages
 {
@@ -42,23 +43,21 @@ namespace Aaru.DiscImages
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
     public partial class Gdi : IOpticalMediaImage
     {
-        ulong        densitySeparationSectors;
-        GdiDisc      discimage;
-        StreamReader gdiStream;
-        ImageInfo    imageInfo;
-        Stream       imageStream;
+        SectorBuilder _sectorBuilder;
+        ulong         densitySeparationSectors;
+        GdiDisc       discimage;
+        StreamReader  gdiStream;
+        ImageInfo     imageInfo;
+        Stream        imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
         Dictionary<uint, ulong> offsetmap;
 
         public Gdi() => imageInfo = new ImageInfo
         {
             ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions      = true, HasSessions                            = true, Version = null,
-            ApplicationVersion = null,
-            MediaTitle         = null, Creator = null, MediaManufacturer = null,
-            MediaModel         = null,
-            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
-            DriveManufacturer  = null,
+            HasPartitions      = true, HasSessions = true, Version = null, ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null, MediaModel = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0, DriveManufacturer = null,
             DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
         };
     }

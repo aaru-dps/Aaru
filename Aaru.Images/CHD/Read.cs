@@ -1237,6 +1237,8 @@ namespace Aaru.DiscImages
             if(cis != null)
                 imageInfo.MediaType = MediaType.PCCardTypeI;
 
+            _sectorBuilder = new SectorBuilder();
+
             return true;
         }
 
@@ -1703,6 +1705,57 @@ namespace Aaru.DiscImages
                 }
             else
                 Array.Copy(sector, 0, buffer, 0, track.TrackRawBytesPerSector);
+
+            switch(track.TrackType)
+            {
+                case TrackType.CdMode1 when track.TrackRawBytesPerSector == 2048:
+                {
+                    byte[] fullSector = new byte[2352];
+
+                    Array.Copy(buffer, 0, fullSector, 16, 2048);
+                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)sectorAddress);
+                    _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+
+                    buffer = fullSector;
+
+                    break;
+                }
+                case TrackType.CdMode2Form1 when track.TrackRawBytesPerSector == 2048:
+                {
+                    byte[] fullSector = new byte[2352];
+
+                    Array.Copy(buffer, 0, fullSector, 24, 2048);
+                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)sectorAddress);
+                    _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+
+                    buffer = fullSector;
+
+                    break;
+                }
+                case TrackType.CdMode2Form1 when track.TrackRawBytesPerSector == 2324:
+                {
+                    byte[] fullSector = new byte[2352];
+
+                    Array.Copy(buffer, 0, fullSector, 24, 2324);
+                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form2, (long)sectorAddress);
+                    _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form2);
+
+                    buffer = fullSector;
+
+                    break;
+                }
+                case TrackType.CdMode2Formless when track.TrackRawBytesPerSector == 2336:
+                {
+                    byte[] fullSector = new byte[2352];
+
+                    _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Formless, (long)sectorAddress);
+                    Array.Copy(buffer, 0, fullSector, 16, 2336);
+
+                    buffer = fullSector;
+
+                    break;
+                }
+            }
 
             return buffer;
         }

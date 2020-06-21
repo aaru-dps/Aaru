@@ -575,6 +575,9 @@ namespace Aaru.DiscImages
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
+                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
                         if(imageInfo.SectorSize < 2336)
                             imageInfo.SectorSize = 2336;
 

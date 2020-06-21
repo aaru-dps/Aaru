@@ -35,6 +35,7 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
 
 namespace Aaru.DiscImages
 {
@@ -42,11 +43,12 @@ namespace Aaru.DiscImages
     // TODO: Doesn't support silences that are not in files
     public partial class Cdrdao : IWritableOpticalImage
     {
-        IFilter      cdrdaoFilter;
-        StreamWriter descriptorStream;
-        CdrdaoDisc   discimage;
-        ImageInfo    imageInfo;
-        Stream       imageStream;
+        SectorBuilder _sectorBuilder;
+        IFilter       cdrdaoFilter;
+        StreamWriter  descriptorStream;
+        CdrdaoDisc    discimage;
+        ImageInfo     imageInfo;
+        Stream        imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
         Dictionary<uint, ulong> offsetmap;
         bool                         separateTracksWriting;
@@ -60,12 +62,9 @@ namespace Aaru.DiscImages
         public Cdrdao() => imageInfo = new ImageInfo
         {
             ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions      = true, HasSessions                            = true, Version = null,
-            ApplicationVersion = null,
-            MediaTitle         = null, Creator = null, MediaManufacturer = null,
-            MediaModel         = null,
-            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
-            DriveManufacturer  = null,
+            HasPartitions      = true, HasSessions = true, Version = null, ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null, MediaModel = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0, DriveManufacturer = null,
             DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
         };
     }

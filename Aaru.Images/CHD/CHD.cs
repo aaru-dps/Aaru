@@ -36,6 +36,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
 
 namespace Aaru.DiscImages
 {
@@ -47,6 +48,7 @@ namespace Aaru.DiscImages
         {
             0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
         };
+        SectorBuilder             _sectorBuilder;
         uint                      bytesPerHunk;
         byte[]                    cis;
         byte[]                    expectedChecksum;
@@ -77,15 +79,11 @@ namespace Aaru.DiscImages
 
         public Chd() => imageInfo = new ImageInfo
         {
-            ReadableSectorTags    = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions         = false, HasSessions                           = false, Application = "MAME",
-            Creator               = null,
-            Comments              = null, MediaManufacturer = null, MediaModel = null,
-            MediaSerialNumber     = null,
-            MediaBarcode          = null, MediaPartNumber = null, MediaSequence = 0,
-            LastMediaSequence     = 0,
-            DriveManufacturer     = null, DriveModel = null, DriveSerialNumber = null,
-            DriveFirmwareRevision = null
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = false, HasSessions = false, Application = "MAME", Creator = null,
+            Comments           = null, MediaManufacturer = null, MediaModel = null, MediaSerialNumber = null,
+            MediaBarcode       = null, MediaPartNumber = null, MediaSequence = 0, LastMediaSequence = 0,
+            DriveManufacturer  = null, DriveModel = null, DriveSerialNumber = null, DriveFirmwareRevision = null
         };
     }
 }

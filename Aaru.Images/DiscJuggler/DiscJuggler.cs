@@ -35,6 +35,7 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
 
 namespace Aaru.DiscImages
 {
@@ -42,6 +43,7 @@ namespace Aaru.DiscImages
     // TODO: Too many unknowns to make this writable
     public partial class DiscJuggler : IOpticalMediaImage
     {
+        SectorBuilder           _sectorBuilder;
         byte[]                  cdtext;
         ImageInfo               imageInfo;
         Stream                  imageStream;
@@ -51,12 +53,9 @@ namespace Aaru.DiscImages
         public DiscJuggler() => imageInfo = new ImageInfo
         {
             ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions      = true, HasSessions                            = true, Version = null,
-            ApplicationVersion = null,
-            MediaTitle         = null, Creator = null, MediaManufacturer = null,
-            MediaModel         = null,
-            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
-            DriveManufacturer  = null,
+            HasPartitions      = true, HasSessions = true, Version = null, ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null, MediaModel = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0, DriveManufacturer = null,
             DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
         };
     }
