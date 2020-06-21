@@ -67,6 +67,9 @@ namespace Aaru.Decoders.CD
 
             decoded.PMADescriptors = new CDPMADescriptors[(decoded.DataLength - 2) / 11];
 
+            if(decoded.PMADescriptors.Length == 0)
+                return null;
+
             if(decoded.DataLength + 2 != CDPMAResponse.Length)
             {
                 AaruConsole.DebugWriteLine("CD PMA decoder",
