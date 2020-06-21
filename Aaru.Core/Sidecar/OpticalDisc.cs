@@ -509,9 +509,11 @@ namespace Aaru.Core
                 xmlTrk.StartSector = trk.TrackStartSector;
                 xmlTrk.EndSector   = trk.TrackEndSector;
 
-                if(trk.Indexes?.ContainsKey(0) == true)
-                    if(trk.Indexes.TryGetValue(0, out int idx0))
-                        xmlTrk.StartSector = (ulong)idx0;
+                int idx0 = -1;
+
+                if(trk.Indexes?.TryGetValue(0, out idx0) == true &&
+                   idx0                                  >= 0)
+                    xmlTrk.StartSector = (ulong)idx0;
 
                 switch(sidecar.OpticalDisc[0].DiscType)
                 {
