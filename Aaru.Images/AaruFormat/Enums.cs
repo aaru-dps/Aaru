@@ -244,7 +244,9 @@ namespace Aaru.DiscImages
             /// <summary>Block containing list of files for a tape image</summary>
             TapeFileBlock = 0x454C4654,
             /// <summary>Block containing list of partitions for a tape image</summary>
-            TapePartitionBlock = 0x54425054
+            TapePartitionBlock = 0x54425054,
+            /// <summary>Block containing list of indexes for Compact Disc tracks</summary>
+            CompactDiscIndexesBlock = 0x58494443
         }
 
         enum ChecksumAlgorithm : byte

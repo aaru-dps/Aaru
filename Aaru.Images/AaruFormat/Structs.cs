@@ -380,5 +380,33 @@ namespace Aaru.DiscImages
             /// <summary>Last block, inclusive, of the partition</summary>
             public ulong LastBlock;
         }
+
+        /// <summary>
+        ///     Compact Disc track indexes block, contains a cache of all Compact Disc indexes to not need to interpret
+        ///     subchannel
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CompactDiscIndexesHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.CompactDiscIndexesBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public ushort entries;
+            /// <summary>Size of the whole block, not including this header, in bytes</summary>
+            public readonly ulong length;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public ulong crc64;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CompactDiscIndexEntry
+        {
+            /// <summary>How many entries follow this header</summary>
+            public ushort Track;
+            /// <summary>Size of the whole block, not including this header, in bytes</summary>
+            public ushort Index;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public int Lba;
+        }
     }
 }

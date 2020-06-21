@@ -2928,7 +2928,8 @@ namespace Aaru.DiscImages
                         blockStream = null;
                     }
 
-                    List<TrackEntry> trackEntries = new List<TrackEntry>();
+                    List<TrackEntry>            trackEntries            = new List<TrackEntry>();
+                    List<CompactDiscIndexEntry> compactDiscIndexEntries = new List<CompactDiscIndexEntry>();
 
                     foreach(Track track in Tracks)
                     {
@@ -2946,6 +2947,21 @@ namespace Aaru.DiscImages
                             pregap   = (long)track.TrackPregap, session  = (byte)track.TrackSession, isrc = isrc,
                             flags    = flags
                         });
+
+                        if(!track.Indexes.ContainsKey(0) &&
+                           track.TrackPregap > 0)
+                        {
+                            track.Indexes[0] = (int)track.TrackStartSector;
+                            track.Indexes[1] = (int)(track.TrackStartSector + track.TrackPregap);
+                        }
+                        else if(!track.Indexes.ContainsKey(0) &&
+                                !track.Indexes.ContainsKey(1))
+                            track.Indexes[0] = (int)track.TrackStartSector;
+
+                        compactDiscIndexEntries.AddRange(track.Indexes.Select(trackIndex => new CompactDiscIndexEntry
+                        {
+                            Index = trackIndex.Key, Lba = trackIndex.Value, Track = (ushort)track.TrackSequence
+                        }));
                     }
 
                     // If there are tracks build the tracks block
@@ -2989,6 +3005,56 @@ namespace Aaru.DiscImages
 
                         structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
                         MemoryMarshal.Write(structureBytes, ref trkHeader);
+                        imageStream.Write(structureBytes, 0, structureBytes.Length);
+                        imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
+                        blockStream.ReallyClose();
+                        blockStream = null;
+                    }
+
+                    // If there are track indexes bigger than 1
+                    if(compactDiscIndexEntries.Any(i => i.Index > 1))
+                    {
+                        blockStream = new NonClosableStream();
+
+                        foreach(CompactDiscIndexEntry entry in compactDiscIndexEntries)
+                        {
+                            structurePointer =
+                                System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.
+                                                                                        SizeOf<CompactDiscIndexEntry
+                                                                                        >());
+
+                            structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>()];
+                            System.Runtime.InteropServices.Marshal.StructureToPtr(entry, structurePointer, true);
+
+                            System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
+                                                                        structureBytes.Length);
+
+                            System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                            blockStream.Write(structureBytes, 0, structureBytes.Length);
+                        }
+
+                        Crc64Context.Data(blockStream.ToArray(), out byte[] cdixCrc);
+
+                        var cdixHeader = new CompactDiscIndexesHeader
+                        {
+                            identifier = BlockType.CompactDiscIndexesBlock,
+                            entries = (ushort)compactDiscIndexEntries.Count, crc64 = BitConverter.ToUInt64(cdixCrc, 0)
+                        };
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing compact disc indexes to position {0}",
+                                                   imageStream.Position);
+
+                        index.RemoveAll(t => t.blockType == BlockType.CompactDiscIndexesBlock &&
+                                             t.dataType  == DataType.NoData);
+
+                        index.Add(new IndexEntry
+                        {
+                            blockType = BlockType.CompactDiscIndexesBlock, dataType = DataType.NoData,
+                            offset    = (ulong)imageStream.Position
+                        });
+
+                        structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
+                        MemoryMarshal.Write(structureBytes, ref cdixHeader);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                         blockStream.ReallyClose();

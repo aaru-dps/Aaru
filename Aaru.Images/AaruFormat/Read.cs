@@ -150,6 +150,7 @@ namespace Aaru.DiscImages
 
             bool foundUserDataDdt = false;
             mediaTags = new Dictionary<MediaTagType, byte[]>();
+            List<CompactDiscIndexEntry> compactDiscIndexes = null;
 
             foreach(IndexEntry entry in index)
             {
@@ -994,6 +995,59 @@ namespace Aaru.DiscImages
                         IsTape = true;
 
                         break;
+
+                    // Optical disc tracks block
+                    case BlockType.CompactDiscIndexesBlock:
+                        structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+
+                        CompactDiscIndexesHeader indexesHeader =
+                            Marshal.SpanToStructureLittleEndian<CompactDiscIndexesHeader>(structureBytes);
+
+                        if(indexesHeader.identifier != BlockType.CompactDiscIndexesBlock)
+                        {
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                       "Incorrect identifier for compact disc indexes block at position {0}",
+                                                       entry.offset);
+
+                            break;
+                        }
+
+                        structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>() * indexesHeader.entries];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        Crc64Context.Data(structureBytes, out byte[] idsxCrc);
+
+                        if(BitConverter.ToUInt64(idsxCrc, 0) != indexesHeader.crc64)
+                        {
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                       "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                       BitConverter.ToUInt64(idsxCrc, 0), indexesHeader.crc64);
+
+                            break;
+                        }
+
+                        imageStream.Position -= structureBytes.Length;
+
+                        compactDiscIndexes = new List<CompactDiscIndexEntry>();
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   "Found {0} compact disc indexes at position {0}",
+                                                   indexesHeader.entries, entry.offset);
+
+                        for(ushort i = 0; i < indexesHeader.entries; i++)
+                        {
+                            structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>()];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+
+                            compactDiscIndexes.Add(Marshal.
+                                                       ByteArrayToStructureLittleEndian<CompactDiscIndexEntry
+                                                       >(structureBytes));
+                        }
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                   GC.GetTotalMemory(false));
+
+                        break;
                 }
             }
 
@@ -1147,6 +1201,20 @@ namespace Aaru.DiscImages
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                            GC.GetTotalMemory(false));
+
+                if(compactDiscIndexes != null)
+                {
+                    foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.
+                                                                      OrderBy(i => i.Track).ThenBy(i => i.Index))
+                    {
+                        Track track = Tracks.FirstOrDefault(t => t.TrackSequence == compactDiscIndex.Track);
+
+                        if(track is null)
+                            continue;
+
+                        track.Indexes[compactDiscIndex.Index] = compactDiscIndex.Lba;
+                    }
+                }
             }
             else
             {
