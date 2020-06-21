@@ -92,7 +92,7 @@ namespace Aaru.Core.Devices.Dumping
             const uint sectorSize       = 2352;            // Full sector size
             Track      firstTrack       = tracks.FirstOrDefault(t => t.TrackSequence == 1);
 
-            if(firstTrack.TrackSequence == 0)
+            if(firstTrack is null)
                 return;
 
             InitProgress?.Invoke();

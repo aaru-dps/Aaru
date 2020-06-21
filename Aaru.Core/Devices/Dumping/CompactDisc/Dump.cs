@@ -817,7 +817,7 @@ namespace Aaru.Core.Devices.Dumping
             {
                 Track track = tracks.FirstOrDefault(t => t.TrackSequence == kvp.Key);
 
-                if(track.TrackSequence == 0)
+                if(track is null)
                     continue;
 
                 _dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);

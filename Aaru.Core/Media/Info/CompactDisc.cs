@@ -224,8 +224,8 @@ namespace Aaru.Core.Media.Info
                     break;
                 }
 
-                if(dataTrack.TrackSequence  == 0 ||
-                   audioTrack.TrackSequence == 0)
+                if(dataTrack is null ||
+                   audioTrack is null)
                     return;
 
                 // Found them

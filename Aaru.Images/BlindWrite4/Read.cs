@@ -868,7 +868,7 @@ namespace Aaru.DiscImages
                 break;
             }
 
-            if(aaruTrack.TrackSequence == 0)
+            if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1)
@@ -972,7 +972,7 @@ namespace Aaru.DiscImages
                 break;
             }
 
-            if(aaruTrack.TrackSequence == 0)
+            if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1)
@@ -1189,7 +1189,7 @@ namespace Aaru.DiscImages
                 break;
             }
 
-            if(aaruTrack.TrackSequence == 0)
+            if(aaruTrack is null)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1)

@@ -152,7 +152,7 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-            if(track.TrackSequence == 0)
+            if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
 
@@ -204,7 +204,7 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-            if(track.TrackSequence == 0)
+            if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
 
@@ -263,7 +263,7 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-            if(track.TrackSequence == 0)
+            if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
 
@@ -308,7 +308,7 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-            if(track.TrackSequence == 0)
+            if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
 
@@ -564,7 +564,7 @@ namespace Aaru.DiscImages
                 _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                      sectorAddress <= trk.TrackEndSector);
 
-            if(track.TrackSequence == 0)
+            if(track is null)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
 
