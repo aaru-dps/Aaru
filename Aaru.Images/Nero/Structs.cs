@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             public int LbaStart;
         }
 
-        struct NeroV2Cuesheet
+        class NeroV2Cuesheet
         {
             /// <summary>"CUEX"</summary>
             public uint ChunkId;
@@ -108,7 +108,7 @@ namespace Aaru.DiscImages
             public byte Frame;
         }
 
-        struct NeroV1Cuesheet
+        class NeroV1Cuesheet
         {
             /// <summary>"CUES"</summary>
             public uint ChunkId;
@@ -401,6 +401,7 @@ namespace Aaru.DiscImages
             public ulong  Index0;
             public ulong  Index1;
             public uint   Sequence;
+            public bool   UseLbaForIndex;
         }
     }
 }
