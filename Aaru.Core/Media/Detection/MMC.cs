@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.Console;
@@ -1105,8 +1106,10 @@ namespace Aaru.Core.Media.Detection
                     if(isoSector.Length < 2048)
                         break;
 
-                    List<string> rootEntries = new List<string>();
-                    int          rootPos     = 0;
+                    List<string> rootEntries   = new List<string>();
+                    int          rootPos       = 0;
+                    uint         ngcdIplStart  = 0;
+                    uint         ngcdIplLength = 0;
 
                     while(isoSector[rootPos]           > 0                &&
                           rootPos                      < isoSector.Length &&
@@ -1121,8 +1124,13 @@ namespace Aaru.Core.Media.Detection
                             name = name.Substring(0, name.Length - 2);
 
                         // TODO: Video CD and Super Video CD
-                        // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
                         rootEntries.Add(name);
+
+                        if(name == "IPL.TXT")
+                        {
+                            ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                            ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
+                        }
 
                         rootPos += isoSector[rootPos];
                     }
@@ -1138,7 +1146,148 @@ namespace Aaru.Core.Media.Detection
                     }
 
                     if(rootEntries.Contains("CDTV.TM"))
+                    {
                         mediaType = MediaType.CDTV;
+
+                        return;
+                    }
+
+                    // "IPL.TXT" length
+                    if(ngcdIplLength > 0)
+                    {
+                        uint ngcdSectors = ngcdIplLength / 2048;
+
+                        if(ngcdIplLength % 2048 > 0)
+                            ngcdSectors++;
+
+                        string iplTxt = null;
+
+                        // Read "IPL.TXT"
+                        try
+                        {
+                            using var ngcdMs = new MemoryStream();
+
+                            for(uint i = 0; i < ngcdSectors; i++)
+                            {
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, ngcdIplStart + i,
+                                                   2048, 0, 1, false, dev.Timeout, out _);
+
+                                if(sense)
+                                    break;
+
+                                ngcdMs.Write(isoSector, 0, 2048);
+                            }
+
+                            isoSector = ngcdMs.ToArray();
+                            iplTxt    = Encoding.ASCII.GetString(isoSector);
+                        }
+                        catch
+                        {
+                            iplTxt = null;
+                        }
+
+                        // Check "IPL.TXT" lines
+                        if(iplTxt != null)
+                        {
+                            using var sr = new StringReader(iplTxt);
+
+                            bool correctNeoGeoCd = true;
+                            int  lineNumber      = 0;
+
+                            while(sr.Peek() > 0)
+                            {
+                                string? line = sr.ReadLine();
+
+                                // End of file
+                                if(line is null ||
+                                   line.Length == 0)
+                                {
+                                    if(lineNumber == 0)
+                                        correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Split line by comma
+                                string[] split = line.Split(',');
+
+                                // Empty line
+                                if(split.Length == 0)
+                                    continue;
+
+                                // More than 3 entries
+                                if(split.Length != 3)
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Split filename
+                                string[] split2 = split[0].Split('.');
+
+                                // Filename must have two parts, name and extension
+                                if(split2.Length != 2)
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Name must be smaller or equal to 8 characters
+                                if(split2[0].Length > 8)
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Extension must be smaller or equal to 8 characters
+                                if(split2[1].Length > 3)
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Second part must be a single digit
+                                if(split[1].Length != 1 ||
+                                   !byte.TryParse(split[1], out _))
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                // Third part must be bigger or equal to 1 and smaller or equal to 8
+                                if(split[2].Length < 1 ||
+                                   split[2].Length > 8)
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                try
+                                {
+                                    _ = Convert.ToUInt32(split[2], 16);
+                                }
+                                catch
+                                {
+                                    correctNeoGeoCd = false;
+
+                                    break;
+                                }
+
+                                lineNumber++;
+                            }
+
+                            if(correctNeoGeoCd)
+                            {
+                                mediaType = MediaType.NeoGeoCD;
+                            }
+                        }
+                    }
 
                     break;
                 }
