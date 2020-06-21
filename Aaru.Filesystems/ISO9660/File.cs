@@ -37,6 +37,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -175,9 +176,8 @@ namespace Aaru.Filesystems.ISO9660
 
             stat = new FileEntryInfo
             {
-                Attributes       = new FileAttributes(), Blocks = (long)(entry.Size / 2048), // TODO: XA
-                BlockSize        = 2048, Length                 = (long)entry.Size, Links = 1,
-                LastWriteTimeUtc = entry.Timestamp
+                Attributes = new FileAttributes(), Blocks = (long)(entry.Size / 2048), // TODO: XA
+                BlockSize  = 2048, Length = (long)entry.Size, Links = 1, LastWriteTimeUtc = entry.Timestamp
             };
 
             if(entry.Extents?.Count > 0)
@@ -553,6 +553,38 @@ namespace Aaru.Filesystems.ISO9660
 
             if(ms.Length >= size)
                 ms.SetLength(size);
+
+            return ms.ToArray();
+        }
+
+        byte[] ReadSubheaderWithExtents(List<(uint extent, uint size)> extents, bool copy)
+        {
+            var ms = new MemoryStream();
+
+            for(int i = 0; i < extents.Count; i++)
+            {
+                long leftExtentSize      = extents[i].size;
+                uint currentExtentSector = 0;
+
+                while(leftExtentSize > 0)
+                {
+                    try
+                    {
+                        byte[] fullSector =
+                            image.ReadSectorTag(extents[i].extent + currentExtentSector,
+                                                SectorTagType.CdSectorSubHeader);
+
+                        ms.Write(fullSector, copy ? 0 : 4, 4);
+                    }
+                    catch
+                    {
+                        // Do nothing
+                    }
+
+                    currentExtentSector++;
+                    leftExtentSize -= 2048;
+                }
+            }
 
             return ms.ToArray();
         }

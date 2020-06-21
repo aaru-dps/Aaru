@@ -78,6 +78,18 @@ namespace Aaru.Filesystems.ISO9660
             if(entry.AmigaComment != null)
                 xattrs.Add("com.amiga.comments");
 
+            if(entry.Flags.HasFlag(FileFlags.Directory) ||
+               entry.Extents.Count == 0)
+                return Errno.NoError;
+
+            byte[] sector = image.ReadSectorLong(entry.Extents[0].extent);
+
+            if(sector[15] != 2)
+                return Errno.NoError;
+
+            xattrs.Add("org.iso.mode2.subheader");
+            xattrs.Add("org.iso.mode2.subheader.copy");
+
             return Errno.NoError;
         }
 
@@ -120,8 +132,7 @@ namespace Aaru.Filesystems.ISO9660
                     }
 
                     buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
-                                          entry.AssociatedFile.XA?.signature ==
-                                          XA_MAGIC &&
+                                          entry.AssociatedFile.XA?.signature == XA_MAGIC &&
                                           entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
                                           entry.AssociatedFile.XA?.filenumber ?? 0);
 
@@ -156,8 +167,7 @@ namespace Aaru.Filesystems.ISO9660
                     }
 
                     buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
-                                          entry.ResourceFork.XA?.signature ==
-                                          XA_MAGIC &&
+                                          entry.ResourceFork.XA?.signature == XA_MAGIC &&
                                           entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
                                           entry.ResourceFork.XA?.filenumber ?? 0);
 
@@ -183,6 +193,14 @@ namespace Aaru.Filesystems.ISO9660
 
                     buf = new byte[entry.AmigaComment.Length];
                     Array.Copy(entry.AmigaComment, 0, buf, 0, entry.AmigaComment.Length);
+
+                    return Errno.NoError;
+                case "org.iso.mode2.subheader":
+                    buf = ReadSubheaderWithExtents(entry.Extents, false);
+
+                    return Errno.NoError;
+                case "org.iso.mode2.subheader.copy":
+                    buf = ReadSubheaderWithExtents(entry.Extents, true);
 
                     return Errno.NoError;
                 default: return Errno.NoSuchExtendedAttribute;
