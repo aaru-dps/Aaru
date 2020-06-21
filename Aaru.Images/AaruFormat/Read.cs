@@ -1079,6 +1079,26 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                            GC.GetTotalMemory(false));
 
+                foreach(Track track in Tracks.OrderBy(t => t.TrackStartSector))
+                {
+                    if(track.TrackSequence == 1)
+                    {
+                        track.TrackPregap = 150;
+                        track.Indexes[0]  = -150;
+                        track.Indexes[1]  = (int)track.TrackStartSector;
+
+                        continue;
+                    }
+
+                    if(track.TrackPregap > 0)
+                    {
+                        track.Indexes[0] = (int)track.TrackStartSector;
+                        track.Indexes[1] = (int)(track.TrackStartSector + track.TrackPregap);
+                    }
+                    else
+                        track.Indexes[1] = (int)track.TrackStartSector;
+                }
+
                 ulong currentTrackOffset = 0;
                 Partitions = new List<Partition>();
 
@@ -1086,11 +1106,12 @@ namespace Aaru.DiscImages
                 {
                     Partitions.Add(new Partition
                     {
-                        Sequence = track.TrackSequence, Type = track.TrackType.ToString(),
-                        Name = $"Track {track.TrackSequence}", Offset = currentTrackOffset,
-                        Start = track.TrackStartSector,
-                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) * (ulong)track.TrackBytesPerSector,
-                        Length = (track.TrackEndSector - track.TrackStartSector) + 1, Scheme = "Optical disc track"
+                        Sequence = track.TrackSequence, Type              = track.TrackType.ToString(),
+                        Name     = $"Track {track.TrackSequence}", Offset = currentTrackOffset,
+                        Start    = (ulong)track.Indexes[1],
+                        Size = ((track.TrackEndSector - (ulong)track.Indexes[1]) + 1) *
+                               (ulong)track.TrackBytesPerSector,
+                        Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1, Scheme = "Optical disc track"
                     });
 
                     currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *
