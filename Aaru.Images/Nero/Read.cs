@@ -1122,7 +1122,7 @@ namespace Aaru.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress        - kvp.Value <
+                                                     where sectorAddress        - kvp.Value <=
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
@@ -1133,7 +1133,7 @@ namespace Aaru.DiscImages
         {
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress        - kvp.Value <
+                                                     where sectorAddress        - kvp.Value <=
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
