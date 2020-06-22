@@ -149,6 +149,65 @@ namespace Aaru.Core.Media.Detection
             return syncMark.SequenceEqual(testMark) && (sector[0xF] == 0 || sector[0xF] == 1 || sector[0xF] == 2);
         }
 
+        static bool IsScrambledData(byte[] sector, int wantedLba, out int offset)
+        {
+            offset = 0;
+
+            if(sector?.Length != 2352)
+                return false;
+
+            byte[] syncMark =
+            {
+                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+            };
+
+            byte[] testMark = new byte[12];
+
+            for(int i = 0; i <= 2336; i++)
+            {
+                Array.Copy(sector, i, testMark, 0, 12);
+
+                if(syncMark.SequenceEqual(testMark) &&
+                   (sector[i + 0xF] == 0x60 || sector[i + 0xF] == 0x61 || sector[i + 0xF] == 0x62))
+
+                {
+                    // De-scramble M and S
+                    int minute = sector[i + 12] ^ 0x01;
+                    int second = sector[i + 13] ^ 0x80;
+                    int frame  = sector[i + 14];
+
+                    // Convert to binary
+                    minute = ((minute / 16) * 10) + (minute & 0x0F);
+                    second = ((second / 16) * 10) + (second & 0x0F);
+                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+
+                    // Calculate the first found LBA
+                    int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+
+                    // Calculate the difference between the found LBA and the requested one
+                    int diff = wantedLba - lba;
+
+                    offset = i + (2352 * diff);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // TODO: Negative offset
+        static byte[] DescrambleAndFixOffset(byte[] sector, int offsetBytes, int sectorsForOffset)
+        {
+            byte[] descrambled = new byte[2352];
+
+            int offsetFix = offsetBytes < 0 ? (2352 * sectorsForOffset) + offsetBytes : offsetBytes;
+
+            Array.Copy(sector, offsetFix, descrambled, 0, 2352);
+
+            return Sector.Scramble(descrambled);
+        }
+
         /// <summary>Checks if the media corresponds to CD-i.</summary>
         /// <param name="sector0">Contents of LBA 0, with all headers.</param>
         /// <param name="sector16">Contents of LBA 0, with all headers.</param>
@@ -242,8 +301,8 @@ namespace Aaru.Core.Media.Detection
 
             if(decodedToc.HasValue)
                 if(decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == 2))
-                    secondSessionFirstTrack =
-                        decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).Min(t => t.POINT);
+                    secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
+                                                         Min(t => t.POINT);
 
             if(mediaType == MediaType.CD ||
                mediaType == MediaType.CDROMXA)
@@ -377,7 +436,7 @@ namespace Aaru.Core.Media.Detection
 
                 uint firstSectorSecondSessionFirstTrack =
                     (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
-                            (secondSessionFirstTrackTrack.PMIN * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
+                            (secondSessionFirstTrackTrack.PMIN  * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
                             secondSessionFirstTrackTrack.PFRAME) - 150);
 
                 sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
@@ -454,7 +513,7 @@ namespace Aaru.Core.Media.Detection
                 if(firstTrack.POINT == 1)
                 {
                     uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
-                                                    (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
+                                                    (firstTrack.PSEC  * 75)        + firstTrack.PFRAME) - 150);
 
                     // Check for hidden data before start of track 1
                     if(firstTrackSector > 0)
@@ -479,6 +538,53 @@ namespace Aaru.Core.Media.Detection
                                 if(IsCdi(sector0, sector16))
                                 {
                                     mediaType = MediaType.CDIREADY;
+
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                hiddenData = IsScrambledData(sector0, 0, out int combinedOffset);
+
+                                if(hiddenData)
+                                {
+                                    int sectorsForOffset = combinedOffset / 2352;
+
+                                    if(sectorsForOffset < 0)
+                                        sectorsForOffset *= -1;
+
+                                    if(combinedOffset % 2352 != 0)
+                                        sectorsForOffset++;
+
+                                    int lba0  = 0;
+                                    int lba16 = 16;
+
+                                    if(combinedOffset < 0)
+                                    {
+                                        lba0  -= sectorsForOffset - 1;
+                                        lba16 -= sectorsForOffset - 1;
+                                    }
+
+                                    sense = dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
+                                                       MmcSectorTypes.AllTypes, false, false, true,
+                                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                       MmcSubchannel.None, dev.Timeout, out _);
+
+                                    sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
+
+                                    sense = dev.ReadCd(out byte[] sector16, out _, (uint)lba16, 2352,
+                                                       (uint)sectorsForOffset + 1, MmcSectorTypes.AllTypes, false,
+                                                       false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                    sector16 = DescrambleAndFixOffset(sector16, combinedOffset, sectorsForOffset);
+
+                                    if(IsCdi(sector0, sector16))
+                                    {
+                                        mediaType = MediaType.CDIREADY;
+
+                                        return;
+                                    }
                                 }
                             }
                         }
