@@ -818,8 +818,13 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.
                 Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
-            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
-            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            if(maxSpeed > 0)
+                UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+
+            if(minSpeed > 0 &&
+               minSpeed < double.MaxValue)
+                UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+
             UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
             UpdateStatus?.Invoke("");
 
