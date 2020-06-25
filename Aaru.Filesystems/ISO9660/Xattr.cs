@@ -79,6 +79,7 @@ namespace Aaru.Filesystems.ISO9660
                 xattrs.Add("com.amiga.comments");
 
             if(entry.Flags.HasFlag(FileFlags.Directory) ||
+               entry.Extents       == null              ||
                entry.Extents.Count == 0)
                 return Errno.NoError;
 
