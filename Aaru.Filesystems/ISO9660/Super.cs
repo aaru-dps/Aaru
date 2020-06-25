@@ -208,8 +208,8 @@ namespace Aaru.Filesystems.ISO9660
                                    svd.escape_sequences[2] == 'E')
                                     jolietvd = svd;
                                 else
-                                    AaruConsole.WriteLine("ISO9660 plugin",
-                                                          "Found unknown supplementary volume descriptor");
+                                    AaruConsole.DebugWriteLine("ISO9660 plugin",
+                                                               "Found unknown supplementary volume descriptor");
 
                             if(debug)
                                 svdSectors.Add(16 + counter + partition.Start);
@@ -338,6 +338,72 @@ namespace Aaru.Filesystems.ISO9660
                     rootSize = hsvd.Value.root_directory_record.size;
                 else
                     rootSize = pvd.Value.root_directory_record.size;
+
+                if(pathTableData.Length > 1 &&
+                   rootLocation         != pathTable[0].Extent)
+                {
+                    AaruConsole.DebugWriteLine("ISO9660 plugin",
+                                               "Path table and PVD do not point to the same location for the root directory!");
+
+                    byte[] firstRootSector = ReadSector(rootLocation);
+
+                    bool pvdWrongRoot = false;
+
+                    if(highSierra)
+                    {
+                        HighSierraDirectoryRecord rootEntry =
+                            Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
+
+                        if(rootEntry.extent != rootLocation)
+                            pvdWrongRoot = true;
+                    }
+                    else
+                    {
+                        DirectoryRecord rootEntry =
+                            Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(firstRootSector);
+
+                        if(rootEntry.extent != rootLocation)
+                            pvdWrongRoot = true;
+                    }
+
+                    if(pvdWrongRoot)
+                    {
+                        AaruConsole.DebugWriteLine("ISO9660 plugin",
+                                                   "PVD does not point to correct root directory, checking path table...");
+
+                        bool pathTableWrongRoot = false;
+
+                        rootLocation = pathTable[0].Extent;
+
+                        firstRootSector = ReadSector(pathTable[0].Extent);
+
+                        if(highSierra)
+                        {
+                            HighSierraDirectoryRecord rootEntry =
+                                Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
+
+                            if(rootEntry.extent != rootLocation)
+                                pathTableWrongRoot = true;
+                        }
+                        else
+                        {
+                            DirectoryRecord rootEntry =
+                                Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(firstRootSector);
+
+                            if(rootEntry.extent != rootLocation)
+                                pathTableWrongRoot = true;
+                        }
+
+                        if(pathTableWrongRoot)
+                        {
+                            AaruConsole.ErrorWriteLine("Cannot find root directory...");
+
+                            return Errno.InvalidArgument;
+                        }
+
+                        usePathTable = true;
+                    }
+                }
             }
             else
             {
