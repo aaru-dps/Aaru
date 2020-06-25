@@ -358,6 +358,30 @@ namespace Aaru.Filesystems.ISO9660
             if(usePathTable && pathTableData.Length == 1)
                 usePathTable = false;
 
+            if(usePathTable && !cdi)
+            {
+                rootLocation = pathTable[0].Extent;
+
+                byte[] firstRootSector = ReadSector(rootLocation);
+
+                if(highSierra)
+                {
+                    HighSierraDirectoryRecord rootEntry =
+                        Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
+
+                    rootSize = rootEntry.size;
+                }
+                else
+                {
+                    DirectoryRecord rootEntry =
+                        Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(firstRootSector);
+
+                    rootSize = rootEntry.size;
+                }
+
+                rootXattrLength = pathTable[0].XattrLength;
+            }
+
             try
             {
                 byte[] rootDir = ReadSingleExtent(0, rootSize, rootLocation);
