@@ -610,7 +610,7 @@ namespace Aaru.Filesystems.ISO9660
                 {
                     Extents = new List<(uint extent, uint size)>
                     {
-                        (pathTableMsbLocation, (uint)pathTableData.Length)
+                        (Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)
                     },
                     Filename = "$PATH_TABLE.MSB", Size = (uint)pathTableData.Length, Timestamp = decodedVd.CreationTime
                 });
