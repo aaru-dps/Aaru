@@ -37,6 +37,7 @@ using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Schemas;
 
@@ -48,6 +49,71 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        static bool IsData(byte[] sector)
+        {
+            if(sector?.Length != 2352)
+                return false;
+
+            byte[] syncMark =
+            {
+                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+            };
+
+            byte[] testMark = new byte[12];
+            Array.Copy(sector, 0, testMark, 0, 12);
+
+            return syncMark.SequenceEqual(testMark) && (sector[0xF] == 0 || sector[0xF] == 1 || sector[0xF] == 2);
+        }
+
+        static bool IsScrambledData(byte[] sector, int wantedLba, out int? offset)
+        {
+            offset = 0;
+
+            if(sector?.Length != 2352)
+                return false;
+
+            byte[] syncMark =
+            {
+                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+            };
+
+            byte[] testMark = new byte[12];
+
+            for(int i = 0; i <= 2336; i++)
+            {
+                Array.Copy(sector, i, testMark, 0, 12);
+
+                if(syncMark.SequenceEqual(testMark) &&
+                   (sector[i + 0xF] == 0x60 || sector[i + 0xF] == 0x61 || sector[i + 0xF] == 0x62))
+
+                {
+                    // De-scramble M and S
+                    int minute = sector[i + 12] ^ 0x01;
+                    int second = sector[i + 13] ^ 0x80;
+                    int frame  = sector[i + 14];
+
+                    // Convert to binary
+                    minute = ((minute / 16) * 10) + (minute & 0x0F);
+                    second = ((second / 16) * 10) + (second & 0x0F);
+                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+
+                    // Calculate the first found LBA
+                    int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+
+                    // Calculate the difference between the found LBA and the requested one
+                    int diff = wantedLba - lba;
+
+                    offset = i + (2352 * diff);
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // TODO: Set pregap for Track 1
+        // TODO: Detect errors in sectors
         /// <summary>Reads all CD user data</summary>
         /// <param name="audioExtents">Extents with audio sectors</param>
         /// <param name="blocks">Total number of positive sectors</param>
@@ -77,11 +143,11 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="totalDuration">Total commands duration</param>
         void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
                           IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
-                          ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, bool read6, bool read10,
-                          bool read12, bool read16, bool readcd, uint subSize, MmcSubchannel supportedSubchannel,
-                          bool supportsLongSectors, ref double totalDuration, Track[] tracks, SubchannelLog subLog,
-                          MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs, ref string mcn,
-                          HashSet<int> subchannelExtents, ulong blocks)
+                          ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, uint subSize,
+                          MmcSubchannel supportedSubchannel, ref double totalDuration, Track[] tracks,
+                          SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
+                          ref string mcn, HashSet<int> subchannelExtents, ulong blocks, bool cdiReadyReadAsAudio,
+                          int offsetBytes, int sectorsForOffset)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -91,13 +157,22 @@ namespace Aaru.Core.Devices.Dumping
             double     cmdDuration      = 0;               // Command execution time
             const uint sectorSize       = 2352;            // Full sector size
             Track      firstTrack       = tracks.FirstOrDefault(t => t.TrackSequence == 1);
+            uint       blocksToRead     = 0; // How many sectors to read at once
 
             if(firstTrack is null)
                 return;
 
+            if(cdiReadyReadAsAudio)
+            {
+                _dumpLog.WriteLine("Setting speed to 8x for CD-i Ready reading as audio.");
+                UpdateStatus?.Invoke("Setting speed to 8x for CD-i Ready reading as audio.");
+
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+            }
+
             InitProgress?.Invoke();
 
-            for(ulong i = _resume.NextBlock; i < firstTrack.TrackStartSector; i += _maximumReadable)
+            for(ulong i = _resume.NextBlock; i < firstTrack.TrackStartSector; i += blocksToRead)
             {
                 if(_aborted)
                 {
@@ -108,12 +183,24 @@ namespace Aaru.Core.Devices.Dumping
                     break;
                 }
 
-                if(i >= firstTrack.TrackStartSector)
-                    break;
-
                 uint firstSectorToRead = (uint)i;
 
-                Track track = tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
+                blocksToRead = _maximumReadable;
+
+                if(blocksToRead == 1 && cdiReadyReadAsAudio)
+                    blocksToRead += (uint)sectorsForOffset;
+
+                if(cdiReadyReadAsAudio)
+                {
+                    // TODO: FreeBSD bug
+                    if(offsetBytes < 0)
+                    {
+                        if(i == 0)
+                            firstSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
+                        else
+                            firstSectorToRead -= (uint)sectorsForOffset;
+                    }
+                }
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 
@@ -133,34 +220,11 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                if(readcd)
-                {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, _maximumReadable,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
+                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                    MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
-                    totalDuration += cmdDuration;
-                }
-                else if(read16)
-                {
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, firstSectorToRead, blockSize,
-                                        0, _maximumReadable, false, _dev.Timeout, out cmdDuration);
-                }
-                else if(read12)
-                {
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, firstSectorToRead,
-                                        blockSize, 0, _maximumReadable, false, _dev.Timeout, out cmdDuration);
-                }
-                else if(read10)
-                {
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, firstSectorToRead,
-                                        blockSize, 0, (ushort)_maximumReadable, _dev.Timeout, out cmdDuration);
-                }
-                else if(read6)
-                {
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, (byte)_maximumReadable,
-                                       _dev.Timeout, out cmdDuration);
-                }
+                totalDuration += cmdDuration;
 
                 double elapsed;
 
@@ -172,35 +236,12 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateProgress?.Invoke($"Reading sector {i + r} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i + r, (long)blocks);
 
-                        if(readcd)
-                        {
-                            sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1,
-                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
-                                                out cmdDuration);
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize,
+                                            (uint)sectorsForOffset + 1, MmcSectorTypes.AllTypes, false, false, true,
+                                            MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                            supportedSubchannel, _dev.Timeout, out cmdDuration);
 
-                            totalDuration += cmdDuration;
-                        }
-                        else if(read16)
-                        {
-                            sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i + r, blockSize, 0, 1,
-                                                false, _dev.Timeout, out cmdDuration);
-                        }
-                        else if(read12)
-                        {
-                            sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
-                                                blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
-                        }
-                        else if(read10)
-                        {
-                            sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)(i + r),
-                                                blockSize, 0, 1, _dev.Timeout, out cmdDuration);
-                        }
-                        else if(read6)
-                        {
-                            sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, 1, _dev.Timeout,
-                                               out cmdDuration);
-                        }
+                        totalDuration += cmdDuration;
 
                         if(!sense &&
                            !_dev.Error)
@@ -209,6 +250,10 @@ namespace Aaru.Core.Devices.Dumping
                             ibgLog.Write(i  + r, currentSpeed * 1024);
                             extents.Add(i   + r, 1, true);
                             DateTime writeStart = DateTime.Now;
+
+                            if(cdiReadyReadAsAudio)
+                                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
+                                              ref blocksToRead, subSize, ref cmdBuf, blockSize, false);
 
                             if(supportedSubchannel != MmcSubchannel.None)
                             {
@@ -219,12 +264,14 @@ namespace Aaru.Core.Devices.Dumping
 
                                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
+                                if(cdiReadyReadAsAudio)
+                                    data = Sector.Scramble(data);
+
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
                                 bool indexesChanged =
                                     WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1,
-                                                           subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
-                                                           subchannelExtents);
+                                                           subLog, isrcs, 1, ref mcn, tracks, subchannelExtents);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -237,25 +284,7 @@ namespace Aaru.Core.Devices.Dumping
                             }
                             else
                             {
-                                if(supportsLongSectors)
-                                {
-                                    _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
-                                }
-                                else
-                                {
-                                    if(cmdBuf.Length % sectorSize == 0)
-                                    {
-                                        byte[] data = new byte[2048];
-
-                                        Array.Copy(cmdBuf, 16, data, 2048, 2048);
-
-                                        _outputPlugin.WriteSectors(data, i + r, 1);
-                                    }
-                                    else
-                                    {
-                                        _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
-                                    }
-                                }
+                                _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
                             }
 
                             imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
@@ -291,61 +320,68 @@ namespace Aaru.Core.Devices.Dumping
                 if(!sense &&
                    !_dev.Error)
                 {
+                    if(cdiReadyReadAsAudio)
+                        FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
+                                      subSize, ref cmdBuf, blockSize, false);
+
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
-                    extents.Add(i, _maximumReadable, true);
+                    extents.Add(i, blocksToRead, true);
                     DateTime writeStart = DateTime.Now;
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        byte[] data = new byte[sectorSize * _maximumReadable];
-                        byte[] sub  = new byte[subSize    * _maximumReadable];
+                        byte[] data    = new byte[sectorSize * blocksToRead];
+                        byte[] sub     = new byte[subSize    * blocksToRead];
+                        byte[] tmpData = new byte[sectorSize];
 
-                        for(int b = 0; b < _maximumReadable; b++)
+                        for(int b = 0; b < blocksToRead; b++)
                         {
-                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            if(cdiReadyReadAsAudio)
+                            {
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), tmpData, 0, sectorSize);
+                                tmpData = Sector.Scramble(tmpData);
+                                Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
+                            }
+                            else
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
-                        _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
+                        _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
                         bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
-                                                                     _maximumReadable, subLog, isrcs,
-                                                                     (byte)track.TrackSequence, ref mcn, tracks,
+                                                                     blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
                                                                      subchannelExtents);
 
                         // Set tracks and go back
                         if(indexesChanged)
                         {
                             (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
-                            i -= _maximumReadable;
+                            i -= blocksToRead;
 
                             continue;
                         }
                     }
                     else
                     {
-                        if(supportsLongSectors)
+                        if(cdiReadyReadAsAudio)
                         {
-                            _outputPlugin.WriteSectorsLong(cmdBuf, i, _maximumReadable);
+                            byte[] tmpData = new byte[sectorSize];
+                            byte[] data    = new byte[sectorSize * blocksToRead];
+
+                            for(int b = 0; b < blocksToRead; b++)
+                            {
+                                Array.Copy(cmdBuf, (int)(b * sectorSize), tmpData, 0, sectorSize);
+                                tmpData = Sector.Scramble(tmpData);
+                                Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
+                            }
+
+                            _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
                         }
                         else
-                        {
-                            if(cmdBuf.Length % sectorSize == 0)
-                            {
-                                byte[] data = new byte[2048 * _maximumReadable];
-
-                                for(int b = 0; b < _maximumReadable; b++)
-                                    Array.Copy(cmdBuf, (int)(16 + (b * blockSize)), data, 2048 * b, 2048);
-
-                                _outputPlugin.WriteSectors(data, i, _maximumReadable);
-                            }
-                            else
-                            {
-                                _outputPlugin.WriteSectorsLong(cmdBuf, i, _maximumReadable);
-                            }
-                        }
+                            _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
                     }
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
@@ -357,9 +393,9 @@ namespace Aaru.Core.Devices.Dumping
                     break;
                 }
 
-                sectorSpeedStart += _maximumReadable;
+                sectorSpeedStart += blocksToRead;
 
-                _resume.NextBlock = i + _maximumReadable;
+                _resume.NextBlock = i + blocksToRead;
 
                 elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 

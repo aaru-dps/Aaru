@@ -87,7 +87,7 @@ namespace Aaru.Core.Devices.Dumping
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
-        readonly bool                       _skipCdireadyHole;
+        bool                                _skipCdireadyHole;
         int                                 _speed;
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;

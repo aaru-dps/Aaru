@@ -112,10 +112,11 @@ namespace Aaru.Core.Devices.Dumping
             bool                     hiddenTrack; // Disc has a hidden track before track 1
             MmcSubchannel            supportedSubchannel; // Drive's maximum supported subchannel
             MmcSubchannel            desiredSubchannel; // User requested subchannel
-            bool                     bcdSubchannel     = false; // Subchannel positioning is in BCD
-            Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
-            string                   mcn               = null;
-            HashSet<int>             subchannelExtents = new HashSet<int>();
+            bool                     bcdSubchannel       = false; // Subchannel positioning is in BCD
+            Dictionary<byte, string> isrcs               = new Dictionary<byte, string>();
+            string                   mcn                 = null;
+            HashSet<int>             subchannelExtents   = new HashSet<int>();
+            bool                     cdiReadyReadAsAudio = false;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -892,15 +893,6 @@ namespace Aaru.Core.Devices.Dumping
                     Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
         #endif
 
-            if(dskType == MediaType.CDIREADY &&
-               !_skipCdireadyHole)
-            {
-                _dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
-
-                UpdateStatus?.
-                    Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
-            }
-
             // Check offset
             if(_fixOffset)
             {
@@ -1041,12 +1033,100 @@ namespace Aaru.Core.Devices.Dumping
             // Start reading
             start = DateTime.UtcNow;
 
-            if(dskType == MediaType.CDIREADY && _skipCdireadyHole)
+            if(dskType == MediaType.CDIREADY)
             {
-                ReadCdiReady(blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
-                             leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                             subSize, supportedSubchannel, supportsLongSectors, ref totalDuration, tracks, subLog,
-                             desiredSubchannel, isrcs, ref mcn, subchannelExtents, blocks);
+                Track track0 = tracks.FirstOrDefault(t => t.TrackSequence == 0);
+
+                track0.TrackType = TrackType.CdMode2Formless;
+
+                if(!supportsLongSectors)
+                {
+                    _dumpLog.WriteLine("Dumping CD-i Ready requires the output image format to support long sectors.");
+
+                    StoppingErrorMessage?.
+                        Invoke("Dumping CD-i Ready requires the output image format to support long sectors.");
+
+                    return;
+                }
+
+                if(!readcd)
+                {
+                    _dumpLog.WriteLine("Dumping CD-i Ready requires the drive to support the READ CD command.");
+
+                    StoppingErrorMessage?.
+                        Invoke("Dumping CD-i Ready requires the drive to support the READ CD command.");
+
+                    return;
+                }
+
+                sense = _dev.ReadCd(out cmdBuf, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                    _dev.Timeout, out _);
+
+                hiddenData = IsData(cmdBuf);
+
+                if(!hiddenData)
+                {
+                    cdiReadyReadAsAudio = IsScrambledData(cmdBuf, 0, out combinedOffset);
+
+                    if(cdiReadyReadAsAudio)
+                    {
+                        offsetBytes      = combinedOffset.Value;
+                        sectorsForOffset = offsetBytes / (int)sectorSize;
+
+                        if(sectorsForOffset < 0)
+                            sectorsForOffset *= -1;
+
+                        if(offsetBytes % sectorSize != 0)
+                            sectorsForOffset++;
+
+                        _dumpLog.WriteLine("Enabling skipping CD-i Ready hole because drive returns data as audio.");
+
+                        UpdateStatus?.Invoke("Enabling skipping CD-i Ready hole because drive returns data as audio.");
+
+                        _skipCdireadyHole = true;
+
+                        if(driveOffset is null)
+                        {
+                            _dumpLog.WriteLine("Drive reading offset not found in database.");
+                            UpdateStatus?.Invoke("Drive reading offset not found in database.");
+
+                            _dumpLog.
+                                WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+
+                            UpdateStatus?.
+                                Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                        }
+                        else
+                        {
+                            _dumpLog.
+                                WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+
+                            UpdateStatus?.
+                                Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+
+                            discOffset = offsetBytes - driveOffset;
+
+                            _dumpLog.WriteLine($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+
+                            UpdateStatus?.Invoke($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                        }
+                    }
+                }
+
+                if(!_skipCdireadyHole)
+                {
+                    _dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+
+                    UpdateStatus?.
+                        Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+                }
+
+                if(_skipCdireadyHole)
+                    ReadCdiReady(blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
+                                 leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, subSize, supportedSubchannel,
+                                 ref totalDuration, tracks, subLog, desiredSubchannel, isrcs, ref mcn,
+                                 subchannelExtents, blocks, cdiReadyReadAsAudio, offsetBytes, sectorsForOffset);
             }
 
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
