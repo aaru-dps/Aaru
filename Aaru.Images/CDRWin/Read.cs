@@ -368,6 +368,7 @@ namespace Aaru.DiscImages
 
                         _discImage.IsRedumpGigadisc = true;
                         currentSession              = 2;
+                        firstTrackInSession         = true;
                     }
                     else if(matchLba.Success)
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
@@ -1140,6 +1141,8 @@ namespace Aaru.DiscImages
                 Partitions = new List<Partition>();
 
                 ulong partitionSequence = 0;
+                ulong previousPartitionsSize = 0;
+                string previousFile = _discImage.Tracks[0].TrackFile.DataFilter.GetBasePath();
 
                 _offsetMap = new Dictionary<uint, ulong>();
 
@@ -1165,15 +1168,26 @@ namespace Aaru.DiscImages
                     partition.Type        = _discImage.Tracks[i].TrackType;
 
                     partitionSequence++;
+                    
+                    if(_discImage.Tracks[i].TrackFile.DataFilter.GetBasePath() != previousFile){
+                        previousPartitionsSize += _discImage.Tracks[i - 1].Sectors;
+                        previousFile            = _discImage.Tracks[i].TrackFile.DataFilter.GetBasePath();
+                    }
 
                     if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0);
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0 + previousPartitionsSize);
+                    else if(_discImage.IsRedumpGigadisc && _discImage.Tracks[i].Sequence == 3) {
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
+                        previousPartitionsSize = gdRomSession2Offset;
+                    }
                     else if(_discImage.Tracks[i].Sequence > 1)
                         _offsetMap.Add(_discImage.Tracks[i].Sequence,
-                                       (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap));
+                                       (ulong)(_discImage.Tracks[i].Indexes[1] - _discImage.Tracks[i].Pregap) + 
+                                       previousPartitionsSize);
                     else
-                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)_discImage.Tracks[i].Indexes[1]);
-
+                        _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)_discImage.Tracks[i].Indexes[1] + 
+                                                                      previousPartitionsSize);
+                    
                     Partitions.Add(partition);
                 }
 
