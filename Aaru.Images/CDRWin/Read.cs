@@ -1176,8 +1176,10 @@ namespace Aaru.DiscImages
 
                     if(_discImage.Tracks[i].Indexes.TryGetValue(0, out int idx0))
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, (ulong)idx0 + previousPartitionsSize);
-                    else if(_discImage.IsRedumpGigadisc && _discImage.Tracks[i].Sequence == 3) {
+                    else if(_discImage.IsRedumpGigadisc && _discImage.Tracks[i].Sequence == 3)
+                    {
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
+                        densitySeparationSectors += gdRomSession2Offset - previousPartitionsSize;
                         previousPartitionsSize = gdRomSession2Offset;
                     }
                     else if(_discImage.Tracks[i].Sequence > 1)
