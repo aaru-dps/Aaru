@@ -46,7 +46,7 @@ namespace Aaru.Tests.Filters
         };
         readonly string location;
 
-        public BZip2() => location = Path.Combine(Consts.TestFilesRoot, "filters", "bzip2.bz2");
+        public BZip2() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "bzip2.bz2");
 
         [Test]
         public void CheckContents()

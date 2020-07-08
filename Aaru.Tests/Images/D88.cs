@@ -87,7 +87,7 @@ namespace Aaru.Tests.Images
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "images", "d88", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "D88", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.D88();

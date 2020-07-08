@@ -80,7 +80,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_apm", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -154,7 +154,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_gpt", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (GPT)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -229,7 +229,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "exfat_mbr", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (MBR)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

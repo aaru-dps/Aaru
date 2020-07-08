@@ -75,7 +75,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "qnx4", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
@@ -133,8 +133,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "qnx4_mbr", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

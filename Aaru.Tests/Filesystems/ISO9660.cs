@@ -417,7 +417,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "iso9660", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "ISO9660", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();

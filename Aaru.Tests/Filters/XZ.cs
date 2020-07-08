@@ -47,7 +47,7 @@ namespace Aaru.Tests.Filters
         };
         readonly string location;
 
-        public Xz() => location = Path.Combine(Consts.TestFilesRoot, "filters", "xz.xz");
+        public Xz() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "xz.xz");
 
         [Test]
         public void CheckContents()

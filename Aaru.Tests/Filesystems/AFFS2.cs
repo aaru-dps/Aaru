@@ -80,8 +80,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "affs2_rdb", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System 2 (RDB)",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

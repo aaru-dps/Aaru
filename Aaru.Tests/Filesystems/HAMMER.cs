@@ -80,7 +80,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hammer_mbr", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "HAMMER (MBR)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

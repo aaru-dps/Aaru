@@ -56,8 +56,7 @@ namespace Aaru.Tests.Partitions
                 },
                 new Partition
                 {
-                    Description = null, Size = 15728640, Name = "Microsoft basic data",
-                    Type        = "Microsoft Basic data",
+                    Description = null, Size = 15728640, Name = "Microsoft basic data", Type = "Microsoft Basic data",
                     Offset      = 11534336, Length = 30720, Sequence = 1, Start = 22528
                 },
                 new Partition
@@ -109,8 +108,10 @@ namespace Aaru.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "gpt", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "GUID Partition Table",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

@@ -126,7 +126,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
@@ -202,7 +202,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_apm", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (APM)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -282,7 +282,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_atari", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (Atari)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -363,7 +363,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_gpt", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (GPT)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -493,7 +493,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_mbr", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (MBR)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -562,7 +562,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_rdb", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (RDB)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -642,7 +642,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat16_human", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (Human68K)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();

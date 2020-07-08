@@ -113,7 +113,7 @@ namespace Aaru.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "sun", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Sun", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

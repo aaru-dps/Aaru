@@ -48,7 +48,7 @@ namespace Aaru.Tests.Filesystems
         [SetUp]
         public void Init()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fatx16", "le", "fatx.img.lz");
+            location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "le", "fatx.img.lz");
             filter   = new LZip();
             filter.Open(location);
             image = new ZZZRawImage();
@@ -256,7 +256,7 @@ namespace Aaru.Tests.Filesystems
         [SetUp]
         public void Init()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fatx16", "be", "microsoft256mb.img.lz");
+            location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "be", "microsoft256mb.img.lz");
             filter   = new LZip();
             filter.Open(location);
             image = new ZZZRawImage();

@@ -46,8 +46,8 @@ namespace Aaru.Tests.Filters
 
         public AppleDoubleProDos()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "prodos", "DOS_720.dmg");
-            sidecar  = Path.Combine(Consts.TestFilesRoot, "filters", "appledouble", "prodos", "R.DOS_720.dmg");
+            location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "prodos", "DOS_720.dmg");
+            sidecar  = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "prodos", "R.DOS_720.dmg");
         }
 
         [Test]

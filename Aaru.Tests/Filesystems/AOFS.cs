@@ -85,8 +85,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -155,8 +157,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR)",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -229,8 +233,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_mbr_rdb", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR+RDB)",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -303,8 +309,10 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "aofs_rdb", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (RDB)",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

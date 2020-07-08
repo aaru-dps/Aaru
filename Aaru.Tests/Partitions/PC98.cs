@@ -247,7 +247,7 @@ namespace Aaru.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "pc98", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "PC-98", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new T98();

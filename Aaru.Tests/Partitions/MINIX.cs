@@ -77,7 +77,7 @@ namespace Aaru.Tests.Partitions
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "partitions", "minix", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "MINIX", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

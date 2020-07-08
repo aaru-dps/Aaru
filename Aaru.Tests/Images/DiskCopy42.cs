@@ -41,17 +41,19 @@ namespace Aaru.Tests.Images
         readonly string[] testfiles =
         {
             // Made with DiskCopy 4.2
-            "dc42/mf1dd_hfs.img.lz", "dc42/mf1dd_mfs.img.lz", "dc42/mf2dd_hfs.img.lz", "dc42/mf2dd_mfs.img.lz",
+            "Made by DiskCopy 4.2/mf1dd_hfs.img.lz", "Made by DiskCopy 4.2/mf1dd_mfs.img.lz",
+            "Made by DiskCopy 4.2/mf2dd_hfs.img.lz", "Made by DiskCopy 4.2/mf2dd_mfs.img.lz",
 
             // Made with ShrinkWrap 3
-            "shrinkwrap/DiskCopy 4/DC6_RW_HFS_1440.image.lz", "shrinkwrap/DiskCopy 4/DC6_RW_HFS_800.image.lz",
-            "shrinkwrap/DiskCopy 4/DOS1440.image.lz", "shrinkwrap/DiskCopy 4/DOS720.image.lz",
-            "shrinkwrap/DiskCopy 4/PD1440.image.lz", "shrinkwrap/DiskCopy 4/PD800.image.lz",
+            "Made by ShrinkWrap 3/DC6_RW_HFS_1440.image.lz", "Made by ShrinkWrap 3/DC6_RW_HFS_800.image.lz",
+            "Made by ShrinkWrap 3/DOS1440.image.lz", "Made by ShrinkWrap 3/DOS720.image.lz",
+            "Made by ShrinkWrap 3/PD1440.image.lz", "Made by ShrinkWrap 3/PD800.image.lz",
 
             // Made with DiskImages.framework
-            "macosx/DC42/DOS_1440.img.lz", "macosx/DC42/DOS_720.img.lz", "macosx/DC42/HFS_1440.img.lz",
-            "macosx/DC42/HFS_800.img.lz", "macosx/DC42/ProDOS_1440.img.lz", "macosx/DC42/ProDOS_800.img.lz",
-            "macosx/DC42/UFS_1440.img.lz", "macosx/DC42/UFS_720.img.lz", "macosx/DC42/UFS_800.img.lz"
+            "Made by Mac OS X/DOS_1440.img.lz", "Made by Mac OS X/DOS_720.img.lz", "Made by Mac OS X/HFS_1440.img.lz",
+            "Made by Mac OS X/HFS_800.img.lz", "Made by Mac OS X/ProDOS_1440.img.lz",
+            "Made by Mac OS X/ProDOS_800.img.lz", "Made by Mac OS X/UFS_1440.img.lz", "Made by Mac OS X/UFS_720.img.lz",
+            "Made by Mac OS X/UFS_800.img.lz"
         };
 
         readonly ulong[] sectors =
@@ -90,8 +92,10 @@ namespace Aaru.Tests.Images
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "images", "", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2",
+                                               testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.DiskCopy42();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

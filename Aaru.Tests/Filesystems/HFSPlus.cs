@@ -97,7 +97,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_apm", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (APM)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -177,7 +177,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_gpt", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (GPT)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();
@@ -262,7 +262,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "hfsplus_mbr", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (MBR)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

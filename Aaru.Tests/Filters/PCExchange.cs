@@ -43,7 +43,7 @@ namespace Aaru.Tests.Filters
         readonly string location;
 
         public PcExchange() =>
-            location = Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "DC6_RW_DOS_720.img");
+            location = Path.Combine(Consts.TestFilesRoot, "Filters", "PC Exchange", "DC6_RW_DOS_720.img");
 
         [Test]
         public void CheckContents()
@@ -63,7 +63,7 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            string result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "filters", "pcexchange", "FINDER.DAT"),
+            string result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "Filters", "PC Exchange", "FINDER.DAT"),
                                             out _);
 
             Assert.AreEqual(EXPECTED_FILE, result);

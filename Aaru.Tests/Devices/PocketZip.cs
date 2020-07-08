@@ -63,7 +63,7 @@ namespace Aaru.Tests.Devices
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "devices", "pocketzip", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "PocketZIP", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();

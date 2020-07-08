@@ -83,7 +83,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "jfs2", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

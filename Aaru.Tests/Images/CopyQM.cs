@@ -73,7 +73,7 @@ namespace Aaru.Tests.Images
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "images", "copyqm", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "CopyQM", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.CopyQm();

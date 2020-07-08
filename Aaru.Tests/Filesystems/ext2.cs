@@ -92,7 +92,7 @@ namespace Aaru.Tests.Filesystems
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ext2", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext2", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new Vdi();

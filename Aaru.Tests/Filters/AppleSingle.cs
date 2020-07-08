@@ -41,7 +41,7 @@ namespace Aaru.Tests.Filters
         const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
 
-        public AppleSingle() => location = Path.Combine(Consts.TestFilesRoot, "filters", "applesingle", "DOS_720.ASF");
+        public AppleSingle() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleSingle", "DOS_720.ASF");
 
         [Test]
         public void CheckContents()

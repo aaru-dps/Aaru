@@ -42,7 +42,7 @@ namespace Aaru.Tests.Filters
         const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
         readonly string location;
 
-        public MacBinary2() => location = Path.Combine(Consts.TestFilesRoot, "filters", "macbinary", "macbinary2.bin");
+        public MacBinary2() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "MacBinary", "macbinary2.bin");
 
         [Test]
         public void CheckContents()

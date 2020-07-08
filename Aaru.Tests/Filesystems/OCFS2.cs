@@ -75,7 +75,7 @@ namespace Aaru.Tests.Filesystems
         /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "ocfs2", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Oracle Cluster File System 2", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();

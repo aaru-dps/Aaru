@@ -75,7 +75,7 @@ namespace Aaru.Tests.Images
         {
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "images", "anex86", testfiles[i]);
+                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "Anex86", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.Anex86();

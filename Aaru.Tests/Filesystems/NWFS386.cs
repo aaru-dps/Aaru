@@ -75,7 +75,7 @@ namespace Aaru.Tests.Filesystems
         /*
             for(int i = 0; i < testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "filesystems", "nwfs386", testfiles[i]);
+                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "NetWare File System (32-bit)", testfiles[i]);
                 Filter filter = new LZip();
                 filter.Open(location);
                 ImagePlugin image = new VDI();
