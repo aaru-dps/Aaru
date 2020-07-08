@@ -1,224 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B2ABC1F2-C365-4515-9F23-A5725050CC48}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Aaru.Tests</RootNamespace>
-    <AssemblyName>Aaru.Tests</AssemblyName>
-    <ReleaseVersion>$(Version)</ReleaseVersion>
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>4.5.99.1693</Version>
-    <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
-    <Product>Aaru Data Preservation Suite</Product>
-    <Title>Aaru.Tests</Title>
-    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
-  <PropertyGroup>
-    <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
-    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-    <NrtShowRevision>true</NrtShowRevision>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Consts.cs" />
-    <Compile Include="Checksums\CRC16.cs" />
-    <Compile Include="Checksums\SHA384.cs" />
-    <Compile Include="Checksums\SHA256.cs" />
-    <Compile Include="Checksums\CRC32.cs" />
-    <Compile Include="Checksums\CRC64.cs" />
-    <Compile Include="Checksums\MD5.cs" />
-    <Compile Include="Checksums\SHA1.cs" />
-    <Compile Include="Checksums\SpamSum.cs" />
-    <Compile Include="Checksums\SHA512.cs" />
-    <Compile Include="Checksums\Adler32.cs" />
-    <Compile Include="Filesystems\FATX.cs" />
-    <Compile Include="Filesystems\HPOFS.cs" />
-    <Compile Include="Filesystems\Xia.cs" />
-    <Compile Include="Filters\GZip.cs" />
-    <Compile Include="Filters\XZ.cs" />
-    <Compile Include="Filters\LZip.cs" />
-    <Compile Include="Filters\BZip2.cs" />
-    <Compile Include="Filters\PCExchange.cs" />
-    <Compile Include="Filters\AppleDoubleOsX.cs" />
-    <Compile Include="Filters\AppleDoubleUnix.cs" />
-    <Compile Include="Filters\AppleDoubleProDos.cs" />
-    <Compile Include="Filters\AppleDoubleDave.cs" />
-    <Compile Include="Filters\AppleDoubleNetatalk.cs" />
-    <Compile Include="Filters\AppleDoubleDos.cs" />
-    <Compile Include="Filters\AppleDoubleUnAr.cs" />
-    <Compile Include="Filters\AppleSingle.cs" />
-    <Compile Include="Filters\MacBinary1.cs" />
-    <Compile Include="Filters\MacBinary3.cs" />
-    <Compile Include="Filters\MacBinary2.cs" />
-    <Compile Include="Filesystems\ADFS.cs" />
-    <Compile Include="Filesystems\FAT12.cs" />
-    <Compile Include="Filesystems\HPFS.cs" />
-    <Compile Include="Filesystems\BeFS.cs" />
-    <Compile Include="Filesystems\FAT32.cs" />
-    <Compile Include="Filesystems\PFS3.cs" />
-    <Compile Include="Filesystems\HFSPlus.cs" />
-    <Compile Include="Filesystems\HFSX.cs" />
-    <Compile Include="Filesystems\LisaFS.cs" />
-    <Compile Include="Filesystems\Locus.cs" />
-    <Compile Include="Filesystems\ReFS.cs" />
-    <Compile Include="Filesystems\UDF.cs" />
-    <Compile Include="Filesystems\btrfs.cs" />
-    <Compile Include="Filesystems\exFAT.cs" />
-    <Compile Include="Filesystems\ext2.cs" />
-    <Compile Include="Filesystems\F2FS.cs" />
-    <Compile Include="Filesystems\JFS2.cs" />
-    <Compile Include="Filesystems\NILFS2.cs" />
-    <Compile Include="Filesystems\Reiser3.cs" />
-    <Compile Include="Filesystems\Reiser4.cs" />
-    <Compile Include="Filesystems\UNIXBFS.cs" />
-    <Compile Include="Filesystems\AFFS.cs" />
-    <Compile Include="Filesystems\AFFS2.cs" />
-    <Compile Include="Filesystems\AOFS.cs" />
-    <Compile Include="Filesystems\HAMMER.cs" />
-    <Compile Include="Filesystems\HFS.cs" />
-    <Compile Include="Filesystems\LFS.cs" />
-    <Compile Include="Filesystems\MFS.cs" />
-    <Compile Include="Filesystems\NTFS.cs" />
-    <Compile Include="Filesystems\NWFS386.cs" />
-    <Compile Include="Filesystems\OCFS2.cs" />
-    <Compile Include="Filesystems\ProDOS.cs" />
-    <Compile Include="Filesystems\SysV.cs" />
-    <Compile Include="Filesystems\SFS.cs" />
-    <Compile Include="Filesystems\UFS.cs" />
-    <Compile Include="Filesystems\ZFS.cs" />
-    <Compile Include="Devices\IomegaJaz.cs" />
-    <Compile Include="Devices\LS120.cs" />
-    <Compile Include="Devices\PocketZip.cs" />
-    <Compile Include="Filesystems\Atheos.cs" />
-    <Compile Include="Filesystems\FAT16.cs" />
-    <Compile Include="Filesystems\MINIX.cs" />
-    <Compile Include="Filesystems\QNX4.cs" />
-    <Compile Include="Filesystems\XFS.cs" />
-    <Compile Include="Partitions\AppleMap.cs" />
-    <Compile Include="Partitions\Atari.cs" />
-    <Compile Include="Partitions\BSD.cs" />
-    <Compile Include="Partitions\GPT.cs" />
-    <Compile Include="Partitions\Acorn.cs" />
-    <Compile Include="Partitions\MBR.cs" />
-    <Compile Include="Partitions\MINIX.cs" />
-    <Compile Include="Partitions\PC98.cs" />
-    <Compile Include="Partitions\RDB.cs" />
-    <Compile Include="Partitions\SGI.cs" />
-    <Compile Include="Partitions\Sun.cs" />
-    <Compile Include="Partitions\VTOC.cs" />
-    <Compile Include="Filesystems\XENIX.cs" />
-    <Compile Include="Filesystems\COHERENT.cs" />
-    <Compile Include="Filesystems\HTFS.cs" />
-    <Compile Include="Filesystems\DTFS.cs" />
-    <Compile Include="Filesystems\AFS.cs" />
-    <Compile Include="Filesystems\EAFS.cs" />
-    <Compile Include="Filesystems\ISO9660.cs" />
-    <Compile Include="Images\2MG.cs" />
-    <Compile Include="Images\Anex86.cs" />
-    <Compile Include="Images\CisCopy.cs" />
-    <Compile Include="Images\CopyQM.cs" />
-    <Compile Include="Images\D88.cs" />
-    <Compile Include="Images\DART.cs" />
-    <Compile Include="Images\DiskCopy42.cs" />
-    <Compile Include="Partitions\Xbox.cs" />
-    <Compile Include="Program.cs" />
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
+    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj" />
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj" />
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj">
-      <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
-      <Name>Aaru.Checksums</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj">
-      <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
-      <Name>Aaru.Filters</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj">
-      <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
-      <Name>Aaru.DiscImages</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj">
-      <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
-      <Name>Aaru.Filesystems</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
-      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
-      <Name>Aaru.CommonTypes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj">
-      <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
-      <Name>Aaru.Partitions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj">
-      <Project>{679659B8-25D0-4279-B632-56EF8F94ADC0}</Project>
-      <Name>Aaru.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NUnitLite" Version="3.12.0" />
-    <PackageReference Include="SharpCompress" Version="0.24.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
-          <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-    <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
-        <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
-        <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->
-        <!-- Look in the standard install locations -->
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')">/usr/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>
-        <!-- If we found Mono reference assemblies, then use them -->
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net40'">$(BaseFrameworkPathOverrideForMono)/4.0-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net45'">$(BaseFrameworkPathOverrideForMono)/4.5-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net451'">$(BaseFrameworkPathOverrideForMono)/4.5.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net452'">$(BaseFrameworkPathOverrideForMono)/4.5.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net46'">$(BaseFrameworkPathOverrideForMono)/4.6-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net461'">$(BaseFrameworkPathOverrideForMono)/4.6.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net462'">$(BaseFrameworkPathOverrideForMono)/4.6.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net47'">$(BaseFrameworkPathOverrideForMono)/4.7-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net471'">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>
-        <EnableFrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">true</EnableFrameworkPathOverride>
-        <!-- Add the Facades directory.  Not sure how else to do this. Necessary at least for .NET 4.5 -->
-        <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
-    </PropertyGroup>
+
 </Project>

@@ -9,7 +9,7 @@
     <AssemblyName>Aaru.Tests.Devices</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
@@ -17,6 +17,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Tests.Devices</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
