@@ -443,7 +443,7 @@ namespace Aaru.Filesystems
             }
             else if(bootChk == bootSector[0x1FF])
             {
-                BootBlock bBlock = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
+                BootBlock bBlock = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(bootSector);
                 drSb = bBlock.discRecord;
             }
             else
