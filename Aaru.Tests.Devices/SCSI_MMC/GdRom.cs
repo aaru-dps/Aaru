@@ -14,6 +14,10 @@ namespace Aaru.Tests.Devices
             string strDev;
             int    item;
             bool   tocIsNotBcd = false;
+            bool   sense;
+            byte[] buffer;
+            byte[] senseBuffer;
+            int    retries;
 
             start:
             System.Console.Clear();
@@ -27,16 +31,30 @@ namespace Aaru.Tests.Devices
             AaruConsole.WriteLine("Press any key to continue...");
             System.Console.ReadLine();
 
-            AaruConsole.WriteLine("Waiting 15 seconds...");
-            Thread.Sleep(15000);
-
             AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-            dev.ScsiTestUnitReady(out _, dev.Timeout, out _);
-            bool sense = dev.ReadRawToc(out byte[] buffer, out byte[] senseBuffer, 1, dev.Timeout, out _);
+            retries = 0;
 
-            if(sense)
-                sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
+            do
+            {
+                retries++;
+                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                if(!sense)
+                    break;
+
+                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+
+                if(decodedSense.Value.ASC != 0x04)
+                    break;
+
+                if(decodedSense.Value.ASCQ != 0x01)
+                    break;
+
+                Thread.Sleep(2000);
+            } while(retries < 25);
+
+            sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
 
             if(sense)
             {
@@ -123,11 +141,24 @@ namespace Aaru.Tests.Devices
 
             AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
-            sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
+            retries = 0;
 
-            // Just try again to clear any "disc changed" events
-            if(sense)
+            do
+            {
+                retries++;
                 sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
+
+                if(!sense)
+                    break;
+
+                FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
+
+                if(decodedSense.Value.ASC != 0x04)
+                    break;
+
+                if(decodedSense.Value.ASCQ != 0x01)
+                    break;
+            } while(retries < 25);
 
             if(sense)
             {
