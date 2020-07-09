@@ -168,7 +168,7 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (GPT)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

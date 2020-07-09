@@ -148,7 +148,7 @@ namespace Aaru.Tests.Filesystems
             // 55, 56, 57, 58,
 
             // XorrISO
-            59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
+            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
         };
 
         readonly uint[] sectorsize =
@@ -202,7 +202,7 @@ namespace Aaru.Tests.Filesystems
             // 55, 56, 57, 58,
 
             // XorrISO
-            59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
+            3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
         };
 
         readonly int[] clustersize =
@@ -261,8 +261,7 @@ namespace Aaru.Tests.Filesystems
             // "Root", "Root", "Root", "Root",
 
             // XorrISO
-            "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS",
-            "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS"
+            "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
         };
 
         readonly string[] volumeserial =
@@ -326,14 +325,7 @@ namespace Aaru.Tests.Filesystems
             // "", "", "", "",
 
             // XorrISO
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
-            "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002"
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
         };
 
         readonly string[] appid =
@@ -421,18 +413,7 @@ namespace Aaru.Tests.Filesystems
             // "", "", "", "",
 
             // XorrISO
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
-            "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY"
+            "", "", "", "", "", "", "", "", "", "", "", ""
         };
 
         [Test]

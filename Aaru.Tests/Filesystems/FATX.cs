@@ -169,19 +169,19 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.Directory, stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue, stat.BackupTimeUtc);
+            Assert.AreEqual(null, stat.BackupTimeUtc);
             Assert.AreEqual(1, stat.Blocks);
             Assert.AreEqual(16384, stat.BlockSize);
             Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0, stat.DeviceNo);
-            Assert.AreEqual(0, stat.GID);
+            Assert.AreEqual(null, stat.DeviceNo);
+            Assert.AreEqual(null, stat.GID);
             Assert.AreEqual(2, stat.Inode);
             Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.LastWriteTimeUtc);
             Assert.AreEqual(16384, stat.Length);
             Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(365, stat.Mode);
-            Assert.AreEqual(DateTime.MinValue, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0, stat.UID);
+            Assert.AreEqual(null, stat.Mode);
+            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
+            Assert.AreEqual(null, stat.UID);
 
             error = fs.Stat("49470015/TitleImage", out stat);
             Assert.AreEqual(Errno.NoSuchFile, error);
@@ -190,19 +190,19 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.None, stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue, stat.BackupTimeUtc);
+            Assert.AreEqual(null, stat.BackupTimeUtc);
             Assert.AreEqual(1, stat.Blocks);
             Assert.AreEqual(16384, stat.BlockSize);
             Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0, stat.DeviceNo);
-            Assert.AreEqual(0, stat.GID);
+            Assert.AreEqual(null, stat.DeviceNo);
+            Assert.AreEqual(null, stat.GID);
             Assert.AreEqual(3, stat.Inode);
             Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.LastWriteTimeUtc);
             Assert.AreEqual(10240, stat.Length);
             Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(292, stat.Mode);
-            Assert.AreEqual(DateTime.MinValue, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0, stat.UID);
+            Assert.AreEqual(null, stat.Mode);
+            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
+            Assert.AreEqual(null, stat.UID);
         }
 
         [Test]
@@ -370,19 +370,19 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.Directory, stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue, stat.BackupTimeUtc);
+            Assert.AreEqual(null, stat.BackupTimeUtc);
             Assert.AreEqual(1, stat.Blocks);
             Assert.AreEqual(16384, stat.BlockSize);
             Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0, stat.DeviceNo);
-            Assert.AreEqual(0, stat.GID);
+            Assert.AreEqual(null, stat.DeviceNo);
+            Assert.AreEqual(null, stat.GID);
             Assert.AreEqual(12, stat.Inode);
             Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.LastWriteTimeUtc);
             Assert.AreEqual(16384, stat.Length);
             Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(365, stat.Mode);
-            Assert.AreEqual(DateTime.MinValue, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0, stat.UID);
+            Assert.AreEqual(null, stat.Mode);
+            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
+            Assert.AreEqual(null, stat.UID);
 
             error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache", out stat);
             Assert.AreEqual(Errno.NoSuchFile, error);
@@ -391,19 +391,19 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.None, stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue, stat.BackupTimeUtc);
+            Assert.AreEqual(null, stat.BackupTimeUtc);
             Assert.AreEqual(6, stat.Blocks);
             Assert.AreEqual(16384, stat.BlockSize);
             Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0, stat.DeviceNo);
-            Assert.AreEqual(0, stat.GID);
+            Assert.AreEqual(null, stat.DeviceNo);
+            Assert.AreEqual(null, stat.GID);
             Assert.AreEqual(18, stat.Inode);
             Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.LastWriteTimeUtc);
             Assert.AreEqual(86016, stat.Length);
             Assert.AreEqual(1, stat.Links);
-            Assert.AreEqual(292, stat.Mode);
-            Assert.AreEqual(DateTime.MinValue, stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0, stat.UID);
+            Assert.AreEqual(null, stat.Mode);
+            Assert.AreEqual(null, stat.StatusChangeTimeUtc);
+            Assert.AreEqual(null, stat.UID);
         }
 
         [Test]

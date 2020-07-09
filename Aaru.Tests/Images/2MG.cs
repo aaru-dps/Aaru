@@ -46,7 +46,7 @@ namespace Aaru.Tests.Images
 
         readonly ulong[] sectors =
         {
-            560, 415, 560, 560, 560, 2880
+            560, 455, 560, 560, 560, 2880
         };
 
         readonly uint[] sectorsize =
@@ -62,8 +62,8 @@ namespace Aaru.Tests.Images
 
         readonly string[] md5S =
         {
-            "7db5d585270ab858043d50e60068d45f", "c62ee4dac8835f9acc999e7531d3b5f8", "86bc7879bb477917aab3976057a6a7b2",
-            "32b8f8163238d4f3ea2a3db95ad1a812", "a5acba4cbaddd9c53ea0e8210f4aba55", "eb9b60c78b30d2b6541ed0781944b6da"
+            "7db5d585270ab858043d50e60068d45f", "906c1bdbf76bf089ea47aae98151df5d", "91d020725d081500caa1fd8aad959397",
+            "91d020725d081500caa1fd8aad959397", "91d020725d081500caa1fd8aad959397", "eb9b60c78b30d2b6541ed0781944b6da"
         };
 
         [Test]
