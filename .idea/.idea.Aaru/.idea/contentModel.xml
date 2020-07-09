@@ -634,6 +634,7 @@
             <e p="HP.cs" t="Include" />
             <e p="Kreon.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
+            <e p="MediaTek.cs" t="Include" />
             <e p="MiniDisc.cs" t="Include" />
             <e p="NEC.cs" t="Include" />
             <e p="Optical.cs" t="Include" />

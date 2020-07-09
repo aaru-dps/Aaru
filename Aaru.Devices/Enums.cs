@@ -1833,7 +1833,11 @@ namespace Aaru.Devices
         /// <summary>Gets current audio playing position</summary>
         MiniDiscReadPosition = 0xD7,
         /// <summary>Gets some values that are identical amongst audio discs and data discs, different between them</summary>
-        MiniDiscGetType = 0xD8
+        MiniDiscGetType = 0xD8,
+        #endregion
+
+        #region MediaTek vendor commands
+        MediaTekReadCache = 0xF1
         #endregion
     }
     #endregion SCSI Commands
