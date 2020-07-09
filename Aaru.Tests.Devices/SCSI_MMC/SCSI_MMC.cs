@@ -44,6 +44,8 @@ namespace Aaru.Tests.Devices
                 AaruConsole.
                     WriteLine("1.- Try to read the cache data from a device with a MediaTek chipset (F1h command 06h subcommand).");
 
+                AaruConsole.WriteLine("2.- Try to read a GD-ROM using a trap disc.");
+
                 AaruConsole.WriteLine("0.- Return to command class menu.");
                 AaruConsole.Write("Choose: ");
 
@@ -65,6 +67,10 @@ namespace Aaru.Tests.Devices
                         return;
                     case 1:
                         MediaTekReadCache(devPath, dev);
+
+                        continue;
+                    case 2:
+                        CheckGdromReadability(devPath, dev);
 
                         continue;
                     default:

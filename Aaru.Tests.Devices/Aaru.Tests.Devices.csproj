@@ -53,6 +53,7 @@
     <Compile Include="SCSI.cs" />
     <Compile Include="ATA.cs" />
     <Compile Include="NVMe.cs" />
+    <Compile Include="SCSI_MMC\GdRom.cs" />
     <Compile Include="SCSI_MMC\MediaTek.cs" />
     <Compile Include="SCSI_MMC\SCSI_MMC.cs" />
     <Compile Include="SecureDigital.cs" />
