@@ -2196,6 +2196,7 @@
         <e p="SCSI.cs" t="Include" />
         <e p="SCSI_MMC" t="Include">
           <e p="GdRom.cs" t="Include" />
+          <e p="LeadOutTrap.cs" t="Include" />
           <e p="MediaTek.cs" t="Include" />
           <e p="SCSI_MMC.cs" t="Include" />
         </e>
