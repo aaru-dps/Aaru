@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "microsoft256mb.img.lz"
+            "microsoft256mb.aif"
         };
 
         readonly Partition[][] wanted =
@@ -67,9 +67,9 @@ namespace Aaru.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Xbox", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

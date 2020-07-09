@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "netware_3.12.vdi.lz"
+            "netware_3.12.aif"
         };
 
         readonly ulong[] sectors =
@@ -76,9 +76,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "NetWare File System (32-bit)", testfiles[i]);
-                Filter filter = new LZip();
+                Filter filter = new ZZZNoFilter();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new AaruFormat();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);

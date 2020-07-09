@@ -123,7 +123,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz"
+            "beos_r3.1.aif", "beos_r4.5.aif"
         };
 
         readonly ulong[] sectors =
@@ -169,9 +169,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (APM)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -205,7 +205,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "haiku_hrev51259.vdi.lz"
+            "haiku_hrev51259.aif"
         };
 
         readonly ulong[] sectors =
@@ -246,9 +246,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (GPT)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -281,7 +281,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz", "syllable_0.6.7.vdi.lz"
+            "beos_r3.1.aif", "beos_r4.5.aif", "haiku_hrev51259.aif", "syllable_0.6.7.aif"
         };
 
         readonly ulong[] sectors =
@@ -322,9 +322,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (MBR)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

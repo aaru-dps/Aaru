@@ -41,12 +41,11 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "1.02/linux.vdi.lz", "1.02/macosx_10.11.vdi.lz", "1.50/linux.vdi.lz", "1.50/macosx_10.11.vdi.lz",
-            "2.00/linux.vdi.lz", "2.00/macosx_10.11.vdi.lz", "2.01/linux.vdi.lz", "2.01/macosx_10.11.vdi.lz",
-            "2.50/linux.vdi.lz", "2.50/macosx_10.11.vdi.lz", "2.60/macosx_10.11.vdi.lz", "1.50/solaris_7.vdi.lz",
-            "1.50/solaris_9.vdi.lz", "2.01/netbsd_7.1.vdi.lz", "1.02/linux_4.19_udf_1.02_flashdrive.vdi.lz",
-            "1.50/linux_4.19_udf_1.50_flashdrive.vdi.lz", "2.00/linux_4.19_udf_2.00_flashdrive.vdi.lz",
-            "2.01/linux_4.19_udf_2.01_flashdrive.vdi.lz"
+            "1.02/linux.aif", "1.02/macosx_10.11.aif", "1.50/linux.aif", "1.50/macosx_10.11.aif", "2.00/linux.aif",
+            "2.00/macosx_10.11.aif", "2.01/linux.aif", "2.01/macosx_10.11.aif", "2.50/linux.aif",
+            "2.50/macosx_10.11.aif", "2.60/macosx_10.11.aif", "1.50/solaris_7.aif", "1.50/solaris_9.aif",
+            "2.01/netbsd_7.1.aif", "1.02/linux_4.19_udf_1.02_flashdrive.aif", "1.50/linux_4.19_udf_1.50_flashdrive.aif",
+            "2.00/linux_4.19_udf_2.00_flashdrive.aif", "2.01/linux_4.19_udf_2.01_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -113,9 +112,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -144,7 +143,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "1.50/ecs20.iso.lz", "2.00/ecs20.iso.lz", "2.01/ecs20.iso.lz", "2.01/ecs20_cdrw.iso.lz"
+            "1.50/ecs20.aif", "2.00/ecs20.aif", "2.01/ecs20.aif", "2.01/ecs20_cdrw.aif"
         };
 
         readonly ulong[] sectors =
@@ -195,9 +194,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

@@ -125,7 +125,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "scoopenserver_5.0.7hw.vdi.lz"
+            "scoopenserver_5.0.7hw.aif"
         };
 
         readonly ulong[] sectors =
@@ -169,9 +169,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "EAFS (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

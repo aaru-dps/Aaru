@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "parted.vdi.lz", "netbsd_1.6.vdi.lz", "netbsd_6.1.5.vdi.lz", "netbsd_7.1.vdi.lz"
+            "parted.aif", "netbsd_1.6.aif", "netbsd_6.1.5.aif", "netbsd_7.1.aif"
         };
 
         readonly Partition[][] wanted =
@@ -228,9 +228,9 @@ namespace Aaru.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "BSD slices",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

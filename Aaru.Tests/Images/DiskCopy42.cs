@@ -95,7 +95,7 @@ namespace Aaru.Tests.Images
                 string location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.DiskCopy42();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

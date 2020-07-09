@@ -43,7 +43,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "linux_4.19_btrfs_flashdrive.vdi.lz"
+            "linux.aif", "linux_4.19_btrfs_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -82,9 +82,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "btrfs", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

@@ -42,7 +42,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "uae.vdi.lz"
+            "uae.aif"
         };
 
         readonly ulong[] sectors =
@@ -88,9 +88,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Professional File System 3",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

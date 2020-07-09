@@ -42,8 +42,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz",
-            "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif", "darwin_8.0.1_journal.aif", "darwin_8.0.1.aif",
+            "macosx_10.4_journal.aif", "macosx_10.4.aif"
         };
 
         readonly ulong[] sectors =
@@ -88,9 +88,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (APM)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -124,7 +124,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif"
         };
 
         readonly ulong[] sectors =
@@ -170,7 +170,7 @@ namespace Aaru.Tests.Filesystems
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (GPT)", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -204,8 +204,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
-            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "linux_4.19_hfsx_flashdrive.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif", "linux.aif", "linux_journal.aif",
+            "darwin_8.0.1_journal.aif", "darwin_8.0.1.aif", "linux_4.19_hfsx_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -250,9 +250,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFSX (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

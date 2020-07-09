@@ -75,7 +75,7 @@ namespace Aaru.Tests.Images
                 string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "DART", testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
-                IMediaImage image = new DiscImages.D88();
+                IMediaImage image = new DiscImages.Dart();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

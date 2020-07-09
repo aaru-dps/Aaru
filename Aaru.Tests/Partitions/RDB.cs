@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "amigaos_3.9.vdi.lz", "amigaos_4.0.vdi.lz", "parted.vdi.lz"
+            "amigaos_3.9.aif", "amigaos_4.0.aif", "parted.aif"
         };
 
         readonly Partition[][] wanted =
@@ -145,9 +145,9 @@ namespace Aaru.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Rigid Disk Block",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

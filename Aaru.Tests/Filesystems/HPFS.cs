@@ -42,9 +42,9 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "ecs.vdi.lz", "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz", "os2_1.20.vdi.lz", "os2_1.30.vdi.lz",
-            "os2_6.307.vdi.lz", "os2_6.514.vdi.lz", "os2_6.617.vdi.lz", "os2_8.162.vdi.lz", "os2_9.023.vdi.lz",
-            "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz", "ecs20_fstester.vdi.lz"
+            "ecs.aif", "msos2_1.21.aif", "msos2_1.30.1.aif", "os2_1.20.aif", "os2_1.30.aif", "os2_6.307.aif",
+            "os2_6.514.aif", "os2_6.617.aif", "os2_8.162.aif", "os2_9.023.aif", "winnt_3.10.aif", "winnt_3.50.aif",
+            "ecs20_fstester.aif"
         };
 
         readonly ulong[] sectors =
@@ -93,9 +93,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance File System",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

@@ -42,8 +42,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "linux_caseinsensitive.vdi.lz", "ecs20_fstester.vdi.lz", "linux_4.19_jfs_flashdrive.vdi.lz",
-            "linux_4.19_jfs_os2_flashdrive.vdi.lz"
+            "linux.aif", "linux_caseinsensitive.aif", "ecs20_fstester.aif", "linux_4.19_jfs_flashdrive.aif",
+            "linux_4.19_jfs_os2_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -84,9 +84,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

@@ -97,7 +97,7 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -128,7 +128,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"
+            "att_unix_svr4v2.1.aif", "att_unix_svr4v2.1_2k.aif", "scoopenserver_5.0.7hw.aif"
         };
 
         readonly ulong[] sectors =
@@ -174,9 +174,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -210,7 +210,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "amix.vdi.lz"
+            "amix.aif"
         };
 
         readonly ulong[] sectors =
@@ -256,9 +256,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (RDB)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

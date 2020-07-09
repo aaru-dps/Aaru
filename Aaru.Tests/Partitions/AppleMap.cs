@@ -41,12 +41,11 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "d2_driver.vdi.lz", "hdt_1.8_encrypted1.vdi.lz", "hdt_1.8_encrypted2.vdi.lz", "hdt_1.8_password.vdi.lz",
-            "hdt_1.8.vdi.lz", "linux.vdi.lz", "macos_1.1.vdi.lz", "macos_2.0.vdi.lz", "macos_4.2.vdi.lz",
-            "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
-            "macos_6.0.7.vdi.lz", "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz",
-            "macos_7.5.vdi.lz", "parted.vdi.lz", "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz",
-            "vcpformatter_2.1.1.vdi.lz"
+            "d2_driver.aif", "hdt_1.8_encrypted1.aif", "hdt_1.8_encrypted2.aif", "hdt_1.8_password.aif", "hdt_1.8.aif",
+            "linux.aif", "macos_1.1.aif", "macos_2.0.aif", "macos_4.2.aif", "macos_4.3.aif", "macos_6.0.2.aif",
+            "macos_6.0.3.aif", "macos_6.0.4.aif", "macos_6.0.5.aif", "macos_6.0.7.aif", "macos_6.0.8.aif",
+            "macos_6.0.aif", "macos_7.0.aif", "macos_7.1.1.aif", "macos_7.5.aif", "parted.aif",
+            "silverlining_2.2.1.aif", "speedtools_3.6.aif", "vcpformatter_2.1.1.aif"
         };
 
         readonly Partition[][] wanted =
@@ -1022,9 +1021,9 @@ namespace Aaru.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Apple Partition Map",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

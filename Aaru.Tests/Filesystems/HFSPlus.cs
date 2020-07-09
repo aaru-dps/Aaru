@@ -43,11 +43,11 @@ namespace Aaru.Tests.Filesystems
         // Missing Darwin 1.4.1
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.3.1_wrapped.vdi.lz",
-            "darwin_1.4.1_wrapped.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_6.0.2_wrapped.vdi.lz",
-            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "darwin_8.0.1_wrapped.vdi.lz", "macos_8.1.vdi.lz",
-            "macos_9.0.4.vdi.lz", "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz", "macosx_10.2.vdi.lz",
-            "macosx_10.3_journal.vdi.lz", "macosx_10.3.vdi.lz", "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif", "darwin_1.3.1.aif", "darwin_1.3.1_wrapped.aif",
+            "darwin_1.4.1_wrapped.aif", "darwin_6.0.2.aif", "darwin_6.0.2_wrapped.aif", "darwin_8.0.1_journal.aif",
+            "darwin_8.0.1.aif", "darwin_8.0.1_wrapped.aif", "macos_8.1.aif", "macos_9.0.4.aif", "macos_9.1.aif",
+            "macos_9.2.1.aif", "macos_9.2.2.aif", "macosx_10.2.aif", "macosx_10.3_journal.aif", "macosx_10.3.aif",
+            "macosx_10.4_journal.aif", "macosx_10.4.aif"
         };
 
         readonly ulong[] sectors =
@@ -98,9 +98,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (APM)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -134,7 +134,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif"
         };
 
         readonly ulong[] sectors =
@@ -178,9 +178,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (GPT)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -215,10 +215,9 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
-            "darwin_1.3.1.vdi.lz", "darwin_1.3.1_wrapped.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_1.4.1_wrapped.vdi.lz",
-            "darwin_6.0.2.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "darwin_8.0.1_wrapped.vdi.lz",
-            "linux_4.19_hfs+_flashdrive.vdi.lz"
+            "macosx_10.11.aif", "macosx_10.11_journal.aif", "linux.aif", "linux_journal.aif", "darwin_1.3.1.aif",
+            "darwin_1.3.1_wrapped.aif", "darwin_1.4.1.aif", "darwin_1.4.1_wrapped.aif", "darwin_6.0.2.aif",
+            "darwin_8.0.1_journal.aif", "darwin_8.0.1.aif", "darwin_8.0.1_wrapped.aif", "linux_4.19_hfs+_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -263,9 +262,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

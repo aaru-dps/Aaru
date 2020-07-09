@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "att_unix_vtoc.vdi.lz"
+            "att_unix_vtoc.aif"
         };
 
         readonly Partition[][] wanted =
@@ -138,9 +138,9 @@ namespace Aaru.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "UNIX VTOC", testfiles[i]);
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

@@ -121,14 +121,13 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "amigaos_3.9.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz",
-            "darwin_8.0.1.vdi.lz", "macos_1.1.vdi.lz", "macos_2.0.vdi.lz", "macos_6.0.7.vdi.lz", "macos_7.5.3.vdi.lz",
-            "macos_7.5.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz",
-            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz", "macosx_10.2.vdi.lz", "macosx_10.3.vdi.lz",
-            "macosx_10.4.vdi.lz", "rhapsody_dr1.vdi.lz", "d2_driver.vdi.lz", "hdt_1.8.vdi.lz", "macos_4.2.vdi.lz",
-            "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
-            "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz", "parted.vdi.lz",
-            "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz", "vcpformatter_2.1.1.vdi.lz"
+            "amigaos_3.9.aif", "darwin_1.3.1.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif",
+            "macos_1.1.aif", "macos_2.0.aif", "macos_6.0.7.aif", "macos_7.5.3.aif", "macos_7.5.aif", "macos_7.6.aif",
+            "macos_8.0.aif", "macos_8.1.aif", "macos_9.0.4.aif", "macos_9.1.aif", "macos_9.2.1.aif", "macos_9.2.2.aif",
+            "macosx_10.2.aif", "macosx_10.3.aif", "macosx_10.4.aif", "rhapsody_dr1.aif", "d2_driver.aif", "hdt_1.8.aif",
+            "macos_4.2.aif", "macos_4.3.aif", "macos_6.0.2.aif", "macos_6.0.3.aif", "macos_6.0.4.aif",
+            "macos_6.0.5.aif", "macos_6.0.8.aif", "macos_6.0.aif", "macos_7.0.aif", "macos_7.1.1.aif", "parted.aif",
+            "silverlining_2.2.1.aif", "speedtools_3.6.aif", "vcpformatter_2.1.1.aif"
         };
 
         readonly ulong[] sectors =
@@ -180,9 +179,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (APM)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -215,9 +214,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "toast_3.5.7_hfs_from_volume.iso.lz", "toast_3.5.7_iso9660_hfs.iso.lz",
-            "toast_4.1.3_hfs_from_volume.iso.lz", "toast_4.1.3_iso9660_hfs.iso.lz", "toast_3.5.7_hfs_from_files.iso.lz",
-            "toast_4.1.3_hfs_from_files.iso.lz"
+            "toast_3.5.7_hfs_from_volume.aif", "toast_3.5.7_iso9660_hfs.aif", "toast_4.1.3_hfs_from_volume.aif",
+            "toast_4.1.3_iso9660_hfs.aif", "toast_3.5.7_hfs_from_files.aif", "toast_4.1.3_hfs_from_files.aif"
         };
 
         readonly ulong[] sectors =
@@ -256,9 +254,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (CD-ROM)", testfiles[i]);
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -291,8 +289,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_8.0.1.vdi.lz",
-            "linux_4.19_hfs_flashdrive.vdi.lz"
+            "linux.aif", "darwin_1.3.1.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif",
+            "linux_4.19_hfs_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -331,9 +329,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -366,7 +364,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "amigaos_3.9.vdi.lz"
+            "amigaos_3.9.aif"
         };
 
         readonly ulong[] sectors =
@@ -405,9 +403,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (RDB)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

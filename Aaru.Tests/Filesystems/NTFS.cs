@@ -42,7 +42,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "haiku_hrev51259.vdi.lz"
+            "haiku_hrev51259.aif"
         };
 
         readonly ulong[] sectors =
@@ -88,9 +88,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (GPT)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -124,9 +124,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "win10.vdi.lz", "win2000.vdi.lz", "winnt_3.10.vdi.lz", "winnt_3.50.vdi.lz", "winnt_3.51.vdi.lz",
-            "winnt_4.00.vdi.lz", "winvista.vdi.lz", "linux.vdi.lz", "haiku_hrev51259.vdi.lz",
-            "linux_4.19_ntfs3g_flashdrive.vdi.lz"
+            "win10.aif", "win2000.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif", "winnt_4.00.aif",
+            "winvista.aif", "linux.aif", "haiku_hrev51259.aif", "linux_4.19_ntfs3g_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -173,9 +172,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (MBR)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

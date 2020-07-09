@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "minix_3.1.2a.vdi.lz"
+            "minix_3.1.2a.aif"
         };
 
         readonly Partition[][] wanted =
@@ -78,9 +78,9 @@ namespace Aaru.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "MINIX", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

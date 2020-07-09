@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "parted.vdi.lz"
+            "linux.aif", "parted.aif"
         };
 
         readonly Partition[][] wanted =
@@ -111,9 +111,9 @@ namespace Aaru.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "GUID Partition Table",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

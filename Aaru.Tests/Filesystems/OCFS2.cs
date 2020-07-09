@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz"
+            "linux.aif"
         };
 
         readonly ulong[] sectors =
@@ -76,9 +76,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Oracle Cluster File System 2", testfiles[i]);
-                Filter filter = new LZip();
+                Filter filter = new ZZZNoFilter();
                 filter.Open(location);
-                ImagePlugin image = new VDI();
+                ImagePlugin image = new AaruFormat();
                 Assert.AreEqual(true, image.OpenImage(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.ImageInfo.sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.ImageInfo.sectorSize, testfiles[i]);

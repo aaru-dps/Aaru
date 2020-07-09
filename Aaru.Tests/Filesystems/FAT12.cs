@@ -2627,7 +2627,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz"
+            "macosx_10.11.aif"
         };
 
         readonly ulong[] sectors =
@@ -2671,9 +2671,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (APM)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -2707,7 +2707,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz"
+            "macosx_10.11.aif"
         };
 
         readonly ulong[] sectors =
@@ -2751,9 +2751,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (GPT)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -2787,19 +2787,17 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "compaqmsdos331.vdi.lz", "drdos_3.40.vdi.lz", "drdos_3.41.vdi.lz", "drdos_5.00.vdi.lz", "drdos_6.00.vdi.lz",
-            "drdos_7.02.vdi.lz", "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz", "msdos331.vdi.lz", "msdos401.vdi.lz",
-            "msdos500.vdi.lz", "msdos600.vdi.lz", "msdos620rc1.vdi.lz", "msdos620.vdi.lz", "msdos621.vdi.lz",
-            "msdos622.vdi.lz", "msdos710.vdi.lz", "novelldos_7.00.vdi.lz", "opendos_7.01.vdi.lz", "pcdos2000.vdi.lz",
-            "pcdos200.vdi.lz", "pcdos210.vdi.lz", "pcdos300.vdi.lz", "pcdos310.vdi.lz", "pcdos330.vdi.lz",
-            "pcdos400.vdi.lz", "pcdos500.vdi.lz", "pcdos502.vdi.lz", "pcdos610.vdi.lz", "pcdos630.vdi.lz",
-            "toshibamsdos330.vdi.lz", "toshibamsdos401.vdi.lz", "msos2_1.21.vdi.lz", "msos2_1.30.1.vdi.lz",
-            "multiuserdos_7.22r4.vdi.lz", "os2_1.20.vdi.lz", "os2_1.30.vdi.lz", "os2_6.307.vdi.lz", "os2_6.514.vdi.lz",
-            "os2_6.617.vdi.lz", "os2_8.162.vdi.lz", "os2_9.023.vdi.lz", "ecs.vdi.lz", "macosx_10.11.vdi.lz",
-            "win10.vdi.lz", "win2000.vdi.lz", "win95.vdi.lz", "win95osr2.1.vdi.lz", "win95osr2.5.vdi.lz",
-            "win95osr2.vdi.lz", "win98.vdi.lz", "win98se.vdi.lz", "winme.vdi.lz", "winnt_3.10.vdi.lz",
-            "winnt_3.50.vdi.lz", "winnt_3.51.vdi.lz", "winnt_4.00.vdi.lz", "winvista.vdi.lz", "beos_r4.5.vdi.lz",
-            "linux.vdi.lz", "freebsd_6.1.vdi.lz", "freebsd_7.0.vdi.lz", "freebsd_8.2.vdi.lz"
+            "compaqmsdos331.aif", "drdos_3.40.aif", "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif",
+            "drdos_7.02.aif", "drdos_7.03.aif", "drdos_8.00.aif", "msdos331.aif", "msdos401.aif", "msdos500.aif",
+            "msdos600.aif", "msdos620rc1.aif", "msdos620.aif", "msdos621.aif", "msdos622.aif", "msdos710.aif",
+            "novelldos_7.00.aif", "opendos_7.01.aif", "pcdos2000.aif", "pcdos200.aif", "pcdos210.aif", "pcdos300.aif",
+            "pcdos310.aif", "pcdos330.aif", "pcdos400.aif", "pcdos500.aif", "pcdos502.aif", "pcdos610.aif",
+            "pcdos630.aif", "toshibamsdos330.aif", "toshibamsdos401.aif", "msos2_1.21.aif", "msos2_1.30.1.aif",
+            "multiuserdos_7.22r4.aif", "os2_1.20.aif", "os2_1.30.aif", "os2_6.307.aif", "os2_6.514.aif",
+            "os2_6.617.aif", "os2_8.162.aif", "os2_9.023.aif", "ecs.aif", "macosx_10.11.aif", "win10.aif",
+            "win2000.aif", "win95.aif", "win95osr2.1.aif", "win95osr2.5.aif", "win95osr2.aif", "win98.aif",
+            "win98se.aif", "winme.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif", "winnt_4.00.aif",
+            "winvista.aif", "beos_r4.5.aif", "linux.aif", "freebsd_6.1.aif", "freebsd_7.0.aif", "freebsd_8.2.aif"
         };
 
         readonly ulong[] sectors =
@@ -2875,9 +2873,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -2900,7 +2898,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "diska.d88.lz", "diskb.d88.lz"
+            "diska.aif", "diskb.aif"
         };
 
         readonly MediaType[] mediatypes =
@@ -2949,9 +2947,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (Human68K)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new D88();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);

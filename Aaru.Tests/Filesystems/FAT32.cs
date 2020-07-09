@@ -42,7 +42,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz"
+            "macosx_10.11.aif"
         };
 
         readonly ulong[] sectors =
@@ -86,9 +86,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (APM)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -122,7 +122,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz"
+            "macosx_10.11.aif"
         };
 
         readonly ulong[] sectors =
@@ -166,9 +166,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (GPT)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
@@ -202,12 +202,11 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "drdos_7.03.vdi.lz", "drdos_8.00.vdi.lz", "msdos_7.10.vdi.lz", "macosx_10.11.vdi.lz", "win10.vdi.lz",
-            "win2000.vdi.lz", "win95osr2.1.vdi.lz", "win95osr2.5.vdi.lz", "win95osr2.vdi.lz", "win98se.vdi.lz",
-            "win98.vdi.lz", "winme.vdi.lz", "winvista.vdi.lz", "beos_r4.5.vdi.lz", "linux.vdi.lz", "aros.vdi.lz",
-            "freebsd_6.1.vdi.lz", "freebsd_7.0.vdi.lz", "freebsd_8.2.vdi.lz", "freedos_1.2.vdi.lz",
-            "ecs20_fstester.vdi.lz", "linux_2.2_umsdos32_flashdrive.vdi.lz", "linux_4.19_fat32_msdos_flashdrive.vdi.lz",
-            "linux_4.19_vfat32_flashdrive.vdi.lz"
+            "drdos_7.03.aif", "drdos_8.00.aif", "msdos_7.10.aif", "macosx_10.11.aif", "win10.aif", "win2000.aif",
+            "win95osr2.1.aif", "win95osr2.5.aif", "win95osr2.aif", "win98se.aif", "win98.aif", "winme.aif",
+            "winvista.aif", "beos_r4.5.aif", "linux.aif", "aros.aif", "freebsd_6.1.aif", "freebsd_7.0.aif",
+            "freebsd_8.2.aif", "freedos_1.2.aif", "ecs20_fstester.aif", "linux_2.2_umsdos32_flashdrive.aif",
+            "linux_4.19_fat32_msdos_flashdrive.aif", "linux_4.19_vfat32_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -262,9 +261,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT32 (MBR)", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

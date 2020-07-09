@@ -93,7 +93,7 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
@@ -124,7 +124,7 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "xenix_2.3.2d.vdi.lz", "xenix_2.3.4h.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"
+            "xenix_2.3.2d.aif", "xenix_2.3.4h.aif", "scoopenserver_5.0.7hw.aif"
         };
 
         readonly ulong[] sectors =
@@ -170,9 +170,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem (MBR)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

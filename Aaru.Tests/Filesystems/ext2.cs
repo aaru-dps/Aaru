@@ -43,9 +43,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz",
-            "linux_4.19_ext2_flashdrive.vdi.lz", "linux_4.19_ext3_flashdrive.vdi.lz",
-            "linux_4.19_ext4_flashdrive.vdi.lz"
+            "linux_ext2.aif", "linux_ext3.aif", "linux_ext4.aif", "netbsd_7.1.aif", "netbsd_7.1_r0.aif",
+            "linux_4.19_ext2_flashdrive.aif", "linux_4.19_ext3_flashdrive.aif", "linux_4.19_ext4_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -93,9 +92,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext2", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

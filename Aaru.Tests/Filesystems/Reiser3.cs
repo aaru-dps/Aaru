@@ -42,8 +42,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux_r3.5.vdi.lz", "linux_r3.6.vdi.lz", "linux_4.19_reiser_3.5_flashdrive.vdi.lz",
-            "linux_4.19_reiser_3.6_flashdrive.vdi.lz"
+            "linux_r3.5.aif", "linux_r3.6.aif", "linux_4.19_reiser_3.5_flashdrive.aif",
+            "linux_4.19_reiser_3.6_flashdrive.aif"
         };
 
         readonly ulong[] sectors =
@@ -79,9 +79,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v3",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

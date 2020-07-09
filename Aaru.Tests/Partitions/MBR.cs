@@ -41,14 +41,13 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "concurrentdos_6.0.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_8.0.1.vdi.lz",
-            "drdos_3.40.vdi.lz", "drdos_3.41.vdi.lz", "drdos_5.00.vdi.lz", "drdos_6.00.vdi.lz", "drdos_7.02.vdi.lz",
-            "drdos_7.03.vdi.lz", "drdos_8.0.vdi.lz", "linux.vdi.lz", "macosx_10.3.vdi.lz", "macosx_10.4.vdi.lz",
-            "msdos_3.30a.vdi.lz", "msdos_5.00.vdi.lz", "msdos_6.00.vdi.lz", "msdos_6.20.vdi.lz", "msdos_6.21.vdi.lz",
-            "msdos_6.22.vdi.lz", "multiuserdos_7.22r04.vdi.lz", "novelldos_7.00.vdi.lz", "opendos_7.01.vdi.lz",
-            "parted.vdi.lz", "pcdos_2000.vdi.lz", "pcdos_2.00.vdi.lz", "pcdos_2.10.vdi.lz", "pcdos_3.00.vdi.lz",
-            "pcdos_3.10.vdi.lz", "pcdos_3.30.vdi.lz", "pcdos_4.00.vdi.lz", "pcdos_5.00.vdi.lz", "pcdos_6.10.vdi.lz",
-            "win95.vdi.lz", "win96osr25.vdi.lz", "winnt_3.10.vdi.lz"
+            "concurrentdos_6.0.aif", "darwin_1.4.1.aif", "darwin_6.0.2.aif", "darwin_8.0.1.aif", "drdos_3.40.aif",
+            "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif", "drdos_7.02.aif", "drdos_7.03.aif", "drdos_8.0.aif",
+            "linux.aif", "macosx_10.3.aif", "macosx_10.4.aif", "msdos_3.30a.aif", "msdos_5.00.aif", "msdos_6.00.aif",
+            "msdos_6.20.aif", "msdos_6.21.aif", "msdos_6.22.aif", "multiuserdos_7.22r04.aif", "novelldos_7.00.aif",
+            "opendos_7.01.aif", "parted.aif", "pcdos_2000.aif", "pcdos_2.00.aif", "pcdos_2.10.aif", "pcdos_3.00.aif",
+            "pcdos_3.10.aif", "pcdos_3.30.aif", "pcdos_4.00.aif", "pcdos_5.00.aif", "pcdos_6.10.aif", "win95.aif",
+            "win96osr25.aif", "winnt_3.10.aif"
         };
 
         readonly Partition[][] wanted =
@@ -1217,9 +1216,9 @@ namespace Aaru.Tests.Partitions
                 string location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Master Boot Record",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

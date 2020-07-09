@@ -89,7 +89,7 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Macintosh File System",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);

@@ -42,8 +42,8 @@ namespace Aaru.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macos_7.5.3.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz",
-            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz"
+            "macos_7.5.3.aif", "macos_7.6.aif", "macos_8.0.aif", "macos_8.1.aif", "macos_9.0.4.aif", "macos_9.1.aif",
+            "macos_9.2.1.aif", "macos_9.2.2.aif"
         };
 
         readonly ulong[] sectors =
@@ -85,9 +85,9 @@ namespace Aaru.Tests.Filesystems
                 string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "ProDOS filesystem (APM)",
                                                testfiles[i]);
 
-                IFilter filter = new LZip();
+                IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new Vdi();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);

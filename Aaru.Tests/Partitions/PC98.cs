@@ -41,7 +41,7 @@ namespace Aaru.Tests.Partitions
     {
         readonly string[] testfiles =
         {
-            "msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz"
+            "msdos330.aif", "msdos330_alt.aif", "msdos500_epson.aif", "msdos500.aif", "msdos620.aif"
         };
 
         readonly Partition[][] wanted =
@@ -248,9 +248,9 @@ namespace Aaru.Tests.Partitions
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "PC-98", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new T98();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 Assert.AreEqual(wanted[i].Length, partitions.Count, testfiles[i]);

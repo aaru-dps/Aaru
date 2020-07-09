@@ -42,23 +42,20 @@ namespace Aaru.Tests.Filesystems
         readonly string[] testfiles =
         {
             // Toast 3.5.7
-            "toast_3.5.7_iso9660_apple.iso.lz", "toast_3.5.7_iso9660_dos_apple.iso.lz",
-            "toast_3.5.7_iso9660_dos.iso.lz", "toast_3.5.7_iso9660_hfs.iso.lz", "toast_3.5.7_iso9660.iso.lz",
-            "toast_3.5.7_iso9660_joliet_apple.iso.lz", "toast_3.5.7_iso9660_joliet.iso.lz",
-            "toast_3.5.7_iso9660_mac_apple.iso.lz", "toast_3.5.7_iso9660_mac.iso.lz",
-            "toast_3.5.7_iso9660_ver_apple.iso.lz", "toast_3.5.7_iso9660_ver_dos_apple.iso.lz",
-            "toast_3.5.7_iso9660_ver_dos.iso.lz", "toast_3.5.7_iso9660_ver.iso.lz",
-            "toast_3.5.7_iso9660_ver_joliet_apple.iso.lz", "toast_3.5.7_iso9660_ver_joliet.iso.lz",
-            "toast_3.5.7_iso9660.iso.lz",
+            "toast_3.5.7_iso9660_apple.aif", "toast_3.5.7_iso9660_dos_apple.aif", "toast_3.5.7_iso9660_dos.aif",
+            "toast_3.5.7_iso9660_hfs.aif", "toast_3.5.7_iso9660.aif", "toast_3.5.7_iso9660_joliet_apple.aif",
+            "toast_3.5.7_iso9660_joliet.aif", "toast_3.5.7_iso9660_mac_apple.aif", "toast_3.5.7_iso9660_mac.aif",
+            "toast_3.5.7_iso9660_ver_apple.aif", "toast_3.5.7_iso9660_ver_dos_apple.aif",
+            "toast_3.5.7_iso9660_ver_dos.aif", "toast_3.5.7_iso9660_ver.aif",
+            "toast_3.5.7_iso9660_ver_joliet_apple.aif", "toast_3.5.7_iso9660_ver_joliet.aif", "toast_3.5.7_iso9660.aif",
 
             // Toast 4.1.3
-            "toast_4.1.3_iso9660_hfs.iso.lz",
+            "toast_4.1.3_iso9660_hfs.aif",
 
             // Toast 4.0.3
-            "toast_4.0.3_iso9660_apple.iso.lz", "toast_4.0.3_iso9660_dos_apple.iso.lz",
-            "toast_4.0.3_iso9660_dos.iso.lz", "toast_4.0.3_iso9660_hfs.iso.lz", "toast_4.0.3_iso9660.iso.lz",
-            "toast_4.0.3_iso9660_joliet_apple.iso.lz", "toast_4.0.3_iso9660_joliet.iso.lz",
-            "toast_4.0.3_iso9660_mac_apple.iso.lz", "toast_4.0.3_iso9660_mac.iso.lz",
+            "toast_4.0.3_iso9660_apple.aif", "toast_4.0.3_iso9660_dos_apple.aif", "toast_4.0.3_iso9660_dos.aif",
+            "toast_4.0.3_iso9660_hfs.aif", "toast_4.0.3_iso9660.aif", "toast_4.0.3_iso9660_joliet_apple.aif",
+            "toast_4.0.3_iso9660_joliet.aif", "toast_4.0.3_iso9660_mac_apple.aif", "toast_4.0.3_iso9660_mac.aif",
 
             // Toast 4.0.3 (CD-ROM XA)
             // "toast_4.0.3_iso9660_apple_xa.iso.lz","toast_4.0.3_iso9660_dos_apple_xa.iso.lz",
@@ -67,29 +64,29 @@ namespace Aaru.Tests.Filesystems
             // "toast_4.0.3_iso9660_mac_xa.iso.lz","toast_4.0.3_iso9660_xa.iso.lz",
             // "toast_4.0.3_iso9660_hfs_xa.iso.lz",
             // mkisofs
-            "mkisofs_apple_rockrige.iso.lz", "mkisofs_apple_xa.iso.lz", "mkisofs_hybrid.iso.lz",
-            "mkisofs_hybrid_nopart.iso.lz", "mkisofs_iso9660_level1_dirnest.iso.lz", "mkisofs_iso9660_level1.iso.lz",
-            "mkisofs_iso9660_level2_dirnest.iso.lz", "mkisofs_iso9660_level2.iso.lz",
-            "mkisofs_iso9660_level3_dirnest.iso.lz", "mkisofs_iso9660_level3.iso.lz",
-            "mkisofs_iso9660_level4_dirnest.iso.lz", "mkisofs_iso9660_level4.iso.lz",
-            "mkisofs_iso9660_udf_hybrid_dirnest.iso.lz", "mkisofs_iso9660_udf_hybrid.iso.lz", "mkisofs_joliet.iso.lz",
-            "mkisofs_joliet_level1.iso.lz", "mkisofs_joliet_level2.iso.lz", "mkisofs_joliet_level3.iso.lz",
-            "mkisofs_joliet_violating.iso.lz", "mkisofs_level1.iso.lz", "mkisofs_level2.iso.lz",
-            "mkisofs_level3.iso.lz", "mkisofs_level4.iso.lz", "mkisofs_rockridge_dirnest.iso.lz",
-            "mkisofs_rockridge.iso.lz", "mkisofs_rockridge_old.iso.lz", "mkisofs_rockridge_rational.iso.lz",
-            "mkisofs_udf.iso.lz", "mkisofs_violating.iso.lz", "mkisofs_xa.iso.lz", "mkisofs_zisofs.iso.lz",
-            "mkisofs_zisofs_rockridge.iso.lz",
+            "mkisofs_apple_rockrige.aif", "mkisofs_apple_xa.aif", "mkisofs_hybrid.aif", "mkisofs_hybrid_nopart.aif",
+            "mkisofs_iso9660_level1_dirnest.aif", "mkisofs_iso9660_level1.aif", "mkisofs_iso9660_level2_dirnest.aif",
+            "mkisofs_iso9660_level2.aif", "mkisofs_iso9660_level3_dirnest.aif", "mkisofs_iso9660_level3.aif",
+            "mkisofs_iso9660_level4_dirnest.aif", "mkisofs_iso9660_level4.aif",
+            "mkisofs_iso9660_udf_hybrid_dirnest.aif", "mkisofs_iso9660_udf_hybrid.aif", "mkisofs_joliet.aif",
+            "mkisofs_joliet_level1.aif", "mkisofs_joliet_level2.aif", "mkisofs_joliet_level3.aif",
+            "mkisofs_joliet_violating.aif", "mkisofs_level1.aif", "mkisofs_level2.aif", "mkisofs_level3.aif",
+            "mkisofs_level4.aif", "mkisofs_rockridge_dirnest.aif", "mkisofs_rockridge.aif", "mkisofs_rockridge_old.aif",
+            "mkisofs_rockridge_rational.aif", "mkisofs_udf.aif", "mkisofs_violating.aif", "mkisofs_xa.aif",
+            "mkisofs_zisofs.aif", "mkisofs_zisofs_rockridge.aif",
 
             // Nero MAX
-            "neromax_iso_mode1_apple.iso.lz", "neromax_iso_mode1_joliet.iso.lz", "neromax_iso_mode1_level1.iso.lz",
-            "neromax_iso_mode1_level2.iso.lz", "neromax_iso_mode2_apple.iso.lz", "neromax_iso_mode2_joliet.iso.lz",
-            "neromax_iso_mode2_level1.iso.lz", "neromax_iso_mode2_level2.iso.lz",
+            "neromax_iso_mode1_apple.aif", "neromax_iso_mode1_joliet.aif", "neromax_iso_mode1_level1.aif",
+            "neromax_iso_mode1_level2.aif",
+
+            // Nero MAX (CD-ROM XA)
+            // "neromax_iso_mode2_apple.iso.lz", "neromax_iso_mode2_joliet.iso.lz",
+            // "neromax_iso_mode2_level1.iso.lz", "neromax_iso_mode2_level2.iso.lz",
 
             // XorrISO
-            "xorriso_hybrid.iso.lz", "xorriso_joliet.iso.lz", "xorriso_joliet_utf.iso.lz",
-            "xorriso_joliet_violating.iso.lz", "xorriso_level1.iso.lz", "xorriso_level2.iso.lz",
-            "xorriso_level3.iso.lz", "xorriso_level4.iso.lz", "xorriso_rockridge.iso.lz", "xorriso_violating.iso.lz",
-            "xorriso_zisofs.iso.lz", "xorriso_zisofs_rockridge.iso.lz"
+            "xorriso_hybrid.aif", "xorriso_joliet.aif", "xorriso_joliet_utf.aif", "xorriso_joliet_violating.aif",
+            "xorriso_level1.aif", "xorriso_level2.aif", "xorriso_level3.aif", "xorriso_level4.aif",
+            "xorriso_rockridge.aif", "xorriso_violating.aif", "xorriso_zisofs.aif", "xorriso_zisofs_rockridge.aif"
         };
 
         readonly MediaType[] mediatypes =
@@ -117,8 +114,10 @@ namespace Aaru.Tests.Filesystems
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
 
             // Nero MAX
-            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
-            MediaType.CD,
+            MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
+
+            // Nero MAX (CD-ROM XA)
+            // MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
 
             // XorrISO
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
@@ -143,7 +142,10 @@ namespace Aaru.Tests.Filesystems
             3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
 
             // Nero MAX
-            389, 417, 257, 266, 55, 56, 57, 58,
+            389, 417, 257, 266,
+
+            // Nero MAX (CD-ROM XA)
+            // 55, 56, 57, 58,
 
             // XorrISO
             59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
@@ -167,7 +169,10 @@ namespace Aaru.Tests.Filesystems
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
 
             // Nero MAX
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+
+            // Nero MAX (CD-ROM XA)
+            // 2048, 2048, 2048, 2048,
 
             // XorrISO
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
@@ -191,7 +196,10 @@ namespace Aaru.Tests.Filesystems
             3651, 3651, 3637, 3637, 3637, 3689, 7481, 7487, 3693, 7487, 3925, 3637, 3637, 3637, 3693,
 
             // Nero MAX
-            389, 417, 257, 266, 55, 56, 57, 58,
+            389, 417, 257, 266,
+
+            // Nero MAX (CD-ROM XA)
+            // 55, 56, 57, 58,
 
             // XorrISO
             59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70
@@ -215,7 +223,10 @@ namespace Aaru.Tests.Filesystems
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
 
             // Nero MAX
-            2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
+            2048, 2048, 2048, 2048,
+
+            // Nero MAX (CD-ROM XA)
+            // 2048, 2048, 2048, 2048,
 
             // XorrISO
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
@@ -244,7 +255,10 @@ namespace Aaru.Tests.Filesystems
             "test", "CDROM", "test", "test", "test", "test", "test",
 
             // Nero MAX
-            "Root", "Root", "Root", "Root", "Root", "Root", "Root", "Root",
+            "Root", "Root", "Root", "Root",
+
+            // Nero MAX (CD-ROM XA)
+            // "Root", "Root", "Root", "Root",
 
             // XorrISO
             "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS",
@@ -269,7 +283,10 @@ namespace Aaru.Tests.Filesystems
             null, null, null, null, null, null, null, null, null, null, null, null, null, null,
 
             // Nero MAX
-            null, null, null, null, null, null, null, null,
+            null, null, null, null,
+
+            // Nero MAX (CD-ROM XA)
+            // null, null, null, null,
 
             // XorrISO
             null, null, null, null, null, null, null, null, null, null, null, null
@@ -303,7 +320,10 @@ namespace Aaru.Tests.Filesystems
             "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX", "LINUX",
 
             // Nero MAX
-            "", "", "", "", "", "", "", "",
+            "", "", "", "",
+
+            // Nero MAX (CD-ROM XA)
+            // "", "", "", "",
 
             // XorrISO
             "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002", "APPLE COMPUTER, INC., TYPE: 0002",
@@ -395,7 +415,10 @@ namespace Aaru.Tests.Filesystems
             "MKISOFS ISO9660/HFS/UDF FILESYSTEM BUILDER & CDRECORD CD/DVD/BluRay CREATOR (C) 1993 E.YOUNGDALE (C) 1997 J.PEARSON/J.SCHILLING",
 
             // Nero MAX
-            "", "", "", "", "", "", "", "",
+            "", "", "", "",
+
+            // Nero MAX (CD-ROM XA)
+            // "", "", "", "",
 
             // XorrISO
             "TOAST ISO 9660 BUILDER COPYRIGHT (C) 1997 ADAPTEC, INC. - HAVE A NICE DAY",
@@ -418,9 +441,9 @@ namespace Aaru.Tests.Filesystems
             for(int i = 0; i < testfiles.Length; i++)
             {
                 string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "ISO9660", testfiles[i]);
-                IFilter filter   = new LZip();
+                IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
-                IMediaImage image = new ZZZRawImage();
+                IMediaImage image = new AaruFormat();
                 Assert.AreEqual(true, image.Open(filter), $"{testfiles[i]}: Open()");
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType, $"{testfiles[i]}: MediaType");
                 Assert.AreEqual(sectors[i], image.Info.Sectors, $"{testfiles[i]}: Sectors");
