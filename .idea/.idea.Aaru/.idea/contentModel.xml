@@ -2051,6 +2051,7 @@
           <e p="LS120.cs" t="Include" />
           <e p="PocketZip.cs" t="Include" />
         </e>
+        <e p="Encoding.cs" t="Include" />
         <e p="Filesystems" t="Include">
           <e p="ADFS.cs" t="Include" />
           <e p="AFFS.cs" t="Include" />
