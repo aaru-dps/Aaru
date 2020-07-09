@@ -2194,6 +2194,10 @@
           <e p="SyQuest.cs" t="Include" />
         </e>
         <e p="SCSI.cs" t="Include" />
+        <e p="SCSI_MMC" t="Include">
+          <e p="MediaTek.cs" t="Include" />
+          <e p="SCSI_MMC.cs" t="Include" />
+        </e>
         <e p="SecureDigital" t="Include">
           <e p="MultiMediaCard.cs" t="Include" />
           <e p="SecureDigital.cs" t="Include" />
