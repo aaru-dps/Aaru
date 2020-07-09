@@ -15,51 +15,37 @@ namespace Aaru.Tests.Devices
             int    item;
             bool   tocIsNotBcd = false;
 
-            parameters:
-
-            while(true)
-            {
-                System.Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine();
-                AaruConsole.WriteLine("Choose what to do:");
-                AaruConsole.WriteLine("1.- Try to read GD-ROM using a trap disc.");
-                AaruConsole.WriteLine("0.- Return to special SCSI MultiMedia Commands menu.");
-
-                strDev = System.Console.ReadLine();
-
-                if(!int.TryParse(strDev, out item))
-                {
-                    AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                    System.Console.ReadKey();
-
-                    continue;
-                }
-
-                switch(item)
-                {
-                    case 0:
-                        AaruConsole.WriteLine("Returning to special SCSI MultiMedia Commands menu...");
-
-                        return;
-                    case 1: goto start;
-                }
-            }
-
             start:
             System.Console.Clear();
 
+            AaruConsole.WriteLine("Ejecting disc...");
+
+            dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+            dev.EjectTray(out _, dev.Timeout, out _);
+
+            AaruConsole.WriteLine("Please insert trap disc inside...");
+            AaruConsole.WriteLine("Press any key to continue...");
+            System.Console.ReadLine();
+
+            AaruConsole.WriteLine("Waiting 15 seconds...");
+            Thread.Sleep(15000);
+
             AaruConsole.WriteLine("Sending READ FULL TOC to the device...");
 
+            dev.ScsiTestUnitReady(out _, dev.Timeout, out _);
             bool sense = dev.ReadRawToc(out byte[] buffer, out byte[] senseBuffer, 1, dev.Timeout, out _);
+
+            if(sense)
+                sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
 
             if(sense)
             {
                 AaruConsole.WriteLine("READ FULL TOC failed...");
+                AaruConsole.WriteLine("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(buffer);
@@ -70,7 +56,7 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             FullTOC.CDFullTOC toc = decodedToc.Value;
@@ -83,7 +69,7 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             int min = 0, sec, frame;
@@ -121,7 +107,7 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             AaruConsole.WriteLine("Stopping motor...");
@@ -146,10 +132,11 @@ namespace Aaru.Tests.Devices
             if(sense)
             {
                 AaruConsole.WriteLine("READ FULL TOC failed...");
+                AaruConsole.WriteLine("{0}", Sense.PrettifySense(senseBuffer));
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             decodedToc = FullTOC.Decode(buffer);
@@ -160,7 +147,7 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             toc = decodedToc.Value;
@@ -173,7 +160,7 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
 
             if(newLeadOutTrack.PMIN >= 0xA0 &&
@@ -188,8 +175,10 @@ namespace Aaru.Tests.Devices
                 AaruConsole.WriteLine("Press any key to continue...");
                 System.Console.ReadLine();
 
-                goto parameters;
+                return;
             }
+
+            dev.SetCdSpeed(out _, RotationalControl.PureCav, 170, 0, dev.Timeout, out _);
 
             AaruConsole.Write("Reading LBA 0... ");
 
