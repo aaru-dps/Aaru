@@ -43,36 +43,38 @@ namespace Aaru.Dto
 
         public DeviceDto(DeviceReportV2 report)
         {
-            ATA            = report.ATA;
-            ATAPI          = report.ATAPI;
-            CompactFlash   = report.CompactFlash;
-            FireWire       = report.FireWire;
-            MultiMediaCard = report.MultiMediaCard;
-            PCMCIA         = report.PCMCIA;
-            SCSI           = report.SCSI;
-            SecureDigital  = report.SecureDigital;
-            USB            = report.USB;
-            Manufacturer   = report.Manufacturer;
-            Model          = report.Model;
-            Revision       = report.Revision;
-            Type           = report.Type;
+            ATA                       = report.ATA;
+            ATAPI                     = report.ATAPI;
+            CompactFlash              = report.CompactFlash;
+            FireWire                  = report.FireWire;
+            MultiMediaCard            = report.MultiMediaCard;
+            PCMCIA                    = report.PCMCIA;
+            SCSI                      = report.SCSI;
+            SecureDigital             = report.SecureDigital;
+            USB                       = report.USB;
+            Manufacturer              = report.Manufacturer;
+            Model                     = report.Model;
+            Revision                  = report.Revision;
+            Type                      = report.Type;
+            GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
         }
 
-        public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead)
+        public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead, bool canReadGdRomUsingSwapDisc)
         {
-            ATA            = report.ATA;
-            ATAPI          = report.ATAPI;
-            CompactFlash   = report.CompactFlash;
-            FireWire       = report.FireWire;
-            MultiMediaCard = report.MultiMediaCard;
-            PCMCIA         = report.PCMCIA;
-            SCSI           = report.SCSI;
-            SecureDigital  = report.SecureDigital;
-            USB            = report.USB;
-            Manufacturer   = report.Manufacturer;
-            Model          = report.Model;
-            Revision       = report.Revision;
-            Type           = report.Type;
+            ATA                       = report.ATA;
+            ATAPI                     = report.ATAPI;
+            CompactFlash              = report.CompactFlash;
+            FireWire                  = report.FireWire;
+            MultiMediaCard            = report.MultiMediaCard;
+            PCMCIA                    = report.PCMCIA;
+            SCSI                      = report.SCSI;
+            SecureDigital             = report.SecureDigital;
+            USB                       = report.USB;
+            Manufacturer              = report.Manufacturer;
+            Model                     = report.Model;
+            Revision                  = report.Revision;
+            Type                      = report.Type;
+            GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
 
             if(ATA != null)
             {
@@ -165,6 +167,7 @@ namespace Aaru.Dto
 
             Id                         = id;
             OptimalMultipleSectorsRead = optimalMultipleSectorsRead;
+            CanReadGdRomUsingSwapDisc  = canReadGdRomUsingSwapDisc;
         }
 
         public int OptimalMultipleSectorsRead { get; set; }
