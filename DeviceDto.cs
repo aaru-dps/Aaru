@@ -59,7 +59,7 @@ namespace Aaru.Dto
             GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
         }
 
-        public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead, bool canReadGdRomUsingSwapDisc)
+        public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead, bool? canReadGdRomUsingSwapDisc)
         {
             ATA                       = report.ATA;
             ATAPI                     = report.ATAPI;
@@ -172,7 +172,7 @@ namespace Aaru.Dto
 
         public int OptimalMultipleSectorsRead { get; set; }
 
-        public bool CanReadGdRomUsingSwapDisc { get; set; }
+        public bool? CanReadGdRomUsingSwapDisc { get; set; }
 
         public new int Id { get; set; }
 
