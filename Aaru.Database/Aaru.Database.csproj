@@ -108,6 +108,8 @@
     <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs" />
     <Compile Include="Migrations\20191207184342_AddRemoteStats.cs" />
     <Compile Include="Migrations\20191207184342_AddRemoteStats.Designer.cs" />
+    <Compile Include="Migrations\20200710140320_FixIndexes.cs" />
+    <Compile Include="Migrations\20200710140320_FixIndexes.Designer.cs" />
     <Compile Include="Migrations\AaruContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseOperatingSystem.cs" />

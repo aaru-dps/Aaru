@@ -121,8 +121,30 @@ namespace Aaru.Gui.ViewModels.Windows
 
             Task.Run(() =>
             {
-                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-                ctx.Database.Migrate();
+                AaruContext ctx;
+
+                try
+                {
+                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                    ctx.Database.Migrate();
+                }
+                catch(NotSupportedException)
+                {
+                    File.Delete(Settings.Settings.LocalDbPath);
+                    ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                    ctx.Database.EnsureCreated();
+
+                    ctx.Database.
+                        ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+
+                    foreach(string migration in ctx.Database.GetPendingMigrations())
+                    {
+                        ctx.Database.
+                            ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                    }
+
+                    ctx.SaveChanges();
+                }
 
                 // Remove duplicates
                 foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
@@ -131,9 +153,8 @@ namespace Aaru.Gui.ViewModels.Windows
                 }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
                     ctx.RemoveRange(ctx.SeenDevices.
                                         Where(d => d.Manufacturer == duplicate.Manufacturer &&
-                                                   d.Model        == duplicate.Model        &&
-                                                   d.Revision     == duplicate.Revision     &&
-                                                   d.Bus          == duplicate.Bus).Skip(1));
+                                                   d.Model == duplicate.Model && d.Revision == duplicate.Revision &&
+                                                   d.Bus == duplicate.Bus).Skip(1));
 
                 // Remove nulls
                 ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&

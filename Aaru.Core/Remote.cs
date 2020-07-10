@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -114,7 +114,23 @@ namespace Aaru.Core
         public static void UpdateMasterDatabase(bool create)
         {
             var mctx = AaruContext.Create(Settings.Settings.MasterDbPath);
-            mctx.Database.Migrate();
+
+            if(create)
+            {
+                mctx.Database.EnsureCreated();
+
+                mctx.Database.
+                     ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+
+                foreach(string migration in mctx.Database.GetPendingMigrations())
+                {
+                    mctx.Database.
+                         ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                }
+            }
+            else
+                mctx.Database.Migrate();
+
             mctx.SaveChanges();
 
             try

@@ -12,15 +12,15 @@ namespace Aaru.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+            modelBuilder.HasAnnotation("ProductVersion", "3.1.5");
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ata", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("Identify");
+                b.Property<byte[]>("Identify").HasColumnType("BLOB");
 
-                b.Property<int?>("ReadCapabilitiesId");
+                b.Property<int?>("ReadCapabilitiesId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -31,15 +31,15 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<uint?>("BlockLength");
+                b.Property<uint?>("BlockLength").HasColumnType("INTEGER");
 
-                b.Property<ulong?>("Blocks");
+                b.Property<ulong?>("Blocks").HasColumnType("INTEGER");
 
-                b.Property<byte>("Density");
+                b.Property<byte>("Density").HasColumnType("INTEGER");
 
-                b.Property<int?>("ScsiModeId");
+                b.Property<int?>("ScsiModeId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -50,13 +50,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Chs", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ushort>("Cylinders");
+                b.Property<ushort>("Cylinders").HasColumnType("INTEGER");
 
-                b.Property<ushort>("Heads");
+                b.Property<ushort>("Heads").HasColumnType("INTEGER");
 
-                b.Property<ushort>("Sectors");
+                b.Property<ushort>("Sectors").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -65,11 +65,11 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<int>("Code");
+                b.Property<int>("Code").HasColumnType("INTEGER");
 
-                b.Property<int?>("SscSupportedMediaId");
+                b.Property<int?>("SscSupportedMediaId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -80,17 +80,17 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.FireWire", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Product");
+                b.Property<string>("Product").HasColumnType("TEXT");
 
-                b.Property<uint>("ProductID");
+                b.Property<uint>("ProductID").HasColumnType("INTEGER");
 
-                b.Property<bool>("RemovableMedia");
+                b.Property<bool>("RemovableMedia").HasColumnType("INTEGER");
 
-                b.Property<uint>("VendorID");
+                b.Property<uint>("VendorID").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -99,11 +99,11 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<int?>("FeaturesId");
+                b.Property<int?>("FeaturesId").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("ModeSense2AData");
+                b.Property<byte[]>("ModeSense2AData").HasColumnType("BLOB");
 
                 b.HasKey("Id");
 
@@ -114,255 +114,255 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.MmcFeatures", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte?>("AACSVersion");
+                b.Property<byte?>("AACSVersion").HasColumnType("INTEGER");
 
-                b.Property<byte?>("AGIDs");
+                b.Property<byte?>("AGIDs").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("BinaryData");
+                b.Property<byte[]>("BinaryData").HasColumnType("BLOB");
 
-                b.Property<byte?>("BindingNonceBlocks");
+                b.Property<byte?>("BindingNonceBlocks").HasColumnType("INTEGER");
 
-                b.Property<ushort?>("BlocksPerReadableUnit");
+                b.Property<ushort?>("BlocksPerReadableUnit").HasColumnType("INTEGER");
 
-                b.Property<bool>("BufferUnderrunFreeInDVD");
+                b.Property<bool>("BufferUnderrunFreeInDVD").HasColumnType("INTEGER");
 
-                b.Property<bool>("BufferUnderrunFreeInSAO");
+                b.Property<bool>("BufferUnderrunFreeInSAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("BufferUnderrunFreeInTAO");
+                b.Property<bool>("BufferUnderrunFreeInTAO").HasColumnType("INTEGER");
 
-                b.Property<byte?>("CPRMVersion");
+                b.Property<byte?>("CPRMVersion").HasColumnType("INTEGER");
 
-                b.Property<byte?>("CSSVersion");
+                b.Property<byte?>("CSSVersion").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanAudioScan");
+                b.Property<bool>("CanAudioScan").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanEject");
+                b.Property<bool>("CanEject").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanEraseSector");
+                b.Property<bool>("CanEraseSector").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanExpandBDRESpareArea");
+                b.Property<bool>("CanExpandBDRESpareArea").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormat");
+                b.Property<bool>("CanFormat").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormatBDREWithoutSpare");
+                b.Property<bool>("CanFormatBDREWithoutSpare").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormatCert");
+                b.Property<bool>("CanFormatCert").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormatFRF");
+                b.Property<bool>("CanFormatFRF").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormatQCert");
+                b.Property<bool>("CanFormatQCert").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanFormatRRM");
+                b.Property<bool>("CanFormatRRM").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanGenerateBindingNonce");
+                b.Property<bool>("CanGenerateBindingNonce").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanLoad");
+                b.Property<bool>("CanLoad").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanMuteSeparateChannels");
+                b.Property<bool>("CanMuteSeparateChannels").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanOverwriteSAOTrack");
+                b.Property<bool>("CanOverwriteSAOTrack").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanOverwriteTAOTrack");
+                b.Property<bool>("CanOverwriteTAOTrack").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanPlayCDAudio");
+                b.Property<bool>("CanPlayCDAudio").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanPseudoOverwriteBDR");
+                b.Property<bool>("CanPseudoOverwriteBDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadAllDualR");
+                b.Property<bool>("CanReadAllDualR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadAllDualRW");
+                b.Property<bool>("CanReadAllDualRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBD");
+                b.Property<bool>("CanReadBD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBDR");
+                b.Property<bool>("CanReadBDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBDRE1");
+                b.Property<bool>("CanReadBDRE1").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBDRE2");
+                b.Property<bool>("CanReadBDRE2").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBDROM");
+                b.Property<bool>("CanReadBDROM").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadBluBCA");
+                b.Property<bool>("CanReadBluBCA").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadCD");
+                b.Property<bool>("CanReadCD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadCDMRW");
+                b.Property<bool>("CanReadCDMRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadCPRM_MKB");
+                b.Property<bool>("CanReadCPRM_MKB").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDDCD");
+                b.Property<bool>("CanReadDDCD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVD");
+                b.Property<bool>("CanReadDVD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVDPlusMRW");
+                b.Property<bool>("CanReadDVDPlusMRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVDPlusR");
+                b.Property<bool>("CanReadDVDPlusR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVDPlusRDL");
+                b.Property<bool>("CanReadDVDPlusRDL").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVDPlusRW");
+                b.Property<bool>("CanReadDVDPlusRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDVDPlusRWDL");
+                b.Property<bool>("CanReadDVDPlusRWDL").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadDriveAACSCertificate");
+                b.Property<bool>("CanReadDriveAACSCertificate").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadHDDVD");
+                b.Property<bool>("CanReadHDDVD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadHDDVDR");
+                b.Property<bool>("CanReadHDDVDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadHDDVDRAM");
+                b.Property<bool>("CanReadHDDVDRAM").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadLeadInCDText");
+                b.Property<bool>("CanReadLeadInCDText").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadOldBDR");
+                b.Property<bool>("CanReadOldBDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadOldBDRE");
+                b.Property<bool>("CanReadOldBDRE").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadOldBDROM");
+                b.Property<bool>("CanReadOldBDROM").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReadSpareAreaInformation");
+                b.Property<bool>("CanReadSpareAreaInformation").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReportDriveSerial");
+                b.Property<bool>("CanReportDriveSerial").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanReportMediaSerial");
+                b.Property<bool>("CanReportMediaSerial").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanTestWriteDDCDR");
+                b.Property<bool>("CanTestWriteDDCDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanTestWriteDVD");
+                b.Property<bool>("CanTestWriteDVD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanTestWriteInSAO");
+                b.Property<bool>("CanTestWriteInSAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanTestWriteInTAO");
+                b.Property<bool>("CanTestWriteInTAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanUpgradeFirmware");
+                b.Property<bool>("CanUpgradeFirmware").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteBD");
+                b.Property<bool>("CanWriteBD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteBDR");
+                b.Property<bool>("CanWriteBDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteBDRE1");
+                b.Property<bool>("CanWriteBDRE1").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteBDRE2");
+                b.Property<bool>("CanWriteBDRE2").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteBusEncryptedBlocks");
+                b.Property<bool>("CanWriteBusEncryptedBlocks").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCDMRW");
+                b.Property<bool>("CanWriteCDMRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCDRW");
+                b.Property<bool>("CanWriteCDRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCDRWCAV");
+                b.Property<bool>("CanWriteCDRWCAV").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCDSAO");
+                b.Property<bool>("CanWriteCDSAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCDTAO");
+                b.Property<bool>("CanWriteCDTAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteCSSManagedDVD");
+                b.Property<bool>("CanWriteCSSManagedDVD").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDDCDR");
+                b.Property<bool>("CanWriteDDCDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDDCDRW");
+                b.Property<bool>("CanWriteDDCDRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDPlusMRW");
+                b.Property<bool>("CanWriteDVDPlusMRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDPlusR");
+                b.Property<bool>("CanWriteDVDPlusR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDPlusRDL");
+                b.Property<bool>("CanWriteDVDPlusRDL").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDPlusRW");
+                b.Property<bool>("CanWriteDVDPlusRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDPlusRWDL");
+                b.Property<bool>("CanWriteDVDPlusRWDL").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDR");
+                b.Property<bool>("CanWriteDVDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDRDL");
+                b.Property<bool>("CanWriteDVDRDL").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteDVDRW");
+                b.Property<bool>("CanWriteDVDRW").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteHDDVDR");
+                b.Property<bool>("CanWriteHDDVDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteHDDVDRAM");
+                b.Property<bool>("CanWriteHDDVDRAM").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteOldBDR");
+                b.Property<bool>("CanWriteOldBDR").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteOldBDRE");
+                b.Property<bool>("CanWriteOldBDRE").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWritePackedSubchannelInTAO");
+                b.Property<bool>("CanWritePackedSubchannelInTAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteRWSubchannelInSAO");
+                b.Property<bool>("CanWriteRWSubchannelInSAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteRWSubchannelInTAO");
+                b.Property<bool>("CanWriteRWSubchannelInTAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteRaw");
+                b.Property<bool>("CanWriteRaw").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteRawMultiSession");
+                b.Property<bool>("CanWriteRawMultiSession").HasColumnType("INTEGER");
 
-                b.Property<bool>("CanWriteRawSubchannelInTAO");
+                b.Property<bool>("CanWriteRawSubchannelInTAO").HasColumnType("INTEGER");
 
-                b.Property<bool>("ChangerIsSideChangeCapable");
+                b.Property<bool>("ChangerIsSideChangeCapable").HasColumnType("INTEGER");
 
-                b.Property<byte>("ChangerSlots");
+                b.Property<byte>("ChangerSlots").HasColumnType("INTEGER");
 
-                b.Property<bool>("ChangerSupportsDiscPresent");
+                b.Property<bool>("ChangerSupportsDiscPresent").HasColumnType("INTEGER");
 
-                b.Property<bool>("DBML");
+                b.Property<bool>("DBML").HasColumnType("INTEGER");
 
-                b.Property<bool>("DVDMultiRead");
+                b.Property<bool>("DVDMultiRead").HasColumnType("INTEGER");
 
-                b.Property<bool>("EmbeddedChanger");
+                b.Property<bool>("EmbeddedChanger").HasColumnType("INTEGER");
 
-                b.Property<bool>("ErrorRecoveryPage");
+                b.Property<bool>("ErrorRecoveryPage").HasColumnType("INTEGER");
 
-                b.Property<DateTime?>("FirmwareDate");
+                b.Property<DateTime?>("FirmwareDate").HasColumnType("TEXT");
 
-                b.Property<byte?>("LoadingMechanismType");
+                b.Property<byte?>("LoadingMechanismType").HasColumnType("INTEGER");
 
-                b.Property<bool>("Locked");
+                b.Property<bool>("Locked").HasColumnType("INTEGER");
 
-                b.Property<uint?>("LogicalBlockSize");
+                b.Property<uint?>("LogicalBlockSize").HasColumnType("INTEGER");
 
-                b.Property<bool>("MultiRead");
+                b.Property<bool>("MultiRead").HasColumnType("INTEGER");
 
-                b.Property<uint?>("PhysicalInterfaceStandardNumber");
+                b.Property<uint?>("PhysicalInterfaceStandardNumber").HasColumnType("INTEGER");
 
-                b.Property<bool>("PreventJumper");
+                b.Property<bool>("PreventJumper").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsAACS");
+                b.Property<bool>("SupportsAACS").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsBusEncryption");
+                b.Property<bool>("SupportsBusEncryption").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsC2");
+                b.Property<bool>("SupportsC2").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsCPRM");
+                b.Property<bool>("SupportsCPRM").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsCSS");
+                b.Property<bool>("SupportsCSS").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsDAP");
+                b.Property<bool>("SupportsDAP").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsDeviceBusyEvent");
+                b.Property<bool>("SupportsDeviceBusyEvent").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsHybridDiscs");
+                b.Property<bool>("SupportsHybridDiscs").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsModePage1Ch");
+                b.Property<bool>("SupportsModePage1Ch").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsOSSC");
+                b.Property<bool>("SupportsOSSC").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsPWP");
+                b.Property<bool>("SupportsPWP").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsSWPP");
+                b.Property<bool>("SupportsSWPP").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsSecurDisc");
+                b.Property<bool>("SupportsSecurDisc").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsSeparateVolume");
+                b.Property<bool>("SupportsSeparateVolume").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsVCPS");
+                b.Property<bool>("SupportsVCPS").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsWriteInhibitDCB");
+                b.Property<bool>("SupportsWriteInhibitDCB").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsWriteProtectPAC");
+                b.Property<bool>("SupportsWriteProtectPAC").HasColumnType("INTEGER");
 
-                b.Property<ushort?>("VolumeLevels");
+                b.Property<ushort?>("VolumeLevels").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -371,17 +371,17 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.MmcSd", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("CID");
+                b.Property<byte[]>("CID").HasColumnType("BLOB");
 
-                b.Property<byte[]>("CSD");
+                b.Property<byte[]>("CSD").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ExtendedCSD");
+                b.Property<byte[]>("ExtendedCSD").HasColumnType("BLOB");
 
-                b.Property<byte[]>("OCR");
+                b.Property<byte[]>("OCR").HasColumnType("BLOB");
 
-                b.Property<byte[]>("SCR");
+                b.Property<byte[]>("SCR").HasColumnType("BLOB");
 
                 b.HasKey("Id");
 
@@ -390,19 +390,19 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Pcmcia", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("CIS");
+                b.Property<byte[]>("CIS").HasColumnType("BLOB");
 
-                b.Property<ushort?>("CardCode");
+                b.Property<ushort?>("CardCode").HasColumnType("INTEGER");
 
-                b.Property<string>("Compliance");
+                b.Property<string>("Compliance").HasColumnType("TEXT");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<ushort?>("ManufacturerCode");
+                b.Property<ushort?>("ManufacturerCode").HasColumnType("INTEGER");
 
-                b.Property<string>("ProductName");
+                b.Property<string>("ProductName").HasColumnType("TEXT");
 
                 b.HasKey("Id");
 
@@ -411,35 +411,35 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("InquiryData");
+                b.Property<byte[]>("InquiryData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense10ChangeableData");
+                b.Property<byte[]>("ModeSense10ChangeableData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense10CurrentData");
+                b.Property<byte[]>("ModeSense10CurrentData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense10Data");
+                b.Property<byte[]>("ModeSense10Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense6ChangeableData");
+                b.Property<byte[]>("ModeSense6ChangeableData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense6CurrentData");
+                b.Property<byte[]>("ModeSense6CurrentData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense6Data");
+                b.Property<byte[]>("ModeSense6Data").HasColumnType("BLOB");
 
-                b.Property<int?>("ModeSenseId");
+                b.Property<int?>("ModeSenseId").HasColumnType("INTEGER");
 
-                b.Property<int?>("MultiMediaDeviceId");
+                b.Property<int?>("MultiMediaDeviceId").HasColumnType("INTEGER");
 
-                b.Property<int?>("ReadCapabilitiesId");
+                b.Property<int?>("ReadCapabilitiesId").HasColumnType("INTEGER");
 
-                b.Property<int?>("SequentialDeviceId");
+                b.Property<int?>("SequentialDeviceId").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsModeSense10");
+                b.Property<bool>("SupportsModeSense10").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsModeSense6");
+                b.Property<bool>("SupportsModeSense6").HasColumnType("INTEGER");
 
-                b.Property<bool>("SupportsModeSubpages");
+                b.Property<bool>("SupportsModeSubpages").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -456,19 +456,19 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.ScsiMode", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<bool>("BlankCheckEnabled");
+                b.Property<bool>("BlankCheckEnabled").HasColumnType("INTEGER");
 
-                b.Property<byte?>("BufferedMode");
+                b.Property<byte?>("BufferedMode").HasColumnType("INTEGER");
 
-                b.Property<bool>("DPOandFUA");
+                b.Property<bool>("DPOandFUA").HasColumnType("INTEGER");
 
-                b.Property<byte?>("MediumType");
+                b.Property<byte?>("MediumType").HasColumnType("INTEGER");
 
-                b.Property<byte?>("Speed");
+                b.Property<byte?>("Speed").HasColumnType("INTEGER");
 
-                b.Property<bool>("WriteProtected");
+                b.Property<bool>("WriteProtected").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -477,17 +477,17 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.ScsiPage", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<int?>("ScsiId");
+                b.Property<int?>("ScsiId").HasColumnType("INTEGER");
 
-                b.Property<int?>("ScsiModeId");
+                b.Property<int?>("ScsiModeId").HasColumnType("INTEGER");
 
-                b.Property<byte>("page");
+                b.Property<byte>("page").HasColumnType("INTEGER");
 
-                b.Property<byte?>("subpage");
+                b.Property<byte?>("subpage").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("value");
+                b.Property<byte[]>("value").HasColumnType("BLOB");
 
                 b.HasKey("Id");
 
@@ -500,13 +500,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ssc", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte?>("BlockSizeGranularity");
+                b.Property<byte?>("BlockSizeGranularity").HasColumnType("INTEGER");
 
-                b.Property<uint?>("MaxBlockLength");
+                b.Property<uint?>("MaxBlockLength").HasColumnType("INTEGER");
 
-                b.Property<uint?>("MinBlockLength");
+                b.Property<uint?>("MinBlockLength").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -515,23 +515,23 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<string>("Description");
+                b.Property<string>("Description").HasColumnType("TEXT");
 
-                b.Property<ushort>("Length");
+                b.Property<ushort>("Length").HasColumnType("INTEGER");
 
-                b.Property<byte>("MediumType");
+                b.Property<byte>("MediumType").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<string>("Organization");
+                b.Property<string>("Organization").HasColumnType("TEXT");
 
-                b.Property<int?>("SscId");
+                b.Property<int?>("SscId").HasColumnType("INTEGER");
 
-                b.Property<int?>("TestedSequentialMediaId");
+                b.Property<int?>("TestedSequentialMediaId").HasColumnType("INTEGER");
 
-                b.Property<ushort>("Width");
+                b.Property<ushort>("Width").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -544,35 +544,35 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SupportedDensity", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<uint>("BitsPerMm");
+                b.Property<uint>("BitsPerMm").HasColumnType("INTEGER");
 
-                b.Property<uint>("Capacity");
+                b.Property<uint>("Capacity").HasColumnType("INTEGER");
 
-                b.Property<bool>("DefaultDensity");
+                b.Property<bool>("DefaultDensity").HasColumnType("INTEGER");
 
-                b.Property<string>("Description");
+                b.Property<string>("Description").HasColumnType("TEXT");
 
-                b.Property<bool>("Duplicate");
+                b.Property<bool>("Duplicate").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<string>("Organization");
+                b.Property<string>("Organization").HasColumnType("TEXT");
 
-                b.Property<byte>("PrimaryCode");
+                b.Property<byte>("PrimaryCode").HasColumnType("INTEGER");
 
-                b.Property<byte>("SecondaryCode");
+                b.Property<byte>("SecondaryCode").HasColumnType("INTEGER");
 
-                b.Property<int?>("SscId");
+                b.Property<int?>("SscId").HasColumnType("INTEGER");
 
-                b.Property<int?>("TestedSequentialMediaId");
+                b.Property<int?>("TestedSequentialMediaId").HasColumnType("INTEGER");
 
-                b.Property<ushort>("Tracks");
+                b.Property<ushort>("Tracks").HasColumnType("INTEGER");
 
-                b.Property<ushort>("Width");
+                b.Property<ushort>("Width").HasColumnType("INTEGER");
 
-                b.Property<bool>("Writable");
+                b.Property<bool>("Writable").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -585,321 +585,321 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedMedia", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("AdipData");
+                b.Property<byte[]>("AdipData").HasColumnType("BLOB");
 
-                b.Property<int?>("AtaId");
+                b.Property<int?>("AtaId").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("AtipData");
+                b.Property<byte[]>("AtipData").HasColumnType("BLOB");
 
-                b.Property<uint?>("BlockSize");
+                b.Property<uint?>("BlockSize").HasColumnType("INTEGER");
 
-                b.Property<ulong?>("Blocks");
+                b.Property<ulong?>("Blocks").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("BluBcaData");
+                b.Property<byte[]>("BluBcaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("BluDdsData");
+                b.Property<byte[]>("BluDdsData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("BluDiData");
+                b.Property<byte[]>("BluDiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("BluPacData");
+                b.Property<byte[]>("BluPacData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("BluSaiData");
+                b.Property<byte[]>("BluSaiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("C2PointersData");
+                b.Property<byte[]>("C2PointersData").HasColumnType("BLOB");
 
-                b.Property<int?>("CHSId");
+                b.Property<int?>("CHSId").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadAACS");
+                b.Property<bool?>("CanReadAACS").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadADIP");
+                b.Property<bool?>("CanReadADIP").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadATIP");
+                b.Property<bool?>("CanReadATIP").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadBCA");
+                b.Property<bool?>("CanReadBCA").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadC2Pointers");
+                b.Property<bool?>("CanReadC2Pointers").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadCMI");
+                b.Property<bool?>("CanReadCMI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadCdScrambled");
+                b.Property<bool?>("CanReadCdScrambled").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadCorrectedSubchannel");
+                b.Property<bool?>("CanReadCorrectedSubchannel").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadCorrectedSubchannelWithC2");
+                b.Property<bool?>("CanReadCorrectedSubchannelWithC2").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadDCB");
+                b.Property<bool?>("CanReadDCB").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadDDS");
+                b.Property<bool?>("CanReadDDS").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadDMI");
+                b.Property<bool?>("CanReadDMI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadDiscInformation");
+                b.Property<bool?>("CanReadDiscInformation").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadFirstTrackPreGap");
+                b.Property<bool?>("CanReadFirstTrackPreGap").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadFullTOC");
+                b.Property<bool?>("CanReadFullTOC").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadHDCMI");
+                b.Property<bool?>("CanReadHDCMI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadLayerCapacity");
+                b.Property<bool?>("CanReadLayerCapacity").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadLeadIn");
+                b.Property<bool?>("CanReadLeadIn").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadLeadOut");
+                b.Property<bool?>("CanReadLeadOut").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadMediaID");
+                b.Property<bool?>("CanReadMediaID").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadMediaSerial");
+                b.Property<bool?>("CanReadMediaSerial").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPAC");
+                b.Property<bool?>("CanReadPAC").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPFI");
+                b.Property<bool?>("CanReadPFI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPMA");
+                b.Property<bool?>("CanReadPMA").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPQSubchannel");
+                b.Property<bool?>("CanReadPQSubchannel").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPQSubchannelWithC2");
+                b.Property<bool?>("CanReadPQSubchannelWithC2").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadPRI");
+                b.Property<bool?>("CanReadPRI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadRWSubchannel");
+                b.Property<bool?>("CanReadRWSubchannel").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadRWSubchannelWithC2");
+                b.Property<bool?>("CanReadRWSubchannelWithC2").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadRecordablePFI");
+                b.Property<bool?>("CanReadRecordablePFI").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadSpareAreaInformation");
+                b.Property<bool?>("CanReadSpareAreaInformation").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadTOC");
+                b.Property<bool?>("CanReadTOC").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadingIntersessionLeadIn");
+                b.Property<bool?>("CanReadingIntersessionLeadIn").HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadingIntersessionLeadOut");
+                b.Property<bool?>("CanReadingIntersessionLeadOut").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("CmiData");
+                b.Property<byte[]>("CmiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("CorrectedSubchannelData");
+                b.Property<byte[]>("CorrectedSubchannelData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("CorrectedSubchannelWithC2Data");
+                b.Property<byte[]>("CorrectedSubchannelWithC2Data").HasColumnType("BLOB");
 
-                b.Property<int?>("CurrentCHSId");
+                b.Property<int?>("CurrentCHSId").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("DcbData");
+                b.Property<byte[]>("DcbData").HasColumnType("BLOB");
 
-                b.Property<byte?>("Density");
+                b.Property<byte?>("Density").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("DmiData");
+                b.Property<byte[]>("DmiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("DvdAacsData");
+                b.Property<byte[]>("DvdAacsData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("DvdBcaData");
+                b.Property<byte[]>("DvdBcaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("DvdDdsData");
+                b.Property<byte[]>("DvdDdsData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("DvdLayerData");
+                b.Property<byte[]>("DvdLayerData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("DvdSaiData");
+                b.Property<byte[]>("DvdSaiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("EmbossedPfiData");
+                b.Property<byte[]>("EmbossedPfiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("FullTocData");
+                b.Property<byte[]>("FullTocData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("HLDTSTReadRawDVDData");
+                b.Property<byte[]>("HLDTSTReadRawDVDData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("HdCmiData");
+                b.Property<byte[]>("HdCmiData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("IdentifyData");
+                b.Property<byte[]>("IdentifyData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("IntersessionLeadInData");
+                b.Property<byte[]>("IntersessionLeadInData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("IntersessionLeadOutData");
+                b.Property<byte[]>("IntersessionLeadOutData").HasColumnType("BLOB");
 
-                b.Property<ulong?>("LBA48Sectors");
+                b.Property<ulong?>("LBA48Sectors").HasColumnType("INTEGER");
 
-                b.Property<uint?>("LBASectors");
+                b.Property<uint?>("LBASectors").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("LeadInData");
+                b.Property<byte[]>("LeadInData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("LeadOutData");
+                b.Property<byte[]>("LeadOutData").HasColumnType("BLOB");
 
-                b.Property<ushort?>("LogicalAlignment");
+                b.Property<ushort?>("LogicalAlignment").HasColumnType("INTEGER");
 
-                b.Property<uint?>("LongBlockSize");
+                b.Property<uint?>("LongBlockSize").HasColumnType("INTEGER");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<bool>("MediaIsRecognized");
+                b.Property<bool>("MediaIsRecognized").HasColumnType("INTEGER");
 
-                b.Property<byte?>("MediumType");
+                b.Property<byte?>("MediumType").HasColumnType("INTEGER");
 
-                b.Property<string>("MediumTypeName");
+                b.Property<string>("MediumTypeName").HasColumnType("TEXT");
 
-                b.Property<int?>("MmcId");
+                b.Property<int?>("MmcId").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("ModeSense10Data");
+                b.Property<byte[]>("ModeSense10Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense6Data");
+                b.Property<byte[]>("ModeSense6Data").HasColumnType("BLOB");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<byte[]>("NecReadCddaData");
+                b.Property<byte[]>("NecReadCddaData").HasColumnType("BLOB");
 
-                b.Property<ushort?>("NominalRotationRate");
+                b.Property<ushort?>("NominalRotationRate").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("PQSubchannelData");
+                b.Property<byte[]>("PQSubchannelData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PQSubchannelWithC2Data");
+                b.Property<byte[]>("PQSubchannelWithC2Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PfiData");
+                b.Property<byte[]>("PfiData").HasColumnType("BLOB");
 
-                b.Property<uint?>("PhysicalBlockSize");
+                b.Property<uint?>("PhysicalBlockSize").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("PioneerReadCddaData");
+                b.Property<byte[]>("PioneerReadCddaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PioneerReadCddaMsfData");
+                b.Property<byte[]>("PioneerReadCddaMsfData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PlextorReadCddaData");
+                b.Property<byte[]>("PlextorReadCddaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PlextorReadRawDVDData");
+                b.Property<byte[]>("PlextorReadRawDVDData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PmaData");
+                b.Property<byte[]>("PmaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("PriData");
+                b.Property<byte[]>("PriData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("RWSubchannelData");
+                b.Property<byte[]>("RWSubchannelData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("RWSubchannelWithC2Data");
+                b.Property<byte[]>("RWSubchannelWithC2Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Read10Data");
+                b.Property<byte[]>("Read10Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Read12Data");
+                b.Property<byte[]>("Read12Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Read16Data");
+                b.Property<byte[]>("Read16Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Read6Data");
+                b.Property<byte[]>("Read6Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadCdData");
+                b.Property<byte[]>("ReadCdData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadCdFullData");
+                b.Property<byte[]>("ReadCdFullData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadCdMsfData");
+                b.Property<byte[]>("ReadCdMsfData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadCdMsfFullData");
+                b.Property<byte[]>("ReadCdMsfFullData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadCdScrambledData");
+                b.Property<byte[]>("ReadCdScrambledData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadDmaData");
+                b.Property<byte[]>("ReadDmaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadDmaLba48Data");
+                b.Property<byte[]>("ReadDmaLba48Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadDmaLbaData");
+                b.Property<byte[]>("ReadDmaLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadDmaRetryData");
+                b.Property<byte[]>("ReadDmaRetryData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadDmaRetryLbaData");
+                b.Property<byte[]>("ReadDmaRetryLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLba48Data");
+                b.Property<byte[]>("ReadLba48Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLbaData");
+                b.Property<byte[]>("ReadLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLong10Data");
+                b.Property<byte[]>("ReadLong10Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLong16Data");
+                b.Property<byte[]>("ReadLong16Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLongData");
+                b.Property<byte[]>("ReadLongData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLongLbaData");
+                b.Property<byte[]>("ReadLongLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLongRetryData");
+                b.Property<byte[]>("ReadLongRetryData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadLongRetryLbaData");
+                b.Property<byte[]>("ReadLongRetryLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadRetryLbaData");
+                b.Property<byte[]>("ReadRetryLbaData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadSectorsData");
+                b.Property<byte[]>("ReadSectorsData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ReadSectorsRetryData");
+                b.Property<byte[]>("ReadSectorsRetryData").HasColumnType("BLOB");
 
-                b.Property<int?>("ScsiId");
+                b.Property<int?>("ScsiId").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SolidStateDevice");
+                b.Property<bool?>("SolidStateDevice").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsHLDTSTReadRawDVD");
+                b.Property<bool?>("SupportsHLDTSTReadRawDVD").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsNECReadCDDA");
+                b.Property<bool?>("SupportsNECReadCDDA").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsPioneerReadCDDA");
+                b.Property<bool?>("SupportsPioneerReadCDDA").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsPioneerReadCDDAMSF");
+                b.Property<bool?>("SupportsPioneerReadCDDAMSF").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsPlextorReadCDDA");
+                b.Property<bool?>("SupportsPlextorReadCDDA").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsPlextorReadRawDVD");
+                b.Property<bool?>("SupportsPlextorReadRawDVD").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsRead10");
+                b.Property<bool?>("SupportsRead10").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsRead12");
+                b.Property<bool?>("SupportsRead12").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsRead16");
+                b.Property<bool?>("SupportsRead16").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsRead6");
+                b.Property<bool?>("SupportsRead6").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCapacity");
+                b.Property<bool?>("SupportsReadCapacity").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCapacity16");
+                b.Property<bool?>("SupportsReadCapacity16").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCd");
+                b.Property<bool?>("SupportsReadCd").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCdMsf");
+                b.Property<bool?>("SupportsReadCdMsf").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCdMsfRaw");
+                b.Property<bool?>("SupportsReadCdMsfRaw").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadCdRaw");
+                b.Property<bool?>("SupportsReadCdRaw").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadDma");
+                b.Property<bool?>("SupportsReadDma").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadDmaLba");
+                b.Property<bool?>("SupportsReadDmaLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadDmaLba48");
+                b.Property<bool?>("SupportsReadDmaLba48").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadDmaRetry");
+                b.Property<bool?>("SupportsReadDmaRetry").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadDmaRetryLba");
+                b.Property<bool?>("SupportsReadDmaRetryLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLba");
+                b.Property<bool?>("SupportsReadLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLba48");
+                b.Property<bool?>("SupportsReadLba48").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLong");
+                b.Property<bool?>("SupportsReadLong").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLong16");
+                b.Property<bool?>("SupportsReadLong16").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLongLba");
+                b.Property<bool?>("SupportsReadLongLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLongRetry");
+                b.Property<bool?>("SupportsReadLongRetry").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadLongRetryLba");
+                b.Property<bool?>("SupportsReadLongRetryLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadRetry");
+                b.Property<bool?>("SupportsReadRetry").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadRetryLba");
+                b.Property<bool?>("SupportsReadRetryLba").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsReadSectors");
+                b.Property<bool?>("SupportsReadSectors").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsSeek");
+                b.Property<bool?>("SupportsSeek").HasColumnType("INTEGER");
 
-                b.Property<bool?>("SupportsSeekLba");
+                b.Property<bool?>("SupportsSeekLba").HasColumnType("INTEGER");
 
-                b.Property<byte[]>("TocData");
+                b.Property<byte[]>("TocData").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Track1PregapData");
+                b.Property<byte[]>("Track1PregapData").HasColumnType("BLOB");
 
-                b.Property<ushort?>("UnformattedBPS");
+                b.Property<ushort?>("UnformattedBPS").HasColumnType("INTEGER");
 
-                b.Property<ushort?>("UnformattedBPT");
+                b.Property<ushort?>("UnformattedBPT").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -918,27 +918,27 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedSequentialMedia", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<bool?>("CanReadMediaSerial");
+                b.Property<bool?>("CanReadMediaSerial").HasColumnType("INTEGER");
 
-                b.Property<byte?>("Density");
+                b.Property<byte?>("Density").HasColumnType("INTEGER");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<bool>("MediaIsRecognized");
+                b.Property<bool>("MediaIsRecognized").HasColumnType("INTEGER");
 
-                b.Property<byte?>("MediumType");
+                b.Property<byte?>("MediumType").HasColumnType("INTEGER");
 
-                b.Property<string>("MediumTypeName");
+                b.Property<string>("MediumTypeName").HasColumnType("TEXT");
 
-                b.Property<byte[]>("ModeSense10Data");
+                b.Property<byte[]>("ModeSense10Data").HasColumnType("BLOB");
 
-                b.Property<byte[]>("ModeSense6Data");
+                b.Property<byte[]>("ModeSense6Data").HasColumnType("BLOB");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<int?>("SscId");
+                b.Property<int?>("SscId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -949,19 +949,19 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Usb", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<byte[]>("Descriptors");
+                b.Property<byte[]>("Descriptors").HasColumnType("BLOB");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Product");
+                b.Property<string>("Product").HasColumnType("TEXT");
 
-                b.Property<ushort>("ProductID");
+                b.Property<ushort>("ProductID").HasColumnType("INTEGER");
 
-                b.Property<bool>("RemovableMedia");
+                b.Property<bool>("RemovableMedia").HasColumnType("INTEGER");
 
-                b.Property<ushort>("VendorID");
+                b.Property<ushort>("VendorID").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -970,36 +970,38 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.CdOffset", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<DateTime>("AddedWhen");
+                b.Property<DateTime>("AddedWhen").HasColumnType("TEXT");
 
-                b.Property<float>("Agreement");
+                b.Property<float>("Agreement").HasColumnType("REAL");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<DateTime>("ModifiedWhen");
+                b.Property<DateTime>("ModifiedWhen").HasColumnType("TEXT");
 
-                b.Property<short>("Offset");
+                b.Property<short>("Offset").HasColumnType("INTEGER");
 
-                b.Property<int>("Submissions");
+                b.Property<int>("Submissions").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
+
+                b.HasIndex("ModifiedWhen");
 
                 b.ToTable("CdOffsets");
             });
 
             modelBuilder.Entity("Aaru.Database.Models.Command", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1008,37 +1010,37 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Device", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<int?>("ATAId");
+                b.Property<int?>("ATAId").HasColumnType("INTEGER");
 
-                b.Property<int?>("ATAPIId");
+                b.Property<int?>("ATAPIId").HasColumnType("INTEGER");
 
-                b.Property<bool>("CompactFlash");
+                b.Property<bool>("CompactFlash").HasColumnType("INTEGER");
 
-                b.Property<int?>("FireWireId");
+                b.Property<int?>("FireWireId").HasColumnType("INTEGER");
 
-                b.Property<DateTime>("LastSynchronized");
+                b.Property<DateTime>("LastSynchronized").HasColumnType("TEXT");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<int?>("MultiMediaCardId");
+                b.Property<int?>("MultiMediaCardId").HasColumnType("INTEGER");
 
-                b.Property<int>("OptimalMultipleSectorsRead");
+                b.Property<int>("OptimalMultipleSectorsRead").HasColumnType("INTEGER");
 
-                b.Property<int?>("PCMCIAId");
+                b.Property<int?>("PCMCIAId").HasColumnType("INTEGER");
 
-                b.Property<string>("Revision");
+                b.Property<string>("Revision").HasColumnType("TEXT");
 
-                b.Property<int?>("SCSIId");
+                b.Property<int?>("SCSIId").HasColumnType("INTEGER");
 
-                b.Property<int?>("SecureDigitalId");
+                b.Property<int?>("SecureDigitalId").HasColumnType("INTEGER");
 
-                b.Property<int>("Type");
+                b.Property<int>("Type").HasColumnType("INTEGER");
 
-                b.Property<int?>("USBId");
+                b.Property<int?>("USBId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1063,17 +1065,17 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.DeviceStat", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<string>("Bus");
+                b.Property<string>("Bus").HasColumnType("TEXT");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<string>("Revision");
+                b.Property<string>("Revision").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1082,13 +1084,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Filesystem", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1097,13 +1099,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Filter", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1112,15 +1114,15 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Media", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<bool>("Real");
+                b.Property<bool>("Real").HasColumnType("INTEGER");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
-                b.Property<string>("Type");
+                b.Property<string>("Type").HasColumnType("TEXT");
 
                 b.HasKey("Id");
 
@@ -1129,13 +1131,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.MediaFormat", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1144,15 +1146,15 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.OperatingSystem", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
-                b.Property<string>("Version");
+                b.Property<string>("Version").HasColumnType("TEXT");
 
                 b.HasKey("Id");
 
@@ -1161,13 +1163,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Partition", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1176,15 +1178,15 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.RemoteApplication", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
-                b.Property<string>("Version");
+                b.Property<string>("Version").HasColumnType("TEXT");
 
                 b.HasKey("Id");
 
@@ -1193,13 +1195,13 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.RemoteArchitecture", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1208,15 +1210,15 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.RemoteOperatingSystem", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
-                b.Property<string>("Version");
+                b.Property<string>("Version").HasColumnType("TEXT");
 
                 b.HasKey("Id");
 
@@ -1225,37 +1227,37 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.Report", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<int?>("ATAId");
+                b.Property<int?>("ATAId").HasColumnType("INTEGER");
 
-                b.Property<int?>("ATAPIId");
+                b.Property<int?>("ATAPIId").HasColumnType("INTEGER");
 
-                b.Property<bool>("CompactFlash");
+                b.Property<bool>("CompactFlash").HasColumnType("INTEGER");
 
-                b.Property<DateTime>("Created");
+                b.Property<DateTime>("Created").HasColumnType("TEXT");
 
-                b.Property<int?>("FireWireId");
+                b.Property<int?>("FireWireId").HasColumnType("INTEGER");
 
-                b.Property<string>("Manufacturer");
+                b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
-                b.Property<string>("Model");
+                b.Property<string>("Model").HasColumnType("TEXT");
 
-                b.Property<int?>("MultiMediaCardId");
+                b.Property<int?>("MultiMediaCardId").HasColumnType("INTEGER");
 
-                b.Property<int?>("PCMCIAId");
+                b.Property<int?>("PCMCIAId").HasColumnType("INTEGER");
 
-                b.Property<string>("Revision");
+                b.Property<string>("Revision").HasColumnType("TEXT");
 
-                b.Property<int?>("SCSIId");
+                b.Property<int?>("SCSIId").HasColumnType("INTEGER");
 
-                b.Property<int?>("SecureDigitalId");
+                b.Property<int?>("SecureDigitalId").HasColumnType("INTEGER");
 
-                b.Property<int>("Type");
+                b.Property<int>("Type").HasColumnType("INTEGER");
 
-                b.Property<int?>("USBId");
+                b.Property<int?>("USBId").HasColumnType("INTEGER");
 
-                b.Property<bool>("Uploaded");
+                b.Property<bool>("Uploaded").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1280,19 +1282,23 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.UsbProduct", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<DateTime>("AddedWhen");
+                b.Property<DateTime>("AddedWhen").HasColumnType("TEXT");
 
-                b.Property<DateTime>("ModifiedWhen");
+                b.Property<DateTime>("ModifiedWhen").HasColumnType("TEXT");
 
-                b.Property<string>("Product");
+                b.Property<string>("Product").HasColumnType("TEXT");
 
-                b.Property<ushort>("ProductId");
+                b.Property<ushort>("ProductId").HasColumnType("INTEGER");
 
-                b.Property<ushort>("VendorId");
+                b.Property<ushort>("VendorId").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
+
+                b.HasIndex("ModifiedWhen");
+
+                b.HasIndex("ProductId");
 
                 b.HasIndex("VendorId");
 
@@ -1301,28 +1307,30 @@ namespace Aaru.Database.Migrations
 
             modelBuilder.Entity("Aaru.Database.Models.UsbVendor", b =>
             {
-                b.Property<ushort>("Id").ValueGeneratedOnAdd();
+                b.Property<ushort>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<DateTime>("AddedWhen");
+                b.Property<DateTime>("AddedWhen").HasColumnType("TEXT");
 
-                b.Property<DateTime>("ModifiedWhen");
+                b.Property<DateTime>("ModifiedWhen").HasColumnType("TEXT");
 
-                b.Property<string>("Vendor");
+                b.Property<string>("Vendor").HasColumnType("TEXT");
 
                 b.HasKey("Id");
+
+                b.HasIndex("ModifiedWhen");
 
                 b.ToTable("UsbVendors");
             });
 
             modelBuilder.Entity("Aaru.Database.Models.Version", b =>
             {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
 
-                b.Property<ulong>("Count");
+                b.Property<ulong>("Count").HasColumnType("INTEGER");
 
-                b.Property<string>("Name");
+                b.Property<string>("Name").HasColumnType("TEXT");
 
-                b.Property<bool>("Synchronized");
+                b.Property<bool>("Synchronized").HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -1332,126 +1340,151 @@ namespace Aaru.Database.Migrations
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ata", b =>
             {
                 b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
-                  HasForeignKey("ReadCapabilitiesId");
+                  HasForeignKey("ReadCapabilitiesId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors").HasForeignKey("ScsiModeId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).WithMany("BlockDescriptors").
+                  HasForeignKey("ScsiModeId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia").WithMany("DensityCodes").
-                  HasForeignKey("SscSupportedMediaId");
+                b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia", null).WithMany("DensityCodes").
+                  HasForeignKey("SscSupportedMediaId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().HasForeignKey("FeaturesId");
+                b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().HasForeignKey("FeaturesId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany().HasForeignKey("ModeSenseId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany().HasForeignKey("ModeSenseId").
+                  OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Mmc", "MultiMediaDevice").WithMany().
-                  HasForeignKey("MultiMediaDeviceId");
+                  HasForeignKey("MultiMediaDeviceId").OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
-                  HasForeignKey("ReadCapabilitiesId");
+                  HasForeignKey("ReadCapabilitiesId").OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.Ssc", "SequentialDevice").WithMany().
-                  HasForeignKey("SequentialDeviceId");
+                  HasForeignKey("SequentialDeviceId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.ScsiPage", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Scsi").WithMany("EVPDPages").HasForeignKey("ScsiId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null).WithMany("EVPDPages").HasForeignKey("ScsiId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode").WithMany("ModePages").HasForeignKey("ScsiModeId");
+                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).WithMany("ModePages").HasForeignKey("ScsiModeId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes").HasForeignKey("SscId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).WithMany("SupportedMediaTypes").HasForeignKey("SscId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedMediaTypes").
-                  HasForeignKey("TestedSequentialMediaId");
+                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null).WithMany("SupportedMediaTypes").
+                  HasForeignKey("TestedSequentialMediaId").OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.SupportedDensity", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities").HasForeignKey("SscId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).WithMany("SupportedDensities").HasForeignKey("SscId").
+                  OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedDensities").
-                  HasForeignKey("TestedSequentialMediaId");
+                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null).WithMany("SupportedDensities").
+                  HasForeignKey("TestedSequentialMediaId").OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedMedia", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ata").WithMany("RemovableMedias").HasForeignKey("AtaId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ata", null).WithMany("RemovableMedias").HasForeignKey("AtaId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CHS").WithMany().HasForeignKey("CHSId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CHS").WithMany().HasForeignKey("CHSId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany().HasForeignKey("CurrentCHSId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany().HasForeignKey("CurrentCHSId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Mmc").WithMany("TestedMedia").HasForeignKey("MmcId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Mmc", null).WithMany("TestedMedia").HasForeignKey("MmcId").
+                  OnDelete(DeleteBehavior.Cascade);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Scsi").WithMany("RemovableMedias").HasForeignKey("ScsiId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null).WithMany("RemovableMedias").HasForeignKey("ScsiId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedSequentialMedia", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc").WithMany("TestedMedia").HasForeignKey("SscId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).WithMany("TestedMedia").HasForeignKey("SscId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.Database.Models.Device", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId");
+                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId").
+                  OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
-                  HasForeignKey("MultiMediaCardId");
+                  HasForeignKey("MultiMediaCardId").OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId").
+                  OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany().
-                  HasForeignKey("SecureDigitalId");
+                  HasForeignKey("SecureDigitalId").OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.Database.Models.Report", b =>
             {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId");
+                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId").
+                  OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
-                  HasForeignKey("MultiMediaCardId");
+                  HasForeignKey("MultiMediaCardId").OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId").
+                  OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId").
+                  OnDelete(DeleteBehavior.SetNull);
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany().
-                  HasForeignKey("SecureDigitalId");
+                  HasForeignKey("SecureDigitalId").OnDelete(DeleteBehavior.SetNull);
 
-                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
+                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId").
+                  OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity("Aaru.Database.Models.UsbProduct", b =>
             {
                 b.HasOne("Aaru.Database.Models.UsbVendor", "Vendor").WithMany("Products").HasForeignKey("VendorId").
-                  OnDelete(DeleteBehavior.Cascade);
+                  OnDelete(DeleteBehavior.Cascade).IsRequired();
             });
             #pragma warning restore 612, 618
         }
