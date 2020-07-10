@@ -169,6 +169,8 @@ namespace Aaru.Dto
 
         public int OptimalMultipleSectorsRead { get; set; }
 
+        public bool CanReadGdRomUsingSwapDisc { get; set; }
+
         public new int Id { get; set; }
 
         static TestedMedia ClearBinaries(TestedMedia media)
