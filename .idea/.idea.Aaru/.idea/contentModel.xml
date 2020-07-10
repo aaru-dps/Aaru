@@ -2205,6 +2205,9 @@
           <e p="SecureDigital.cs" t="Include" />
         </e>
         <e p="SecureDigital.cs" t="Include" />
+        <e p="aaru-tests-devices-20200709-linux-amd64.7z" t="Include" />
+        <e p="aaru-tests-devices-20200709-win32.7z" t="Include" />
+        <e p="aaru-tests-devices-20200709-win64.7z" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
