@@ -171,11 +171,20 @@ namespace Aaru.CommonTypes
                        blockSize == 512)
                         return blocks == 625134256 ? MediaType.RDX320 : MediaType.RDX;
 
-                    if(vendor.ToLowerInvariant().StartsWith("cws orb"))
+                    if(vendor.ToLowerInvariant().StartsWith("cws orb", StringComparison.Ordinal))
                     {
                         switch(blocks)
                         {
                             case 4307184 when blockSize == 512: return MediaType.Orb;
+                            default:                            return MediaType.Unknown;
+                        }
+                    }
+
+                    if(model.ToLowerInvariant().StartsWith("hifd", StringComparison.Ordinal))
+                    {
+                        switch(blocks)
+                        {
+                            case 393380 when blockSize == 512: return MediaType.HiFD;
                             default:                            return MediaType.Unknown;
                         }
                     }
