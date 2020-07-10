@@ -142,16 +142,17 @@ namespace Aaru.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                          set; }
-        public virtual Usb      USB            { get; set; }
-        public virtual FireWire FireWire       { get; set; }
-        public virtual Pcmcia   PCMCIA         { get; set; }
-        public         bool     CompactFlash   { get; set; }
-        public virtual Ata      ATA            { get; set; }
-        public virtual Ata      ATAPI          { get; set; }
-        public virtual Scsi     SCSI           { get; set; }
-        public virtual MmcSd    MultiMediaCard { get; set; }
-        public virtual MmcSd    SecureDigital  { get; set; }
+        public int Id { get;                                                      set; }
+        public virtual Usb                       USB                       { get; set; }
+        public virtual FireWire                  FireWire                  { get; set; }
+        public virtual Pcmcia                    PCMCIA                    { get; set; }
+        public         bool                      CompactFlash              { get; set; }
+        public virtual Ata                       ATA                       { get; set; }
+        public virtual Ata                       ATAPI                     { get; set; }
+        public virtual Scsi                      SCSI                      { get; set; }
+        public virtual MmcSd                     MultiMediaCard            { get; set; }
+        public virtual MmcSd                     SecureDigital             { get; set; }
+        public virtual GdRomSwapDiscCapabilities GdRomSwapDiscCapabilities { get; set; }
 
         public string     Manufacturer { get; set; }
         public string     Model        { get; set; }
@@ -768,54 +769,35 @@ namespace Aaru.CommonTypes.Metadata
             if(mmc.ModeSense2A != null)
                 ModeSense2AData = ModePage_2A.Encode(new ModePage_2A
                 {
-                    AccurateCDDA                     = mmc.ModeSense2A.AccurateCDDA, BCK = mmc.ModeSense2A.BCK,
-                    BufferSize                       = mmc.ModeSense2A.BufferSize,
-                    BUF                              = mmc.ModeSense2A.BufferUnderRunProtection,
-                    Eject                            = mmc.ModeSense2A.CanEject,
-                    Lock                             = mmc.ModeSense2A.CanLockMedia,
-                    CDDACommand                      = mmc.ModeSense2A.CDDACommand,
-                    Composite                        = mmc.ModeSense2A.CompositeAudioVideo,
-                    CMRSupported                     = (ushort)(mmc.ModeSense2A.CSSandCPPMSupported ? 1 : 0),
-                    CurrentSpeed                     = mmc.ModeSense2A.CurrentSpeed,
-                    CurrentWriteSpeed                = mmc.ModeSense2A.CurrentWriteSpeed,
-                    CurrentWriteSpeedSelected        = mmc.ModeSense2A.CurrentWriteSpeedSelected,
-                    SDP                              = mmc.ModeSense2A.DeterministicSlotChanger,
-                    DigitalPort1                     = mmc.ModeSense2A.DigitalPort1,
-                    DigitalPort2                     = mmc.ModeSense2A.DigitalPort2,
-                    LeadInPW                         = mmc.ModeSense2A.LeadInPW,
-                    LoadingMechanism                 = mmc.ModeSense2A.LoadingMechanismType,
-                    LockState                        = mmc.ModeSense2A.LockStatus,
-                    LSBF                             = mmc.ModeSense2A.LSBF,
-                    MaximumSpeed                     = mmc.ModeSense2A.MaximumSpeed,
-                    MaxWriteSpeed                    = mmc.ModeSense2A.MaximumWriteSpeed,
-                    AudioPlay                        = mmc.ModeSense2A.PlaysAudio,
-                    PreventJumper                    = mmc.ModeSense2A.PreventJumperStatus,
-                    RCK                              = mmc.ModeSense2A.RCK,
-                    ReadBarcode                      = mmc.ModeSense2A.ReadsBarcode,
-                    SCC                              = mmc.ModeSense2A.ReadsBothSides,
-                    ReadCDR                          = mmc.ModeSense2A.ReadsCDR,
-                    ReadCDRW                         = mmc.ModeSense2A.ReadsCDRW,
-                    DeinterlaveSubchannel            = mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
-                    ReadDVDR                         = mmc.ModeSense2A.ReadsDVDR,
-                    ReadDVDRAM                       = mmc.ModeSense2A.ReadsDVDRAM,
-                    ReadDVDROM                       = mmc.ModeSense2A.ReadsDVDROM,
-                    ISRC                             = mmc.ModeSense2A.ReadsISRC,
-                    Mode2Form2                       = mmc.ModeSense2A.ReadsMode2Form2,
-                    Mode2Form1                       = mmc.ModeSense2A.ReadsMode2Form1,
-                    Method2                          = mmc.ModeSense2A.ReadsPacketCDR,
-                    Subchannel                       = mmc.ModeSense2A.ReadsSubchannel,
-                    UPC                              = mmc.ModeSense2A.ReadsUPC,
-                    C2Pointer                        = mmc.ModeSense2A.ReturnsC2Pointers,
-                    RotationControlSelected          = mmc.ModeSense2A.RotationControlSelected,
-                    SeparateChannelMute              = mmc.ModeSense2A.SeparateChannelMute,
-                    SeparateChannelVolume            = mmc.ModeSense2A.SeparateChannelVolume, SSS = mmc.ModeSense2A.SSS,
-                    MultiSession                     = mmc.ModeSense2A.SupportsMultiSession,
-                    SupportedVolumeLevels            = mmc.ModeSense2A.SupportedVolumeLevels,
-                    TestWrite                        = mmc.ModeSense2A.TestWrite,
-                    WriteCDR                         = mmc.ModeSense2A.WritesCDR,
-                    WriteCDRW                        = mmc.ModeSense2A.WritesCDRW,
-                    WriteDVDR                        = mmc.ModeSense2A.WritesDVDR,
-                    WriteDVDRAM                      = mmc.ModeSense2A.WritesDVDRAM,
+                    AccurateCDDA = mmc.ModeSense2A.AccurateCDDA, BCK = mmc.ModeSense2A.BCK,
+                    BufferSize = mmc.ModeSense2A.BufferSize, BUF = mmc.ModeSense2A.BufferUnderRunProtection,
+                    Eject = mmc.ModeSense2A.CanEject, Lock = mmc.ModeSense2A.CanLockMedia,
+                    CDDACommand = mmc.ModeSense2A.CDDACommand, Composite = mmc.ModeSense2A.CompositeAudioVideo,
+                    CMRSupported = (ushort)(mmc.ModeSense2A.CSSandCPPMSupported ? 1 : 0),
+                    CurrentSpeed = mmc.ModeSense2A.CurrentSpeed, CurrentWriteSpeed = mmc.ModeSense2A.CurrentWriteSpeed,
+                    CurrentWriteSpeedSelected = mmc.ModeSense2A.CurrentWriteSpeedSelected,
+                    SDP = mmc.ModeSense2A.DeterministicSlotChanger, DigitalPort1 = mmc.ModeSense2A.DigitalPort1,
+                    DigitalPort2 = mmc.ModeSense2A.DigitalPort2, LeadInPW = mmc.ModeSense2A.LeadInPW,
+                    LoadingMechanism = mmc.ModeSense2A.LoadingMechanismType, LockState = mmc.ModeSense2A.LockStatus,
+                    LSBF = mmc.ModeSense2A.LSBF, MaximumSpeed = mmc.ModeSense2A.MaximumSpeed,
+                    MaxWriteSpeed = mmc.ModeSense2A.MaximumWriteSpeed, AudioPlay = mmc.ModeSense2A.PlaysAudio,
+                    PreventJumper = mmc.ModeSense2A.PreventJumperStatus, RCK = mmc.ModeSense2A.RCK,
+                    ReadBarcode = mmc.ModeSense2A.ReadsBarcode, SCC = mmc.ModeSense2A.ReadsBothSides,
+                    ReadCDR = mmc.ModeSense2A.ReadsCDR, ReadCDRW = mmc.ModeSense2A.ReadsCDRW,
+                    DeinterlaveSubchannel = mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
+                    ReadDVDR = mmc.ModeSense2A.ReadsDVDR, ReadDVDRAM = mmc.ModeSense2A.ReadsDVDRAM,
+                    ReadDVDROM = mmc.ModeSense2A.ReadsDVDROM, ISRC = mmc.ModeSense2A.ReadsISRC,
+                    Mode2Form2 = mmc.ModeSense2A.ReadsMode2Form2, Mode2Form1 = mmc.ModeSense2A.ReadsMode2Form1,
+                    Method2 = mmc.ModeSense2A.ReadsPacketCDR, Subchannel = mmc.ModeSense2A.ReadsSubchannel,
+                    UPC = mmc.ModeSense2A.ReadsUPC, C2Pointer = mmc.ModeSense2A.ReturnsC2Pointers,
+                    RotationControlSelected = mmc.ModeSense2A.RotationControlSelected,
+                    SeparateChannelMute = mmc.ModeSense2A.SeparateChannelMute,
+                    SeparateChannelVolume = mmc.ModeSense2A.SeparateChannelVolume, SSS = mmc.ModeSense2A.SSS,
+                    MultiSession = mmc.ModeSense2A.SupportsMultiSession,
+                    SupportedVolumeLevels = mmc.ModeSense2A.SupportedVolumeLevels,
+                    TestWrite = mmc.ModeSense2A.TestWrite, WriteCDR = mmc.ModeSense2A.WritesCDR,
+                    WriteCDRW = mmc.ModeSense2A.WritesCDRW, WriteDVDR = mmc.ModeSense2A.WritesDVDR,
+                    WriteDVDRAM = mmc.ModeSense2A.WritesDVDRAM,
                     WriteSpeedPerformanceDescriptors = mmc.ModeSense2A.WriteSpeedPerformanceDescriptors
                 });
 
@@ -2082,5 +2064,119 @@ namespace Aaru.CommonTypes.Metadata
         }
 
         public override int GetHashCode() => Code;
+    }
+
+    public class GdRomSwapDiscCapabilities
+    {
+        [JsonIgnore, Key]
+        public int Id { get; set; }
+
+        public bool   RecognizedSwapDisc            { get; set; }
+        public byte   SwapDiscLeadOutPMIN           { get; set; }
+        public byte   SwapDiscLeadOutPSEC           { get; set; }
+        public byte   SwapDiscLeadOutPFRAM          { get; set; }
+        public int    SwapDiscLeadOutStart          { get; set; }
+        public bool   Lba0Readable                  { get; set; }
+        public byte[] Lba0Data                      { get; set; }
+        public byte[] Lba0Sense                     { get; set; }
+        public string Lba0DecodedSense              { get; set; }
+        public bool   Lba0ScrambledReadable         { get; set; }
+        public byte[] Lba0ScrambledData             { get; set; }
+        public byte[] Lba0ScrambledSense            { get; set; }
+        public string Lba0ScrambledDecodedSense     { get; set; }
+        public bool   Lba44990Readable              { get; set; }
+        public byte[] Lba44990Data                  { get; set; }
+        public byte[] Lba44990Sense                 { get; set; }
+        public string Lba44990DecodedSense          { get; set; }
+        public int    Lba44990ReadableCluster       { get; set; }
+        public bool   Lba45000Readable              { get; set; }
+        public byte[] Lba45000Data                  { get; set; }
+        public byte[] Lba45000Sense                 { get; set; }
+        public string Lba45000DecodedSense          { get; set; }
+        public int    Lba45000ReadableCluster       { get; set; }
+        public bool   Lba50000Readable              { get; set; }
+        public byte[] Lba50000Data                  { get; set; }
+        public byte[] Lba50000Sense                 { get; set; }
+        public string Lba50000DecodedSense          { get; set; }
+        public int    Lba50000ReadableCluster       { get; set; }
+        public bool   Lba100000Readable             { get; set; }
+        public byte[] Lba100000Data                 { get; set; }
+        public byte[] Lba100000Sense                { get; set; }
+        public string Lba100000DecodedSense         { get; set; }
+        public int    Lba100000ReadableCluster      { get; set; }
+        public bool   Lba400000Readable             { get; set; }
+        public byte[] Lba400000Data                 { get; set; }
+        public byte[] Lba400000Sense                { get; set; }
+        public string Lba400000DecodedSense         { get; set; }
+        public int    Lba400000ReadableCluster      { get; set; }
+        public bool   Lba450000Readable             { get; set; }
+        public byte[] Lba450000Data                 { get; set; }
+        public byte[] Lba450000Sense                { get; set; }
+        public string Lba450000DecodedSense         { get; set; }
+        public int    Lba450000ReadableCluster      { get; set; }
+        public bool   Lba44990PqReadable            { get; set; }
+        public byte[] Lba44990PqData                { get; set; }
+        public byte[] Lba44990PqSense               { get; set; }
+        public string Lba44990PqDecodedSense        { get; set; }
+        public int    Lba44990PqReadableCluster     { get; set; }
+        public bool   Lba45000PqReadable            { get; set; }
+        public byte[] Lba45000PqData                { get; set; }
+        public byte[] Lba45000PqSense               { get; set; }
+        public string Lba45000PqDecodedSense        { get; set; }
+        public int    Lba45000PqReadableCluster     { get; set; }
+        public bool   Lba50000PqReadable            { get; set; }
+        public byte[] Lba50000PqData                { get; set; }
+        public byte[] Lba50000PqSense               { get; set; }
+        public string Lba50000PqDecodedSense        { get; set; }
+        public int    Lba50000PqReadableCluster     { get; set; }
+        public bool   Lba100000PqReadable           { get; set; }
+        public byte[] Lba100000PqData               { get; set; }
+        public byte[] Lba100000PqSense              { get; set; }
+        public string Lba100000PqDecodedSense       { get; set; }
+        public int    Lba100000PqReadableCluster    { get; set; }
+        public bool   Lba400000PqReadable           { get; set; }
+        public byte[] Lba400000PqData               { get; set; }
+        public byte[] Lba400000PqSense              { get; set; }
+        public string Lba400000PqDecodedSense       { get; set; }
+        public int    Lba400000PqReadableCluster    { get; set; }
+        public bool   Lba450000PqReadable           { get; set; }
+        public byte[] Lba450000PqData               { get; set; }
+        public byte[] Lba450000PqSense              { get; set; }
+        public string Lba450000PqDecodedSense       { get; set; }
+        public int    Lba450000PqReadableCluster    { get; set; }
+        public bool   Lba44990RwReadable            { get; set; }
+        public byte[] Lba44990RwData                { get; set; }
+        public byte[] Lba44990RwSense               { get; set; }
+        public string Lba44990RwDecodedSense        { get; set; }
+        public int    Lba44990RwReadableCluster     { get; set; }
+        public bool   Lba45000RwReadable            { get; set; }
+        public byte[] Lba45000RwData                { get; set; }
+        public byte[] Lba45000RwSense               { get; set; }
+        public string Lba45000RwDecodedSense        { get; set; }
+        public int    Lba45000RwReadableCluster     { get; set; }
+        public bool   Lba50000RwReadable            { get; set; }
+        public byte[] Lba50000RwData                { get; set; }
+        public byte[] Lba50000RwSense               { get; set; }
+        public string Lba50000RwDecodedSense        { get; set; }
+        public int    Lba50000RwReadableCluster     { get; set; }
+        public bool   Lba100000RwReadable           { get; set; }
+        public byte[] Lba100000RwData               { get; set; }
+        public byte[] Lba100000RwSense              { get; set; }
+        public string Lba100000RwDecodedSense       { get; set; }
+        public int    Lba100000RwReadableCluster    { get; set; }
+        public bool   Lba400000RwReadable           { get; set; }
+        public byte[] Lba400000RwData               { get; set; }
+        public byte[] Lba400000RwSense              { get; set; }
+        public string Lba400000RwDecodedSense       { get; set; }
+        public int    Lba400000RwReadableCluster    { get; set; }
+        public bool   Lba450000RwReadable           { get; set; }
+        public byte[] Lba450000RwData               { get; set; }
+        public byte[] Lba450000RwSense              { get; set; }
+        public string Lba450000RwDecodedSense       { get; set; }
+        public int    Lba450000RwReadableCluster    { get; set; }
+        public uint   MinimumReadableSectorInHdArea { get; set; }
+        public uint   MaximumReadableSectorInHdArea { get; set; }
+        public byte[] MaximumReadablePqInHdArea     { get; set; }
+        public byte[] MaximumReadableRwInHdArea     { get; set; }
     }
 }
