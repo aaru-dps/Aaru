@@ -1016,6 +1016,8 @@ namespace Aaru.Database.Migrations
 
                 b.Property<int?>("ATAPIId").HasColumnType("INTEGER");
 
+                b.Property<bool>("CanReadGdRomUsingSwapDisc").HasColumnType("INTEGER");
+
                 b.Property<bool>("CompactFlash").HasColumnType("INTEGER");
 
                 b.Property<int?>("FireWireId").HasColumnType("INTEGER");

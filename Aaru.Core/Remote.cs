@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -332,7 +332,8 @@ namespace Aaru.Core
 
                             existing = new Device(device)
                             {
-                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
+                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                CanReadGdRomUsingSwapDisc = device.CanReadGdRomUsingSwapDisc
                             };
 
                             mctx.Devices.Add(existing);
@@ -343,7 +344,8 @@ namespace Aaru.Core
 
                             mctx.Devices.Add(new Device(device)
                             {
-                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
+                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                CanReadGdRomUsingSwapDisc = device.CanReadGdRomUsingSwapDisc
                             });
                         }
                     }

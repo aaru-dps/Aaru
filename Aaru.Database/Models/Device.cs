@@ -62,5 +62,8 @@ namespace Aaru.Database.Models
 
         [DefaultValue(0)]
         public int OptimalMultipleSectorsRead { get; set; }
+
+        [DefaultValue(false)]
+        public bool CanReadGdRomUsingSwapDisc { get; set; }
     }
 }
