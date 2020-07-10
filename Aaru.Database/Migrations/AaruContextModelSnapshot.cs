@@ -97,6 +97,229 @@ namespace Aaru.Database.Migrations
                 b.ToTable("FireWire");
             });
 
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.GdRomSwapDiscCapabilities", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba0Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba0DecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba0Readable").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba0ScrambledData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba0ScrambledDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba0ScrambledReadable").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba0ScrambledSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba0Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba100000Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba100000DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba100000PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba100000PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba100000PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba100000PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba100000PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba100000Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba100000ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba100000RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba100000RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba100000RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba100000RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba100000RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba100000Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba400000Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba400000DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba400000PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba400000PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba400000PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba400000PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba400000PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba400000Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba400000ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba400000RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba400000RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba400000RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba400000RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba400000RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba400000Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba44990Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba44990DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba44990PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba44990PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba44990PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba44990PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba44990PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba44990Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba44990ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba44990RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba44990RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba44990RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba44990RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba44990RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba44990Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba450000Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba450000DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba450000PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba450000PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba450000PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba450000PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba450000PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba450000Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba450000ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba450000RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba450000RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba450000RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba450000RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba450000RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba450000Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba45000Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba45000DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba45000PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba45000PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba45000PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba45000PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba45000PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba45000Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba45000ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba45000RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba45000RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba45000RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba45000RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba45000RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba45000Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba50000Data").HasColumnType("BLOB");
+
+                b.Property<string>("Lba50000DecodedSense").HasColumnType("TEXT");
+
+                b.Property<byte[]>("Lba50000PqData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba50000PqDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba50000PqReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba50000PqReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba50000PqSense").HasColumnType("BLOB");
+
+                b.Property<bool>("Lba50000Readable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba50000ReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba50000RwData").HasColumnType("BLOB");
+
+                b.Property<string>("Lba50000RwDecodedSense").HasColumnType("TEXT");
+
+                b.Property<bool>("Lba50000RwReadable").HasColumnType("INTEGER");
+
+                b.Property<int>("Lba50000RwReadableCluster").HasColumnType("INTEGER");
+
+                b.Property<byte[]>("Lba50000RwSense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("Lba50000Sense").HasColumnType("BLOB");
+
+                b.Property<byte[]>("MaximumReadablePqInHdArea").HasColumnType("BLOB");
+
+                b.Property<byte[]>("MaximumReadableRwInHdArea").HasColumnType("BLOB");
+
+                b.Property<uint>("MaximumReadableSectorInHdArea").HasColumnType("INTEGER");
+
+                b.Property<uint>("MinimumReadableSectorInHdArea").HasColumnType("INTEGER");
+
+                b.Property<bool>("RecognizedSwapDisc").HasColumnType("INTEGER");
+
+                b.Property<byte>("SwapDiscLeadOutPFRAM").HasColumnType("INTEGER");
+
+                b.Property<byte>("SwapDiscLeadOutPMIN").HasColumnType("INTEGER");
+
+                b.Property<byte>("SwapDiscLeadOutPSEC").HasColumnType("INTEGER");
+
+                b.Property<int>("SwapDiscLeadOutStart").HasColumnType("INTEGER");
+
+                b.HasKey("Id");
+
+                b.ToTable("GdRomSwapDiscCapabilities");
+            });
+
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd().HasColumnType("INTEGER");
@@ -1022,6 +1245,8 @@ namespace Aaru.Database.Migrations
 
                 b.Property<int?>("FireWireId").HasColumnType("INTEGER");
 
+                b.Property<int?>("GdRomSwapDiscCapabilitiesId").HasColumnType("INTEGER");
+
                 b.Property<DateTime>("LastSynchronized").HasColumnType("TEXT");
 
                 b.Property<string>("Manufacturer").HasColumnType("TEXT");
@@ -1051,6 +1276,8 @@ namespace Aaru.Database.Migrations
                 b.HasIndex("ATAPIId");
 
                 b.HasIndex("FireWireId");
+
+                b.HasIndex("GdRomSwapDiscCapabilitiesId");
 
                 b.HasIndex("MultiMediaCardId");
 
@@ -1241,6 +1468,8 @@ namespace Aaru.Database.Migrations
 
                 b.Property<int?>("FireWireId").HasColumnType("INTEGER");
 
+                b.Property<int?>("GdRomSwapDiscCapabilitiesId").HasColumnType("INTEGER");
+
                 b.Property<string>("Manufacturer").HasColumnType("TEXT");
 
                 b.Property<string>("Model").HasColumnType("TEXT");
@@ -1268,6 +1497,8 @@ namespace Aaru.Database.Migrations
                 b.HasIndex("ATAPIId");
 
                 b.HasIndex("FireWireId");
+
+                b.HasIndex("GdRomSwapDiscCapabilitiesId");
 
                 b.HasIndex("MultiMediaCardId");
 
@@ -1440,6 +1671,9 @@ namespace Aaru.Database.Migrations
                 b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId").
                   OnDelete(DeleteBehavior.SetNull);
 
+                b.HasOne("Aaru.CommonTypes.Metadata.GdRomSwapDiscCapabilities", "GdRomSwapDiscCapabilities").WithMany().
+                  HasForeignKey("GdRomSwapDiscCapabilitiesId");
+
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
                   HasForeignKey("MultiMediaCardId").OnDelete(DeleteBehavior.SetNull);
 
@@ -1466,6 +1700,9 @@ namespace Aaru.Database.Migrations
 
                 b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId").
                   OnDelete(DeleteBehavior.SetNull);
+
+                b.HasOne("Aaru.CommonTypes.Metadata.GdRomSwapDiscCapabilities", "GdRomSwapDiscCapabilities").WithMany().
+                  HasForeignKey("GdRomSwapDiscCapabilitiesId");
 
                 b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
                   HasForeignKey("MultiMediaCardId").OnDelete(DeleteBehavior.SetNull);

@@ -42,20 +42,21 @@ namespace Aaru.Database.Models
 
         public Device(DeviceReportV2 report)
         {
-            ATA              = report.ATA;
-            ATAPI            = report.ATAPI;
-            CompactFlash     = report.CompactFlash;
-            FireWire         = report.FireWire;
-            LastSynchronized = DateTime.UtcNow;
-            MultiMediaCard   = report.MultiMediaCard;
-            PCMCIA           = report.PCMCIA;
-            SCSI             = report.SCSI;
-            SecureDigital    = report.SecureDigital;
-            USB              = report.USB;
-            Manufacturer     = report.Manufacturer;
-            Model            = report.Model;
-            Revision         = report.Revision;
-            Type             = report.Type;
+            ATA                       = report.ATA;
+            ATAPI                     = report.ATAPI;
+            CompactFlash              = report.CompactFlash;
+            FireWire                  = report.FireWire;
+            LastSynchronized          = DateTime.UtcNow;
+            MultiMediaCard            = report.MultiMediaCard;
+            PCMCIA                    = report.PCMCIA;
+            SCSI                      = report.SCSI;
+            SecureDigital             = report.SecureDigital;
+            USB                       = report.USB;
+            Manufacturer              = report.Manufacturer;
+            Model                     = report.Model;
+            Revision                  = report.Revision;
+            Type                      = report.Type;
+            GdRomSwapDiscCapabilities = report.GdRomSwapDiscCapabilities;
         }
 
         public DateTime LastSynchronized { get; set; }
