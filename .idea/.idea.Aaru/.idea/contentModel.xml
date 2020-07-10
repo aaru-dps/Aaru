@@ -416,6 +416,8 @@
           <e p="20200710164101_AddCanReadGdRomUsingSwapDisc.cs" t="Include" />
           <e p="20200710170129_AddGdRomSwapDiscCapabilities.Designer.cs" t="Include" />
           <e p="20200710170129_AddGdRomSwapDiscCapabilities.cs" t="Include" />
+          <e p="20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.Designer.cs" t="Include" />
+          <e p="20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.cs" t="Include" />
           <e p="AaruContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

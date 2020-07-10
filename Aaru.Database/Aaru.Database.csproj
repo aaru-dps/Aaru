@@ -114,6 +114,8 @@
     <Compile Include="Migrations\20200710164101_AddCanReadGdRomUsingSwapDisc.Designer.cs" />
     <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.cs" />
     <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.Designer.cs" />
+    <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.cs" />
+    <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.Designer.cs" />
     <Compile Include="Migrations\AaruContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseOperatingSystem.cs" />
