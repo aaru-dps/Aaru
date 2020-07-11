@@ -1682,6 +1682,15 @@ namespace Aaru.CommonTypes.Metadata
         [DisplayName("Data from scrambled READ CD command")]
         public byte[] ReadCdScrambledData { get; set; }
 
+        [DisplayName("Can read from cache using F1h command subcommand 06h")]
+        public bool? CanReadF1_06 { get; set; }
+        [DisplayName("Can read from cache using F1h command subcommand 06h")]
+        public byte[] ReadF1_06Data { get; set; }
+        [DisplayName("Can read from cache using F1h command subcommand 06h targeting Lead-Out")]
+        public bool? CanReadF1_06LeadOut { get; set; }
+        [DisplayName("Can read from cache using F1h command subcommand 06h targeting Lead-Out")]
+        public byte[] ReadF1_06LeadOutData { get; set; }
+
         [JsonIgnore]
         public int? AtaId { get; set; }
         [JsonIgnore]
