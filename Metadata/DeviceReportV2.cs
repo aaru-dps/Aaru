@@ -2205,7 +2205,7 @@ namespace Aaru.CommonTypes.Metadata
         public string Lba100000AudioDecodedSense      { get; set; }
         public int    Lba100000AudioReadableCluster   { get; set; }
         public bool   Lba400000AudioReadable          { get; set; }
-        public byte[] Lba400000AudioAudioData         { get; set; }
+        public byte[] Lba400000AudioData              { get; set; }
         public byte[] Lba400000AudioSense             { get; set; }
         public string Lba400000AudioDecodedSense      { get; set; }
         public int    Lba400000AudioReadableCluster   { get; set; }
