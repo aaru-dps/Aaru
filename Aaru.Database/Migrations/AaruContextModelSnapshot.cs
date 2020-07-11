@@ -177,7 +177,7 @@ namespace Aaru.Database.Migrations
 
                 b.Property<byte[]>("Lba100000Sense").HasColumnType("BLOB");
 
-                b.Property<byte[]>("Lba400000AudioAudioData").HasColumnType("BLOB");
+                b.Property<byte[]>("Lba400000AudioData").HasColumnType("BLOB");
 
                 b.Property<string>("Lba400000AudioDecodedSense").HasColumnType("TEXT");
 
