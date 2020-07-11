@@ -1042,6 +1042,10 @@ namespace Aaru.Database.Migrations
 
                 b.Property<bool?>("CanReadDiscInformation").HasColumnType("INTEGER");
 
+                b.Property<bool?>("CanReadF1_06").HasColumnType("INTEGER");
+
+                b.Property<bool?>("CanReadF1_06LeadOut").HasColumnType("INTEGER");
+
                 b.Property<bool?>("CanReadFirstTrackPreGap").HasColumnType("INTEGER");
 
                 b.Property<bool?>("CanReadFullTOC").HasColumnType("INTEGER");
@@ -1205,6 +1209,10 @@ namespace Aaru.Database.Migrations
                 b.Property<byte[]>("ReadDmaRetryData").HasColumnType("BLOB");
 
                 b.Property<byte[]>("ReadDmaRetryLbaData").HasColumnType("BLOB");
+
+                b.Property<byte[]>("ReadF1_06Data").HasColumnType("BLOB");
+
+                b.Property<byte[]>("ReadF1_06LeadOutData").HasColumnType("BLOB");
 
                 b.Property<byte[]>("ReadLba48Data").HasColumnType("BLOB");
 

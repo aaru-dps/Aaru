@@ -420,6 +420,8 @@
           <e p="20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.cs" t="Include" />
           <e p="20200710194507_AddAudioFieldsToGdromReadCapabilities.Designer.cs" t="Include" />
           <e p="20200710194507_AddAudioFieldsToGdromReadCapabilities.cs" t="Include" />
+          <e p="20200711182425_AddFieldsForF1hCommand06hSubcommand.Designer.cs" t="Include" />
+          <e p="20200711182425_AddFieldsForF1hCommand06hSubcommand.cs" t="Include" />
           <e p="AaruContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

@@ -118,6 +118,8 @@
     <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.Designer.cs" />
     <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.cs" />
     <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.Designer.cs" />
+    <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.cs" />
+    <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.Designer.cs" />
     <Compile Include="Migrations\AaruContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseOperatingSystem.cs" />
