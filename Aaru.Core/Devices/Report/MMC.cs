@@ -572,7 +572,7 @@ namespace Aaru.Core.Devices.Report
         }
 
         public TestedMedia ReportMmcMedia(string mediaType, bool tryPlextor, bool tryPioneer, bool tryNec,
-                                          bool tryHldtst)
+                                          bool tryHldtst, bool tryMediaTekF106)
         {
             var mediaTest = new TestedMedia();
 
@@ -1610,21 +1610,159 @@ namespace Aaru.Core.Devices.Report
                     mediaTest.PlextorReadRawDVDData = buffer;
             }
 
-            if(!tryHldtst)
-                return mediaTest;
+            if(tryHldtst)
+            {
+                AaruConsole.WriteLine("Trying HL-DT-ST (aka LG) trick to raw read DVDs...");
 
-            AaruConsole.WriteLine("Trying HL-DT-ST (aka LG) trick to raw read DVDs...");
+                mediaTest.SupportsHLDTSTReadRawDVD =
+                    !_dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
 
-            mediaTest.SupportsHLDTSTReadRawDVD =
-                !_dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsHLDTSTReadRawDVD);
 
-            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsHLDTSTReadRawDVD);
+                if(mediaTest.SupportsHLDTSTReadRawDVD == true)
+                    mediaTest.SupportsHLDTSTReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
 
-            if(mediaTest.SupportsHLDTSTReadRawDVD == true)
-                mediaTest.SupportsHLDTSTReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
+                if(mediaTest.SupportsHLDTSTReadRawDVD == true)
+                    mediaTest.HLDTSTReadRawDVDData = buffer;
+            }
 
-            if(mediaTest.SupportsHLDTSTReadRawDVD == true)
-                mediaTest.HLDTSTReadRawDVDData = buffer;
+            if(tryMediaTekF106)
+            {
+                bool triedLba0    = false;
+                bool triedLeadOut = false;
+
+                if(mediaType                == "Audio CD" &&
+                   mediaTest.SupportsReadCd == true)
+                {
+                    _dev.ReadCd(out _, out _, 0, 2352, 1, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None,
+                                true, false, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+
+                    triedLba0 = true;
+                }
+                else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                         mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                        mediaTest.SupportsReadCdRaw == true)
+                {
+                    _dev.ReadCd(out _, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                _dev.Timeout, out _);
+
+                    triedLba0 = true;
+                }
+                else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                         mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                        mediaTest.SupportsReadCd == true)
+                {
+                    _dev.ReadCd(out _, out _, 0, 2048, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                                out _);
+
+                    triedLba0 = true;
+                }
+                else if(mediaTest.SupportsRead6 == true)
+                {
+                    _dev.Read6(out _, out _, 0, 2048, _dev.Timeout, out _);
+                    triedLba0 = true;
+                }
+                else if(mediaTest.SupportsRead10 == true)
+                {
+                    _dev.Read10(out _, out _, 0, false, true, false, false, 0, 2048, 0, 1, _dev.Timeout, out _);
+                    triedLba0 = true;
+                }
+                else if(mediaTest.SupportsRead12 == true)
+                {
+                    _dev.Read12(out _, out _, 0, false, true, false, false, 0, 2048, 0, 1, false, _dev.Timeout, out _);
+                    triedLba0 = true;
+                }
+                else if(mediaTest.SupportsRead16 == true)
+                {
+                    _dev.Read16(out _, out _, 0, false, true, false, 0, 2048, 0, 1, false, _dev.Timeout, out _);
+                    triedLba0 = true;
+                }
+
+                if(triedLba0)
+                {
+                    AaruConsole.WriteLine("Trying MediaTek command F1h subcommand 06h...");
+
+                    mediaTest.CanReadF1_06 =
+                        !_dev.MediaTekReadCache(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
+
+                    mediaTest.ReadF1_06Data = mediaTest.CanReadF1_06 == true ? buffer : senseBuffer;
+
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadF1_06);
+                }
+
+                if(mediaTest.Blocks > 0)
+                {
+                    if(mediaType                == "Audio CD" &&
+                       mediaTest.SupportsReadCd == true)
+                    {
+                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.Cdda, false,
+                                    false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                    MmcSubchannel.None, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+                    else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                             mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                            mediaTest.SupportsReadCdRaw == true)
+                    {
+                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2352, 1, MmcSectorTypes.AllTypes, false,
+                                    false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                    MmcSubchannel.None, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+                    else if((mediaType.StartsWith("CD", StringComparison.OrdinalIgnoreCase) ||
+                             mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)") &&
+                            mediaTest.SupportsReadCd == true)
+                    {
+                        _dev.ReadCd(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, 1, MmcSectorTypes.AllTypes, false,
+                                    false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                    MmcSubchannel.None, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+                    else if(mediaTest.SupportsRead6 == true)
+                    {
+                        _dev.Read6(out _, out _, (uint)(mediaTest.Blocks + 1), 2048, _dev.Timeout, out _);
+                        triedLeadOut = true;
+                    }
+                    else if(mediaTest.SupportsRead10 == true)
+                    {
+                        _dev.Read10(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
+                                    1, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+                    else if(mediaTest.SupportsRead12 == true)
+                    {
+                        _dev.Read12(out _, out _, 0, false, true, false, false, (uint)(mediaTest.Blocks + 1), 2048, 0,
+                                    1, false, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+                    else if(mediaTest.SupportsRead16 == true)
+                    {
+                        _dev.Read16(out _, out _, 0, false, true, false, (ulong)(mediaTest.Blocks + 1), 2048, 0, 1,
+                                    false, _dev.Timeout, out _);
+
+                        triedLeadOut = true;
+                    }
+
+                    if(triedLeadOut)
+                    {
+                        AaruConsole.WriteLine("Trying MediaTek command F1h subcommand 06h for Lead-Out...");
+
+                        mediaTest.CanReadF1_06LeadOut =
+                            !_dev.MediaTekReadCache(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
+
+                        mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
+
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadF1_06LeadOut);
+                    }
+                }
+            }
 
             // This is for checking multi-session support, and inter-session lead-in/out reading, as Enhanced CD are
             if(mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)")

@@ -641,7 +641,8 @@ namespace Aaru.Commands.Device
 
                             mediaTypes.Sort();
 
-                            bool tryPlextor = false, tryHldtst = false, tryPioneer = false, tryNec = false;
+                            bool tryPlextor      = false, tryHldtst = false, tryPioneer = false, tryNec = false,
+                                 tryMediaTekF106 = false;
 
                             tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
                             tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
@@ -717,6 +718,20 @@ namespace Aaru.Commands.Device
 
                                     tryHldtst |= pressedKey.Key == ConsoleKey.Y;
                                 }
+
+                                pressedKey = new ConsoleKeyInfo();
+
+                                while(pressedKey.Key != ConsoleKey.Y &&
+                                      pressedKey.Key != ConsoleKey.N)
+                                {
+                                    AaruConsole.
+                                        Write("Do you have want to try MediaTek vendor command F1h subcommand 06h? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+
+                                    pressedKey = System.Console.ReadKey();
+                                    AaruConsole.WriteLine();
+                                }
+
+                                tryMediaTekF106 = pressedKey.Key == ConsoleKey.Y;
                             }
 
                             if(dev.Model.StartsWith("PD-", StringComparison.Ordinal))
@@ -844,7 +859,7 @@ namespace Aaru.Commands.Device
                                 if(mediaIsRecognized)
                                 {
                                     mediaTest = reporter.ReportMmcMedia(mediaType, tryPlextor, tryPioneer, tryNec,
-                                                                        tryHldtst);
+                                                                        tryHldtst, tryMediaTekF106);
 
                                     if(mediaTest is null)
                                         continue;
