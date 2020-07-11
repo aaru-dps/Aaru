@@ -69,6 +69,7 @@
     <Compile Include="Devices\Info\Plextor.cs" />
     <Compile Include="Devices\Info\Properties.cs" />
     <Compile Include="Devices\Report\DeviceReport.cs" />
+    <Compile Include="Devices\Report\GdRomSwapTrick.cs" />
     <Compile Include="Devices\Report\Scsi.cs" />
     <Compile Include="Devices\Report\MMC.cs" />
     <Compile Include="Devices\Report\SSC.cs" />

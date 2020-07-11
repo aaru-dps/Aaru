@@ -63,10 +63,18 @@ namespace Aaru.Commands.Device
                 Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
             });
 
+            Add(new Option(new[]
+                {
+                    "--trap-disc", "-t"
+                }, "Does a device report using a trap disc.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string devicePath)
+        public static int Invoke(bool debug, bool verbose, string devicePath, bool trapDisc)
         {
             MainClass.PrintCopyright();
 
@@ -147,6 +155,13 @@ namespace Aaru.Commands.Device
                 jsonFile = dev.Model + ".json";
 
             jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
+
+            if(trapDisc && dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+            {
+                AaruConsole.ErrorWriteLine("This device type does not support doing reports with trap discs.");
+
+                return (int)ErrorNumber.InvalidArgument;
+            }
 
             var reporter = new DeviceReport(dev);
 
@@ -424,100 +439,268 @@ namespace Aaru.Commands.Device
                             bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
                                              dev.Model.ToLowerInvariant().StartsWith("rrd");
 
-                            List<string> mediaTypes = new List<string>();
-
-                            report.SCSI.MultiMediaDevice = new Mmc
+                            if(trapDisc)
                             {
-                                ModeSense2AData = cdromMode, Features = reporter.ReportMmcFeatures()
-                            };
-
-                            if(cdromMode != null &&
-                               !iomegaRev)
-                            {
-                                mediaTypes.Add("CD-ROM");
-                                mediaTypes.Add("Audio CD");
-                                mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR)
-                                    mediaTypes.Add("CD-R");
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
+                                if(iomegaRev)
                                 {
-                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                    AaruConsole.
+                                        ErrorWriteLine("This device type does not support doing reports with trap discs.");
+
+                                    return (int)ErrorNumber.InvalidArgument;
                                 }
 
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM)
-                                    mediaTypes.Add("DVD-ROM");
+                                pressedKey = new ConsoleKeyInfo();
 
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM)
+                                while(pressedKey.Key != ConsoleKey.Y &&
+                                      pressedKey.Key != ConsoleKey.N)
                                 {
-                                    mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
-                                    mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                                    AaruConsole.
+                                        Write("Are you sure you want to do a report using a trap disc and the swapping method?\n" +
+                                              "This method can damage the drive, or the disc, and requires some ability.\n" +
+                                              "In you are unsure, please press N to not continue.\n" +
+                                              "Press Y to continue (Y/N): ");
+
+                                    pressedKey = System.Console.ReadKey();
+                                    AaruConsole.WriteLine();
                                 }
 
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR)
-                                    mediaTypes.Add("DVD-R");
+                                if(pressedKey.Key == ConsoleKey.N)
+                                    return (int)ErrorNumber.NoError;
+
+                                pressedKey = new ConsoleKeyInfo();
+
+                                while(pressedKey.Key != ConsoleKey.Y &&
+                                      pressedKey.Key != ConsoleKey.N)
+                                {
+                                    AaruConsole.Write("Do you have an audio trap disc (if unsure press N)? (Y/N): ");
+
+                                    pressedKey = System.Console.ReadKey();
+                                    AaruConsole.WriteLine();
+                                }
+
+                                if(pressedKey.Key == ConsoleKey.N)
+                                {
+                                    AaruConsole.ErrorWriteLine("Please burn an audio trap disc before continuing...");
+
+                                    return (int)ErrorNumber.NoError;
+                                }
+
+                                pressedKey = new ConsoleKeyInfo();
+
+                                while(pressedKey.Key != ConsoleKey.Y &&
+                                      pressedKey.Key != ConsoleKey.N)
+                                {
+                                    AaruConsole.Write("Do you have a GD-ROM disc (if unsure press N)? (Y/N): ");
+
+                                    pressedKey = System.Console.ReadKey();
+                                    AaruConsole.WriteLine();
+                                }
+
+                                if(pressedKey.Key == ConsoleKey.Y)
+                                    reporter.ReportGdRomSwapTrick(ref report);
+                                else
+                                    return (int)ErrorNumber.NoError;
                             }
-
-                            if(report.SCSI.MultiMediaDevice.Features != null &&
-                               !iomegaRev)
+                            else
                             {
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
+                                List<string> mediaTypes = new List<string>();
+
+                                report.SCSI.MultiMediaDevice = new Mmc
                                 {
-                                    if(!mediaTypes.Contains("BD-ROM"))
-                                        mediaTypes.Add("BD-ROM");
+                                    ModeSense2AData = cdromMode, Features = reporter.ReportMmcFeatures()
+                                };
 
-                                    if(!mediaTypes.Contains("BD-R HTL (not LTH)"))
-                                        mediaTypes.Add("BD-R HTL (not LTH)");
+                                if(cdromMode != null &&
+                                   !iomegaRev)
+                                {
+                                    mediaTypes.Add("CD-ROM");
+                                    mediaTypes.Add("Audio CD");
+                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
 
-                                    if(!mediaTypes.Contains("BD-RE"))
-                                        mediaTypes.Add("BD-RE");
+                                    if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR)
+                                        mediaTypes.Add("CD-R");
 
-                                    if(!mediaTypes.Contains("BD-R LTH"))
-                                        mediaTypes.Add("BD-R LTH");
+                                    if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
+                                    {
+                                        mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                        mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                        mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                    }
 
-                                    if(!mediaTypes.Contains("BD-R Triple Layer (100Gb)"))
-                                        mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                    if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM)
+                                        mediaTypes.Add("DVD-ROM");
 
-                                    if(!mediaTypes.Contains("BD-R Quad Layer (128Gb)"))
-                                        mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                    if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM)
+                                    {
+                                        mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                        mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                                    }
 
-                                    if(!mediaTypes.Contains("Ultra HD Blu-ray movie"))
-                                        mediaTypes.Add("Ultra HD Blu-ray movie");
-
-                                    if(!mediaTypes.Contains("PlayStation 3 game"))
-                                        mediaTypes.Add("PlayStation 3 game");
-
-                                    if(!mediaTypes.Contains("PlayStation 4 game"))
-                                        mediaTypes.Add("PlayStation 4 game");
-
-                                    if(!mediaTypes.Contains("Xbox One game"))
-                                        mediaTypes.Add("Xbox One game");
-
-                                    if(!mediaTypes.Contains("Nintendo Wii U game"))
-                                        mediaTypes.Add("Nintendo Wii U game");
+                                    if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR)
+                                        mediaTypes.Add("DVD-R");
                                 }
 
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
-                                   report.SCSI.MultiMediaDevice.Features.MultiRead)
+                                if(report.SCSI.MultiMediaDevice.Features != null &&
+                                   !iomegaRev)
+                                {
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
+                                    {
+                                        if(!mediaTypes.Contains("BD-ROM"))
+                                            mediaTypes.Add("BD-ROM");
+
+                                        if(!mediaTypes.Contains("BD-R HTL (not LTH)"))
+                                            mediaTypes.Add("BD-R HTL (not LTH)");
+
+                                        if(!mediaTypes.Contains("BD-RE"))
+                                            mediaTypes.Add("BD-RE");
+
+                                        if(!mediaTypes.Contains("BD-R LTH"))
+                                            mediaTypes.Add("BD-R LTH");
+
+                                        if(!mediaTypes.Contains("BD-R Triple Layer (100Gb)"))
+                                            mediaTypes.Add("BD-R Triple Layer (100Gb)");
+
+                                        if(!mediaTypes.Contains("BD-R Quad Layer (128Gb)"))
+                                            mediaTypes.Add("BD-R Quad Layer (128Gb)");
+
+                                        if(!mediaTypes.Contains("Ultra HD Blu-ray movie"))
+                                            mediaTypes.Add("Ultra HD Blu-ray movie");
+
+                                        if(!mediaTypes.Contains("PlayStation 3 game"))
+                                            mediaTypes.Add("PlayStation 3 game");
+
+                                        if(!mediaTypes.Contains("PlayStation 4 game"))
+                                            mediaTypes.Add("PlayStation 4 game");
+
+                                        if(!mediaTypes.Contains("Xbox One game"))
+                                            mediaTypes.Add("Xbox One game");
+
+                                        if(!mediaTypes.Contains("Nintendo Wii U game"))
+                                            mediaTypes.Add("Nintendo Wii U game");
+                                    }
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
+                                       report.SCSI.MultiMediaDevice.Features.MultiRead)
+                                    {
+                                        if(!mediaTypes.Contains("CD-ROM"))
+                                            mediaTypes.Add("CD-ROM");
+
+                                        if(!mediaTypes.Contains("Audio CD"))
+                                            mediaTypes.Add("Audio CD");
+
+                                        if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
+                                            mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+
+                                        if(!mediaTypes.Contains("CD-R"))
+                                            mediaTypes.Add("CD-R");
+
+                                        if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
+                                            mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+
+                                        if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
+                                            mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+
+                                        if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
+                                            mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                    }
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
+                                        if(!mediaTypes.Contains("CD-MRW"))
+                                            mediaTypes.Add("CD-MRW");
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
+                                    {
+                                        if(!mediaTypes.Contains("DDCD-ROM"))
+                                            mediaTypes.Add("DDCD-ROM");
+
+                                        if(!mediaTypes.Contains("DDCD-R"))
+                                            mediaTypes.Add("DDCD-R");
+
+                                        if(!mediaTypes.Contains("DDCD-RW"))
+                                            mediaTypes.Add("DDCD-RW");
+                                    }
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
+                                       report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
+                                    {
+                                        if(!mediaTypes.Contains("DVD-ROM"))
+                                            mediaTypes.Add("DVD-ROM");
+
+                                        if(!mediaTypes.Contains("DVD-R"))
+                                            mediaTypes.Add("DVD-R");
+
+                                        if(!mediaTypes.Contains("DVD-RW"))
+                                            mediaTypes.Add("DVD-RW");
+
+                                        if(!mediaTypes.Contains("DVD+R"))
+                                            mediaTypes.Add("DVD+R");
+
+                                        if(!mediaTypes.Contains("DVD+RW"))
+                                            mediaTypes.Add("DVD+RW");
+
+                                        if(!mediaTypes.Contains("DVD-R DL"))
+                                            mediaTypes.Add("DVD-R DL");
+
+                                        if(!mediaTypes.Contains("DVD+R DL"))
+                                            mediaTypes.Add("DVD+R DL");
+
+                                        if(!mediaTypes.Contains("Nintendo GameCube game"))
+                                            mediaTypes.Add("Nintendo GameCube game");
+
+                                        if(!mediaTypes.Contains("Nintendo Wii game"))
+                                            mediaTypes.Add("Nintendo Wii game");
+                                    }
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
+                                        if(!mediaTypes.Contains("DVD+MRW"))
+                                            mediaTypes.Add("DVD+MRW");
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
+                                       report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
+                                    {
+                                        if(!mediaTypes.Contains("HD DVD-ROM"))
+                                            mediaTypes.Add("HD DVD-ROM");
+
+                                        if(!mediaTypes.Contains("HD DVD-R"))
+                                            mediaTypes.Add("HD DVD-R");
+
+                                        if(!mediaTypes.Contains("HD DVD-RW"))
+                                            mediaTypes.Add("HD DVD-RW");
+                                    }
+
+                                    if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
+                                        if(!mediaTypes.Contains("HD DVD-RAM"))
+                                            mediaTypes.Add("HD DVD-RAM");
+                                }
+
+                                if(iomegaRev)
+                                {
+                                    mediaTypes.Add("REV 35Gb");
+                                    mediaTypes.Add("REV 70Gb");
+                                    mediaTypes.Add("REV 120Gb");
+                                }
+
+                                // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
+                                // Also don't get confident, some drives didn't know CD-RW but are able to read them
+                                if(mediaTypes.Count == 0 ||
+                                   mediaTypes.Contains("CD-ROM"))
                                 {
                                     if(!mediaTypes.Contains("CD-ROM"))
                                         mediaTypes.Add("CD-ROM");
 
                                     if(!mediaTypes.Contains("Audio CD"))
                                         mediaTypes.Add("Audio CD");
-
-                                    if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
-                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
 
                                     if(!mediaTypes.Contains("CD-R"))
                                         mediaTypes.Add("CD-R");
@@ -530,342 +713,24 @@ namespace Aaru.Commands.Device
 
                                     if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
                                         mediaTypes.Add("CD-RW (marked 4x or lower)");
+
+                                    if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
+                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                 }
 
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
-                                    if(!mediaTypes.Contains("CD-MRW"))
-                                        mediaTypes.Add("CD-MRW");
+                                mediaTypes.Sort();
 
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
+                                bool tryPlextor      = false, tryHldtst = false, tryPioneer = false, tryNec = false,
+                                     tryMediaTekF106 = false;
+
+                                tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
+                                tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
+                                tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
+                                tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
+
+                                if(!iomegaRev)
                                 {
-                                    if(!mediaTypes.Contains("DDCD-ROM"))
-                                        mediaTypes.Add("DDCD-ROM");
-
-                                    if(!mediaTypes.Contains("DDCD-R"))
-                                        mediaTypes.Add("DDCD-R");
-
-                                    if(!mediaTypes.Contains("DDCD-RW"))
-                                        mediaTypes.Add("DDCD-RW");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
-                                   report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
-                                {
-                                    if(!mediaTypes.Contains("DVD-ROM"))
-                                        mediaTypes.Add("DVD-ROM");
-
-                                    if(!mediaTypes.Contains("DVD-R"))
-                                        mediaTypes.Add("DVD-R");
-
-                                    if(!mediaTypes.Contains("DVD-RW"))
-                                        mediaTypes.Add("DVD-RW");
-
-                                    if(!mediaTypes.Contains("DVD+R"))
-                                        mediaTypes.Add("DVD+R");
-
-                                    if(!mediaTypes.Contains("DVD+RW"))
-                                        mediaTypes.Add("DVD+RW");
-
-                                    if(!mediaTypes.Contains("DVD-R DL"))
-                                        mediaTypes.Add("DVD-R DL");
-
-                                    if(!mediaTypes.Contains("DVD+R DL"))
-                                        mediaTypes.Add("DVD+R DL");
-
-                                    if(!mediaTypes.Contains("Nintendo GameCube game"))
-                                        mediaTypes.Add("Nintendo GameCube game");
-
-                                    if(!mediaTypes.Contains("Nintendo Wii game"))
-                                        mediaTypes.Add("Nintendo Wii game");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
-                                    if(!mediaTypes.Contains("DVD+MRW"))
-                                        mediaTypes.Add("DVD+MRW");
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
-                                {
-                                    if(!mediaTypes.Contains("HD DVD-ROM"))
-                                        mediaTypes.Add("HD DVD-ROM");
-
-                                    if(!mediaTypes.Contains("HD DVD-R"))
-                                        mediaTypes.Add("HD DVD-R");
-
-                                    if(!mediaTypes.Contains("HD DVD-RW"))
-                                        mediaTypes.Add("HD DVD-RW");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
-                                    if(!mediaTypes.Contains("HD DVD-RAM"))
-                                        mediaTypes.Add("HD DVD-RAM");
-                            }
-
-                            if(iomegaRev)
-                            {
-                                mediaTypes.Add("REV 35Gb");
-                                mediaTypes.Add("REV 70Gb");
-                                mediaTypes.Add("REV 120Gb");
-                            }
-
-                            // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
-                            // Also don't get confident, some drives didn't know CD-RW but are able to read them
-                            if(mediaTypes.Count == 0 ||
-                               mediaTypes.Contains("CD-ROM"))
-                            {
-                                if(!mediaTypes.Contains("CD-ROM"))
-                                    mediaTypes.Add("CD-ROM");
-
-                                if(!mediaTypes.Contains("Audio CD"))
-                                    mediaTypes.Add("Audio CD");
-
-                                if(!mediaTypes.Contains("CD-R"))
-                                    mediaTypes.Add("CD-R");
-
-                                if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
-                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-
-                                if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
-                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-
-                                if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
-                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
-
-                                if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
-                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-                            }
-
-                            mediaTypes.Sort();
-
-                            bool tryPlextor      = false, tryHldtst = false, tryPioneer = false, tryNec = false,
-                                 tryMediaTekF106 = false;
-
-                            tryPlextor |= dev.Manufacturer.ToLowerInvariant() == "plextor";
-                            tryHldtst  |= dev.Manufacturer.ToLowerInvariant() == "hl-dt-st";
-                            tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
-                            tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
-
-                            if(!iomegaRev)
-                            {
-                                if(!tryPlextor)
-                                {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    tryPlextor |= pressedKey.Key == ConsoleKey.Y;
-                                }
-
-                                if(!tryNec)
-                                {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    tryNec |= pressedKey.Key == ConsoleKey.Y;
-                                }
-
-                                if(!tryPioneer)
-                                {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    tryPioneer |= pressedKey.Key == ConsoleKey.Y;
-                                }
-
-                                if(!tryHldtst)
-                                {
-                                    pressedKey = new ConsoleKeyInfo();
-
-                                    while(pressedKey.Key != ConsoleKey.Y &&
-                                          pressedKey.Key != ConsoleKey.N)
-                                    {
-                                        AaruConsole.
-                                            Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                        pressedKey = System.Console.ReadKey();
-                                        AaruConsole.WriteLine();
-                                    }
-
-                                    tryHldtst |= pressedKey.Key == ConsoleKey.Y;
-                                }
-
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.
-                                        Write("Do you have want to try MediaTek vendor command F1h subcommand 06h? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                tryMediaTekF106 = pressedKey.Key == ConsoleKey.Y;
-                            }
-
-                            if(dev.Model.StartsWith("PD-", StringComparison.Ordinal))
-                                mediaTypes.Add("PD-650");
-
-                            List<TestedMedia> mediaTests = new List<TestedMedia>();
-
-                            foreach(string mediaType in mediaTypes)
-                            {
-                                pressedKey = new ConsoleKeyInfo();
-
-                                while(pressedKey.Key != ConsoleKey.Y &&
-                                      pressedKey.Key != ConsoleKey.N)
-                                {
-                                    AaruConsole.
-                                        Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
-                                              mediaType);
-
-                                    pressedKey = System.Console.ReadKey();
-                                    AaruConsole.WriteLine();
-                                }
-
-                                if(pressedKey.Key != ConsoleKey.Y)
-                                    continue;
-
-                                AaruConsole.
-                                    WriteLine("Please insert it in the drive and press any key when it is ready.");
-
-                                System.Console.ReadKey(true);
-
-                                bool mediaIsRecognized = true;
-
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                if(sense)
-                                {
-                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
-
-                                    if(decSense.HasValue)
-                                    {
-                                        if(decSense.Value.ASC == 0x3A)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
-                                            {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense)
-                                                    break;
-
-                                                leftRetries--;
-                                            }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else if(decSense.Value.ASC  == 0x04 &&
-                                                decSense.Value.ASCQ == 0x01)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
-                                            {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense)
-                                                    break;
-
-                                                leftRetries--;
-                                            }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-
-                                        // These should be trapped by the OS but seems in some cases they're not
-                                        else if(decSense.Value.ASC == 0x28)
-                                        {
-                                            int leftRetries = 50;
-
-                                            while(leftRetries > 0)
-                                            {
-                                                AaruConsole.Write("\rWaiting for drive to become ready");
-                                                Thread.Sleep(2000);
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense)
-                                                    break;
-
-                                                leftRetries--;
-                                            }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-                                        }
-                                        else
-                                        {
-                                            AaruConsole.DebugWriteLine("Device-Report command",
-                                                                       "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
-                                                                       decSense.Value.ASCQ);
-
-                                            mediaIsRecognized = false;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        AaruConsole.DebugWriteLine("Device-Report command",
-                                                                   "Got sense status but no sense buffer");
-
-                                        mediaIsRecognized = false;
-                                    }
-                                }
-
-                                var mediaTest = new TestedMedia();
-
-                                if(mediaIsRecognized)
-                                {
-                                    mediaTest = reporter.ReportMmcMedia(mediaType, tryPlextor, tryPioneer, tryNec,
-                                                                        tryHldtst, tryMediaTekF106);
-
-                                    if(mediaTest is null)
-                                        continue;
-
-                                    if(mediaTest.SupportsReadLong == true &&
-                                       mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                    if(!tryPlextor)
                                     {
                                         pressedKey = new ConsoleKeyInfo();
 
@@ -873,60 +738,275 @@ namespace Aaru.Commands.Device
                                               pressedKey.Key != ConsoleKey.N)
                                         {
                                             AaruConsole.
-                                                Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+                                                Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
 
                                             pressedKey = System.Console.ReadKey();
                                             AaruConsole.WriteLine();
                                         }
 
-                                        if(pressedKey.Key == ConsoleKey.Y)
+                                        tryPlextor |= pressedKey.Key == ConsoleKey.Y;
+                                    }
+
+                                    if(!tryNec)
+                                    {
+                                        pressedKey = new ConsoleKeyInfo();
+
+                                        while(pressedKey.Key != ConsoleKey.Y &&
+                                              pressedKey.Key != ConsoleKey.N)
                                         {
-                                            for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                            AaruConsole.
+                                                Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+
+                                            pressedKey = System.Console.ReadKey();
+                                            AaruConsole.WriteLine();
+                                        }
+
+                                        tryNec |= pressedKey.Key == ConsoleKey.Y;
+                                    }
+
+                                    if(!tryPioneer)
+                                    {
+                                        pressedKey = new ConsoleKeyInfo();
+
+                                        while(pressedKey.Key != ConsoleKey.Y &&
+                                              pressedKey.Key != ConsoleKey.N)
+                                        {
+                                            AaruConsole.
+                                                Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+
+                                            pressedKey = System.Console.ReadKey();
+                                            AaruConsole.WriteLine();
+                                        }
+
+                                        tryPioneer |= pressedKey.Key == ConsoleKey.Y;
+                                    }
+
+                                    if(!tryHldtst)
+                                    {
+                                        pressedKey = new ConsoleKeyInfo();
+
+                                        while(pressedKey.Key != ConsoleKey.Y &&
+                                              pressedKey.Key != ConsoleKey.N)
+                                        {
+                                            AaruConsole.
+                                                Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+
+                                            pressedKey = System.Console.ReadKey();
+                                            AaruConsole.WriteLine();
+                                        }
+
+                                        tryHldtst |= pressedKey.Key == ConsoleKey.Y;
+                                    }
+
+                                    pressedKey = new ConsoleKeyInfo();
+
+                                    while(pressedKey.Key != ConsoleKey.Y &&
+                                          pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        AaruConsole.
+                                            Write("Do you have want to try MediaTek vendor command F1h subcommand 06h? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
+
+                                        pressedKey = System.Console.ReadKey();
+                                        AaruConsole.WriteLine();
+                                    }
+
+                                    tryMediaTekF106 = pressedKey.Key == ConsoleKey.Y;
+                                }
+
+                                if(dev.Model.StartsWith("PD-", StringComparison.Ordinal))
+                                    mediaTypes.Add("PD-650");
+
+                                List<TestedMedia> mediaTests = new List<TestedMedia>();
+
+                                foreach(string mediaType in mediaTypes)
+                                {
+                                    pressedKey = new ConsoleKeyInfo();
+
+                                    while(pressedKey.Key != ConsoleKey.Y &&
+                                          pressedKey.Key != ConsoleKey.N)
+                                    {
+                                        AaruConsole.
+                                            Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
+                                                  mediaType);
+
+                                        pressedKey = System.Console.ReadKey();
+                                        AaruConsole.WriteLine();
+                                    }
+
+                                    if(pressedKey.Key != ConsoleKey.Y)
+                                        continue;
+
+                                    AaruConsole.
+                                        WriteLine("Please insert it in the drive and press any key when it is ready.");
+
+                                    System.Console.ReadKey(true);
+
+                                    bool mediaIsRecognized = true;
+
+                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                    if(sense)
+                                    {
+                                        FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+
+                                        if(decSense.HasValue)
+                                        {
+                                            if(decSense.Value.ASC == 0x3A)
                                             {
-                                                AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
-                                                                  i);
+                                                int leftRetries = 50;
 
-                                                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
-                                                                       dev.Timeout, out _);
-
-                                                if(!sense)
+                                                while(leftRetries > 0)
                                                 {
-                                                    mediaTest.ReadLong10Data = buffer;
-                                                    mediaTest.LongBlockSize  = i;
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-                                                    break;
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
                                                 }
 
-                                                if(i == ushort.MaxValue)
-                                                    break;
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+                                            }
+                                            else if(decSense.Value.ASC  == 0x04 &&
+                                                    decSense.Value.ASCQ == 0x01)
+                                            {
+                                                int leftRetries = 50;
+
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
                                             }
 
-                                            AaruConsole.WriteLine();
+                                            // These should be trapped by the OS but seems in some cases they're not
+                                            else if(decSense.Value.ASC == 0x28)
+                                            {
+                                                int leftRetries = 50;
+
+                                                while(leftRetries > 0)
+                                                {
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
+                                                    Thread.Sleep(2000);
+                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+
+                                                    if(!sense)
+                                                        break;
+
+                                                    leftRetries--;
+                                                }
+
+                                                AaruConsole.WriteLine();
+
+                                                mediaIsRecognized &= !sense;
+                                            }
+                                            else
+                                            {
+                                                AaruConsole.DebugWriteLine("Device-Report command",
+                                                                           "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                           decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                           decSense.Value.ASCQ);
+
+                                                mediaIsRecognized = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            AaruConsole.DebugWriteLine("Device-Report command",
+                                                                       "Got sense status but no sense buffer");
+
+                                            mediaIsRecognized = false;
                                         }
                                     }
 
-                                    if(mediaTest.SupportsReadLong == true &&
-                                       mediaTest.LongBlockSize    != mediaTest.BlockSize)
-                                    {
-                                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
-                                                               (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+                                    var mediaTest = new TestedMedia();
 
-                                        if(!sense)
-                                            mediaTest.ReadLong10Data = buffer;
+                                    if(mediaIsRecognized)
+                                    {
+                                        mediaTest = reporter.ReportMmcMedia(mediaType, tryPlextor, tryPioneer, tryNec,
+                                                                            tryHldtst, tryMediaTekF106);
+
+                                        if(mediaTest is null)
+                                            continue;
+
+                                        if(mediaTest.SupportsReadLong == true &&
+                                           mediaTest.LongBlockSize    == mediaTest.BlockSize)
+                                        {
+                                            pressedKey = new ConsoleKeyInfo();
+
+                                            while(pressedKey.Key != ConsoleKey.Y &&
+                                                  pressedKey.Key != ConsoleKey.N)
+                                            {
+                                                AaruConsole.
+                                                    Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
+
+                                                pressedKey = System.Console.ReadKey();
+                                                AaruConsole.WriteLine();
+                                            }
+
+                                            if(pressedKey.Key == ConsoleKey.Y)
+                                            {
+                                                for(ushort i = (ushort)mediaTest.BlockSize;; i++)
+                                                {
+                                                    AaruConsole.
+                                                        Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+
+                                                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                           i, dev.Timeout, out _);
+
+                                                    if(!sense)
+                                                    {
+                                                        mediaTest.ReadLong10Data = buffer;
+                                                        mediaTest.LongBlockSize  = i;
+
+                                                        break;
+                                                    }
+
+                                                    if(i == ushort.MaxValue)
+                                                        break;
+                                                }
+
+                                                AaruConsole.WriteLine();
+                                            }
+                                        }
+
+                                        if(mediaTest.SupportsReadLong == true &&
+                                           mediaTest.LongBlockSize    != mediaTest.BlockSize)
+                                        {
+                                            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
+                                                                   (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
+
+                                            if(!sense)
+                                                mediaTest.ReadLong10Data = buffer;
+                                        }
+
+                                        // TODO: READ LONG (16)
                                     }
 
-                                    // TODO: READ LONG (16)
+                                    mediaTest.MediumTypeName    = mediaType;
+                                    mediaTest.MediaIsRecognized = mediaIsRecognized;
+                                    mediaTests.Add(mediaTest);
+
+                                    dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                    dev.EjectTray(out buffer, dev.Timeout, out _);
                                 }
 
-                                mediaTest.MediumTypeName    = mediaType;
-                                mediaTest.MediaIsRecognized = mediaIsRecognized;
-                                mediaTests.Add(mediaTest);
-
-                                dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
-                                dev.EjectTray(out buffer, dev.Timeout, out _);
+                                report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
                             }
-
-                            report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
                         }
 
                             break;
