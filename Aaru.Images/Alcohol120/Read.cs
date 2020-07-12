@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
             isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
+            header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}",
                                        Encoding.ASCII.GetString(header.signature));

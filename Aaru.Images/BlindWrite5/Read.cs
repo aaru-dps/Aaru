@@ -1131,6 +1131,15 @@ namespace Aaru.DiscImages
 
             AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
 
+            if(header.profile != ProfileNumber.CDR  &&
+               header.profile != ProfileNumber.CDRW &&
+               header.profile != ProfileNumber.CDROM)
+                foreach(Track track in Tracks)
+                {
+                    track.TrackPregap = 0;
+                    track.Indexes?.Clear();
+                }
+
             return true;
         }
 

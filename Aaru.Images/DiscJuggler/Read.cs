@@ -657,6 +657,8 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("DiscJuggler plugin", "End position = {0}", position);
 
+            imageInfo.MediaType = DecodeCdiMediumType(mediumType);
+
             if(imageInfo.MediaType == MediaType.CDROM)
             {
                 bool data       = false;
@@ -713,6 +715,13 @@ namespace Aaru.DiscImages
             imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             _sectorBuilder = new SectorBuilder();
+
+            if(mediumType != 152)
+                foreach(Track track in Tracks)
+                {
+                    track.TrackPregap = 0;
+                    track.Indexes?.Clear();
+                }
 
             return true;
         }

@@ -1230,6 +1230,54 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
+            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                return true;
+
+            if(imageInfo.MediaType != MediaType.CD            &&
+               imageInfo.MediaType != MediaType.CDDA          &&
+               imageInfo.MediaType != MediaType.CDG           &&
+               imageInfo.MediaType != MediaType.CDEG          &&
+               imageInfo.MediaType != MediaType.CDI           &&
+               imageInfo.MediaType != MediaType.CDROM         &&
+               imageInfo.MediaType != MediaType.CDROMXA       &&
+               imageInfo.MediaType != MediaType.CDPLUS        &&
+               imageInfo.MediaType != MediaType.CDMO          &&
+               imageInfo.MediaType != MediaType.CDR           &&
+               imageInfo.MediaType != MediaType.CDRW          &&
+               imageInfo.MediaType != MediaType.CDMRW         &&
+               imageInfo.MediaType != MediaType.VCD           &&
+               imageInfo.MediaType != MediaType.SVCD          &&
+               imageInfo.MediaType != MediaType.PCD           &&
+               imageInfo.MediaType != MediaType.DTSCD         &&
+               imageInfo.MediaType != MediaType.CDMIDI        &&
+               imageInfo.MediaType != MediaType.CDV           &&
+               imageInfo.MediaType != MediaType.CDIREADY      &&
+               imageInfo.MediaType != MediaType.FMTOWNS       &&
+               imageInfo.MediaType != MediaType.PS1CD         &&
+               imageInfo.MediaType != MediaType.PS2CD         &&
+               imageInfo.MediaType != MediaType.MEGACD        &&
+               imageInfo.MediaType != MediaType.SATURNCD      &&
+               imageInfo.MediaType != MediaType.GDROM         &&
+               imageInfo.MediaType != MediaType.GDR           &&
+               imageInfo.MediaType != MediaType.MilCD         &&
+               imageInfo.MediaType != MediaType.SuperCDROM2   &&
+               imageInfo.MediaType != MediaType.JaguarCD      &&
+               imageInfo.MediaType != MediaType.ThreeDO       &&
+               imageInfo.MediaType != MediaType.PCFX          &&
+               imageInfo.MediaType != MediaType.NeoGeoCD      &&
+               imageInfo.MediaType != MediaType.CDTV          &&
+               imageInfo.MediaType != MediaType.CD32          &&
+               imageInfo.MediaType != MediaType.Playdia       &&
+               imageInfo.MediaType != MediaType.Pippin        &&
+               imageInfo.MediaType != MediaType.VideoNow      &&
+               imageInfo.MediaType != MediaType.VideoNowColor &&
+               imageInfo.MediaType != MediaType.VideoNowXp)
+                foreach(Track track in Tracks)
+                {
+                    track.TrackPregap = 0;
+                    track.Indexes?.Clear();
+                }
+
             return true;
         }
 

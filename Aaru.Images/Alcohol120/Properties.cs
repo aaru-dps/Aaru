@@ -108,6 +108,14 @@ namespace Aaru.DiscImages
                             break;
                     }
 
+                    if(header.type != AlcoholMediumType.CD  &&
+                       header.type != AlcoholMediumType.CDR &&
+                       header.type != AlcoholMediumType.CDRW)
+                    {
+                        aaruTrack.TrackPregap = 0;
+                        aaruTrack.Indexes?.Clear();
+                    }
+
                     tracks.Add(aaruTrack);
                 }
 
