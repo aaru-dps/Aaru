@@ -154,8 +154,6 @@ namespace Aaru
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            Statistics.SaveStats();
-
             var rootCommand = new RootCommand
             {
                 new Option(new[]
@@ -189,7 +187,11 @@ namespace Aaru
             rootCommand.AddCommand(new ListNamespacesCommand());
             rootCommand.AddCommand(new RemoteCommand());
 
-            return rootCommand.Invoke(args);
+            int ret = rootCommand.Invoke(args);
+
+            Statistics.SaveStats();
+
+            return ret;
         }
 
         internal static void PrintCopyright()

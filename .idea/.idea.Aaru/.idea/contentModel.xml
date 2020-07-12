@@ -16,6 +16,16 @@
     <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.api.dll" t="Include" />
     <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.dll" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Checksums/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.CommonTypes/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Console/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Decoders/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Dto/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Helpers/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetools.net/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
