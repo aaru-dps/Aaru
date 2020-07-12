@@ -402,6 +402,11 @@ namespace Aaru.Core
                         };
 
                         break;
+                    case MediaTagType.CD_MCN:
+                        sidecar.OpticalDisc[0].MediaCatalogueNumber =
+                            Encoding.ASCII.GetString(image.ReadDiskTag(MediaTagType.CD_MCN));
+
+                        break;
                 }
             }
 
@@ -833,6 +838,48 @@ namespace Aaru.Core
 
                     if(lstFs.Count > 0)
                         xmlTrk.FileSystemInformation[0].FileSystems = lstFs.ToArray();
+                }
+
+                try
+                {
+                    byte[] isrcData = image.ReadSectorTag(trk.TrackSequence, SectorTagType.CdTrackIsrc);
+
+                    if(isrcData?.Length > 0)
+                        xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
+                }
+                catch(Exception)
+                {
+                    // Ignored
+                }
+
+                try
+                {
+                    byte[] flagsData = image.ReadSectorTag(trk.TrackSequence, SectorTagType.CdTrackFlags);
+
+                    if(flagsData?.Length > 0)
+                    {
+                        var trackFlags = (CdFlags)flagsData[0];
+
+                        xmlTrk.Flags = new TrackFlagsType
+                        {
+                            PreEmphasis   = trackFlags.HasFlag(CdFlags.PreEmphasis),
+                            CopyPermitted = trackFlags.HasFlag(CdFlags.CopyPermitted),
+                            Data          = trackFlags.HasFlag(CdFlags.DataTrack),
+                            Quadraphonic  = trackFlags.HasFlag(CdFlags.FourChannel)
+                        };
+                    }
+                }
+                catch(Exception)
+                {
+                    // Ignored
+                }
+
+                if(trk.Indexes?.Count > 0)
+                {
+                    xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndexType
+                    {
+                        index = i.Key, Value = i.Value
+                    }).ToArray();
                 }
 
                 trksLst.Add(xmlTrk);
