@@ -101,10 +101,27 @@ namespace Aaru.Gui.ViewModels.Panels
 
             MediaType = scsiInfo.MediaType.ToString();
 
-            if(scsiInfo.Blocks != 0 &&
+            if(scsiInfo.Blocks    != 0 &&
                scsiInfo.BlockSize != 0)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {scsiInfo.Blocks * scsiInfo.BlockSize} bytes)";
+            {
+                ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
+
+                if(totalSize > 1099511627776)
+                    MediaSize =
+                        $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)";
+                else if(totalSize > 1073741824)
+                    MediaSize =
+                        $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)";
+                else if(totalSize > 1048576)
+                    MediaSize =
+                        $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)";
+                else if(totalSize > 1024)
+                    MediaSize =
+                        $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)";
+                else
+                    MediaSize =
+                        $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize} bytes)";
+            }
 
             if(scsiInfo.MediaSerialNumber != null)
             {

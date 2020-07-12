@@ -186,8 +186,23 @@ namespace Aaru.Core.Devices.Scanning
                     {
                         results.Blocks++;
 
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {results.Blocks * (ulong)blockSize} bytes)");
+                        ulong totalSize = results.Blocks * blockSize;
+
+                        if(totalSize > 1099511627776)
+                            UpdateStatus?.
+                                Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
+                        else if(totalSize > 1073741824)
+                            UpdateStatus?.
+                                Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
+                        else if(totalSize > 1048576)
+                            UpdateStatus?.
+                                Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
+                        else if(totalSize > 1024)
+                            UpdateStatus?.
+                                Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
+                        else
+                            UpdateStatus?.
+                                Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize} bytes)");
                     }
 
                     break;
@@ -432,8 +447,7 @@ namespace Aaru.Core.Devices.Scanning
                 mhddLog.Close();
 
                 ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (blockSize              * (double)(results.Blocks + 1)) / 1024 /
-                             (results.ProcessingTime / 1000),
+                             (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
             }
             else
@@ -526,8 +540,7 @@ namespace Aaru.Core.Devices.Scanning
                 mhddLog.Close();
 
                 ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                             (blockSize              * (double)(results.Blocks + 1)) / 1024 /
-                             (results.ProcessingTime / 1000),
+                             (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
             }
 

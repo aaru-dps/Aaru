@@ -199,9 +199,25 @@ namespace Aaru.Commands.Media
 
                     if(scsiInfo.Blocks    != 0 &&
                        scsiInfo.BlockSize != 0)
-                        AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
-                                              scsiInfo.Blocks, scsiInfo.BlockSize,
-                                              scsiInfo.Blocks * scsiInfo.BlockSize);
+                    {
+                        ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
+
+                        if(totalSize > 1099511627776)
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} TiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1099511627776d);
+                        else if(totalSize > 1073741824)
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} GiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1073741824d);
+                        else if(totalSize > 1048576)
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} MiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1048576d);
+                        else if(totalSize > 1024)
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2:F3} KiB)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize / 1024d);
+                        else
+                            AaruConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
+                                                  scsiInfo.Blocks, scsiInfo.BlockSize, totalSize);
+                    }
 
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:

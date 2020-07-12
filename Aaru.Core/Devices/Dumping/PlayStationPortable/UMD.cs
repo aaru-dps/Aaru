@@ -97,8 +97,23 @@ namespace Aaru.Core.Devices.Dumping
             ulong  blocks          = umdSizeInBytes / BLOCK_SIZE;
             string mediaPartNumber = Encoding.ASCII.GetString(readBuffer, 0, 11).Trim();
 
-            UpdateStatus?.
-                Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {blocks * (ulong)BLOCK_SIZE} bytes)");
+            ulong totalSize = blocks * BLOCK_SIZE;
+
+            if(totalSize > 1099511627776)
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
+            else if(totalSize > 1073741824)
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
+            else if(totalSize > 1048576)
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
+            else if(totalSize > 1024)
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
+            else
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize} bytes)");
 
             UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * BLOCK_SIZE} bytes).");
             UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
