@@ -465,15 +465,13 @@ namespace Aaru.Core
                             foreach(DeviceStats device in allStats.Devices)
                             {
                                 if(ctx.SeenDevices.Any(d => d.Manufacturer == device.Manufacturer &&
-                                                            d.Model        == device.Model        &&
-                                                            d.Revision     == device.Revision     &&
-                                                            d.Bus          == device.Bus))
+                                                            d.Model == device.Model && d.Revision == device.Revision &&
+                                                            d.Bus == device.Bus))
                                     continue;
 
                                 ctx.SeenDevices.Add(new DeviceStat
                                 {
-                                    Bus      = device.Bus, Manufacturer = device.Manufacturer,
-                                    Model    = device.Model,
+                                    Bus      = device.Bus, Manufacturer = device.Manufacturer, Model = device.Model,
                                     Revision = device.Revision, Synchronized = true
                                 });
                             }
@@ -615,7 +613,7 @@ namespace Aaru.Core
                         {
                             dto.MediaFormats = new List<NameValueStats>();
 
-                            foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).
+                            foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).
                                                       Distinct())
                                 dto.MediaFormats.Add(new NameValueStats
                                 {
@@ -967,8 +965,7 @@ namespace Aaru.Core
                                 {
                                     OperatingSystem existing =
                                         ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized && c.Name == osName &&
-                                                                                 c.Version ==
-                                                                                 osVersion) ??
+                                                                                 c.Version == osVersion) ??
                                         new OperatingSystem
                                         {
                                             Synchronized = true, Version = osVersion, Name = osName
@@ -1341,16 +1338,13 @@ namespace Aaru.Core
 
             using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            if(ctx.SeenDevices.Any(d => d.Manufacturer == dev.Manufacturer &&
-                                        d.Model        == dev.Model        &&
-                                        d.Revision     == dev.FirmwareRevision &&
-                                        d.Bus          == deviceBus))
+            if(ctx.SeenDevices.Any(d => d.Manufacturer == dev.Manufacturer     && d.Model == dev.Model &&
+                                        d.Revision     == dev.FirmwareRevision && d.Bus   == deviceBus))
                 return;
 
             ctx.SeenDevices.Add(new DeviceStat
             {
-                Bus          = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model,
-                Revision     = dev.FirmwareRevision,
+                Bus = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.FirmwareRevision,
                 Synchronized = false
             });
 
