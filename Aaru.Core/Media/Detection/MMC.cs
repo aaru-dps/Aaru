@@ -321,10 +321,12 @@ namespace Aaru.Core.Media.Detection
                         switch(a0Track.PSEC)
                         {
                             case 0x10:
+                                AaruConsole.DebugWriteLine("Media detection", "TOC says disc type is CD-i.");
                                 mediaType = MediaType.CDI;
 
                                 break;
                             case 0x20:
+                                AaruConsole.DebugWriteLine("Media detection", "TOC says disc type is CD-ROM XA.");
                                 mediaType = MediaType.CDROMXA;
 
                                 break;
@@ -366,22 +368,42 @@ namespace Aaru.Core.Media.Detection
                        hasAudioTrack                 &&
                        allFirstSessionTracksAreAudio &&
                        sessions == 2)
+                    {
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has audio and data tracks, two sessions, and all data tracks are in second session, setting as CD+.");
+
                         mediaType = MediaType.CDPLUS;
+                    }
 
                     if(!hasDataTrack &&
                        hasAudioTrack &&
                        sessions == 1)
+                    {
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has only audio tracks in a single session, setting as CD Digital Audio.");
+
                         mediaType = MediaType.CDDA;
+                    }
 
                     if(hasDataTrack   &&
                        !hasAudioTrack &&
                        sessions == 1)
+                    {
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has only data tracks in a single session, setting as CD-ROM.");
+
                         mediaType = MediaType.CDROM;
+                    }
 
                     if(hasVideoTrack &&
                        !hasDataTrack &&
                        sessions == 1)
+                    {
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has video tracks in a single session, setting as CD Video.");
+
                         mediaType = MediaType.CDV;
+                    }
                 }
 
                 if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
@@ -418,6 +440,9 @@ namespace Aaru.Core.Media.Detection
                                cmdBuf[11] == 0x00 &&
                                cmdBuf[15] == 0x02)
                             {
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Disc has a mode 2 data track, setting as CD-ROM XA.");
+
                                 mediaType = MediaType.CDROMXA;
 
                                 break;
@@ -436,7 +461,7 @@ namespace Aaru.Core.Media.Detection
 
                 uint firstSectorSecondSessionFirstTrack =
                     (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
-                            (secondSessionFirstTrackTrack.PMIN  * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
+                            (secondSessionFirstTrackTrack.PMIN * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
                             secondSessionFirstTrackTrack.PFRAME) - 150);
 
                 sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
@@ -513,7 +538,7 @@ namespace Aaru.Core.Media.Detection
                 if(firstTrack.POINT == 1)
                 {
                     uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
-                                                    (firstTrack.PSEC  * 75)        + firstTrack.PFRAME) - 150);
+                                                    (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
 
                     // Check for hidden data before start of track 1
                     if(firstTrackSector > 0)
@@ -538,6 +563,9 @@ namespace Aaru.Core.Media.Detection
                                 if(IsCdi(sector0, sector16))
                                 {
                                     mediaType = MediaType.CDIREADY;
+
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Disc has a hidden CD-i track in track 1's pregap, setting as CD-i Ready.");
 
                                     return;
                                 }
@@ -582,6 +610,9 @@ namespace Aaru.Core.Media.Detection
                                     if(IsCdi(sector0, sector16))
                                     {
                                         mediaType = MediaType.CDIREADY;
+
+                                        AaruConsole.DebugWriteLine("Media detection",
+                                                                   "Disc has a hidden CD-i track in track 1's pregap, setting as CD-i Ready.");
 
                                         return;
                                     }
@@ -1121,6 +1152,9 @@ namespace Aaru.Core.Media.Detection
                                 case "PHOTO_CD":
                                     mediaType = MediaType.PCD;
 
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Photo CD description file, setting disc type to Photo CD.");
+
                                     return;
                             }
                         }
@@ -1170,12 +1204,18 @@ namespace Aaru.Core.Media.Detection
                     {
                         mediaType = MediaType.MEGACD;
 
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found Mega/Sega CD IP.BIN, setting disc type to Mega CD.");
+
                         return;
                     }
 
                     if(Saturn.DecodeIPBin(sector0).HasValue)
                     {
                         mediaType = MediaType.SATURNCD;
+
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found Sega Saturn IP.BIN, setting disc type to Saturn CD.");
 
                         return;
                     }
@@ -1184,6 +1224,9 @@ namespace Aaru.Core.Media.Detection
                     if(Dreamcast.DecodeIPBin(sector0).HasValue)
                     {
                         mediaType = MediaType.GDROM;
+
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found Sega Dreamcast IP.BIN, setting disc type to GD-ROM.");
 
                         return;
                     }
@@ -1208,6 +1251,9 @@ namespace Aaru.Core.Media.Detection
                         {
                             mediaType = MediaType.PS2CD;
 
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Sony PlayStation 2 boot sectors, setting disc type to PS2 CD.");
+
                             return;
                         }
                     }
@@ -1221,12 +1267,18 @@ namespace Aaru.Core.Media.Detection
                         {
                             mediaType = MediaType.ThreeDO;
 
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Opera filesystem, setting disc type to 3DO.");
+
                             return;
                         }
 
                         if(_fmTownsBootId.SequenceEqual(syncBytes))
                         {
                             mediaType = MediaType.FMTOWNS;
+
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found FM-Towns boot, setting disc type to FM-Towns.");
 
                             return;
                         }
@@ -1246,6 +1298,9 @@ namespace Aaru.Core.Media.Detection
                         {
                             mediaType = MediaType.Playdia;
 
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Playdia copyright, setting disc type to Playdia.");
+
                             return;
                         }
                     }
@@ -1259,6 +1314,9 @@ namespace Aaru.Core.Media.Detection
                         {
                             mediaType = MediaType.SuperCDROM2;
 
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found PC-Engine CD signature, setting disc type to Super CD-ROM².");
+
                             return;
                         }
                     }
@@ -1271,6 +1329,9 @@ namespace Aaru.Core.Media.Detection
                         if(_pcFxSignature.SequenceEqual(pcfx))
                         {
                             mediaType = MediaType.PCFX;
+
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found PC-FX copyright, setting disc type to PC-FX.");
 
                             return;
                         }
@@ -1289,6 +1350,9 @@ namespace Aaru.Core.Media.Detection
 
                             mediaType = MediaType.JaguarCD;
 
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Atari signature, setting disc type to Jaguar CD.");
+
                             break;
                         }
                     }
@@ -1303,6 +1367,9 @@ namespace Aaru.Core.Media.Detection
                             {
                                 mediaType = MediaType.MilCD;
 
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found Sega Dreamcast IP.BIN on second session, setting disc type to MilCD.");
+
                                 return;
                             }
                         }
@@ -1312,6 +1379,9 @@ namespace Aaru.Core.Media.Detection
                     if(IsVideoNowColor(videoNowColorFrame))
                     {
                         mediaType = MediaType.VideoNowColor;
+
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found VideoNow! Color frame, setting disc type to VideoNow Color.");
 
                         return;
                     }
@@ -1349,6 +1419,9 @@ namespace Aaru.Core.Media.Detection
                             {
                                 mediaType = MediaType.CDEG;
 
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found enhanced graphics RW packet, setting disc type to CD+EG.");
+
                                 return;
                             }
 
@@ -1356,12 +1429,18 @@ namespace Aaru.Core.Media.Detection
                             {
                                 mediaType = MediaType.CDG;
 
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found graphics RW packet, setting disc type to CD+G.");
+
                                 return;
                             }
 
                             if(cdmidi)
                             {
                                 mediaType = MediaType.CDMIDI;
+
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found MIDI RW packet, setting disc type to CD+MIDI.");
 
                                 return;
                             }
@@ -1505,12 +1584,18 @@ namespace Aaru.Core.Media.Detection
                     {
                         mediaType = MediaType.CD32;
 
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found CD32.TM file in root, setting disc type to Amiga CD32.");
+
                         return;
                     }
 
                     if(rootEntries.Contains("CDTV.TM"))
                     {
                         mediaType = MediaType.CDTV;
+
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Found CDTV.TM file in root, setting disc type to Commodore CDTV.");
 
                         return;
                     }
@@ -1649,6 +1734,9 @@ namespace Aaru.Core.Media.Detection
                             {
                                 mediaType = MediaType.NeoGeoCD;
 
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found correct IPL.TXT file in root, setting disc type to Neo Geo CD.");
+
                                 return;
                             }
                         }
@@ -1725,10 +1813,16 @@ namespace Aaru.Core.Media.Detection
                                 case "VIDEO_CD":
                                     mediaType = MediaType.VCD;
 
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Video CD description file, setting disc type to Video CD.");
+
                                     return;
                                 case "SUPERVCD":
                                 case "HQ-VCD":
                                     mediaType = MediaType.SVCD;
+
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Super Video CD description file, setting disc type to Super Video CD.");
 
                                     break;
                             }
@@ -1805,6 +1899,9 @@ namespace Aaru.Core.Media.Detection
                                 case "PHOTO_CD":
                                     mediaType = MediaType.PCD;
 
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Photo CD description file, setting disc type to Photo CD.");
+
                                     return;
                             }
                         }
@@ -1837,7 +1934,12 @@ namespace Aaru.Core.Media.Detection
                         if(ps2BootSectorsHash == PS2_PAL_HASH  ||
                            ps2BootSectorsHash == PS2_NTSC_HASH ||
                            ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                        {
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Sony PlayStation 2 boot sectors, setting disc type to PS2 DVD.");
+
                             mediaType = MediaType.PS2DVD;
+                        }
                     }
 
                     if(sector1 != null)
@@ -1849,10 +1951,16 @@ namespace Aaru.Core.Media.Detection
                             switch(mediaType)
                             {
                                 case MediaType.BDROM:
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Sony PlayStation 3 boot sectors, setting disc type to PS3 Blu-ray.");
+
                                     mediaType = MediaType.PS3BD;
 
                                     break;
                                 case MediaType.DVDROM:
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found Sony PlayStation 3 boot sectors, setting disc type to PS3 DVD.");
+
                                     mediaType = MediaType.PS3DVD;
 
                                     break;
@@ -1863,7 +1971,12 @@ namespace Aaru.Core.Media.Detection
 
                         if(tmp.SequenceEqual(_ps4Id) &&
                            mediaType == MediaType.BDROM)
+                        {
                             mediaType = MediaType.PS4BD;
+
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Sony PlayStation 4 boot sectors, setting disc type to PS4 Blu-ray.");
+                        }
                     }
 
                     break;

@@ -217,7 +217,7 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     mediaType = MediaTypeFromDevice.GetFromAta(_dev.Manufacturer, _dev.Model, _dev.IsRemovable,
-                                                               _dev.IsCompactFlash, _dev.IsPcmcia, blocks, blockSize);
+                                                               _dev.IsCompactFlash, _dev.IsPcmcia, blocks);
 
                     ret = _outputPlugin.Create(_outputPath, mediaType, _formatOptions, blocks, blockSize);
 

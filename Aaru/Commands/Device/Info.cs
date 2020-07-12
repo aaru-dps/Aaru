@@ -323,8 +323,7 @@ namespace Aaru.Commands.Device
                     bool removable = ATAID.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
 
                     MediaType mediaType = MediaTypeFromDevice.GetFromAta(dev.Manufacturer, dev.Model, removable,
-                                                                         dev.IsCompactFlash, dev.IsPcmcia, blocks,
-                                                                         blockSize);
+                                                                         dev.IsCompactFlash, dev.IsPcmcia, blocks);
 
                     AaruConsole.WriteLine(removable ? "Media identified as {0}" : "Device identified as {0}",
                                           mediaType);
