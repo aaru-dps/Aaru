@@ -171,10 +171,13 @@ namespace Aaru
                                        "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                        year, month, day, hour, minute, second, hundredths * 10);
 
+            sbyte difference = (sbyte)vdDateTime[16];
+
             var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
                                          DateTimeKind.Unspecified);
 
-            return decodedDt;
+            // Convert ISO9660 time from GMT to UTC and remove the difference from GMT. Doing the removal first could cause problems if that makes it cross over a leap day, or a leap second
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(decodedDt, "GMT", "UTC").AddMinutes(difference * -15);
         }
 
         /// <summary>Converts a VMS timestamp to a .NET DateTime</summary>
