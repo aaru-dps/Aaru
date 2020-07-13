@@ -34,7 +34,7 @@ namespace Aaru.Core.Logging
             _logSw.Close();
         }
 
-        public void WriteEntry(byte[] subchannel, bool raw, long startingLba, uint blocks)
+        public void WriteEntry(byte[] subchannel, bool raw, long startingLba, uint blocks, bool generated, bool @fixed)
         {
             if(subchannel.Length / _subSize != blocks)
             {
@@ -179,8 +179,15 @@ namespace Aaru.Core.Logging
                 subBuf[10] = (byte)q[10 + (block * 12)];
                 subBuf[11] = (byte)q[11 + (block * 12)];
 
-                _logSw.WriteLine(Subchannel.PrettifyQ(subBuf, _bcd, startingLba + block, corruptedPause, pause,
-                                                      rwEmpty));
+                string prettyQ = Subchannel.PrettifyQ(subBuf, generated || _bcd, startingLba + block, corruptedPause,
+                                                      pause, rwEmpty);
+
+                if(generated)
+                    prettyQ += " (GENERATED)";
+                else if(@fixed)
+                    prettyQ += " (FIXED)";
+
+                _logSw.WriteLine(prettyQ);
             }
 
             _logSw.Flush();

@@ -217,6 +217,14 @@ namespace Aaru.Commands.Media
 
             Add(new Option(new[]
                 {
+                    "--generate-subchannels"
+                }, "Generates missing subchannels (they don't count as dumped in resume file).")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
                     "--skip-cdiready-hole"
                 }, "Skip the hole between data and audio in a CD-i Ready disc.")
                 {
@@ -231,7 +239,7 @@ namespace Aaru.Commands.Media
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
-                                 bool fixSubchannelCrc, bool skipCdireadyHole)
+                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdireadyHole)
         {
             MainClass.PrintCopyright();
 
@@ -273,6 +281,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--retry-subchannel={0}", retrySubchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel={0}", fixSubchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--generate-subchannels={0}", generateSubchannels);
             AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdireadyHole);
 
             // TODO: Disabled temporarily
@@ -475,7 +484,7 @@ namespace Aaru.Commands.Media
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
                                   parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
                                   wantedSubchannel, speed, @private, fixSubchannelPosition, retrySubchannel,
-                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole, errorLog);
+                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole, errorLog, generateSubchannels);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

@@ -1218,6 +1218,9 @@ namespace Aaru.Core.Devices.Dumping
             _resume.BadSubchannels.AddRange(subchannelExtents);
             _resume.BadSubchannels.Sort();
 
+            if(_generateSubchannels && _outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog);
+
             // TODO: Disc ID
             var metadata = new CommonTypes.Structs.ImageInfo
             {

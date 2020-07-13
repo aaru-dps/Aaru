@@ -803,7 +803,7 @@ namespace Aaru.Gui.ViewModels.Windows
                                Persistent, StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination,
                                parsedOptions, _sidecar, (uint)Skipped, ExistingMetadata == false, Trim == false,
                                Track1Pregap, true, false, DumpSubchannel.Any, 0, false, false, false, false, false,
-                               true, errorLog);
+                               true, errorLog, false);
 
             new Thread(DoWork).Start();
         }

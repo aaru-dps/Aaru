@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
@@ -80,7 +81,8 @@ namespace Aaru.Core.Devices.Dumping
                desiredSubchannel != MmcSubchannel.None)
                 _outputPlugin.WriteSectorsTag(sub, sectorAddress, length, SectorTagType.CdSectorSubchannel);
 
-            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, length);
+            subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, length, false,
+                               false);
 
             byte[] deSub = Subchannel.Deinterleave(sub);
 
@@ -269,7 +271,7 @@ namespace Aaru.Core.Devices.Dumping
                 subchannelExtents.Remove(aPos);
 
                 if(@fixed)
-                    subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1);
+                    subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1, false, true);
             }
 
             return indexesChanged;
@@ -1428,6 +1430,59 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             return false;
+        }
+
+        void GenerateSubchannels(HashSet<int> subchannelExtents, Track[] tracks, Dictionary<byte, byte> trackFlags,
+                                 ulong blocks, SubchannelLog subLog)
+        {
+            InitProgress?.Invoke();
+
+            foreach(int sector in subchannelExtents)
+            {
+                Track track = tracks.LastOrDefault(t => (int)t.TrackStartSector <= sector);
+                byte  trkFlags;
+                byte  flags;
+                ulong trackStart;
+                ulong pregap;
+
+                // Hidden track
+                if(track.TrackSequence == 0)
+                {
+                    track      = tracks.FirstOrDefault(t => (int)t.TrackSequence == 1);
+                    trackStart = 0;
+                    pregap     = track.TrackStartSector;
+                }
+                else
+                {
+                    trackStart = track.TrackStartSector;
+                    pregap     = track.TrackPregap;
+                }
+
+                if(!trackFlags.TryGetValue((byte)track.TrackSequence, out trkFlags) &&
+                   track.TrackType != TrackType.Audio)
+                    flags = (byte)CdFlags.DataTrack;
+                else
+                    flags = trkFlags;
+
+                byte index;
+
+                if(track.Indexes?.Count > 0)
+                    index = (byte)track.Indexes.LastOrDefault(i => i.Value >= sector).Key;
+                else
+                    index = 0;
+
+                UpdateProgress?.Invoke($"Generating subchannel for sector {sector}...", sector, (long)blocks);
+                _dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");
+
+                byte[] sub = Subchannel.Generate(sector, track.TrackSequence, (int)pregap, (int)trackStart, flags,
+                                                 index);
+
+                _outputPlugin.WriteSectorsTag(sub, (ulong)sector, 1, SectorTagType.CdSectorSubchannel);
+
+                subLog.WriteEntry(sub, true, sector, 1, true, false);
+            }
+
+            EndProgress?.Invoke();
         }
     }
 }

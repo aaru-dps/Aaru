@@ -84,6 +84,7 @@ namespace Aaru.Core.Devices.Dumping
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
+        readonly bool                       _generateSubchannels;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
         Resume                              _resume;
         Sidecar                             _sidecarClass;
@@ -120,7 +121,7 @@ namespace Aaru.Core.Devices.Dumping
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
-                    bool skipCdireadyHole, ErrorLog errorLog)
+                    bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -156,6 +157,7 @@ namespace Aaru.Core.Devices.Dumping
             _fixSubchannelCrc      = fixSubchannelCrc;
             _skipCdireadyHole      = skipCdireadyHole;
             _errorLog              = errorLog;
+            _generateSubchannels   = generateSubchannels;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
