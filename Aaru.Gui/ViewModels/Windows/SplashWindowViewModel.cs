@@ -162,44 +162,43 @@ namespace Aaru.Gui.ViewModels.Windows
 
                 ctx.SaveChanges();
 
-                Dispatcher.UIThread.Post(UpdateMasterDatabase);
+                Dispatcher.UIThread.Post(UpdateMainDatabase);
             });
         }
 
-        void UpdateMasterDatabase()
+        void UpdateMainDatabase()
         {
             CurrentProgress++;
-            Message = "Updating master database...";
-            AaruConsole.WriteLine("Updating master database...");
+            Message = "Updating main database...";
+            AaruConsole.WriteLine("Updating main database...");
 
             Task.Run(() =>
             {
-                bool masterDbUpdate = false;
+                bool mainDbUpdate = false;
 
-                if(!File.Exists(Settings.Settings.MasterDbPath))
+                if(!File.Exists(Settings.Settings.MainDbPath))
                 {
-                    masterDbUpdate = true;
+                    mainDbUpdate = true;
 
                     // TODO: Update database
                 }
 
-                var masterContext = AaruContext.Create(Settings.Settings.MasterDbPath);
+                var mainContext = AaruContext.Create(Settings.Settings.MainDbPath);
 
-                if(masterContext.Database.GetPendingMigrations().Any())
+                if(mainContext.Database.GetPendingMigrations().Any())
                 {
                     AaruConsole.WriteLine("New database version, updating...");
 
                     try
                     {
-                        File.Delete(Settings.Settings.MasterDbPath);
+                        File.Delete(Settings.Settings.MainDbPath);
                     }
                     catch(Exception)
                     {
                         AaruConsole.
                             ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
 
-                        AaruConsole.ErrorWriteLine("Please manually remove file at {0}",
-                                                   Settings.Settings.MasterDbPath);
+                        AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
                     }
 
                     // TODO: Update database

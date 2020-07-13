@@ -45,18 +45,18 @@ namespace Aaru.Commands
 {
     internal class UpdateCommand : Command
     {
-        readonly bool _masterDbUpdate;
+        readonly bool _mainDbUpdate;
 
-        public UpdateCommand(bool masterDbUpdate) : base("update", "Updates the database.")
+        public UpdateCommand(bool mainDbUpdate) : base("update", "Updates the database.")
         {
-            _masterDbUpdate = masterDbUpdate;
+            _mainDbUpdate = mainDbUpdate;
 
-            Add(new Option("--clear", "Clear existing master database.")
+            Add(new Option("--clear", "Clear existing main database.")
             {
                 Argument = new Argument<bool>(() => false), Required = false
             });
 
-            Add(new Option("--clear-all", "Clear existing master and local database.")
+            Add(new Option("--clear-all", "Clear existing main and local database.")
             {
                 Argument = new Argument<bool>(() => false), Required = false
             });
@@ -66,7 +66,7 @@ namespace Aaru.Commands
 
         public int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
         {
-            if(_masterDbUpdate)
+            if(_mainDbUpdate)
                 return (int)ErrorNumber.NoError;
 
             MainClass.PrintCopyright();
@@ -105,14 +105,14 @@ namespace Aaru.Commands
             {
                 try
                 {
-                    File.Delete(Settings.Settings.MasterDbPath);
+                    File.Delete(Settings.Settings.MainDbPath);
                 }
                 catch(Exception)
                 {
                     if(Debugger.IsAttached)
                         throw;
 
-                    AaruConsole.ErrorWriteLine("Could not remove master database.");
+                    AaruConsole.ErrorWriteLine("Could not remove main database.");
 
                     return (int)ErrorNumber.CannotRemoveDatabase;
                 }
@@ -125,7 +125,7 @@ namespace Aaru.Commands
 
         internal static void DoUpdate(bool create)
         {
-            Remote.UpdateMasterDatabase(create);
+            Remote.UpdateMainDatabase(create);
             Statistics.AddCommand("update");
         }
     }

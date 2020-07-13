@@ -1135,10 +1135,10 @@ namespace Aaru.Commands.Device
 
             AaruConsole.WriteLine();
 
-            // Open master database
-            var ctx = AaruContext.Create(Settings.Settings.MasterDbPath);
+            // Open main database
+            var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
-            // Search for device in master database
+            // Search for device in main database
             Database.Models.Device dbDev =
                 ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                 d.Revision     == dev.FirmwareRevision);
@@ -1157,7 +1157,7 @@ namespace Aaru.Commands.Device
             if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 return (int)ErrorNumber.NoError;
 
-            // Search for read offset in master database
+            // Search for read offset in main database
             CdOffset cdOffset =
                 ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model);
 

@@ -921,7 +921,7 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
             }
 
-            // Search for read offset in master database
+            // Search for read offset in main database
             cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
 
             Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,

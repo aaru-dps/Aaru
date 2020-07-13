@@ -111,8 +111,8 @@ namespace Aaru.Settings
         /// <summary>Global path to save statistics</summary>
         public static string StatsPath { get; private set; }
 
-        public static string LocalDbPath  { get; private set; }
-        public static string MasterDbPath { get; private set; }
+        public static string LocalDbPath { get; private set; }
+        public static string MainDbPath  { get; private set; }
 
         /// <summary>Loads settings</summary>
         public static void LoadSettings()
@@ -120,8 +120,9 @@ namespace Aaru.Settings
             Current = new DicSettings();
             PlatformID ptId     = DetectOS.GetRealPlatformID();
             string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            LocalDbPath  = "local.db";
-            MasterDbPath = "master.db";
+            LocalDbPath = "local.db";
+            string OldMainDbPath = "master.db";
+            MainDbPath = "main.db";
 
             try
             {
@@ -148,8 +149,9 @@ namespace Aaru.Settings
                         if(!Directory.Exists(aaruPath))
                             Directory.CreateDirectory(aaruPath);
 
-                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+                        LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
+                        MainDbPath    = Path.Combine(aaruPath, MainDbPath);
+                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -188,8 +190,9 @@ namespace Aaru.Settings
                         if(!Directory.Exists(aaruPath))
                             Directory.CreateDirectory(aaruPath);
 
-                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+                        LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
+                        MainDbPath    = Path.Combine(aaruPath, MainDbPath);
+                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -229,8 +232,9 @@ namespace Aaru.Settings
                         if(!Directory.Exists(aaruPath))
                             Directory.CreateDirectory(aaruPath);
 
-                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+                        LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
+                        MainDbPath    = Path.Combine(aaruPath, MainDbPath);
+                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -245,6 +249,9 @@ namespace Aaru.Settings
 
                         break;
                 }
+
+                if(File.Exists(OldMainDbPath))
+                    File.Move(OldMainDbPath, MainDbPath);
             }
             catch
             {

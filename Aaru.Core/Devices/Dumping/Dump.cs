@@ -80,7 +80,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _trim;
         bool                                _aborted;
-        AaruContext                         _ctx;   // Master database context
+        AaruContext                         _ctx;   // Main database context
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
@@ -161,10 +161,10 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
         public void Start()
         {
-            // Open master database
-            _ctx = AaruContext.Create(Settings.Settings.MasterDbPath);
+            // Open main database
+            _ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
-            // Search for device in master database
+            // Search for device in main database
             _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
                                                       d.Revision     == _dev.FirmwareRevision);
 

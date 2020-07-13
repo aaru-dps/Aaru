@@ -119,28 +119,28 @@ namespace Aaru
 
             ctx.SaveChanges();
 
-            bool masterDbUpdate = false;
+            bool mainDbUpdate = false;
 
-            if(!File.Exists(Settings.Settings.MasterDbPath))
+            if(!File.Exists(Settings.Settings.MainDbPath))
             {
-                masterDbUpdate = true;
+                mainDbUpdate = true;
                 UpdateCommand.DoUpdate(true);
             }
 
-            var masterContext = AaruContext.Create(Settings.Settings.MasterDbPath);
+            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath);
 
-            if(masterContext.Database.GetPendingMigrations().Any())
+            if(mainContext.Database.GetPendingMigrations().Any())
             {
                 AaruConsole.WriteLine("New database version, updating...");
 
                 try
                 {
-                    File.Delete(Settings.Settings.MasterDbPath);
+                    File.Delete(Settings.Settings.MainDbPath);
                 }
                 catch(Exception)
                 {
                     AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MasterDbPath);
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MainDbPath);
                 }
 
                 UpdateCommand.DoUpdate(true);
@@ -175,7 +175,7 @@ namespace Aaru
             rootCommand.Description =
                 $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
 
-            rootCommand.AddCommand(new DatabaseFamily(masterDbUpdate));
+            rootCommand.AddCommand(new DatabaseFamily(mainDbUpdate));
             rootCommand.AddCommand(new DeviceFamily());
             rootCommand.AddCommand(new FilesystemFamily());
             rootCommand.AddCommand(new ImageFamily());

@@ -111,9 +111,9 @@ namespace Aaru.Core
             submitThread.Start();
         }
 
-        public static void UpdateMasterDatabase(bool create)
+        public static void UpdateMainDatabase(bool create)
         {
-            var mctx = AaruContext.Create(Settings.Settings.MasterDbPath);
+            var mctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
             if(create)
             {
@@ -164,11 +164,11 @@ namespace Aaru.Core
                 if(lastUpdate == 0)
                 {
                     create = true;
-                    AaruConsole.WriteLine("Creating master database");
+                    AaruConsole.WriteLine("Creating main database");
                 }
                 else
                 {
-                    AaruConsole.WriteLine("Updating master database");
+                    AaruConsole.WriteLine("Updating main database");
                     AaruConsole.WriteLine("Last update: {0}", latest);
                 }
 

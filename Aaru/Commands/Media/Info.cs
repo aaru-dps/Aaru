@@ -573,10 +573,10 @@ namespace Aaru.Commands.Media
                     bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null);
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
 
-                    // Open master database
-                    var ctx = AaruContext.Create(Settings.Settings.MasterDbPath);
+                    // Open main database
+                    var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
-                    // Search for device in master database
+                    // Search for device in main database
                     Database.Models.Device dbDev =
                         ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                         d.Revision     == dev.FirmwareRevision);
@@ -607,7 +607,7 @@ namespace Aaru.Commands.Media
 
                     CdOffset cdOffset = null;
 
-                    // Search for read offset in master database
+                    // Search for read offset in main database
                     cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
                                                                  d.Model        == dev.Model);
 

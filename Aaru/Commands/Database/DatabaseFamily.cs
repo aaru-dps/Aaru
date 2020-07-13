@@ -36,13 +36,13 @@ namespace Aaru.Commands.Filesystem
 {
     public class DatabaseFamily : Command
     {
-        public DatabaseFamily(bool masterDbUpdate) : base("database",
-                                                          "Commands to manage the device and statistics database")
+        public DatabaseFamily(bool mainDbUpdate) : base("database",
+                                                        "Commands to manage the device and statistics database")
         {
             AddAlias("db");
 
             AddCommand(new StatisticsCommand());
-            AddCommand(new UpdateCommand(masterDbUpdate));
+            AddCommand(new UpdateCommand(mainDbUpdate));
         }
     }
 }
