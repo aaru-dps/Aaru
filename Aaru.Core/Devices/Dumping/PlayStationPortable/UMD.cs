@@ -61,6 +61,7 @@ namespace Aaru.Core.Devices.Dumping
             double          minSpeed      = double.MaxValue;
             DateTime        start;
             DateTime        end;
+            byte[]          senseBuf;
 
             bool sense = _dev.Read12(out byte[] readBuffer, out _, 0, false, true, false, false, 0, 512, 0, 1, false,
                                      _dev.Timeout, out _);
@@ -212,8 +213,9 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)(umdStart + (i * 4)),
-                                    512, 0, blocksToRead * 4, false, _dev.Timeout, out double cmdDuration);
+                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
+                                    (uint)(umdStart + (i * 4)), 512, 0, blocksToRead * 4, false, _dev.Timeout,
+                                    out double cmdDuration);
 
                 totalDuration += cmdDuration;
 
@@ -229,6 +231,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
+                    _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                     // TODO: Reset device after X errors
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
@@ -312,12 +316,16 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false,
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
                                         (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
                                         out double cmdDuration);
 
                     if(sense || _dev.Error)
+                    {
+                        _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                         continue;
+                    }
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
@@ -396,7 +404,7 @@ namespace Aaru.Core.Devices.Dumping
                     md6 = Modes.EncodeMode6(md, _dev.ScsiType);
 
                     _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
-                    sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
+                    sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
                     if(sense)
                     {
@@ -429,11 +437,14 @@ namespace Aaru.Core.Devices.Dumping
                     PulseProgress?.
                         Invoke($"Retrying sector {badSector}, pass {pass}, {(runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
 
-                    sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false,
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
                                         (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
                                         out double cmdDuration);
 
                     totalDuration += cmdDuration;
+
+                    if(sense || _dev.Error)
+                        _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
 
                     if(!sense &&
                        !_dev.Error)

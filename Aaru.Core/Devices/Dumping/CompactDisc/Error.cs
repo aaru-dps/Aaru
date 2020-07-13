@@ -247,6 +247,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(sense || _dev.Error)
                 {
+                    _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                     if(!runningPersistent)
                         continue;
 
@@ -279,6 +281,8 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
                     sectorsNotEvenPartial.Remove(badSector);
                 }
+                else
+                    _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
@@ -390,7 +394,11 @@ namespace Aaru.Core.Devices.Dumping
                         }
 
                         if(sense || _dev.Error)
+                        {
+                            _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                             continue;
+                        }
 
                         _dumpLog.WriteLine("Got partial data for sector {0} in pass {1}.", badSector, pass);
 
@@ -541,7 +549,11 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 if(sense || _dev.Error)
+                {
+                    _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                     continue;
+                }
 
                 WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, cmdBuf, badSector, 5, subLog, isrcs,
                                        (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents);

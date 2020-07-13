@@ -434,6 +434,8 @@ namespace Aaru.Core.Devices.Dumping
                         }
                         else
                         {
+                            _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf);
+
                             // Write empty data
                             DateTime writeStart = DateTime.Now;
 
@@ -573,6 +575,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         continue;
                     }
+
+                    _errorLog?.WriteLine(firstSectorToRead, _dev.Error, _dev.LastError, senseBuf);
 
                     // TODO: Reset device after X errors
                     if(_stopOnError)

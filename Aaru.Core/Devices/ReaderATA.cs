@@ -361,6 +361,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && buffer.Length > 0);
                 status    = errorLba48.Status;
                 errorByte = errorLba48.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
             }
             else if(_ataReadLba48)
             {
@@ -368,6 +371,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorLba48.Status & 0x27) == 0 && errorLba48.Error == 0 && buffer.Length > 0);
                 status    = errorLba48.Status;
                 errorByte = errorLba48.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
             }
             else if(_ataReadDmaRetryLba)
             {
@@ -376,6 +382,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
             }
             else if(_ataReadDmaLba)
             {
@@ -384,6 +393,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
             }
             else if(_ataReadRetryLba)
             {
@@ -391,6 +403,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
             }
             else if(_ataReadLba)
             {
@@ -398,6 +413,9 @@ namespace Aaru.Core.Devices
                 error = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status = errorLba.Status;
                 errorByte = errorLba.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
             }
 
             if(error)
@@ -422,6 +440,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
             }
             else if(_ataReadDma)
             {
@@ -431,6 +452,9 @@ namespace Aaru.Core.Devices
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
             }
             else if(_ataReadRetry)
             {
@@ -438,6 +462,9 @@ namespace Aaru.Core.Devices
                 error = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status = errorChs.Status;
                 errorByte = errorChs.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
             }
             else if(_ataRead)
             {
@@ -445,6 +472,9 @@ namespace Aaru.Core.Devices
                 error = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status = errorChs.Status;
                 errorByte = errorChs.Error;
+
+                if(error)
+                    _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
             }
 
             if(error)
@@ -457,12 +487,18 @@ namespace Aaru.Core.Devices
         {
             bool sense = _dev.Seek(out AtaErrorRegistersLba28 errorLba, (uint)block, _timeout, out duration);
 
+            if(!(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0))
+                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
+
             return !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0);
         }
 
         bool AtaSeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
             bool sense = _dev.Seek(out AtaErrorRegistersChs errorChs, cylinder, head, sector, _timeout, out duration);
+
+            if(!(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0))
+                _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
 
             return !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0);
         }

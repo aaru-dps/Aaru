@@ -203,7 +203,7 @@ namespace Aaru.Core.Devices.Dumping
 
             _speedMultiplier *= 150;
 
-            var   scsiReader = new Reader(_dev, _dev.Timeout, null, _dumpRaw);
+            var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog, _dumpRaw);
             ulong blocks     = scsiReader.GetDeviceBlocks();
             _dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();

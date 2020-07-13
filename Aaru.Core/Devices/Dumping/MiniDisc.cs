@@ -72,7 +72,7 @@ namespace Aaru.Core.Devices.Dumping
             bool                             ret;
 
             _dumpLog.WriteLine("Initializing reader.");
-            var   scsiReader = new Reader(_dev, _dev.Timeout, null);
+            var   scsiReader = new Reader(_dev, _dev.Timeout, null, _errorLog);
             ulong blocks     = scsiReader.GetDeviceBlocks();
             uint  blockSize  = scsiReader.LogicalBlockSize;
 

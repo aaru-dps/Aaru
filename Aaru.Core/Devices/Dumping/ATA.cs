@@ -39,11 +39,12 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Devices.Report;
 using Aaru.Core.Logging;
+using Aaru.Decoders.ATA;
 using Aaru.Decoders.PCMCIA;
 using Schemas;
+using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 using Version = Aaru.CommonTypes.Interop.Version;
 
@@ -74,10 +75,11 @@ namespace Aaru.Core.Devices.Dumping
 
             UpdateStatus?.Invoke("Requesting ATA IDENTIFY DEVICE.");
             _dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
-            bool sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
+            bool sense = _dev.AtaIdentify(out byte[] cmdBuf, out AtaErrorRegistersChs errorChs);
 
-            if(!sense &&
-               Identify.Decode(cmdBuf).HasValue)
+            if(sense)
+                _errorLog?.WriteLine("ATA IDENTIFY DEVICE", _dev.Error, _dev.LastError, errorChs);
+            else if(Identify.Decode(cmdBuf).HasValue)
             {
                 Identify.IdentifyDevice? ataIdNullable = Identify.Decode(cmdBuf);
 
@@ -97,7 +99,7 @@ namespace Aaru.Core.Devices.Dumping
                     // Initializate reader
                     UpdateStatus?.Invoke("Initializing reader.");
                     _dumpLog.WriteLine("Initializing reader.");
-                    var ataReader = new Reader(_dev, TIMEOUT, ataIdentify);
+                    var ataReader = new Reader(_dev, TIMEOUT, ataIdentify, _errorLog);
 
                     // Fill reader blocks
                     ulong blocks = ataReader.GetDeviceBlocks();

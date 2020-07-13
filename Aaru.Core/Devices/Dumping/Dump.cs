@@ -61,6 +61,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpLog                    _dumpLog;
         readonly bool                       _dumpRaw;
         readonly Encoding                   _encoding;
+        readonly ErrorLog                   _errorLog;
         readonly bool                       _fixSubchannel;
         readonly bool                       _fixSubchannelCrc;
         readonly bool                       _fixSubchannelPosition;
@@ -119,7 +120,7 @@ namespace Aaru.Core.Devices.Dumping
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
-                    bool skipCdireadyHole)
+                    bool skipCdireadyHole, ErrorLog errorLog)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -154,6 +155,7 @@ namespace Aaru.Core.Devices.Dumping
             _fixSubchannel         = fixSubchannel;
             _fixSubchannelCrc      = fixSubchannelCrc;
             _skipCdireadyHole      = skipCdireadyHole;
+            _errorLog              = errorLog;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
@@ -215,6 +217,7 @@ namespace Aaru.Core.Devices.Dumping
                         return;
                 }
 
+            _errorLog.Close();
             _dumpLog.Close();
 
             if(_resume == null ||

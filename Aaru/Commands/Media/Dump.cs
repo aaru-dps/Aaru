@@ -469,11 +469,13 @@ namespace Aaru.Commands.Media
                 AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
             }
 
+            var errorLog = new ErrorLog(outputPrefix + ".error.log");
+
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
                                   parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
                                   wantedSubchannel, speed, @private, fixSubchannelPosition, retrySubchannel,
-                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole);
+                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole, errorLog);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

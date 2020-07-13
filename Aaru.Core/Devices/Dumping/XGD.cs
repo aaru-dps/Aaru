@@ -151,6 +151,8 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
+                _errorLog?.WriteLine("Kreon lock", _dev.Error, _dev.LastError, senseBuf);
+
                 _dumpLog.WriteLine("Cannot lock drive, not continuing.");
                 StoppingErrorMessage?.Invoke("Cannot lock drive, not continuing.");
 
@@ -251,6 +253,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
+                _errorLog?.WriteLine("Kreon Xtreme unlock", _dev.Error, _dev.LastError, senseBuf);
                 _dumpLog.WriteLine("Cannot unlock drive, not continuing.");
                 StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
 
@@ -282,6 +285,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
+                _errorLog?.WriteLine("Kreon Wxripper unlock", _dev.Error, _dev.LastError, senseBuf);
                 _dumpLog.WriteLine("Cannot unlock drive, not continuing.");
                 StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
 
@@ -600,6 +604,8 @@ namespace Aaru.Core.Devices.Dumping
                     }
                     else
                     {
+                        _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                         // TODO: Reset device after X errors
                         if(_stopOnError)
                             return; // TODO: Return more cleanly
@@ -794,6 +800,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
+                    _errorLog?.WriteLine(currentSector, _dev.Error, _dev.LastError, senseBuf);
+
                     // TODO: Reset device after X errors
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
@@ -844,6 +852,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(sense)
             {
+                _errorLog?.WriteLine("Kreon Wxripper unlock", _dev.Error, _dev.LastError, senseBuf);
                 _dumpLog.WriteLine("Cannot unlock drive, not continuing.");
                 StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
 
@@ -913,7 +922,11 @@ namespace Aaru.Core.Devices.Dumping
                     totalDuration += cmdDuration;
 
                     if(sense || _dev.Error)
+                    {
+                        _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                         continue;
+                    }
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
@@ -1061,6 +1074,9 @@ namespace Aaru.Core.Devices.Dumping
                                         BLOCK_SIZE, 0, 1, false, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
+
+                    if(sense || _dev.Error)
+                        _errorLog?.WriteLine(currentSector, _dev.Error, _dev.LastError, senseBuf);
 
                     if(!sense &&
                        !_dev.Error)

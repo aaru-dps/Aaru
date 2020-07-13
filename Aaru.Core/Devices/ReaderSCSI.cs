@@ -622,6 +622,9 @@ namespace Aaru.Core.Devices
                     return true;
             }
 
+            if(sense || _dev.Error)
+                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, senseBuf);
+
             if(!sense &&
                !_dev.Error)
                 return false;

@@ -56,7 +56,7 @@ namespace Aaru.Core.Devices.Scanning
                Identify.Decode(cmdBuf).HasValue)
             {
                 // Initializate reader
-                var ataReader = new Reader(_dev, TIMEOUT, cmdBuf);
+                var ataReader = new Reader(_dev, TIMEOUT, cmdBuf, null);
 
                 // Fill reader blocks
                 results.Blocks = ataReader.GetDeviceBlocks();
@@ -204,8 +204,7 @@ namespace Aaru.Core.Devices.Scanning
                     mhddLog.Close();
 
                     ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (blockSize              * (double)(results.Blocks + 1)) / 1024 /
-                                 (results.ProcessingTime / 1000),
+                                 (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
                                  _devicePath);
 
                     InitProgress?.Invoke();
@@ -325,8 +324,7 @@ namespace Aaru.Core.Devices.Scanning
                     mhddLog.Close();
 
                     ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 (blockSize              * (double)(results.Blocks + 1)) / 1024 /
-                                 (results.ProcessingTime / 1000),
+                                 (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
                                  _devicePath);
 
                     InitProgress?.Invoke();

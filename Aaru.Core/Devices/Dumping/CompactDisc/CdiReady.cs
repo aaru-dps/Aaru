@@ -291,6 +291,8 @@ namespace Aaru.Core.Devices.Dumping
                         }
                         else
                         {
+                            _errorLog?.WriteLine(i + r, _dev.Error, _dev.LastError, senseBuf);
+
                             leadOutExtents.Add(i + r, firstTrack.TrackStartSector - 1);
 
                             UpdateStatus?.
@@ -388,6 +390,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
+                    _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                     _resume.NextBlock = firstTrack.TrackStartSector;
 
                     break;

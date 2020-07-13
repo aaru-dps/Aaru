@@ -65,6 +65,7 @@ namespace Aaru.Core.Devices.Dumping
             DateTime     end;
             MediaType    dskType;
             bool         sense;
+            byte[]       senseBuf;
 
             sense = _dev.ReadCapacity(out byte[] readBuffer, out _, _dev.Timeout, out _);
 
@@ -195,7 +196,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i, blocks);
 
-                sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)i, BLOCK_SIZE, 0,
+                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)i, BLOCK_SIZE, 0,
                                     blocksToRead, false, _dev.Timeout, out double cmdDuration);
 
                 totalDuration += cmdDuration;
@@ -212,6 +213,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
+                    _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                     // TODO: Reset device after X errors
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
@@ -297,11 +300,15 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)badSector,
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector,
                                         BLOCK_SIZE, 0, 1, false, _dev.Timeout, out double cmdDuration);
 
                     if(sense || _dev.Error)
+                    {
+                        _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
                         continue;
+                    }
 
                     _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
@@ -397,7 +404,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
                     _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
-                    sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
+                    sense = _dev.ModeSelect(md6, out senseBuf, true, false, _dev.Timeout, out _);
 
                     if(sense)
                     {
@@ -431,10 +438,13 @@ namespace Aaru.Core.Devices.Dumping
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
-                    sense = _dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)badSector,
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector,
                                         BLOCK_SIZE, 0, 1, false, _dev.Timeout, out double cmdDuration);
 
                     totalDuration += cmdDuration;
+
+                    if(sense || _dev.Error)
+                        _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
 
                     if(!sense &&
                        !_dev.Error)

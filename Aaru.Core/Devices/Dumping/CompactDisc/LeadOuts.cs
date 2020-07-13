@@ -80,6 +80,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
             bool       sense      = true; // Sense indicator
+            byte[]     senseBuf   = null;
 
             UpdateStatus?.Invoke("Reading lead-outs");
             _dumpLog.WriteLine("Reading lead-outs");
@@ -117,23 +118,24 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(readcd)
                     {
-                        sense = _dev.ReadCd(out cmdBuf, out _, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                            supportedSubchannel, _dev.Timeout, out cmdDuration);
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes,
+                                            false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                            MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                         totalDuration += cmdDuration;
                     }
                     else if(read16)
-                        sense = _dev.Read16(out cmdBuf, out _, 0, false, true, false, i, blockSize, 0, 1, false,
+                        sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                             _dev.Timeout, out cmdDuration);
                     else if(read12)
-                        sense = _dev.Read12(out cmdBuf, out _, 0, false, true, false, false, (uint)i, blockSize, 0, 1,
-                                            false, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
+                                            0, 1, false, _dev.Timeout, out cmdDuration);
                     else if(read10)
-                        sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, (uint)i, blockSize, 0, 1,
-                                            _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
+                                            0, 1, _dev.Timeout, out cmdDuration);
                     else if(read6)
-                        sense = _dev.Read6(out cmdBuf, out _, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout,
+                                           out cmdDuration);
 
                     if(!sense &&
                        !_dev.Error)
@@ -178,6 +180,8 @@ namespace Aaru.Core.Devices.Dumping
                     }
                     else
                     {
+                        _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                         // TODO: Reset device after X errors
                         if(_stopOnError)
                             return; // TODO: Return more cleanly
@@ -244,6 +248,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
             bool       sense      = true; // Sense indicator
+            byte[]     senseBuf   = null;
 
             _dumpLog.WriteLine("Retrying lead-outs");
 
@@ -281,23 +286,24 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(readcd)
                     {
-                        sense = _dev.ReadCd(out cmdBuf, out _, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                            supportedSubchannel, _dev.Timeout, out cmdDuration);
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes,
+                                            false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                            MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
                         totalDuration += cmdDuration;
                     }
                     else if(read16)
-                        sense = _dev.Read16(out cmdBuf, out _, 0, false, true, false, i, blockSize, 0, 1, false,
+                        sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
                                             _dev.Timeout, out cmdDuration);
                     else if(read12)
-                        sense = _dev.Read12(out cmdBuf, out _, 0, false, true, false, false, (uint)i, blockSize, 0, 1,
-                                            false, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
+                                            0, 1, false, _dev.Timeout, out cmdDuration);
                     else if(read10)
-                        sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, (uint)i, blockSize, 0, 1,
-                                            _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
+                                            0, 1, _dev.Timeout, out cmdDuration);
                     else if(read6)
-                        sense = _dev.Read6(out cmdBuf, out _, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout,
+                                           out cmdDuration);
 
                     if(!sense &&
                        !_dev.Error)
@@ -342,6 +348,8 @@ namespace Aaru.Core.Devices.Dumping
                     }
                     else
                     {
+                        _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
+
                         // TODO: Reset device after X errors
                         if(_stopOnError)
                             return; // TODO: Return more cleanly

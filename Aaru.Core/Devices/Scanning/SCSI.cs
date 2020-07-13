@@ -169,7 +169,7 @@ namespace Aaru.Core.Devices.Scanning
                 case PeripheralDeviceTypes.OpticalDevice:
                 case PeripheralDeviceTypes.SimplifiedDevice:
                 case PeripheralDeviceTypes.WriteOnceDevice:
-                    scsiReader     = new Reader(_dev, _dev.Timeout, null);
+                    scsiReader     = new Reader(_dev, _dev.Timeout, null, null);
                     results.Blocks = scsiReader.GetDeviceBlocks();
 
                     if(scsiReader.FindReadCommand())

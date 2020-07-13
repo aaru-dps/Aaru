@@ -33,6 +33,7 @@
 using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Core.Logging;
 using Aaru.Devices;
 
 namespace Aaru.Core.Devices
@@ -40,15 +41,17 @@ namespace Aaru.Core.Devices
     /// <summary>Reduces common code used for scanning and dumping</summary>
     internal partial class Reader
     {
-        readonly Device _dev;
-        readonly uint   _timeout;
+        readonly Device   _dev;
+        readonly ErrorLog _errorLog;
+        readonly uint     _timeout;
 
-        internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
+        internal Reader(Device dev, uint timeout, byte[] identification, ErrorLog errorLog, bool raw = false)
         {
             _dev         = dev;
             _timeout     = timeout;
             BlocksToRead = 64;
             CanReadRaw   = raw;
+            _errorLog    = errorLog;
 
             switch(dev.Type)
             {

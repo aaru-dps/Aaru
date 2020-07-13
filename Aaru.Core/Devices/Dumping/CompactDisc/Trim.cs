@@ -62,6 +62,7 @@ namespace Aaru.Core.Devices.Dumping
             double            cmdDuration = 0;    // Command execution time
             const uint        sectorSize  = 2352; // Full sector size
             PlextorSubchannel supportedPlextorSubchannel;
+            byte[]            senseBuf = null;
 
             switch(supportedSubchannel)
             {
@@ -135,32 +136,36 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(_supportsPlextorD8 && audioExtents.Contains(badSector))
                 {
-                    sense = ReadPlextorWithSubchannel(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
-                                                      supportedPlextorSubchannel, out cmdDuration);
+                    sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize,
+                                                      sectorsToTrim, supportedPlextorSubchannel, out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
                 else if(readcd)
-                    sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                         true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
                 else if(read16)
-                    sense = _dev.Read16(out cmdBuf, out _, 0, false, true, false, badSectorToRead, blockSize, 0,
+                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize, 0,
                                         sectorsToTrim, false, _dev.Timeout, out cmdDuration);
                 else if(read12)
-                    sense = _dev.Read12(out cmdBuf, out _, 0, false, true, false, false, badSectorToRead, blockSize, 0,
-                                        sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
+                                        blockSize, 0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
                 else if(read10)
-                    sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, badSectorToRead, blockSize, 0,
-                                        sectorsToTrim, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
+                                        blockSize, 0, sectorsToTrim, _dev.Timeout, out cmdDuration);
                 else if(read6)
-                    sense = _dev.Read6(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim, _dev.Timeout,
-                                       out cmdDuration);
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
+                                       _dev.Timeout, out cmdDuration);
 
                 totalDuration += cmdDuration;
 
                 if(sense || _dev.Error)
+                {
+                    _errorLog?.WriteLine(badSectorToRead, _dev.Error, _dev.LastError, senseBuf);
+
                     continue;
+                }
 
                 if(!sense &&
                    !_dev.Error)
