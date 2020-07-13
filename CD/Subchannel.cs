@@ -1,3 +1,4 @@
+using System;
 using Aaru.Checksums;
 
 namespace Aaru.Decoders.CD
@@ -481,6 +482,85 @@ namespace Aaru.Decoders.CD
                 case 'Z': return 0x2A;
                 default:  return 0x00;
             }
+        }
+
+        public static byte[] Generate(int sector, uint trackSequence, int pregap, int trackStart, byte flags,
+                                      byte index)
+        {
+            bool isPregap = sector < 0 || sector <= trackStart + pregap;
+
+            if(index == 0)
+                index = (byte)(isPregap ? 0 : 1);
+
+            byte[] sub = new byte[96];
+
+            // P
+            if(isPregap)
+            {
+                sub[0]  = 0xFF;
+                sub[1]  = 0xFF;
+                sub[2]  = 0xFF;
+                sub[3]  = 0xFF;
+                sub[4]  = 0xFF;
+                sub[5]  = 0xFF;
+                sub[6]  = 0xFF;
+                sub[7]  = 0xFF;
+                sub[8]  = 0xFF;
+                sub[9]  = 0xFF;
+                sub[10] = 0xFF;
+                sub[11] = 0xFF;
+            }
+
+            // Q
+            byte[] q = new byte[12];
+
+            q[0] = (byte)((flags << 4) + 1);
+            q[1] = (byte)trackSequence;
+            q[2] = index;
+
+            int relative;
+
+            if(isPregap)
+                relative = (pregap + trackStart) - sector;
+            else
+                relative = sector - trackStart;
+
+            sector += 150;
+
+            int min   = relative / 60 / 75;
+            int sec   = (relative / 75)            - (min * 60);
+            int frame = relative - (min * 60 * 75) - (sec * 75);
+
+            int amin   = sector / 60 / 75;
+            int asec   = (sector / 75)             - (amin * 60);
+            int aframe = sector - (amin * 60 * 75) - (asec * 75);
+
+            q[3] = (byte)min;
+            q[4] = (byte)sec;
+            q[5] = (byte)frame;
+
+            q[7] = (byte)amin;
+            q[8] = (byte)asec;
+            q[9] = (byte)aframe;
+
+            q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
+            q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
+            q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
+            q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
+            q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
+            q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
+            q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
+            q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
+
+            q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
+
+            CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
+            q[10] = qCrc[0];
+            q[11] = qCrc[1];
+
+            Array.Copy(q, 0, sub, 12, 12);
+
+            return Interleave(sub);
         }
     }
 }

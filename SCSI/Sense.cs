@@ -213,11 +213,10 @@ namespace Aaru.Decoders.SCSI
 
             var decoded = new FixedSense
             {
-                InformationValid = (sense[0]            & 0x80) == 0x80, SegmentNumber = sense[1],
-                Filemark         = (sense[2]            & 0x80) == 0x80, EOM           = (sense[2] & 0x40) == 0x40,
-                ILI              = (sense[2]            & 0x20) == 0x20,
-                SenseKey         = (SenseKeys)(sense[2] & 0x0F),
-                Information      = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]),
+                InformationValid = (sense[0] & 0x80) == 0x80, SegmentNumber = sense[1],
+                Filemark = (sense[2] & 0x80) == 0x80, EOM = (sense[2] & 0x40) == 0x40, ILI = (sense[2] & 0x20) == 0x20,
+                SenseKey = (SenseKeys)(sense[2] & 0x0F),
+                Information = (uint)((sense[3] << 24) + (sense[4] << 16) + (sense[5] << 8) + sense[6]),
                 AdditionalLength = sense[7]
             };
 
@@ -256,6 +255,11 @@ namespace Aaru.Decoders.SCSI
                 return null;
 
             if(sense.Length < 8)
+                return null;
+
+            // Fixed sense
+            if((sense[0] & 0x7F) == 0x70 ||
+               (sense[0] & 0x7F) == 0x71)
                 return null;
 
             var decoded = new DescriptorSense
@@ -512,12 +516,11 @@ namespace Aaru.Decoders.SCSI
 
         public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor) => new AtaErrorRegistersLba48
         {
-            Error      = descriptor[3], SectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]),
-            LbaLow     = (ushort)((descriptor[6]                              << 8) + descriptor[7]),
-            LbaMid     = (ushort)((descriptor[8]                              << 8) + descriptor[9]),
-            LbaHigh    = (ushort)((descriptor[10]                             << 8) + descriptor[11]),
-            DeviceHead = descriptor[12],
-            Status     = descriptor[13]
+            Error   = descriptor[3], SectorCount = (ushort)((descriptor[4] << 8) + descriptor[5]),
+            LbaLow  = (ushort)((descriptor[6] << 8) + descriptor[7]),
+            LbaMid  = (ushort)((descriptor[8] << 8) + descriptor[9]),
+            LbaHigh = (ushort)((descriptor[10] << 8) + descriptor[11]), DeviceHead = descriptor[12],
+            Status  = descriptor[13]
         };
 
         public static void DecodeDescriptor0B(byte[] descriptor) => throw new NotImplementedException("Check SBC-3");
