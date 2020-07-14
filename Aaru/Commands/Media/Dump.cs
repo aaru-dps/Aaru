@@ -42,6 +42,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Dumping;
@@ -231,6 +232,14 @@ namespace Aaru.Commands.Media
                     Argument = new Argument<bool>(() => true), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--eject"
+                }, "Eject media after dump finishes.")
+                {
+                    Argument = new Argument<bool>(() => false), Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -239,7 +248,7 @@ namespace Aaru.Commands.Media
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
-                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdireadyHole)
+                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdireadyHole, bool eject)
         {
             MainClass.PrintCopyright();
 
@@ -283,6 +292,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
             AaruConsole.DebugWriteLine("Dump-Media command", "--generate-subchannels={0}", generateSubchannels);
             AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdireadyHole);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--eject={0}", eject);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -504,6 +514,45 @@ namespace Aaru.Commands.Media
             };
 
             dumper.Start();
+
+            if(eject && dev.IsRemovable)
+            {
+                switch(dev.Type)
+                {
+                    case DeviceType.ATA:
+                        dev.DoorUnlock(out _, dev.Timeout, out _);
+                        dev.MediaEject(out _, dev.Timeout, out _);
+
+                        break;
+                    case DeviceType.ATAPI:
+                    case DeviceType.SCSI:
+                        switch(dev.ScsiType)
+                        {
+                            case PeripheralDeviceTypes.DirectAccess:
+                            case PeripheralDeviceTypes.SimplifiedDevice:
+                            case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                            case PeripheralDeviceTypes.WriteOnceDevice:
+                            case PeripheralDeviceTypes.OpticalDevice:
+                            case PeripheralDeviceTypes.OCRWDevice:
+                                dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.EjectTray(out _, dev.Timeout, out _);
+
+                                break;
+                            case PeripheralDeviceTypes.MultiMediaDevice:
+                                dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.EjectTray(out _, dev.Timeout, out _);
+
+                                break;
+                            case PeripheralDeviceTypes.SequentialAccess:
+                                dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
+
+                                break;
+                        }
+
+                        break;
+                }
+            }
 
             dev.Close();
 
