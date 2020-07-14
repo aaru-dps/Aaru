@@ -773,6 +773,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
                                              _outputPlugin.ErrorMessage);
+
+                return;
             }
 
             // Send track list to output plugin. This may fail if subchannel is set but unsupported.
