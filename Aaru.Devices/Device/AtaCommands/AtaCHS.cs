@@ -99,8 +99,7 @@ namespace Aaru.Devices
             var registers = new AtaRegistersChs
             {
                 SectorCount = count, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder                       & 0xFF)   / 0x1), DeviceHead = (byte)(head & 0x0F),
-                Sector      = sector,
+                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector,
                 Command     = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
             };
 
@@ -149,8 +148,7 @@ namespace Aaru.Devices
             var registers = new AtaRegistersChs
             {
                 Command      = retry ? (byte)AtaCommands.ReadRetry : (byte)AtaCommands.Read, SectorCount = count,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100), CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
                 DeviceHead   = (byte)(head & 0x0F), Sector = sector
             };
 
@@ -177,10 +175,8 @@ namespace Aaru.Devices
             var registers = new AtaRegistersChs
             {
                 Command      = retry ? (byte)AtaCommands.ReadLongRetry : (byte)AtaCommands.ReadLong, SectorCount = 1,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
-                DeviceHead   = (byte)(head & 0x0F),
-                Sector       = sector
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100), CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
+                DeviceHead   = (byte)(head & 0x0F), Sector = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
@@ -202,8 +198,7 @@ namespace Aaru.Devices
             var registers = new AtaRegistersChs
             {
                 Command     = (byte)AtaCommands.Seek, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder                                        & 0xFF)   / 0x1),
-                DeviceHead  = (byte)(head & 0x0F), Sector = sector
+                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -229,10 +224,8 @@ namespace Aaru.Devices
             var registers = new AtaRegistersChs
             {
                 Command     = (byte)AtaCommands.SetFeatures, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder                                               & 0xFF)   / 0x1),
-                DeviceHead  = (byte)(head & 0x0F), Sector = sector,
-                SectorCount = sectorCount,
-                Feature     = (byte)feature
+                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector,
+                SectorCount = sectorCount, Feature = (byte)feature
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -242,6 +235,66 @@ namespace Aaru.Devices
             Error = LastError != 0;
 
             AaruConsole.DebugWriteLine("ATA Device", "SET FEATURES took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool DoorLock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+
+            var registers = new AtaRegistersChs
+            {
+                Command = (byte)AtaCommands.DoorLock
+            };
+
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
+                                       out bool sense);
+
+            Error = LastError != 0;
+
+            AaruConsole.DebugWriteLine("ATA Device", "DOOR LOCK took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool DoorUnlock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+
+            var registers = new AtaRegistersChs
+            {
+                Command = (byte)AtaCommands.DoorUnLock
+            };
+
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
+                                       out bool sense);
+
+            Error = LastError != 0;
+
+            AaruConsole.DebugWriteLine("ATA Device", "DOOR UNLOCK took {0} ms.", duration);
+
+            return sense;
+        }
+
+        public bool MediaEject(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
+        {
+            byte[] buffer = new byte[0];
+
+            var registers = new AtaRegistersChs
+            {
+                Command = (byte)AtaCommands.MediaEject
+            };
+
+            LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
+                                       AtaTransferRegister.NoTransfer, ref buffer, timeout, true, out duration,
+                                       out bool sense);
+
+            Error = LastError != 0;
+
+            AaruConsole.DebugWriteLine("ATA Device", "MEDIA EJECT took {0} ms.", duration);
 
             return sense;
         }
