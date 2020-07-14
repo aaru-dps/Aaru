@@ -220,7 +220,7 @@ namespace Aaru.Commands.Media
                     "--generate-subchannels"
                 }, "Generates missing subchannels (they don't count as dumped in resume file).")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => false), Required = false
                 });
 
             Add(new Option(new[]

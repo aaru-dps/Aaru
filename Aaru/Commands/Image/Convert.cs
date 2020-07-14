@@ -218,7 +218,7 @@ namespace Aaru.Commands.Image
                     "--generate-subchannels"
                 }, "Generates missing subchannels.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => false), Required = false
                 });
 
             AddArgument(new Argument<string>
