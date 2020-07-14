@@ -135,12 +135,12 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 if(_supportsPlextorD8 && audioExtents.Contains(badSector))
-                {
                     sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize,
                                                       sectorsToTrim, supportedPlextorSubchannel, out cmdDuration);
-
-                    totalDuration += cmdDuration;
-                }
+                else if(readcd && audioExtents.Contains(badSector))
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
+                                        MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
+                                        MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
                 else if(readcd)
                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
@@ -194,9 +194,14 @@ namespace Aaru.Core.Devices.Dumping
                     _outputPlugin.WriteSectorLong(data, badSector);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                                                   desiredSubchannel, sub, badSector, 1,
+                                                                                   subLog, isrcs,
+                                                                                   (byte)track.TrackSequence, ref mcn,
+                                                                                   tracks, subchannelExtents,
+                                                                                   _fixSubchannelPosition,
+                                                                                   _outputPlugin, _fixSubchannel,
+                                                                                   _fixSubchannelCrc, _dumpLog,
+                                                                                   UpdateStatus);
 
                     // Set tracks and go back
                     if(!indexesChanged)
