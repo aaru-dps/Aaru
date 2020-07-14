@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
@@ -45,6 +46,8 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Core.Media;
+using Aaru.Devices;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -59,30 +62,27 @@ namespace Aaru.Gui.ViewModels.Windows
 {
     public class ImageConvertViewModel : ViewModelBase
     {
-        readonly Window      _view;
-        readonly IMediaImage inputFormat;
-        bool                 _cicmXmlFromImageVisible;
-        string               _cicmXmlText;
-        bool                 _closeVisible;
-        string               _commentsText;
-        bool                 _commentsVisible;
-        string               _creatorText;
-
-        bool   _creatorVisible;
-        bool   _destinationEnabled;
-        string _destinationText;
-
-        bool   _destinationVisible;
-        string _driveFirmwareRevisionText;
-        bool   _driveFirmwareRevisionVisible;
-        string _driveManufacturerText;
-        bool   _driveManufacturerVisible;
-        string _driveModelText;
-        bool   _driveModelVisible;
-        string _driveSerialNumberText;
-        bool   _driveSerialNumberVisible;
-        bool   _forceChecked;
-
+        readonly Window        _view;
+        readonly IMediaImage   inputFormat;
+        bool                   _cicmXmlFromImageVisible;
+        string                 _cicmXmlText;
+        bool                   _closeVisible;
+        string                 _commentsText;
+        bool                   _commentsVisible;
+        string                 _creatorText;
+        bool                   _creatorVisible;
+        bool                   _destinationEnabled;
+        string                 _destinationText;
+        bool                   _destinationVisible;
+        string                 _driveFirmwareRevisionText;
+        bool                   _driveFirmwareRevisionVisible;
+        string                 _driveManufacturerText;
+        bool                   _driveManufacturerVisible;
+        string                 _driveModelText;
+        bool                   _driveModelVisible;
+        string                 _driveSerialNumberText;
+        bool                   _driveSerialNumberVisible;
+        bool                   _forceChecked;
         bool                   _formatReadOnly;
         double                 _lastMediaSequenceValue;
         bool                   _lastMediaSequenceVisible;
@@ -127,49 +127,45 @@ namespace Aaru.Gui.ViewModels.Windows
 
         public ImageConvertViewModel(IMediaImage inputFormat, string imageSource, Window view)
         {
-            _view                        = view;
-            this.inputFormat             = inputFormat;
-            cancel                       = false;
-            DestinationCommand           = ReactiveCommand.Create(ExecuteDestinationCommand);
-            CreatorCommand               = ReactiveCommand.Create(ExecuteCreatorCommand);
-            MediaTitleCommand            = ReactiveCommand.Create(ExecuteMediaTitleCommand);
-            MediaManufacturerCommand     = ReactiveCommand.Create(ExecuteMediaManufacturerCommand);
-            MediaModelCommand            = ReactiveCommand.Create(ExecuteMediaModelCommand);
-            MediaSerialNumberCommand     = ReactiveCommand.Create(ExecuteMediaSerialNumberCommand);
-            MediaBarcodeCommand          = ReactiveCommand.Create(ExecuteMediaBarcodeCommand);
-            MediaPartNumberCommand       = ReactiveCommand.Create(ExecuteMediaPartNumberCommand);
-            MediaSequenceCommand         = ReactiveCommand.Create(ExecuteMediaSequenceCommand);
-            LastMediaSequenceCommand     = ReactiveCommand.Create(ExecuteLastMediaSequenceCommand);
-            DriveManufacturerCommand     = ReactiveCommand.Create(ExecuteDriveManufacturerCommand);
-            DriveModelCommand            = ReactiveCommand.Create(ExecuteDriveModelCommand);
-            DriveSerialNumberCommand     = ReactiveCommand.Create(ExecuteDriveSerialNumberCommand);
+            _view = view;
+            this.inputFormat = inputFormat;
+            cancel = false;
+            DestinationCommand = ReactiveCommand.Create(ExecuteDestinationCommand);
+            CreatorCommand = ReactiveCommand.Create(ExecuteCreatorCommand);
+            MediaTitleCommand = ReactiveCommand.Create(ExecuteMediaTitleCommand);
+            MediaManufacturerCommand = ReactiveCommand.Create(ExecuteMediaManufacturerCommand);
+            MediaModelCommand = ReactiveCommand.Create(ExecuteMediaModelCommand);
+            MediaSerialNumberCommand = ReactiveCommand.Create(ExecuteMediaSerialNumberCommand);
+            MediaBarcodeCommand = ReactiveCommand.Create(ExecuteMediaBarcodeCommand);
+            MediaPartNumberCommand = ReactiveCommand.Create(ExecuteMediaPartNumberCommand);
+            MediaSequenceCommand = ReactiveCommand.Create(ExecuteMediaSequenceCommand);
+            LastMediaSequenceCommand = ReactiveCommand.Create(ExecuteLastMediaSequenceCommand);
+            DriveManufacturerCommand = ReactiveCommand.Create(ExecuteDriveManufacturerCommand);
+            DriveModelCommand = ReactiveCommand.Create(ExecuteDriveModelCommand);
+            DriveSerialNumberCommand = ReactiveCommand.Create(ExecuteDriveSerialNumberCommand);
             DriveFirmwareRevisionCommand = ReactiveCommand.Create(ExecuteDriveFirmwareRevisionCommand);
-            CommentsCommand              = ReactiveCommand.Create(ExecuteCommentsCommand);
-            CicmXmlFromImageCommand      = ReactiveCommand.Create(ExecuteCicmXmlFromImageCommand);
-            CicmXmlCommand               = ReactiveCommand.Create(ExecuteCicmXmlCommand);
-            ResumeFileFromImageCommand   = ReactiveCommand.Create(ExecuteResumeFileFromImageCommand);
-            ResumeFileCommand            = ReactiveCommand.Create(ExecuteResumeFileCommand);
-            StartCommand                 = ReactiveCommand.Create(ExecuteStartCommand);
-            CloseCommand                 = ReactiveCommand.Create(ExecuteCloseCommand);
-            StopCommand                  = ReactiveCommand.Create(ExecuteStopCommand);
-
-            SourceText               = imageSource;
-            CreatorVisible           = !string.IsNullOrWhiteSpace(inputFormat.Info.Creator);
-            MediaTitleVisible        = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaTitle);
-            CommentsVisible          = !string.IsNullOrWhiteSpace(inputFormat.Info.Comments);
+            CommentsCommand = ReactiveCommand.Create(ExecuteCommentsCommand);
+            CicmXmlFromImageCommand = ReactiveCommand.Create(ExecuteCicmXmlFromImageCommand);
+            CicmXmlCommand = ReactiveCommand.Create(ExecuteCicmXmlCommand);
+            ResumeFileFromImageCommand = ReactiveCommand.Create(ExecuteResumeFileFromImageCommand);
+            ResumeFileCommand = ReactiveCommand.Create(ExecuteResumeFileCommand);
+            StartCommand = ReactiveCommand.Create(ExecuteStartCommand);
+            CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
+            StopCommand = ReactiveCommand.Create(ExecuteStopCommand);
+            SourceText = imageSource;
+            CreatorVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.Creator);
+            MediaTitleVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaTitle);
+            CommentsVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.Comments);
             MediaManufacturerVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaManufacturer);
-            MediaModelVisible        = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaModel);
+            MediaModelVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaModel);
             MediaSerialNumberVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaSerialNumber);
-            MediaBarcodeVisible      = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaBarcode);
-            MediaPartNumberVisible   = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaPartNumber);
-
+            MediaBarcodeVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaBarcode);
+            MediaPartNumberVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.MediaPartNumber);
             MediaSequenceVisible = inputFormat.Info.MediaSequence != 0 && inputFormat.Info.LastMediaSequence != 0;
-
             LastMediaSequenceVisible = inputFormat.Info.MediaSequence != 0 && inputFormat.Info.LastMediaSequence != 0;
-
-            DriveManufacturerVisible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveManufacturer);
-            DriveModelVisible            = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveModel);
-            DriveSerialNumberVisible     = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
+            DriveManufacturerVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveManufacturer);
+            DriveModelVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveModel);
+            DriveSerialNumberVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveSerialNumber);
             DriveFirmwareRevisionVisible = !string.IsNullOrWhiteSpace(inputFormat.Info.DriveFirmwareRevision);
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -1014,6 +1010,47 @@ namespace Aaru.Gui.ViewModels.Windows
                     Progress2Value = Progress2MaxValue;
                 });
 
+                Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
+                Dictionary<byte, byte>   trackFlags        = new Dictionary<byte, byte>();
+                string                   mcn               = null;
+                HashSet<int>             subchannelExtents = new HashSet<int>();
+
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
+                                                         Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
+                {
+                    foreach(Track track in inputOptical.Tracks)
+                    {
+                        byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+
+                        if(isrc is null)
+                            continue;
+
+                        isrcs[(byte)track.TrackSequence] = Encoding.UTF8.GetString(isrc);
+                    }
+                }
+
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
+                                                         Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+                {
+                    foreach(Track track in inputOptical.Tracks)
+                    {
+                        byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+
+                        if(flags is null)
+                            continue;
+
+                        trackFlags[(byte)track.TrackSequence] = flags[0];
+                    }
+                }
+
+                for(ulong s = 0; s < inputFormat.Info.Sectors; s++)
+                {
+                    if(s > int.MaxValue)
+                        break;
+
+                    subchannelExtents.Add((int)s);
+                }
+
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
                 {
                     if(!useLong || cancel)
@@ -1076,12 +1113,45 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(sectorsToDo == 1)
                         {
                             sector = inputFormat.ReadSectorTag(doneSectors, tag);
-                            result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
+                            Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
+
+                            if(tag   == SectorTagType.CdSectorSubchannel &&
+                               track != null)
+                            {
+                                bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
+                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    outputFormat, false, false, null, null);
+
+                                if(indexesChanged)
+                                    outputOptical.SetTracks(tracks.ToList());
+
+                                result = true;
+                            }
+                            else
+                                result = outputFormat.WriteSectorTag(sector, doneSectors, tag);
                         }
                         else
                         {
                             sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
-                            result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
+                            Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
+
+                            if(tag   == SectorTagType.CdSectorSubchannel &&
+                               track != null)
+
+                            {
+                                bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                    MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
+                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    outputFormat, false, false, null, null);
+
+                                if(indexesChanged)
+                                    outputOptical.SetTracks(tracks.ToList());
+
+                                result = true;
+                            }
+                            else
+                                result = outputFormat.WriteSectorsTag(sector, doneSectors, sectorsToDo, tag);
                         }
 
                         if(!result)
@@ -1118,6 +1188,21 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         Progress2Value = Progress2MaxValue;
                     });
+
+                    if(isrcs.Count > 0)
+                        foreach(KeyValuePair<byte, string> isrc in isrcs)
+                            outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key,
+                                                         SectorTagType.CdTrackIsrc);
+
+                    if(trackFlags.Count > 0)
+                        foreach(KeyValuePair<byte, byte> flags in trackFlags)
+                            outputOptical.WriteSectorTag(new[]
+                            {
+                                flags.Value
+                            }, flags.Key, SectorTagType.CdTrackFlags);
+
+                    if(mcn != null)
+                        outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
                 }
             }
             else

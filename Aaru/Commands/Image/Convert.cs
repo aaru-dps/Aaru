@@ -36,6 +36,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -44,6 +45,8 @@ using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Core.Media;
+using Aaru.Devices;
 using Schemas;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 using MediaType = Aaru.CommonTypes.MediaType;
@@ -186,6 +189,30 @@ namespace Aaru.Commands.Image
                     Argument = new Argument<string>(() => null), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--fix-subchannel-position"
+                }, "Store subchannel according to the sector they describe.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--fix-subchannel"
+                }, "Try to fix subchannel. Implies fixing subchannel position.")
+                {
+                    Argument = new Argument<bool>(() => false), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--fix-subchannel-crc"
+                }, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel.")
+                {
+                    Argument = new Argument<bool>(() => false), Required = false
+                });
+
             AddArgument(new Argument<string>
             {
                 Arity = ArgumentArity.ExactlyOne, Description = "Input image path", Name = "input-path"
@@ -204,7 +231,8 @@ namespace Aaru.Commands.Image
                                  string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
                                  string mediaBarcode, string mediaManufacturer, string mediaModel,
                                  string mediaPartNumber, int mediaSequence, string mediaSerialNumber, string mediaTitle,
-                                 string outputPath, string options, string resumeFile, string format, string geometry)
+                                 string outputPath, string options, string resumeFile, string format, string geometry,
+                                 bool fixSubchannelPosition, bool fixSubchannel, bool fixSubchannelCrc)
         {
             MainClass.PrintCopyright();
 
@@ -213,6 +241,12 @@ namespace Aaru.Commands.Image
 
             if(verbose)
                 AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(fixSubchannelCrc)
+                fixSubchannel = true;
+
+            if(fixSubchannel)
+                fixSubchannelPosition = true;
 
             Statistics.AddCommand("convert-image");
 
@@ -241,6 +275,9 @@ namespace Aaru.Commands.Image
             AaruConsole.DebugWriteLine("Analyze command", "--output={0}", outputPath);
             AaruConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
             AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel-position={0}", fixSubchannelPosition);
+            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel={0}", fixSubchannel);
+            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
 
             Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
@@ -449,8 +486,8 @@ namespace Aaru.Commands.Image
             // Try name
             else
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                                           StringComparison.
-                                                                                               InvariantCultureIgnoreCase)));
+                                                                            StringComparison.
+                                                                                InvariantCultureIgnoreCase)));
 
             if(candidates.Count == 0)
             {
@@ -613,7 +650,7 @@ namespace Aaru.Commands.Image
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
                         AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                          doneSectors               + track.TrackStartSector,
+                                          doneSectors + track.TrackStartSector,
                                           doneSectors + sectorsToDo + track.TrackStartSector,
                                           (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                           track.TrackSequence);
@@ -690,6 +727,48 @@ namespace Aaru.Commands.Image
 
                 AaruConsole.WriteLine();
 
+                Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
+                Dictionary<byte, byte>   trackFlags        = new Dictionary<byte, byte>();
+                string                   mcn               = null;
+                HashSet<int>             subchannelExtents = new HashSet<int>();
+                Track[]                  tracks            = inputOptical.Tracks.ToArray();
+
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
+                                                         Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
+                {
+                    foreach(Track track in inputOptical.Tracks)
+                    {
+                        byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+
+                        if(isrc is null)
+                            continue;
+
+                        isrcs[(byte)track.TrackSequence] = Encoding.UTF8.GetString(isrc);
+                    }
+                }
+
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
+                                                         Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+                {
+                    foreach(Track track in inputOptical.Tracks)
+                    {
+                        byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+
+                        if(flags is null)
+                            continue;
+
+                        trackFlags[(byte)track.TrackSequence] = flags[0];
+                    }
+                }
+
+                for(ulong s = 0; s < inputFormat.Info.Sectors; s++)
+                {
+                    if(s > int.MaxValue)
+                        break;
+
+                    subchannelExtents.Add((int)s);
+                }
+
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 {
                     if(!useLong)
@@ -755,23 +834,53 @@ namespace Aaru.Commands.Image
                                 sectorsToDo = (uint)(trackSectors - doneSectors);
 
                             AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                              doneSectors               + track.TrackStartSector,
+                                              doneSectors + track.TrackStartSector,
                                               doneSectors + sectorsToDo + track.TrackStartSector,
                                               (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                               track.TrackSequence, tag);
 
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSectorTag(doneSectors           + track.TrackStartSector, tag);
-                                result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector, tag);
+                                sector = inputFormat.ReadSectorTag(doneSectors + track.TrackStartSector, tag);
+
+                                if(tag == SectorTagType.CdSectorSubchannel)
+                                {
+                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
+                                        isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
+                                        fixSubchannelPosition, outputFormat, fixSubchannel, fixSubchannelCrc, null,
+                                        null);
+
+                                    if(indexesChanged)
+                                        outputOptical.SetTracks(tracks.ToList());
+
+                                    result = true;
+                                }
+                                else
+                                    result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector,
+                                                                         tag);
                             }
                             else
                             {
                                 sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
                                                                     tag);
 
-                                result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
-                                                                      sectorsToDo, tag);
+                                if(tag == SectorTagType.CdSectorSubchannel)
+                                {
+                                    bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
+                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
+                                        sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
+                                        subchannelExtents, fixSubchannelPosition, outputFormat, fixSubchannel,
+                                        fixSubchannelCrc, null, null);
+
+                                    if(indexesChanged)
+                                        outputOptical.SetTracks(tracks.ToList());
+
+                                    result = true;
+                                }
+                                else
+                                    result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
+                                                                          sectorsToDo, tag);
                             }
 
                             if(!result)
@@ -810,6 +919,21 @@ namespace Aaru.Commands.Image
 
                     AaruConsole.WriteLine();
                 }
+
+                if(isrcs.Count > 0)
+                    foreach(KeyValuePair<byte, string> isrc in isrcs)
+                        outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key,
+                                                     SectorTagType.CdTrackIsrc);
+
+                if(trackFlags.Count > 0)
+                    foreach(KeyValuePair<byte, byte> flags in trackFlags)
+                        outputOptical.WriteSectorTag(new[]
+                        {
+                            flags.Value
+                        }, flags.Key, SectorTagType.CdTrackFlags);
+
+                if(mcn != null)
+                    outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
             }
             else
             {
