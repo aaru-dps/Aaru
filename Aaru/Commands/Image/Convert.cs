@@ -213,6 +213,14 @@ namespace Aaru.Commands.Image
                     Argument = new Argument<bool>(() => false), Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--generate-subchannels"
+                }, "Generates missing subchannels.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
             AddArgument(new Argument<string>
             {
                 Arity = ArgumentArity.ExactlyOne, Description = "Input image path", Name = "input-path"
@@ -232,7 +240,8 @@ namespace Aaru.Commands.Image
                                  string mediaBarcode, string mediaManufacturer, string mediaModel,
                                  string mediaPartNumber, int mediaSequence, string mediaSerialNumber, string mediaTitle,
                                  string outputPath, string options, string resumeFile, string format, string geometry,
-                                 bool fixSubchannelPosition, bool fixSubchannel, bool fixSubchannelCrc)
+                                 bool fixSubchannelPosition, bool fixSubchannel, bool fixSubchannelCrc,
+                                 bool generateSubchannels)
         {
             MainClass.PrintCopyright();
 
@@ -250,34 +259,35 @@ namespace Aaru.Commands.Image
 
             Statistics.AddCommand("convert-image");
 
-            AaruConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}", cicmXml);
-            AaruConsole.DebugWriteLine("Analyze command", "--comments={0}", comments);
-            AaruConsole.DebugWriteLine("Analyze command", "--count={0}", count);
-            AaruConsole.DebugWriteLine("Analyze command", "--creator={0}", creator);
-            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            AaruConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", driveManufacturer);
-            AaruConsole.DebugWriteLine("Analyze command", "--drive-model={0}", driveModel);
-            AaruConsole.DebugWriteLine("Analyze command", "--drive-revision={0}", driveFirmwareRevision);
-            AaruConsole.DebugWriteLine("Analyze command", "--drive-serial={0}", driveSerialNumber);
-            AaruConsole.DebugWriteLine("Analyze command", "--force={0}", force);
-            AaruConsole.DebugWriteLine("Analyze command", "--format={0}", format);
-            AaruConsole.DebugWriteLine("Analyze command", "--geometry={0}", geometry);
-            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", inputPath);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-barcode={0}", mediaBarcode);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", lastMediaSequence);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", mediaManufacturer);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-model={0}", mediaModel);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}", mediaPartNumber);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-sequence={0}", mediaSequence);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-serial={0}", mediaSerialNumber);
-            AaruConsole.DebugWriteLine("Analyze command", "--media-title={0}", mediaTitle);
-            AaruConsole.DebugWriteLine("Analyze command", "--options={0}", options);
-            AaruConsole.DebugWriteLine("Analyze command", "--output={0}", outputPath);
-            AaruConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
-            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
-            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel-position={0}", fixSubchannelPosition);
-            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel={0}", fixSubchannel);
-            AaruConsole.DebugWriteLine("Analyze command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
+            AaruConsole.DebugWriteLine("Image convert command", "--cicm-xml={0}", cicmXml);
+            AaruConsole.DebugWriteLine("Image convert command", "--comments={0}", comments);
+            AaruConsole.DebugWriteLine("Image convert command", "--count={0}", count);
+            AaruConsole.DebugWriteLine("Image convert command", "--creator={0}", creator);
+            AaruConsole.DebugWriteLine("Image convert command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Image convert command", "--drive-manufacturer={0}", driveManufacturer);
+            AaruConsole.DebugWriteLine("Image convert command", "--drive-model={0}", driveModel);
+            AaruConsole.DebugWriteLine("Image convert command", "--drive-revision={0}", driveFirmwareRevision);
+            AaruConsole.DebugWriteLine("Image convert command", "--drive-serial={0}", driveSerialNumber);
+            AaruConsole.DebugWriteLine("Image convert command", "--force={0}", force);
+            AaruConsole.DebugWriteLine("Image convert command", "--format={0}", format);
+            AaruConsole.DebugWriteLine("Image convert command", "--geometry={0}", geometry);
+            AaruConsole.DebugWriteLine("Image convert command", "--input={0}", inputPath);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-barcode={0}", mediaBarcode);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-lastsequence={0}", lastMediaSequence);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-manufacturer={0}", mediaManufacturer);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-model={0}", mediaModel);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-partnumber={0}", mediaPartNumber);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-sequence={0}", mediaSequence);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-serial={0}", mediaSerialNumber);
+            AaruConsole.DebugWriteLine("Image convert command", "--media-title={0}", mediaTitle);
+            AaruConsole.DebugWriteLine("Image convert command", "--options={0}", options);
+            AaruConsole.DebugWriteLine("Image convert command", "--output={0}", outputPath);
+            AaruConsole.DebugWriteLine("Image convert command", "--resume-file={0}", resumeFile);
+            AaruConsole.DebugWriteLine("Image convert command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-position={0}", fixSubchannelPosition);
+            AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel={0}", fixSubchannel);
+            AaruConsole.DebugWriteLine("Image convert command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
+            AaruConsole.DebugWriteLine("Image convert command", "--generate-subchannels={0}", generateSubchannels);
 
             Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
             AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
@@ -934,6 +944,33 @@ namespace Aaru.Commands.Image
 
                 if(mcn != null)
                     outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
+
+                // TODO: Progress
+                if((inputFormat.Info.MediaType == MediaType.CD || inputFormat.Info.MediaType == MediaType.CDDA ||
+                    inputFormat.Info.MediaType == MediaType.CDG || inputFormat.Info.MediaType == MediaType.CDEG ||
+                    inputFormat.Info.MediaType == MediaType.CDI || inputFormat.Info.MediaType == MediaType.CDROM ||
+                    inputFormat.Info.MediaType == MediaType.CDROMXA || inputFormat.Info.MediaType == MediaType.CDPLUS ||
+                    inputFormat.Info.MediaType == MediaType.CDMO || inputFormat.Info.MediaType == MediaType.CDR ||
+                    inputFormat.Info.MediaType == MediaType.CDRW || inputFormat.Info.MediaType == MediaType.CDMRW ||
+                    inputFormat.Info.MediaType == MediaType.VCD || inputFormat.Info.MediaType == MediaType.SVCD ||
+                    inputFormat.Info.MediaType == MediaType.PCD || inputFormat.Info.MediaType == MediaType.DTSCD ||
+                    inputFormat.Info.MediaType == MediaType.CDMIDI || inputFormat.Info.MediaType == MediaType.CDV ||
+                    inputFormat.Info.MediaType == MediaType.CDIREADY ||
+                    inputFormat.Info.MediaType == MediaType.FMTOWNS || inputFormat.Info.MediaType == MediaType.PS1CD ||
+                    inputFormat.Info.MediaType == MediaType.PS2CD || inputFormat.Info.MediaType == MediaType.MEGACD ||
+                    inputFormat.Info.MediaType == MediaType.SATURNCD || inputFormat.Info.MediaType == MediaType.GDROM ||
+                    inputFormat.Info.MediaType == MediaType.GDR || inputFormat.Info.MediaType == MediaType.MilCD ||
+                    inputFormat.Info.MediaType == MediaType.SuperCDROM2 ||
+                    inputFormat.Info.MediaType == MediaType.JaguarCD ||
+                    inputFormat.Info.MediaType == MediaType.ThreeDO || inputFormat.Info.MediaType == MediaType.PCFX ||
+                    inputFormat.Info.MediaType == MediaType.NeoGeoCD || inputFormat.Info.MediaType == MediaType.CDTV ||
+                    inputFormat.Info.MediaType == MediaType.CD32 || inputFormat.Info.MediaType == MediaType.Playdia ||
+                    inputFormat.Info.MediaType == MediaType.Pippin ||
+                    inputFormat.Info.MediaType == MediaType.VideoNow ||
+                    inputFormat.Info.MediaType == MediaType.VideoNowColor ||
+                    inputFormat.Info.MediaType == MediaType.VideoNowXp) && generateSubchannels)
+                    CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
+                                                    null, null, null, null, null, outputFormat);
             }
             else
             {
