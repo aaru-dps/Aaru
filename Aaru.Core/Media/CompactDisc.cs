@@ -188,16 +188,16 @@ namespace Aaru.Core.Media
 
                 if((q[0] & 0x3) == 1)
                 {
-                    amin = (byte)(((q[7] / 16) * 10)      + (q[7] & 0x0F));
-                    asec = (byte)(((q[8] / 16) * 10)      + (q[8] & 0x0F));
-                    aPos = ((amin              * 60 * 75) + (asec * 75) + aframe) - 150;
+                    amin = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                    asec = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
+                    aPos = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
                 }
                 else
                 {
                     ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
                     smin                  =  (byte)(expectedSectorAddress / 60 / 75);
-                    expectedSectorAddress -= (ulong)(smin                 * 60 * 75);
-                    ssec                  =  (byte)(expectedSectorAddress / 75);
+                    expectedSectorAddress -= (ulong)(smin * 60                 * 75);
+                    ssec                  =  (byte)(expectedSectorAddress      / 75);
 
                     aPos = ((smin * 60 * 75) + (ssec * 75) + aframe) - 150;
 
@@ -230,6 +230,8 @@ namespace Aaru.Core.Media
                                                ref string mcn, Track[] tracks, DumpLog dumpLog,
                                                UpdateStatusHandler updateStatus)
         {
+            bool status = false;
+
             // Check subchannel
             for(int subPos = 0; subPos < deSub.Length; subPos += 96)
             {
@@ -317,7 +319,7 @@ namespace Aaru.Core.Media
 
                             ulong oldPregap = tracks[i].TrackPregap;
 
-                            tracks[i].TrackPregap      =  (ulong)qPos;
+                            tracks[i].TrackPregap      =  (ulong)qPos           + 1;
                             tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
 
                             if(i > 0)
@@ -326,29 +328,31 @@ namespace Aaru.Core.Media
                             dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
                             updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
 
-                            return true;
+                            status = true;
+
+                            continue;
                         }
 
-                        byte amin   = (byte)(((q[7] / 16) * 10)      + (q[7] & 0x0F));
-                        byte asec   = (byte)(((q[8] / 16) * 10)      + (q[8] & 0x0F));
-                        byte aframe = (byte)(((q[9] / 16) * 10)      + (q[9] & 0x0F));
-                        int  aPos   = ((amin              * 60 * 75) + (asec * 75) + aframe) - 150;
+                        byte amin   = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                        byte asec   = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
+                        byte aframe = (byte)(((q[9] / 16) * 10)       + (q[9] & 0x0F));
+                        int  aPos   = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
 
                         if(tracks[i].Indexes.ContainsKey(q[2]) &&
                            aPos >= tracks[i].Indexes[q[2]])
-                            return false;
+                            continue;
 
                         dumpLog?.WriteLine($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
                         updateStatus?.Invoke($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
 
                         tracks[i].Indexes[q[2]] = aPos;
 
-                        return true;
+                        status = true;
                     }
                 }
             }
 
-            return false;
+            return status;
         }
 
         static void DetectRwPackets(byte[] subchannel, out bool zero, out bool rwPacket, out bool cdtextPacket)
@@ -710,7 +714,7 @@ namespace Aaru.Core.Media
             byte[] preQ  = new byte[12];
             byte[] nextQ = new byte[12];
             Array.Copy(deSub, (subPos + 12) - 96, preQ, 0, 12);
-            Array.Copy(deSub, subPos        + 12 + 96, nextQ, 0, 12);
+            Array.Copy(deSub, subPos + 12   + 96, nextQ, 0, 12);
             bool status;
 
             CRC16CCITTContext.Data(preQ, 10, out byte[] preCrc);
@@ -869,10 +873,10 @@ namespace Aaru.Core.Media
                     }
                 }
 
-                amin   = (byte)(((q[7] / 16) * 10)      + (q[7] & 0x0F));
-                asec   = (byte)(((q[8] / 16) * 10)      + (q[8] & 0x0F));
-                aframe = (byte)(((q[9] / 16) * 10)      + (q[9] & 0x0F));
-                aPos   = ((amin              * 60 * 75) + (asec * 75) + aframe) - 150;
+                amin   = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
+                asec   = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
+                aframe = (byte)(((q[9] / 16) * 10)       + (q[9] & 0x0F));
+                aPos   = ((amin * 60 * 75) + (asec * 75) + aframe) - 150;
 
                 pmin   = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
                 psec   = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
@@ -1002,10 +1006,10 @@ namespace Aaru.Core.Media
 
                 if(preCrcOk)
                 {
-                    rmin   = (byte)(((preQ[7] / 16) * 10)      + (preQ[7] & 0x0F));
-                    rsec   = (byte)(((preQ[8] / 16) * 10)      + (preQ[8] & 0x0F));
-                    rframe = (byte)(((preQ[9] / 16) * 10)      + (preQ[9] & 0x0F));
-                    rPos   = ((rmin                 * 60 * 75) + (rsec * 75) + rframe) - 150;
+                    rmin   = (byte)(((preQ[7] / 16) * 10)    + (preQ[7] & 0x0F));
+                    rsec   = (byte)(((preQ[8] / 16) * 10)    + (preQ[8] & 0x0F));
+                    rframe = (byte)(((preQ[9] / 16) * 10)    + (preQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
 
                     dPos = aPos - rPos;
 
@@ -1059,10 +1063,10 @@ namespace Aaru.Core.Media
                    nextCrcOk    &&
                    !fixedAbsPos)
                 {
-                    rmin   = (byte)(((nextQ[7] / 16) * 10)      + (nextQ[7] & 0x0F));
-                    rsec   = (byte)(((nextQ[8] / 16) * 10)      + (nextQ[8] & 0x0F));
-                    rframe = (byte)(((nextQ[9] / 16) * 10)      + (nextQ[9] & 0x0F));
-                    rPos   = ((rmin                  * 60 * 75) + (rsec * 75) + rframe) - 150;
+                    rmin   = (byte)(((nextQ[7] / 16) * 10)   + (nextQ[7] & 0x0F));
+                    rsec   = (byte)(((nextQ[8] / 16) * 10)   + (nextQ[8] & 0x0F));
+                    rframe = (byte)(((nextQ[9] / 16) * 10)   + (nextQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
 
                     dPos = rPos - pPos;
 
@@ -1124,10 +1128,10 @@ namespace Aaru.Core.Media
 
                 if(preCrcOk)
                 {
-                    rmin   = (byte)(((preQ[7] / 16) * 10)      + (preQ[7] & 0x0F));
-                    rsec   = (byte)(((preQ[8] / 16) * 10)      + (preQ[8] & 0x0F));
-                    rframe = (byte)(((preQ[9] / 16) * 10)      + (preQ[9] & 0x0F));
-                    rPos   = ((rmin                 * 60 * 75) + (rsec * 75) + rframe) - 150;
+                    rmin   = (byte)(((preQ[7] / 16) * 10)    + (preQ[7] & 0x0F));
+                    rsec   = (byte)(((preQ[8] / 16) * 10)    + (preQ[8] & 0x0F));
+                    rframe = (byte)(((preQ[9] / 16) * 10)    + (preQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
 
                     dPos = aPos - rPos;
 
@@ -1161,10 +1165,10 @@ namespace Aaru.Core.Media
 
                 if(nextCrcOk)
                 {
-                    rmin   = (byte)(((nextQ[7] / 16) * 10)      + (nextQ[7] & 0x0F));
-                    rsec   = (byte)(((nextQ[8] / 16) * 10)      + (nextQ[8] & 0x0F));
-                    rframe = (byte)(((nextQ[9] / 16) * 10)      + (nextQ[9] & 0x0F));
-                    rPos   = ((rmin                  * 60 * 75) + (rsec * 75) + rframe) - 150;
+                    rmin   = (byte)(((nextQ[7] / 16) * 10)   + (nextQ[7] & 0x0F));
+                    rsec   = (byte)(((nextQ[8] / 16) * 10)   + (nextQ[8] & 0x0F));
+                    rframe = (byte)(((nextQ[9] / 16) * 10)   + (nextQ[9] & 0x0F));
+                    rPos   = ((rmin * 60 * 75) + (rsec * 75) + rframe) - 150;
 
                     dPos = rPos - aPos;
 
