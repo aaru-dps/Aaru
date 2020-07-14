@@ -1671,6 +1671,9 @@ namespace Aaru.Core.Media.Detection
                                 // More than 3 entries
                                 if(split.Length != 3)
                                 {
+                                    if(line[0] < 0x20)
+                                        break;
+
                                     correctNeoGeoCd = false;
 
                                     break;
