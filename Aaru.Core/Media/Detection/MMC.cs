@@ -1540,41 +1540,46 @@ namespace Aaru.Core.Media.Detection
                     uint         pcdStart      = 0;
                     uint         pcdLength     = 0;
 
-                    while(isoSector[rootPos]           > 0                &&
-                          rootPos                      < isoSector.Length &&
-                          rootPos + isoSector[rootPos] <= isoSector.Length)
+                    for(int ri = 0; ri < rootLength; ri++)
                     {
-                        int    nameLen = isoSector[rootPos + 32];
-                        byte[] tmpName = new byte[nameLen];
-                        Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
-                        string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+                        rootPos = ri * 2048;
 
-                        if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                            name = name.Substring(0, name.Length - 2);
-
-                        rootEntries.Add(name);
-
-                        if(name == "IPL.TXT")
+                        while(isoSector[rootPos]           > 0                &&
+                              rootPos                      < isoSector.Length &&
+                              rootPos + isoSector[rootPos] <= isoSector.Length)
                         {
-                            ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                            ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
-                        }
+                            int    nameLen = isoSector[rootPos + 32];
+                            byte[] tmpName = new byte[nameLen];
+                            Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
+                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                        if((name == "VCD" || name == "SVCD") &&
-                           (isoSector[rootPos + 25] & 0x02) == 0x02)
-                        {
-                            vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                            vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
-                        }
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                name = name.Substring(0, name.Length - 2);
 
-                        if(name                             == "PHOTO_CD" &&
-                           (isoSector[rootPos + 25] & 0x02) == 0x02)
-                        {
-                            pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                            pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
-                        }
+                            rootEntries.Add(name);
 
-                        rootPos += isoSector[rootPos];
+                            if(name == "IPL.TXT")
+                            {
+                                ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
+                            }
+
+                            if((name == "VCD" || name == "SVCD") &&
+                               (isoSector[rootPos + 25] & 0x02) == 0x02)
+                            {
+                                vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+                            }
+
+                            if(name                             == "PHOTO_CD" &&
+                               (isoSector[rootPos + 25] & 0x02) == 0x02)
+                            {
+                                pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+                            }
+
+                            rootPos += isoSector[rootPos];
+                        }
                     }
 
                     if(rootEntries.Count == 0)
@@ -1772,27 +1777,32 @@ namespace Aaru.Core.Media.Detection
                         int  vcdPos  = 0;
                         uint infoPos = 0;
 
-                        while(isoSector[vcdPos]          > 0                &&
-                              vcdPos                     < isoSector.Length &&
-                              vcdPos + isoSector[vcdPos] <= isoSector.Length)
+                        for(int vi = 0; vi < vcdLength; vi++)
                         {
-                            int    nameLen = isoSector[vcdPos + 32];
-                            byte[] tmpName = new byte[nameLen];
-                            Array.Copy(isoSector, vcdPos + 33, tmpName, 0, nameLen);
-                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+                            vcdPos = vi * 2048;
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
-
-                            if(name == "INFO.VCD" ||
-                               name == "INFO.SVD")
+                            while(isoSector[vcdPos]          > 0                &&
+                                  vcdPos                     < isoSector.Length &&
+                                  vcdPos + isoSector[vcdPos] <= isoSector.Length)
                             {
-                                infoPos = BitConverter.ToUInt32(isoSector, vcdPos + 2);
+                                int    nameLen = isoSector[vcdPos + 32];
+                                byte[] tmpName = new byte[nameLen];
+                                Array.Copy(isoSector, vcdPos + 33, tmpName, 0, nameLen);
+                                string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                                break;
+                                if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                    name = name.Substring(0, name.Length - 2);
+
+                                if(name == "INFO.VCD" ||
+                                   name == "INFO.SVD")
+                                {
+                                    infoPos = BitConverter.ToUInt32(isoSector, vcdPos + 2);
+
+                                    break;
+                                }
+
+                                vcdPos += isoSector[vcdPos];
                             }
-
-                            vcdPos += isoSector[vcdPos];
                         }
 
                         if(infoPos > 0)
@@ -1859,26 +1869,31 @@ namespace Aaru.Core.Media.Detection
                         int  pcdPos  = 0;
                         uint infoPos = 0;
 
-                        while(isoSector[pcdPos]          > 0                &&
-                              pcdPos                     < isoSector.Length &&
-                              pcdPos + isoSector[pcdPos] <= isoSector.Length)
+                        for(int pi = 0; pi < vcdLength; pi++)
                         {
-                            int    nameLen = isoSector[pcdPos + 32];
-                            byte[] tmpName = new byte[nameLen];
-                            Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
-                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+                            pcdPos = pi * 2048;
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
-
-                            if(name == "INFO.PCD")
+                            while(isoSector[pcdPos]          > 0                &&
+                                  pcdPos                     < isoSector.Length &&
+                                  pcdPos + isoSector[pcdPos] <= isoSector.Length)
                             {
-                                infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+                                int    nameLen = isoSector[pcdPos + 32];
+                                byte[] tmpName = new byte[nameLen];
+                                Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
+                                string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                                break;
+                                if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                    name = name.Substring(0, name.Length - 2);
+
+                                if(name == "INFO.PCD")
+                                {
+                                    infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+
+                                    break;
+                                }
+
+                                pcdPos += isoSector[pcdPos];
                             }
-
-                            pcdPos += isoSector[pcdPos];
                         }
 
                         if(infoPos > 0)
