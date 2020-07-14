@@ -406,7 +406,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                         CanStorePregaps) &&
+                   CanStorePregaps) &&
                tracks.Where(track => track.TrackSequence !=
                                      tracks.First(t => t.TrackSession == track.TrackSession).TrackSequence).
                       Any(track => track.TrackPregap > 0))
@@ -793,7 +793,7 @@ namespace Aaru.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(desiredSubchannel != MmcSubchannel.None &&
                !(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                         CanStoreSubchannelRw))
+                   CanStoreSubchannelRw))
             {
                 _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
 
@@ -1219,7 +1219,8 @@ namespace Aaru.Core.Devices.Dumping
             _resume.BadSubchannels.Sort();
 
             if(_generateSubchannels && _outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog);
+                Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
+                                                      InitProgress, UpdateProgress, EndProgress, _outputPlugin);
 
             // TODO: Disc ID
             var metadata = new CommonTypes.Structs.ImageInfo

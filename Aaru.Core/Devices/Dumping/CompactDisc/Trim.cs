@@ -193,9 +193,10 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
                     _outputPlugin.WriteSectorLong(data, badSector);
 
-                    bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, badSector,
-                                                                 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
-                                                                 tracks, subchannelExtents);
+                    bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
+                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                        _fixSubchannelCrc, _dumpLog, UpdateStatus);
 
                     // Set tracks and go back
                     if(!indexesChanged)

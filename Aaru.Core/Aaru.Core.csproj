@@ -79,6 +79,7 @@
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Logging\ErrorLog.cs" />
     <Compile Include="Logging\SubchannelLog.cs" />
+    <Compile Include="Media\CompactDisc.cs" />
     <Compile Include="Media\Detection\MMC.cs" />
     <Compile Include="Media\Info\CompactDisc.cs" />
     <Compile Include="Media\Info\ScsiInfo.cs" />

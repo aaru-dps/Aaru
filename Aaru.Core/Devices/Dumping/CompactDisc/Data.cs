@@ -393,10 +393,10 @@ namespace Aaru.Core.Devices.Dumping
 
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
-                                bool indexesChanged =
-                                    WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i + r, 1,
-                                                           subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
-                                                           subchannelExtents);
+                                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
+                                    desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.TrackSequence,
+                                    ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                                    _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -526,10 +526,10 @@ namespace Aaru.Core.Devices.Dumping
 
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
-                        bool indexesChanged = WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, sub, i,
-                                                                     blocksToRead, subLog, isrcs,
-                                                                     (byte)track.TrackSequence, ref mcn, tracks,
-                                                                     subchannelExtents);
+                        bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
+                            desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.TrackSequence,
+                            ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                            _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus);
 
                         // Set tracks and go back
                         if(indexesChanged)
