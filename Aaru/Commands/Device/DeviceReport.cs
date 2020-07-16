@@ -68,7 +68,7 @@ namespace Aaru.Commands.Device
                     "--trap-disc", "-t"
                 }, "Does a device report using a trap disc.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => false), Required = false
                 });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
