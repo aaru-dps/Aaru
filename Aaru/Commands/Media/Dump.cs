@@ -37,12 +37,10 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
@@ -175,10 +173,7 @@ namespace Aaru.Commands.Media
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne,
-                Description =
-                    "Output image path. If filename starts with # and exists, it will be read as a list of output images, its extension will be used to detect the image output format, each media will be ejected and confirmation for the next one will be asked.",
-                Name = "output-path"
+                Arity = ArgumentArity.ExactlyOne, Description = "Output image path", Name = "output-path"
             });
 
             Add(new Option(new[]
@@ -356,30 +351,103 @@ namespace Aaru.Commands.Media
                     break;
             }
 
-            string filename = Path.GetFileNameWithoutExtension(outputPath);
+            if(devicePath.Length == 2   &&
+               devicePath[1]     == ':' &&
+               devicePath[0]     != '/' &&
+               char.IsLetter(devicePath[0]))
+                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            bool isResponse = filename.StartsWith("#", StringComparison.OrdinalIgnoreCase) &&
-                              File.Exists(Path.Combine(Path.GetDirectoryName(outputPath),
-                                                       Path.GetFileNameWithoutExtension(outputPath)));
+            Devices.Device dev;
 
-            TextReader resReader;
+            try
+            {
+                dev = new Devices.Device(devicePath);
 
-            if(isResponse)
-                resReader = new StreamReader(Path.Combine(Path.GetDirectoryName(outputPath),
-                                                          Path.GetFileNameWithoutExtension(outputPath)));
-            else
-                resReader = new StringReader(Path.GetFileNameWithoutExtension(outputPath));
+                if(dev.IsRemote)
+                    Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
+                                         dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
 
-            if(isResponse)
-                eject = true;
+                if(dev.Error)
+                {
+                    AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
+
+                    return (int)ErrorNumber.CannotOpenDevice;
+                }
+            }
+            catch(DeviceException e)
+            {
+                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+
+                return (int)ErrorNumber.CannotOpenDevice;
+            }
+
+            Statistics.AddDevice(dev);
+
+            string outputPrefix = Path.Combine(Path.GetDirectoryName(outputPath),
+                                               Path.GetFileNameWithoutExtension(outputPath));
+
+            Resume resumeClass = null;
+            var    xs          = new XmlSerializer(typeof(Resume));
+
+            if(File.Exists(outputPrefix + ".resume.xml") && resume)
+                try
+                {
+                    var sr = new StreamReader(outputPrefix + ".resume.xml");
+                    resumeClass = (Resume)xs.Deserialize(sr);
+                    sr.Close();
+                }
+                catch
+                {
+                    AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+
+                    return (int)ErrorNumber.InvalidResume;
+                }
+
+            if(resumeClass                 != null                 &&
+               resumeClass.NextBlock       > resumeClass.LastBlock &&
+               resumeClass.BadBlocks.Count == 0                    &&
+               !resumeClass.Tape                                   &&
+               (resumeClass.BadSubchannels is null || resumeClass.BadSubchannels.Count == 0))
+            {
+                AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
+
+                return (int)ErrorNumber.AlreadyDumped;
+            }
+
+            CICMMetadataType sidecar   = null;
+            var              sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+
+            if(cicmXml != null)
+                if(File.Exists(cicmXml))
+                {
+                    try
+                    {
+                        var sr = new StreamReader(cicmXml);
+                        sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                        sr.Close();
+                    }
+                    catch
+                    {
+                        AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+
+                        return (int)ErrorNumber.InvalidSidecar;
+                    }
+                }
+                else
+                {
+                    AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+
+                    return (int)ErrorNumber.FileNotFound;
+                }
 
             PluginBase           plugins    = GetPluginBase.Instance;
             List<IWritableImage> candidates = new List<IWritableImage>();
-            string               extension  = Path.GetExtension(outputPath);
 
             // Try extension
             if(string.IsNullOrEmpty(format))
-                candidates.AddRange(plugins.WritableImages.Values.Where(t => t.KnownExtensions.Contains(extension)));
+                candidates.AddRange(plugins.WritableImages.Values.Where(t =>
+                                                                            t.KnownExtensions.
+                                                                              Contains(Path.GetExtension(outputPath))));
 
             // Try Id
             else if(Guid.TryParse(format, out Guid outId))
@@ -388,8 +456,8 @@ namespace Aaru.Commands.Media
             // Try name
             else
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                                           StringComparison.
-                                                                                               InvariantCultureIgnoreCase)));
+                                                                            StringComparison.
+                                                                                InvariantCultureIgnoreCase)));
 
             if(candidates.Count == 0)
             {
@@ -405,247 +473,88 @@ namespace Aaru.Commands.Media
                 return (int)ErrorNumber.TooManyFormats;
             }
 
-            while(true)
+            IWritableImage outputFormat = candidates[0];
+
+            var dumpLog = new DumpLog(outputPrefix + ".log", dev, @private);
+
+            if(verbose)
             {
-                string responseLine = resReader.ReadLine();
-
-                if(responseLine is null)
-                    break;
-
-                if(responseLine.Any(c => c < 0x20))
-                {
-                    AaruConsole.ErrorWriteLine("Invalid characters found in list of files, exiting...");
-
-                    return (int)ErrorNumber.InvalidArgument;
-                }
-
-                if(isResponse)
-                {
-                    AaruConsole.WriteLine("Please insert media with title {0} and press any key to continue...",
-                                          responseLine);
-
-                    System.Console.ReadKey();
-                    Thread.Sleep(1000);
-                }
-
-                responseLine = responseLine.Replace('/', '／');
-
-                // Replace Windows forbidden filename characters with Japanese equivalents that are visually the same, but bigger.
-                if(DetectOS.IsWindows)
-                    responseLine = responseLine.Replace('<', '\uFF1C').Replace('>', '\uFF1E').Replace(':', '\uFF1A').
-                                                Replace('"', '\u2033').Replace('\\', '＼').Replace('|', '｜').
-                                                Replace('?', '？').Replace('*', '＊');
-
-                if(devicePath.Length == 2   &&
-                   devicePath[1]     == ':' &&
-                   devicePath[0]     != '/' &&
-                   char.IsLetter(devicePath[0]))
-                    devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
-
-                Devices.Device dev;
-
-                try
-                {
-                    dev = new Devices.Device(devicePath);
-
-                    if(dev.IsRemote)
-                        Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                             dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
-
-                    if(dev.Error)
-                    {
-                        AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
-
-                        if(isResponse)
-                            continue;
-
-                        return (int)ErrorNumber.CannotOpenDevice;
-                    }
-                }
-                catch(DeviceException e)
-                {
-                    AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
-
-                    if(isResponse)
-                        continue;
-
-                    return (int)ErrorNumber.CannotOpenDevice;
-                }
-
-                Statistics.AddDevice(dev);
-
-                string outputPrefix = Path.Combine(Path.GetDirectoryName(outputPath), responseLine);
-
-                Resume resumeClass = null;
-                var    xs          = new XmlSerializer(typeof(Resume));
-
-                if(File.Exists(outputPrefix + ".resume.xml") && resume)
-                    try
-                    {
-                        var sr = new StreamReader(outputPrefix + ".resume.xml");
-                        resumeClass = (Resume)xs.Deserialize(sr);
-                        sr.Close();
-                    }
-                    catch
-                    {
-                        AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
-
-                        if(isResponse)
-                            continue;
-
-                        return (int)ErrorNumber.InvalidResume;
-                    }
-
-                if(resumeClass                 != null                 &&
-                   resumeClass.NextBlock       > resumeClass.LastBlock &&
-                   resumeClass.BadBlocks.Count == 0                    &&
-                   !resumeClass.Tape                                   &&
-                   (resumeClass.BadSubchannels is null || resumeClass.BadSubchannels.Count == 0))
-                {
-                    AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
-
-                    if(isResponse)
-                        continue;
-
-                    return (int)ErrorNumber.AlreadyDumped;
-                }
-
-                CICMMetadataType sidecar   = null;
-                var              sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
-
-                if(cicmXml != null)
-                    if(File.Exists(cicmXml))
-                    {
-                        try
-                        {
-                            var sr = new StreamReader(cicmXml);
-                            sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
-                            sr.Close();
-                        }
-                        catch
-                        {
-                            AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
-
-                            if(isResponse)
-                                continue;
-
-                            return (int)ErrorNumber.InvalidSidecar;
-                        }
-                    }
-                    else
-                    {
-                        AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
-
-                        if(isResponse)
-                            continue;
-
-                        return (int)ErrorNumber.FileNotFound;
-                    }
-
-                plugins    = GetPluginBase.Instance;
-                candidates = new List<IWritableImage>();
-
-                // Try extension
-                if(string.IsNullOrEmpty(format))
-                    candidates.AddRange(plugins.WritableImages.Values.Where(t =>
-                                                                                t.KnownExtensions.
-                                                                                  Contains(Path.
-                                                                                               GetExtension(outputPath))));
-
-                // Try Id
-                else if(Guid.TryParse(format, out Guid outId))
-                    candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
-
-                // Try name
-                else
-                    candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                                               StringComparison.
-                                                                                                   InvariantCultureIgnoreCase)));
-
-                IWritableImage outputFormat = candidates[0];
-
-                var dumpLog = new DumpLog(outputPrefix + ".log", dev, @private);
-
-                if(verbose)
-                {
-                    dumpLog.WriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
-                    AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
-                }
-                else
-                {
-                    dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
-                    AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
-                }
-
-                var errorLog = new ErrorLog(outputPrefix + ".error.log");
-
-                var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
-                                      stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix,
-                                      outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
-                                      firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
-                                      fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdireadyHole, errorLog, generateSubchannels);
-
-                dumper.UpdateStatus         += Progress.UpdateStatus;
-                dumper.ErrorMessage         += Progress.ErrorMessage;
-                dumper.StoppingErrorMessage += Progress.ErrorMessage;
-                dumper.UpdateProgress       += Progress.UpdateProgress;
-                dumper.PulseProgress        += Progress.PulseProgress;
-                dumper.InitProgress         += Progress.InitProgress;
-                dumper.EndProgress          += Progress.EndProgress;
-                dumper.InitProgress2        += Progress.InitProgress2;
-                dumper.EndProgress2         += Progress.EndProgress2;
-                dumper.UpdateProgress2      += Progress.UpdateProgress2;
-
-                System.Console.CancelKeyPress += (sender, e) =>
-                {
-                    e.Cancel = true;
-                    dumper.Abort();
-                };
-
-                dumper.Start();
-
-                if(eject && dev.IsRemovable)
-                {
-                    switch(dev.Type)
-                    {
-                        case DeviceType.ATA:
-                            dev.DoorUnlock(out _, dev.Timeout, out _);
-                            dev.MediaEject(out _, dev.Timeout, out _);
-
-                            break;
-                        case DeviceType.ATAPI:
-                        case DeviceType.SCSI:
-                            switch(dev.ScsiType)
-                            {
-                                case PeripheralDeviceTypes.DirectAccess:
-                                case PeripheralDeviceTypes.SimplifiedDevice:
-                                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                case PeripheralDeviceTypes.WriteOnceDevice:
-                                case PeripheralDeviceTypes.OpticalDevice:
-                                case PeripheralDeviceTypes.OCRWDevice:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.EjectTray(out _, dev.Timeout, out _);
-
-                                    break;
-                                case PeripheralDeviceTypes.MultiMediaDevice:
-                                    dev.AllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.EjectTray(out _, dev.Timeout, out _);
-
-                                    break;
-                                case PeripheralDeviceTypes.SequentialAccess:
-                                    dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
-                                    dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
-
-                                    break;
-                            }
-
-                            break;
-                    }
-                }
-
-                dev.Close();
+                dumpLog.WriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+                AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
             }
+            else
+            {
+                dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
+                AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+            }
+
+            var errorLog = new ErrorLog(outputPrefix + ".error.log");
+
+            var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
+                                  stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
+                                  parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
+                                  wantedSubchannel, speed, @private, fixSubchannelPosition, retrySubchannel,
+                                  fixSubchannel, fixSubchannelCrc, skipCdireadyHole, errorLog, generateSubchannels);
+
+            dumper.UpdateStatus         += Progress.UpdateStatus;
+            dumper.ErrorMessage         += Progress.ErrorMessage;
+            dumper.StoppingErrorMessage += Progress.ErrorMessage;
+            dumper.UpdateProgress       += Progress.UpdateProgress;
+            dumper.PulseProgress        += Progress.PulseProgress;
+            dumper.InitProgress         += Progress.InitProgress;
+            dumper.EndProgress          += Progress.EndProgress;
+            dumper.InitProgress2        += Progress.InitProgress2;
+            dumper.EndProgress2         += Progress.EndProgress2;
+            dumper.UpdateProgress2      += Progress.UpdateProgress2;
+
+            System.Console.CancelKeyPress += (sender, e) =>
+            {
+                e.Cancel = true;
+                dumper.Abort();
+            };
+
+            dumper.Start();
+
+            if(eject && dev.IsRemovable)
+            {
+                switch(dev.Type)
+                {
+                    case DeviceType.ATA:
+                        dev.DoorUnlock(out _, dev.Timeout, out _);
+                        dev.MediaEject(out _, dev.Timeout, out _);
+
+                        break;
+                    case DeviceType.ATAPI:
+                    case DeviceType.SCSI:
+                        switch(dev.ScsiType)
+                        {
+                            case PeripheralDeviceTypes.DirectAccess:
+                            case PeripheralDeviceTypes.SimplifiedDevice:
+                            case PeripheralDeviceTypes.SCSIZonedBlockDevice:
+                            case PeripheralDeviceTypes.WriteOnceDevice:
+                            case PeripheralDeviceTypes.OpticalDevice:
+                            case PeripheralDeviceTypes.OCRWDevice:
+                                dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.EjectTray(out _, dev.Timeout, out _);
+
+                                break;
+                            case PeripheralDeviceTypes.MultiMediaDevice:
+                                dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.EjectTray(out _, dev.Timeout, out _);
+
+                                break;
+                            case PeripheralDeviceTypes.SequentialAccess:
+                                dev.SpcAllowMediumRemoval(out _, dev.Timeout, out _);
+                                dev.LoadUnload(out _, true, false, false, false, false, dev.Timeout, out _);
+
+                                break;
+                        }
+
+                        break;
+                }
+            }
+
+            dev.Close();
 
             return (int)ErrorNumber.NoError;
         }
