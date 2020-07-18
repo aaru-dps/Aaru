@@ -304,12 +304,12 @@ namespace Aaru.Core.Media
 
                     for(int i = 0; i < tracks.Length; i++)
                     {
-                        if(tracks[i].TrackSequence != trackNo ||
-                           trackNo                 == 1)
+                        if(tracks[i].TrackSequence != trackNo)
                             continue;
 
                         // Pregap
-                        if(q[2] == 0)
+                        if(q[2]    == 0 &&
+                           trackNo > 1)
                         {
                             byte pmin   = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
                             byte psec   = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
@@ -356,6 +356,9 @@ namespace Aaru.Core.Media
 
                             continue;
                         }
+
+                        if(q[2] == 0)
+                            continue;
 
                         byte amin   = (byte)(((q[7] / 16) * 10)       + (q[7] & 0x0F));
                         byte asec   = (byte)(((q[8] / 16) * 10)       + (q[8] & 0x0F));
