@@ -15,7 +15,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/alpine-amd64'
+    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/alpine-amd64'
     zipAfterPublish: false
   displayName: "Building for Alpine Linux (amd64)"
 - task: DotNetCoreCLI@2
@@ -23,7 +23,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/cli/linux-arm'
+    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/linux-arm'
     zipAfterPublish: false
   displayName: "Building for Linux (armv7h)"
 - task: DotNetCoreCLI@2
@@ -31,7 +31,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-aarch64'
+    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/linux-aarch64'
     zipAfterPublish: false
   displayName: "Building for Linux (aarch64)"
 - task: DotNetCoreCLI@2
@@ -39,7 +39,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-amd64'
+    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
     zipAfterPublish: false
   displayName: "Building for Linux (amd64)"
 - task: DotNetCoreCLI@2
@@ -47,7 +47,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-x86'
+    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/linux-x86'
     zipAfterPublish: false
   displayName: "Building for Linux (x86)"
 - task: DotNetCoreCLI@2
@@ -55,7 +55,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r osx-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/macos'
+    arguments: '-r osx-x64 -o $(Build.ArtifactStagingDirectory)/out/macos'
     zipAfterPublish: false
   displayName: "Building for macOS (amd64)"
 - task: DotNetCoreCLI@2
@@ -63,7 +63,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r win8-arm -o $(Build.ArtifactStagingDirectory)/out/cli/windows-arm'
+    arguments: '-r win8-arm -o $(Build.ArtifactStagingDirectory)/out/windows-arm'
     zipAfterPublish: false
   displayName: "Building for Windows (armv7h)"
 - task: DotNetCoreCLI@2
@@ -71,7 +71,7 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r win-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/windows-x64'
+    arguments: '-r win-x64 -o $(Build.ArtifactStagingDirectory)/out/windows-x64'
     zipAfterPublish: false
   displayName: "Building for Windows (x64)"
 - task: DotNetCoreCLI@2
@@ -79,65 +79,6 @@ steps:
     command: 'publish'
     projects: 'Aaru/Aaru.csproj'
     publishWebProjects: false
-    arguments: '-r win-x86 -o $(Build.ArtifactStagingDirectory)/out/cli/windows-x86'
+    arguments: '-r win-x86 -o $(Build.ArtifactStagingDirectory)/out/windows-x86'
     zipAfterPublish: false
   displayName: "Building for Windows (x86)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru.Gtk/Aaru.Gtk.csproj'
-    publishWebProjects: false
-    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/gtk/alpine-amd64'
-    zipAfterPublish: false
-  displayName: "Building GTK+ GUI for Alpine Linux (amd64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru.Gtk/Aaru.Gtk.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-arm'
-    zipAfterPublish: false
-  displayName: "Building GTK+ GUI for Linux (armv7h)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru.Gtk/Aaru.Gtk.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-aarch64'
-    zipAfterPublish: false
-  displayName: "Building GTK+ GUI for Linux (aarch64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru.Gtk/Aaru.Gtk.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-amd64'
-    zipAfterPublish: false
-  displayName: "Building GTK+ GUI for Linux (amd64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru.Gtk/Aaru.Gtk.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-x86'
-    zipAfterPublish: false
-  displayName: "Building GTK+ GUI for Linux (x86)"
-- script: |
-    tar cJvf $(Build.ArtifactStagingDirectory)/Aaru-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/cli .
-  displayName: "Compressing CLI binaries"
-- script: |
-    tar cJvf $(Build.ArtifactStagingDirectory)/Aaru.Gtk-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/gtk .
-  displayName: "Compressing GTK+ binaries"
-- task: FtpUpload@2
-  inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://www.aaru.app'
-    username: 'ftpuser'
-    password: '$(FtpPassword)'
-    rootDirectory: '$(Build.ArtifactStagingDirectory)'
-    filePatterns: '*.tar.xz'
-    remoteDirectory: '/srv/ftp/'
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
