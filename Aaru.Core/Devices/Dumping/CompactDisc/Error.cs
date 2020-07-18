@@ -55,7 +55,8 @@ namespace Aaru.Core.Devices.Dumping
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                              MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
-                             ref string mcn, HashSet<int> subchannelExtents)
+                             ref string mcn, HashSet<int> subchannelExtents,
+                             Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -293,9 +294,15 @@ namespace Aaru.Core.Devices.Dumping
                     _outputPlugin.WriteSectorLong(data, badSector);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
-                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                                                   desiredSubchannel, sub, badSector, 1,
+                                                                                   subLog, isrcs,
+                                                                                   (byte)track.TrackSequence, ref mcn,
+                                                                                   tracks, subchannelExtents,
+                                                                                   _fixSubchannelPosition,
+                                                                                   _outputPlugin, _fixSubchannel,
+                                                                                   _fixSubchannelCrc, _dumpLog,
+                                                                                   UpdateStatus,
+                                                                                   smallestPregapLbaPerTrack);
 
                     // Set tracks and go back
                     if(indexesChanged)
@@ -412,9 +419,17 @@ namespace Aaru.Core.Devices.Dumping
                             _outputPlugin.WriteSectorLong(data, badSector);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence,
-                                ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
-                                _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                                                           desiredSubchannel, sub,
+                                                                                           badSector, 1, subLog, isrcs,
+                                                                                           (byte)track.TrackSequence,
+                                                                                           ref mcn, tracks,
+                                                                                           subchannelExtents,
+                                                                                           _fixSubchannelPosition,
+                                                                                           _outputPlugin,
+                                                                                           _fixSubchannel,
+                                                                                           _fixSubchannelCrc, _dumpLog,
+                                                                                           UpdateStatus,
+                                                                                           smallestPregapLbaPerTrack);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -458,7 +473,8 @@ namespace Aaru.Core.Devices.Dumping
 
         void RetrySubchannel(bool readcd, uint subSize, MmcSubchannel supportedSubchannel, ref double totalDuration,
                              SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
-                             Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
+                             Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
+                             Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -559,7 +575,8 @@ namespace Aaru.Core.Devices.Dumping
                 Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel, cmdBuf, badSector, 5,
                                                          subLog, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
                                                          subchannelExtents, _fixSubchannelPosition, _outputPlugin,
-                                                         _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                         _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
+                                                         smallestPregapLbaPerTrack);
 
                 if(subchannelExtents.Contains(tmpArray[i]))
                     continue;

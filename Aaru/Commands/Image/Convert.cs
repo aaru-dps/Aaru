@@ -496,8 +496,8 @@ namespace Aaru.Commands.Image
             // Try name
             else
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                            StringComparison.
-                                                                                InvariantCultureIgnoreCase)));
+                                                                                           StringComparison.
+                                                                                               InvariantCultureIgnoreCase)));
 
             if(candidates.Count == 0)
             {
@@ -660,7 +660,7 @@ namespace Aaru.Commands.Image
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
                         AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
-                                          doneSectors + track.TrackStartSector,
+                                          doneSectors               + track.TrackStartSector,
                                           doneSectors + sectorsToDo + track.TrackStartSector,
                                           (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                           track.TrackSequence);
@@ -737,11 +737,12 @@ namespace Aaru.Commands.Image
 
                 AaruConsole.WriteLine();
 
-                Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
-                Dictionary<byte, byte>   trackFlags        = new Dictionary<byte, byte>();
-                string                   mcn               = null;
-                HashSet<int>             subchannelExtents = new HashSet<int>();
-                Track[]                  tracks            = inputOptical.Tracks.ToArray();
+                Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
+                Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+                string                   mcn                       = null;
+                HashSet<int>             subchannelExtents         = new HashSet<int>();
+                Track[]                  tracks                    = inputOptical.Tracks.ToArray();
+                Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
                                                          Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
@@ -844,7 +845,7 @@ namespace Aaru.Commands.Image
                                 sectorsToDo = (uint)(trackSectors - doneSectors);
 
                             AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
-                                              doneSectors + track.TrackStartSector,
+                                              doneSectors               + track.TrackStartSector,
                                               doneSectors + sectorsToDo + track.TrackStartSector,
                                               (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
                                               track.TrackSequence, tag);
@@ -856,10 +857,19 @@ namespace Aaru.Commands.Image
                                 if(tag == SectorTagType.CdSectorSubchannel)
                                 {
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector, 1, null,
-                                        isrcs, (byte)track.TrackSequence, ref mcn, tracks, subchannelExtents,
-                                        fixSubchannelPosition, outputFormat, fixSubchannel, fixSubchannelCrc, null,
-                                        null);
+                                                                                             MmcSubchannel.Raw, sector,
+                                                                                             doneSectors +
+                                                                                             track.TrackStartSector, 1,
+                                                                                             null, isrcs,
+                                                                                             (byte)track.TrackSequence,
+                                                                                             ref mcn, tracks,
+                                                                                             subchannelExtents,
+                                                                                             fixSubchannelPosition,
+                                                                                             outputFormat,
+                                                                                             fixSubchannel,
+                                                                                             fixSubchannelCrc, null,
+                                                                                             null,
+                                                                                             smallestPregapLbaPerTrack);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());
@@ -878,10 +888,19 @@ namespace Aaru.Commands.Image
                                 if(tag == SectorTagType.CdSectorSubchannel)
                                 {
                                     bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                        MmcSubchannel.Raw, sector, doneSectors + track.TrackStartSector,
-                                        sectorsToDo, null, isrcs, (byte)track.TrackSequence, ref mcn, tracks,
-                                        subchannelExtents, fixSubchannelPosition, outputFormat, fixSubchannel,
-                                        fixSubchannelCrc, null, null);
+                                                                                             MmcSubchannel.Raw, sector,
+                                                                                             doneSectors +
+                                                                                             track.TrackStartSector,
+                                                                                             sectorsToDo, null, isrcs,
+                                                                                             (byte)track.TrackSequence,
+                                                                                             ref mcn, tracks,
+                                                                                             subchannelExtents,
+                                                                                             fixSubchannelPosition,
+                                                                                             outputFormat,
+                                                                                             fixSubchannel,
+                                                                                             fixSubchannelCrc, null,
+                                                                                             null,
+                                                                                             smallestPregapLbaPerTrack);
 
                                     if(indexesChanged)
                                         outputOptical.SetTracks(tracks.ToList());

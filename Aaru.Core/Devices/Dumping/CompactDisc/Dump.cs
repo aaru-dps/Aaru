@@ -119,6 +119,7 @@ namespace Aaru.Core.Devices.Dumping
             bool                     cdiReadyReadAsAudio = false;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
+            Dictionary<byte, int>            smallestPregapLbaPerTrack = new Dictionary<byte, int>();
 
             MediaType dskType = MediaType.CD;
 
@@ -406,7 +407,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                   CanStorePregaps) &&
+                                                                                         CanStorePregaps) &&
                tracks.Where(track => track.TrackSequence !=
                                      tracks.First(t => t.TrackSession == track.TrackSession).TrackSequence).
                       Any(track => track.TrackPregap > 0))
@@ -795,7 +796,7 @@ namespace Aaru.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(desiredSubchannel != MmcSubchannel.None &&
                !(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                   CanStoreSubchannelRw))
+                                                                                         CanStoreSubchannelRw))
             {
                 _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
 
@@ -1128,20 +1129,22 @@ namespace Aaru.Core.Devices.Dumping
                     ReadCdiReady(blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                                  leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, subSize, supportedSubchannel,
                                  ref totalDuration, tracks, subLog, desiredSubchannel, isrcs, ref mcn,
-                                 subchannelExtents, blocks, cdiReadyReadAsAudio, offsetBytes, sectorsForOffset);
+                                 subchannelExtents, blocks, cdiReadyReadAsAudio, offsetBytes, sectorsForOffset,
+                                 smallestPregapLbaPerTrack);
             }
 
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
                        readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
-                       tracks, subLog, desiredSubchannel, isrcs, ref mcn, subchannelExtents);
+                       tracks, subLog, desiredSubchannel, isrcs, ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
 
             // TODO: Enable when underlying images support lead-outs
             /*
             DumpCdLeadOuts(blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog, ref imageWriteDuration,
                            leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed, read6, read10, read12, read16, readcd,
-                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs, ref mcn, tracks);
+                           supportedSubchannel, subSize, ref totalDuration, subLog, desiredSubchannel, isrcs, ref mcn, tracks,
+                           smallestPregapLbaPerTrack);
             */
 
             end = DateTime.UtcNow;
@@ -1168,11 +1171,12 @@ namespace Aaru.Core.Devices.Dumping
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
-                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn, subchannelExtents);
+                           ref totalDuration, subLog, desiredSubchannel, tracks, isrcs, ref mcn, subchannelExtents,
+                           smallestPregapLbaPerTrack);
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
                             subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs,
-                            ref mcn, subchannelExtents);
+                            ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
 
             foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
             {
@@ -1184,7 +1188,7 @@ namespace Aaru.Core.Devices.Dumping
                _retryPasses            > 0 &&
                _retrySubchannel)
                 RetrySubchannel(readcd, subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel,
-                                tracks, isrcs, ref mcn, subchannelExtents);
+                                tracks, isrcs, ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
 
             // Write media tags to image
             if(!_aborted)

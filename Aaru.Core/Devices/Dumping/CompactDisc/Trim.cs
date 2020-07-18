@@ -53,7 +53,8 @@ namespace Aaru.Core.Devices.Dumping
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,
                             MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
-                            Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
+                            Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
+                            Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             DateTime          start;
             DateTime          end;
@@ -201,7 +202,8 @@ namespace Aaru.Core.Devices.Dumping
                                                                                    _fixSubchannelPosition,
                                                                                    _outputPlugin, _fixSubchannel,
                                                                                    _fixSubchannelCrc, _dumpLog,
-                                                                                   UpdateStatus);
+                                                                                   UpdateStatus,
+                                                                                   smallestPregapLbaPerTrack);
 
                     // Set tracks and go back
                     if(!indexesChanged)

@@ -86,7 +86,8 @@ namespace Aaru.Core.Devices.Dumping
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
                         MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
                         Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
-                        Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents)
+                        Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
+                        Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -407,7 +408,8 @@ namespace Aaru.Core.Devices.Dumping
                                                                                                _outputPlugin,
                                                                                                _fixSubchannel,
                                                                                                _fixSubchannelCrc,
-                                                                                               _dumpLog, UpdateStatus);
+                                                                                               _dumpLog, UpdateStatus,
+                                                                                               smallestPregapLbaPerTrack);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -546,7 +548,8 @@ namespace Aaru.Core.Devices.Dumping
                                                                                        _fixSubchannelPosition,
                                                                                        _outputPlugin, _fixSubchannel,
                                                                                        _fixSubchannelCrc, _dumpLog,
-                                                                                       UpdateStatus);
+                                                                                       UpdateStatus,
+                                                                                       smallestPregapLbaPerTrack);
 
                         // Set tracks and go back
                         if(indexesChanged)

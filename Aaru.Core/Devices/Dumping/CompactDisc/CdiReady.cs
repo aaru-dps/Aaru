@@ -147,7 +147,7 @@ namespace Aaru.Core.Devices.Dumping
                           MmcSubchannel supportedSubchannel, ref double totalDuration, Track[] tracks,
                           SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
                           ref string mcn, HashSet<int> subchannelExtents, ulong blocks, bool cdiReadyReadAsAudio,
-                          int offsetBytes, int sectorsForOffset)
+                          int offsetBytes, int sectorsForOffset, Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -270,9 +270,16 @@ namespace Aaru.Core.Devices.Dumping
                                 _outputPlugin.WriteSectorsLong(data, i + r, 1);
 
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                    desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
-                                    subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                                    _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                                                               desiredSubchannel, sub,
+                                                                                               i + r, 1, subLog, isrcs,
+                                                                                               1, ref mcn, tracks,
+                                                                                               subchannelExtents,
+                                                                                               _fixSubchannelPosition,
+                                                                                               _outputPlugin,
+                                                                                               _fixSubchannel,
+                                                                                               _fixSubchannelCrc,
+                                                                                               _dumpLog, UpdateStatus,
+                                                                                               smallestPregapLbaPerTrack);
 
                                 // Set tracks and go back
                                 if(indexesChanged)
@@ -355,9 +362,15 @@ namespace Aaru.Core.Devices.Dumping
                         _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus);
+                                                                                       desiredSubchannel, sub, i,
+                                                                                       blocksToRead, subLog, isrcs, 1,
+                                                                                       ref mcn, tracks,
+                                                                                       subchannelExtents,
+                                                                                       _fixSubchannelPosition,
+                                                                                       _outputPlugin, _fixSubchannel,
+                                                                                       _fixSubchannelCrc, _dumpLog,
+                                                                                       UpdateStatus,
+                                                                                       smallestPregapLbaPerTrack);
 
                         // Set tracks and go back
                         if(indexesChanged)

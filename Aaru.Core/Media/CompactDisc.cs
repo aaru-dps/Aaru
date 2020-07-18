@@ -20,7 +20,8 @@ namespace Aaru.Core.Media
                                                   Track[] tracks, HashSet<int> subchannelExtents,
                                                   bool fixSubchannelPosition, IWritableImage outputPlugin,
                                                   bool fixSubchannel, bool fixSubchannelCrc, DumpLog dumpLog,
-                                                  UpdateStatusHandler updateStatus)
+                                                  UpdateStatusHandler updateStatus,
+                                                  Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             if(supportedSubchannel == MmcSubchannel.Q16)
                 sub = Subchannel.ConvertQToRaw(sub);
@@ -34,8 +35,8 @@ namespace Aaru.Core.Media
 
             byte[] deSub = Subchannel.Deinterleave(sub);
 
-            bool indexesChanged =
-                CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog, updateStatus);
+            bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
+                                                             updateStatus, smallestPregapLbaPerTrack);
 
             if(!fixSubchannelPosition ||
                desiredSubchannel == MmcSubchannel.None)
@@ -228,7 +229,8 @@ namespace Aaru.Core.Media
 
         static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrack,
                                                ref string mcn, Track[] tracks, DumpLog dumpLog,
-                                               UpdateStatusHandler updateStatus)
+                                               UpdateStatusHandler updateStatus,
+                                               Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             bool status = false;
 
@@ -314,12 +316,34 @@ namespace Aaru.Core.Media
                             byte pframe = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
                             int  qPos   = (pmin * 60 * 75) + (psec * 75) + pframe;
 
+                            if(!smallestPregapLbaPerTrack.ContainsKey(trackNo))
+                                smallestPregapLbaPerTrack[trackNo] = 1;
+
+                            if(qPos < smallestPregapLbaPerTrack[trackNo])
+                            {
+                                int dif = smallestPregapLbaPerTrack[trackNo] - qPos;
+                                tracks[i].TrackPregap              += (ulong)dif;
+                                tracks[i].TrackStartSector         -= (ulong)dif;
+                                smallestPregapLbaPerTrack[trackNo] =  qPos;
+
+                                if(i > 0)
+                                    tracks[i - 1].TrackEndSector = tracks[i].TrackStartSector - 1;
+
+                                dumpLog?.
+                                    WriteLine($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+
+                                updateStatus?.
+                                    Invoke($"Pregap for track {trackNo} set to {tracks[i].TrackPregap} sectors.");
+
+                                status = true;
+                            }
+
                             if(tracks[i].TrackPregap >= (ulong)qPos)
                                 continue;
 
                             ulong oldPregap = tracks[i].TrackPregap;
 
-                            tracks[i].TrackPregap      =  (ulong)qPos           + 1;
+                            tracks[i].TrackPregap      =  (ulong)qPos;
                             tracks[i].TrackStartSector -= tracks[i].TrackPregap - oldPregap;
 
                             if(i > 0)

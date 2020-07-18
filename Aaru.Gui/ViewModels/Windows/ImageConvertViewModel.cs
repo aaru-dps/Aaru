@@ -1010,10 +1010,11 @@ namespace Aaru.Gui.ViewModels.Windows
                     Progress2Value = Progress2MaxValue;
                 });
 
-                Dictionary<byte, string> isrcs             = new Dictionary<byte, string>();
-                Dictionary<byte, byte>   trackFlags        = new Dictionary<byte, byte>();
-                string                   mcn               = null;
-                HashSet<int>             subchannelExtents = new HashSet<int>();
+                Dictionary<byte, string> isrcs                     = new Dictionary<byte, string>();
+                Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
+                string                   mcn                       = null;
+                HashSet<int>             subchannelExtents         = new HashSet<int>();
+                Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
                                                          Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
@@ -1119,9 +1120,14 @@ namespace Aaru.Gui.ViewModels.Windows
                                track != null)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
-                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat, false, false, null, null);
+                                                                                         MmcSubchannel.Raw, sector,
+                                                                                         doneSectors, 1, null, isrcs,
+                                                                                         (byte)track.TrackSequence,
+                                                                                         ref mcn, tracks.ToArray(),
+                                                                                         subchannelExtents, false,
+                                                                                         outputFormat, false, false,
+                                                                                         null, null,
+                                                                                         smallestPregapLbaPerTrack);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1141,9 +1147,15 @@ namespace Aaru.Gui.ViewModels.Windows
 
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                    MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
-                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
-                                    outputFormat, false, false, null, null);
+                                                                                         MmcSubchannel.Raw, sector,
+                                                                                         doneSectors, sectorsToDo, null,
+                                                                                         isrcs,
+                                                                                         (byte)track.TrackSequence,
+                                                                                         ref mcn, tracks.ToArray(),
+                                                                                         subchannelExtents, false,
+                                                                                         outputFormat, false, false,
+                                                                                         null, null,
+                                                                                         smallestPregapLbaPerTrack);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
