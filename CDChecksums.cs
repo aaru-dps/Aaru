@@ -173,7 +173,7 @@ namespace Aaru.Checksums
             //AaruConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
             //                          channel[0x00D], channel[0x00E]);
 
-            if(channel[0x00F] == 0x00) // mode (1 byte)
+            if((channel[0x00F] & 0x03) == 0x00) // mode (1 byte)
             {
                 //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
@@ -190,7 +190,7 @@ namespace Aaru.Checksums
                 return true;
             }
 
-            if(channel[0x00F] == 0x01) // mode (1 byte)
+            if((channel[0x00F] & 0x03) == 0x01) // mode (1 byte)
             {
                 //AaruConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
@@ -254,7 +254,7 @@ namespace Aaru.Checksums
                 return false;
             }
 
-            if(channel[0x00F] == 0x02) // mode (1 byte)
+            if((channel[0x00F] & 0x03) == 0x02) // mode (1 byte)
             {
                 //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
