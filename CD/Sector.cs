@@ -432,9 +432,9 @@ namespace Aaru.Decoders.CD
                         break;
                     }
 
-                    sb.AppendFormat("File number: {0}", buffer[16]);
-                    sb.AppendFormat("Channel number: {0}", buffer[17]);
-                    sb.AppendFormat("Coding information number: {0}", buffer[19]);
+                    sb.AppendFormat("File number: {0}", buffer[16]).AppendLine();
+                    sb.AppendFormat("Channel number: {0}", buffer[17]).AppendLine();
+                    sb.AppendFormat("Coding information number: {0}", buffer[19]).AppendLine();
 
                     if((buffer[18] & 0x80) == 0x80)
                         sb.AppendLine("End of file.");
@@ -442,10 +442,7 @@ namespace Aaru.Decoders.CD
                     if((buffer[18] & 0x40) == 0x40)
                         sb.AppendLine("Real-time block.");
 
-                    if((buffer[18] & 0x20) == 0x20)
-                        sb.AppendLine("Form 2.");
-                    else
-                        sb.AppendLine("Form 1.");
+                    sb.AppendLine((buffer[18] & 0x20) == 0x20 ? "Form 2." : "Form 1.");
 
                     if((buffer[18] & 0x10) == 0x10)
                         sb.AppendLine("Trigger block.");
