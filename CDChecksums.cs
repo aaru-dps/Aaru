@@ -44,6 +44,8 @@ namespace Aaru.Checksums
         static byte[] eccBTable;
         static uint[] edcTable;
 
+        public static bool? CheckCdSector(byte[] buffer) => CheckCdSector(buffer, out _, out _, out _);
+
         public static bool? CheckCdSector(byte[] buffer, out bool? correctEccP, out bool? correctEccQ,
                                           out bool? correctEdc)
         {
