@@ -34,6 +34,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using Aaru.Checksums;
 
 namespace Aaru.Decoders.CD
 {
@@ -272,6 +274,206 @@ namespace Aaru.Decoders.CD
             Array.Copy(data, pos, sector, 0, len);
 
             return sector;
+        }
+
+        public static string Prettify(byte[] buffer)
+        {
+            if(buffer is null ||
+               buffer.Length <= 0)
+                return null;
+
+            if(buffer[0]  != 0x00 ||
+               buffer[1]  != 0xFF ||
+               buffer[2]  != 0xFF ||
+               buffer[3]  != 0xFF ||
+               buffer[4]  != 0xFF ||
+               buffer[5]  != 0xFF ||
+               buffer[6]  != 0xFF ||
+               buffer[7]  != 0xFF ||
+               buffer[8]  != 0xFF ||
+               buffer[9]  != 0xFF ||
+               buffer[10] != 0xFF ||
+               buffer[11] != 0x00)
+                return "CD sector.";
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("CD-ROM sector.");
+
+            byte min        = buffer[12];
+            byte sec        = buffer[13];
+            byte frame      = buffer[14];
+            int  lba        = 0;
+            bool moreThan90 = false;
+
+            if(min > 0x90)
+            {
+                lba        += 405000;
+                min        -= 0x90;
+                moreThan90 =  true;
+            }
+
+            lba += (((min >> 4) * 10) + (min & 0x0F)) * 75 * 60;
+            lba += (((sec >> 4) * 10) + (sec & 0x0F))      * 75;
+            lba += ((frame >> 4) * 10) + (frame & 0x0F);
+            lba -= 150;
+
+            if(moreThan90)
+                min += 0x90;
+
+            sb.AppendFormat("Position {0:X2}:{1:X2}:{2:X2} (LBA {3})", min, sec, frame, lba).AppendLine();
+
+            switch(buffer[15] & 0x03)
+            {
+                case 0:
+                    sb.AppendLine("Mode 0.");
+
+                    break;
+                case 1:
+                    sb.AppendLine("Mode 1.");
+
+                    break;
+                case 2:
+                    sb.AppendLine("Mode 2.");
+
+                    break;
+                case 3:
+                    sb.AppendLine("Invalid mode 0.");
+
+                    break;
+            }
+
+            switch((buffer[15] & 0xE0) >> 5)
+            {
+                case 0:
+                    sb.AppendLine("User data block");
+
+                    break;
+                case 1:
+                    sb.AppendLine("Fourth run-in block");
+
+                    break;
+                case 2:
+                    sb.AppendLine("Third run-in block");
+
+                    break;
+                case 3:
+                    sb.AppendLine("Second run-in block");
+
+                    break;
+                case 4:
+                    sb.AppendLine("First run-in block");
+
+                    break;
+                case 5:
+                    sb.AppendLine("Link block");
+
+                    break;
+                case 6:
+                    sb.AppendLine("Second run-out block");
+
+                    break;
+                case 7:
+                    sb.AppendLine("First run-out block");
+
+                    break;
+            }
+
+            CdChecksums.CheckCdSector(buffer, out bool? correctEccP, out bool? correctEccQ, out bool? correctEdc);
+
+            bool empty = true;
+
+            switch(buffer[15] & 0x03)
+            {
+                case 0:
+
+                    for(int i = 16; i < 2352; i++)
+                    {
+                        if(buffer[i] != 0x00)
+                        {
+                            empty = false;
+
+                            break;
+                        }
+                    }
+
+                    sb.AppendLine(empty ? "Correct sector contents." : "Incorrect sector contents.");
+
+                    break;
+                case 1:
+                    sb.AppendLine(correctEdc  == true ? "Correct EDC." : "Incorrect EDC.");
+                    sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
+                    sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+
+                    for(int i = 2068; i < 2076; i++)
+                    {
+                        if(buffer[i] != 0x00)
+                        {
+                            empty = false;
+
+                            break;
+                        }
+                    }
+
+                    sb.AppendLine(empty ? "Correct zero fill." : "Incorrect zero fill.");
+
+                    break;
+                case 2:
+                    if(buffer[16] != buffer[20] ||
+                       buffer[17] != buffer[21] ||
+                       buffer[18] != buffer[22] ||
+                       buffer[19] != buffer[23])
+                    {
+                        sb.AppendLine("Subheader copies differ.");
+                        sb.AppendLine(correctEdc  == true ? "Correct EDC." : "Incorrect EDC.");
+                        sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
+                        sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+
+                        break;
+                    }
+
+                    sb.AppendFormat("File number: {0}", buffer[16]);
+                    sb.AppendFormat("Channel number: {0}", buffer[17]);
+                    sb.AppendFormat("Coding information number: {0}", buffer[19]);
+
+                    if((buffer[18] & 0x80) == 0x80)
+                        sb.AppendLine("End of file.");
+
+                    if((buffer[18] & 0x40) == 0x40)
+                        sb.AppendLine("Real-time block.");
+
+                    if((buffer[18] & 0x20) == 0x20)
+                        sb.AppendLine("Form 2.");
+                    else
+                        sb.AppendLine("Form 1.");
+
+                    if((buffer[18] & 0x10) == 0x10)
+                        sb.AppendLine("Trigger block.");
+
+                    if((buffer[18] & 0x08) == 0x08)
+                        sb.AppendLine("Data block.");
+
+                    if((buffer[18] & 0x04) == 0x04)
+                        sb.AppendLine("Audio block.");
+
+                    if((buffer[18] & 0x02) == 0x02)
+                        sb.AppendLine("Video block.");
+
+                    if((buffer[18] & 0x01) == 0x01)
+                        sb.AppendLine("End of record.");
+
+                    if((buffer[18] & 0x20) != 0x20)
+                    {
+                        sb.AppendLine(correctEccP == true ? "Correct ECC P." : "Incorrect ECC P.");
+                        sb.AppendLine(correctEccQ == true ? "Correct ECC Q." : "Incorrect ECC Q.");
+                    }
+
+                    sb.AppendLine(correctEdc == true ? "Correct EDC." : "Incorrect EDC.");
+
+                    break;
+            }
+
+            return sb.ToString();
         }
     }
 }
