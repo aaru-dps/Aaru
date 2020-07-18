@@ -209,6 +209,9 @@ namespace Aaru.Core.Devices.Dumping
                             firstSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
                         else
                             firstSectorToRead -= (uint)sectorsForOffset;
+
+                        if(blocksToRead <= sectorsForOffset)
+                            blocksToRead += (uint)sectorsForOffset;
                     }
                 }
 
