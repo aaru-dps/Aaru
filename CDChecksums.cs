@@ -44,8 +44,13 @@ namespace Aaru.Checksums
         static byte[] eccBTable;
         static uint[] edcTable;
 
-        public static bool? CheckCdSector(byte[] buffer)
+        public static bool? CheckCdSector(byte[] buffer, out bool? correctEccP, out bool? correctEccQ,
+                                          out bool? correctEdc)
         {
+            correctEccP = null;
+            correctEccQ = null;
+            correctEdc  = null;
+
             switch(buffer.Length)
             {
                 case 2448:
@@ -56,7 +61,9 @@ namespace Aaru.Checksums
                     Array.Copy(buffer, 0, channel, 0, 2352);
                     Array.Copy(buffer, 2352, subchannel, 0, 96);
 
-                    bool? channelStatus    = CheckCdSectorChannel(channel);
+                    bool? channelStatus =
+                        CheckCdSectorChannel(channel, out correctEccP, out correctEccQ, out correctEdc);
+
                     bool? subchannelStatus = CheckCdSectorSubChannel(subchannel);
                     bool? status           = null;
 
@@ -79,7 +86,7 @@ namespace Aaru.Checksums
                     return status;
                 }
 
-                case 2352: return CheckCdSectorChannel(buffer);
+                case 2352: return CheckCdSectorChannel(buffer, out correctEccP, out correctEccQ, out correctEdc);
                 default:   return null;
             }
         }
@@ -140,9 +147,14 @@ namespace Aaru.Checksums
             return true;
         }
 
-        static bool? CheckCdSectorChannel(byte[] channel)
+        static bool? CheckCdSectorChannel(byte[] channel, out bool? correctEccP, out bool? correctEccQ,
+                                          out bool? correctEdc)
         {
             EccInit();
+
+            correctEccP = null;
+            correctEccQ = null;
+            correctEdc  = null;
 
             if(channel[0x000] != 0x00 ||
                channel[0x001] != 0xFF ||
@@ -214,6 +226,9 @@ namespace Aaru.Checksums
                 bool failedEccP = !CheckEcc(address, data, 86, 24, 2, 86, eccP);
                 bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
+                correctEccP = !failedEccP;
+                correctEccQ = !failedEccQ;
+
                 if(failedEccP)
                     AaruConsole.DebugWriteLine("CD checksums",
                                                "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
@@ -226,6 +241,8 @@ namespace Aaru.Checksums
 
                 uint storedEdc     = BitConverter.ToUInt32(channel, 0x810);
                 uint calculatedEdc = ComputeEdc(0, channel, 0x810);
+
+                correctEdc = calculatedEdc == storedEdc;
 
                 if(calculatedEdc == storedEdc)
                     return !failedEccP && !failedEccQ;
@@ -262,6 +279,8 @@ namespace Aaru.Checksums
 
                     uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x91C);
 
+                    correctEdc = calculatedEdc == storedEdc || storedEdc == 0;
+
                     if(calculatedEdc == storedEdc ||
                        storedEdc     == 0x00000000)
                         return true;
@@ -293,6 +312,9 @@ namespace Aaru.Checksums
                     bool failedEccP = !CheckEcc(address, mode2Sector, 86, 24, 2, 86, eccP);
                     bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
 
+                    correctEccP = !failedEccP;
+                    correctEccQ = !failedEccQ;
+
                     if(failedEccP)
                         AaruConsole.DebugWriteLine("CD checksums",
                                                    "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
@@ -305,6 +327,8 @@ namespace Aaru.Checksums
 
                     uint storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
                     uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x808);
+
+                    correctEdc = calculatedEdc == storedEdc;
 
                     if(calculatedEdc == storedEdc)
                         return !failedEccP && !failedEccQ;
