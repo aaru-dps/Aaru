@@ -1759,6 +1759,15 @@ namespace Aaru.Core.Devices.Report
 
                         mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
 
+                        // This means it has returned the same as previous read, so not really lead-out.
+                        if(mediaTest.CanReadF1_06        == true &&
+                           mediaTest.CanReadF1_06LeadOut == true &&
+                           mediaTest.ReadF1_06Data.SequenceEqual(mediaTest.ReadF1_06LeadOutData))
+                        {
+                            mediaTest.CanReadF1_06LeadOut  = false;
+                            mediaTest.ReadF1_06LeadOutData = senseBuffer;
+                        }
+
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadF1_06LeadOut);
                     }
                 }
