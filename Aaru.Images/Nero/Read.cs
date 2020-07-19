@@ -1128,7 +1128,8 @@ namespace Aaru.DiscImages
                    imageInfo.MediaType != MediaType.Pippin        &&
                    imageInfo.MediaType != MediaType.VideoNow      &&
                    imageInfo.MediaType != MediaType.VideoNowColor &&
-                   imageInfo.MediaType != MediaType.VideoNowXp)
+                   imageInfo.MediaType != MediaType.VideoNowXp    &&
+                   imageInfo.MediaType != MediaType.CVD)
                     foreach(Track track in Tracks)
                     {
                         track.TrackPregap = 0;

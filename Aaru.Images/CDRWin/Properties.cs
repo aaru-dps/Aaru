@@ -163,7 +163,8 @@ namespace Aaru.DiscImages
                        _imageInfo.MediaType != MediaType.Pippin        &&
                        _imageInfo.MediaType != MediaType.VideoNow      &&
                        _imageInfo.MediaType != MediaType.VideoNowColor &&
-                       _imageInfo.MediaType != MediaType.VideoNowXp)
+                       _imageInfo.MediaType != MediaType.VideoNowXp    &&
+                       _imageInfo.MediaType != MediaType.CVD)
                     {
                         aaruTrack.TrackPregap = 0;
                         aaruTrack.Indexes?.Clear();
@@ -205,7 +206,7 @@ namespace Aaru.DiscImages
             MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD,
             MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
             MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-            MediaType.VideoNowColor, MediaType.VideoNowXp
+            MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD
         };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
         {

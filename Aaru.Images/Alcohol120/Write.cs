@@ -118,6 +118,7 @@ namespace Aaru.DiscImages
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
                 case MediaType.VideoNowXp:
+                case MediaType.CVD:
                     isDvd = false;
 
                     break;

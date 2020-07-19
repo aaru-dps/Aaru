@@ -221,6 +221,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
                 case MediaType.VideoNowXp:
+                case MediaType.CVD:
                     Track1PregapVisible = true;
 
                     break;

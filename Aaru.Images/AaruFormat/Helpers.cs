@@ -232,7 +232,8 @@ namespace Aaru.DiscImages
                 case MediaType.MilCD:
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
-                case MediaType.VideoNowXp: return XmlMediaType.OpticalDisc;
+                case MediaType.VideoNowXp:
+                case MediaType.CVD: return XmlMediaType.OpticalDisc;
                 default: return XmlMediaType.BlockMedia;
             }
         }
@@ -365,77 +366,76 @@ namespace Aaru.DiscImages
         {
             switch(tag)
             {
-                case MediaTagType.CD_TOC:                        return DataType.CompactDiscPartialToc;
-                case MediaTagType.CD_SessionInfo:                return DataType.CompactDiscSessionInfo;
-                case MediaTagType.CD_FullTOC:                    return DataType.CompactDiscToc;
-                case MediaTagType.CD_PMA:                        return DataType.CompactDiscPma;
-                case MediaTagType.CD_ATIP:                       return DataType.CompactDiscAtip;
-                case MediaTagType.CD_TEXT:                       return DataType.CompactDiscLeadInCdText;
-                case MediaTagType.DVD_PFI:                       return DataType.DvdPfi;
-                case MediaTagType.DVD_CMI:                       return DataType.DvdLeadInCmi;
-                case MediaTagType.DVD_DiscKey:                   return DataType.DvdDiscKey;
-                case MediaTagType.DVD_BCA:                       return DataType.DvdBca;
-                case MediaTagType.DVD_DMI:                       return DataType.DvdDmi;
-                case MediaTagType.DVD_MediaIdentifier:           return DataType.DvdMediaIdentifier;
-                case MediaTagType.DVD_MKB:                       return DataType.DvdMediaKeyBlock;
-                case MediaTagType.DVDRAM_DDS:                    return DataType.DvdRamDds;
-                case MediaTagType.DVDRAM_MediumStatus:           return DataType.DvdRamMediumStatus;
-                case MediaTagType.DVDRAM_SpareArea:              return DataType.DvdRamSpareArea;
-                case MediaTagType.DVDR_RMD:                      return DataType.DvdRRmd;
-                case MediaTagType.DVDR_PreRecordedInfo:          return DataType.DvdRPrerecordedInfo;
-                case MediaTagType.DVDR_MediaIdentifier:          return DataType.DvdRMediaIdentifier;
-                case MediaTagType.DVDR_PFI:                      return DataType.DvdRPfi;
-                case MediaTagType.DVD_ADIP:                      return DataType.DvdAdip;
-                case MediaTagType.HDDVD_CPI:                     return DataType.HdDvdCpi;
-                case MediaTagType.HDDVD_MediumStatus:            return DataType.HdDvdMediumStatus;
-                case MediaTagType.DVDDL_LayerCapacity:           return DataType.DvdDlLayerCapacity;
-                case MediaTagType.DVDDL_MiddleZoneAddress:       return DataType.DvdDlMiddleZoneAddress;
-                case MediaTagType.DVDDL_JumpIntervalSize:        return DataType.DvdDlJumpIntervalSize;
-                case MediaTagType.DVDDL_ManualLayerJumpLBA:      return DataType.DvdDlManualLayerJumpLba;
-                case MediaTagType.BD_DI:                         return DataType.BlurayDi;
-                case MediaTagType.BD_BCA:                        return DataType.BlurayBca;
-                case MediaTagType.BD_DDS:                        return DataType.BlurayDds;
-                case MediaTagType.BD_CartridgeStatus:            return DataType.BlurayCartridgeStatus;
-                case MediaTagType.BD_SpareArea:                  return DataType.BluraySpareArea;
-                case MediaTagType.AACS_VolumeIdentifier:         return DataType.AacsVolumeIdentifier;
-                case MediaTagType.AACS_SerialNumber:             return DataType.AacsSerialNumber;
-                case MediaTagType.AACS_MediaIdentifier:          return DataType.AacsMediaIdentifier;
-                case MediaTagType.AACS_MKB:                      return DataType.AacsMediaKeyBlock;
-                case MediaTagType.AACS_DataKeys:                 return DataType.AacsDataKeys;
-                case MediaTagType.AACS_LBAExtents:               return DataType.AacsLbaExtents;
-                case MediaTagType.AACS_CPRM_MKB:                 return DataType.CprmMediaKeyBlock;
-                case MediaTagType.Hybrid_RecognizedLayers:       return DataType.HybridRecognizedLayers;
-                case MediaTagType.MMC_WriteProtection:           return DataType.ScsiMmcWriteProtection;
-                case MediaTagType.MMC_DiscInformation:           return DataType.ScsiMmcDiscInformation;
+                case MediaTagType.CD_TOC: return DataType.CompactDiscPartialToc;
+                case MediaTagType.CD_SessionInfo: return DataType.CompactDiscSessionInfo;
+                case MediaTagType.CD_FullTOC: return DataType.CompactDiscToc;
+                case MediaTagType.CD_PMA: return DataType.CompactDiscPma;
+                case MediaTagType.CD_ATIP: return DataType.CompactDiscAtip;
+                case MediaTagType.CD_TEXT: return DataType.CompactDiscLeadInCdText;
+                case MediaTagType.DVD_PFI: return DataType.DvdPfi;
+                case MediaTagType.DVD_CMI: return DataType.DvdLeadInCmi;
+                case MediaTagType.DVD_DiscKey: return DataType.DvdDiscKey;
+                case MediaTagType.DVD_BCA: return DataType.DvdBca;
+                case MediaTagType.DVD_DMI: return DataType.DvdDmi;
+                case MediaTagType.DVD_MediaIdentifier: return DataType.DvdMediaIdentifier;
+                case MediaTagType.DVD_MKB: return DataType.DvdMediaKeyBlock;
+                case MediaTagType.DVDRAM_DDS: return DataType.DvdRamDds;
+                case MediaTagType.DVDRAM_MediumStatus: return DataType.DvdRamMediumStatus;
+                case MediaTagType.DVDRAM_SpareArea: return DataType.DvdRamSpareArea;
+                case MediaTagType.DVDR_RMD: return DataType.DvdRRmd;
+                case MediaTagType.DVDR_PreRecordedInfo: return DataType.DvdRPrerecordedInfo;
+                case MediaTagType.DVDR_MediaIdentifier: return DataType.DvdRMediaIdentifier;
+                case MediaTagType.DVDR_PFI: return DataType.DvdRPfi;
+                case MediaTagType.DVD_ADIP: return DataType.DvdAdip;
+                case MediaTagType.HDDVD_CPI: return DataType.HdDvdCpi;
+                case MediaTagType.HDDVD_MediumStatus: return DataType.HdDvdMediumStatus;
+                case MediaTagType.DVDDL_LayerCapacity: return DataType.DvdDlLayerCapacity;
+                case MediaTagType.DVDDL_MiddleZoneAddress: return DataType.DvdDlMiddleZoneAddress;
+                case MediaTagType.DVDDL_JumpIntervalSize: return DataType.DvdDlJumpIntervalSize;
+                case MediaTagType.DVDDL_ManualLayerJumpLBA: return DataType.DvdDlManualLayerJumpLba;
+                case MediaTagType.BD_DI: return DataType.BlurayDi;
+                case MediaTagType.BD_BCA: return DataType.BlurayBca;
+                case MediaTagType.BD_DDS: return DataType.BlurayDds;
+                case MediaTagType.BD_CartridgeStatus: return DataType.BlurayCartridgeStatus;
+                case MediaTagType.BD_SpareArea: return DataType.BluraySpareArea;
+                case MediaTagType.AACS_VolumeIdentifier: return DataType.AacsVolumeIdentifier;
+                case MediaTagType.AACS_SerialNumber: return DataType.AacsSerialNumber;
+                case MediaTagType.AACS_MediaIdentifier: return DataType.AacsMediaIdentifier;
+                case MediaTagType.AACS_MKB: return DataType.AacsMediaKeyBlock;
+                case MediaTagType.AACS_DataKeys: return DataType.AacsDataKeys;
+                case MediaTagType.AACS_LBAExtents: return DataType.AacsLbaExtents;
+                case MediaTagType.AACS_CPRM_MKB: return DataType.CprmMediaKeyBlock;
+                case MediaTagType.Hybrid_RecognizedLayers: return DataType.HybridRecognizedLayers;
+                case MediaTagType.MMC_WriteProtection: return DataType.ScsiMmcWriteProtection;
+                case MediaTagType.MMC_DiscInformation: return DataType.ScsiMmcDiscInformation;
                 case MediaTagType.MMC_TrackResourcesInformation: return DataType.ScsiMmcTrackResourcesInformation;
-                case MediaTagType.MMC_POWResourcesInformation:   return DataType.ScsiMmcPowResourcesInformation;
-                case MediaTagType.SCSI_INQUIRY:                  return DataType.ScsiInquiry;
-                case MediaTagType.SCSI_MODEPAGE_2A:              return DataType.ScsiModePage2A;
-                case MediaTagType.ATA_IDENTIFY:                  return DataType.AtaIdentify;
-                case MediaTagType.ATAPI_IDENTIFY:                return DataType.AtapiIdentify;
-                case MediaTagType.PCMCIA_CIS:                    return DataType.PcmciaCis;
-                case MediaTagType.SD_CID:                        return DataType.SecureDigitalCid;
-                case MediaTagType.SD_CSD:                        return DataType.SecureDigitalCsd;
-                case MediaTagType.SD_SCR:                        return DataType.SecureDigitalScr;
-                case MediaTagType.SD_OCR:                        return DataType.SecureDigitalOcr;
-                case MediaTagType.MMC_CID:                       return DataType.MultiMediaCardCid;
-                case MediaTagType.MMC_CSD:                       return DataType.MultiMediaCardCsd;
-                case MediaTagType.MMC_OCR:                       return DataType.MultiMediaCardOcr;
-                case MediaTagType.MMC_ExtendedCSD:               return DataType.MultiMediaCardExtendedCsd;
-                case MediaTagType.Xbox_SecuritySector:           return DataType.XboxSecuritySector;
-                case MediaTagType.Floppy_LeadOut:                return DataType.FloppyLeadOut;
-                case MediaTagType.DCB:                           return DataType.DvdDiscControlBlock;
-                case MediaTagType.CD_FirstTrackPregap:           return DataType.CompactDiscFirstTrackPregap;
-                case MediaTagType.CD_LeadOut:                    return DataType.CompactDiscLeadOut;
-                case MediaTagType.SCSI_MODESENSE_6:              return DataType.ScsiModeSense6;
-                case MediaTagType.SCSI_MODESENSE_10:             return DataType.ScsiModeSense10;
-                case MediaTagType.USB_Descriptors:               return DataType.UsbDescriptors;
-                case MediaTagType.Xbox_DMI:                      return DataType.XboxDmi;
-                case MediaTagType.Xbox_PFI:                      return DataType.XboxPfi;
-                case MediaTagType.CD_MCN:                        return DataType.CompactDiscMediaCatalogueNumber;
-                case MediaTagType.CD_LeadIn:                     return DataType.CompactDiscLeadIn;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
+                case MediaTagType.MMC_POWResourcesInformation: return DataType.ScsiMmcPowResourcesInformation;
+                case MediaTagType.SCSI_INQUIRY: return DataType.ScsiInquiry;
+                case MediaTagType.SCSI_MODEPAGE_2A: return DataType.ScsiModePage2A;
+                case MediaTagType.ATA_IDENTIFY: return DataType.AtaIdentify;
+                case MediaTagType.ATAPI_IDENTIFY: return DataType.AtapiIdentify;
+                case MediaTagType.PCMCIA_CIS: return DataType.PcmciaCis;
+                case MediaTagType.SD_CID: return DataType.SecureDigitalCid;
+                case MediaTagType.SD_CSD: return DataType.SecureDigitalCsd;
+                case MediaTagType.SD_SCR: return DataType.SecureDigitalScr;
+                case MediaTagType.SD_OCR: return DataType.SecureDigitalOcr;
+                case MediaTagType.MMC_CID: return DataType.MultiMediaCardCid;
+                case MediaTagType.MMC_CSD: return DataType.MultiMediaCardCsd;
+                case MediaTagType.MMC_OCR: return DataType.MultiMediaCardOcr;
+                case MediaTagType.MMC_ExtendedCSD: return DataType.MultiMediaCardExtendedCsd;
+                case MediaTagType.Xbox_SecuritySector: return DataType.XboxSecuritySector;
+                case MediaTagType.Floppy_LeadOut: return DataType.FloppyLeadOut;
+                case MediaTagType.DCB: return DataType.DvdDiscControlBlock;
+                case MediaTagType.CD_FirstTrackPregap: return DataType.CompactDiscFirstTrackPregap;
+                case MediaTagType.CD_LeadOut: return DataType.CompactDiscLeadOut;
+                case MediaTagType.SCSI_MODESENSE_6: return DataType.ScsiModeSense6;
+                case MediaTagType.SCSI_MODESENSE_10: return DataType.ScsiModeSense10;
+                case MediaTagType.USB_Descriptors: return DataType.UsbDescriptors;
+                case MediaTagType.Xbox_DMI: return DataType.XboxDmi;
+                case MediaTagType.Xbox_PFI: return DataType.XboxPfi;
+                case MediaTagType.CD_MCN: return DataType.CompactDiscMediaCatalogueNumber;
+                case MediaTagType.CD_LeadIn: return DataType.CompactDiscLeadIn;
+                default: throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
             }
         }
     }

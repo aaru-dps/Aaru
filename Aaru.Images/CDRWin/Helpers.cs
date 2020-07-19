@@ -212,7 +212,8 @@ namespace Aaru.DiscImages
                 case MediaType.MilCD:
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
-                case MediaType.VideoNowXp: return CDRWIN_DISK_TYPE_CD;
+                case MediaType.VideoNowXp:
+                case MediaType.CVD: return CDRWIN_DISK_TYPE_CD;
                 case MediaType.CDMRW:    return CDRWIN_DISK_TYPE_CDMRW;
                 case MediaType.CDRW:     return CDRWIN_DISK_TYPE_CDRW;
                 case MediaType.DVDPR:    return CDRWIN_DISK_TYPE_DVDPR;

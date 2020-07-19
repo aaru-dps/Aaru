@@ -133,7 +133,8 @@ namespace Aaru.DiscImages
                 case MediaType.MilCD:
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
-                case MediaType.VideoNowXp: return AlcoholMediumType.CD;
+                case MediaType.VideoNowXp:
+                case MediaType.CVD: return AlcoholMediumType.CD;
                 case MediaType.CDR: return AlcoholMediumType.CDR;
                 case MediaType.CDRW:
                 case MediaType.CDMRW: return AlcoholMediumType.CDRW;

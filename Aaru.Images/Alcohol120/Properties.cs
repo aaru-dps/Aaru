@@ -152,7 +152,7 @@ namespace Aaru.DiscImages
             MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM,
             MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV,
             MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD,
-            MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp
+            MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD
         };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]

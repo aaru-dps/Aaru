@@ -987,7 +987,8 @@ namespace Aaru.Commands.Image
                     inputFormat.Info.MediaType == MediaType.Pippin ||
                     inputFormat.Info.MediaType == MediaType.VideoNow ||
                     inputFormat.Info.MediaType == MediaType.VideoNowColor ||
-                    inputFormat.Info.MediaType == MediaType.VideoNowXp) && generateSubchannels)
+                    inputFormat.Info.MediaType == MediaType.VideoNowXp ||
+                    inputFormat.Info.MediaType == MediaType.CVD) && generateSubchannels)
                     CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputFormat.Info.Sectors,
                                                     null, null, null, null, null, outputFormat);
             }
