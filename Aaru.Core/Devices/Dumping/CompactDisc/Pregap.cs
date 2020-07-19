@@ -124,7 +124,7 @@ namespace Aaru.Core.Devices.Dumping
 
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
-                                             Database.Models.Device dbDev, out bool inexactPositioning)
+                                             Database.Models.Device dbDev, out bool inexactPositioning, bool dumping)
         {
             bool                  sense  = true; // Sense indicator
             byte[]                subBuf = null;
@@ -178,7 +178,7 @@ namespace Aaru.Core.Devices.Dumping
                 Track track        = tracks[t];
                 int   trackRetries = 0;
 
-                // First track of each session has at least 150 sectors of pregap and is not readable always
+                // First track of each session has at least 150 sectors of pregap and is not always readable
                 if(tracks.Where(t => t.TrackSession == track.TrackSession).OrderBy(t => t.TrackSequence).
                           FirstOrDefault().TrackSequence == track.TrackSequence)
                 {
@@ -190,8 +190,9 @@ namespace Aaru.Core.Devices.Dumping
                     continue;
                 }
 
-                if(t                       > 0 &&
-                   tracks[t - 1].TrackType == tracks[t].TrackType)
+                if(t                       > 0                    &&
+                   tracks[t - 1].TrackType == tracks[t].TrackType &&
+                   dumping)
                 {
                     AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
 
@@ -562,7 +563,21 @@ namespace Aaru.Core.Devices.Dumping
 
             for(int i = 0; i < tracks.Length; i++)
             {
-                tracks[i].TrackPregap      =  (ulong)pregaps[tracks[i].TrackSequence];
+                tracks[i].TrackPregap = (ulong)pregaps[tracks[i].TrackSequence];
+
+                if(dumping)
+                {
+                    // Minus five, to ensure dumping will fix if there is a pregap LBA 0
+                    int red = 5;
+
+                    while(tracks[i].TrackPregap > 0 &&
+                          red                   > 0)
+                    {
+                        tracks[i].TrackPregap--;
+                        red--;
+                    }
+                }
+
                 tracks[i].TrackStartSector -= tracks[i].TrackPregap;
 
             #if DEBUG

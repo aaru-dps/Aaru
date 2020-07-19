@@ -396,7 +396,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke("Calculating pregaps, can take some time...");
 
             SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev,
-                              out bool inexactPositioning);
+                              out bool inexactPositioning, true);
 
             if(inexactPositioning)
             {
