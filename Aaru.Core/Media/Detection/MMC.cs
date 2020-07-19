@@ -1569,7 +1569,7 @@ namespace Aaru.Core.Media.Detection
                                 ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
                             }
 
-                            if((name == "VCD" || name == "SVCD") &&
+                            if((name == "VCD" || name == "SVCD" || name == "HQVCD") &&
                                (isoSector[rootPos + 25] & 0x02) == 0x02)
                             {
                                 vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
@@ -1842,11 +1842,17 @@ namespace Aaru.Core.Media.Detection
 
                                     return;
                                 case "SUPERVCD":
-                                case "HQ-VCD":
                                     mediaType = MediaType.SVCD;
 
                                     AaruConsole.DebugWriteLine("Media detection",
                                                                "Found Super Video CD description file, setting disc type to Super Video CD.");
+
+                                    break;
+                                case "HQ-VCD":
+                                    mediaType = MediaType.CVD;
+
+                                    AaruConsole.DebugWriteLine("Media detection",
+                                                               "Found China Video Disc description file, setting disc type to China Video Disc.");
 
                                     break;
                             }
