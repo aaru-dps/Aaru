@@ -582,14 +582,14 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    _trackFlags.Add((byte)sectorAddress, data[0]);
+                    _trackFlags[(byte)sectorAddress] = data[0];
 
                     return true;
                 }
                 case SectorTagType.CdTrackIsrc:
                 {
                     if(data != null)
-                        _trackIsrcs.Add((byte)sectorAddress, Encoding.UTF8.GetString(data));
+                        _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
 
                     return true;
                 }

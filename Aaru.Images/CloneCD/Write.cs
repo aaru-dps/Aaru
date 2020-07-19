@@ -542,7 +542,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags.Add((byte)sectorAddress, data[0]);
+                    trackFlags[(byte)sectorAddress] = data[0];
 
                     return true;
                 }
