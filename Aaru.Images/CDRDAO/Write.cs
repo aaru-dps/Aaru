@@ -601,6 +601,13 @@ namespace Aaru.DiscImages
                                            (ulong)(track.TrackRawBytesPerSector +
                                                    (track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0)));
 
+                foreach(KeyValuePair<ushort, int> index in track.Indexes.OrderBy(i => i.Key).Where(i => i.Key > 1))
+                {
+                    msf = LbaToMsf((ulong)index.Value - (track.TrackPregap + track.TrackStartSector));
+
+                    descriptorStream.WriteLine("INDEX {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
+                }
+
                 descriptorStream.WriteLine();
             }
 
