@@ -747,6 +747,14 @@ namespace Aaru.DiscImages
                             trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
                         }
 
+                        if(trackFlags.Count > 0 &&
+                           !imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
+                        if(trackIsrcs.Count > 0 &&
+                           !imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+
                         imageInfo.HasPartitions = true;
                         imageInfo.HasSessions   = true;
 
