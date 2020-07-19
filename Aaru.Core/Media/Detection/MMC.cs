@@ -1254,7 +1254,7 @@ namespace Aaru.Core.Media.Detection
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Found Sony PlayStation 2 boot sectors, setting disc type to PS2 CD.");
 
-                            return;
+                            goto hasPs2CdBoot;
                         }
                     }
 
@@ -1447,6 +1447,9 @@ namespace Aaru.Core.Media.Detection
                         }
                     }
 
+                    // If it has a PS2 boot area it can still be PS1, so check for SYSTEM.CNF below
+                    hasPs2CdBoot:
+
                     // Check if ISO9660
                     sense = dev.Read12(out byte[] isoSector, out _, 0, false, true, false, false, 16, 2048, 0, 1, false,
                                        dev.Timeout, out _);
@@ -1539,6 +1542,8 @@ namespace Aaru.Core.Media.Detection
                     uint         vcdLength     = 0;
                     uint         pcdStart      = 0;
                     uint         pcdLength     = 0;
+                    uint         ps1Start      = 0;
+                    uint         ps1Length     = 0;
 
                     for(int ri = 0; ri < rootLength; ri++)
                     {
@@ -1576,6 +1581,12 @@ namespace Aaru.Core.Media.Detection
                             {
                                 pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
                                 pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+                            }
+
+                            if(name == "SYSTEM.CNF")
+                            {
+                                ps1Start  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                ps1Length = BitConverter.ToUInt32(isoSector, rootPos + 10);
                             }
 
                             rootPos += isoSector[rootPos];
@@ -1921,6 +1932,104 @@ namespace Aaru.Core.Media.Detection
                                                                "Found Photo CD description file, setting disc type to Photo CD.");
 
                                     return;
+                            }
+                        }
+                    }
+
+                    // "SYSTEM.CNF" length
+                    if(ps1Length > 0)
+                    {
+                        uint ps1Sectors = ps1Length / 2048;
+
+                        if(ps1Length % 2048 > 0)
+                            ps1Sectors++;
+
+                        string ps1Txt = null;
+
+                        // Read "SYSTEM.CNF"
+                        try
+                        {
+                            using var ps1Ms = new MemoryStream();
+
+                            for(uint i = 0; i < ps1Sectors; i++)
+                            {
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, ps1Start + i,
+                                                   2048, 0, 1, false, dev.Timeout, out _);
+
+                                if(sense)
+                                    break;
+
+                                ps1Ms.Write(isoSector, 0, 2048);
+                            }
+
+                            isoSector = ps1Ms.ToArray();
+                            ps1Txt    = Encoding.ASCII.GetString(isoSector);
+                        }
+                        catch
+                        {
+                            ps1Txt = null;
+                        }
+
+                        // Check "SYSTEM.CNF" lines
+                        if(ps1Txt != null)
+                        {
+                            using var sr = new StringReader(ps1Txt);
+
+                            string ps1BootFile = null;
+                            string ps2BootFile = null;
+
+                            while(sr.Peek() > 0)
+                            {
+                                string line = sr.ReadLine();
+
+                                // End of file
+                                if(line is null ||
+                                   line.Length == 0)
+                                    break;
+
+                                if(line.StartsWith("BOOT = cdrom:", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    ps1BootFile = line.Substring(13);
+
+                                    if(ps1BootFile.StartsWith('\\'))
+                                        ps1BootFile = ps1BootFile.Substring(1);
+
+                                    if(ps1BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
+                                        ps1BootFile = ps1BootFile.Substring(0, ps1BootFile.Length - 2);
+
+                                    break;
+                                }
+
+                                if(line.StartsWith("BOOT2 = cdrom0:", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    ps2BootFile = line.Substring(13);
+
+                                    if(ps2BootFile.StartsWith('\\'))
+                                        ps2BootFile = ps2BootFile.Substring(1);
+
+                                    if(ps2BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
+                                        ps2BootFile = ps2BootFile.Substring(0, ps2BootFile.Length - 2);
+
+                                    break;
+                                }
+                            }
+
+                            if(ps1BootFile != null &&
+                               rootEntries.Contains(ps1BootFile.ToUpperInvariant()))
+                            {
+                                mediaType = MediaType.PS1CD;
+
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found correct SYSTEM.CNF file in root pointing to existing file in root, setting disc type to PlayStation CD.");
+                            }
+
+                            if(ps2BootFile != null &&
+                               rootEntries.Contains(ps2BootFile.ToUpperInvariant()))
+                            {
+                                mediaType = MediaType.PS2CD;
+
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Found correct SYSTEM.CNF file in root pointing to existing file in root, setting disc type to PlayStation 2 CD.");
                             }
                         }
                     }
