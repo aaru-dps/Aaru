@@ -582,7 +582,7 @@ namespace Aaru.Commands.Media
                                                         d.Revision     == dev.FirmwareRevision);
 
                     Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
-                                           out bool inexactPositioning);
+                                           out bool inexactPositioning, false);
 
                     for(int t = 1; t < tracks.Length; t++)
                         tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
