@@ -54,7 +54,8 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData     |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreNotCdSessions  |
-                                                               OpticalImageCapabilities.CanStoreNotCdTracks;
+                                                               OpticalImageCapabilities.CanStoreNotCdTracks    |
+                                                               OpticalImageCapabilities.CanStoreIndexes;
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Aaru Format";
         public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");

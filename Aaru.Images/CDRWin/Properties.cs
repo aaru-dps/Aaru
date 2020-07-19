@@ -52,7 +52,8 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData     |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreNotCdSessions  |
-                                                               OpticalImageCapabilities.CanStoreNotCdTracks;
+                                                               OpticalImageCapabilities.CanStoreNotCdTracks    |
+                                                               OpticalImageCapabilities.CanStoreIndexes;
         public ImageInfo       Info       => _imageInfo;
         public string          Name       => "CDRWin cuesheet";
         public Guid            Id         => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");
