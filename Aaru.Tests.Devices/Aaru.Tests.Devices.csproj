@@ -17,7 +17,7 @@
     <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Tests.Devices</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

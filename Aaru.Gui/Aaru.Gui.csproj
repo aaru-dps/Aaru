@@ -12,6 +12,7 @@
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <NoWarn>CS0649,CS0169</NoWarn>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
