@@ -519,6 +519,14 @@ namespace Aaru.DiscImages
                     _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
                                                 msf.frame);
 
+                foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
+                {
+                    msf = LbaToMsf((ulong)index.Value);
+
+                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
+                                                msf.second, msf.frame);
+                }
+
                 ushort lastSession = _writingTracks.Max(t => t.TrackSession);
 
                 if(currentSession >= lastSession)
