@@ -195,6 +195,8 @@ namespace Aaru.CommonTypes
         SVOD = 76,
         /// <summary>Five Dimensional disc</summary>
         FDDVD = 77,
+        /// <summary>China Video Disc</summary>
+        CVD = 78,
         #endregion Rare or uncommon optical standards, types 70 to 79
 
         #region LaserDisc based, types 80 to 89

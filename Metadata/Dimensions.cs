@@ -1015,6 +1015,7 @@ namespace Aaru.CommonTypes.Metadata
                 case CommonTypes.MediaType.Playdia:
                 case CommonTypes.MediaType.Pippin:
                 case CommonTypes.MediaType.MilCD:
+                case CommonTypes.MediaType.CVD:
                     dmns.Diameter          = 120;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;

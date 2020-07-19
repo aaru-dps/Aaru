@@ -423,6 +423,11 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "Super Video CD";
 
                     break;
+                case CommonTypes.MediaType.CVD:
+                    discType    = "Compact Disc";
+                    discSubType = "China Video Disc";
+
+                    break;
                 case CommonTypes.MediaType.SVOD:
                     discType    = "SVOD";
                     discSubType = "SVOD";
