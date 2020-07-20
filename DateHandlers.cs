@@ -38,49 +38,49 @@ namespace Aaru.Helpers
 {
     public static class DateHandlers
     {
-        static readonly DateTime LisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
-        static readonly DateTime MacEpoch  = new DateTime(1904, 1, 1, 0, 0, 0);
-        static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
+        static readonly DateTime _lisaEpoch = new DateTime(1901, 1, 1, 0, 0, 0);
+        static readonly DateTime _macEpoch  = new DateTime(1904, 1, 1, 0, 0, 0);
+        static readonly DateTime _unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
         /// <summary>Day 0 of Julian Date system</summary>
-        static readonly DateTime JulianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
-        static readonly DateTime AmigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
+        static readonly DateTime _julianEpoch = new DateTime(1858, 11, 17, 0, 0, 0);
+        static readonly DateTime _amigaEpoch = new DateTime(1978, 1, 1, 0, 0, 0);
 
         /// <summary>Converts a Macintosh timestamp to a .NET DateTime</summary>
         /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime MacToDateTime(ulong macTimeStamp) => MacEpoch.AddTicks((long)(macTimeStamp * 10000000));
+        public static DateTime MacToDateTime(ulong macTimeStamp) => _macEpoch.AddTicks((long)(macTimeStamp * 10000000));
 
         /// <summary>Converts a Lisa timestamp to a .NET DateTime</summary>
         /// <param name="lisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime LisaToDateTime(uint lisaTimeStamp) => LisaEpoch.AddSeconds(lisaTimeStamp);
+        public static DateTime LisaToDateTime(uint lisaTimeStamp) => _lisaEpoch.AddSeconds(lisaTimeStamp);
 
         /// <summary>Converts a UNIX timestamp to a .NET DateTime</summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixToDateTime(int unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
+        public static DateTime UnixToDateTime(int unixTimeStamp) => _unixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>Converts a UNIX timestamp to a .NET DateTime</summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixToDateTime(long unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
+        public static DateTime UnixToDateTime(long unixTimeStamp) => _unixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>Converts a UNIX timestamp to a .NET DateTime</summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixUnsignedToDateTime(uint unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
+        public static DateTime UnixUnsignedToDateTime(uint unixTimeStamp) => _unixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>Converts a UNIX timestamp to a .NET DateTime</summary>
         /// <param name="seconds">Seconds since 1st Jan. 1970)</param>
         /// <param name="nanoseconds">Nanoseconds</param>
         /// <returns>.NET DateTime</returns>
         public static DateTime UnixUnsignedToDateTime(uint seconds, uint nanoseconds) =>
-            UnixEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
+            _unixEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
 
         /// <summary>Converts a UNIX timestamp to a .NET DateTime</summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixUnsignedToDateTime(ulong unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
+        public static DateTime UnixUnsignedToDateTime(ulong unixTimeStamp) => _unixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>Converts a High Sierra Format timestamp to a .NET DateTime</summary>
         /// <param name="vdDateTime">High Sierra Format timestamp</param>
@@ -188,7 +188,7 @@ namespace Aaru.Helpers
         {
             double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
 
-            return JulianEpoch.AddMilliseconds(delta);
+            return _julianEpoch.AddMilliseconds(delta);
         }
 
         /// <summary>Converts an Amiga timestamp to a .NET DateTime</summary>
@@ -198,7 +198,7 @@ namespace Aaru.Helpers
         /// <returns>.NET DateTime</returns>
         public static DateTime AmigaToDateTime(uint days, uint minutes, uint ticks)
         {
-            DateTime temp = AmigaEpoch.AddDays(days);
+            DateTime temp = _amigaEpoch.AddDays(days);
             temp = temp.AddMinutes(minutes);
 
             return temp.AddMilliseconds(ticks * 20);
@@ -263,7 +263,7 @@ namespace Aaru.Helpers
             int    hours   = timestamp[2];
             int    minutes = timestamp[3];
 
-            DateTime temp = AmigaEpoch.AddDays(days);
+            DateTime temp = _amigaEpoch.AddDays(days);
             temp = temp.AddHours(hours);
             temp = temp.AddMinutes(minutes);
 
@@ -316,7 +316,8 @@ namespace Aaru.Helpers
         /// <summary>Convers a Solaris high resolution timestamp to .NET DateTime</summary>
         /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) => UnixEpoch.AddTicks((long)(hrTimeStamp / 100));
+        public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) =>
+            _unixEpoch.AddTicks((long)(hrTimeStamp / 100));
 
         /// <summary>Converts an OS-9 timestamp to .NET DateTime</summary>
         /// <param name="date">OS-9 timestamp</param>

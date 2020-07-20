@@ -39,29 +39,29 @@ namespace Aaru.Helpers
     {
         /// <summary>Converts a null-terminated (aka C string) ASCII byte array to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="CString">A null-terminated (aka C string) ASCII byte array</param>
-        public static string CToString(byte[] CString) => CToString(CString, Encoding.ASCII);
+        /// <param name="cString">A null-terminated (aka C string) ASCII byte array</param>
+        public static string CToString(byte[] cString) => CToString(cString, Encoding.ASCII);
 
         /// <summary>Converts a null-terminated (aka C string) byte array with the specified encoding to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="CString">A null-terminated (aka C string) byte array in the specified encoding</param>
+        /// <param name="cString">A null-terminated (aka C string) byte array in the specified encoding</param>
         /// <param name="encoding">Encoding.</param>
         /// <param name="twoBytes">Set if encoding uses 16-bit characters.</param>
         /// <param name="start">Start decodint at this position</param>
-        public static string CToString(byte[] CString, Encoding encoding, bool twoBytes = false, int start = 0)
+        public static string CToString(byte[] cString, Encoding encoding, bool twoBytes = false, int start = 0)
         {
-            if(CString == null)
+            if(cString == null)
                 return null;
 
             int len = 0;
 
-            for(int i = start; i < CString.Length; i++)
+            for(int i = start; i < cString.Length; i++)
             {
-                if(CString[i] == 0)
+                if(cString[i] == 0)
                     if(twoBytes)
                     {
-                        if(i + 1          < CString.Length &&
-                           CString[i + 1] == 0)
+                        if(i + 1          < cString.Length &&
+                           cString[i + 1] == 0)
                         {
                             len++;
 
@@ -78,67 +78,67 @@ namespace Aaru.Helpers
                 len--;
 
             byte[] dest = new byte[len];
-            Array.Copy(CString, start, dest, 0, len);
+            Array.Copy(cString, start, dest, 0, len);
 
             return len == 0 ? "" : encoding.GetString(dest);
         }
 
         /// <summary>Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
-        public static string PascalToString(byte[] PascalString) => PascalToString(PascalString, Encoding.ASCII);
+        /// <param name="pascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
+        public static string PascalToString(byte[] pascalString) => PascalToString(pascalString, Encoding.ASCII);
 
         /// <summary>Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
+        /// <param name="pascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
         /// <param name="start">Start decodint at this position</param>
-        public static string PascalToString(byte[] PascalString, Encoding encoding, int start = 0)
+        public static string PascalToString(byte[] pascalString, Encoding encoding, int start = 0)
         {
-            if(PascalString == null)
+            if(pascalString == null)
                 return null;
 
-            byte length = PascalString[start];
+            byte length = pascalString[start];
             int  len    = 0;
 
-            for(int i = start + 1; i < length + 1 && i < PascalString.Length; i++)
+            for(int i = start + 1; i < length + 1 && i < pascalString.Length; i++)
             {
-                if(PascalString[i] == 0)
+                if(pascalString[i] == 0)
                     break;
 
                 len++;
             }
 
             byte[] dest = new byte[len];
-            Array.Copy(PascalString, start + 1, dest, 0, len);
+            Array.Copy(pascalString, start + 1, dest, 0, len);
 
             return len == 0 ? "" : encoding.GetString(dest);
         }
 
         /// <summary>Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
-        public static string SpacePaddedToString(byte[] SpacePaddedString) =>
-            SpacePaddedToString(SpacePaddedString, Encoding.ASCII);
+        /// <param name="spacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
+        public static string SpacePaddedToString(byte[] spacePaddedString) =>
+            SpacePaddedToString(spacePaddedString, Encoding.ASCII);
 
         /// <summary>Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string</summary>
         /// <returns>The corresponding C# string</returns>
-        /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
+        /// <param name="spacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
         /// <param name="start">Start decodint at this position</param>
-        public static string SpacePaddedToString(byte[] SpacePaddedString, Encoding encoding, int start = 0)
+        public static string SpacePaddedToString(byte[] spacePaddedString, Encoding encoding, int start = 0)
         {
-            if(SpacePaddedString == null)
+            if(spacePaddedString == null)
                 return null;
 
             int len = start;
 
-            for(int i = SpacePaddedString.Length; i >= start; i--)
+            for(int i = spacePaddedString.Length; i >= start; i--)
             {
                 if(i == start)
                     return "";
 
-                if(SpacePaddedString[i - 1] == 0x20)
+                if(spacePaddedString[i - 1] == 0x20)
                     continue;
 
                 len = i;
@@ -146,7 +146,7 @@ namespace Aaru.Helpers
                 break;
             }
 
-            return len == 0 ? "" : encoding.GetString(SpacePaddedString, start, len);
+            return len == 0 ? "" : encoding.GetString(spacePaddedString, start, len);
         }
 
         /// <summary>Converts an OSTA compressed unicode byte array to a C# string</summary>
