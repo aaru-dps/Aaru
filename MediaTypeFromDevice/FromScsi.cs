@@ -71,8 +71,7 @@ namespace Aaru.CommonTypes
                 // Write-once device
                 case 0x04:
                 // Optical device
-                case 0x07:
-                    return GetFromOdc(mediumType, blocks, blockSize);
+                case 0x07: return GetFromOdc(mediumType, blocks, blockSize);
 
                 // MultiMedia Device
                 case 0x05: return GetFromMmc(model, mediumType, densityCode, blocks, blockSize);

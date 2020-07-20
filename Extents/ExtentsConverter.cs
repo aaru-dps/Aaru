@@ -56,7 +56,8 @@ namespace Aaru.CommonTypes.Extents
             for(ulong i = 0; i < (ulong)array.LongLength; i++)
                 array[i] = new ExtentType
                 {
-                    Start = tuples[i].Item1, End = tuples[i].Item2
+                    Start = tuples[i].Item1,
+                    End   = tuples[i].Item2
                 };
 
             return array;

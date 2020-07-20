@@ -235,9 +235,8 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
             for(int i = 0; i < descriptors; i++)
                 decoded.WriteSpeedPerformanceDescriptors[i] = new ModePage_2A_WriteDescriptor
                 {
-                    RotationControl =
-                        (byte)(pageResponse[1 + 32 + (i * 4)] & 0x07),
-                    WriteSpeed = (ushort)((pageResponse[2 + 32 + (i * 4)] << 8) + pageResponse[3 + 32 + (i * 4)])
+                    RotationControl = (byte)(pageResponse[1 + 32 + (i * 4)] & 0x07),
+                    WriteSpeed      = (ushort)((pageResponse[2 + 32 + (i * 4)] << 8) + pageResponse[3 + 32 + (i * 4)])
                 };
 
             return decoded;
