@@ -41,11 +41,12 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <inheritdoc cref="IWritableImage" />
     /// <summary>
     ///     Abstract class to implement disk image reading plugins that can contain floppy images. This interface is
     ///     needed because floppy formatting characteristics are not necesarily compatible with the whole LBA-oriented
-    ///     interface defined by <see cref="IMediaImage" />. All data expected by these methods is already decoded from its
-    ///     corresponding bitstream.
+    ///     interface defined by <see cref="T:Aaru.CommonTypes.Interfaces.IMediaImage" />. All data expected by these methods
+    ///     is already decoded from its corresponding bitstream.
     /// </summary>
     public interface IWritableFloppyImage : IFloppyImage, IWritableImage
     {

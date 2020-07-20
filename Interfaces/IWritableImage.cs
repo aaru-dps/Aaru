@@ -44,6 +44,7 @@ using Schemas;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <inheritdoc />
     /// <summary>
     ///     Abstract class to implement disk image writing plugins. TODO: This interface is subject to change until
     ///     notice.

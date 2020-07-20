@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <inheritdoc cref="IMediaImage" />
     /// <summary>Abstract class to implement disk image reading plugins.</summary>
     public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVerifiableSectorsImage
     {

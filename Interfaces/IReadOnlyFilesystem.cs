@@ -44,6 +44,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.CommonTypes.Interfaces
 {
+    /// <inheritdoc />
     /// <summary>Interface to implement filesystem plugins.</summary>
     public interface IReadOnlyFilesystem : IFilesystem
     {
