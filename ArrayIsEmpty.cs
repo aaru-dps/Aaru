@@ -32,7 +32,7 @@
 
 using System.Linq;
 
-namespace Aaru
+namespace Aaru.Helpers
 {
     public static partial class ArrayHelpers
     {

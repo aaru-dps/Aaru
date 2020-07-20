@@ -34,7 +34,7 @@ using System;
 using System.Text;
 using Aaru.Console;
 
-namespace Aaru
+namespace Aaru.Helpers
 {
     public static class DateHandlers
     {

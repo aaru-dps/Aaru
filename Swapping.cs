@@ -32,7 +32,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Aaru
+namespace Aaru.Helpers
 {
     public static class Swapping
     {

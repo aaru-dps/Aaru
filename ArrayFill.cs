@@ -27,7 +27,7 @@
 using System;
 using System.Text;
 
-namespace Aaru
+namespace Aaru.Helpers
 {
     public static partial class ArrayHelpers
     {

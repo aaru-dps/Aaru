@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru
+namespace Aaru.Helpers
 {
     public static partial class ArrayHelpers
     {
