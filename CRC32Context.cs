@@ -43,17 +43,17 @@ namespace Aaru.Checksums
         const uint CRC32_ISO_POLY = 0xEDB88320;
         const uint CRC32_ISO_SEED = 0xFFFFFFFF;
 
-        readonly uint   finalSeed;
-        readonly uint[] table;
-        uint            hashInt;
+        readonly uint   _finalSeed;
+        readonly uint[] _table;
+        uint            _hashInt;
 
         /// <summary>Initializes the CRC32 table and seed as CRC32-ISO</summary>
         public Crc32Context()
         {
-            hashInt   = CRC32_ISO_SEED;
-            finalSeed = CRC32_ISO_SEED;
+            _hashInt   = CRC32_ISO_SEED;
+            _finalSeed = CRC32_ISO_SEED;
 
-            table = new uint[256];
+            _table = new uint[256];
 
             for(int i = 0; i < 256; i++)
             {
@@ -65,17 +65,17 @@ namespace Aaru.Checksums
                     else
                         entry = entry >> 1;
 
-                table[i] = entry;
+                _table[i] = entry;
             }
         }
 
         /// <summary>Initializes the CRC32 table with a custom polynomial and seed</summary>
         public Crc32Context(uint polynomial, uint seed)
         {
-            hashInt   = seed;
-            finalSeed = seed;
+            _hashInt   = seed;
+            _finalSeed = seed;
 
-            table = new uint[256];
+            _table = new uint[256];
 
             for(int i = 0; i < 256; i++)
             {
@@ -87,7 +87,7 @@ namespace Aaru.Checksums
                     else
                         entry = entry >> 1;
 
-                table[i] = entry;
+                _table[i] = entry;
             }
         }
 
@@ -98,7 +98,7 @@ namespace Aaru.Checksums
         public void Update(byte[] data, uint len)
         {
             for(int i = 0; i < len; i++)
-                hashInt = (hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xff)];
+                _hashInt = (_hashInt >> 8) ^ _table[data[i] ^ (_hashInt & 0xff)];
         }
 
         /// <inheritdoc />
@@ -108,7 +108,7 @@ namespace Aaru.Checksums
 
         /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes(hashInt ^ finalSeed);
+        public byte[] Final() => BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed);
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
@@ -116,8 +116,8 @@ namespace Aaru.Checksums
         {
             var crc32Output = new StringBuilder();
 
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^ finalSeed).Length; i++)
-                crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt ^ finalSeed)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed).Length; i++)
+                crc32Output.Append(BigEndianBitConverter.GetBytes(_hashInt ^ _finalSeed)[i].ToString("x2"));
 
             return crc32Output.ToString();
         }

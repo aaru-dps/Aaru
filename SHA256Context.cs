@@ -40,16 +40,16 @@ namespace Aaru.Checksums
     /// <summary>Wraps up .NET SHA256 implementation to a Init(), Update(), Final() context.</summary>
     public class Sha256Context : IChecksum
     {
-        readonly SHA256 sha256Provider;
+        readonly SHA256 _provider;
 
         /// <summary>Initializes the SHA256 hash provider</summary>
-        public Sha256Context() => sha256Provider = SHA256.Create();
+        public Sha256Context() => _provider = SHA256.Create();
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => sha256Provider.TransformBlock(data, 0, (int)len, data, 0);
+        public void Update(byte[] data, uint len) => _provider.TransformBlock(data, 0, (int)len, data, 0);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -60,19 +60,19 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
 
-            return sha256Provider.Hash;
+            return _provider.Hash;
         }
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            sha256Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
             var sha256Output = new StringBuilder();
 
-            foreach(byte h in sha256Provider.Hash)
+            foreach(byte h in _provider.Hash)
                 sha256Output.Append(h.ToString("x2"));
 
             return sha256Output.ToString();

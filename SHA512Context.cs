@@ -40,16 +40,16 @@ namespace Aaru.Checksums
     /// <summary>Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.</summary>
     public class Sha512Context : IChecksum
     {
-        readonly SHA512 sha512Provider;
+        readonly SHA512 _provider;
 
         /// <summary>Initializes the SHA512 hash provider</summary>
-        public Sha512Context() => sha512Provider = SHA512.Create();
+        public Sha512Context() => _provider = SHA512.Create();
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => sha512Provider.TransformBlock(data, 0, (int)len, data, 0);
+        public void Update(byte[] data, uint len) => _provider.TransformBlock(data, 0, (int)len, data, 0);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -60,19 +60,19 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
 
-            return sha512Provider.Hash;
+            return _provider.Hash;
         }
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            sha512Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
             var sha512Output = new StringBuilder();
 
-            foreach(byte h in sha512Provider.Hash)
+            foreach(byte h in _provider.Hash)
                 sha512Output.Append(h.ToString("x2"));
 
             return sha512Output.ToString();

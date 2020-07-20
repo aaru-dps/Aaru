@@ -41,13 +41,13 @@ namespace Aaru.Checksums
     public class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
-        ushort       sum1, sum2;
+        ushort       _sum1, _sum2;
 
         /// <summary>Initializes the Adler-32 sums</summary>
         public Adler32Context()
         {
-            sum1 = 1;
-            sum2 = 0;
+            _sum1 = 1;
+            _sum2 = 0;
         }
 
         /// <inheritdoc />
@@ -58,8 +58,8 @@ namespace Aaru.Checksums
         {
             for(int i = 0; i < len; i++)
             {
-                sum1 = (ushort)((sum1 + data[i]) % ADLER_MODULE);
-                sum2 = (ushort)((sum2 + sum1)    % ADLER_MODULE);
+                _sum1 = (ushort)((_sum1 + data[i]) % ADLER_MODULE);
+                _sum2 = (ushort)((_sum2 + _sum1)   % ADLER_MODULE);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            uint finalSum = (uint)((sum2 << 16) | sum1);
+            uint finalSum = (uint)((_sum2 << 16) | _sum1);
 
             return BigEndianBitConverter.GetBytes(finalSum);
         }
@@ -81,7 +81,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            uint finalSum    = (uint)((sum2 << 16) | sum1);
+            uint finalSum    = (uint)((_sum2 << 16) | _sum1);
             var  adlerOutput = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)

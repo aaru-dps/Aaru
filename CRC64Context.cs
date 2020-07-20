@@ -43,16 +43,16 @@ namespace Aaru.Checksums
         public const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
         public const ulong CRC64_ECMA_SEED = 0xFFFFFFFFFFFFFFFF;
 
-        readonly ulong   finalSeed;
-        readonly ulong[] table;
-        ulong            hashInt;
+        readonly ulong   _finalSeed;
+        readonly ulong[] _table;
+        ulong            _hashInt;
 
         /// <summary>Initializes the CRC64 table and seed as CRC64-ECMA</summary>
         public Crc64Context()
         {
-            hashInt = CRC64_ECMA_SEED;
+            _hashInt = CRC64_ECMA_SEED;
 
-            table = new ulong[256];
+            _table = new ulong[256];
 
             for(int i = 0; i < 256; i++)
             {
@@ -64,18 +64,18 @@ namespace Aaru.Checksums
                     else
                         entry = entry >> 1;
 
-                table[i] = entry;
+                _table[i] = entry;
             }
 
-            finalSeed = CRC64_ECMA_SEED;
+            _finalSeed = CRC64_ECMA_SEED;
         }
 
         /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
         public Crc64Context(ulong polynomial, ulong seed)
         {
-            hashInt = seed;
+            _hashInt = seed;
 
-            table = new ulong[256];
+            _table = new ulong[256];
 
             for(int i = 0; i < 256; i++)
             {
@@ -87,10 +87,10 @@ namespace Aaru.Checksums
                     else
                         entry = entry >> 1;
 
-                table[i] = entry;
+                _table[i] = entry;
             }
 
-            finalSeed = seed;
+            _finalSeed = seed;
         }
 
         /// <inheritdoc />
@@ -100,7 +100,7 @@ namespace Aaru.Checksums
         public void Update(byte[] data, uint len)
         {
             for(int i = 0; i < len; i++)
-                hashInt = (hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xff)];
+                _hashInt = (_hashInt >> 8) ^ _table[data[i] ^ (_hashInt & 0xff)];
         }
 
         /// <inheritdoc />
@@ -110,7 +110,7 @@ namespace Aaru.Checksums
 
         /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes(hashInt ^= finalSeed);
+        public byte[] Final() => BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed);
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
@@ -118,8 +118,8 @@ namespace Aaru.Checksums
         {
             var crc64Output = new StringBuilder();
 
-            for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^= finalSeed).Length; i++)
-                crc64Output.Append(BigEndianBitConverter.GetBytes(hashInt ^= finalSeed)[i].ToString("x2"));
+            for(int i = 0; i < BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed).Length; i++)
+                crc64Output.Append(BigEndianBitConverter.GetBytes(_hashInt ^= _finalSeed)[i].ToString("x2"));
 
             return crc64Output.ToString();
         }

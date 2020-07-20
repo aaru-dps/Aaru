@@ -58,7 +58,7 @@ namespace Aaru.Checksums
         const uint FUZZY_MAX_RESULT = (2 * SPAMSUM_LENGTH) + 20;
 
         //"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        readonly byte[] b64 =
+        readonly byte[] _b64 =
         {
             0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52,
             0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A,
@@ -66,27 +66,27 @@ namespace Aaru.Checksums
             0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2B, 0x2F
         };
 
-        FuzzyState self;
+        FuzzyState _self;
 
         /// <summary>Initializes the SpamSum structures</summary>
         public SpamSumContext()
         {
-            self = new FuzzyState
+            _self = new FuzzyState
             {
                 Bh = new BlockhashContext[NUM_BLOCKHASHES]
             };
 
             for(int i = 0; i < NUM_BLOCKHASHES; i++)
-                self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
+                _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
-            self.Bhstart          = 0;
-            self.Bhend            = 1;
-            self.Bh[0].H          = HASH_INIT;
-            self.Bh[0].Halfh      = HASH_INIT;
-            self.Bh[0].Digest[0]  = 0;
-            self.Bh[0].Halfdigest = 0;
-            self.Bh[0].Dlen       = 0;
-            self.TotalSize        = 0;
+            _self.Bhstart          = 0;
+            _self.Bhend            = 1;
+            _self.Bh[0].H          = HASH_INIT;
+            _self.Bh[0].Halfh      = HASH_INIT;
+            _self.Bh[0].Digest[0]  = 0;
+            _self.Bh[0].Halfdigest = 0;
+            _self.Bh[0].Dlen       = 0;
+            _self.TotalSize        = 0;
             roll_init();
         }
 
@@ -96,7 +96,7 @@ namespace Aaru.Checksums
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            self.TotalSize += len;
+            _self.TotalSize += len;
 
             for(int i = 0; i < len; i++)
                 fuzzy_engine_step(data[i]);
@@ -121,7 +121,7 @@ namespace Aaru.Checksums
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void roll_init() => self.Roll = new RollState
+        void roll_init() => _self.Roll = new RollState
         {
             Window = new byte[ROLLING_WINDOW]
         };
@@ -139,24 +139,24 @@ namespace Aaru.Checksums
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void roll_hash(byte c)
         {
-            self.Roll.H2 -= self.Roll.H1;
-            self.Roll.H2 += ROLLING_WINDOW * c;
+            _self.Roll.H2 -= _self.Roll.H1;
+            _self.Roll.H2 += ROLLING_WINDOW * c;
 
-            self.Roll.H1 += c;
-            self.Roll.H1 -= self.Roll.Window[self.Roll.N % ROLLING_WINDOW];
+            _self.Roll.H1 += c;
+            _self.Roll.H1 -= _self.Roll.Window[_self.Roll.N % ROLLING_WINDOW];
 
-            self.Roll.Window[self.Roll.N % ROLLING_WINDOW] = c;
-            self.Roll.N++;
+            _self.Roll.Window[_self.Roll.N % ROLLING_WINDOW] = c;
+            _self.Roll.N++;
 
             /* The original spamsum AND'ed this value with 0xFFFFFFFF which
              * in theory should have no effect. This AND has been removed
              * for performance (jk) */
-            self.Roll.H3 <<= 5;
-            self.Roll.H3 ^=  c;
+            _self.Roll.H3 <<= 5;
+            _self.Roll.H3 ^=  c;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        uint roll_sum() => self.Roll.H1 + self.Roll.H2 + self.Roll.H3;
+        uint roll_sum() => _self.Roll.H1 + _self.Roll.H2 + _self.Roll.H3;
 
         /* A simple non-rolling hash, based on the FNV hash. */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -168,44 +168,44 @@ namespace Aaru.Checksums
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void fuzzy_try_fork_blockhash()
         {
-            if(self.Bhend >= NUM_BLOCKHASHES)
+            if(_self.Bhend >= NUM_BLOCKHASHES)
                 return;
 
-            if(self.Bhend == 0) // assert
+            if(_self.Bhend == 0) // assert
                 throw new Exception("Assertion failed");
 
-            uint obh = self.Bhend - 1;
-            uint nbh = self.Bhend;
-            self.Bh[nbh].H          = self.Bh[obh].H;
-            self.Bh[nbh].Halfh      = self.Bh[obh].Halfh;
-            self.Bh[nbh].Digest[0]  = 0;
-            self.Bh[nbh].Halfdigest = 0;
-            self.Bh[nbh].Dlen       = 0;
-            ++self.Bhend;
+            uint obh = _self.Bhend - 1;
+            uint nbh = _self.Bhend;
+            _self.Bh[nbh].H          = _self.Bh[obh].H;
+            _self.Bh[nbh].Halfh      = _self.Bh[obh].Halfh;
+            _self.Bh[nbh].Digest[0]  = 0;
+            _self.Bh[nbh].Halfdigest = 0;
+            _self.Bh[nbh].Dlen       = 0;
+            ++_self.Bhend;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void fuzzy_try_reduce_blockhash()
         {
-            if(self.Bhstart >= self.Bhend)
+            if(_self.Bhstart >= _self.Bhend)
                 throw new Exception("Assertion failed");
 
-            if(self.Bhend - self.Bhstart < 2)
+            if(_self.Bhend - _self.Bhstart < 2)
                 /* Need at least two working hashes. */
                 return;
 
-            if((ulong)SSDEEP_BS(self.Bhstart) * SPAMSUM_LENGTH >= self.TotalSize)
+            if((ulong)SSDEEP_BS(_self.Bhstart) * SPAMSUM_LENGTH >= _self.TotalSize)
                 /* Initial blocksize estimate would select this or a smaller
                  * blocksize. */
                 return;
 
-            if(self.Bh[self.Bhstart + 1].Dlen < SPAMSUM_LENGTH / 2)
+            if(_self.Bh[_self.Bhstart + 1].Dlen < SPAMSUM_LENGTH / 2)
                 /* Estimate adjustment would select this blocksize. */
                 return;
 
             /* At this point we are clearly no longer interested in the
              * start_blocksize. Get rid of it. */
-            ++self.Bhstart;
+            ++_self.Bhstart;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -218,13 +218,13 @@ namespace Aaru.Checksums
             roll_hash(c);
             ulong h = roll_sum();
 
-            for(i = self.Bhstart; i < self.Bhend; ++i)
+            for(i = _self.Bhstart; i < _self.Bhend; ++i)
             {
-                self.Bh[i].H     = sum_hash(c, self.Bh[i].H);
-                self.Bh[i].Halfh = sum_hash(c, self.Bh[i].Halfh);
+                _self.Bh[i].H     = sum_hash(c, _self.Bh[i].H);
+                _self.Bh[i].Halfh = sum_hash(c, _self.Bh[i].Halfh);
             }
 
-            for(i = self.Bhstart; i < self.Bhend; ++i)
+            for(i = _self.Bhstart; i < _self.Bhend; ++i)
             {
                 /* With growing blocksize almost no runs fail the next test. */
                 if(h % SSDEEP_BS(i) != SSDEEP_BS(i) - 1)
@@ -236,13 +236,13 @@ namespace Aaru.Checksums
                 /* We have hit a reset point. We now emit hashes which are
                  * based on all characters in the piece of the message between
                  * the last reset point and this one */
-                if(0 == self.Bh[i].Dlen)
+                if(0 == _self.Bh[i].Dlen)
                     fuzzy_try_fork_blockhash();
 
-                self.Bh[i].Digest[self.Bh[i].Dlen] = b64[self.Bh[i].H     % 64];
-                self.Bh[i].Halfdigest              = b64[self.Bh[i].Halfh % 64];
+                _self.Bh[i].Digest[_self.Bh[i].Dlen] = _b64[_self.Bh[i].H     % 64];
+                _self.Bh[i].Halfdigest               = _b64[_self.Bh[i].Halfh % 64];
 
-                if(self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
+                if(_self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
                 {
                     /* We can have a problem with the tail overflowing. The
                      * easiest way to cope with this is to only reset the
@@ -250,14 +250,14 @@ namespace Aaru.Checksums
                      * our signature. This has the effect of combining the
                      * last few pieces of the message into a single piece
                      * */
-                    self.Bh[i].Digest[++self.Bh[i].Dlen] = 0;
-                    self.Bh[i].H                         = HASH_INIT;
+                    _self.Bh[i].Digest[++_self.Bh[i].Dlen] = 0;
+                    _self.Bh[i].H                          = HASH_INIT;
 
-                    if(self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2)
+                    if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2)
                         continue;
 
-                    self.Bh[i].Halfh      = HASH_INIT;
-                    self.Bh[i].Halfdigest = 0;
+                    _self.Bh[i].Halfh      = HASH_INIT;
+                    _self.Bh[i].Halfdigest = 0;
                 }
                 else
                     fuzzy_try_reduce_blockhash();
@@ -269,19 +269,19 @@ namespace Aaru.Checksums
         void FuzzyDigest(out byte[] result)
         {
             var  sb     = new StringBuilder();
-            uint bi     = self.Bhstart;
+            uint bi     = _self.Bhstart;
             uint h      = roll_sum();
             int  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
             result = new byte[FUZZY_MAX_RESULT];
 
             /* Verify that our elimination was not overeager. */
-            if(!(bi == 0 || ((ulong)SSDEEP_BS(bi) / 2) * SPAMSUM_LENGTH < self.TotalSize))
+            if(!(bi == 0 || ((ulong)SSDEEP_BS(bi) / 2) * SPAMSUM_LENGTH < _self.TotalSize))
                 throw new Exception("Assertion failed");
 
             int resultOff = 0;
 
             /* Initial blocksize guess. */
-            while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < self.TotalSize)
+            while((ulong)SSDEEP_BS(bi) * SPAMSUM_LENGTH < _self.TotalSize)
             {
                 ++bi;
 
@@ -290,15 +290,15 @@ namespace Aaru.Checksums
             }
 
             /* Adapt blocksize guess to actual digest length. */
-            while(bi >= self.Bhend)
+            while(bi >= _self.Bhend)
                 --bi;
 
-            while(bi               > self.Bhstart &&
-                  self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+            while(bi                > _self.Bhstart &&
+                  _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
                 --bi;
 
-            if(bi               > 0 &&
-               self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
+            if(bi                > 0 &&
+               _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
                 throw new Exception("Assertion failed");
 
             sb.AppendFormat("{0}:", SSDEEP_BS(bi));
@@ -317,12 +317,12 @@ namespace Aaru.Checksums
 
             resultOff = i;
 
-            i = (int)self.Bh[bi].Dlen;
+            i = (int)_self.Bh[bi].Dlen;
 
             if(i > remain)
                 throw new Exception("Assertion failed");
 
-            Array.Copy(self.Bh[bi].Digest, 0, result, resultOff, i);
+            Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
             resultOff += i;
             remain    -= i;
 
@@ -331,7 +331,7 @@ namespace Aaru.Checksums
                 if(remain <= 0)
                     throw new Exception("Assertion failed");
 
-                result[resultOff] = b64[self.Bh[bi].H % 64];
+                result[resultOff] = _b64[_self.Bh[bi].H % 64];
 
                 if(i                 < 3                      ||
                    result[resultOff] != result[resultOff - 1] ||
@@ -342,12 +342,12 @@ namespace Aaru.Checksums
                     --remain;
                 }
             }
-            else if(self.Bh[bi].Digest[i] != 0)
+            else if(_self.Bh[bi].Digest[i] != 0)
             {
                 if(remain <= 0)
                     throw new Exception("Assertion failed");
 
-                result[resultOff] = self.Bh[bi].Digest[i];
+                result[resultOff] = _self.Bh[bi].Digest[i];
 
                 if(i                 < 3                      ||
                    result[resultOff] != result[resultOff - 1] ||
@@ -365,15 +365,15 @@ namespace Aaru.Checksums
             result[resultOff++] = 0x3A; // ':'
             --remain;
 
-            if(bi < self.Bhend - 1)
+            if(bi < _self.Bhend - 1)
             {
                 ++bi;
-                i = (int)self.Bh[bi].Dlen;
+                i = (int)_self.Bh[bi].Dlen;
 
                 if(i > remain)
                     throw new Exception("Assertion failed");
 
-                Array.Copy(self.Bh[bi].Digest, 0, result, resultOff, i);
+                Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
                 resultOff += i;
                 remain    -= i;
 
@@ -382,8 +382,8 @@ namespace Aaru.Checksums
                     if(remain <= 0)
                         throw new Exception("Assertion failed");
 
-                    h                 = self.Bh[bi].Halfh;
-                    result[resultOff] = b64[h % 64];
+                    h                 = _self.Bh[bi].Halfh;
+                    result[resultOff] = _b64[h % 64];
 
                     if(i                 < 3                      ||
                        result[resultOff] != result[resultOff - 1] ||
@@ -396,7 +396,7 @@ namespace Aaru.Checksums
                 }
                 else
                 {
-                    i = self.Bh[bi].Halfdigest;
+                    i = _self.Bh[bi].Halfdigest;
 
                     if(i != 0)
                     {
@@ -418,13 +418,13 @@ namespace Aaru.Checksums
             }
             else if(h != 0)
             {
-                if(self.Bh[bi].Dlen != 0)
+                if(_self.Bh[bi].Dlen != 0)
                     throw new Exception("Assertion failed");
 
                 if(remain <= 0)
                     throw new Exception("Assertion failed");
 
-                result[resultOff++] = b64[self.Bh[bi].H % 64];
+                result[resultOff++] = _b64[_self.Bh[bi].H % 64];
                 /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this
                  * digest has length 1. */
                 --remain;

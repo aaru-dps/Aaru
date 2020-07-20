@@ -41,9 +41,9 @@ namespace Aaru.Checksums
     /// <summary>Implements ReedSolomon and CRC32 algorithms as used by CD-ROM</summary>
     public static class CdChecksums
     {
-        static byte[] eccFTable;
-        static byte[] eccBTable;
-        static uint[] edcTable;
+        static byte[] _eccFTable;
+        static byte[] _eccBTable;
+        static uint[] _edcTable;
 
         public static bool? CheckCdSector(byte[] buffer) => CheckCdSector(buffer, out _, out _, out _);
 
@@ -96,21 +96,21 @@ namespace Aaru.Checksums
 
         static void EccInit()
         {
-            eccFTable = new byte[256];
-            eccBTable = new byte[256];
-            edcTable  = new uint[256];
+            _eccFTable = new byte[256];
+            _eccBTable = new byte[256];
+            _edcTable  = new uint[256];
 
             for(uint i = 0; i < 256; i++)
             {
                 uint edc = i;
                 uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
-                eccFTable[i]     = (byte)j;
-                eccBTable[i ^ j] = (byte)i;
+                _eccFTable[i]     = (byte)j;
+                _eccBTable[i ^ j] = (byte)i;
 
                 for(j = 0; j < 8; j++)
                     edc = (edc >> 1) ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
 
-                edcTable[i] = edc;
+                _edcTable[i] = edc;
             }
         }
 
@@ -137,10 +137,10 @@ namespace Aaru.Checksums
 
                     eccA ^= temp;
                     eccB ^= temp;
-                    eccA =  eccFTable[eccA];
+                    eccA =  _eccFTable[eccA];
                 }
 
-                eccA = eccBTable[eccFTable[eccA] ^ eccB];
+                eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
                 if(ecc[major]              != eccA ||
                    ecc[major + majorCount] != (eccA ^ eccB))
@@ -356,7 +356,7 @@ namespace Aaru.Checksums
             int pos = 0;
 
             for(; size > 0; size--)
-                edc = (edc >> 8) ^ edcTable[(edc ^ src[pos++]) & 0xFF];
+                edc = (edc >> 8) ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
 
             return edc;
         }

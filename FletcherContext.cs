@@ -43,13 +43,13 @@ namespace Aaru.Checksums
     public class Fletcher32Context : IChecksum
     {
         const ushort FLETCHER_MODULE = 0xFFFF;
-        ushort       sum1, sum2;
+        ushort       _sum1, _sum2;
 
         /// <summary>Initializes the Fletcher-32 sums</summary>
         public Fletcher32Context()
         {
-            sum1 = 0xFFFF;
-            sum2 = 0xFFFF;
+            _sum1 = 0xFFFF;
+            _sum2 = 0xFFFF;
         }
 
         /// <inheritdoc />
@@ -60,8 +60,8 @@ namespace Aaru.Checksums
         {
             for(int i = 0; i < len; i++)
             {
-                sum1 = (ushort)((sum1 + data[i]) % FLETCHER_MODULE);
-                sum2 = (ushort)((sum2 + sum1)    % FLETCHER_MODULE);
+                _sum1 = (ushort)((_sum1 + data[i]) % FLETCHER_MODULE);
+                _sum2 = (ushort)((_sum2 + _sum1)   % FLETCHER_MODULE);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            uint finalSum = (uint)((sum2 << 16) | sum1);
+            uint finalSum = (uint)((_sum2 << 16) | _sum1);
 
             return BigEndianBitConverter.GetBytes(finalSum);
         }
@@ -83,7 +83,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            uint finalSum       = (uint)((sum2 << 16) | sum1);
+            uint finalSum       = (uint)((_sum2 << 16) | _sum1);
             var  fletcherOutput = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
@@ -168,13 +168,13 @@ namespace Aaru.Checksums
     public class Fletcher16Context : IChecksum
     {
         const byte FLETCHER_MODULE = 0xFF;
-        byte       sum1, sum2;
+        byte       _sum1, _sum2;
 
         /// <summary>Initializes the Fletcher-16 sums</summary>
         public Fletcher16Context()
         {
-            sum1 = 0xFF;
-            sum2 = 0xFF;
+            _sum1 = 0xFF;
+            _sum2 = 0xFF;
         }
 
         /// <inheritdoc />
@@ -185,8 +185,8 @@ namespace Aaru.Checksums
         {
             for(int i = 0; i < len; i++)
             {
-                sum1 = (byte)((sum1 + data[i]) % FLETCHER_MODULE);
-                sum2 = (byte)((sum2 + sum1)    % FLETCHER_MODULE);
+                _sum1 = (byte)((_sum1 + data[i]) % FLETCHER_MODULE);
+                _sum2 = (byte)((_sum2 + _sum1)   % FLETCHER_MODULE);
             }
         }
 
@@ -199,7 +199,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            ushort finalSum = (ushort)((sum2 << 8) | sum1);
+            ushort finalSum = (ushort)((_sum2 << 8) | _sum1);
 
             return BigEndianBitConverter.GetBytes(finalSum);
         }
@@ -208,7 +208,7 @@ namespace Aaru.Checksums
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            ushort finalSum       = (ushort)((sum2 << 8) | sum1);
+            ushort finalSum       = (ushort)((_sum2 << 8) | _sum1);
             var    fletcherOutput = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)

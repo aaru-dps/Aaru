@@ -40,16 +40,16 @@ namespace Aaru.Checksums
     /// <summary>Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.</summary>
     public class Sha1Context : IChecksum
     {
-        readonly SHA1 sha1Provider;
+        readonly SHA1 _provider;
 
         /// <summary>Initializes the SHA1 hash provider</summary>
-        public Sha1Context() => sha1Provider = SHA1.Create();
+        public Sha1Context() => _provider = SHA1.Create();
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len) => sha1Provider.TransformBlock(data, 0, (int)len, data, 0);
+        public void Update(byte[] data, uint len) => _provider.TransformBlock(data, 0, (int)len, data, 0);
 
         /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
@@ -60,19 +60,19 @@ namespace Aaru.Checksums
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
-            sha1Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
 
-            return sha1Provider.Hash;
+            return _provider.Hash;
         }
 
         /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            sha1Provider.TransformFinalBlock(new byte[0], 0, 0);
+            _provider.TransformFinalBlock(new byte[0], 0, 0);
             var sha1Output = new StringBuilder();
 
-            foreach(byte h in sha1Provider.Hash)
+            foreach(byte h in _provider.Hash)
                 sha1Output.Append(h.ToString("x2"));
 
             return sha1Output.ToString();
