@@ -52,34 +52,34 @@ namespace Aaru.Decoders.Xbox
             var ss = new SecuritySector
             {
                 DiskCategory = (DiskCategory)((response[0] & 0xF0) >> 4),
-                PartVersion  = (byte)(response[0] & 0x0F),
-                DiscSize     = (DVDSize)((response[1] & 0xF0) >> 4),
-                MaximumRate  = (MaximumRateField)(response[1] & 0x0F),
-                Reserved3 =
-                    (response[2] & 0x80) ==
-                    0x80,
+                PartVersion = (byte)(response[0] & 0x0F),
+                DiscSize = (DVDSize)((response[1] & 0xF0) >> 4),
+                MaximumRate = (MaximumRateField)(response[1] & 0x0F),
+                Reserved3 = (response[2] & 0x80) == 0x80,
                 Layers = (byte)((response[2] & 0x60) >> 5),
-                TrackPath =
-                    (response[2] & 0x08) ==
-                    0x08,
-                LayerType     = (LayerTypeFieldMask)(response[2] & 0x07),
+                TrackPath = (response[2] & 0x08) == 0x08,
+                LayerType = (LayerTypeFieldMask)(response[2] & 0x07),
                 LinearDensity = (LinearDensityField)((response[3] & 0xF0) >> 4),
-                TrackDensity  = (TrackDensityField)(response[3] & 0x0F),
-                DataAreaStartPSN =
-                    (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
-                DataAreaEndPSN =
-                    (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
-                Layer0EndPSN =
-                    (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]),
-                Unknown1           = response[27], Unknown2              = new byte[28],
-                Unknown3           = new byte[436], Unknown4             = new byte[4],
-                Unknown5           = new byte[43], ChallengeTableVersion = response[768],
+                TrackDensity = (TrackDensityField)(response[3] & 0x0F),
+                DataAreaStartPSN = (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),
+                DataAreaEndPSN = (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
+                Layer0EndPSN = (uint)((response[12] << 24) + (response[13] << 16) + (response[14] << 8) + response[15]),
+                Unknown1 = response[27],
+                Unknown2 = new byte[28],
+                Unknown3 = new byte[436],
+                Unknown4 = new byte[4],
+                Unknown5 = new byte[43],
+                ChallengeTableVersion = response[768],
                 NoChallengeEntries = response[769],
-                ChallengeEntries   = new ChallengeEntry[23], Unknown6 = response[1023],
-                Unknown7           = new byte[48],
-                Unknown8           = new byte[16], Unknown9                    = new byte[16],
-                Unknown10          = new byte[303], Unknown11                  = new byte[104],
-                Extents            = new SecuritySectorExtent[23], ExtentsCopy = new SecuritySectorExtent[23]
+                ChallengeEntries = new ChallengeEntry[23],
+                Unknown6 = response[1023],
+                Unknown7 = new byte[48],
+                Unknown8 = new byte[16],
+                Unknown9 = new byte[16],
+                Unknown10 = new byte[303],
+                Unknown11 = new byte[104],
+                Extents = new SecuritySectorExtent[23],
+                ExtentsCopy = new SecuritySectorExtent[23]
             };
 
             Array.Copy(response, 256, ss.Unknown2, 0, 28);
@@ -90,7 +90,8 @@ namespace Aaru.Decoders.Xbox
             for(int i = 0; i < 23; i++)
                 ss.ChallengeEntries[i] = new ChallengeEntry
                 {
-                    Level = response[770 + (i * 11) + 0], ChallengeId = response[770 + (i * 11) + 1],
+                    Level       = response[770 + (i * 11) + 0],
+                    ChallengeId = response[770 + (i * 11) + 1],
                     ChallengeValue = (uint)((response[770 + (i * 11) + 2] << 24) +
                                             (response[770 + (i * 11) + 3] << 16) + (response[770 + (i * 11) + 4] << 8) +
                                             response[770 + (i * 11) + 5]),

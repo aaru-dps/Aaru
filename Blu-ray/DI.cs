@@ -109,7 +109,8 @@ namespace Aaru.Decoders.Bluray
 
             var decoded = new DiscInformation
             {
-                DataLength = BigEndianBitConverter.ToUInt16(DIResponse, 0), Reserved1 = DIResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(DIResponse, 0),
+                Reserved1  = DIResponse[2],
                 Reserved2  = DIResponse[3]
             };
 

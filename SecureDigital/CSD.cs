@@ -100,15 +100,17 @@ namespace Aaru.Decoders.SecureDigital
 
             var csd = new CSD
             {
-                Structure               = (byte)((response[0] & 0xC0) >> 6), TAAC = response[1],
+                Structure               = (byte)((response[0] & 0xC0) >> 6),
+                TAAC                    = response[1],
                 NSAC                    = response[2],
                 Speed                   = response[3],
                 Classes                 = (ushort)((response[4] << 4) + ((response[5] & 0xF0) >> 4)),
-                ReadBlockLength         = (byte)(response[5] & 0x0F), ReadsPartialBlocks = (response[6] & 0x80) == 0x80,
-                WriteMisalignment       = (response[6]       & 0x40)                                            == 0x40,
-                ReadMisalignment        = (response[6]       & 0x20)                                            == 0x20,
-                DSRImplemented          = (response[6]       & 0x10)                                            == 0x10,
-                EraseBlockEnable        = (response[10]      & 0x40)                                            == 0x40,
+                ReadBlockLength         = (byte)(response[5] & 0x0F),
+                ReadsPartialBlocks      = (response[6]       & 0x80) == 0x80,
+                WriteMisalignment       = (response[6]       & 0x40) == 0x40,
+                ReadMisalignment        = (response[6]       & 0x20) == 0x20,
+                DSRImplemented          = (response[6]       & 0x10) == 0x10,
+                EraseBlockEnable        = (response[10]      & 0x40) == 0x40,
                 EraseSectorSize         = (byte)(((response[10] & 0x3F) << 1) + ((response[11] & 0x80) >> 7)),
                 WriteProtectGroupSize   = (byte)(response[11] & 0x7F),
                 WriteProtectGroupEnable = (response[12]       & 0x80) == 0x80,
@@ -120,8 +122,7 @@ namespace Aaru.Decoders.SecureDigital
                 PermanentWriteProtect   = (response[14] & 0x20) == 0x20,
                 TemporaryWriteProtect   = (response[14] & 0x10) == 0x10,
                 FileFormat              = (byte)((response[14] & 0x0C) >> 2),
-                CRC =
-                    (byte)((response[15] & 0xFE) >> 1)
+                CRC                     = (byte)((response[15] & 0xFE) >> 1)
             };
 
             if(csd.Structure == 0)

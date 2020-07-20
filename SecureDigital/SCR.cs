@@ -78,15 +78,17 @@ namespace Aaru.Decoders.SecureDigital
 
             var scr = new SCR
             {
-                Structure            = (byte)((response[0] & 0xF0) >> 4), Spec = (byte)(response[0] & 0x0F),
-                DataStatusAfterErase = (response[1]                                                 & 0x80) == 0x80,
+                Structure            = (byte)((response[0] & 0xF0) >> 4),
+                Spec                 = (byte)(response[0] & 0x0F),
+                DataStatusAfterErase = (response[1]       & 0x80) == 0x80,
                 Security             = (byte)((response[1] & 0x70) >> 4),
                 BusWidth             = (byte)(response[1] & 0x0F),
                 Spec3                = (response[2]       & 0x80) == 0x80,
                 ExtendedSecurity     = (byte)((response[2] & 0x78) >> 3),
                 Spec4                = (response[2] & 0x04) == 0x04,
                 SpecX                = (byte)(((response[2] & 0x03) << 2) + ((response[3] & 0xC0) >> 6)),
-                CommandSupport       = (byte)(response[3] & 0x0F), ManufacturerReserved = new byte[4]
+                CommandSupport       = (byte)(response[3] & 0x0F),
+                ManufacturerReserved = new byte[4]
             };
 
             Array.Copy(response, 4, scr.ManufacturerReserved, 0, 4);

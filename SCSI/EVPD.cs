@@ -226,9 +226,10 @@ namespace Aaru.Decoders.SCSI
             var decoded = new Page_81
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
-                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0]                                  & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), Current = (ScsiDefinitions)(pageResponse[4] & 0x7F),
-                Default              = (ScsiDefinitions)(pageResponse[5]                                        & 0x7F)
+                PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
+                PageLength           = (byte)(pageResponse[3] + 4),
+                Current              = (ScsiDefinitions)(pageResponse[4] & 0x7F),
+                Default              = (ScsiDefinitions)(pageResponse[5] & 0x7F)
             };
 
             int                   position    = 6;
@@ -1160,62 +1161,32 @@ namespace Aaru.Decoders.SCSI
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
                 PageLength           = (byte)(pageResponse[3] + 4),
                 ActivateMicrocode    = (byte)((pageResponse[4] & 0xC0) >> 6),
-                SPT =
-                    (byte)((pageResponse[4] & 0x38) >> 3),
-                GRD_CHK = (pageResponse[4] & 0x04) == 0x04,
-                APP_CHK =
-                    (pageResponse
-                         [4] &
-                     0x02) == 0x02,
-                REF_CHK = (pageResponse[4] & 0x01) == 0x01,
-                UASK_SUP =
-                    (pageResponse
-                         [5] &
-                     0x20) == 0x20,
-                GROUP_SUP = (pageResponse[5] & 0x10) == 0x10,
-                PRIOR_SUP =
-                    (pageResponse
-                         [5] &
-                     0x08) == 0x08,
-                HEADSUP = (pageResponse[5] & 0x04) == 0x04,
-                ORDSUP =
-                    (pageResponse
-                         [5] &
-                     0x02) == 0x02,
-                SIMPSUP = (pageResponse[5] & 0x01) == 0x01,
-                WU_SUP =
-                    (pageResponse
-                         [6] &
-                     0x08) == 0x08,
-                CRD_SUP = (pageResponse[6] & 0x04) == 0x04,
-                NV_SUP =
-                    (pageResponse
-                         [6] &
-                     0x02) == 0x02,
-                V_SUP = (pageResponse[6] & 0x01) == 0x01,
-                NO_PI_CHK =
-                    (pageResponse
-                         [7] &
-                     0x20) == 0x20,
-                P_I_I_SUP = (pageResponse[7] & 0x10) == 0x10,
-                LUICLR =
-                    (pageResponse
-                         [7] &
-                     0x01) == 0x01,
-                R_SUP = (pageResponse[8] & 0x10) == 0x10,
-                HSSRELEF =
-                    (pageResponse
-                         [8] &
-                     0x02) == 0x02,
-                CBCS = (pageResponse[8] & 0x01) == 0x01,
-                Nexus =
-                    (byte)(pageResponse
-                               [9] &
-                           0x0F),
-                ExtendedTestMinutes = (ushort)((pageResponse[10] << 8) + pageResponse[11]),
-                POA_SUP             = (pageResponse[12] & 0x80) == 0x80,
-                HRA_SUP             = (pageResponse[12] & 0x40) == 0x40,
-                VSA_SUP             = (pageResponse[12] & 0x20) == 0x20, MaximumSenseLength = pageResponse[13]
+                SPT                  = (byte)((pageResponse[4] & 0x38) >> 3),
+                GRD_CHK              = (pageResponse[4]       & 0x04) == 0x04,
+                APP_CHK              = (pageResponse[4]       & 0x02) == 0x02,
+                REF_CHK              = (pageResponse[4]       & 0x01) == 0x01,
+                UASK_SUP             = (pageResponse[5]       & 0x20) == 0x20,
+                GROUP_SUP            = (pageResponse[5]       & 0x10) == 0x10,
+                PRIOR_SUP            = (pageResponse[5]       & 0x08) == 0x08,
+                HEADSUP              = (pageResponse[5]       & 0x04) == 0x04,
+                ORDSUP               = (pageResponse[5]       & 0x02) == 0x02,
+                SIMPSUP              = (pageResponse[5]       & 0x01) == 0x01,
+                WU_SUP               = (pageResponse[6]       & 0x08) == 0x08,
+                CRD_SUP              = (pageResponse[6]       & 0x04) == 0x04,
+                NV_SUP               = (pageResponse[6]       & 0x02) == 0x02,
+                V_SUP                = (pageResponse[6]       & 0x01) == 0x01,
+                NO_PI_CHK            = (pageResponse[7]       & 0x20) == 0x20,
+                P_I_I_SUP            = (pageResponse[7]       & 0x10) == 0x10,
+                LUICLR               = (pageResponse[7]       & 0x01) == 0x01,
+                R_SUP                = (pageResponse[8]       & 0x10) == 0x10,
+                HSSRELEF             = (pageResponse[8]       & 0x02) == 0x02,
+                CBCS                 = (pageResponse[8]       & 0x01) == 0x01,
+                Nexus                = (byte)(pageResponse[9] & 0x0F),
+                ExtendedTestMinutes  = (ushort)((pageResponse[10] << 8) + pageResponse[11]),
+                POA_SUP              = (pageResponse[12] & 0x80) == 0x80,
+                HRA_SUP              = (pageResponse[12] & 0x40) == 0x40,
+                VSA_SUP              = (pageResponse[12] & 0x20) == 0x20,
+                MaximumSenseLength   = pageResponse[13]
             };
         }
 
@@ -1401,7 +1372,8 @@ namespace Aaru.Decoders.SCSI
                 PageLength            = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
                 VendorIdentification  = new byte[8],
                 ProductIdentification = new byte[16],
-                ProductRevisionLevel  = new byte[4], Signature = new byte[20],
+                ProductRevisionLevel  = new byte[4],
+                Signature             = new byte[20],
                 IdentifyData          = new byte[512]
             };
 
@@ -1595,8 +1567,11 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), Component = new byte[26], Version = new byte[19],
-                Date                 = new byte[24], Variant                  = new byte[23]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                Component            = new byte[26],
+                Version              = new byte[19],
+                Date                 = new byte[24],
+                Variant              = new byte[23]
             };
 
             Array.Copy(pageResponse, 4, decoded.Component, 0, 26);
@@ -1666,7 +1641,8 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), SerialNumber = new byte[12]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                SerialNumber         = new byte[12]
             };
 
             Array.Copy(pageResponse, 4, decoded.SerialNumber, 0, 12);
@@ -1789,10 +1765,12 @@ namespace Aaru.Decoders.SCSI
                 Clean                = (pageResponse[5]       & 0x01) == 0x01,
                 Threaded             = (pageResponse[6]       & 0x10) == 0x10,
                 Lun1Cmd              = (pageResponse[6]       & 0x08) == 0x08,
-                AutoloadMode         = (byte)(pageResponse[6] & 0x07), CartridgeType = pageResponse[8],
+                AutoloadMode         = (byte)(pageResponse[6] & 0x07),
+                CartridgeType        = pageResponse[8],
                 CartridgeFormat      = pageResponse[9],
                 CartridgeCapacity    = (ushort)((pageResponse[10] << 8) + pageResponse[11] + 4),
-                PortATransportType   = pageResponse[12], PortASelectionID = pageResponse[15],
+                PortATransportType   = pageResponse[12],
+                PortASelectionID     = pageResponse[15],
                 OperatingHours = (uint)((pageResponse[20] << 24) + (pageResponse[21] << 16) + (pageResponse[22] << 8) +
                                         pageResponse[23]),
                 CartridgeSerialNumber = new byte[32]
@@ -1996,7 +1974,9 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), CodeName = new byte[12], Date = new byte[8]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                CodeName             = new byte[12],
+                Date                 = new byte[8]
             };
 
             Array.Copy(pageResponse, 4, decoded.CodeName, 0, 12);
@@ -2056,7 +2036,8 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), ManufacturingSerial = new byte[12],
+                PageLength           = (byte)(pageResponse[3] + 4),
+                ManufacturingSerial  = new byte[12],
                 ReportedSerial       = new byte[12]
             };
 
@@ -2121,7 +2102,8 @@ namespace Aaru.Decoders.SCSI
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
                 PageLength           = (ushort)((pageResponse[2] << 8) + pageResponse[3] + 4),
-                TSMC                 = (pageResponse[4] & 0x02) == 0x02, WORM = (pageResponse[4] & 0x01) == 0x01
+                TSMC                 = (pageResponse[4] & 0x02) == 0x02,
+                WORM                 = (pageResponse[4] & 0x01) == 0x01
             };
 
             return decoded;
@@ -2188,7 +2170,8 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), PageCode = pageResponse[1]
+                PageLength           = (byte)(pageResponse[3] + 4),
+                PageCode             = pageResponse[1]
             };
 
             if(pageResponse[3]     == 92 &&
@@ -2348,9 +2331,11 @@ namespace Aaru.Decoders.SCSI
             {
                 PeripheralQualifier  = (PeripheralQualifiers)((pageResponse[0] & 0xE0) >> 5),
                 PeripheralDeviceType = (PeripheralDeviceTypes)(pageResponse[0] & 0x1F),
-                PageLength           = (byte)(pageResponse[3] + 4), PageCode = pageResponse[1],
+                PageLength           = (byte)(pageResponse[3] + 4),
+                PageCode             = pageResponse[1],
                 ControllerFirmware   = new byte[4],
-                BootFirmware         = new byte[4], ServoFirmware = new byte[4]
+                BootFirmware         = new byte[4],
+                ServoFirmware        = new byte[4]
             };
 
             Array.Copy(pageResponse, 4, decoded.ControllerFirmware, 0, 4);

@@ -61,22 +61,17 @@ namespace Aaru.Decoders.SCSI.SSC
             {
                 var descriptor = new DensitySupportDescriptor
                 {
-                    primaryCode    = response[offset + 0], secondaryCode = response[offset + 1],
-                    writable       = (response[offset + 2] & 0x80) == 0x80,
-                    duplicate      = (response[offset + 2] & 0x40) == 0x40,
+                    primaryCode = response[offset + 0],
+                    secondaryCode = response[offset + 1],
+                    writable = (response[offset + 2] & 0x80) == 0x80,
+                    duplicate = (response[offset + 2] & 0x40) == 0x40,
                     defaultDensity = (response[offset + 2] & 0x20) == 0x20,
-                    reserved       = (byte)((response[offset + 2] & 0x1E) >> 1),
-                    lenvalid =
-                        (response[offset + 2] &
-                         0x01) == 0x01,
-                    len =
-                        (ushort)((response[offset + 3] << 8) + response[offset + 4]),
-                    bpmm = (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) +
-                                            response[offset + 7]),
-                    width =
-                        (ushort)((response[offset + 8] << 8) + response[offset + 9]),
-                    tracks = (ushort)((response[offset + 10] << 8) +
-                                              response[offset + 11]),
+                    reserved = (byte)((response[offset + 2] & 0x1E) >> 1),
+                    lenvalid = (response[offset + 2] & 0x01) == 0x01,
+                    len = (ushort)((response[offset + 3] << 8) + response[offset + 4]),
+                    bpmm = (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) + response[offset + 7]),
+                    width = (ushort)((response[offset + 8] << 8) + response[offset + 9]),
+                    tracks = (ushort)((response[offset + 10] << 8) + response[offset + 11]),
                     capacity = (uint)((response[offset + 12] << 24) + (response[offset + 13] << 16) +
                                       (response[offset + 14] << 8)  + response[offset + 15])
                 };
@@ -101,7 +96,8 @@ namespace Aaru.Decoders.SCSI.SSC
 
             var decoded = new DensitySupportHeader
             {
-                length      = responseLen, reserved = (ushort)((response[2] << 8) + response[3] + 2),
+                length      = responseLen,
+                reserved    = (ushort)((response[2] << 8) + response[3] + 2),
                 descriptors = descriptors.ToArray()
             };
 
@@ -168,7 +164,8 @@ namespace Aaru.Decoders.SCSI.SSC
             {
                 var descriptor = new MediaTypeSupportDescriptor
                 {
-                    mediumType = response[offset + 0], reserved1 = response[offset + 1],
+                    mediumType = response[offset + 0],
+                    reserved1  = response[offset + 1],
                     len        = (ushort)((response[offset + 2] << 8) + response[offset + 3])
                 };
 
@@ -199,7 +196,8 @@ namespace Aaru.Decoders.SCSI.SSC
 
             var decoded = new MediaTypeSupportHeader
             {
-                length      = responseLen, reserved = (ushort)((response[2] << 8) + response[3] + 2),
+                length      = responseLen,
+                reserved    = (ushort)((response[2] << 8) + response[3] + 2),
                 descriptors = descriptors.ToArray()
             };
 

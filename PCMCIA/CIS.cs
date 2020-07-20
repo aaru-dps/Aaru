@@ -100,11 +100,12 @@ namespace Aaru.Decoders.PCMCIA
             {
                 var geometry = new DeviceGeometry
                 {
-                    CardInterface  = data[position], EraseBlockSize = data[position + 1],
-                    ReadBlockSize  = data[position                                  + 2],
-                    WriteBlockSize = data[position                                  + 3],
-                    Partitions     = data[position                                  + 4],
-                    Interleaving   = data[position                                  + 5]
+                    CardInterface  = data[position],
+                    EraseBlockSize = data[position + 1],
+                    ReadBlockSize  = data[position + 2],
+                    WriteBlockSize = data[position + 3],
+                    Partitions     = data[position + 4],
+                    Interleaving   = data[position + 5]
                 };
 
                 geometries.Add(geometry);
@@ -175,8 +176,10 @@ namespace Aaru.Decoders.PCMCIA
 
             return new ManufacturerIdentificationTuple
             {
-                Code   = (TupleCodes)data[0], Link = data[1], ManufacturerID = BitConverter.ToUInt16(data, 2),
-                CardID = BitConverter.ToUInt16(data, 4)
+                Code           = (TupleCodes)data[0],
+                Link           = data[1],
+                ManufacturerID = BitConverter.ToUInt16(data, 2),
+                CardID         = BitConverter.ToUInt16(data, 4)
             };
         }
 
@@ -222,7 +225,10 @@ namespace Aaru.Decoders.PCMCIA
 
             var tuple = new Level1VersionTuple
             {
-                Code = (TupleCodes)data[0], Link = data[1], MajorVersion = data[2], MinorVersion = data[3]
+                Code         = (TupleCodes)data[0],
+                Link         = data[1],
+                MajorVersion = data[2],
+                MinorVersion = data[3]
             };
 
             for(int position = 4; position < data.Length; position++)

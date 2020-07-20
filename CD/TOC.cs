@@ -63,7 +63,8 @@ namespace Aaru.Decoders.CD
 
             var decoded = new CDTOC
             {
-                DataLength = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0), FirstTrack = CDTOCResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0),
+                FirstTrack = CDTOCResponse[2],
                 LastTrack  = CDTOCResponse[3]
             };
 

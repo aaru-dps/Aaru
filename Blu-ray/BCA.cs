@@ -83,8 +83,10 @@ namespace Aaru.Decoders.Bluray
 
             var decoded = new BurstCuttingArea
             {
-                DataLength = BigEndianBitConverter.ToUInt16(BCAResponse, 0), Reserved1 = BCAResponse[2],
-                Reserved2  = BCAResponse[3], BCA                                       = new byte[64]
+                DataLength = BigEndianBitConverter.ToUInt16(BCAResponse, 0),
+                Reserved1  = BCAResponse[2],
+                Reserved2  = BCAResponse[3],
+                BCA        = new byte[64]
             };
 
             Array.Copy(BCAResponse, 4, decoded.BCA, 0, 64);

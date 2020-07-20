@@ -59,7 +59,8 @@ namespace Aaru.Decoders.DVD
 
             return new SpareAreaInformation
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1  = response[2],
                 Reserved2  = response[3],
                 UnusedPrimaryBlocks =
                     (uint)((response[4] << 24) + (response[5] << 16) + (response[6] << 8) + response[7]),

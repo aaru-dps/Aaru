@@ -60,14 +60,18 @@ namespace Aaru.Decoders.DVD
 
             return new MediumStatus
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
-                Reserved2  = response[3], Cartridge                                = (response[4] & 0x80) == 0x80,
-                OUT        = (response[4]                                                         & 0x40) == 0x40,
-                Reserved3  = (byte)((response[4] & 0x30) >> 4), MSWI = (response[4]               & 0x08) == 0x08,
-                CWP        = (response[4]                                                         & 0x04) == 0x04,
-                PWP        = (response[4]                                                         & 0x02) == 0x02,
-                Reserved4  = (response[4]                                                         & 0x01) == 0x01,
-                DiscType   = response[5], Reserved5 = response[6],
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1  = response[2],
+                Reserved2  = response[3],
+                Cartridge  = (response[4] & 0x80) == 0x80,
+                OUT        = (response[4] & 0x40) == 0x40,
+                Reserved3  = (byte)((response[4] & 0x30) >> 4),
+                MSWI       = (response[4] & 0x08) == 0x08,
+                CWP        = (response[4] & 0x04) == 0x04,
+                PWP        = (response[4] & 0x02) == 0x02,
+                Reserved4  = (response[4] & 0x01) == 0x01,
+                DiscType   = response[5],
+                Reserved5  = response[6],
                 RAMSWI     = response[7]
             };
         }

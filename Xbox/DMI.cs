@@ -90,8 +90,10 @@ namespace Aaru.Decoders.Xbox
 
             var dmi = new XboxDMI
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
-                Reserved2  = response[3], Version                                  = BitConverter.ToUInt32(response, 4),
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1  = response[2],
+                Reserved2  = response[3],
+                Version    = BitConverter.ToUInt32(response, 4),
                 Timestamp  = BitConverter.ToInt64(response, 20)
             };
 
@@ -111,9 +113,12 @@ namespace Aaru.Decoders.Xbox
 
             var dmi = new Xbox360DMI
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
-                Reserved2  = response[3], Version                                  = BitConverter.ToUInt32(response, 4),
-                Timestamp  = BitConverter.ToInt64(response, 20), MediaID           = new byte[16]
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1  = response[2],
+                Reserved2  = response[3],
+                Version    = BitConverter.ToUInt32(response, 4),
+                Timestamp  = BitConverter.ToInt64(response, 20),
+                MediaID    = new byte[16]
             };
 
             Array.Copy(response, 36, dmi.MediaID, 0, 16);

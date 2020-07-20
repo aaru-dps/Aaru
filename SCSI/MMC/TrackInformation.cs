@@ -61,13 +61,20 @@ namespace Aaru.Decoders.SCSI.MMC
 
             var decoded = new TrackInformation
             {
-                DataLength    = (ushort)((response[0] << 8) + response[1]), LogicalTrackNumber = response[2],
-                SessionNumber = response[3], LayerJumpRecordingStatus = (LayerJumpRecordingStatus)(response[5] >> 6),
-                Damage        = (response[5]       & 0x20) == 0x20, Copy = (response[5] & 0x10) == 0x10,
-                TrackMode     = (byte)(response[5] & 0xF), RT = (response[6] & 0x80) == 0x80,
-                Blank         = (response[6]       & 0x40) == 0x40, Packet = (response[6] & 0x20) == 0x20,
-                FP            = (response[6]       & 0x10) == 0x10, DataMode = (byte)(response[6] & 0xF),
-                LraV          = (response[7]       & 0x02) == 0x02, NwaV = (response[7] & 0x01) == 0x01,
+                DataLength               = (ushort)((response[0] << 8) + response[1]),
+                LogicalTrackNumber       = response[2],
+                SessionNumber            = response[3],
+                LayerJumpRecordingStatus = (LayerJumpRecordingStatus)(response[5] >> 6),
+                Damage                   = (response[5]       & 0x20) == 0x20,
+                Copy                     = (response[5]       & 0x10) == 0x10,
+                TrackMode                = (byte)(response[5] & 0xF),
+                RT                       = (response[6]       & 0x80) == 0x80,
+                Blank                    = (response[6]       & 0x40) == 0x40,
+                Packet                   = (response[6]       & 0x20) == 0x20,
+                FP                       = (response[6]       & 0x10) == 0x10,
+                DataMode                 = (byte)(response[6] & 0xF),
+                LraV                     = (response[7]       & 0x02) == 0x02,
+                NwaV                     = (response[7]       & 0x01) == 0x01,
                 LogicalTrackStartAddress =
                     (uint)((response[8] << 24) + (response[9] << 16) + (response[10] << 8) + response[11]),
                 NextWritableAddress =

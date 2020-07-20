@@ -63,10 +63,12 @@ namespace Aaru.Decoders.SCSI.MMC
             var decoded = new RecognizedFormatLayers
             {
                 DataLength         = BigEndianBitConverter.ToUInt16(FormatLayersResponse, 0),
-                Reserved1          = FormatLayersResponse[2], Reserved2 = FormatLayersResponse[3],
-                NumberOfLayers     = FormatLayersResponse[4], Reserved3 = (byte)((FormatLayersResponse[5] & 0xC0) >> 6),
-                DefaultFormatLayer = (byte)((FormatLayersResponse[5]                                      & 0x30) >> 4),
-                Reserved4          = (byte)((FormatLayersResponse[5]                                      & 0x0C) >> 2),
+                Reserved1          = FormatLayersResponse[2],
+                Reserved2          = FormatLayersResponse[3],
+                NumberOfLayers     = FormatLayersResponse[4],
+                Reserved3          = (byte)((FormatLayersResponse[5] & 0xC0) >> 6),
+                DefaultFormatLayer = (byte)((FormatLayersResponse[5] & 0x30) >> 4),
+                Reserved4          = (byte)((FormatLayersResponse[5] & 0x0C) >> 2),
                 OnlineFormatLayer  = (byte)(FormatLayersResponse[5] & 0x03),
                 FormatLayers       = new ushort[(FormatLayersResponse.Length - 6) / 2]
             };

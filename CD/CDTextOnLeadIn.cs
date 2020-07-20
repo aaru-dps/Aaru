@@ -98,7 +98,8 @@ namespace Aaru.Decoders.CD
 
             var decoded = new CDText
             {
-                DataLength = BigEndianBitConverter.ToUInt16(CDTextResponse, 0), Reserved1 = CDTextResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(CDTextResponse, 0),
+                Reserved1  = CDTextResponse[2],
                 Reserved2  = CDTextResponse[3]
             };
 

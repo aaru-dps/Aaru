@@ -167,9 +167,11 @@ namespace Aaru.Decoders.Floppy
                                 {
                                     data[position], data[position + 1], data[position + 2]
                                 },
-                                track  = data[position                                                    + 3], sector = data[position + 4],
-                                side   = data[position                                                    + 5],
-                                format = (AppleEncodedFormat)data[position + 6], checksum = data[position + 7],
+                                track    = data[position + 3],
+                                sector   = data[position + 4],
+                                side     = data[position + 5],
+                                format   = (AppleEncodedFormat)data[position + 6],
+                                checksum = data[position + 7],
                                 epilogue = new[]
                                 {
                                     data[position + 8], data[position + 9]
@@ -378,7 +380,8 @@ namespace Aaru.Decoders.Floppy
 
             var track = new RawTrack
             {
-                gap = gaps.ToArray(), sectors = sectors.ToArray()
+                gap     = gaps.ToArray(),
+                sectors = sectors.ToArray()
             };
 
             endOffset = position;

@@ -60,14 +60,16 @@ namespace Aaru.Decoders.SCSI.MMC
 
             var decoded = new WriteProtectionStatus
             {
-                DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0), Reserved1 = WPSResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0),
+                Reserved1  = WPSResponse[2],
                 Reserved2  = WPSResponse[3],
                 Reserved3  = (byte)((WPSResponse[4] & 0xF0) >> 4),
                 MSWI       = Convert.ToBoolean(WPSResponse[4] & 0x08),
                 CWP        = Convert.ToBoolean(WPSResponse[4] & 0x04),
                 PWP        = Convert.ToBoolean(WPSResponse[4] & 0x02),
                 SWPP       = Convert.ToBoolean(WPSResponse[4] & 0x01),
-                Reserved4  = WPSResponse[5], Reserved5 = WPSResponse[6],
+                Reserved4  = WPSResponse[5],
+                Reserved5  = WPSResponse[6],
                 Reserved6  = WPSResponse[7]
             };
 

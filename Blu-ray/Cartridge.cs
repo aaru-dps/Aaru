@@ -99,19 +99,17 @@ namespace Aaru.Decoders.Bluray
 
             var decoded = new CartridgeStatus
             {
-                DataLength = BigEndianBitConverter.ToUInt16(CSResponse, 0), Reserved1 = CSResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(CSResponse, 0),
+                Reserved1  = CSResponse[2],
                 Reserved2  = CSResponse[3],
                 Cartridge  = Convert.ToBoolean(CSResponse[4] & 0x80),
-                OUT =
-                    Convert.ToBoolean(CSResponse[4] & 0x40),
-                Reserved3 = (byte)((CSResponse[4] & 0x38) >> 3),
-                CWP =
-                    Convert.ToBoolean(CSResponse[4] & 0x04),
-                Reserved4 = (byte)(CSResponse[4] & 0x03),
-                Reserved5 = CSResponse[5],
-                Reserved6 =
-                    CSResponse[6],
-                Reserved7 = CSResponse[7]
+                OUT        = Convert.ToBoolean(CSResponse[4] & 0x40),
+                Reserved3  = (byte)((CSResponse[4] & 0x38) >> 3),
+                CWP        = Convert.ToBoolean(CSResponse[4] & 0x04),
+                Reserved4  = (byte)(CSResponse[4] & 0x03),
+                Reserved5  = CSResponse[5],
+                Reserved6  = CSResponse[6],
+                Reserved7  = CSResponse[7]
             };
 
             return decoded;

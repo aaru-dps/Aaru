@@ -47,8 +47,10 @@ namespace Aaru.Decoders
 
             var snTag = new SonyTag
             {
-                Version   = BigEndianBitConverter.ToUInt16(tag, 0), Kind = (byte)((tag[2] & 0xC0) >> 6),
-                Reserved  = (byte)(tag[2] & 0x3F), Volume                = tag[3],
+                Version   = BigEndianBitConverter.ToUInt16(tag, 0),
+                Kind      = (byte)((tag[2] & 0xC0) >> 6),
+                Reserved  = (byte)(tag[2] & 0x3F),
+                Volume    = tag[3],
                 FileId    = BigEndianBitConverter.ToInt16(tag, 4),
                 RelPage   = BigEndianBitConverter.ToUInt16(tag, 6),
                 NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8)  & 0x7FF),
@@ -251,10 +253,16 @@ namespace Aaru.Decoders
             /// <summary>Converts this tag to Priam DataTower format</summary>
             public PriamTag ToPriam() => new PriamTag
             {
-                AbsPage   = AbsPage, Checksum = Checksum, FileId = FileId, IsFirst = IsFirst,
-                IsLast    = IsLast, Kind      = Kind, NextBlock  = IsLast ? 0xFFFFFF : NextBlock & 0xFFFFFF,
-                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock                                       & 0xFFFFFF,
-                RelPage   = RelPage, UsedBytes = UsedBytes,
+                AbsPage   = AbsPage,
+                Checksum  = Checksum,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
+                NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
+                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
+                RelPage   = RelPage,
+                UsedBytes = UsedBytes,
                 ValidChk  = ValidChk,
                 Version   = Version,
                 Volume    = Volume
@@ -263,8 +271,14 @@ namespace Aaru.Decoders
             /// <summary>Converts this tag to Sony format</summary>
             public SonyTag ToSony() => new SonyTag
             {
-                FileId    = FileId, IsFirst              = IsFirst, IsLast            = IsLast, Kind     = Kind,
-                NextBlock = (ushort)NextBlock, PrevBlock = (ushort)PrevBlock, RelPage = RelPage, Version = Version,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
+                NextBlock = (ushort)NextBlock,
+                PrevBlock = (ushort)PrevBlock,
+                RelPage   = RelPage,
+                Version   = Version,
                 Volume    = Volume
             };
 
@@ -337,10 +351,16 @@ namespace Aaru.Decoders
             /// <summary>Converts this tag to Apple Profile format</summary>
             public ProfileTag ToProfile() => new ProfileTag
             {
-                AbsPage   = AbsPage, Checksum = Checksum, FileId = FileId, IsFirst = IsFirst,
-                IsLast    = IsLast, Kind      = Kind, NextBlock  = IsLast ? 0xFFFFFF : NextBlock & 0xFFFFFF,
-                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock                                       & 0xFFFFFF,
-                RelPage   = RelPage, UsedBytes = UsedBytes,
+                AbsPage   = AbsPage,
+                Checksum  = Checksum,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
+                NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
+                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
+                RelPage   = RelPage,
+                UsedBytes = UsedBytes,
                 ValidChk  = ValidChk,
                 Version   = Version,
                 Volume    = Volume
@@ -349,9 +369,14 @@ namespace Aaru.Decoders
             /// <summary>Converts this tag to Sony format</summary>
             public SonyTag ToSony() => new SonyTag
             {
-                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
                 NextBlock = (ushort)(IsLast ? 0x7FF : NextBlock  & 0x7FF),
-                PrevBlock = (ushort)(IsFirst ? 0x7FF : PrevBlock & 0x7FF), RelPage = RelPage, Version = Version,
+                PrevBlock = (ushort)(IsFirst ? 0x7FF : PrevBlock & 0x7FF),
+                RelPage   = RelPage,
+                Version   = Version,
                 Volume    = Volume
             };
 
@@ -416,18 +441,28 @@ namespace Aaru.Decoders
             /// <summary>Converts this tag to Apple Profile format</summary>
             public ProfileTag ToProfile() => new ProfileTag
             {
-                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
                 NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
-                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF), RelPage = RelPage, Version = Version,
+                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF),
+                RelPage   = RelPage,
+                Version   = Version,
                 Volume    = Volume
             };
 
             /// <summary>Converts this tag to Priam DataTower format</summary>
             public PriamTag ToPriam() => new PriamTag
             {
-                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                FileId    = FileId,
+                IsFirst   = IsFirst,
+                IsLast    = IsLast,
+                Kind      = Kind,
                 NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
-                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF), RelPage = RelPage, Version = Version,
+                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF),
+                RelPage   = RelPage,
+                Version   = Version,
                 Volume    = Volume
             };
 

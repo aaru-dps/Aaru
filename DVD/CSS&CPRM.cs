@@ -60,10 +60,13 @@ namespace Aaru.Decoders.DVD
 
             return new LeadInCopyright
             {
-                DataLength        = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
-                Reserved2         = response[3], CopyrightType                            = (CopyrightType)response[4],
+                DataLength        = (ushort)((response[0] << 8) + response[1]),
+                Reserved1         = response[2],
+                Reserved2         = response[3],
+                CopyrightType     = (CopyrightType)response[4],
                 RegionInformation = response[5],
-                Reserved3         = response[6], Reserved4 = response[7]
+                Reserved3         = response[6],
+                Reserved4         = response[7]
             };
         }
 

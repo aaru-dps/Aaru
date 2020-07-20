@@ -87,7 +87,8 @@ namespace Aaru.Decoders.Bluray
 
             var decoded = new SpareAreaInformation
             {
-                DataLength           = BigEndianBitConverter.ToUInt16(SAIResponse, 0), Reserved1 = SAIResponse[2],
+                DataLength           = BigEndianBitConverter.ToUInt16(SAIResponse, 0),
+                Reserved1            = SAIResponse[2],
                 Reserved2            = SAIResponse[3],
                 Reserved3            = BigEndianBitConverter.ToUInt32(SAIResponse, 4),
                 FreeSpareBlocks      = BigEndianBitConverter.ToUInt32(SAIResponse, 8),

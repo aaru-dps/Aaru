@@ -62,13 +62,20 @@ namespace Aaru.Decoders.SecureDigital
     {
         public static OCR DecodeOCR(uint response) => new OCR
         {
-            PowerUp    = (response & 0x80000000) == 0x80000000, CCS       = (response & 0x40000000) == 0x40000000,
-            UHS        = (response & 0x20000000) == 0x20000000, OneEight  = (response & 0x01000000) == 0x01000000,
-            ThreeFive  = (response & 0x00800000) == 0x00800000, ThreeFour = (response & 0x00400000) == 0x00400000,
-            ThreeThree = (response & 0x00200000) == 0x00200000, ThreeTwo  = (response & 0x00100000) == 0x00100000,
-            ThreeOne   = (response & 0x00080000) == 0x00080000, ThreeZero = (response & 0x00040000) == 0x00040000,
-            TwoNine    = (response & 0x00020000) == 0x00020000, TwoEight  = (response & 0x00010000) == 0x00010000,
-            TwoSeven   = (response & 0x00008000) == 0x00008000, LowPower  = (response & 0x00000080) == 0x00000080
+            PowerUp    = (response & 0x80000000) == 0x80000000,
+            CCS        = (response & 0x40000000) == 0x40000000,
+            UHS        = (response & 0x20000000) == 0x20000000,
+            OneEight   = (response & 0x01000000) == 0x01000000,
+            ThreeFive  = (response & 0x00800000) == 0x00800000,
+            ThreeFour  = (response & 0x00400000) == 0x00400000,
+            ThreeThree = (response & 0x00200000) == 0x00200000,
+            ThreeTwo   = (response & 0x00100000) == 0x00100000,
+            ThreeOne   = (response & 0x00080000) == 0x00080000,
+            ThreeZero  = (response & 0x00040000) == 0x00040000,
+            TwoNine    = (response & 0x00020000) == 0x00020000,
+            TwoEight   = (response & 0x00010000) == 0x00010000,
+            TwoSeven   = (response & 0x00008000) == 0x00008000,
+            LowPower   = (response & 0x00000080) == 0x00000080
         };
 
         public static OCR DecodeOCR(byte[] response) =>

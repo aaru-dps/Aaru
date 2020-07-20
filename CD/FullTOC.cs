@@ -71,7 +71,8 @@ namespace Aaru.Decoders.CD
             var decoded = new CDFullTOC
             {
                 DataLength           = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0),
-                FirstCompleteSession = CDFullTOCResponse[2], LastCompleteSession = CDFullTOCResponse[3]
+                FirstCompleteSession = CDFullTOCResponse[2],
+                LastCompleteSession  = CDFullTOCResponse[3]
             };
 
             decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];

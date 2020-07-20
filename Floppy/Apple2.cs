@@ -532,7 +532,8 @@ namespace Aaru.Decoders.Floppy
 
             var track = new RawTrack
             {
-                gap = gaps.ToArray(), sectors = sectors.ToArray()
+                gap     = gaps.ToArray(),
+                sectors = sectors.ToArray()
             };
 
             endOffset = position;

@@ -61,7 +61,8 @@ namespace Aaru.Decoders.SCSI.MMC
             var decoded = new CPRMMediaKeyBlock
             {
                 MKBPackData = new byte[CPRMMKBResponse.Length - 4],
-                DataLength  = BigEndianBitConverter.ToUInt16(CPRMMKBResponse, 0), Reserved = CPRMMKBResponse[2],
+                DataLength  = BigEndianBitConverter.ToUInt16(CPRMMKBResponse, 0),
+                Reserved    = CPRMMKBResponse[2],
                 TotalPacks  = CPRMMKBResponse[3]
             };
 

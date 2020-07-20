@@ -73,14 +73,17 @@ namespace Aaru.Decoders.SCSI
 
             return new IBM_ModePage_2F
             {
-                PS                 = (pageResponse[0] & 0x80) == 0x80, FenceBehaviour = pageResponse[2],
-                CleanBehaviour     = pageResponse[3], WORMEmulation                   = pageResponse[4],
-                SenseDataBehaviour = pageResponse[5],
-                CCDM               = (pageResponse[6] & 0x04) == 0x04,
-                DDEOR              = (pageResponse[6] & 0x02) == 0x02,
-                CLNCHK             = (pageResponse[6] & 0x01) == 0x01, FirmwareUpdateBehaviour = pageResponse[7],
-                UOE_C              = (byte)((pageResponse[8] & 0x30) >> 4),
-                UOE_F              = (byte)((pageResponse[8] & 0x0C) >> 2)
+                PS                      = (pageResponse[0] & 0x80) == 0x80,
+                FenceBehaviour          = pageResponse[2],
+                CleanBehaviour          = pageResponse[3],
+                WORMEmulation           = pageResponse[4],
+                SenseDataBehaviour      = pageResponse[5],
+                CCDM                    = (pageResponse[6] & 0x04) == 0x04,
+                DDEOR                   = (pageResponse[6] & 0x02) == 0x02,
+                CLNCHK                  = (pageResponse[6] & 0x01) == 0x01,
+                FirmwareUpdateBehaviour = pageResponse[7],
+                UOE_C                   = (byte)((pageResponse[8] & 0x30) >> 4),
+                UOE_F                   = (byte)((pageResponse[8] & 0x0C) >> 2)
             };
         }
 

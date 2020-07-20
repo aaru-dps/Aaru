@@ -61,7 +61,8 @@ namespace Aaru.Decoders.CD
 
             var decoded = new CDPMA
             {
-                DataLength = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0), Reserved1 = CDPMAResponse[2],
+                DataLength = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0),
+                Reserved1  = CDPMAResponse[2],
                 Reserved2  = CDPMAResponse[3]
             };
 

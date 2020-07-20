@@ -54,8 +54,9 @@ namespace Aaru.Decoders.SCSI
             {
                 var cap = new Capability
                 {
-                    FormatCode = response[offset], SDS = (response[offset + 1] & 0x80) == 0x80,
-                    RDS        = (response[offset                         + 1] & 0x40) == 0x40
+                    FormatCode = response[offset],
+                    SDS        = (response[offset + 1] & 0x80) == 0x80,
+                    RDS        = (response[offset + 1] & 0x40) == 0x40
                 };
 
                 caps.Add(cap);
