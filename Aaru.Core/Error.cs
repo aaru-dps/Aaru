@@ -30,9 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Aaru.CommonTypes.Interop;
-using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Core
 {
@@ -81,8 +79,6 @@ namespace Aaru.Core
                 case PlatformID.Unknown:      return $"Unknown error code {errno}";
                 default:                      return $"Unknown error code {errno}";
             }
-
-            throw new Exception("Arrived an unexpected place");
         }
 
         static string PrintUnixError(int errno)

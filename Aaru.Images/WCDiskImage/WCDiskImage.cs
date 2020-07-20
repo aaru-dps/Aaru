@@ -32,12 +32,14 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public partial class WCDiskImage : IMediaImage
     {
         public Dictionary<(int cylinder, int head, int sector), bool> badSectors =

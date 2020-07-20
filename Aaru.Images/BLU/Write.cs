@@ -230,7 +230,7 @@ namespace Aaru.DiscImages
                     break;
 
                 // Priam tag, copy to Priam
-                case 12 when longSectorSize == 536:
+                case 24 when longSectorSize == 536:
                     newTag = new byte[24];
                     Array.Copy(data, 512, newTag, 0, 24);
 
@@ -335,7 +335,7 @@ namespace Aaru.DiscImages
                         break;
 
                     // Priam tag, copy to Priam
-                    case 12 when longSectorSize == 536:
+                    case 24 when longSectorSize == 536:
                         newTag = new byte[24];
                         Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 24);
 

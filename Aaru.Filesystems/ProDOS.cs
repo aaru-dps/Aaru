@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,9 +41,12 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
+// ReSharper disable NotAccessedField.Local
+
 namespace Aaru.Filesystems
 {
     // Information from Apple ProDOS 8 Technical Reference
+    [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public class ProDOSPlugin : IFilesystem
     {
         const byte EMPTY_STORAGE_TYPE = 0x00;

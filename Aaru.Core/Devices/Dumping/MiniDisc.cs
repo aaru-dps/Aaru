@@ -457,7 +457,7 @@ namespace Aaru.Core.Devices.Dumping
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = _dev.Read6(out readBuffer, out _, (uint)badSector, blockSize, 1, _dev.Timeout,
-                                       out double cmdDuration);
+                                       out double _);
 
                     if(sense || _dev.Error)
                         continue;
@@ -485,12 +485,10 @@ namespace Aaru.Core.Devices.Dumping
 
                 Modes.ModePage? currentModePage = null;
                 byte[]          md6;
-                byte[]          md10;
 
                 if(_persistent)
                 {
-                    Modes.ModePage_01_MMC pgMmc;
-                    Modes.ModePage_01     pg;
+                    Modes.ModePage_01 pg;
 
                     sense = _dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
                                             _dev.Timeout, out _);

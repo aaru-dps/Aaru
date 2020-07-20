@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.Checksums;
@@ -39,8 +40,11 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
+// ReSharper disable NotAccessedField.Local
+
 namespace Aaru.Partitions
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class AmigaRigidDiskBlock : IPartition
     {
         /// <summary>RDB magic number "RDSK"</summary>

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -41,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class BeFS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)

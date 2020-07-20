@@ -38,10 +38,13 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
+// ReSharper disable NotAccessedField.Local
+
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local"),
+     SuppressMessage("ReSharper", "UnusedType.Local")]
     public class SysVfs : IFilesystem
     {
         const uint XENIX_MAGIC = 0x002B5544;

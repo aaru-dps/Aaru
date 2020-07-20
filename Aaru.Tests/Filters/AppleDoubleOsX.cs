@@ -61,7 +61,6 @@ namespace Aaru.Tests.Filters
             str.Close();
             str.Dispose();
             filter.Close();
-            var    ctx    = new Md5Context();
             string result = Md5Context.Data(data, out _);
             Assert.AreEqual(EXPECTED_CONTENTS, result);
         }
@@ -69,11 +68,9 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            var    ctx    = new Md5Context();
             string result = Md5Context.File(location, out _);
             Assert.AreEqual(EXPECTED_FILE, result);
 
-            ctx    = new Md5Context();
             result = Md5Context.File(sidecar, out _);
             Assert.AreEqual(EXPECTED_SIDECAR, result);
         }
@@ -96,7 +93,6 @@ namespace Aaru.Tests.Filters
             str.Close();
             str.Dispose();
             filter.Close();
-            var    ctx    = new Md5Context();
             string result = Md5Context.Data(data, out _);
             Assert.AreEqual(EXPECTED_RESOURCE, result);
         }

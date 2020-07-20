@@ -35,7 +35,6 @@ using System.Reactive;
 using System.Threading;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
-using Aaru.Core.Media.Info;
 using Aaru.Devices;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -44,7 +43,6 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using OxyPlot;
 using ReactiveUI;
-using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
@@ -92,7 +90,7 @@ namespace Aaru.Gui.ViewModels.Windows
         string          _totalTime;
         string          _unreadableSectors;
 
-        public MediaScanViewModel(string devicePath, DeviceInfo deviceInfo, Window view, ScsiInfo scsiInfo = null)
+        public MediaScanViewModel(string devicePath, Window view)
         {
             _devicePath  = devicePath;
             _view        = view;

@@ -338,7 +338,7 @@ namespace Aaru.Filesystems.ISO9660
             }
 
             if(entry.PosixDeviceNumber != null)
-                stat.DeviceNo = (entry.PosixDeviceNumber.Value.dev_t_high << 32) +
+                stat.DeviceNo = ((ulong)entry.PosixDeviceNumber.Value.dev_t_high << 32) +
                                 entry.PosixDeviceNumber.Value.dev_t_low;
 
             if(entry.RripModify != null)

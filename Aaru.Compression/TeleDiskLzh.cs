@@ -62,7 +62,6 @@ namespace Aaru.Compression
         const int N         = 4096; /* Size of string buffer */
         const int F         = 60;   /* Size of look-ahead buffer */
         const int THRESHOLD = 2;
-        const int NIL       = N; /* End of tree's node  */
 
         /* Huffman coding parameters */
 

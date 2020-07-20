@@ -301,7 +301,7 @@ namespace Aaru.Core.Devices.Dumping
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)badSector,
-                                        BLOCK_SIZE, 0, 1, false, _dev.Timeout, out double cmdDuration);
+                                        BLOCK_SIZE, 0, 1, false, _dev.Timeout, out double _);
 
                     if(sense || _dev.Error)
                     {

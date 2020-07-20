@@ -450,7 +450,7 @@ namespace Aaru.Filesystems.ISO9660
 
             try
             {
-                byte[] rootDir = ReadSingleExtent(0, rootSize, rootLocation);
+                _ = ReadSingleExtent(0, rootSize, rootLocation);
             }
             catch
             {

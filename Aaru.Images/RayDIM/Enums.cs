@@ -34,6 +34,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class RayDim
     {
         [SuppressMessage("ReSharper", "InconsistentNaming")]

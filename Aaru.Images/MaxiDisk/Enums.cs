@@ -30,8 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class MaxiDisk
     {
         enum HdkDiskTypes : byte

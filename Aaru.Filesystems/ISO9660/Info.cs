@@ -680,7 +680,7 @@ namespace Aaru.Filesystems.ISO9660
                 if(valentry.signature != EL_TORITO_MAGIC)
                     goto exit_torito;
 
-                toritoOff += EL_TORITO_ENTRY_SIZE;
+                toritoOff = EL_TORITO_ENTRY_SIZE;
 
                 ElToritoInitialEntry initialEntry =
                     Marshal.ByteArrayToStructureLittleEndian<ElToritoInitialEntry>(vdSector, toritoOff,

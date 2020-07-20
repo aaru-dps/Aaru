@@ -31,8 +31,13 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+// ReSharper disable IdentifierTypo
+
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Filesystems.ISO9660
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class ISO9660
     {
         const ushort SUSP_CONTINUATION = 0x4345; // "CE"

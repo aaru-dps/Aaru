@@ -38,6 +38,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedParameter.Local
+
 namespace Aaru.Gui
 {
     public class App : Application

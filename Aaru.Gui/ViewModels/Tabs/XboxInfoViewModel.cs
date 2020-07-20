@@ -43,12 +43,13 @@ namespace Aaru.Gui.ViewModels.Tabs
     public class XboxInfoViewModel
     {
         readonly byte[] xboxSecuritySector;
-        Window          _view;
+        readonly Window _view;
 
         public XboxInfoViewModel(XgdInfo xgdInfo, byte[] dmi, byte[] securitySector,
                                  SS.SecuritySector? decodedSecuritySector, Window view)
         {
             xboxSecuritySector = securitySector;
+            _view              = view;
             SaveXboxSsCommand  = ReactiveCommand.Create(ExecuteSaveXboxSsCommand);
 
             if(xgdInfo != null)

@@ -30,10 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class Chd
     {
         // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length

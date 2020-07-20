@@ -739,7 +739,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
+                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double _);
 
                     if(sense || _dev.Error)
                         continue;

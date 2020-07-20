@@ -44,12 +44,10 @@ namespace Aaru.Core
     {
         readonly bool        debug;
         readonly IMediaImage inputFormat;
-        bool                 verbose;
 
-        public Entropy(bool debug, bool verbose, IMediaImage inputFormat)
+        public Entropy(bool debug, IMediaImage inputFormat)
         {
             this.debug       = debug;
-            this.verbose     = verbose;
             this.inputFormat = inputFormat;
         }
 

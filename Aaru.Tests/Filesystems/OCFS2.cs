@@ -29,6 +29,8 @@
 using System;
 using NUnit.Framework;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Tests.Filesystems
 {
     [TestFixture]

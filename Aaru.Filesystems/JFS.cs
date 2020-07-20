@@ -38,6 +38,8 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems
 {
     public class JFS : IFilesystem

@@ -126,7 +126,7 @@ namespace Aaru.Commands.Media
             }
             catch(DeviceException e)
             {
-                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message);
 
                 return (int)ErrorNumber.CannotOpenDevice;
             }
@@ -150,7 +150,7 @@ namespace Aaru.Commands.Media
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    DoScsiMediaInfo(debug, verbose, outputPrefix, dev);
+                    DoScsiMediaInfo(debug, outputPrefix, dev);
 
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
@@ -166,7 +166,7 @@ namespace Aaru.Commands.Media
 
         static void DoSdMediaInfo() => AaruConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Devices.Device dev)
+        static void DoScsiMediaInfo(bool debug, string outputPrefix, Devices.Device dev)
         {
             var scsiInfo = new ScsiInfo(dev);
 

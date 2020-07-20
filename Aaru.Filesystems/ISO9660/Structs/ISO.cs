@@ -34,6 +34,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+// ReSharper disable UnusedType.Local
+
 namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660

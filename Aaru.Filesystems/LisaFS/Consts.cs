@@ -30,8 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Filesystems.LisaFS
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class LisaFS
     {
         /// <summary>Lisa FS v1, from Lisa OS 1.0 (Workshop or Office) Never seen on Sony floppies.</summary>

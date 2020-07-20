@@ -39,7 +39,6 @@ using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
@@ -168,8 +167,6 @@ namespace Aaru.Commands.Image
 
             ImageInfo                        image1Info     = input1Format.Info;
             ImageInfo                        image2Info     = input2Format.Info;
-            List<Session>                    image1Sessions = new List<Session>();
-            List<Session>                    image2Sessions = new List<Session>();
             Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
             Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 

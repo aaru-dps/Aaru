@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,7 @@ namespace Aaru.DiscImages
 {
     public partial class Chd
     {
+        [SuppressMessage("ReSharper", "UnusedVariable")]
         public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();

@@ -31,9 +31,13 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable NotAccessedField.Local
 
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class Nero
     {
         struct NeroV1Footer

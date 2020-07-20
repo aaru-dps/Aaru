@@ -31,10 +31,12 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems.ISO9660
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class ISO9660
     {
         // RRIP 1.10

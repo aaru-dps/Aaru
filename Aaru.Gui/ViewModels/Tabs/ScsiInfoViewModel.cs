@@ -57,7 +57,7 @@ namespace Aaru.Gui.ViewModels.Tabs
         object          _selectedEvpdPage;
         object          _selectedMmcFeature;
         object          _selectedModeSensePage;
-        Window          _view;
+        readonly Window _view;
 
         public ScsiInfoViewModel(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
                                  Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
@@ -67,6 +67,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             _scsiModeSense6          = scsiModeSense6;
             _scsiModeSense10         = scsiModeSense10;
             _configuration           = mmcConfiguration;
+            _view                    = view;
             ModeSensePages           = new ObservableCollection<ScsiPageModel>();
             EvpdPages                = new ObservableCollection<ScsiPageModel>();
             MmcFeatures              = new ObservableCollection<ScsiPageModel>();
@@ -425,8 +426,8 @@ namespace Aaru.Gui.ViewModels.Tabs
             {
                 foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
                 {
-                    string evpdPageTitle   = "";
-                    string evpdDecodedPage = "";
+                    string evpdPageTitle = "";
+                    string evpdDecodedPage;
 
                     if(page.Key >= 0x01 &&
                        page.Key <= 0x7F)

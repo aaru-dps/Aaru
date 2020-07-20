@@ -142,8 +142,7 @@ namespace Aaru.Filesystems.FAT
             bool dosOemCorrect = dosOem[0] >= 0x20 && dosOem[1] >= 0x20 && dosOem[2] >= 0x20 && dosOem[3] >= 0x20 &&
                                  dosOem[4] >= 0x20 && dosOem[5] >= 0x20 && dosOem[6] >= 0x20 && dosOem[7] >= 0x20;
 
-            string atariString = Encoding.ASCII.GetString(atariOem);
-            string oemString   = Encoding.ASCII.GetString(dosOem);
+            string oemString = Encoding.ASCII.GetString(dosOem);
 
             AaruConsole.DebugWriteLine("FAT plugin", "atari_oem_correct = {0}", atariOemCorrect);
             AaruConsole.DebugWriteLine("FAT plugin", "dos_oem_correct = {0}", dosOemCorrect);

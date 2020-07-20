@@ -143,7 +143,7 @@ namespace Aaru.Core.Devices.Dumping
             for(retries = 0; retries < 10; retries++)
             {
                 sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf, false)
-                            : GetSectorForPregapQ16(dev, 11, dbDev, out subBuf, false);
+                            : GetSectorForPregapQ16(dev, 11, out subBuf, false);
 
                 if(sense)
                     continue;
@@ -217,8 +217,7 @@ namespace Aaru.Core.Devices.Dumping
                     sense = supportsRwSubchannel
                                 ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
                                                         track.TrackType == TrackType.Audio)
-                                : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf,
-                                                        track.TrackType == TrackType.Audio);
+                                : GetSectorForPregapQ16(dev, (uint)lba, out subBuf, track.TrackType == TrackType.Audio);
 
                     if(sense)
                     {
@@ -316,7 +315,7 @@ namespace Aaru.Core.Devices.Dumping
                         sense = supportsRwSubchannel
                                     ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf,
                                                             track.TrackType == TrackType.Audio)
-                                    : GetSectorForPregapQ16(dev, (uint)lba - 10, dbDev, out subBuf,
+                                    : GetSectorForPregapQ16(dev, (uint)lba - 10, out subBuf,
                                                             track.TrackType == TrackType.Audio);
 
                     for(retries = 0; retries < 10; retries++)
@@ -324,7 +323,7 @@ namespace Aaru.Core.Devices.Dumping
                         sense = supportsRwSubchannel
                                     ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf,
                                                             track.TrackType == TrackType.Audio)
-                                    : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf,
+                                    : GetSectorForPregapQ16(dev, (uint)lba, out subBuf,
                                                             track.TrackType == TrackType.Audio);
 
                         if(sense)
@@ -653,8 +652,7 @@ namespace Aaru.Core.Devices.Dumping
             return sense;
         }
 
-        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf,
-                                          bool audioTrack)
+        static bool GetSectorForPregapQ16(Device dev, uint lba, out byte[] subBuf, bool audioTrack)
         {
             byte[] cmdBuf;
             bool   sense;

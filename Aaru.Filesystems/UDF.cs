@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // TODO: Detect bootable
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class UDF : IFilesystem
     {
         readonly byte[] UDF_Magic =

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class AtheOS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)

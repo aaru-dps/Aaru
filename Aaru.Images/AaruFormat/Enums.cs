@@ -30,6 +30,8 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.DiscImages
 {
     public partial class AaruFormat

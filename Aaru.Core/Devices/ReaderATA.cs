@@ -59,10 +59,10 @@ namespace Aaru.Core.Devices
         internal byte   Heads     { get; private set; }
         internal byte   Sectors   { get; private set; }
 
-        (uint, byte, byte) GetDeviceChs()
+        void GetDeviceChs()
         {
             if(_dev.Type != DeviceType.ATA)
-                return (0, 0, 0);
+                return;
 
             if(_ataId.CurrentCylinders       > 0 &&
                _ataId.CurrentHeads           > 0 &&
@@ -78,14 +78,12 @@ namespace Aaru.Core.Devices
                _ataId.Cylinders       <= 0                                                                      ||
                _ataId.Heads           <= 0                                                                      ||
                _ataId.SectorsPerTrack <= 0)
-                return (Cylinders, Heads, Sectors);
+                return;
 
             Cylinders = _ataId.Cylinders;
             Heads     = (byte)_ataId.Heads;
             Sectors   = (byte)_ataId.SectorsPerTrack;
             Blocks    = (ulong)(Cylinders * Heads * Sectors);
-
-            return (Cylinders, Heads, Sectors);
         }
 
         ulong AtaGetBlocks()

@@ -60,7 +60,8 @@ namespace Aaru.Filesystems
      * It can also be encoded little or big endian.
      * Because of this variations, ZFS stored a header indicating the used encoding and endianess before the encoded nvlist.
      */
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
+     SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public class ZFS : IFilesystem
     {
         const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;

@@ -32,6 +32,8 @@
 
 using System;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems.FAT
 {
     public partial class FAT

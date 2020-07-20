@@ -43,7 +43,7 @@ using ufs_daddr_t = System.Int32;
 
 namespace Aaru.Filesystems
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class dump : IFilesystem
     {
         /// <summary>Magic number for old dump</summary>

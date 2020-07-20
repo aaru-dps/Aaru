@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -40,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filters
 {
     /// <summary>Decodes AppleDouble files</summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class AppleDouble : IFilter
     {
         const uint AppleDoubleMagic    = 0x00051607;

@@ -65,8 +65,6 @@ namespace Aaru.Filesystems.AppleMFS
 
             var mdb = new MasterDirectoryBlock();
 
-            byte[] pString = new byte[16];
-
             byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
             byte[] bbSector  = imagePlugin.ReadSector(0 + partition.Start);
 

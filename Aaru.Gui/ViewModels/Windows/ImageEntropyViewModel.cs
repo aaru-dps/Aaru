@@ -284,7 +284,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
         void ExecuteStartCommand()
         {
-            var entropyCalculator = new Entropy(false, false, _inputFormat);
+            var entropyCalculator = new Entropy(false, _inputFormat);
             entropyCalculator.InitProgressEvent    += InitProgress;
             entropyCalculator.InitProgress2Event   += InitProgress2;
             entropyCalculator.UpdateProgressEvent  += UpdateProgress;

@@ -61,6 +61,9 @@ using pckno_t = System.Int16;
 // Timestamp
 using time_t = System.Int32;
 
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedType.Local
+
 namespace Aaru.Filesystems
 {
     public class Locus : IFilesystem

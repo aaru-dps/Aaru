@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,6 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class APFS : IFilesystem
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"

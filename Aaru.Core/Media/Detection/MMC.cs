@@ -560,7 +560,8 @@ namespace Aaru.Core.Media.Detection
                                                    false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                                    MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
-                                if(IsCdi(sector0, sector16))
+                                if(!sense &&
+                                   IsCdi(sector0, sector16))
                                 {
                                     mediaType = MediaType.CDIREADY;
 
@@ -1660,7 +1661,7 @@ namespace Aaru.Core.Media.Detection
 
                             while(sr.Peek() > 0)
                             {
-                                string? line = sr.ReadLine();
+                                string line = sr.ReadLine();
 
                                 // End of file
                                 if(line is null ||

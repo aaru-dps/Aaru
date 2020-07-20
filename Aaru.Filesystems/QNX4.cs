@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public class QNX4 : IFilesystem
     {
         readonly byte[] qnx4_rootDir_fname =

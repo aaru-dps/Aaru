@@ -42,6 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class ext2FS : IFilesystem
     {
         const int SB_POS = 0x400;

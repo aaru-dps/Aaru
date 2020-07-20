@@ -53,9 +53,8 @@ namespace Aaru.Filesystems.CPM
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
-            device         = imagePlugin;
-            this.partition = partition;
-            Encoding       = encoding ?? Encoding.GetEncoding("IBM437");
+            device   = imagePlugin;
+            Encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(device, partition) ||

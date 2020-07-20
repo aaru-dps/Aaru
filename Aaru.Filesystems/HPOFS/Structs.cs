@@ -30,10 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class HPOFS
     {
         /// <summary>BIOS Parameter Block, at sector 0, little-endian</summary>

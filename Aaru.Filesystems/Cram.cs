@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -38,8 +39,11 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public class Cram : IFilesystem
     {
         /// <summary>Identifier for Cram</summary>

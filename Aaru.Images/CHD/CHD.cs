@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -41,6 +42,7 @@ using Aaru.Decoders.CD;
 namespace Aaru.DiscImages
 {
     // TODO: Implement PCMCIA support
+    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public partial class Chd : IOpticalMediaImage, IVerifiableImage
     {
         /// <summary>"MComprHD"</summary>

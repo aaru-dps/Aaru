@@ -34,6 +34,8 @@
 using System;
 using Aaru.Helpers;
 
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660

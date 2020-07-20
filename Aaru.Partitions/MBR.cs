@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -253,6 +254,7 @@ namespace Aaru.Partitions
         public Guid   Id     => new Guid("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
         public string Author => "Natalia Portillo";
 
+        [SuppressMessage("ReSharper", "UnusedVariable")]
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             ulong counter = 0;

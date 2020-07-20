@@ -30,10 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class Partimage
     {
         /// <summary>Partimage disk image header, little-endian</summary>

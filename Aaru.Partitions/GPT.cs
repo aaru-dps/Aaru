@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
@@ -42,6 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class GuidPartitionTable : IPartition
     {
         const ulong GPT_MAGIC     = 0x5452415020494645;

@@ -197,7 +197,7 @@ namespace Aaru.Filesystems.FAT
 
             while(pos < eaData.Length)
             {
-                byte   fEA     = eaData[pos++];
+                pos++; // Skip fEA
                 byte   cbName  = eaData[pos++];
                 ushort cbValue = BitConverter.ToUInt16(eaData, pos);
                 pos += 2;

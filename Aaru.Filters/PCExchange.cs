@@ -32,6 +32,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -41,6 +42,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Filters
 {
     /// <summary>Decodes PCExchange files</summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class PCExchange : IFilter
     {
         const string FILE_ID     = "FILEID.DAT";

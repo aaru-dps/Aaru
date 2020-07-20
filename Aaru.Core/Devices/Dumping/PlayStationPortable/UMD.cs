@@ -322,7 +322,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false,
                                         (uint)(umdStart + (badSector * 4)), 512, 0, 4, false, _dev.Timeout,
-                                        out double cmdDuration);
+                                        out double _);
 
                     if(sense || _dev.Error)
                     {

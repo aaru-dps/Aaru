@@ -99,7 +99,6 @@ namespace Aaru.Settings
     {
         const string XDG_DATA_HOME            = "XDG_DATA_HOME";
         const string XDG_CONFIG_HOME          = "XDG_CONFIG_HOME";
-        const string OLD_DATA_HOME            = ".claunia.com";
         const string XDG_DATA_HOME_RESOLVED   = ".local/share";
         const string XDG_CONFIG_HOME_RESOLVED = ".config";
         /// <summary>Current statistcs</summary>

@@ -36,6 +36,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+// ReSharper disable NotAccessedField.Local
+
 namespace Aaru.DiscImages
 {
     public partial class Parallels : IWritableImage

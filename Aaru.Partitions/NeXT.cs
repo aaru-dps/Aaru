@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -43,6 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 // Information learnt from XNU source and testing against real disks
 namespace Aaru.Partitions
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     public class NeXTDisklabel : IPartition
     {
         /// <summary>"NeXT"</summary>

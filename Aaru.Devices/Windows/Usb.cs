@@ -42,6 +42,7 @@ namespace Aaru.Devices.Windows
 {
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
     /// <summary>Implements functions for getting and accesing information from the USB bus</summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     internal static partial class Usb
     {
         /// <summary>Return a list of USB Host Controllers</summary>

@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -43,6 +44,7 @@ namespace Aaru.Partitions
 {
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class AppleMap : IPartition
     {
         /// <summary>"ER", driver descriptor magic</summary>

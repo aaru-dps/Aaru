@@ -38,6 +38,8 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+// ReSharper disable UnusedType.Local
+
 namespace Aaru.Filesystems
 {
     public class PFS : IFilesystem

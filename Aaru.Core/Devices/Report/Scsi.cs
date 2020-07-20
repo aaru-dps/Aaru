@@ -47,7 +47,7 @@ namespace Aaru.Core.Devices.Report
         public Scsi ReportScsiInquiry()
         {
             AaruConsole.WriteLine("Querying SCSI INQUIRY...");
-            bool sense = _dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
+            bool sense = _dev.ScsiInquiry(out byte[] buffer, out _);
 
             var report = new Scsi();
 

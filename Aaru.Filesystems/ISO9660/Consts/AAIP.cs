@@ -32,9 +32,13 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems.ISO9660
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class ISO9660
     {
         const ushort AAIP_MAGIC     = 0x414C; // "AL"

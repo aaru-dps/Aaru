@@ -1475,7 +1475,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 Progress2Visible = false;
             });
 
-            bool ret = false;
+            bool ret;
 
             if(dumpHardware != null &&
                !cancel)

@@ -38,6 +38,9 @@ using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+// ReSharper disable UnusedType.Local
+// ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems
 {
     // Information from http://www.owg.ru/mkt/BK/MKDOS.TXT

@@ -248,11 +248,8 @@ namespace Aaru.Core.Media.Info
 
                 // Convert to BCD
                 minute = ((minute / 10) << 4) + (minute % 10);
-                ;
                 second = ((second / 10) << 4) + (second % 10);
-                ;
-                frame = ((frame / 10) << 4) + (frame % 10);
-                ;
+                frame  = ((frame  / 10) << 4) + (frame  % 10);
 
                 // Scramble M and S
                 minute ^= 0x01;

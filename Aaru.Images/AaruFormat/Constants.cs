@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
         /// <summary>Maximum number of samples for a FLAC block. Bigger than 4608 gives no benefit.</summary>
         const int MAX_FLAKE_BLOCK = 4608;
         /// <summary>
-        ///     Minimum number of samples for a FLAC block. <see cref="CUETools.Codecs.FLAKE" /> does not support it to be
+        ///     Minimum number of samples for a FLAC block. <see cref="CUETools.Codecs.Flake" /> does not support it to be
         ///     smaller than 256.
         /// </summary>
         const int MIN_FLAKE_BLOCK = 256;

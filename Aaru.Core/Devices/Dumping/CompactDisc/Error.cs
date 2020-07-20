@@ -491,11 +491,10 @@ namespace Aaru.Core.Devices.Dumping
                              Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,
                              Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
-            bool              sense  = true;     // Sense indicator
-            byte[]            cmdBuf = null;     // Data buffer
-            double            cmdDuration;       // Command execution time
-            const uint        sectorSize = 2352; // Full sector size
-            byte[]            senseBuf   = null; // Sense buffer
+            bool              sense  = true;   // Sense indicator
+            byte[]            cmdBuf = null;   // Data buffer
+            double            cmdDuration;     // Command execution time
+            byte[]            senseBuf = null; // Sense buffer
             PlextorSubchannel supportedPlextorSubchannel;
 
             if(supportedSubchannel == MmcSubchannel.None ||

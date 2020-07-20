@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
@@ -40,6 +41,8 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
+     SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class VMfs : IFilesystem
     {
         /// <summary>Identifier for VMfs</summary>

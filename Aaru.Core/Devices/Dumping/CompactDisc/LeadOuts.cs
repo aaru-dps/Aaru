@@ -50,7 +50,6 @@ namespace Aaru.Core.Devices.Dumping
     partial class Dump
     {
         /// <summary>Dumps inter-session lead-outs</summary>
-        /// <param name="blocks">Total number of positive sectors</param>
         /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="currentSpeed">Current read speed</param>
         /// <param name="currentTry">Current dump hardware try</param>
@@ -76,14 +75,13 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="mcn">Disc media catalogue number</param>
         /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
         /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-        void DumpCdLeadOuts(ulong blocks, uint blockSize, ref double currentSpeed, DumpHardwareType currentTry,
-                            ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
-                            ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
-                            bool read6, bool read10, bool read12, bool read16, bool readcd,
-                            MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
-                            SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                            ref string mcn, Track[] tracks, HashSet<int> subchannelExtents,
-                            Dictionary<byte, int> smallestPregapLbaPerTrack)
+        void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+                            IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
+                            ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, bool read6, bool read10,
+                            bool read12, bool read16, bool readcd, MmcSubchannel supportedSubchannel, uint subSize,
+                            ref double totalDuration, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
+                            Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
+                            HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -234,7 +232,6 @@ namespace Aaru.Core.Devices.Dumping
         }
 
         /// <summary>Retries inter-session lead-outs</summary>
-        /// <param name="blocks">Total number of positive sectors</param>
         /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="currentSpeed">Current read speed</param>
         /// <param name="currentTry">Current dump hardware try</param>
@@ -260,14 +257,13 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="mcn">Disc media catalogue number</param>
         /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
         /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-        void RetryCdLeadOuts(ulong blocks, uint blockSize, ref double currentSpeed, DumpHardwareType currentTry,
-                             ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
-                             ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
-                             bool read6, bool read10, bool read12, bool read16, bool readcd,
-                             MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
-                             SubchannelLog subLog, MmcSubchannel desiredSubchannel, Dictionary<byte, string> isrcs,
-                             ref string mcn, Track[] tracks, HashSet<int> subchannelExtents,
-                             Dictionary<byte, int> smallestPregapLbaPerTrack)
+        void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+                             IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
+                             ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, bool read6, bool read10,
+                             bool read12, bool read16, bool readcd, MmcSubchannel supportedSubchannel, uint subSize,
+                             ref double totalDuration, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
+                             Dictionary<byte, string> isrcs, ref string mcn, Track[] tracks,
+                             HashSet<int> subchannelExtents, Dictionary<byte, int> smallestPregapLbaPerTrack)
         {
             byte[]     cmdBuf     = null; // Data buffer
             const uint sectorSize = 2352; // Full sector size
@@ -305,7 +301,7 @@ namespace Aaru.Core.Devices.Dumping
                     // ReSharper restore CompareOfFloatsByEqualityOperator
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    PulseProgress?.Invoke(string.Format("Reading sector {0} at lead-out ({1:F3} MiB/sec.)", i, blocks,
+                    PulseProgress?.Invoke(string.Format("Reading sector {0} at lead-out ({1:F3} MiB/sec.)", i,
                                                         currentSpeed));
 
                     if(readcd)

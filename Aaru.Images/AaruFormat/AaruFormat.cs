@@ -107,9 +107,9 @@ namespace Aaru.DiscImages
         bool              deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
         Dictionary<string, ulong> deduplicationTable;
-        /// <summary><see cref="CUETools.Codecs.FLAKE" /> writer.</summary>
+        /// <summary><see cref="CUETools.Codecs.Flake" /> writer.</summary>
         AudioEncoder flakeWriter;
-        /// <summary><see cref="CUETools.Codecs.FLAKE" /> settings.</summary>
+        /// <summary><see cref="CUETools.Codecs.Flake" /> settings.</summary>
         EncoderSettings flakeWriterSettings;
         /// <summary>Block with logical geometry.</summary>
         GeometryBlock geometryBlock;

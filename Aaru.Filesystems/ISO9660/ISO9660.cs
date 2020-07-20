@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -41,6 +42,7 @@ using Schemas;
 namespace Aaru.Filesystems.ISO9660
 {
     // This is coded following ECMA-119.
+    [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class ISO9660 : IReadOnlyFilesystem
     {
         bool                                      cdi;

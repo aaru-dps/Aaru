@@ -125,7 +125,7 @@ namespace Aaru.Commands.Image
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
 
-            var entropyCalculator = new Entropy(debug, verbose, inputFormat);
+            var entropyCalculator = new Entropy(debug, inputFormat);
             entropyCalculator.InitProgressEvent    += Progress.InitProgress;
             entropyCalculator.InitProgress2Event   += Progress.InitProgress2;
             entropyCalculator.UpdateProgressEvent  += Progress.UpdateProgress;

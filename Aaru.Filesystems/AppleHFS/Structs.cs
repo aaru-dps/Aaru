@@ -32,6 +32,8 @@
 
 using System.Runtime.InteropServices;
 
+// ReSharper disable UnusedType.Local
+
 // ReSharper disable IdentifierTypo
 // ReSharper disable MemberCanBePrivate.Local
 

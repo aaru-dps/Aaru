@@ -30,10 +30,14 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+// ReSharper disable NotAccessedField.Local
 
 namespace Aaru.Filesystems.FAT
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class FAT
     {
         const int UMSDOS_MAXNAME = 220;

@@ -43,7 +43,7 @@ namespace Aaru.Gui.ViewModels.Tabs
     {
         readonly byte[] ata;
         readonly byte[] atapi;
-        Window          _view;
+        readonly Window _view;
 
         public AtaInfoViewModel(byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
                                 Window view)
@@ -53,6 +53,7 @@ namespace Aaru.Gui.ViewModels.Tabs
 
             ata   = ataIdentify;
             atapi = atapiIdentify;
+            _view = view;
 
             if(ataIdentify   == null &&
                atapiIdentify == null)

@@ -27,11 +27,12 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
 namespace Aaru.Tests.Filesystems
 {
-    [TestFixture]
+    [TestFixture, SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class Nwfs386
     {
         readonly string[] testfiles =

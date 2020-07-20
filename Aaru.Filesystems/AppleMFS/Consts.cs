@@ -30,9 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class AppleMFS
     {
         const ushort MFS_MAGIC = 0xD2D7;

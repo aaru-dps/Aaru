@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -39,6 +40,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class Xbox : IPartition
     {
         const uint XboxCigam                = 0x46415458;

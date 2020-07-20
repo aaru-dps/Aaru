@@ -30,10 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class OperaFS
     {
         const string SYNC       = "ZZZZZ";

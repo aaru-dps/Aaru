@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
@@ -66,8 +65,7 @@ namespace Aaru.Filesystems.CPM
         byte[] labelCreationDate;
         /// <summary>Timestamp in volume label for update</summary>
         byte[] labelUpdateDate;
-        bool      mounted;
-        Partition partition;
+        bool mounted;
         /// <summary>Cached file passwords</summary>
         Dictionary<string, byte[]> passwordCache;
         /// <summary>Sector deinterleaving mask</summary>

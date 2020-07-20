@@ -120,7 +120,7 @@ namespace Aaru.Commands.Device
             }
             catch(DeviceException e)
             {
-                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message);
 
                 return (int)ErrorNumber.CannotOpenDevice;
             }

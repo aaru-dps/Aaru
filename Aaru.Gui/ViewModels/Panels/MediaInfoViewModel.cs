@@ -444,8 +444,7 @@ namespace Aaru.Gui.ViewModels.Panels
 
             var mediaScanWindow = new MediaScan();
 
-            mediaScanWindow.DataContext =
-                new MediaScanViewModel(_devicePath, _scsiInfo.DeviceInfo, mediaScanWindow, _scsiInfo);
+            mediaScanWindow.DataContext = new MediaScanViewModel(_devicePath, mediaScanWindow);
 
             mediaScanWindow.Show();
         }

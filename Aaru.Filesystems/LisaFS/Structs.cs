@@ -32,6 +32,8 @@
 
 using System;
 
+// ReSharper disable NotAccessedField.Local
+
 namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
