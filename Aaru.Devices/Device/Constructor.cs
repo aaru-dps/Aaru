@@ -872,8 +872,8 @@ namespace Aaru.Devices
                 if(string.IsNullOrEmpty(Serial))
                     Serial = UsbSerialString;
                 else
-                    foreach(char c in Serial.Where(char.IsControl))
-                        Serial = UsbSerialString;
+                    foreach(char c in Serial.Where(c => !char.IsControl(c)))
+                        Serial = $"{(uint)c:X2}";
             }
 
             if(IsFireWire)
@@ -887,8 +887,8 @@ namespace Aaru.Devices
                 if(string.IsNullOrEmpty(Serial))
                     Serial = $"{firewireGuid:X16}";
                 else
-                    foreach(char c in Serial.Where(char.IsControl))
-                        Serial = $"{firewireGuid:X16}";
+                    foreach(char c in Serial.Where(c => !char.IsControl(c)))
+                        Serial = $"{(uint)c:X2}";
             }
 
             // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without
