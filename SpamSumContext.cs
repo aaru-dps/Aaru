@@ -266,7 +266,7 @@ namespace Aaru.Checksums
 
         // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        uint FuzzyDigest(out byte[] result)
+        void FuzzyDigest(out byte[] result)
         {
             var  sb     = new StringBuilder();
             uint bi     = self.Bhstart;
@@ -315,7 +315,7 @@ namespace Aaru.Checksums
 
             Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
 
-            resultOff += i;
+            resultOff = i;
 
             i = (int)self.Bh[bi].Dlen;
 
@@ -431,8 +431,6 @@ namespace Aaru.Checksums
             }
 
             result[resultOff] = 0;
-
-            return 0;
         }
 
         /// <summary>Gets the hash of a file</summary>

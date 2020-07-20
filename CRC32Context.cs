@@ -39,10 +39,8 @@ namespace Aaru.Checksums
     /// <summary>Implements a CRC32 algorithm</summary>
     public class Crc32Context : IChecksum
     {
-        const uint CRC32_ISO_POLY        = 0xEDB88320;
-        const uint CRC32_ISO_SEED        = 0xFFFFFFFF;
-        const uint CRC32_CASTAGNOLI_POLY = 0x8F6E37A0;
-        const uint CRC32_CASTAGNOLI_SEED = 0xFFFFFFFF;
+        const uint CRC32_ISO_POLY = 0xEDB88320;
+        const uint CRC32_ISO_SEED = 0xFFFFFFFF;
 
         readonly uint   finalSeed;
         readonly uint[] table;
