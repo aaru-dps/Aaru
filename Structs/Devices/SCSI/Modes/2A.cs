@@ -464,6 +464,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
         }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public struct ModePage_2A_WriteDescriptor
     {
         public byte   RotationControl;

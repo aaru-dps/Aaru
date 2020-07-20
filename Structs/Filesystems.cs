@@ -38,6 +38,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Aaru.CommonTypes.Structs
@@ -263,6 +264,7 @@ namespace Aaru.CommonTypes.Structs
     }
 
     /// <summary>Errors</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum Errno
     {
         /// <summary>No error happened</summary>

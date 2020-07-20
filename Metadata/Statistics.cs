@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 
 namespace Aaru.CommonTypes.Metadata
@@ -182,6 +183,7 @@ namespace Aaru.CommonTypes.Metadata
         public string Bus          { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class NameValueStats
     {
         [XmlAttribute]
@@ -190,6 +192,7 @@ namespace Aaru.CommonTypes.Metadata
         public long Value { get; set; }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class OsStats
     {
         [XmlAttribute]

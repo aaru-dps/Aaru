@@ -45,17 +45,17 @@ namespace Aaru.CommonTypes.Extents
     /// <summary>Implements extents for <see cref="long" /></summary>
     public class ExtentsLong
     {
-        List<Tuple<long, long>> backend;
+        List<Tuple<long, long>> _backend;
 
         /// <summary>Initialize an empty list of extents</summary>
-        public ExtentsLong() => backend = new List<Tuple<long, long>>();
+        public ExtentsLong() => _backend = new List<Tuple<long, long>>();
 
         /// <summary>Initializes extents with an specific list</summary>
         /// <param name="list">List of extents as tuples "start, end"</param>
-        public ExtentsLong(IEnumerable<Tuple<long, long>> list) => backend = list.OrderBy(t => t.Item1).ToList();
+        public ExtentsLong(IEnumerable<Tuple<long, long>> list) => _backend = list.OrderBy(t => t.Item1).ToList();
 
         /// <summary>Gets a count of how many extents are stored</summary>
-        public int Count => backend.Count;
+        public int Count => _backend.Count;
 
         /// <summary>Adds the specified number to the corresponding extent, or creates a new one</summary>
         /// <param name="item"></param>
@@ -65,59 +65,59 @@ namespace Aaru.CommonTypes.Extents
             Tuple<long, long> removeTwo = null;
             Tuple<long, long> itemToAdd = null;
 
-            for(int i = 0; i < backend.Count; i++)
+            for(int i = 0; i < _backend.Count; i++)
             {
                 // Already contained in an extent
-                if(item >= backend[i].Item1 &&
-                   item <= backend[i].Item2)
+                if(item >= _backend[i].Item1 &&
+                   item <= _backend[i].Item2)
                     return;
 
                 // Expands existing extent start
-                if(item == backend[i].Item1 - 1)
+                if(item == _backend[i].Item1 - 1)
                 {
-                    removeOne = backend[i];
+                    removeOne = _backend[i];
 
                     if(i    > 0 &&
-                       item == backend[i - 1].Item2 + 1)
+                       item == _backend[i - 1].Item2 + 1)
                     {
-                        removeTwo = backend[i - 1];
-                        itemToAdd = new Tuple<long, long>(backend[i - 1].Item1, backend[i].Item2);
+                        removeTwo = _backend[i - 1];
+                        itemToAdd = new Tuple<long, long>(_backend[i - 1].Item1, _backend[i].Item2);
                     }
                     else
-                        itemToAdd = new Tuple<long, long>(item, backend[i].Item2);
+                        itemToAdd = new Tuple<long, long>(item, _backend[i].Item2);
 
                     break;
                 }
 
                 // Expands existing extent end
-                if(item != backend[i].Item2 + 1)
+                if(item != _backend[i].Item2 + 1)
                     continue;
 
-                removeOne = backend[i];
+                removeOne = _backend[i];
 
-                if(i    < backend.Count         - 1 &&
-                   item == backend[i + 1].Item1 - 1)
+                if(i    < _backend.Count         - 1 &&
+                   item == _backend[i + 1].Item1 - 1)
                 {
-                    removeTwo = backend[i + 1];
-                    itemToAdd = new Tuple<long, long>(backend[i].Item1, backend[i + 1].Item2);
+                    removeTwo = _backend[i + 1];
+                    itemToAdd = new Tuple<long, long>(_backend[i].Item1, _backend[i + 1].Item2);
                 }
                 else
-                    itemToAdd = new Tuple<long, long>(backend[i].Item1, item);
+                    itemToAdd = new Tuple<long, long>(_backend[i].Item1, item);
 
                 break;
             }
 
             if(itemToAdd != null)
             {
-                backend.Remove(removeOne);
-                backend.Remove(removeTwo);
-                backend.Add(itemToAdd);
+                _backend.Remove(removeOne);
+                _backend.Remove(removeTwo);
+                _backend.Add(itemToAdd);
             }
             else
-                backend.Add(new Tuple<long, long>(item, item));
+                _backend.Add(new Tuple<long, long>(item, item));
 
             // Sort
-            backend = backend.OrderBy(t => t.Item1).ToList();
+            _backend = _backend.OrderBy(t => t.Item1).ToList();
         }
 
         /// <summary>Adds a new extent</summary>
@@ -144,10 +144,10 @@ namespace Aaru.CommonTypes.Extents
         /// <summary>Checks if the specified item is contained by an extent on this instance</summary>
         /// <param name="item">Item to seach for</param>
         /// <returns><c>true</c> if any of the extents on this instance contains the item</returns>
-        public bool Contains(long item) => backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
+        public bool Contains(long item) => _backend.Any(extent => item >= extent.Item1 && item <= extent.Item2);
 
         /// <summary>Removes all extents from this instance</summary>
-        public void Clear() => backend.Clear();
+        public void Clear() => _backend.Clear();
 
         /// <summary>Removes an item from the extents in this instance</summary>
         /// <param name="item">Item to remove</param>
@@ -158,7 +158,7 @@ namespace Aaru.CommonTypes.Extents
             Tuple<long, long> toAddOne = null;
             Tuple<long, long> toAddTwo = null;
 
-            foreach(Tuple<long, long> extent in backend)
+            foreach(Tuple<long, long> extent in _backend)
             {
                 // Extent is contained and not a border
                 if(item > extent.Item1 &&
@@ -205,16 +205,16 @@ namespace Aaru.CommonTypes.Extents
             if(toRemove == null)
                 return false;
 
-            backend.Remove(toRemove);
+            _backend.Remove(toRemove);
 
             if(toAddOne != null)
-                backend.Add(toAddOne);
+                _backend.Add(toAddOne);
 
             if(toAddTwo != null)
-                backend.Add(toAddTwo);
+                _backend.Add(toAddTwo);
 
             // Sort
-            backend = backend.OrderBy(t => t.Item1).ToList();
+            _backend = _backend.OrderBy(t => t.Item1).ToList();
 
             return true;
         }
@@ -224,7 +224,7 @@ namespace Aaru.CommonTypes.Extents
         ///     T2 is last element
         /// </summary>
         /// <returns>Array of <see cref="Tuple" /></returns>
-        public Tuple<long, long>[] ToArray() => backend.ToArray();
+        public Tuple<long, long>[] ToArray() => _backend.ToArray();
 
         /// <summary>Gets the first element of the extent that contains the specified item</summary>
         /// <param name="item">Item</param>
@@ -234,7 +234,7 @@ namespace Aaru.CommonTypes.Extents
         {
             start = 0;
 
-            foreach(Tuple<long, long> extent in backend.Where(extent => item >= extent.Item1 && item <= extent.Item2))
+            foreach(Tuple<long, long> extent in _backend.Where(extent => item >= extent.Item1 && item <= extent.Item2))
             {
                 start = extent.Item1;
 

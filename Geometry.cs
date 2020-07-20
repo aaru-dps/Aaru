@@ -42,7 +42,7 @@ namespace Aaru.CommonTypes
 {
     public static class Geometry
     {
-        static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
+        public static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
             encoding, bool variableSectorsPerTrack, MediaType type)[] KnownGeometries =
             {
                 (32, 1, 8, 319, MediaEncoding.FM, false, MediaType.IBM23FD),

@@ -36,9 +36,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Aaru.CommonTypes.Interop
 {
     /// <summary>Contains an arbitrary list of OSes, even if .NET does not run on them</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum PlatformID
     {
         /// <summary>Win32s</summary>

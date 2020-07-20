@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.CommonTypes.Enums
 {
@@ -110,6 +111,7 @@ namespace Aaru.CommonTypes.Enums
     }
 
     /// <summary>Metadata present for each media.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum MediaTagType
     {
         /// <summary>CD table of contents</summary>
