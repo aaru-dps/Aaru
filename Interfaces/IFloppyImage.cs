@@ -82,6 +82,7 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="head">Physical head (0-based).</param>
         /// <param name="sector">Logical sector ID.</param>
         /// <param name="status">Status of request.</param>
+        /// <param name="tag">Sector tag</param>
         byte[] ReadSectorTag(ushort track, byte head, ushort sector, out FloppySectorStatus status, SectorTagType tag);
 
         /// <summary>Reads a whole track. It includes all gaps, address marks, sectors data, etc.</summary>
