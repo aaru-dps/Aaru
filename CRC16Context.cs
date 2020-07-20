@@ -139,6 +139,10 @@ namespace Aaru.Checksums
         /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
+        /// <param name="polynomial">CRC polynomial</param>
+        /// <param name="seed">CRC seed</param>
+        /// <param name="table">CRC lookup table</param>
+        /// <param name="inverse">Is CRC inverted?</param>
         public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[] table,
                                   bool inverse)
         {
@@ -179,6 +183,8 @@ namespace Aaru.Checksums
         /// <param name="hash">Byte array of the hash value.</param>
         /// <param name="polynomial">CRC polynomial</param>
         /// <param name="seed">CRC seed</param>
+        /// <param name="table">CRC lookup table</param>
+        /// <param name="inverse">Is CRC inverted?</param>
         public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
                                   ushort[] table, bool inverse)
         {

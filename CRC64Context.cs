@@ -141,6 +141,8 @@ namespace Aaru.Checksums
         /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
+        /// <param name="polynomial">CRC polynomial</param>
+        /// <param name="seed">CRC seed</param>
         public static string File(string filename, out byte[] hash, ulong polynomial, ulong seed)
         {
             var fileStream = new FileStream(filename, FileMode.Open);
