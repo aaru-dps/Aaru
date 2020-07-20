@@ -40,6 +40,7 @@ namespace Aaru.Core.Logging
 
         /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
+        /// <param name="bcd">Drive returns subchannel in BCD format</param>
         public SubchannelLog(string outputFile, bool bcd)
         {
             if(string.IsNullOrEmpty(outputFile))

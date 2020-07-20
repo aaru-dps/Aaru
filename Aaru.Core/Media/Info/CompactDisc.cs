@@ -58,6 +58,7 @@ namespace Aaru.Core.Media.Info
         /// <param name="updateStatus">UpdateStatus event</param>
         /// <param name="driveOffset">Drive offset</param>
         /// <param name="combinedOffset">Combined offset</param>
+        /// <param name="supportsPlextorReadCdDa">Set to <c>true</c> if drive supports PLEXTOR READ CD-DA vendor command</param>
         /// <returns><c>true</c> if offset could be found, <c>false</c> otherwise</returns>
         [SuppressMessage("ReSharper", "TooWideLocalVariableScope")]
         public static void GetOffset(CdOffset cdOffset, Device dbDev, bool debug, Aaru.Devices.Device dev,

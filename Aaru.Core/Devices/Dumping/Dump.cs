@@ -115,6 +115,18 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="preSidecar">Sidecar to store in dumped image</param>
         /// <param name="skip">How many sectors to skip reading on error</param>
         /// <param name="metadata">Create metadata sidecar after dump?</param>
+        /// <param name="fixOffset">Fix audio offset</param>
+        /// <param name="debug">Debug mode</param>
+        /// <param name="subchannel">Desired subchannel to save to image</param>
+        /// <param name="speed">Desired drive speed</param>
+        /// <param name="private">Disable saving paths or serial numbers in images and logs</param>
+        /// <param name="fixSubchannelPosition">Fix subchannel position (save where it says it belongs)</param>
+        /// <param name="retrySubchannel">Retry reading incorrect or missing subchannels</param>
+        /// <param name="fixSubchannel">Try to fix subchannel errors (but not Q CRC)</param>
+        /// <param name="fixSubchannelCrc">Try to fix subchannel Q CRC errors</param>
+        /// <param name="skipCdireadyHole">Skip gap between CD-i Ready hidden track and track 1 audio</param>
+        /// <param name="errorLog">Error log</param>
+        /// <param name="generateSubchannels">Generate missing subchannels</param>
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,

@@ -69,6 +69,13 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
         /// <param name="subSize">Subchannel size in bytes</param>
         /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void DumpCdLeadOuts(ulong blocks, uint blockSize, ref double currentSpeed, DumpHardwareType currentTry,
                             ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
                             ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,
@@ -246,6 +253,13 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
         /// <param name="subSize">Subchannel size in bytes</param>
         /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void RetryCdLeadOuts(ulong blocks, uint blockSize, ref double currentSpeed, DumpHardwareType currentTry,
                              ExtentsULong extents, IbgLog ibgLog, ref double imageWriteDuration,
                              ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog, ref double minSpeed,

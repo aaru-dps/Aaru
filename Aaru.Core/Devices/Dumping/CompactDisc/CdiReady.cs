@@ -115,7 +115,6 @@ namespace Aaru.Core.Devices.Dumping
         // TODO: Set pregap for Track 1
         // TODO: Detect errors in sectors
         /// <summary>Reads all CD user data</summary>
-        /// <param name="audioExtents">Extents with audio sectors</param>
         /// <param name="blocks">Total number of positive sectors</param>
         /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="currentSpeed">Current read speed</param>
@@ -123,24 +122,23 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="extents">Extents</param>
         /// <param name="ibgLog">IMGBurn log</param>
         /// <param name="imageWriteDuration">Duration of image write</param>
-        /// <param name="lastSector">Last sector number</param>
         /// <param name="leadOutExtents">Lead-out extents</param>
         /// <param name="maxSpeed">Maximum speed</param>
         /// <param name="mhddLog">MHDD log</param>
         /// <param name="minSpeed">Minimum speed</param>
-        /// <param name="newTrim">Is trim a new one?</param>
-        /// <param name="nextData">Next cluster of sectors is all data</param>
         /// <param name="offsetBytes">Read offset</param>
-        /// <param name="read6">Device supports READ(6)</param>
-        /// <param name="read10">Device supports READ(10)</param>
-        /// <param name="read12">Device supports READ(12)</param>
-        /// <param name="read16">Device supports READ(16)</param>
-        /// <param name="readcd">Device supports READ CD</param>
         /// <param name="sectorsForOffset">Sectors needed to fix offset</param>
         /// <param name="subSize">Subchannel size in bytes</param>
         /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
-        /// <param name="supportsLongSectors">Supports reading EDC and ECC</param>
         /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="cdiReadyReadAsAudio">Is the drive returning CD-i Ready hidden track as audio?</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
                           IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents,
                           ref double maxSpeed, MhddLog mhddLog, ref double minSpeed, uint subSize,

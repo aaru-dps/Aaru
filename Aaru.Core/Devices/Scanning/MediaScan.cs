@@ -49,6 +49,7 @@ namespace Aaru.Core.Devices.Scanning
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
         /// <param name="devicePath">Device path</param>
         /// <param name="dev">Device</param>
+        /// <param name="seekTest">Enable seek test</param>
         public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev, bool seekTest = true)
         {
             _mhddLogPath = mhddLogPath;

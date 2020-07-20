@@ -42,6 +42,7 @@ namespace Aaru.Devices
         /// <param name="relAddr">Set to <c>true</c> if <paramref name="lba" /> is relative</param>
         /// <param name="lba">Logical block address where to start the search.</param>
         /// <param name="scanLength">Number of blocks to scan</param>
+        /// <param name="foundBlocks">How many blocks were found</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         /// <param name="written">
@@ -55,6 +56,7 @@ namespace Aaru.Devices
         ///     other parameters are met
         /// </param>
         /// <param name="requested">Number of contiguous blocks to find</param>
+        /// <param name="foundLba">First LBA found</param>
         public bool MediumScan(out byte[] senseBuffer, bool written, bool advancedScan, bool reverse, bool partial,
                                bool relAddr, uint lba, uint requested, uint scanLength, out uint foundLba,
                                out uint foundBlocks, uint timeout, out double duration)

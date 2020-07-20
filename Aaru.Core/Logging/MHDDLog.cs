@@ -51,6 +51,7 @@ namespace Aaru.Core.Logging
         /// <param name="blocks">Blocks in media</param>
         /// <param name="blockSize">Bytes per block</param>
         /// <param name="blocksToRead">How many blocks read at once</param>
+        /// <param name="private">Disable saving paths or serial numbers in log</param>
         internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead,
                          bool @private)
         {

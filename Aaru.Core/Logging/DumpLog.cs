@@ -49,6 +49,7 @@ namespace Aaru.Core.Logging
         /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
         /// <param name="dev">Device</param>
+        /// <param name="private">Disable saving paths or serial numbers in log</param>
         public DumpLog(string outputFile, Device dev, bool @private)
         {
             if(string.IsNullOrEmpty(outputFile))
