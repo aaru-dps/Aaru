@@ -298,7 +298,7 @@ dotnet_sort_system_directives_first=true
 
 # Constants in C style, all-caps
 dotnet_naming_rule.constant_fields_caps.symbols = constant_fields
-dotnet_naming_rule.constant_fields_caps.severity = suggestion
+dotnet_naming_rule.constant_fields_caps.severity = warning
 dotnet_naming_rule.constant_fields_caps.style = caps_style
 dotnet_naming_symbols.constant_fields.applicable_kinds = field
 dotnet_naming_symbols.constant_fields.required_modifiers = const
@@ -313,7 +313,7 @@ dotnet_naming_style.pascal_case_interface_style.required_prefix = I
 dotnet_naming_style.pascal_case_interface_style.capitalization = pascal_case
 
 ## internal and private fields should be _camelCase
-dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
+dotnet_naming_rule.camel_case_for_private_internal_fields.severity = warning
 dotnet_naming_rule.camel_case_for_private_internal_fields.symbols  = private_internal_fields
 dotnet_naming_rule.camel_case_for_private_internal_fields.style    = camel_case_underscore_style
 dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
