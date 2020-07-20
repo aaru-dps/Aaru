@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.PCMCIA
 {

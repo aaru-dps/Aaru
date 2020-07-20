@@ -32,6 +32,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders
 {

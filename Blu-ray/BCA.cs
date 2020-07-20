@@ -34,6 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.Bluray
 {

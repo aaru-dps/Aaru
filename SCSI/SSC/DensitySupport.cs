@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI.SSC
 {

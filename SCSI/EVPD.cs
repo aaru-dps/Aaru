@@ -38,6 +38,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI
 {

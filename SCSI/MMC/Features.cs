@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Helpers;
 
 // ReSharper disable MemberCanBePrivate.Global
 

@@ -35,6 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Helpers;
 
 namespace Aaru.Decoders.SCSI
 {
