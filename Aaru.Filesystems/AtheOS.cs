@@ -104,7 +104,7 @@ namespace Aaru.Filesystems
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            AtheosSuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<AtheosSuperBlock>(sbSector);
+            SuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
             sb.AppendLine("Atheos filesystem");
 
@@ -168,7 +168,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Be superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AtheosSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]

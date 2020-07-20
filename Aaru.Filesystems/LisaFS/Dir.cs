@@ -78,7 +78,7 @@ namespace Aaru.Filesystems.LisaFS
 
             // On debug add system files as readable files
             // Syntax similar to NTFS
-            if(debug && fileId == DIRID_ROOT)
+            if(_debug && fileId == DIRID_ROOT)
             {
                 contents.Add("$MDDF");
                 contents.Add("$Boot");
@@ -97,7 +97,7 @@ namespace Aaru.Filesystems.LisaFS
         {
             // Do same trick as Mac OS X, replace filesystem '/' with '-',
             // as '-' is the path separator in Lisa OS
-            contents = (from entry in catalogCache where entry.parentID == dirId
+            contents = (from entry in _catalogCache where entry.parentID == dirId
                         select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
 
             return Errno.NoError;
@@ -106,14 +106,14 @@ namespace Aaru.Filesystems.LisaFS
         /// <summary>Reads, interprets and caches the Catalog File</summary>
         Errno ReadCatalog()
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            catalogCache = new List<CatalogEntry>();
+            _catalogCache = new List<CatalogEntry>();
 
             // Do differently for V1 and V2
-            if(mddf.fsversion == LISA_V2 ||
-               mddf.fsversion == LISA_V1)
+            if(_mddf.fsversion == LISA_V2 ||
+               _mddf.fsversion == LISA_V1)
             {
                 Errno error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
 
@@ -163,14 +163,14 @@ namespace Aaru.Filesystems.LisaFS
                         fileID   = entV2.fileID,
                         filename = new byte[32],
                         fileType = entV2.fileType,
-                        length   = (int)srecords[entV2.fileID].filesize,
+                        length   = (int)_srecords[entV2.fileID].filesize,
                         dtc      = ext.dtc,
                         dtm      = ext.dtm
                     };
 
                     Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
 
-                    catalogCache.Add(entV3);
+                    _catalogCache.Add(entV3);
                 }
 
                 return Errno.NoError;
@@ -181,15 +181,15 @@ namespace Aaru.Filesystems.LisaFS
             // Search for the first sector describing the catalog
             // While root catalog is not stored in S-Records, probably rest are? (unchecked)
             // If root catalog is not pointed in MDDF (unchecked) maybe it's always following S-Records File?
-            for(ulong i = 0; i < device.Info.Sectors; i++)
+            for(ulong i = 0; i < _device.Info.Sectors; i++)
             {
-                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
+                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag catTag);
 
                 if(catTag.FileId  != FILEID_CATALOG ||
                    catTag.RelPage != 0)
                     continue;
 
-                firstCatalogBlock = device.ReadSectors(i, 4);
+                firstCatalogBlock = _device.ReadSectors(i, 4);
 
                 break;
             }
@@ -204,13 +204,13 @@ namespace Aaru.Filesystems.LisaFS
             // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
             {
-                DecodeTag(device.ReadSectorTag(prevCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
+                DecodeTag(_device.ReadSectorTag(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, SectorTagType.AppleSectorTag),
                           out LisaTag.PriamTag prevTag);
 
                 if(prevTag.FileId != FILEID_CATALOG)
                     return Errno.InvalidArgument;
 
-                firstCatalogBlock  = device.ReadSectors(prevCatalogPointer + mddf.mddf_block + volumePrefix, 4);
+                firstCatalogBlock  = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
             }
 
@@ -225,13 +225,13 @@ namespace Aaru.Filesystems.LisaFS
             // Traverse double-linked list to read full catalog
             while(nextCatalogPointer != 0xFFFFFFFF)
             {
-                DecodeTag(device.ReadSectorTag(nextCatalogPointer + mddf.mddf_block + volumePrefix, SectorTagType.AppleSectorTag),
+                DecodeTag(_device.ReadSectorTag(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, SectorTagType.AppleSectorTag),
                           out LisaTag.PriamTag nextTag);
 
                 if(nextTag.FileId != FILEID_CATALOG)
                     return Errno.InvalidArgument;
 
-                byte[] nextCatalogBlock = device.ReadSectors(nextCatalogPointer + mddf.mddf_block + volumePrefix, 4);
+                byte[] nextCatalogBlock = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, 4);
                 nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
                 catalogBlocks.Add(nextCatalogBlock);
             }
@@ -280,10 +280,10 @@ namespace Aaru.Filesystems.LisaFS
                         Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
 
                         if(ReadExtentsFile(entry.fileID, out _) == Errno.NoError)
-                            if(!fileSizeCache.ContainsKey(entry.fileID))
+                            if(!_fileSizeCache.ContainsKey(entry.fileID))
                             {
-                                catalogCache.Add(entry);
-                                fileSizeCache.Add(entry.fileID, entry.length);
+                                _catalogCache.Add(entry);
+                                _fileSizeCache.Add(entry.fileID, entry.length);
                             }
 
                         offset += 64;
@@ -311,10 +311,10 @@ namespace Aaru.Filesystems.LisaFS
 
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
 
-                        if(!directoryDtcCache.ContainsKey(entry.fileID))
-                            directoryDtcCache.Add(entry.fileID, DateHandlers.LisaToDateTime(entry.dtc));
+                        if(!_directoryDtcCache.ContainsKey(entry.fileID))
+                            _directoryDtcCache.Add(entry.fileID, DateHandlers.LisaToDateTime(entry.dtc));
 
-                        catalogCache.Add(entry);
+                        _catalogCache.Add(entry);
 
                         offset += 48;
                     }
@@ -329,7 +329,7 @@ namespace Aaru.Filesystems.LisaFS
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             stat = new FileEntryInfo
@@ -342,11 +342,11 @@ namespace Aaru.Filesystems.LisaFS
                 GID        = 0,
                 DeviceNo   = 0,
                 Length     = 0,
-                BlockSize  = mddf.datasize,
+                BlockSize  = _mddf.datasize,
                 Blocks     = 0
             };
 
-            directoryDtcCache.TryGetValue(dirId, out DateTime tmp);
+            _directoryDtcCache.TryGetValue(dirId, out DateTime tmp);
             stat.CreationTime = tmp;
 
             return Errno.NoError;

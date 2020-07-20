@@ -40,11 +40,11 @@ namespace Aaru.DiscImages
 {
     public partial class RayDim : IWritableImage
     {
-        MemoryStream disk;
-        ImageInfo    imageInfo;
-        FileStream   writingStream;
+        MemoryStream _disk;
+        ImageInfo    _imageInfo;
+        FileStream   _writingStream;
 
-        public RayDim() => imageInfo = new ImageInfo
+        public RayDim() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

@@ -727,15 +727,15 @@ namespace Aaru.Filesystems
                             isoMetadata.AppendLine("\tImage uses no emulation");
 
                             break;
-                        case ElToritoEmulation.Md2hd:
+                        case ElToritoEmulation.Md2Hd:
                             isoMetadata.AppendLine("\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
 
                             break;
-                        case ElToritoEmulation.Mf2hd:
+                        case ElToritoEmulation.Mf2Hd:
                             isoMetadata.AppendLine("\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
 
                             break;
-                        case ElToritoEmulation.Mf2ed:
+                        case ElToritoEmulation.Mf2Ed:
                             isoMetadata.AppendLine("\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
 
                             break;
@@ -757,7 +757,7 @@ namespace Aaru.Filesystems
 
                 toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                const int SECTION_COUNTER = 2;
+                const int sectionCounter = 2;
 
                 while(toritoOff < vdSector.Length &&
                       (vdSector[toritoOff] == (byte)ElToritoIndicator.Header ||
@@ -769,7 +769,7 @@ namespace Aaru.Filesystems
 
                     toritoOff += EL_TORITO_ENTRY_SIZE;
 
-                    isoMetadata.AppendFormat("Boot section {0}:", SECTION_COUNTER);
+                    isoMetadata.AppendFormat("Boot section {0}:", sectionCounter);
 
                     isoMetadata.AppendFormat("\tSection ID: {0}", Encoding.GetString(sectionHeader.identifier)).
                                 AppendLine();
@@ -812,17 +812,17 @@ namespace Aaru.Filesystems
                                     isoMetadata.AppendLine("\t\tImage uses no emulation");
 
                                     break;
-                                case ElToritoEmulation.Md2hd:
+                                case ElToritoEmulation.Md2Hd:
                                     isoMetadata.
                                         AppendLine("\t\tImage emulates a 5.25\" high-density (MD2HD, 1.2Mb) floppy");
 
                                     break;
-                                case ElToritoEmulation.Mf2hd:
+                                case ElToritoEmulation.Mf2Hd:
                                     isoMetadata.
                                         AppendLine("\t\tImage emulates a 3.5\" high-density (MF2HD, 1.44Mb) floppy");
 
                                     break;
-                                case ElToritoEmulation.Mf2ed:
+                                case ElToritoEmulation.Mf2Ed:
                                     isoMetadata.
                                         AppendLine("\t\tImage emulates a 3.5\" extra-density (MF2ED, 2.88Mb) floppy");
 

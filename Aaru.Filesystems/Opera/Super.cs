@@ -52,7 +52,7 @@ namespace Aaru.Filesystems
                 options = GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out debug);
+                bool.TryParse(debugString, out _debug);
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -68,9 +68,9 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize == 2336 ||
                imagePlugin.Info.SectorSize == 2352 ||
                imagePlugin.Info.SectorSize == 2448)
-                volumeBlockSizeRatio = sb.block_size / 2048;
+                _volumeBlockSizeRatio = sb.block_size / 2048;
             else
-                volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
+                _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
 
             XmlFsType = new FileSystemType
             {
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems
                 VolumeSerial = $"{sb.volume_id:X8}"
             };
 
-            statfs = new FileSystemInfo
+            _statfs = new FileSystemInfo
             {
                 Blocks         = sb.block_count,
                 FilenameLength = MAX_NAME,
@@ -96,21 +96,21 @@ namespace Aaru.Filesystems
                 Type     = "Opera"
             };
 
-            image = imagePlugin;
+            _image = imagePlugin;
             int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
-            rootDirectoryCache = DecodeDirectory(firstRootBlock);
-            directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
-            mounted            = true;
+            _rootDirectoryCache = DecodeDirectory(firstRootBlock);
+            _directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
+            _mounted            = true;
 
             return Errno.NoError;
         }
 
         public Errno Unmount()
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            mounted = false;
+            _mounted = false;
 
             return Errno.NoError;
         }
@@ -119,10 +119,10 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            stat = statfs.ShallowCopy();
+            stat = _statfs.ShallowCopy();
 
             return Errno.NoError;
         }

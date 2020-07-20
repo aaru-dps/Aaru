@@ -47,9 +47,9 @@ namespace Aaru.Core.Devices.Scanning
             byte[] cmdBuf;
             bool   sense;
             results.Blocks = 0;
-            const uint   TIMEOUT = 5;
+            const uint   timeout = 5;
             double       duration;
-            const ushort SD_PROFILE    = 0x0001;
+            const ushort sdProfile     = 0x0001;
             uint         blocksToRead  = 128;
             uint         blockSize     = 512;
             bool         byteAddressed = true;
@@ -58,7 +58,7 @@ namespace Aaru.Core.Devices.Scanning
             {
                 case DeviceType.MMC:
                 {
-                    sense = _dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
+                    sense = _dev.ReadExtendedCsd(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
                     {
@@ -73,7 +73,7 @@ namespace Aaru.Core.Devices.Scanning
 
                     if(sense || results.Blocks == 0)
                     {
-                        sense = _dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+                        sense = _dev.ReadCsd(out cmdBuf, out _, timeout, out _);
 
                         if(!sense)
                         {
@@ -88,7 +88,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 case DeviceType.SecureDigital:
                 {
-                    sense = _dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
+                    sense = _dev.ReadCsd(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
                     {
@@ -117,7 +117,7 @@ namespace Aaru.Core.Devices.Scanning
 
             while(true)
             {
-                sense = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
+                sense = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                 if(sense)
                     blocksToRead /= 2;
@@ -157,9 +157,9 @@ namespace Aaru.Core.Devices.Scanning
 
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
-            InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, SD_PROFILE);
+            InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, sdProfile);
             var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
-            var ibgLog  = new IbgLog(_ibgLogPath, SD_PROFILE);
+            var ibgLog  = new IbgLog(_ibgLogPath, sdProfile);
 
             start = DateTime.UtcNow;
             DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -187,7 +187,7 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)results.Blocks);
 
-                bool error = _dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                bool error = _dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, timeout,
                                        out duration);
 
                 if(!error)
@@ -254,7 +254,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
-                _dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                _dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, timeout,
                           out double seekCur);
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator

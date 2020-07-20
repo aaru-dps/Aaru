@@ -40,13 +40,14 @@ namespace Aaru.DiscImages
 {
     public partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
+        ImageInfo _imageInfo;
+        Stream    _scpStream;
+
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public ScpHeader                     Header;
-        ImageInfo                            imageInfo;
-        Stream                               scpStream;
         public Dictionary<byte, TrackHeader> ScpTracks;
 
-        public SuperCardPro() => imageInfo = new ImageInfo
+        public SuperCardPro() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

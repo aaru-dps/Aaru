@@ -55,24 +55,24 @@ namespace Aaru.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
+            _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
-            if(!v98Hdr.signature.SequenceEqual(signature))
+            if(!_v98Hdr.signature.SequenceEqual(_signature))
                 return false;
 
             AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
-                                       StringHandlers.CToString(v98Hdr.signature, shiftjis));
+                                       StringHandlers.CToString(_v98Hdr.signature, shiftjis));
 
             AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
-                                       StringHandlers.CToString(v98Hdr.comment, shiftjis));
+                                       StringHandlers.CToString(_v98Hdr.comment, shiftjis));
 
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", v98Hdr.padding);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", v98Hdr.mbsize);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", v98Hdr.sectors);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", v98Hdr.surfaces);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", v98Hdr.cylinders);
-            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", v98Hdr.totals);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}", _v98Hdr.padding);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}", _v98Hdr.mbsize);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", _v98Hdr.sectorsize);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}", _v98Hdr.sectors);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}", _v98Hdr.surfaces);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}", _v98Hdr.cylinders);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}", _v98Hdr.totals);
 
             return true;
         }

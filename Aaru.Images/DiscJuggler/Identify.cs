@@ -41,21 +41,21 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            imageStream = imageFilter.GetDataForkStream();
+            _imageStream = imageFilter.GetDataForkStream();
 
-            imageStream.Seek(-4, SeekOrigin.End);
+            _imageStream.Seek(-4, SeekOrigin.End);
             byte[] dscLenB = new byte[4];
-            imageStream.Read(dscLenB, 0, 4);
+            _imageStream.Read(dscLenB, 0, 4);
             int dscLen = BitConverter.ToInt32(dscLenB, 0);
 
             AaruConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
 
-            if(dscLen >= imageStream.Length)
+            if(dscLen >= _imageStream.Length)
                 return false;
 
             byte[] descriptor = new byte[dscLen];
-            imageStream.Seek(-dscLen, SeekOrigin.End);
-            imageStream.Read(descriptor, 0, dscLen);
+            _imageStream.Seek(-dscLen, SeekOrigin.End);
+            _imageStream.Read(descriptor, 0, dscLen);
 
             // Sessions
             if(descriptor[0] > 99 ||

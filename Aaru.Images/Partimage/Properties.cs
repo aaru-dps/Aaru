@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class Partimage
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Partimage disk image";
         public Guid                   Id           => new Guid("AAFDB99D-2B77-49EA-831C-C9BB58C68C95");

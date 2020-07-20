@@ -47,8 +47,8 @@ namespace Aaru.Core.Devices.Scanning
             var  results = new ScanResults();
             bool sense;
             results.Blocks = 0;
-            const ushort ATA_PROFILE = 0x0001;
-            const uint   TIMEOUT     = 5;
+            const ushort ataProfile = 0x0001;
+            const uint   timeout    = 5;
 
             sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
 
@@ -56,7 +56,7 @@ namespace Aaru.Core.Devices.Scanning
                Identify.Decode(cmdBuf).HasValue)
             {
                 // Initializate reader
-                var ataReader = new Reader(_dev, TIMEOUT, cmdBuf, null);
+                var ataReader = new Reader(_dev, timeout, cmdBuf, null);
 
                 // Fill reader blocks
                 results.Blocks = ataReader.GetDeviceBlocks();
@@ -122,9 +122,9 @@ namespace Aaru.Core.Devices.Scanning
                 {
                     UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
-                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
+                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ataProfile);
                     mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
-                    ibgLog  = new IbgLog(_ibgLogPath, ATA_PROFILE);
+                    ibgLog  = new IbgLog(_ibgLogPath, ataProfile);
 
                     start = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
@@ -239,9 +239,9 @@ namespace Aaru.Core.Devices.Scanning
                 }
                 else
                 {
-                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
+                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ataProfile);
                     mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
-                    ibgLog  = new IbgLog(_ibgLogPath, ATA_PROFILE);
+                    ibgLog  = new IbgLog(_ibgLogPath, ataProfile);
 
                     ulong currentBlock = 0;
                     results.Blocks = (ulong)(cylinders * heads * sectors);

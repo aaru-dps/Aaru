@@ -53,12 +53,12 @@ namespace Aaru.DiscImages
             if(imageFilter == null)
                 return false;
 
-            ccdFilter = imageFilter;
+            _ccdFilter = imageFilter;
 
             try
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                cueStream = new StreamReader(imageFilter.GetDataForkStream());
+                _cueStream = new StreamReader(imageFilter.GetDataForkStream());
                 int lineNumber = 0;
 
                 var ccdIdRegex     = new Regex(CCD_IDENTIFIER);
@@ -103,13 +103,13 @@ namespace Aaru.DiscImages
                 int                               maxSession   = int.MinValue;
                 var                               currentEntry = new FullTOC.TrackDataDescriptor();
                 List<FullTOC.TrackDataDescriptor> entries      = new List<FullTOC.TrackDataDescriptor>();
-                scrambled = false;
-                catalog   = null;
+                _scrambled = false;
+                _catalog   = null;
 
-                while(cueStream.Peek() >= 0)
+                while(_cueStream.Peek() >= 0)
                 {
                     lineNumber++;
-                    string line = cueStream.ReadLine();
+                    string line = _cueStream.ReadLine();
 
                     Match ccdIdMatch   = ccdIdRegex.Match(line);
                     Match discIdMatch  = discIdRegex.Match(line);
@@ -166,13 +166,13 @@ namespace Aaru.DiscImages
 
                             AaruConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", lineNumber);
 
-                            imageInfo.Version = ccdVerMatch.Groups["value"].Value;
+                            _imageInfo.Version = ccdVerMatch.Groups["value"].Value;
 
-                            if(imageInfo.Version != "2" &&
-                               imageInfo.Version != "3")
+                            if(_imageInfo.Version != "2" &&
+                               _imageInfo.Version != "3")
                                 AaruConsole.
                                     ErrorWriteLine("(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!",
-                                                   imageInfo.Version);
+                                                   _imageInfo.Version);
                         }
                         else if(inDisk)
                         {
@@ -192,7 +192,7 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found DataTracksScrambled at line {0}",
                                                            lineNumber);
 
-                                scrambled |= discScrMatch.Groups["value"].Value == "1";
+                                _scrambled |= discScrMatch.Groups["value"].Value == "1";
                             }
                             else if(cdtLenMatch.Success)
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}",
@@ -200,7 +200,7 @@ namespace Aaru.DiscImages
                             else if(discCatMatch.Success)
                             {
                                 AaruConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", lineNumber);
-                                catalog = discCatMatch.Groups["value"].Value;
+                                _catalog = discCatMatch.Groups["value"].Value;
                             }
                         }
 
@@ -364,20 +364,20 @@ namespace Aaru.DiscImages
                     tocMs.WriteByte(descriptor.PFRAME);
                 }
 
-                fulltoc = tocMs.ToArray();
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
+                _fulltoc = tocMs.ToArray();
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
                 string dataFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".img";
                 string subFile  = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".sub";
 
                 var filtersList = new FiltersList();
-                dataFilter = filtersList.GetFilter(dataFile);
+                _dataFilter = filtersList.GetFilter(dataFile);
 
-                if(dataFilter == null)
+                if(_dataFilter == null)
                     throw new Exception("Cannot open data file");
 
                 filtersList = new FiltersList();
-                subFilter   = filtersList.GetFilter(subFile);
+                _subFilter  = filtersList.GetFilter(subFile);
 
                 int  curSessionNo        = 0;
                 var  currentTrack        = new Track();
@@ -385,12 +385,12 @@ namespace Aaru.DiscImages
                 Tracks = new List<Track>();
                 ulong leadOutStart = 0;
 
-                dataStream = dataFilter.GetDataForkStream();
+                _dataStream = _dataFilter.GetDataForkStream();
 
-                if(subFilter != null)
-                    subStream = subFilter.GetDataForkStream();
+                if(_subFilter != null)
+                    _subStream = _subFilter.GetDataForkStream();
 
-                trackFlags = new Dictionary<byte, byte>();
+                _trackFlags = new Dictionary<byte, byte>();
 
                 foreach(FullTOC.TrackDataDescriptor descriptor in entries)
                 {
@@ -439,9 +439,9 @@ namespace Aaru.DiscImages
                                         currentTrack = new Track
                                         {
                                             TrackBytesPerSector    = 2352,
-                                            TrackFile              = dataFilter.GetFilename(),
-                                            TrackFileType          = scrambled ? "SCRAMBLED" : "BINARY",
-                                            TrackFilter            = dataFilter,
+                                            TrackFile              = _dataFilter.GetFilename(),
+                                            TrackFileType          = _scrambled ? "SCRAMBLED" : "BINARY",
+                                            TrackFilter            = _dataFilter,
                                             TrackRawBytesPerSector = 2352,
                                             TrackSequence          = descriptor.POINT,
                                             TrackStartSector =
@@ -456,13 +456,13 @@ namespace Aaru.DiscImages
                                         else
                                             currentTrack.TrackType = TrackType.Audio;
 
-                                        if(!trackFlags.ContainsKey(descriptor.POINT))
-                                            trackFlags.Add(descriptor.POINT, descriptor.CONTROL);
+                                        if(!_trackFlags.ContainsKey(descriptor.POINT))
+                                            _trackFlags.Add(descriptor.POINT, descriptor.CONTROL);
 
-                                        if(subFilter != null)
+                                        if(_subFilter != null)
                                         {
-                                            currentTrack.TrackSubchannelFile   = subFilter.GetFilename();
-                                            currentTrack.TrackSubchannelFilter = subFilter;
+                                            currentTrack.TrackSubchannelFile   = _subFilter.GetFilename();
+                                            currentTrack.TrackSubchannelFilter = _subFilter;
                                             currentTrack.TrackSubchannelType   = TrackSubchannelType.Raw;
                                         }
                                         else
@@ -482,11 +482,11 @@ namespace Aaru.DiscImages
                                         int type = descriptor.PFRAME % 10;
                                         int frm  = descriptor.PFRAME - type;
 
-                                        imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(descriptor.PSEC, frm);
+                                        _imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(descriptor.PSEC, frm);
 
-                                        if(imageInfo.MediaManufacturer != "")
+                                        if(_imageInfo.MediaManufacturer != "")
                                             AaruConsole.DebugWriteLine("CloneCD plugin", "Disc manufactured by: {0}",
-                                                                       imageInfo.MediaManufacturer);
+                                                                       _imageInfo.MediaManufacturer);
                                     }
 
                                     break;
@@ -497,7 +497,7 @@ namespace Aaru.DiscImages
                         {
                             uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
                             AaruConsole.DebugWriteLine("CloneCD plugin", "Disc ID: {0:X6}", id & 0x00FFFFFF);
-                            imageInfo.MediaSerialNumber = $"{id                                & 0x00FFFFFF:X6}";
+                            _imageInfo.MediaSerialNumber = $"{id                               & 0x00FFFFFF:X6}";
 
                             break;
                         }
@@ -521,7 +521,7 @@ namespace Aaru.DiscImages
 
                     currentDataOffset += 2352 * ((tmpTracks[i].TrackEndSector - tmpTracks[i].TrackStartSector) + 1);
 
-                    if(subFilter != null)
+                    if(_subFilter != null)
                     {
                         tmpTracks[i].TrackSubchannelOffset = currentSubchannelOffset;
 
@@ -538,18 +538,18 @@ namespace Aaru.DiscImages
 
                             long pos = (long)tmpTracks[i].TrackFileOffset + (s * 2352);
 
-                            if(pos >= dataStream.Length + 2352 ||
+                            if(pos >= _dataStream.Length + 2352 ||
                                s   >= (int)(tmpTracks[i].TrackEndSector - tmpTracks[i].TrackStartSector))
                                 break;
 
-                            dataStream.Seek(pos, SeekOrigin.Begin);
-                            dataStream.Read(sectTest, 0, 2352);
+                            _dataStream.Seek(pos, SeekOrigin.Begin);
+                            _dataStream.Read(sectTest, 0, 2352);
                             Array.Copy(sectTest, 0, syncTest, 0, 12);
 
                             if(!Sector.SyncMark.SequenceEqual(syncTest))
                                 continue;
 
-                            if(scrambled)
+                            if(_scrambled)
                                 sectTest = Sector.Scramble(sectTest);
 
                             if(sectTest[15] == 1)
@@ -557,26 +557,26 @@ namespace Aaru.DiscImages
                                 tmpTracks[i].TrackBytesPerSector = 2048;
                                 tmpTracks[i].TrackType           = TrackType.CdMode1;
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                                if(imageInfo.SectorSize < 2048)
-                                    imageInfo.SectorSize = 2048;
+                                if(_imageInfo.SectorSize < 2048)
+                                    _imageInfo.SectorSize = 2048;
 
                                 break;
                             }
@@ -597,20 +597,20 @@ namespace Aaru.DiscImages
                                         tmpTracks[i].TrackBytesPerSector = 2324;
                                         tmpTracks[i].TrackType           = TrackType.CdMode2Form2;
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                                        if(imageInfo.SectorSize < 2324)
-                                            imageInfo.SectorSize = 2324;
+                                        if(_imageInfo.SectorSize < 2324)
+                                            _imageInfo.SectorSize = 2324;
 
                                         break;
                                     }
@@ -619,29 +619,29 @@ namespace Aaru.DiscImages
                                         tmpTracks[i].TrackBytesPerSector = 2048;
                                         tmpTracks[i].TrackType           = TrackType.CdMode2Form1;
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                                        if(imageInfo.SectorSize < 2048)
-                                            imageInfo.SectorSize = 2048;
+                                        if(_imageInfo.SectorSize < 2048)
+                                            _imageInfo.SectorSize = 2048;
 
                                         break;
                                     }
@@ -649,14 +649,14 @@ namespace Aaru.DiscImages
                                 tmpTracks[i].TrackBytesPerSector = 2336;
                                 tmpTracks[i].TrackType           = TrackType.CdMode2Formless;
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                if(imageInfo.SectorSize < 2336)
-                                    imageInfo.SectorSize = 2336;
+                                if(_imageInfo.SectorSize < 2336)
+                                    _imageInfo.SectorSize = 2336;
 
                                 break;
                             }
@@ -664,18 +664,18 @@ namespace Aaru.DiscImages
                     }
                     else
                     {
-                        if(imageInfo.SectorSize < 2352)
-                            imageInfo.SectorSize = 2352;
+                        if(_imageInfo.SectorSize < 2352)
+                            _imageInfo.SectorSize = 2352;
                     }
                 }
 
                 Tracks = tmpTracks.ToList();
 
-                if(subFilter != null &&
-                   !imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                if(_subFilter != null &&
+                   !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
                 Sessions = new List<Session>();
 
@@ -687,7 +687,7 @@ namespace Aaru.DiscImages
                 };
 
                 Partitions = new List<Partition>();
-                offsetmap  = new Dictionary<uint, ulong>();
+                _offsetmap = new Dictionary<uint, ulong>();
 
                 foreach(Track track in Tracks)
                 {
@@ -729,9 +729,9 @@ namespace Aaru.DiscImages
                         Type     = track.TrackType.ToString()
                     };
 
-                    imageInfo.Sectors += partition.Length;
+                    _imageInfo.Sectors += partition.Length;
                     Partitions.Add(partition);
-                    offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
                 }
 
                 bool data       = false;
@@ -766,28 +766,28 @@ namespace Aaru.DiscImages
                 }
 
                 // TODO: Check format
-                cdtext = cdtMs.ToArray();
+                _cdtext = cdtMs.ToArray();
 
                 if(!data &&
                    !firstdata)
-                    imageInfo.MediaType = MediaType.CDDA;
+                    _imageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio         &&
                         data               &&
                         Sessions.Count > 1 &&
                         mode2)
-                    imageInfo.MediaType = MediaType.CDPLUS;
+                    _imageInfo.MediaType = MediaType.CDPLUS;
                 else if((firstdata && audio) || mode2)
-                    imageInfo.MediaType = MediaType.CDROMXA;
+                    _imageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio)
-                    imageInfo.MediaType = MediaType.CDROM;
+                    _imageInfo.MediaType = MediaType.CDROM;
                 else
-                    imageInfo.MediaType = MediaType.CD;
+                    _imageInfo.MediaType = MediaType.CD;
 
-                imageInfo.Application          = "CloneCD";
-                imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-                imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-                imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+                _imageInfo.Application          = "CloneCD";
+                _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
                 return true;
             }
@@ -805,12 +805,12 @@ namespace Aaru.DiscImages
         {
             switch(tag)
             {
-                case MediaTagType.CD_FullTOC: return fulltoc;
+                case MediaTagType.CD_FullTOC: return _fulltoc;
                 case MediaTagType.CD_TEXT:
                 {
-                    if(cdtext        != null &&
-                       cdtext.Length > 0)
-                        return cdtext;
+                    if(_cdtext        != null &&
+                       _cdtext.Length > 0)
+                        return _cdtext;
 
                     throw new FeatureNotPresentImageException("Image does not contain CD-TEXT information.");
                 }
@@ -830,7 +830,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress <= track.TrackEndSector select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
@@ -840,7 +840,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress <= track.TrackEndSector select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
@@ -911,13 +911,13 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            _dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
 
             if(mode2)
             {
                 var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-                dataStream.Read(buffer, 0, buffer.Length);
+                _dataStream.Read(buffer, 0, buffer.Length);
 
                 for(int i = 0; i < length; i++)
                 {
@@ -931,14 +931,14 @@ namespace Aaru.DiscImages
             }
             else if(sectorOffset == 0 &&
                     sectorSkip   == 0)
-                dataStream.Read(buffer, 0, buffer.Length);
+                _dataStream.Read(buffer, 0, buffer.Length);
             else
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                    dataStream.Read(sector, 0, sector.Length);
-                    dataStream.Seek(sectorSkip, SeekOrigin.Current);
+                    _dataStream.Seek(sectorOffset, SeekOrigin.Current);
+                    _dataStream.Read(sector, 0, sector.Length);
+                    _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
@@ -984,14 +984,14 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    return !trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
+                    return !_trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
                     {
                         flags
                     } : new byte[1];
                 case SectorTagType.CdSectorSubchannel:
                     buffer = new byte[96 * length];
-                    subStream.Seek((long)(aaruTrack.TrackSubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
-                    subStream.Read(buffer, 0, buffer.Length);
+                    _subStream.Seek((long)(aaruTrack.TrackSubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
+                    _subStream.Read(buffer, 0, buffer.Length);
 
                     return Subchannel.Interleave(buffer);
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
@@ -1202,18 +1202,18 @@ namespace Aaru.DiscImages
 
             buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            _dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)
-                dataStream.Read(buffer, 0, buffer.Length);
+                _dataStream.Read(buffer, 0, buffer.Length);
             else
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                    dataStream.Read(sector, 0, sector.Length);
-                    dataStream.Seek(sectorSkip, SeekOrigin.Current);
+                    _dataStream.Seek(sectorOffset, SeekOrigin.Current);
+                    _dataStream.Read(sector, 0, sector.Length);
+                    _dataStream.Seek(sectorSkip, SeekOrigin.Current);
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
@@ -1226,7 +1226,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1259,8 +1259,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[2352 * length];
 
-            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
-            dataStream.Read(buffer, 0, buffer.Length);
+            _dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            _dataStream.Read(buffer, 0, buffer.Length);
 
             return buffer;
         }

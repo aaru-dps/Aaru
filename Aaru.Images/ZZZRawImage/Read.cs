@@ -62,26 +62,26 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            switch(extension)
+            switch(_extension)
             {
                 case ".iso" when imageFilter.GetDataForkLength() % 2048 == 0:
-                    imageInfo.SectorSize = 2048;
+                    _imageInfo.SectorSize = 2048;
 
                     break;
                 case ".d81" when imageFilter.GetDataForkLength() == 819200:
-                    imageInfo.SectorSize = 256;
+                    _imageInfo.SectorSize = 256;
 
                     break;
                 default:
-                    if((extension == ".adf" || extension == ".adl" || extension == ".ssd" || extension == ".dsd") &&
+                    if((_extension == ".adf" || _extension == ".adl" || _extension == ".ssd" || _extension == ".dsd") &&
                        (imageFilter.GetDataForkLength() == 163840 || imageFilter.GetDataForkLength() == 327680 ||
                         imageFilter.GetDataForkLength() == 655360))
-                        imageInfo.SectorSize = 256;
-                    else if((extension == ".adf" || extension == ".adl") &&
+                        _imageInfo.SectorSize = 256;
+                    else if((_extension == ".adf" || _extension == ".adl") &&
                             imageFilter.GetDataForkLength() == 819200)
-                        imageInfo.SectorSize = 1024;
+                        _imageInfo.SectorSize = 1024;
                     else
                         switch(imageFilter.GetDataForkLength())
                         {
@@ -90,7 +90,7 @@ namespace Aaru.DiscImages
                             case 495872:
                             case 92160:
                             case 133120:
-                                imageInfo.SectorSize = 128;
+                                _imageInfo.SectorSize = 128;
 
                                 break;
                             case 116480:
@@ -119,17 +119,17 @@ namespace Aaru.DiscImages
                             case 822400:
                                 #endregion Commodore
 
-                                imageInfo.SectorSize = 256;
+                                _imageInfo.SectorSize = 256;
 
                                 break;
                             case 81664:
-                                imageInfo.SectorSize = 319;
+                                _imageInfo.SectorSize = 319;
 
                                 break;
                             case 306432:  // T0S0 = 128bps
                             case 1146624: // T0S0 = 128bps, T0S1 = 256bps
                             case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                                imageInfo.SectorSize = 512;
+                                _imageInfo.SectorSize = 512;
 
                                 break;
                             case 1222400: // T0S0 = 128bps, T0S1 = 256bps
@@ -137,15 +137,15 @@ namespace Aaru.DiscImages
                             case 1255168: // T0S0 = 128bps, T0S1 = 256bps
                             case 1261568:
                             case 1638400:
-                                imageInfo.SectorSize = 1024;
+                                _imageInfo.SectorSize = 1024;
 
                                 break;
                             case 35002122240:
-                                imageInfo.SectorSize = 2048;
+                                _imageInfo.SectorSize = 2048;
 
                                 break;
                             default:
-                                imageInfo.SectorSize = 512;
+                                _imageInfo.SectorSize = 512;
 
                                 break;
                         }
@@ -153,132 +153,132 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            differentTrackZeroSize         = false;
-            rawImageFilter                 = imageFilter;
+            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _differentTrackZeroSize         = false;
+            _rawImageFilter                 = imageFilter;
 
             switch(imageFilter.GetDataForkLength())
             {
                 case 242944:
-                    imageInfo.Sectors = 1898;
+                    _imageInfo.Sectors = 1898;
 
                     break;
                 case 256256:
-                    imageInfo.Sectors = 2002;
+                    _imageInfo.Sectors = 2002;
 
                     break;
                 case 495872:
-                    imageInfo.Sectors = 3874;
+                    _imageInfo.Sectors = 3874;
 
                     break;
                 case 116480:
-                    imageInfo.Sectors = 455;
+                    _imageInfo.Sectors = 455;
 
                     break;
                 case 287488: // T0S0 = 128bps
-                    imageInfo.Sectors      = 1136;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 1136;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 988416: // T0S0 = 128bps
-                    imageInfo.Sectors      = 3874;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 3874;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 995072: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 3900;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 3900;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1021696: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 4004;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 4004;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 81664:
-                    imageInfo.Sectors = 256;
+                    _imageInfo.Sectors = 256;
 
                     break;
                 case 306432: // T0S0 = 128bps
-                    imageInfo.Sectors      = 618;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 618;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1146624: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 2272;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 2272;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1177344: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 2332;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 2332;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1222400: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 1236;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 1236;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1304320: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 1316;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 1316;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1255168: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 1268;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 1268;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 80384: // T0S0 = 128bps
-                    imageInfo.Sectors      = 322;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 322;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 325632: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 1280;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 1280;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 653312: // T0S0 = 128bps, T0S1 = 256bps
-                    imageInfo.Sectors      = 2560;
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 2560;
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 1880064: // IBM XDF, 3,5", real number of sectors
-                    imageInfo.Sectors      = 670;
-                    imageInfo.SectorSize   = 8192; // Biggest sector size
-                    differentTrackZeroSize = true;
+                    _imageInfo.Sectors      = 670;
+                    _imageInfo.SectorSize   = 8192; // Biggest sector size
+                    _differentTrackZeroSize = true;
 
                     break;
                 case 175531:
-                    imageInfo.Sectors = 683;
+                    _imageInfo.Sectors = 683;
 
                     break;
                 case 197375:
-                    imageInfo.Sectors = 768;
+                    _imageInfo.Sectors = 768;
 
                     break;
                 case 351062:
-                    imageInfo.Sectors = 1366;
+                    _imageInfo.Sectors = 1366;
 
                     break;
                 case 822400:
-                    imageInfo.Sectors = 3200;
+                    _imageInfo.Sectors = 3200;
 
                     break;
                 default:
-                    imageInfo.Sectors = imageInfo.ImageSize / imageInfo.SectorSize;
+                    _imageInfo.Sectors = _imageInfo.ImageSize / _imageInfo.SectorSize;
 
                     break;
             }
 
-            imageInfo.MediaType = CalculateDiskType();
+            _imageInfo.MediaType = CalculateDiskType();
 
-            if(imageInfo.ImageSize % 2352 == 0 ||
-               imageInfo.ImageSize % 2448 == 0)
+            if(_imageInfo.ImageSize % 2352 == 0 ||
+               _imageInfo.ImageSize % 2448 == 0)
             {
                 byte[] sync   = new byte[12];
                 byte[] header = new byte[4];
@@ -286,33 +286,33 @@ namespace Aaru.DiscImages
                 stream.Read(sync, 0, 12);
                 stream.Read(header, 0, 4);
 
-                if(cdSync.SequenceEqual(sync))
+                if(_cdSync.SequenceEqual(sync))
                 {
-                    rawCompactDisc       = true;
-                    hasSubchannel        = imageInfo.ImageSize % 2448 == 0;
-                    imageInfo.Sectors    = imageInfo.ImageSize / (ulong)(hasSubchannel ? 2448 : 2352);
-                    imageInfo.MediaType  = MediaType.CD;
-                    mode2                = header[3] == 0x02;
-                    imageInfo.SectorSize = (uint)(mode2 ? 2336 : 2048);
+                    _rawCompactDisc       = true;
+                    _hasSubchannel        = _imageInfo.ImageSize % 2448 == 0;
+                    _imageInfo.Sectors    = _imageInfo.ImageSize / (ulong)(_hasSubchannel ? 2448 : 2352);
+                    _imageInfo.MediaType  = MediaType.CD;
+                    _mode2                = header[3] == 0x02;
+                    _imageInfo.SectorSize = (uint)(_mode2 ? 2336 : 2048);
                 }
             }
 
             // Sharp X68000 SASI hard disks
-            if(extension == ".hdf")
-                if(imageInfo.ImageSize % 256 == 0)
+            if(_extension == ".hdf")
+                if(_imageInfo.ImageSize % 256 == 0)
                 {
-                    imageInfo.SectorSize = 256;
-                    imageInfo.Sectors    = imageInfo.ImageSize / imageInfo.SectorSize;
-                    imageInfo.MediaType  = MediaType.GENERIC_HDD;
+                    _imageInfo.SectorSize = 256;
+                    _imageInfo.Sectors    = _imageInfo.ImageSize / _imageInfo.SectorSize;
+                    _imageInfo.MediaType  = MediaType.GENERIC_HDD;
                 }
 
             // Search for known tags
             string basename = imageFilter.GetBasePath();
-            basename = basename.Substring(0, basename.Length - extension.Length);
+            basename = basename.Substring(0, basename.Length - _extension.Length);
 
-            mediaTags = new Dictionary<MediaTagType, byte[]>();
+            _mediaTags = new Dictionary<MediaTagType, byte[]>();
 
-            foreach((MediaTagType tag, string name) sidecar in readWriteSidecars)
+            foreach((MediaTagType tag, string name) sidecar in _readWriteSidecars)
                 try
                 {
                     var     filters = new FiltersList();
@@ -325,593 +325,593 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
                     byte[] data = new byte[filter.GetDataForkLength()];
                     filter.GetDataForkStream().Read(data, 0, data.Length);
-                    mediaTags.Add(sidecar.tag, data);
+                    _mediaTags.Add(sidecar.tag, data);
                 }
                 catch(IOException) {}
 
             // If there are INQUIRY and IDENTIFY tags, it's ATAPI
-            if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
-                if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] tag))
+            if(_mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
+                if(_mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] tag))
                 {
-                    mediaTags.Remove(MediaTagType.ATA_IDENTIFY);
-                    mediaTags.Add(MediaTagType.ATAPI_IDENTIFY, tag);
+                    _mediaTags.Remove(MediaTagType.ATA_IDENTIFY);
+                    _mediaTags.Add(MediaTagType.ATAPI_IDENTIFY, tag);
                 }
 
             // It is a blu-ray
-            if(mediaTags.ContainsKey(MediaTagType.BD_DI))
+            if(_mediaTags.ContainsKey(MediaTagType.BD_DI))
             {
-                imageInfo.MediaType = MediaType.BDROM;
+                _imageInfo.MediaType = MediaType.BDROM;
 
-                if(mediaTags.TryGetValue(MediaTagType.DVD_BCA, out byte[] bca))
+                if(_mediaTags.TryGetValue(MediaTagType.DVD_BCA, out byte[] bca))
                 {
-                    mediaTags.Remove(MediaTagType.DVD_BCA);
-                    mediaTags.Add(MediaTagType.BD_BCA, bca);
+                    _mediaTags.Remove(MediaTagType.DVD_BCA);
+                    _mediaTags.Add(MediaTagType.BD_BCA, bca);
                 }
 
-                if(mediaTags.TryGetValue(MediaTagType.DVDRAM_DDS, out byte[] dds))
+                if(_mediaTags.TryGetValue(MediaTagType.DVDRAM_DDS, out byte[] dds))
                 {
-                    imageInfo.MediaType = MediaType.BDRE;
-                    mediaTags.Remove(MediaTagType.DVDRAM_DDS);
-                    mediaTags.Add(MediaTagType.BD_DDS, dds);
+                    _imageInfo.MediaType = MediaType.BDRE;
+                    _mediaTags.Remove(MediaTagType.DVDRAM_DDS);
+                    _mediaTags.Add(MediaTagType.BD_DDS, dds);
                 }
 
-                if(mediaTags.TryGetValue(MediaTagType.DVDRAM_SpareArea, out byte[] sai))
+                if(_mediaTags.TryGetValue(MediaTagType.DVDRAM_SpareArea, out byte[] sai))
                 {
-                    imageInfo.MediaType = MediaType.BDRE;
-                    mediaTags.Remove(MediaTagType.DVDRAM_SpareArea);
-                    mediaTags.Add(MediaTagType.BD_SpareArea, sai);
+                    _imageInfo.MediaType = MediaType.BDRE;
+                    _mediaTags.Remove(MediaTagType.DVDRAM_SpareArea);
+                    _mediaTags.Add(MediaTagType.BD_SpareArea, sai);
                 }
             }
 
             // It is a DVD
-            if(mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
+            if(_mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
             {
                 PFI.PhysicalFormatInformation decPfi = PFI.Decode(pfi).Value;
 
                 switch(decPfi.DiskCategory)
                 {
                     case DiskCategory.DVDPR:
-                        imageInfo.MediaType = MediaType.DVDPR;
+                        _imageInfo.MediaType = MediaType.DVDPR;
 
                         break;
                     case DiskCategory.DVDPRDL:
-                        imageInfo.MediaType = MediaType.DVDPRDL;
+                        _imageInfo.MediaType = MediaType.DVDPRDL;
 
                         break;
                     case DiskCategory.DVDPRW:
-                        imageInfo.MediaType = MediaType.DVDPRW;
+                        _imageInfo.MediaType = MediaType.DVDPRW;
 
                         break;
                     case DiskCategory.DVDPRWDL:
-                        imageInfo.MediaType = MediaType.DVDPRWDL;
+                        _imageInfo.MediaType = MediaType.DVDPRWDL;
 
                         break;
                     case DiskCategory.DVDR:
-                        imageInfo.MediaType = decPfi.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                        _imageInfo.MediaType = decPfi.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                         break;
                     case DiskCategory.DVDRAM:
-                        imageInfo.MediaType = MediaType.DVDRAM;
+                        _imageInfo.MediaType = MediaType.DVDRAM;
 
                         break;
                     default:
-                        imageInfo.MediaType = MediaType.DVDROM;
+                        _imageInfo.MediaType = MediaType.DVDROM;
 
                         break;
                     case DiskCategory.DVDRW:
-                        imageInfo.MediaType = decPfi.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                        _imageInfo.MediaType = decPfi.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                         break;
                     case DiskCategory.HDDVDR:
-                        imageInfo.MediaType = MediaType.HDDVDR;
+                        _imageInfo.MediaType = MediaType.HDDVDR;
 
                         break;
                     case DiskCategory.HDDVDRAM:
-                        imageInfo.MediaType = MediaType.HDDVDRAM;
+                        _imageInfo.MediaType = MediaType.HDDVDRAM;
 
                         break;
                     case DiskCategory.HDDVDROM:
-                        imageInfo.MediaType = MediaType.HDDVDROM;
+                        _imageInfo.MediaType = MediaType.HDDVDROM;
 
                         break;
                     case DiskCategory.HDDVDRW:
-                        imageInfo.MediaType = MediaType.HDDVDRW;
+                        _imageInfo.MediaType = MediaType.HDDVDRW;
 
                         break;
                     case DiskCategory.Nintendo:
-                        imageInfo.MediaType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
+                        _imageInfo.MediaType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
 
                         break;
                     case DiskCategory.UMD:
-                        imageInfo.MediaType = MediaType.UMD;
+                        _imageInfo.MediaType = MediaType.UMD;
 
                         break;
                 }
 
-                if((imageInfo.MediaType == MediaType.DVDR || imageInfo.MediaType == MediaType.DVDRW ||
-                    imageInfo.MediaType == MediaType.HDDVDR) &&
-                   mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))
+                if((_imageInfo.MediaType == MediaType.DVDR || _imageInfo.MediaType == MediaType.DVDRW ||
+                    _imageInfo.MediaType == MediaType.HDDVDR) &&
+                   _mediaTags.TryGetValue(MediaTagType.DVD_MediaIdentifier, out byte[] mid))
                 {
-                    mediaTags.Remove(MediaTagType.DVD_MediaIdentifier);
-                    mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, mid);
+                    _mediaTags.Remove(MediaTagType.DVD_MediaIdentifier);
+                    _mediaTags.Add(MediaTagType.DVDR_MediaIdentifier, mid);
                 }
 
                 // Check for Xbox
-                if(mediaTags.TryGetValue(MediaTagType.DVD_DMI, out byte[] dmi))
+                if(_mediaTags.TryGetValue(MediaTagType.DVD_DMI, out byte[] dmi))
                     if(DMI.IsXbox(dmi) ||
                        DMI.IsXbox360(dmi))
                         if(DMI.IsXbox(dmi))
                         {
-                            imageInfo.MediaType = MediaType.XGD;
+                            _imageInfo.MediaType = MediaType.XGD;
                         }
                         else if(DMI.IsXbox360(dmi))
                         {
-                            imageInfo.MediaType = MediaType.XGD2;
+                            _imageInfo.MediaType = MediaType.XGD2;
 
                             // All XGD3 all have the same number of blocks
-                            if(imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-                               imageInfo.Sectors == 4229664 || // Xtreme unlock
-                               imageInfo.Sectors == 4246304)   // Wxripper unlock
-                                imageInfo.MediaType = MediaType.XGD3;
+                            if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
+                               _imageInfo.Sectors == 4229664 || // Xtreme unlock
+                               _imageInfo.Sectors == 4246304)   // Wxripper unlock
+                                _imageInfo.MediaType = MediaType.XGD3;
                         }
             }
 
             // It's MultiMediaCard or SecureDigital
-            if(mediaTags.ContainsKey(MediaTagType.SD_CID) ||
-               mediaTags.ContainsKey(MediaTagType.SD_CSD) ||
-               mediaTags.ContainsKey(MediaTagType.SD_OCR))
+            if(_mediaTags.ContainsKey(MediaTagType.SD_CID) ||
+               _mediaTags.ContainsKey(MediaTagType.SD_CSD) ||
+               _mediaTags.ContainsKey(MediaTagType.SD_OCR))
             {
-                imageInfo.MediaType = MediaType.SecureDigital;
+                _imageInfo.MediaType = MediaType.SecureDigital;
 
-                if(mediaTags.ContainsKey(MediaTagType.MMC_ExtendedCSD) ||
-                   !mediaTags.ContainsKey(MediaTagType.SD_SCR))
+                if(_mediaTags.ContainsKey(MediaTagType.MMC_ExtendedCSD) ||
+                   !_mediaTags.ContainsKey(MediaTagType.SD_SCR))
                 {
-                    imageInfo.MediaType = MediaType.MMC;
+                    _imageInfo.MediaType = MediaType.MMC;
 
-                    if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] cid))
+                    if(_mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] cid))
                     {
-                        mediaTags.Remove(MediaTagType.SD_CID);
-                        mediaTags.Add(MediaTagType.MMC_CID, cid);
+                        _mediaTags.Remove(MediaTagType.SD_CID);
+                        _mediaTags.Add(MediaTagType.MMC_CID, cid);
                     }
 
-                    if(mediaTags.TryGetValue(MediaTagType.SD_CSD, out byte[] csd))
+                    if(_mediaTags.TryGetValue(MediaTagType.SD_CSD, out byte[] csd))
                     {
-                        mediaTags.Remove(MediaTagType.SD_CSD);
-                        mediaTags.Add(MediaTagType.MMC_CSD, csd);
+                        _mediaTags.Remove(MediaTagType.SD_CSD);
+                        _mediaTags.Add(MediaTagType.MMC_CSD, csd);
                     }
 
-                    if(mediaTags.TryGetValue(MediaTagType.SD_OCR, out byte[] ocr))
+                    if(_mediaTags.TryGetValue(MediaTagType.SD_OCR, out byte[] ocr))
                     {
-                        mediaTags.Remove(MediaTagType.SD_OCR);
-                        mediaTags.Add(MediaTagType.MMC_OCR, ocr);
+                        _mediaTags.Remove(MediaTagType.SD_OCR);
+                        _mediaTags.Add(MediaTagType.MMC_OCR, ocr);
                     }
                 }
             }
 
             // It's a compact disc
-            if(mediaTags.ContainsKey(MediaTagType.CD_FullTOC))
+            if(_mediaTags.ContainsKey(MediaTagType.CD_FullTOC))
             {
-                imageInfo.MediaType = imageInfo.Sectors > 360000 ? MediaType.DDCD : MediaType.CD;
+                _imageInfo.MediaType = _imageInfo.Sectors > 360000 ? MediaType.DDCD : MediaType.CD;
 
                 // Only CD-R and CD-RW have ATIP
-                if(mediaTags.TryGetValue(MediaTagType.CD_ATIP, out byte[] atipBuf))
+                if(_mediaTags.TryGetValue(MediaTagType.CD_ATIP, out byte[] atipBuf))
                 {
                     ATIP.CDATIP? atip = ATIP.Decode(atipBuf);
 
                     if(atip.HasValue)
-                        imageInfo.MediaType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                        _imageInfo.MediaType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
                 }
 
-                if(mediaTags.TryGetValue(MediaTagType.Floppy_LeadOut, out byte[] leadout))
+                if(_mediaTags.TryGetValue(MediaTagType.Floppy_LeadOut, out byte[] leadout))
                 {
-                    mediaTags.Remove(MediaTagType.Floppy_LeadOut);
-                    mediaTags.Add(MediaTagType.CD_LeadOut, leadout);
+                    _mediaTags.Remove(MediaTagType.Floppy_LeadOut);
+                    _mediaTags.Add(MediaTagType.CD_LeadOut, leadout);
                 }
             }
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.ACORN_35_DS_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 5;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 5;
 
                     break;
                 case MediaType.ACORN_35_DS_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.ACORN_525_DS_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.ACORN_525_SS_DD_40:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.ACORN_525_SS_DD_80:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.ACORN_525_SS_SD_40:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.ACORN_525_SS_SD_80:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.Apple32DS:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 13;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 13;
 
                     break;
                 case MediaType.Apple32SS:
-                    imageInfo.Cylinders       = 36;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 13;
+                    _imageInfo.Cylinders       = 36;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 13;
 
                     break;
                 case MediaType.Apple33DS:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.Apple33SS:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.AppleSonyDS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.AppleSonySS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.ATARI_35_DS_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.ATARI_35_DS_DD_11:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 11;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 11;
 
                     break;
                 case MediaType.ATARI_35_SS_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.ATARI_35_SS_DD_11:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 11;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 11;
 
                     break;
                 case MediaType.ATARI_525_ED:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.ATARI_525_SD:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 18;
 
                     break;
                 case MediaType.CBM_35_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.CBM_AMIGA_35_DD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 11;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 11;
 
                     break;
                 case MediaType.CBM_AMIGA_35_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 22;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 22;
 
                     break;
                 case MediaType.DMF:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 21;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 21;
 
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.Apricot_35:
-                    imageInfo.Cylinders       = 70;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 70;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_35_ED:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 36;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 36;
 
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 18;
 
                     break;
                 case MediaType.DOS_35_SS_DD_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_525_DS_DD_8:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.DOS_525_DS_DD_9:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_525_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.DOS_525_SS_DD_8:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.DOS_525_SS_DD_9:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.ECMA_54:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.ECMA_59:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.ECMA_66:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.ECMA_69_8:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.ECMA_70:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.ECMA_78:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.ECMA_99_15:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.ECMA_99_26:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.ECMA_99_8:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.FDFORMAT_35_DD:
-                    imageInfo.Cylinders       = 82;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 82;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.FDFORMAT_35_HD:
-                    imageInfo.Cylinders       = 82;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 21;
+                    _imageInfo.Cylinders       = 82;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 21;
 
                     break;
                 case MediaType.FDFORMAT_525_HD:
-                    imageInfo.Cylinders       = 82;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 17;
+                    _imageInfo.Cylinders       = 82;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 17;
 
                     break;
                 case MediaType.IBM23FD:
-                    imageInfo.Cylinders       = 32;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 32;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.IBM33FD_128:
-                    imageInfo.Cylinders       = 73;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 73;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.IBM33FD_256:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.IBM33FD_512:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.IBM43FD_128:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.IBM43FD_256:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.IBM53FD_1024:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.IBM53FD_256:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.IBM53FD_512:
-                    imageInfo.Cylinders       = 74;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 74;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.NEC_35_TD:
-                    imageInfo.Cylinders       = 240;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 38;
+                    _imageInfo.Cylinders       = 240;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 38;
 
                     break;
                 case MediaType.NEC_525_HD:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.XDF_35:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 23;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 23;
 
                     break;
 
                 // Following ones are what the device itself report, not the physical geometry
                 case MediaType.Jaz:
-                    imageInfo.Cylinders       = 1021;
-                    imageInfo.Heads           = 64;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 1021;
+                    _imageInfo.Heads           = 64;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 case MediaType.PocketZip:
-                    imageInfo.Cylinders       = 154;
-                    imageInfo.Heads           = 16;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 154;
+                    _imageInfo.Heads           = 16;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 case MediaType.LS120:
-                    imageInfo.Cylinders       = 963;
-                    imageInfo.Heads           = 8;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 963;
+                    _imageInfo.Heads           = 8;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 case MediaType.LS240:
-                    imageInfo.Cylinders       = 262;
-                    imageInfo.Heads           = 32;
-                    imageInfo.SectorsPerTrack = 56;
+                    _imageInfo.Cylinders       = 262;
+                    _imageInfo.Heads           = 32;
+                    _imageInfo.SectorsPerTrack = 56;
 
                     break;
                 case MediaType.FD32MB:
-                    imageInfo.Cylinders       = 1024;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 1024;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 case MediaType.ZIP100:
-                    imageInfo.Cylinders       = 96;
-                    imageInfo.Heads           = 64;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 96;
+                    _imageInfo.Heads           = 64;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 case MediaType.ZIP250:
-                    imageInfo.Cylinders       = 239;
-                    imageInfo.Heads           = 64;
-                    imageInfo.SectorsPerTrack = 32;
+                    _imageInfo.Cylinders       = 239;
+                    _imageInfo.Heads           = 64;
+                    _imageInfo.SectorsPerTrack = 32;
 
                     break;
                 default:
-                    imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                    imageInfo.Heads           = 16;
-                    imageInfo.SectorsPerTrack = 63;
+                    _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                    _imageInfo.Heads           = 16;
+                    _imageInfo.SectorsPerTrack = 63;
 
                     break;
             }
 
             // It's SCSI, check tags
-            if(mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
+            if(_mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
             {
                 PeripheralDeviceTypes devType = PeripheralDeviceTypes.DirectAccess;
                 Inquiry?              scsiInq = null;
 
-                if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] inq))
+                if(_mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] inq))
                 {
                     scsiInq = Inquiry.Decode(inq);
                     devType = (PeripheralDeviceTypes)(inq[0] & 0x1F);
@@ -919,9 +919,9 @@ namespace Aaru.DiscImages
 
                 Modes.DecodedMode? decMode = null;
 
-                if(mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_6, out byte[] mode6))
+                if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_6, out byte[] mode6))
                     decMode = Modes.DecodeMode6(mode6, devType);
-                else if(mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_10, out byte[] mode10))
+                else if(_mediaTags.TryGetValue(MediaTagType.SCSI_MODESENSE_10, out byte[] mode10))
                     decMode = Modes.DecodeMode10(mode10, devType);
 
                 byte mediumType  = 0;
@@ -942,10 +942,10 @@ namespace Aaru.DiscImages
                             if(page.Page    == 0x2A &&
                                page.Subpage == 0)
                             {
-                                if(mediaTags.ContainsKey(MediaTagType.SCSI_MODEPAGE_2A))
-                                    mediaTags.Remove(MediaTagType.SCSI_MODEPAGE_2A);
+                                if(_mediaTags.ContainsKey(MediaTagType.SCSI_MODEPAGE_2A))
+                                    _mediaTags.Remove(MediaTagType.SCSI_MODEPAGE_2A);
 
-                                mediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A, page.PageResponse);
+                                _mediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A, page.PageResponse);
                             }
 
                             // Rigid Disk page
@@ -957,11 +957,11 @@ namespace Aaru.DiscImages
                                 if(!mode04.HasValue)
                                     continue;
 
-                                imageInfo.Cylinders = mode04.Value.Cylinders;
-                                imageInfo.Heads     = mode04.Value.Heads;
+                                _imageInfo.Cylinders = mode04.Value.Cylinders;
+                                _imageInfo.Heads     = mode04.Value.Heads;
 
-                                imageInfo.SectorsPerTrack =
-                                    (uint)(imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
+                                _imageInfo.SectorsPerTrack =
+                                    (uint)(_imageInfo.Sectors / (mode04.Value.Cylinders * mode04.Value.Heads));
                             }
 
                             // Flexible Disk Page
@@ -973,60 +973,61 @@ namespace Aaru.DiscImages
                                 if(!mode05.HasValue)
                                     continue;
 
-                                imageInfo.Cylinders       = mode05.Value.Cylinders;
-                                imageInfo.Heads           = mode05.Value.Heads;
-                                imageInfo.SectorsPerTrack = mode05.Value.SectorsPerTrack;
+                                _imageInfo.Cylinders       = mode05.Value.Cylinders;
+                                _imageInfo.Heads           = mode05.Value.Heads;
+                                _imageInfo.SectorsPerTrack = mode05.Value.SectorsPerTrack;
                             }
                 }
 
                 if(scsiInq.HasValue)
                 {
-                    imageInfo.DriveManufacturer =
+                    _imageInfo.DriveManufacturer =
                         VendorString.Prettify(StringHandlers.CToString(scsiInq.Value.VendorIdentification).Trim());
 
-                    imageInfo.DriveModel = StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
+                    _imageInfo.DriveModel = StringHandlers.CToString(scsiInq.Value.ProductIdentification).Trim();
 
-                    imageInfo.DriveFirmwareRevision =
+                    _imageInfo.DriveFirmwareRevision =
                         StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
 
-                    imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, imageInfo.DriveManufacturer,
-                                                                          imageInfo.DriveModel, mediumType, densityCode,
-                                                                          imageInfo.Sectors, imageInfo.SectorSize);
+                    _imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, _imageInfo.DriveManufacturer,
+                                                                           _imageInfo.DriveModel, mediumType,
+                                                                           densityCode, _imageInfo.Sectors,
+                                                                           _imageInfo.SectorSize);
                 }
 
-                if(imageInfo.MediaType == MediaType.Unknown)
-                    imageInfo.MediaType = devType == PeripheralDeviceTypes.OpticalDevice ? MediaType.UnknownMO
-                                              : MediaType.GENERIC_HDD;
+                if(_imageInfo.MediaType == MediaType.Unknown)
+                    _imageInfo.MediaType = devType == PeripheralDeviceTypes.OpticalDevice ? MediaType.UnknownMO
+                                               : MediaType.GENERIC_HDD;
             }
 
             // It's ATA, check tags
-            if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
+            if(_mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
             {
                 Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
 
                 if(ataId.HasValue)
                 {
-                    imageInfo.MediaType = (ushort)ataId.Value.GeneralConfiguration == 0x848A ? MediaType.CompactFlash
-                                              : MediaType.GENERIC_HDD;
+                    _imageInfo.MediaType = (ushort)ataId.Value.GeneralConfiguration == 0x848A ? MediaType.CompactFlash
+                                               : MediaType.GENERIC_HDD;
 
                     if(ataId.Value.Cylinders       == 0 ||
                        ataId.Value.Heads           == 0 ||
                        ataId.Value.SectorsPerTrack == 0)
                     {
-                        imageInfo.Cylinders       = ataId.Value.CurrentCylinders;
-                        imageInfo.Heads           = ataId.Value.CurrentHeads;
-                        imageInfo.SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
+                        _imageInfo.Cylinders       = ataId.Value.CurrentCylinders;
+                        _imageInfo.Heads           = ataId.Value.CurrentHeads;
+                        _imageInfo.SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
                     }
                     else
                     {
-                        imageInfo.Cylinders       = ataId.Value.Cylinders;
-                        imageInfo.Heads           = ataId.Value.Heads;
-                        imageInfo.SectorsPerTrack = ataId.Value.SectorsPerTrack;
+                        _imageInfo.Cylinders       = ataId.Value.Cylinders;
+                        _imageInfo.Heads           = ataId.Value.Heads;
+                        _imageInfo.SectorsPerTrack = ataId.Value.SectorsPerTrack;
                     }
                 }
             }
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.CD:
                 case MediaType.CDRW:
@@ -1057,22 +1058,22 @@ namespace Aaru.DiscImages
                 case MediaType.XGD3:
                 case MediaType.PD650:
                 case MediaType.PD650_WORM:
-                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     break;
                 default:
-                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
                     break;
             }
 
-            if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                imageInfo.HasSessions   = true;
-                imageInfo.HasPartitions = true;
+                _imageInfo.HasSessions   = true;
+                _imageInfo.HasPartitions = true;
             }
 
-            AaruConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", _imageInfo.MediaType);
 
             var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 
@@ -1088,51 +1089,51 @@ namespace Aaru.DiscImages
                     // Do nothing.
                 }
 
-            imageInfo.ReadableMediaTags = new List<MediaTagType>(mediaTags.Keys);
+            _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
 
-            if(!rawCompactDisc)
+            if(!_rawCompactDisc)
                 return true;
 
-            if(hasSubchannel)
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+            if(_hasSubchannel)
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-            if(mode2)
+            if(_mode2)
             {
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
             }
             else
             {
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
             }
 
             return true;
@@ -1142,29 +1143,29 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(differentTrackZeroSize)
+            if(_differentTrackZeroSize)
                 throw new NotImplementedException("Not yet implemented");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            Stream stream = rawImageFilter.GetDataForkStream();
+            Stream stream = _rawImageFilter.GetDataForkStream();
 
             uint sectorOffset = 0;
-            uint sectorSize   = imageInfo.SectorSize;
+            uint sectorSize   = _imageInfo.SectorSize;
             uint sectorSkip   = 0;
 
-            if(rawCompactDisc)
+            if(_rawCompactDisc)
             {
-                sectorOffset = (uint)(mode2 ? 0 : 16);
-                sectorSize   = (uint)(mode2 ? 2352 : 2048);
-                sectorSkip   = (uint)(mode2 ? 0 : 288);
+                sectorOffset = (uint)(_mode2 ? 0 : 16);
+                sectorSize   = (uint)(_mode2 ? 2352 : 2048);
+                sectorSkip   = (uint)(_mode2 ? 0 : 288);
             }
 
-            if(hasSubchannel)
+            if(_hasSubchannel)
                 sectorSkip += 96;
 
             byte[] buffer = new byte[sectorSize * length];
@@ -1172,7 +1173,7 @@ namespace Aaru.DiscImages
             var br = new BinaryReader(stream);
             br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
 
-            if(mode2)
+            if(_mode2)
             {
                 var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
@@ -1205,7 +1206,7 @@ namespace Aaru.DiscImages
 
         public List<Track> GetSessionTracks(Session session)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(session.SessionSequence != 1)
@@ -1213,13 +1214,13 @@ namespace Aaru.DiscImages
 
             var trk = new Track
             {
-                TrackBytesPerSector    = (int)imageInfo.SectorSize,
-                TrackEndSector         = imageInfo.Sectors - 1,
-                TrackFilter            = rawImageFilter,
-                TrackFile              = rawImageFilter.GetFilename(),
+                TrackBytesPerSector    = (int)_imageInfo.SectorSize,
+                TrackEndSector         = _imageInfo.Sectors - 1,
+                TrackFilter            = _rawImageFilter,
+                TrackFile              = _rawImageFilter.GetFilename(),
                 TrackFileOffset        = 0,
                 TrackFileType          = "BINARY",
-                TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                TrackRawBytesPerSector = (int)_imageInfo.SectorSize,
                 TrackSequence          = 1,
                 TrackStartSector       = 0,
                 TrackSubchannelType    = TrackSubchannelType.None,
@@ -1237,7 +1238,7 @@ namespace Aaru.DiscImages
 
         public List<Track> GetSessionTracks(ushort session)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(session != 1)
@@ -1245,13 +1246,13 @@ namespace Aaru.DiscImages
 
             var trk = new Track
             {
-                TrackBytesPerSector    = (int)imageInfo.SectorSize,
-                TrackEndSector         = imageInfo.Sectors - 1,
-                TrackFilter            = rawImageFilter,
-                TrackFile              = rawImageFilter.GetFilename(),
+                TrackBytesPerSector    = (int)_imageInfo.SectorSize,
+                TrackEndSector         = _imageInfo.Sectors - 1,
+                TrackFilter            = _rawImageFilter,
+                TrackFile              = _rawImageFilter.GetFilename(),
                 TrackFileOffset        = 0,
                 TrackFileType          = "BINARY",
-                TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                TrackRawBytesPerSector = (int)_imageInfo.SectorSize,
                 TrackSequence          = 1,
                 TrackStartSector       = 0,
                 TrackSubchannelType    = TrackSubchannelType.None,
@@ -1269,7 +1270,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)
@@ -1280,7 +1281,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)
@@ -1291,7 +1292,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)
@@ -1302,7 +1303,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)
@@ -1313,8 +1314,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !rawCompactDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
+               !_rawCompactDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             return ReadSectorsTag(sectorAddress, 1, tag);
@@ -1322,26 +1323,26 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !rawCompactDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
+               !_rawCompactDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip = 0;
 
-            if(!hasSubchannel &&
+            if(!_hasSubchannel &&
                tag == SectorTagType.CdSectorSubchannel)
                 throw new ArgumentException("No tags in image for requested track", nameof(tag));
 
             // Requires reading sector
-            if(mode2)
+            if(_mode2)
             {
                 if(tag != SectorTagType.CdSectorSubchannel)
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
@@ -1423,7 +1424,7 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            Stream stream = rawImageFilter.GetDataForkStream();
+            Stream stream = _rawImageFilter.GetDataForkStream();
             var    br     = new BinaryReader(stream);
             br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
 
@@ -1446,25 +1447,25 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !rawCompactDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
+               !_rawCompactDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             const uint SECTOR_SIZE = 2352;
             uint       sectorSkip  = 0;
 
-            if(hasSubchannel)
+            if(_hasSubchannel)
                 sectorSkip += 96;
 
             byte[] buffer = new byte[SECTOR_SIZE * length];
 
-            Stream stream = rawImageFilter.GetDataForkStream();
+            Stream stream = _rawImageFilter.GetDataForkStream();
             var    br     = new BinaryReader(stream);
 
             br.BaseStream.Seek((long)(sectorAddress * (SECTOR_SIZE + sectorSkip)), SeekOrigin.Begin);
@@ -1485,7 +1486,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(mediaTags.TryGetValue(tag, out byte[] data))
+            if(_mediaTags.TryGetValue(tag, out byte[] data))
                 return data;
 
             throw new FeatureNotPresentImageException("Requested tag is not present in image");
@@ -1493,8 +1494,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !rawCompactDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
+               !_rawCompactDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)
@@ -1505,8 +1506,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
-               !rawCompactDisc)
+            if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc ||
+               !_rawCompactDisc)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             if(track != 1)

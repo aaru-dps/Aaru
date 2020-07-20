@@ -165,14 +165,14 @@ namespace Aaru.DiscImages
                     }
                 }
 
-            dataCache = dataMs.ToArray();
+            _dataCache = dataMs.ToArray();
 
             if(header.srcType == DISK_LISA ||
                header.srcType == DISK_MAC  ||
                header.srcType == DISK_APPLE2)
             {
-                imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
-                tagCache = tagMs.ToArray();
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+                _tagCache = tagMs.ToArray();
             }
 
             try
@@ -225,9 +225,9 @@ namespace Aaru.DiscImages
                             if(dev != null)
                                 pre = $"{version.PreReleaseVersion}";
 
-                            imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                            imageInfo.Application        = version.VersionString;
-                            imageInfo.Comments           = version.VersionMessage;
+                            _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                            _imageInfo.Application        = version.VersionString;
+                            _imageInfo.Comments           = version.VersionMessage;
                         }
                     }
 
@@ -241,18 +241,15 @@ namespace Aaru.DiscImages
                             string dArt = StringHandlers.PascalToString(dartRsrc.GetResource(dartRsrc.GetIds()[0]),
                                                                         Encoding.GetEncoding("macintosh"));
 
-                            const string DART_REGEX =
-                                @"(?<version>\S+), tag checksum=\$(?<tagchk>[0123456789ABCDEF]{8}), data checksum=\$(?<datachk>[0123456789ABCDEF]{8})$";
-
                             var   dArtEx    = new Regex(DART_REGEX);
                             Match dArtMatch = dArtEx.Match(dArt);
 
                             if(dArtMatch.Success)
                             {
-                                imageInfo.Application        = "DART";
-                                imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
-                                dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                                tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
+                                _imageInfo.Application        = "DART";
+                                _imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
+                                _dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
+                                _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
                             }
                         }
                     }
@@ -265,59 +262,59 @@ namespace Aaru.DiscImages
                         if(cksmRsrc?.ContainsId(1) == true)
                         {
                             byte[] tagChk = cksmRsrc.GetResource(1);
-                            tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
+                            _tagChecksum = BigEndianBitConverter.ToUInt32(tagChk, 0);
                         }
 
                         if(cksmRsrc?.ContainsId(2) == true)
                         {
                             byte[] dataChk = cksmRsrc.GetResource(1);
-                            dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
+                            _dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
                         }
                     }
                 }
             }
             catch(InvalidCastException) {}
 
-            AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", imageInfo.Application,
-                                       imageInfo.ApplicationVersion);
+            AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", _imageInfo.Application,
+                                       _imageInfo.ApplicationVersion);
 
-            imageInfo.Sectors              = (ulong)(header.srcSize * 2);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorSize           = SECTOR_SIZE;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.ImageSize            = imageInfo.Sectors * SECTOR_SIZE;
-            imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
+            _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.SectorSize           = SECTOR_SIZE;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
+            _imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 
             switch(header.srcSize)
             {
                 case SIZE_MAC_SS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 10;
-                    imageInfo.MediaType       = MediaType.AppleSonySS;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.MediaType       = MediaType.AppleSonySS;
 
                     break;
                 case SIZE_MAC:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
-                    imageInfo.MediaType       = MediaType.AppleSonyDS;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.MediaType       = MediaType.AppleSonyDS;
 
                     break;
                 case SIZE_DOS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
-                    imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.MediaType       = MediaType.DOS_35_DS_DD_9;
 
                     break;
                 case SIZE_MAC_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 18;
-                    imageInfo.MediaType       = MediaType.DOS_35_HD;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.MediaType       = MediaType.DOS_35_HD;
 
                     break;
             }
@@ -331,15 +328,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Array.Copy(dataCache, (int)sectorAddress * imageInfo.SectorSize, buffer, 0, length * imageInfo.SectorSize);
+            Array.Copy(_dataCache, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
+                       length                         * _imageInfo.SectorSize);
 
             return buffer;
         }
@@ -349,19 +347,19 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.AppleSectorTag)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(tagCache        == null ||
-               tagCache.Length == 0)
+            if(_tagCache        == null ||
+               _tagCache.Length == 0)
                 throw new FeatureNotPresentImageException("Disk image does not have tags");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] buffer = new byte[length * TAG_SECTOR_SIZE];
 
-            Array.Copy(tagCache, (int)sectorAddress * TAG_SECTOR_SIZE, buffer, 0, length * TAG_SECTOR_SIZE);
+            Array.Copy(_tagCache, (int)sectorAddress * TAG_SECTOR_SIZE, buffer, 0, length * TAG_SECTOR_SIZE);
 
             return buffer;
         }
@@ -370,10 +368,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             byte[] data   = ReadSectors(sectorAddress, length);
@@ -382,11 +380,11 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + TAG_SECTOR_SIZE),
-                           imageInfo.SectorSize);
+                Array.Copy(data, i * _imageInfo.SectorSize, buffer, i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
+                           _imageInfo.SectorSize);
 
                 Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                           (i * (imageInfo.SectorSize + TAG_SECTOR_SIZE)) + imageInfo.SectorSize, TAG_SECTOR_SIZE);
+                           (i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE)) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
             }
 
             return buffer;

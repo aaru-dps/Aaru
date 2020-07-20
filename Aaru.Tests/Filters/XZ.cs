@@ -37,23 +37,23 @@ namespace Aaru.Tests.Filters
     [TestFixture]
     public class Xz
     {
-        static readonly byte[] ExpectedFile =
+        static readonly byte[] _expectedFile =
         {
             0x6c, 0x88, 0xa5, 0x9a, 0x1b, 0x7a, 0xec, 0x59, 0x2b, 0xef, 0x8a, 0x28, 0xdb, 0x11, 0x01, 0xc8
         };
-        static readonly byte[] ExpectedContents =
+        static readonly byte[] _expectedContents =
         {
             0x18, 0x90, 0x5a, 0xf9, 0x83, 0xd8, 0x2b, 0xdd, 0x1a, 0xcc, 0x69, 0x75, 0x4f, 0x0f, 0x81, 0x5e
         };
-        readonly string location;
+        readonly string _location;
 
-        public Xz() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "xz.xz");
+        public Xz() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "xz.xz");
 
         [Test]
         public void CheckContents()
         {
             IFilter filter = new XZ();
-            filter.Open(location);
+            filter.Open(_location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[1048576];
             str.Read(data, 0, 1048576);
@@ -61,28 +61,28 @@ namespace Aaru.Tests.Filters
             str.Dispose();
             filter.Close();
             Md5Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedContents, result);
+            Assert.AreEqual(_expectedContents, result);
         }
 
         [Test]
         public void CheckCorrectFile()
         {
-            byte[] result = Md5Context.File(location);
-            Assert.AreEqual(ExpectedFile, result);
+            byte[] result = Md5Context.File(_location);
+            Assert.AreEqual(_expectedFile, result);
         }
 
         [Test]
         public void CheckFilterId()
         {
             IFilter filter = new XZ();
-            Assert.AreEqual(true, filter.Identify(location));
+            Assert.AreEqual(true, filter.Identify(_location));
         }
 
         [Test]
         public void Test()
         {
             IFilter filter = new XZ();
-            filter.Open(location);
+            filter.Open(_location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(1048576, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());

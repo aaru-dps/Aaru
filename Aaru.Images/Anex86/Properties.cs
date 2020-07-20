@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Anex86
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string Name   => "Anex86 Disk Image";
         public Guid   Id     => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");

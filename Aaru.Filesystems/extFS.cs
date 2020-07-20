@@ -98,7 +98,7 @@ namespace Aaru.Filesystems
             byte[] sbSector = new byte[512];
             Array.Copy(sblock, sbOff, sbSector, 0, 512);
 
-            var extSb = new extFSSuperBlock
+            var extSb = new SuperBlock
             {
                 inodes        = BitConverter.ToUInt32(sbSector, 0x000),
                 zones         = BitConverter.ToUInt32(sbSector, 0x004),
@@ -138,7 +138,7 @@ namespace Aaru.Filesystems
 
         /// <summary>ext superblock</summary>
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct extFSSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
             public uint inodes;

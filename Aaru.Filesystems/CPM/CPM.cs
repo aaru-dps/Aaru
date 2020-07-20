@@ -42,42 +42,42 @@ namespace Aaru.Filesystems
     internal partial class CPM : IReadOnlyFilesystem
     {
         /// <summary>True if <see cref="Identify" /> thinks this is a CP/M filesystem</summary>
-        bool cpmFound;
+        bool _cpmFound;
 
         /// <summary>Cached <see cref="FileSystemInfo" /></summary>
-        FileSystemInfo cpmStat;
+        FileSystemInfo _cpmStat;
 
         /// <summary>Cached file passwords, decoded</summary>
-        Dictionary<string, byte[]> decodedPasswordCache;
+        Dictionary<string, byte[]> _decodedPasswordCache;
 
         /// <summary>Stores all known CP/M disk definitions</summary>
-        CpmDefinitions definitions;
-        IMediaImage device;
+        CpmDefinitions _definitions;
+        IMediaImage _device;
         /// <summary>Cached directory listing</summary>
-        List<string> dirList;
+        List<string> _dirList;
         /// <summary>CP/M disc parameter block (on-memory)</summary>
-        DiscParameterBlock dpb;
+        DiscParameterBlock _dpb;
         /// <summary>Cached file data</summary>
-        Dictionary<string, byte[]> fileCache;
+        Dictionary<string, byte[]> _fileCache;
         /// <summary>The volume label, if the CP/M filesystem contains one</summary>
-        string label;
+        string _label;
         /// <summary>Timestamp in volume label for creation</summary>
-        byte[] labelCreationDate;
+        byte[] _labelCreationDate;
         /// <summary>Timestamp in volume label for update</summary>
-        byte[] labelUpdateDate;
-        bool mounted;
+        byte[] _labelUpdateDate;
+        bool _mounted;
         /// <summary>Cached file passwords</summary>
-        Dictionary<string, byte[]> passwordCache;
+        Dictionary<string, byte[]> _passwordCache;
         /// <summary>Sector deinterleaving mask</summary>
-        int[] sectorMask;
+        int[] _sectorMask;
         /// <summary>True if there are CP/M 3 timestamps</summary>
-        bool standardTimestamps;
+        bool _standardTimestamps;
         /// <summary>Cached file <see cref="FileEntryInfo" /></summary>
-        Dictionary<string, FileEntryInfo> statCache;
+        Dictionary<string, FileEntryInfo> _statCache;
         /// <summary>True if there are timestamps in Z80DOS or DOS+ format</summary>
-        bool thirdPartyTimestamps;
+        bool _thirdPartyTimestamps;
         /// <summary>If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it</summary>
-        CpmDefinition workingDefinition;
+        CpmDefinition _workingDefinition;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

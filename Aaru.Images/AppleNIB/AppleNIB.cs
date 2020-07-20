@@ -40,12 +40,12 @@ namespace Aaru.DiscImages
     // TODO: Checksum sectors
     public partial class AppleNib : IMediaImage
     {
-        Dictionary<ulong, byte[]> addressFields;
-        Dictionary<ulong, byte[]> cookedSectors;
-        ImageInfo                 imageInfo;
-        Dictionary<ulong, byte[]> longSectors;
+        Dictionary<ulong, byte[]> _addressFields;
+        Dictionary<ulong, byte[]> _cookedSectors;
+        ImageInfo                 _imageInfo;
+        Dictionary<ulong, byte[]> _longSectors;
 
-        public AppleNib() => imageInfo = new ImageInfo
+        public AppleNib() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

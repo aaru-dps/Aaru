@@ -54,9 +54,9 @@ namespace Aaru.DiscImages
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            footer = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
+            _footer = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
 
-            string sig = StringHandlers.CToString(footer.signature);
+            string sig = StringHandlers.CToString(_footer.signature);
 
             var   regexSignature = new Regex(REGEX_DRI);
             Match matchSignature = regexSignature.Match(sig);
@@ -64,66 +64,66 @@ namespace Aaru.DiscImages
             if(!matchSignature.Success)
                 return false;
 
-            if(footer.bpb.sptrack * footer.bpb.cylinders * footer.bpb.heads != footer.bpb.sectors)
+            if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
                 return false;
 
-            if((footer.bpb.sectors * footer.bpb.bps) + Marshal.SizeOf<DriFooter>() != stream.Length)
+            if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<DriFooter>() != stream.Length)
                 return false;
 
-            imageInfo.Cylinders          = footer.bpb.cylinders;
-            imageInfo.Heads              = footer.bpb.heads;
-            imageInfo.SectorsPerTrack    = footer.bpb.sptrack;
-            imageInfo.Sectors            = footer.bpb.sectors;
-            imageInfo.SectorSize         = footer.bpb.bps;
-            imageInfo.ApplicationVersion = matchSignature.Groups["version"].Value;
+            _imageInfo.Cylinders          = _footer.bpb.cylinders;
+            _imageInfo.Heads              = _footer.bpb.heads;
+            _imageInfo.SectorsPerTrack    = _footer.bpb.sptrack;
+            _imageInfo.Sectors            = _footer.bpb.sectors;
+            _imageInfo.SectorSize         = _footer.bpb.bps;
+            _imageInfo.ApplicationVersion = matchSignature.Groups["version"].Value;
 
-            driImageFilter = imageFilter;
+            _driImageFilter = imageFilter;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<DriFooter>());
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<DriFooter>());
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
-                                       imageInfo.Application, imageInfo.ApplicationVersion);
+                                       _imageInfo.Application, _imageInfo.ApplicationVersion);
 
             // Correct some incorrect data in images of NEC 2HD disks
-            if(imageInfo.Cylinders       == 77  &&
-               imageInfo.Heads           == 2   &&
-               imageInfo.SectorsPerTrack == 16  &&
-               imageInfo.SectorSize      == 512 &&
-               (footer.bpb.driveCode == DriDriveCodes.md2hd || footer.bpb.driveCode == DriDriveCodes.mf2hd))
+            if(_imageInfo.Cylinders       == 77  &&
+               _imageInfo.Heads           == 2   &&
+               _imageInfo.SectorsPerTrack == 16  &&
+               _imageInfo.SectorSize      == 512 &&
+               (_footer.bpb.driveCode == DriDriveCodes.md2hd || _footer.bpb.driveCode == DriDriveCodes.mf2hd))
             {
-                imageInfo.SectorsPerTrack = 8;
-                imageInfo.SectorSize      = 1024;
+                _imageInfo.SectorsPerTrack = 8;
+                _imageInfo.SectorSize      = 1024;
             }
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                         MediaEncoding.MFM, false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                          (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
+                                                          MediaEncoding.MFM, false));
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
-                case MediaType.NEC_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
-                                               footer.bpb.driveCode == DriDriveCodes.mf2ed:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
+                case MediaType.NEC_525_HD when _footer.bpb.driveCode == DriDriveCodes.mf2hd ||
+                                               _footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                     break;
-                case MediaType.DOS_525_HD when footer.bpb.driveCode == DriDriveCodes.mf2hd ||
-                                               footer.bpb.driveCode == DriDriveCodes.mf2ed:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
+                case MediaType.DOS_525_HD when _footer.bpb.driveCode == DriDriveCodes.mf2hd ||
+                                               _footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                     break;
-                case MediaType.RX50 when footer.bpb.driveCode == DriDriveCodes.md2dd ||
-                                         footer.bpb.driveCode == DriDriveCodes.md2hd:
-                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+                case MediaType.RX50 when _footer.bpb.driveCode == DriDriveCodes.md2dd ||
+                                         _footer.bpb.driveCode == DriDriveCodes.md2hd:
+                    _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                     break;
             }
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             AaruConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
-                                         imageInfo.MediaType);
+                                         _imageInfo.MediaType);
 
             return true;
         }
@@ -132,17 +132,17 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = driImageFilter.GetDataForkStream();
-            stream.Seek((long)(sectorAddress    * imageInfo.SectorSize), SeekOrigin.Begin);
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            Stream stream = _driImageFilter.GetDataForkStream();
+            stream.Seek((long)(sectorAddress    * _imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

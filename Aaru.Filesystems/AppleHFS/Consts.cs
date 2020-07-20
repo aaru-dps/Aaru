@@ -32,6 +32,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+// ReSharper disable InconsistentNaming
+
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh

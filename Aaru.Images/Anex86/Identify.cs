@@ -50,19 +50,19 @@ namespace Aaru.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
+            _fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
 
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", fdihdr.unknown);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", fdihdr.hddtype);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", fdihdr.hdrSize);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", fdihdr.dskSize);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", fdihdr.bps);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", fdihdr.spt);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", fdihdr.heads);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", fdihdr.cylinders);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", _fdihdr.unknown);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", _fdihdr.hddtype);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", _fdihdr.hdrSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", _fdihdr.dskSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", _fdihdr.bps);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", _fdihdr.spt);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", _fdihdr.heads);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", _fdihdr.cylinders);
 
-            return stream.Length  == fdihdr.hdrSize + fdihdr.dskSize &&
-                   fdihdr.dskSize == fdihdr.bps * fdihdr.spt * fdihdr.heads * fdihdr.cylinders;
+            return stream.Length   == _fdihdr.hdrSize + _fdihdr.dskSize &&
+                   _fdihdr.dskSize == _fdihdr.bps * _fdihdr.spt * _fdihdr.heads * _fdihdr.cylinders;
         }
     }
 }

@@ -38,47 +38,47 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Locus
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "mf2dd.img.lz", "mf2hd.img.lz"
         };
 
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             1440, 2880
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             180, 360
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             4096, 4096
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "Label", "Label"
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             null, null
         };
 
-        readonly string[] oemid =
+        readonly string[] _oemid =
         {
             null, null
         };
@@ -86,16 +86,18 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Locus filesystem", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem",
+                                               _testfiles[i]);
+
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 IFilesystem fs = new Aaru.Filesystems.Locus();
 
                 var wholePart = new Partition
@@ -105,14 +107,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
             }
         }
     }

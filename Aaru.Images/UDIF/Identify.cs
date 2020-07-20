@@ -49,9 +49,9 @@ namespace Aaru.DiscImages
             byte[] footerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
             stream.Read(footerB, 0, Marshal.SizeOf<UdifFooter>());
-            footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+            _footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-            if(footer.signature == UDIF_SIGNATURE)
+            if(_footer.signature == UDIF_SIGNATURE)
                 return true;
 
             // Old UDIF as created by DiskCopy 6.5 using "OBSOLETE" format. (DiskCopy 5 rumored format?)
@@ -59,9 +59,9 @@ namespace Aaru.DiscImages
             byte[] headerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
             stream.Read(headerB, 0, Marshal.SizeOf<UdifFooter>());
-            footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(headerB);
+            _footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(headerB);
 
-            return footer.signature == UDIF_SIGNATURE;
+            return _footer.signature == UDIF_SIGNATURE;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -62,7 +62,7 @@ namespace Aaru.Filesystems
                 return Errno.NoError;
             }
 
-            if(!statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
+            if(!_statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out FileEntryInfo fInfo))
                 return Errno.NoSuchFile;
 
             attributes = fInfo.Attributes;
@@ -75,12 +75,12 @@ namespace Aaru.Filesystems
         {
             deviceBlock = 0;
 
-            return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(size == 0)
@@ -101,7 +101,7 @@ namespace Aaru.Filesystems
             if(pathElements.Length != 1)
                 return Errno.NotSupported;
 
-            if(!fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
+            if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
                 return Errno.NoSuchFile;
 
             if(offset >= file.Length)
@@ -120,14 +120,14 @@ namespace Aaru.Filesystems
         {
             dest = null;
 
-            return !mounted ? Errno.AccessDenied : Errno.NotSupported;
+            return !_mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
         public Errno Stat(string path, out FileEntryInfo stat)
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -140,7 +140,7 @@ namespace Aaru.Filesystems
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
-                return statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? Errno.NoError
+                return _statCache.TryGetValue(pathElements[0].ToUpperInvariant(), out stat) ? Errno.NoError
                            : Errno.NoSuchFile;
 
             stat = new FileEntryInfo
@@ -149,11 +149,11 @@ namespace Aaru.Filesystems
                 BlockSize  = XmlFsType.ClusterSize
             };
 
-            if(labelCreationDate != null)
-                stat.CreationTime = DateHandlers.CpmToDateTime(labelCreationDate);
+            if(_labelCreationDate != null)
+                stat.CreationTime = DateHandlers.CpmToDateTime(_labelCreationDate);
 
-            if(labelUpdateDate != null)
-                stat.StatusChangeTime = DateHandlers.CpmToDateTime(labelUpdateDate);
+            if(_labelUpdateDate != null)
+                stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
 
             return Errno.NoError;
         }

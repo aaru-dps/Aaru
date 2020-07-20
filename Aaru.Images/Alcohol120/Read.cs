@@ -59,52 +59,53 @@ namespace Aaru.DiscImages
             if(stream.Length < 88)
                 return false;
 
-            isDvd = false;
+            _isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}",
-                                       Encoding.ASCII.GetString(header.signature));
+                                       Encoding.ASCII.GetString(_header.signature));
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.version = {0}.{1}", header.version[0],
-                                       header.version[1]);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.version = {0}.{1}", _header.version[0],
+                                       _header.version[1]);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.type = {0}", header.type);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessions = {0}", header.sessions);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.type = {0}", _header.type);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessions = {0}", _header.sessions);
 
-            for(int i = 0; i < header.unknown1.Length; i++)
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown1[{1}] = 0x{0:X4}", header.unknown1[i],
-                                           i);
+            for(int i = 0; i < _header.unknown1.Length; i++)
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown1[{1}] = 0x{0:X4}",
+                                           _header.unknown1[i], i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaLength = {0}", header.bcaLength);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaLength = {0}", _header.bcaLength);
 
-            for(int i = 0; i < header.unknown2.Length; i++)
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown2[{1}] = 0x{0:X8}", header.unknown2[i],
-                                           i);
+            for(int i = 0; i < _header.unknown2.Length; i++)
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown2[{1}] = 0x{0:X8}",
+                                           _header.unknown2[i], i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaOffset = {0}", header.bcaOffset);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.bcaOffset = {0}", _header.bcaOffset);
 
-            for(int i = 0; i < header.unknown3.Length; i++)
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown3[{1}] = 0x{0:X8}", header.unknown3[i],
-                                           i);
+            for(int i = 0; i < _header.unknown3.Length; i++)
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown3[{1}] = 0x{0:X8}",
+                                           _header.unknown3[i], i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.structuresOffset = {0}", header.structuresOffset);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.structuresOffset = {0}",
+                                       _header.structuresOffset);
 
-            for(int i = 0; i < header.unknown4.Length; i++)
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown4[{1}] = 0x{0:X8}", header.unknown4[i],
-                                           i);
+            for(int i = 0; i < _header.unknown4.Length; i++)
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.unknown4[{1}] = 0x{0:X8}",
+                                           _header.unknown4[i], i);
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessionOffset = {0}", header.sessionOffset);
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.dpmOffset = {0}", header.dpmOffset);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.sessionOffset = {0}", _header.sessionOffset);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "header.dpmOffset = {0}", _header.dpmOffset);
 
-            if(header.version[0] > _maximumSupportedVersion)
+            if(_header.version[0] > _maximumSupportedVersion)
                 return false;
 
-            stream.Seek(header.sessionOffset, SeekOrigin.Begin);
-            alcSessions = new Dictionary<int, AlcoholSession>();
+            stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
+            _alcSessions = new Dictionary<int, AlcoholSession>();
 
-            for(int i = 0; i < header.sessions; i++)
+            for(int i = 0; i < _header.sessions; i++)
             {
                 byte[] sesHdr = new byte[24];
                 stream.Read(sesHdr, 0, 24);
@@ -135,16 +136,16 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].trackOffset = {0}", session.trackOffset,
                                            i);
 
-                alcSessions.Add(session.sessionSequence, session);
+                _alcSessions.Add(session.sessionSequence, session);
             }
 
             long footerOff         = 0;
             bool oldIncorrectImage = false;
 
-            alcTracks = new Dictionary<int, AlcoholTrack>();
-            alcToc    = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
+            _alcTracks = new Dictionary<int, AlcoholTrack>();
+            _alcToc    = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
 
-            foreach(AlcoholSession session in alcSessions.Values)
+            foreach(AlcoholSession session in _alcSessions.Values)
             {
                 stream.Seek(session.trackOffset, SeekOrigin.Begin);
                 Dictionary<int, AlcoholTrack> sesToc = new Dictionary<int, AlcoholTrack>();
@@ -235,22 +236,22 @@ namespace Aaru.DiscImages
                         sesToc.Add(track.point, track);
 
                     if(track.point < 0xA0)
-                        alcTracks.Add(track.point, track);
+                        _alcTracks.Add(track.point, track);
 
                     if(footerOff == 0)
                         footerOff = track.footerOffset;
 
-                    isDvd |= track.mode == AlcoholTrackMode.DVD;
+                    _isDvd |= track.mode == AlcoholTrackMode.DVD;
                 }
 
-                alcToc.Add(session.sessionSequence, sesToc);
+                _alcToc.Add(session.sessionSequence, sesToc);
             }
 
-            alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
+            _alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
 
-            foreach(AlcoholTrack track in alcTracks.Values)
+            foreach(AlcoholTrack track in _alcTracks.Values)
                 if(track.extraOffset > 0 &&
-                   !isDvd)
+                   !_isDvd)
                 {
                     byte[] extHdr = new byte[8];
                     stream.Seek(track.extraOffset, SeekOrigin.Begin);
@@ -263,16 +264,16 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.sectors = {0}", extra.sectors,
                                                track.point);
 
-                    alcTrackExtras.Add(track.point, extra);
+                    _alcTrackExtras.Add(track.point, extra);
                 }
-                else if(isDvd)
+                else if(_isDvd)
                 {
                     var extra = new AlcoholTrackExtra
                     {
                         sectors = track.extraOffset
                     };
 
-                    alcTrackExtras.Add(track.point, extra);
+                    _alcTrackExtras.Add(track.point, extra);
                 }
 
             if(footerOff > 0)
@@ -280,71 +281,71 @@ namespace Aaru.DiscImages
                 byte[] footer = new byte[16];
                 stream.Seek(footerOff, SeekOrigin.Begin);
                 stream.Read(footer, 0, 16);
-                alcFooter = Marshal.SpanToStructureLittleEndian<AlcoholFooter>(footer);
+                _alcFooter = Marshal.SpanToStructureLittleEndian<AlcoholFooter>(footer);
 
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filenameOffset = {0}",
-                                           alcFooter.filenameOffset);
+                                           _alcFooter.filenameOffset);
 
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.widechar = {0}", alcFooter.widechar);
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown1 = 0x{0:X8}", alcFooter.unknown1);
-                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown2 = 0x{0:X8}", alcFooter.unknown2);
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.widechar = {0}", _alcFooter.widechar);
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown1 = 0x{0:X8}", _alcFooter.unknown1);
+                AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.unknown2 = 0x{0:X8}", _alcFooter.unknown2);
             }
 
             string alcFile = "*.mdf";
 
-            if(alcFooter.filenameOffset > 0)
+            if(_alcFooter.filenameOffset > 0)
             {
-                stream.Seek(alcFooter.filenameOffset, SeekOrigin.Begin);
+                stream.Seek(_alcFooter.filenameOffset, SeekOrigin.Begin);
 
-                byte[] filename = header.dpmOffset == 0 ? new byte[stream.Length - stream.Position]
-                                      : new byte[header.dpmOffset                - stream.Position];
+                byte[] filename = _header.dpmOffset == 0 ? new byte[stream.Length - stream.Position]
+                                      : new byte[_header.dpmOffset                - stream.Position];
 
                 stream.Read(filename, 0, filename.Length);
 
-                alcFile = alcFooter.widechar == 1 ? Encoding.Unicode.GetString(filename)
+                alcFile = _alcFooter.widechar == 1 ? Encoding.Unicode.GetString(filename)
                               : Encoding.Default.GetString(filename);
 
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filename = {0}", alcFile);
             }
 
-            if(alcFooter.filenameOffset                                                      == 0 ||
+            if(_alcFooter.filenameOffset                                                     == 0 ||
                string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
                 alcFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".mdf";
 
-            if(header.bcaLength > 0 &&
-               header.bcaOffset > 0 &&
-               isDvd)
+            if(_header.bcaLength > 0 &&
+               _header.bcaOffset > 0 &&
+               _isDvd)
             {
-                bca = new byte[header.bcaLength];
-                stream.Seek(header.bcaOffset, SeekOrigin.Begin);
-                int readBytes = stream.Read(bca, 0, bca.Length);
+                _bca = new byte[_header.bcaLength];
+                stream.Seek(_header.bcaOffset, SeekOrigin.Begin);
+                int readBytes = stream.Read(_bca, 0, _bca.Length);
 
-                if(readBytes == bca.Length)
-                    switch(header.type)
+                if(readBytes == _bca.Length)
+                    switch(_header.type)
                     {
                         case AlcoholMediumType.DVD:
                         case AlcoholMediumType.DVDR:
-                            imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_BCA);
+                            _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_BCA);
 
                             break;
                     }
             }
 
-            imageInfo.MediaType = AlcoholMediumTypeToMediaType(header.type);
+            _imageInfo.MediaType = AlcoholMediumTypeToMediaType(_header.type);
 
             Sessions = new List<Session>();
 
-            foreach(AlcoholSession alcSes in alcSessions.Values)
+            foreach(AlcoholSession alcSes in _alcSessions.Values)
             {
                 var session = new Session();
 
-                if(!alcTracks.TryGetValue(alcSes.firstTrack, out AlcoholTrack startingTrack))
+                if(!_alcTracks.TryGetValue(alcSes.firstTrack, out AlcoholTrack startingTrack))
                     break;
 
-                if(!alcTracks.TryGetValue(alcSes.lastTrack, out AlcoholTrack endingTrack))
+                if(!_alcTracks.TryGetValue(alcSes.lastTrack, out AlcoholTrack endingTrack))
                     break;
 
-                if(!alcTrackExtras.TryGetValue(alcSes.lastTrack, out AlcoholTrackExtra endingTrackExtra))
+                if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out AlcoholTrackExtra endingTrackExtra))
                     break;
 
                 session.StartSector     = startingTrack.startLba;
@@ -355,31 +356,31 @@ namespace Aaru.DiscImages
 
                 Sessions.Add(session);
 
-                if(session.EndSector > imageInfo.Sectors)
-                    imageInfo.Sectors = session.EndSector + 1;
+                if(session.EndSector > _imageInfo.Sectors)
+                    _imageInfo.Sectors = session.EndSector + 1;
             }
 
-            if(isDvd)
+            if(_isDvd)
             {
                 // TODO: Second layer
-                if(header.structuresOffset > 0)
+                if(_header.structuresOffset > 0)
                 {
                     byte[] structures = new byte[4100];
-                    stream.Seek(header.structuresOffset, SeekOrigin.Begin);
+                    stream.Seek(_header.structuresOffset, SeekOrigin.Begin);
                     stream.Read(structures, 0, 4100);
-                    dmi = new byte[2052];
-                    pfi = new byte[2052];
+                    _dmi = new byte[2052];
+                    _pfi = new byte[2052];
 
                     // TODO: CMI
-                    Array.Copy(structures, 4, dmi, 4, 2048);
-                    Array.Copy(structures, 0x804, pfi, 4, 2048);
+                    Array.Copy(structures, 4, _dmi, 4, 2048);
+                    Array.Copy(structures, 0x804, _pfi, 4, 2048);
 
-                    pfi[0] = 0x08;
-                    pfi[1] = 0x02;
-                    dmi[0] = 0x08;
-                    dmi[1] = 0x02;
+                    _pfi[0] = 0x08;
+                    _pfi[1] = 0x02;
+                    _dmi[0] = 0x08;
+                    _dmi[1] = 0x02;
 
-                    PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(pfi);
+                    PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi);
 
                     // All discs I tested the disk category and part version (as well as the start PSN for DVD-RAM) where modified by Alcohol
                     // So much for archival value
@@ -388,82 +389,83 @@ namespace Aaru.DiscImages
                         switch(pfi0.Value.DiskCategory)
                         {
                             case DiskCategory.DVDPR:
-                                imageInfo.MediaType = MediaType.DVDPR;
+                                _imageInfo.MediaType = MediaType.DVDPR;
 
                                 break;
                             case DiskCategory.DVDPRDL:
-                                imageInfo.MediaType = MediaType.DVDPRDL;
+                                _imageInfo.MediaType = MediaType.DVDPRDL;
 
                                 break;
                             case DiskCategory.DVDPRW:
-                                imageInfo.MediaType = MediaType.DVDPRW;
+                                _imageInfo.MediaType = MediaType.DVDPRW;
 
                                 break;
                             case DiskCategory.DVDPRWDL:
-                                imageInfo.MediaType = MediaType.DVDPRWDL;
+                                _imageInfo.MediaType = MediaType.DVDPRWDL;
 
                                 break;
                             case DiskCategory.DVDR:
-                                imageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                                _imageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                                 break;
                             case DiskCategory.DVDRAM:
-                                imageInfo.MediaType = MediaType.DVDRAM;
+                                _imageInfo.MediaType = MediaType.DVDRAM;
 
                                 break;
                             default:
-                                imageInfo.MediaType = MediaType.DVDROM;
+                                _imageInfo.MediaType = MediaType.DVDROM;
 
                                 break;
                             case DiskCategory.DVDRW:
-                                imageInfo.MediaType = pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                                _imageInfo.MediaType =
+                                    pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                                 break;
                             case DiskCategory.HDDVDR:
-                                imageInfo.MediaType = MediaType.HDDVDR;
+                                _imageInfo.MediaType = MediaType.HDDVDR;
 
                                 break;
                             case DiskCategory.HDDVDRAM:
-                                imageInfo.MediaType = MediaType.HDDVDRAM;
+                                _imageInfo.MediaType = MediaType.HDDVDRAM;
 
                                 break;
                             case DiskCategory.HDDVDROM:
-                                imageInfo.MediaType = MediaType.HDDVDROM;
+                                _imageInfo.MediaType = MediaType.HDDVDROM;
 
                                 break;
                             case DiskCategory.HDDVDRW:
-                                imageInfo.MediaType = MediaType.HDDVDRW;
+                                _imageInfo.MediaType = MediaType.HDDVDRW;
 
                                 break;
                             case DiskCategory.Nintendo:
-                                imageInfo.MediaType =
+                                _imageInfo.MediaType =
                                     pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
 
                                 break;
                             case DiskCategory.UMD:
-                                imageInfo.MediaType = MediaType.UMD;
+                                _imageInfo.MediaType = MediaType.UMD;
 
                                 break;
                         }
 
-                        if(DMI.IsXbox(dmi))
-                            imageInfo.MediaType = MediaType.XGD;
-                        else if(DMI.IsXbox360(dmi))
-                            imageInfo.MediaType = MediaType.XGD2;
+                        if(DMI.IsXbox(_dmi))
+                            _imageInfo.MediaType = MediaType.XGD;
+                        else if(DMI.IsXbox360(_dmi))
+                            _imageInfo.MediaType = MediaType.XGD2;
 
                         byte[] tmp = new byte[2048];
-                        Array.Copy(dmi, 4, tmp, 0, 2048);
-                        dmi = tmp;
-                        tmp = new byte[2048];
-                        Array.Copy(pfi, 4, tmp, 0, 2048);
-                        pfi = tmp;
+                        Array.Copy(_dmi, 4, tmp, 0, 2048);
+                        _dmi = tmp;
+                        tmp  = new byte[2048];
+                        Array.Copy(_pfi, 4, tmp, 0, 2048);
+                        _pfi = tmp;
 
-                        imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
-                        imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
+                        _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
+                        _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
                     }
                 }
             }
-            else if(header.type == AlcoholMediumType.CD)
+            else if(_header.type == AlcoholMediumType.CD)
             {
                 bool data       = false;
                 bool mode2      = false;
@@ -471,7 +473,7 @@ namespace Aaru.DiscImages
                 bool firstdata  = false;
                 bool audio      = false;
 
-                foreach(AlcoholTrack alcoholTrack in alcTracks.Values)
+                foreach(AlcoholTrack alcoholTrack in _alcTracks.Values)
                 {
                     // First track is audio
                     firstaudio |= alcoholTrack.point == 1 && alcoholTrack.mode == AlcoholTrackMode.Audio;
@@ -500,29 +502,29 @@ namespace Aaru.DiscImages
 
                 if(!data &&
                    !firstdata)
-                    imageInfo.MediaType = MediaType.CDDA;
+                    _imageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio         &&
                         data               &&
                         Sessions.Count > 1 &&
                         mode2)
-                    imageInfo.MediaType = MediaType.CDPLUS;
+                    _imageInfo.MediaType = MediaType.CDPLUS;
                 else if((firstdata && audio) || mode2)
-                    imageInfo.MediaType = MediaType.CDROMXA;
+                    _imageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio)
-                    imageInfo.MediaType = MediaType.CDROM;
+                    _imageInfo.MediaType = MediaType.CDROM;
                 else
-                    imageInfo.MediaType = MediaType.CD;
+                    _imageInfo.MediaType = MediaType.CD;
             }
 
-            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("Alcohol 120% plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
             Partitions = new List<Partition>();
-            offsetmap  = new Dictionary<uint, ulong>();
+            _offsetmap = new Dictionary<uint, ulong>();
             ulong byteOffset = 0;
 
-            foreach(AlcoholTrack trk in alcTracks.Values)
+            foreach(AlcoholTrack trk in _alcTracks.Values)
             {
-                if(alcTrackExtras.TryGetValue(trk.point, out AlcoholTrackExtra extra))
+                if(_alcTrackExtras.TryGetValue(trk.point, out AlcoholTrackExtra extra))
                 {
                     var partition = new Partition
                     {
@@ -539,84 +541,84 @@ namespace Aaru.DiscImages
                     byteOffset += partition.Size;
                 }
 
-                if(!offsetmap.ContainsKey(trk.point))
-                    offsetmap.Add(trk.point, trk.startLba);
+                if(!_offsetmap.ContainsKey(trk.point))
+                    _offsetmap.Add(trk.point, trk.startLba);
 
                 switch(trk.mode)
                 {
                     case AlcoholTrackMode.Mode1:
                     case AlcoholTrackMode.Mode2F1:
                     case AlcoholTrackMode.Mode2F1Alt:
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                        if(imageInfo.SectorSize < 2048)
-                            imageInfo.SectorSize = 2048;
+                        if(_imageInfo.SectorSize < 2048)
+                            _imageInfo.SectorSize = 2048;
 
                         break;
                     case AlcoholTrackMode.Mode2:
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                        if(imageInfo.SectorSize < 2336)
-                            imageInfo.SectorSize = 2336;
+                        if(_imageInfo.SectorSize < 2336)
+                            _imageInfo.SectorSize = 2336;
 
                         break;
                     case AlcoholTrackMode.Mode2F2:
                     case AlcoholTrackMode.Mode2F2Alt:
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                        if(imageInfo.SectorSize < 2324)
-                            imageInfo.SectorSize = 2324;
+                        if(_imageInfo.SectorSize < 2324)
+                            _imageInfo.SectorSize = 2324;
 
                         break;
                     case AlcoholTrackMode.DVD:
-                        imageInfo.SectorSize = 2048;
+                        _imageInfo.SectorSize = 2048;
 
                         break;
                     default:
-                        imageInfo.SectorSize = 2352;
+                        _imageInfo.SectorSize = 2352;
 
                         break;
                 }
 
                 if(trk.subMode != AlcoholSubchannelMode.None &&
-                   !imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                   !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
             }
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "printing partition map");
@@ -636,23 +638,23 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
-            imageInfo.Application = "Alcohol 120%";
+            _imageInfo.Application = "Alcohol 120%";
 
             AaruConsole.DebugWriteLine("Alcohol 120% plugin", "Data filename: {0}", alcFile);
 
             var filtersList = new FiltersList();
-            alcImage = filtersList.GetFilter(alcFile);
+            _alcImage = filtersList.GetFilter(alcFile);
 
-            if(alcImage == null)
+            if(_alcImage == null)
                 throw new Exception("Cannot open data file");
 
-            imageInfo.ImageSize            = (ulong)alcImage.GetDataForkLength();
-            imageInfo.CreationTime         = alcImage.GetCreationTime();
-            imageInfo.LastModificationTime = alcImage.GetLastWriteTime();
-            imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
-            imageInfo.Version              = $"{header.version[0]}.{header.version[1]}";
+            _imageInfo.ImageSize            = (ulong)_alcImage.GetDataForkLength();
+            _imageInfo.CreationTime         = _alcImage.GetCreationTime();
+            _imageInfo.LastModificationTime = _alcImage.GetLastWriteTime();
+            _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+            _imageInfo.Version              = $"{_header.version[0]}.{_header.version[1]}";
 
-            if(!isDvd)
+            if(!_isDvd)
             {
                 AaruConsole.DebugWriteLine("Alcohol 120% plugin", "Rebuilding TOC");
                 byte firstSession = byte.MaxValue;
@@ -664,7 +666,7 @@ namespace Aaru.DiscImages
                     0, 0
                 }, 0, 2); // Reserved for TOC session numbers
 
-                foreach(KeyValuePair<int, Dictionary<int, AlcoholTrack>> sessionToc in alcToc)
+                foreach(KeyValuePair<int, Dictionary<int, AlcoholTrack>> sessionToc in _alcToc)
                 {
                     if(sessionToc.Key < firstSession)
                         firstSession = (byte)sessionToc.Key;
@@ -688,21 +690,21 @@ namespace Aaru.DiscImages
                     }
                 }
 
-                fullToc    = tocMs.ToArray();
-                fullToc[0] = firstSession;
-                fullToc[1] = lastSession;
+                _fullToc    = tocMs.ToArray();
+                _fullToc[0] = firstSession;
+                _fullToc[1] = lastSession;
 
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
-                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
 
-            if(imageInfo.MediaType == MediaType.XGD2)
-                if(imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-                   imageInfo.Sectors == 4229664 || // Xtreme unlock
-                   imageInfo.Sectors == 4246304)   // Wxripper unlock
-                    imageInfo.MediaType = MediaType.XGD3;
+            if(_imageInfo.MediaType == MediaType.XGD2)
+                if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
+                   _imageInfo.Sectors == 4229664 || // Xtreme unlock
+                   _imageInfo.Sectors == 4246304)   // Wxripper unlock
+                    _imageInfo.MediaType = MediaType.XGD3;
 
-            AaruConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", _imageInfo.MediaType);
 
             if(oldIncorrectImage)
                 AaruConsole.
@@ -717,32 +719,32 @@ namespace Aaru.DiscImages
             {
                 case MediaTagType.DVD_BCA:
                 {
-                    if(bca != null)
-                        return (byte[])bca.Clone();
+                    if(_bca != null)
+                        return (byte[])_bca.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain BCA information.");
                 }
 
                 case MediaTagType.DVD_PFI:
                 {
-                    if(pfi != null)
-                        return (byte[])pfi.Clone();
+                    if(_pfi != null)
+                        return (byte[])_pfi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain PFI.");
                 }
 
                 case MediaTagType.DVD_DMI:
                 {
-                    if(dmi != null)
-                        return (byte[])dmi.Clone();
+                    if(_dmi != null)
+                        return (byte[])_dmi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain DMI.");
                 }
 
                 case MediaTagType.CD_FullTOC:
                 {
-                    if(fullToc != null)
-                        return (byte[])fullToc.Clone();
+                    if(_fullToc != null)
+                        return (byte[])_fullToc.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain TOC information.");
                 }
@@ -763,12 +765,12 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in _offsetmap)
                 if(sectorAddress >= kvp.Value)
-                    foreach(AlcoholTrack track in alcTracks.Values)
+                    foreach(AlcoholTrack track in _alcTracks.Values)
                     {
                         if(track.point != kvp.Key ||
-                           !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
+                           !_alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
                             continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
@@ -780,12 +782,12 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in _offsetmap)
                 if(sectorAddress >= kvp.Value)
-                    foreach(AlcoholTrack track in alcTracks.Values)
+                    foreach(AlcoholTrack track in _alcTracks.Values)
                     {
                         if(track.point != kvp.Key ||
-                           !alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
+                           !_alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
                             continue;
 
                         if(sectorAddress - kvp.Value < extra.sectors)
@@ -797,8 +799,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
-               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!_alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !_alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -871,8 +873,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = alcImage.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _alcImage.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -914,8 +916,8 @@ namespace Aaru.DiscImages
             if(tag == SectorTagType.CdTrackFlags)
                 track = (uint)sectorAddress;
 
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
-               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!_alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !_alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -1275,8 +1277,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = alcImage.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _alcImage.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1303,12 +1305,12 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in offsetmap)
+            foreach(KeyValuePair<uint, ulong> kvp in _offsetmap)
                 if(sectorAddress >= kvp.Value)
-                    foreach(AlcoholTrack alcTrack in alcTracks.Values)
+                    foreach(AlcoholTrack alcTrack in _alcTracks.Values)
                     {
                         if(alcTrack.point != kvp.Key ||
-                           !alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
+                           !_alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
                             continue;
 
                         if(sectorAddress - kvp.Value < alcExtra.sectors)
@@ -1320,8 +1322,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(!alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
-               !alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
+            if(!_alcTracks.TryGetValue((int)track, out AlcoholTrack alcTrack) ||
+               !_alcTrackExtras.TryGetValue((int)track, out AlcoholTrackExtra alcExtra))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(length + sectorAddress > alcExtra.sectors)
@@ -1358,8 +1360,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = alcImage.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _alcImage.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)alcTrack.startOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1393,13 +1395,13 @@ namespace Aaru.DiscImages
         {
             List<Track> tracks = new List<Track>();
 
-            foreach(AlcoholTrack alcTrack in alcTracks.Values)
+            foreach(AlcoholTrack alcTrack in _alcTracks.Values)
             {
                 ushort sessionNo =
                     (from ses in Sessions where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack
                      select ses.SessionSequence).FirstOrDefault();
 
-                if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra) ||
+                if(!_alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra) ||
                    session != sessionNo)
                     continue;
 
@@ -1411,8 +1413,8 @@ namespace Aaru.DiscImages
                     TrackSession           = sessionNo,
                     TrackSequence          = alcTrack.point,
                     TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
-                    TrackFilter            = alcImage,
-                    TrackFile              = alcImage.GetFilename(),
+                    TrackFilter            = _alcImage,
+                    TrackFile              = _alcImage.GetFilename(),
                     TrackFileOffset        = alcTrack.startOffset,
                     TrackFileType          = "BINARY",
                     TrackRawBytesPerSector = alcTrack.sectorSize,
@@ -1427,8 +1429,8 @@ namespace Aaru.DiscImages
                 switch(alcTrack.subMode)
                 {
                     case AlcoholSubchannelMode.Interleaved:
-                        aaruTrack.TrackSubchannelFilter = alcImage;
-                        aaruTrack.TrackSubchannelFile   = alcImage.GetFilename();
+                        aaruTrack.TrackSubchannelFilter = _alcImage;
+                        aaruTrack.TrackSubchannelFile   = _alcImage.GetFilename();
                         aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
                         aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 

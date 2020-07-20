@@ -75,18 +75,18 @@ namespace Aaru.DiscImages
     public partial class HdCopy : IMediaImage
     {
         /// <summary>Every track that has been read is cached here</summary>
-        readonly Dictionary<int, byte[]> trackCache = new Dictionary<int, byte[]>();
+        readonly Dictionary<int, byte[]> _trackCache = new Dictionary<int, byte[]>();
 
         /// <summary>The offset in the file where each track starts, or -1 if the track is not present</summary>
-        readonly Dictionary<int, long> trackOffset = new Dictionary<int, long>();
+        readonly Dictionary<int, long> _trackOffset = new Dictionary<int, long>();
         /// <summary>The HDCP file header after the image has been opened</summary>
-        HdcpFileHeader fileHeader;
+        HdcpFileHeader _fileHeader;
 
         /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
-        IFilter hdcpImageFilter;
-        ImageInfo imageInfo;
+        IFilter _hdcpImageFilter;
+        ImageInfo _imageInfo;
 
-        public HdCopy() => imageInfo = new ImageInfo
+        public HdCopy() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

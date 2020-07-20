@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class DriDiskCopy
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Digital Research DiskCopy";
         public Guid                   Id           => new Guid("9F0BE551-8BAB-4038-8B5A-691F1BF5FFF3");

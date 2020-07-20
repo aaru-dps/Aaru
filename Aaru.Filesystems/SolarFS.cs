@@ -74,7 +74,7 @@ namespace Aaru.Filesystems
             var    sb        = new StringBuilder();
             byte[] bpbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            var bpb = new SolarOSParameterBlock
+            var bpb = new BiosParameterBlock
             {
                 bps       = BitConverter.ToUInt16(bpbSector, 0x0B),
                 root_ent  = BitConverter.ToUInt16(bpbSector, 0x10),
@@ -167,7 +167,7 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
-        struct SolarOSParameterBlock
+        struct BiosParameterBlock
         {
             /// <summary>0x00, x86 jump (3 bytes), jumps to 0x60</summary>
             public byte[] x86_jump;

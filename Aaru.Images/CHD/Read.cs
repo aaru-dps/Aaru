@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
             byte[] magic = new byte[8];
             stream.Read(magic, 0, 8);
 
-            if(!chdTag.SequenceEqual(magic))
+            if(!_chdTag.SequenceEqual(magic))
                 return false;
 
             // Read length
@@ -107,7 +107,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
-                    hunkTable = new ulong[hdrV1.totalhunks];
+                    _hunkTable = new ulong[hdrV1.totalhunks];
 
                     uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV1.totalhunks * 8) / 512);
 
@@ -124,32 +124,32 @@ namespace Aaru.DiscImages
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8, 512 / 8);
+                        if(_hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8,
-                                       hunkTable.Length - ((i * 512)          / 8));
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8,
+                                       _hunkTable.Length - ((i * 512)          / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
                     AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
-                    imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                    imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
-                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                    imageInfo.SectorSize   = 512;
-                    imageInfo.Version      = "1";
-                    imageInfo.ImageSize    = imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
+                    _imageInfo.MediaType    = MediaType.GENERIC_HDD;
+                    _imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
+                    _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    _imageInfo.SectorSize   = 512;
+                    _imageInfo.Version      = "1";
+                    _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
-                    totalHunks     = hdrV1.totalhunks;
-                    sectorsPerHunk = hdrV1.hunksize;
-                    hdrCompression = hdrV1.compression;
-                    mapVersion     = 1;
-                    isHdd          = true;
+                    _totalHunks     = hdrV1.totalhunks;
+                    _sectorsPerHunk = hdrV1.hunksize;
+                    _hdrCompression = hdrV1.compression;
+                    _mapVersion     = 1;
+                    _isHdd          = true;
 
-                    imageInfo.Cylinders       = hdrV1.cylinders;
-                    imageInfo.Heads           = hdrV1.heads;
-                    imageInfo.SectorsPerTrack = hdrV1.sectors;
+                    _imageInfo.Cylinders       = hdrV1.cylinders;
+                    _imageInfo.Heads           = hdrV1.heads;
+                    _imageInfo.SectorsPerTrack = hdrV1.sectors;
 
                     break;
                 }
@@ -184,7 +184,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
-                    hunkTable = new ulong[hdrV2.totalhunks];
+                    _hunkTable = new ulong[hdrV2.totalhunks];
 
                     // How many sectors uses the BAT
                     uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV2.totalhunks * 8) / 512);
@@ -202,32 +202,32 @@ namespace Aaru.DiscImages
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
 
-                        if(hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8, 512 / 8);
+                        if(_hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8,
-                                       hunkTable.Length - ((i * 512)          / 8));
+                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, (i * 512) / 8,
+                                       _hunkTable.Length - ((i * 512)          / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
                     AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
-                    imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                    imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
-                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                    imageInfo.SectorSize   = hdrV2.seclen;
-                    imageInfo.Version      = "2";
-                    imageInfo.ImageSize    = imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
+                    _imageInfo.MediaType    = MediaType.GENERIC_HDD;
+                    _imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
+                    _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    _imageInfo.SectorSize   = hdrV2.seclen;
+                    _imageInfo.Version      = "2";
+                    _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
-                    totalHunks     = hdrV2.totalhunks;
-                    sectorsPerHunk = hdrV2.hunksize;
-                    hdrCompression = hdrV2.compression;
-                    mapVersion     = 1;
-                    isHdd          = true;
+                    _totalHunks     = hdrV2.totalhunks;
+                    _sectorsPerHunk = hdrV2.hunksize;
+                    _hdrCompression = hdrV2.compression;
+                    _mapVersion     = 1;
+                    _isHdd          = true;
 
-                    imageInfo.Cylinders       = hdrV2.cylinders;
-                    imageInfo.Heads           = hdrV2.heads;
-                    imageInfo.SectorsPerTrack = hdrV2.sectors;
+                    _imageInfo.Cylinders       = hdrV2.cylinders;
+                    _imageInfo.Heads           = hdrV2.heads;
+                    _imageInfo.SectorsPerTrack = hdrV2.sectors;
 
                     break;
                 }
@@ -267,21 +267,21 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
-                    hunkMap = new byte[hdrV3.totalhunks * 16];
-                    stream.Read(hunkMap, 0, hunkMap.Length);
+                    _hunkMap = new byte[hdrV3.totalhunks * 16];
+                    stream.Read(_hunkMap, 0, _hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
                     AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV3.metaoffset;
 
-                    imageInfo.ImageSize = hdrV3.logicalbytes;
-                    imageInfo.Version   = "3";
+                    _imageInfo.ImageSize = hdrV3.logicalbytes;
+                    _imageInfo.Version   = "3";
 
-                    totalHunks     = hdrV3.totalhunks;
-                    bytesPerHunk   = hdrV3.hunkbytes;
-                    hdrCompression = hdrV3.compression;
-                    mapVersion     = 3;
+                    _totalHunks     = hdrV3.totalhunks;
+                    _bytesPerHunk   = hdrV3.hunkbytes;
+                    _hdrCompression = hdrV3.compression;
+                    _mapVersion     = 3;
 
                     break;
                 }
@@ -318,21 +318,21 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
-                    hunkMap = new byte[hdrV4.totalhunks * 16];
-                    stream.Read(hunkMap, 0, hunkMap.Length);
+                    _hunkMap = new byte[hdrV4.totalhunks * 16];
+                    stream.Read(_hunkMap, 0, _hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
                     AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV4.metaoffset;
 
-                    imageInfo.ImageSize = hdrV4.logicalbytes;
-                    imageInfo.Version   = "4";
+                    _imageInfo.ImageSize = hdrV4.logicalbytes;
+                    _imageInfo.Version   = "4";
 
-                    totalHunks     = hdrV4.totalhunks;
-                    bytesPerHunk   = hdrV4.hunkbytes;
-                    hdrCompression = hdrV4.compression;
-                    mapVersion     = 3;
+                    _totalHunks     = hdrV4.totalhunks;
+                    _bytesPerHunk   = hdrV4.hunkbytes;
+                    _hdrCompression = hdrV4.compression;
+                    _mapVersion     = 3;
 
                     break;
                 }
@@ -388,9 +388,9 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                         DateTime start = DateTime.UtcNow;
 
-                        hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
+                        _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
-                        uint hunkSectorCount = (uint)Math.Ceiling(((double)hunkTableSmall.Length * 4) / 512);
+                        uint hunkSectorCount = (uint)Math.Ceiling(((double)_hunkTableSmall.Length * 4) / 512);
 
                         byte[] hunkSectorBytes = new byte[512];
 
@@ -409,11 +409,11 @@ namespace Aaru.DiscImages
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
 
-                            if(hunkTableSmall.Length >= ((i * 512) / 4) + (512 / 4))
-                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, (i * 512) / 4, 512 / 4);
+                            if(_hunkTableSmall.Length >= ((i * 512) / 4) + (512 / 4))
+                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, (i * 512) / 4, 512 / 4);
                             else
-                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, (i * 512) / 4,
-                                           hunkTableSmall.Length - ((i * 512)          / 4));
+                                Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, (i * 512) / 4,
+                                           _hunkTableSmall.Length - ((i * 512)          / 4));
                         }
 
                         DateTime end = DateTime.UtcNow;
@@ -424,16 +424,16 @@ namespace Aaru.DiscImages
 
                     nextMetaOff = hdrV5.metaoffset;
 
-                    imageInfo.ImageSize = hdrV5.logicalbytes;
-                    imageInfo.Version   = "5";
+                    _imageInfo.ImageSize = hdrV5.logicalbytes;
+                    _imageInfo.Version   = "5";
 
-                    totalHunks      = (uint)(hdrV5.logicalbytes / hdrV5.hunkbytes);
-                    bytesPerHunk    = hdrV5.hunkbytes;
-                    hdrCompression  = hdrV5.compressor0;
-                    hdrCompression1 = hdrV5.compressor1;
-                    hdrCompression2 = hdrV5.compressor2;
-                    hdrCompression3 = hdrV5.compressor3;
-                    mapVersion      = 5;
+                    _totalHunks      = (uint)(hdrV5.logicalbytes / hdrV5.hunkbytes);
+                    _bytesPerHunk    = hdrV5.hunkbytes;
+                    _hdrCompression  = hdrV5.compressor0;
+                    _hdrCompression1 = hdrV5.compressor1;
+                    _hdrCompression2 = hdrV5.compressor2;
+                    _hdrCompression3 = hdrV5.compressor3;
+                    _mapVersion      = 5;
 
                     break;
                 }
@@ -441,13 +441,13 @@ namespace Aaru.DiscImages
                 default: throw new ImageNotSupportedException($"Unsupported CHD version {version}");
             }
 
-            if(mapVersion >= 3)
+            if(_mapVersion >= 3)
             {
-                isCdrom   = false;
-                isHdd     = false;
-                isGdrom   = false;
-                swapAudio = false;
-                tracks    = new Dictionary<uint, Track>();
+                _isCdrom   = false;
+                _isHdd     = false;
+                _isGdrom   = false;
+                _swapAudio = false;
+                _tracks    = new Dictionary<uint, Track>();
 
                 AaruConsole.DebugWriteLine("CHD plugin", "Reading metadata.");
 
@@ -470,7 +470,7 @@ namespace Aaru.DiscImages
                     {
                         // "GDDD"
                         case HARD_DISK_METADATA:
-                            if(isCdrom || isGdrom)
+                            if(_isCdrom || _isGdrom)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
 
@@ -480,22 +480,22 @@ namespace Aaru.DiscImages
 
                             if(gdddMatch.Success)
                             {
-                                isHdd                     = true;
-                                imageInfo.SectorSize      = uint.Parse(gdddMatch.Groups["bps"].Value);
-                                imageInfo.Cylinders       = uint.Parse(gdddMatch.Groups["cylinders"].Value);
-                                imageInfo.Heads           = uint.Parse(gdddMatch.Groups["heads"].Value);
-                                imageInfo.SectorsPerTrack = uint.Parse(gdddMatch.Groups["sectors"].Value);
+                                _isHdd                     = true;
+                                _imageInfo.SectorSize      = uint.Parse(gdddMatch.Groups["bps"].Value);
+                                _imageInfo.Cylinders       = uint.Parse(gdddMatch.Groups["cylinders"].Value);
+                                _imageInfo.Heads           = uint.Parse(gdddMatch.Groups["heads"].Value);
+                                _imageInfo.SectorsPerTrack = uint.Parse(gdddMatch.Groups["sectors"].Value);
                             }
 
                             break;
 
                         // "CHCD"
                         case CDROM_OLD_METADATA:
-                            if(isHdd)
+                            if(_isHdd)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
 
-                            if(isGdrom)
+                            if(_isGdrom)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
@@ -607,20 +607,20 @@ namespace Aaru.DiscImages
 
                                 aaruTrack.Indexes.Add(1, (int)currentSector);
                                 currentSector += chdTrack.frames + chdTrack.extraFrames;
-                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
+                                _tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
-                            isCdrom = true;
+                            _isCdrom = true;
 
                             break;
 
                         // "CHTR"
                         case CDROM_TRACK_METADATA:
-                            if(isHdd)
+                            if(_isHdd)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
 
-                            if(isGdrom)
+                            if(_isGdrom)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
@@ -630,7 +630,7 @@ namespace Aaru.DiscImages
 
                             if(chtrMatch.Success)
                             {
-                                isCdrom = true;
+                                _isCdrom = true;
 
                                 uint   trackNo   = uint.Parse(chtrMatch.Groups["track"].Value);
                                 uint   frames    = uint.Parse(chtrMatch.Groups["frames"].Value);
@@ -734,18 +734,18 @@ namespace Aaru.DiscImages
                                 aaruTrack.Indexes.Add(1, (int)currentSector);
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
+                                _tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
 
                         // "CHT2"
                         case CDROM_TRACK_METADATA2:
-                            if(isHdd)
+                            if(_isHdd)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
 
-                            if(isGdrom)
+                            if(_isGdrom)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
@@ -755,7 +755,7 @@ namespace Aaru.DiscImages
 
                             if(cht2Match.Success)
                             {
-                                isCdrom = true;
+                                _isCdrom = true;
 
                                 uint   trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
                                 uint   frames    = uint.Parse(cht2Match.Groups["frames"].Value);
@@ -893,23 +893,23 @@ namespace Aaru.DiscImages
 
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
+                                _tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
 
                         // "CHGT"
                         case GDROM_OLD_METADATA:
-                            swapAudio = true;
+                            _swapAudio = true;
                             goto case GDROM_METADATA;
 
                         // "CHGD"
                         case GDROM_METADATA:
-                            if(isHdd)
+                            if(_isHdd)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a hard disk and a GD-ROM at the same time, aborting.");
 
-                            if(isCdrom)
+                            if(_isCdrom)
                                 throw new
                                     ImageNotSupportedException("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
 
@@ -919,7 +919,7 @@ namespace Aaru.DiscImages
 
                             if(chgdMatch.Success)
                             {
-                                isGdrom = true;
+                                _isGdrom = true;
 
                                 uint   trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
                                 uint   frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
@@ -1050,7 +1050,7 @@ namespace Aaru.DiscImages
 
                                 currentSector += frames;
                                 currentTrack++;
-                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
+                                _tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
@@ -1061,39 +1061,39 @@ namespace Aaru.DiscImages
 
                             if(idnt.HasValue)
                             {
-                                imageInfo.MediaManufacturer     = idnt.Value.MediaManufacturer;
-                                imageInfo.MediaSerialNumber     = idnt.Value.MediaSerial;
-                                imageInfo.DriveModel            = idnt.Value.Model;
-                                imageInfo.DriveSerialNumber     = idnt.Value.SerialNumber;
-                                imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
+                                _imageInfo.MediaManufacturer     = idnt.Value.MediaManufacturer;
+                                _imageInfo.MediaSerialNumber     = idnt.Value.MediaSerial;
+                                _imageInfo.DriveModel            = idnt.Value.Model;
+                                _imageInfo.DriveSerialNumber     = idnt.Value.SerialNumber;
+                                _imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
 
                                 if(idnt.Value.CurrentCylinders       > 0 &&
                                    idnt.Value.CurrentHeads           > 0 &&
                                    idnt.Value.CurrentSectorsPerTrack > 0)
                                 {
-                                    imageInfo.Cylinders       = idnt.Value.CurrentCylinders;
-                                    imageInfo.Heads           = idnt.Value.CurrentHeads;
-                                    imageInfo.SectorsPerTrack = idnt.Value.CurrentSectorsPerTrack;
+                                    _imageInfo.Cylinders       = idnt.Value.CurrentCylinders;
+                                    _imageInfo.Heads           = idnt.Value.CurrentHeads;
+                                    _imageInfo.SectorsPerTrack = idnt.Value.CurrentSectorsPerTrack;
                                 }
                                 else
                                 {
-                                    imageInfo.Cylinders       = idnt.Value.Cylinders;
-                                    imageInfo.Heads           = idnt.Value.Heads;
-                                    imageInfo.SectorsPerTrack = idnt.Value.SectorsPerTrack;
+                                    _imageInfo.Cylinders       = idnt.Value.Cylinders;
+                                    _imageInfo.Heads           = idnt.Value.Heads;
+                                    _imageInfo.SectorsPerTrack = idnt.Value.SectorsPerTrack;
                                 }
                             }
 
-                            identify = meta;
+                            _identify = meta;
 
-                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
-                                imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
+                            if(!_imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                                _imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
 
                             break;
                         case PCMCIA_CIS_METADATA:
-                            cis = meta;
+                            _cis = meta;
 
-                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
-                                imageInfo.ReadableMediaTags.Add(MediaTagType.PCMCIA_CIS);
+                            if(!_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                                _imageInfo.ReadableMediaTags.Add(MediaTagType.PCMCIA_CIS);
 
                             break;
                     }
@@ -1101,44 +1101,44 @@ namespace Aaru.DiscImages
                     nextMetaOff = header.next;
                 }
 
-                if(isHdd)
+                if(_isHdd)
                 {
-                    sectorsPerHunk         = bytesPerHunk        / imageInfo.SectorSize;
-                    imageInfo.Sectors      = imageInfo.ImageSize / imageInfo.SectorSize;
-                    imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                    imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                    _sectorsPerHunk         = _bytesPerHunk        / _imageInfo.SectorSize;
+                    _imageInfo.Sectors      = _imageInfo.ImageSize / _imageInfo.SectorSize;
+                    _imageInfo.MediaType    = MediaType.GENERIC_HDD;
+                    _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
                 }
-                else if(isCdrom)
+                else if(_isCdrom)
                 {
                     // Hardcoded on MAME for CD-ROM
-                    sectorsPerHunk         = 8;
-                    imageInfo.MediaType    = MediaType.CDROM;
-                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    _sectorsPerHunk         = 8;
+                    _imageInfo.MediaType    = MediaType.CDROM;
+                    _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track aaruTrack in tracks.Values)
-                        imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
+                    foreach(Track aaruTrack in _tracks.Values)
+                        _imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
                 }
-                else if(isGdrom)
+                else if(_isGdrom)
                 {
                     // Hardcoded on MAME for GD-ROM
-                    sectorsPerHunk         = 8;
-                    imageInfo.MediaType    = MediaType.GDROM;
-                    imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                    _sectorsPerHunk         = 8;
+                    _imageInfo.MediaType    = MediaType.GDROM;
+                    _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track aaruTrack in tracks.Values)
-                        imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
+                    foreach(Track aaruTrack in _tracks.Values)
+                        _imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
                 }
                 else
                     throw new ImageNotSupportedException("Image does not represent a known media, aborting");
             }
 
-            if(isCdrom || isGdrom)
+            if(_isCdrom || _isGdrom)
             {
-                offsetmap  = new Dictionary<ulong, uint>();
-                partitions = new List<Partition>();
+                _offsetmap  = new Dictionary<ulong, uint>();
+                _partitions = new List<Partition>();
                 ulong partPos = 0;
 
-                foreach(Track aaruTrack in tracks.Values)
+                foreach(Track aaruTrack in _tracks.Values)
                 {
                     var partition = new Partition
                     {
@@ -1153,11 +1153,11 @@ namespace Aaru.DiscImages
                     };
 
                     partPos += partition.Length;
-                    offsetmap.Add(aaruTrack.TrackStartSector, aaruTrack.TrackSequence);
+                    _offsetmap.Add(aaruTrack.TrackStartSector, aaruTrack.TrackSequence);
 
                     if(aaruTrack.TrackSubchannelType != TrackSubchannelType.None)
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
                     switch(aaruTrack.TrackType)
                     {
@@ -1165,81 +1165,81 @@ namespace Aaru.DiscImages
                         case TrackType.CdMode2Form1:
                             if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
 
                             break;
                         case TrackType.CdMode2Form2:
                             if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
 
                             break;
                         case TrackType.CdMode2Formless:
                             if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                             }
 
                             break;
                     }
 
-                    if(aaruTrack.TrackBytesPerSector > imageInfo.SectorSize)
-                        imageInfo.SectorSize = (uint)aaruTrack.TrackBytesPerSector;
+                    if(aaruTrack.TrackBytesPerSector > _imageInfo.SectorSize)
+                        _imageInfo.SectorSize = (uint)aaruTrack.TrackBytesPerSector;
 
-                    partitions.Add(partition);
+                    _partitions.Add(partition);
                 }
 
-                imageInfo.HasPartitions = true;
-                imageInfo.HasSessions   = true;
+                _imageInfo.HasPartitions = true;
+                _imageInfo.HasSessions   = true;
             }
 
-            maxBlockCache  = (int)(MAX_CACHE_SIZE / (imageInfo.SectorSize * sectorsPerHunk));
-            maxSectorCache = (int)(MAX_CACHE_SIZE / imageInfo.SectorSize);
+            _maxBlockCache  = (int)(MAX_CACHE_SIZE / (_imageInfo.SectorSize * _sectorsPerHunk));
+            _maxSectorCache = (int)(MAX_CACHE_SIZE / _imageInfo.SectorSize);
 
-            imageStream = stream;
+            _imageStream = stream;
 
-            sectorCache = new Dictionary<ulong, byte[]>();
-            hunkCache   = new Dictionary<ulong, byte[]>();
+            _sectorCache = new Dictionary<ulong, byte[]>();
+            _hunkCache   = new Dictionary<ulong, byte[]>();
 
             // TODO: Detect CompactFlash
             // TODO: Get manufacturer and drive name from CIS if applicable
-            if(cis != null)
-                imageInfo.MediaType = MediaType.PCCardTypeI;
+            if(_cis != null)
+                _imageInfo.MediaType = MediaType.PCCardTypeI;
 
             _sectorBuilder = new SectorBuilder();
 
@@ -1248,38 +1248,38 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
             var  track = new Track();
             uint sectorSize;
 
-            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                if(isHdd)
-                    sectorSize = imageInfo.SectorSize;
+                if(_isHdd)
+                    sectorSize = _imageInfo.SectorSize;
                 else
                 {
                     track      = GetTrack(sectorAddress);
                     sectorSize = (uint)track.TrackRawBytesPerSector;
                 }
 
-                ulong hunkNo = sectorAddress                / sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[imageInfo.SectorSize];
+                sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= _maxSectorCache)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
             }
 
-            if(isHdd)
+            if(_isHdd)
                 return sector;
 
             uint sectorOffset;
@@ -1360,7 +1360,7 @@ namespace Aaru.DiscImages
 
             if(mode2)
                 buffer = Sector.GetUserDataFromMode2(sector);
-            else if(track.TrackType == TrackType.Audio && swapAudio)
+            else if(track.TrackType == TrackType.Audio && _swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1374,10 +1374,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeatureNotPresentImageException("Hard disk images do not have sector tags");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
@@ -1385,26 +1385,26 @@ namespace Aaru.DiscImages
 
             uint sectorSize;
 
-            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
                 track      = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress                / sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[imageInfo.SectorSize];
+                sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= _maxSectorCache)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
             }
 
-            if(isHdd)
+            if(_isHdd)
                 return sector;
 
             uint sectorOffset;
@@ -1606,7 +1606,7 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize];
 
-            if(track.TrackType == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && _swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1615,7 +1615,7 @@ namespace Aaru.DiscImages
             else
                 Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
-            if(track.TrackType == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && _swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1629,13 +1629,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
 
             var ms = new MemoryStream();
 
@@ -1650,13 +1650,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
 
             var ms = new MemoryStream();
 
@@ -1671,37 +1671,37 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(isHdd)
+            if(_isHdd)
                 return ReadSector(sectorAddress);
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
             var track = new Track();
 
-            if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(!_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
                 track = GetTrack(sectorAddress);
                 uint sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress                / sectorsPerHunk;
-                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / _sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (_sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
-                sector = new byte[imageInfo.SectorSize];
+                sector = new byte[_imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= _maxSectorCache)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
             }
 
             byte[] buffer = new byte[track.TrackRawBytesPerSector];
 
-            if(track.TrackType == TrackType.Audio && swapAudio)
+            if(track.TrackType == TrackType.Audio && _swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];
@@ -1766,13 +1766,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
 
             var ms = new MemoryStream();
 
@@ -1787,18 +1787,18 @@ namespace Aaru.DiscImages
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
-                return identify;
+            if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                return _identify;
 
-            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
-                return cis;
+            if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                return _cis;
 
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }
 
         public List<Track> GetSessionTracks(Session session)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return GetSessionTracks(session.SessionSequence);
@@ -1806,15 +1806,15 @@ namespace Aaru.DiscImages
 
         public List<Track> GetSessionTracks(ushort session)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-            return tracks.Values.Where(track => track.TrackSession == session).ToList();
+            return _tracks.Values.Where(track => track.TrackSession == session).ToList();
         }
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSector(GetAbsoluteSector(sectorAddress, track));
@@ -1822,7 +1822,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag);
@@ -1830,7 +1830,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSectors(GetAbsoluteSector(sectorAddress, track), length);
@@ -1838,7 +1838,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag);
@@ -1846,7 +1846,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress, uint track)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track));
@@ -1854,7 +1854,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length);

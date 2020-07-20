@@ -39,12 +39,12 @@ namespace Aaru.DiscImages
 {
     public partial class Cpcdsk : IMediaImage
     {
-        Dictionary<ulong, byte[]> addressMarks;
-        bool                      extended;
-        ImageInfo                 imageInfo;
-        Dictionary<ulong, byte[]> sectors;
+        Dictionary<ulong, byte[]> _addressMarks;
+        bool                      _extended;
+        ImageInfo                 _imageInfo;
+        Dictionary<ulong, byte[]> _sectors;
 
-        public Cpcdsk() => imageInfo = new ImageInfo
+        public Cpcdsk() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

@@ -40,17 +40,16 @@ namespace Aaru.Filesystems
 {
     public partial class AppleDOS : IReadOnlyFilesystem
     {
-        bool        debug;
-        IMediaImage device;
-        bool        mounted;
-        int         sectorsPerTrack;
-        ulong       start;
-        ulong       totalFileEntries;
-        bool        track1UsedByFiles;
-        bool        track2UsedByFiles;
-        uint        usedSectors;
-
-        Vtoc vtoc;
+        bool        _debug;
+        IMediaImage _device;
+        bool        _mounted;
+        int         _sectorsPerTrack;
+        ulong       _start;
+        ulong       _totalFileEntries;
+        bool        _track1UsedByFiles;
+        bool        _track2UsedByFiles;
+        uint        _usedSectors;
+        Vtoc        _vtoc;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
@@ -73,23 +72,23 @@ namespace Aaru.Filesystems
 
         #region Caches
         /// <summary>Caches track/sector lists</summary>
-        Dictionary<string, byte[]> extentCache;
+        Dictionary<string, byte[]> _extentCache;
         /// <summary>Caches files</summary>
-        Dictionary<string, byte[]> fileCache;
+        Dictionary<string, byte[]> _fileCache;
         /// <summary>Caches catalog</summary>
-        Dictionary<string, ushort> catalogCache;
+        Dictionary<string, ushort> _catalogCache;
         /// <summary>Caches file size</summary>
-        Dictionary<string, int> fileSizeCache;
+        Dictionary<string, int> _fileSizeCache;
         /// <summary>Caches VTOC</summary>
-        byte[] vtocBlocks;
+        byte[] _vtocBlocks;
         /// <summary>Caches catalog</summary>
-        byte[] catalogBlocks;
+        byte[] _catalogBlocks;
         /// <summary>Caches boot code</summary>
-        byte[] bootBlocks;
+        byte[] _bootBlocks;
         /// <summary>Caches file type</summary>
-        Dictionary<string, byte> fileTypeCache;
+        Dictionary<string, byte> _fileTypeCache;
         /// <summary>Caches locked files</summary>
-        List<string> lockedFiles;
+        List<string> _lockedFiles;
         #endregion Caches
     }
 }

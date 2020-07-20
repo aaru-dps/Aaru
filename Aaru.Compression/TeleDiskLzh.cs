@@ -77,7 +77,7 @@ namespace Aaru.Compression
          */
 
         /* decoder table */
-        readonly byte[] d_code =
+        readonly byte[] _dCode =
         {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
@@ -96,7 +96,7 @@ namespace Aaru.Compression
             0x3C, 0x3D, 0x3E, 0x3F
         };
 
-        readonly byte[] d_len =
+        readonly byte[] _dLen =
         {
             0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
             0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x04,
@@ -114,40 +114,40 @@ namespace Aaru.Compression
             0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
             0x08, 0x08, 0x08, 0x08
         };
-        readonly ushort[] freq = new ushort[T + 1]; /* cumulative freq table */
+        readonly ushort[] _freq = new ushort[T + 1]; /* cumulative freq table */
 
-        readonly Stream inStream;
+        readonly Stream _inStream;
 
         /*
          * pointing parent nodes.
          * area [T..(T + N_CHAR - 1)] are pointers for leaves
          */
-        readonly short[] prnt = new short[T + N_CHAR];
+        readonly short[] _prnt = new short[T + N_CHAR];
 
         /* pointing children nodes (son[], son[] + 1)*/
-        readonly short[] son      = new short[T];
-        readonly byte[]  text_buf = new byte[(N + F) - 1];
+        readonly short[] _son     = new short[T];
+        readonly byte[]  _textBuf = new byte[(N + F) - 1];
 
-        ushort getbuf;
-        byte   getlen;
+        ushort _getbuf;
+        byte   _getlen;
 
-        Tdlzhuf tdctl;
+        Tdlzhuf _tdctl;
 
         public TeleDiskLzh(Stream dataStream)
         {
             int i;
-            getbuf        = 0;
-            getlen        = 0;
-            tdctl         = new Tdlzhuf();
-            tdctl.Ibufcnt = tdctl.Ibufndx = 0; // input buffer is empty
-            tdctl.Bufcnt  = 0;
+            _getbuf        = 0;
+            _getlen        = 0;
+            _tdctl         = new Tdlzhuf();
+            _tdctl.Ibufcnt = _tdctl.Ibufndx = 0; // input buffer is empty
+            _tdctl.Bufcnt  = 0;
             StartHuff();
 
             for(i = 0; i < N - F; i++)
-                text_buf[i] = 0x20;
+                _textBuf[i] = 0x20;
 
-            tdctl.R  = N - F;
-            inStream = dataStream;
+            _tdctl.R  = N - F;
+            _inStream = dataStream;
         }
 
         /* DeCompression
@@ -163,16 +163,16 @@ namespace Aaru.Compression
             int count; // was an unsigned long, seems unnecessary
 
             for(count = 0; count < len;)
-                if(tdctl.Bufcnt == 0)
+                if(_tdctl.Bufcnt == 0)
                 {
                     if((c = DecodeChar()) < 0)
                         return count; // fatal error
 
                     if(c < 256)
                     {
-                        buf[count]          =  (byte)c;
-                        text_buf[tdctl.R++] =  (byte)c;
-                        tdctl.R             &= N - 1;
+                        buf[count]           =  (byte)c;
+                        _textBuf[_tdctl.R++] =  (byte)c;
+                        _tdctl.R             &= N - 1;
                         count++;
                     }
                     else
@@ -182,28 +182,28 @@ namespace Aaru.Compression
                         if((pos = DecodePosition()) < 0)
                             return count; // fatal error
 
-                        tdctl.Bufpos = (ushort)((tdctl.R - pos - 1) & (N - 1));
-                        tdctl.Bufcnt = (ushort)((c             - 255) + THRESHOLD);
-                        tdctl.Bufndx = 0;
+                        _tdctl.Bufpos = (ushort)((_tdctl.R - pos - 1) & (N - 1));
+                        _tdctl.Bufcnt = (ushort)((c              - 255) + THRESHOLD);
+                        _tdctl.Bufndx = 0;
                     }
                 }
                 else
                 {
                     // still chars from last string
-                    while(tdctl.Bufndx < tdctl.Bufcnt &&
-                          count        < len)
+                    while(_tdctl.Bufndx < _tdctl.Bufcnt &&
+                          count         < len)
                     {
-                        c          = text_buf[(tdctl.Bufpos + tdctl.Bufndx) & (N - 1)];
+                        c          = _textBuf[(_tdctl.Bufpos + _tdctl.Bufndx) & (N - 1)];
                         buf[count] = (byte)c;
-                        tdctl.Bufndx++;
-                        text_buf[tdctl.R++] =  (byte)c;
-                        tdctl.R             &= N - 1;
+                        _tdctl.Bufndx++;
+                        _textBuf[_tdctl.R++] =  (byte)c;
+                        _tdctl.R             &= N - 1;
                         count++;
                     }
 
                     // reset bufcnt after copy string from text_buf[]
-                    if(tdctl.Bufndx >= tdctl.Bufcnt)
-                        tdctl.Bufndx = tdctl.Bufcnt = 0;
+                    if(_tdctl.Bufndx >= _tdctl.Bufcnt)
+                        _tdctl.Bufndx = _tdctl.Bufcnt = 0;
                 }
 
             return count; // count == len, success
@@ -211,31 +211,31 @@ namespace Aaru.Compression
 
         long DataRead(out byte[] buf, long size)
         {
-            if(size > inStream.Length - inStream.Position)
-                size = inStream.Length - inStream.Position;
+            if(size > _inStream.Length - _inStream.Position)
+                size = _inStream.Length - _inStream.Position;
 
             buf = new byte[size];
-            inStream.Read(buf, 0, (int)size);
+            _inStream.Read(buf, 0, (int)size);
 
             return size;
         }
 
         int NextWord()
         {
-            if(tdctl.Ibufndx >= tdctl.Ibufcnt)
+            if(_tdctl.Ibufndx >= _tdctl.Ibufcnt)
             {
-                tdctl.Ibufndx = 0;
-                tdctl.Ibufcnt = (ushort)DataRead(out tdctl.Inbuf, BUFSZ);
+                _tdctl.Ibufndx = 0;
+                _tdctl.Ibufcnt = (ushort)DataRead(out _tdctl.Inbuf, BUFSZ);
 
-                if(tdctl.Ibufcnt <= 0)
+                if(_tdctl.Ibufcnt <= 0)
                     return -1;
             }
 
-            while(getlen <= 8)
+            while(_getlen <= 8)
             {
                 // typically reads a word at a time
-                getbuf |= (ushort)(tdctl.Inbuf[tdctl.Ibufndx++] << (8 - getlen));
-                getlen += 8;
+                _getbuf |= (ushort)(_tdctl.Inbuf[_tdctl.Ibufndx++] << (8 - _getlen));
+                _getlen += 8;
             }
 
             return 0;
@@ -246,9 +246,9 @@ namespace Aaru.Compression
             if(NextWord() < 0)
                 return -1;
 
-            short i = (short)getbuf;
-            getbuf <<= 1;
-            getlen--;
+            short i = (short)_getbuf;
+            _getbuf <<= 1;
+            _getlen--;
 
             return i < 0 ? 1 : 0;
         }
@@ -258,10 +258,10 @@ namespace Aaru.Compression
             if(NextWord() != 0)
                 return -1;
 
-            ushort i = getbuf;
-            getbuf <<= 8;
-            getlen -=  8;
-            i      =   (ushort)(i >> 8);
+            ushort i = _getbuf;
+            _getbuf <<= 8;
+            _getlen -=  8;
+            i       =   (ushort)(i >> 8);
 
             return i;
         }
@@ -274,9 +274,9 @@ namespace Aaru.Compression
 
             for(i = 0; i < N_CHAR; i++)
             {
-                freq[i]     = 1;
-                son[i]      = (short)(i + T);
-                prnt[i + T] = (short)i;
+                _freq[i]     = 1;
+                _son[i]      = (short)(i + T);
+                _prnt[i + T] = (short)i;
             }
 
             i = 0;
@@ -284,15 +284,15 @@ namespace Aaru.Compression
 
             while(j <= ROOT)
             {
-                freq[j] =  (ushort)(freq[i] + freq[i + 1]);
-                son[j]  =  (short)i;
-                prnt[i] =  prnt[i + 1] = (short)j;
-                i       += 2;
+                _freq[j] =  (ushort)(_freq[i] + _freq[i + 1]);
+                _son[j]  =  (short)i;
+                _prnt[i] =  _prnt[i + 1] = (short)j;
+                i        += 2;
                 j++;
             }
 
-            freq[T]    = 0xffff;
-            prnt[ROOT] = 0;
+            _freq[T]    = 0xffff;
+            _prnt[ROOT] = 0;
         }
 
         /* reconstruct freq tree */
@@ -305,10 +305,10 @@ namespace Aaru.Compression
             short j = 0;
 
             for(i = 0; i < T; i++)
-                if(son[i] >= T)
+                if(_son[i] >= T)
                 {
-                    freq[j] = (ushort)((freq[i] + 1) / 2);
-                    son[j]  = son[i];
+                    _freq[j] = (ushort)((_freq[i] + 1) / 2);
+                    _son[j]  = _son[i];
                     j++;
                 }
 
@@ -316,75 +316,75 @@ namespace Aaru.Compression
             for(i = 0, j = N_CHAR; j < T; i += 2, j++)
             {
                 k = (short)(i + 1);
-                ushort f = freq[j] = (ushort)(freq[i] + freq[k]);
+                ushort f = _freq[j] = (ushort)(_freq[i] + _freq[k]);
 
-                for(k = (short)(j - 1); f < freq[k]; k--) {}
+                for(k = (short)(j - 1); f < _freq[k]; k--) {}
 
                 k++;
                 ushort l = (ushort)((j - k) * 2);
 
-                Array.ConstrainedCopy(freq, k, freq, k + 1, l);
-                freq[k] = f;
-                Array.ConstrainedCopy(son, k, son, k + 1, l);
-                son[k] = i;
+                Array.ConstrainedCopy(_freq, k, _freq, k + 1, l);
+                _freq[k] = f;
+                Array.ConstrainedCopy(_son, k, _son, k + 1, l);
+                _son[k] = i;
             }
 
             /* connect parent nodes */
             for(i = 0; i < T; i++)
-                if((k = son[i]) >= T)
-                    prnt[k] = i;
+                if((k = _son[i]) >= T)
+                    _prnt[k] = i;
                 else
-                    prnt[k] = prnt[k + 1] = i;
+                    _prnt[k] = _prnt[k + 1] = i;
         }
 
         /* update freq tree */
 
         void Update(int c)
         {
-            if(freq[ROOT] == MAX_FREQ)
+            if(_freq[ROOT] == MAX_FREQ)
                 Reconst();
 
-            c = prnt[c + T];
+            c = _prnt[c + T];
 
             do
             {
-                int k = ++freq[c];
+                int k = ++_freq[c];
 
                 /* swap nodes to keep the tree freq-ordered */
                 int l;
 
-                if(k <= freq[l = c + 1])
+                if(k <= _freq[l = c + 1])
                     continue;
 
-                while(k > freq[++l]) {}
+                while(k > _freq[++l]) {}
 
                 l--;
-                freq[c] = freq[l];
-                freq[l] = (ushort)k;
+                _freq[c] = _freq[l];
+                _freq[l] = (ushort)k;
 
-                int i = son[c];
-                prnt[i] = (short)l;
+                int i = _son[c];
+                _prnt[i] = (short)l;
 
                 if(i < T)
-                    prnt[i + 1] = (short)l;
+                    _prnt[i + 1] = (short)l;
 
-                int j = son[l];
-                son[l] = (short)i;
+                int j = _son[l];
+                _son[l] = (short)i;
 
-                prnt[j] = (short)c;
+                _prnt[j] = (short)c;
 
                 if(j < T)
-                    prnt[j + 1] = (short)c;
+                    _prnt[j + 1] = (short)c;
 
-                son[c] = (short)j;
+                _son[c] = (short)j;
 
                 c = l;
-            } while((c = prnt[c]) != 0); /* do it until reaching the root */
+            } while((c = _prnt[c]) != 0); /* do it until reaching the root */
         }
 
         short DecodeChar()
         {
-            ushort c = (ushort)son[ROOT];
+            ushort c = (ushort)_son[ROOT];
 
             /*
              * start searching tree from the root to leaves.
@@ -399,7 +399,7 @@ namespace Aaru.Compression
                     return -1;
 
                 c += (ushort)ret;
-                c =  (ushort)son[c];
+                c =  (ushort)_son[c];
             }
 
             c -= T;
@@ -417,8 +417,8 @@ namespace Aaru.Compression
                 return -1;
 
             ushort i = (ushort)bit;
-            ushort c = (ushort)(d_code[i] << 6);
-            ushort j = d_len[i];
+            ushort c = (ushort)(_dCode[i] << 6);
+            ushort j = _dLen[i];
 
             /* input lower 6 bits directly */
             j -= 2;

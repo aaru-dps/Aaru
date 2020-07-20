@@ -307,8 +307,8 @@ namespace Aaru.Devices
 
                             if(!sense)
                             {
-                                cachedCsd = new byte[16];
-                                Array.Copy(sdBuffer, 0, cachedCsd, 0, 16);
+                                _cachedCsd = new byte[16];
+                                Array.Copy(sdBuffer, 0, _cachedCsd, 0, 16);
                             }
 
                             sdBuffer = new byte[16];
@@ -321,8 +321,8 @@ namespace Aaru.Devices
 
                             if(!sense)
                             {
-                                cachedCid = new byte[16];
-                                Array.Copy(sdBuffer, 0, cachedCid, 0, 16);
+                                _cachedCid = new byte[16];
+                                Array.Copy(sdBuffer, 0, _cachedCid, 0, 16);
                             }
 
                             sdBuffer = new byte[8];
@@ -336,14 +336,14 @@ namespace Aaru.Devices
 
                             if(!sense)
                             {
-                                cachedScr = new byte[8];
-                                Array.Copy(sdBuffer, 0, cachedScr, 0, 8);
+                                _cachedScr = new byte[8];
+                                Array.Copy(sdBuffer, 0, _cachedScr, 0, 8);
                             }
 
                             sdBuffer = new byte[4];
 
                             LastError = Windows.Command.SendMmcCommand((SafeFileHandle)FileHandle,
-                                                                       cachedScr != null
+                                                                       _cachedScr != null
                                                                            ? (MmcCommands)SecureDigitalCommands.
                                                                                SendOperatingCondition
                                                                            : MmcCommands.SendOpCond, false, true,
@@ -353,8 +353,8 @@ namespace Aaru.Devices
 
                             if(!sense)
                             {
-                                cachedScr = new byte[4];
-                                Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
+                                _cachedScr = new byte[4];
+                                Array.Copy(sdBuffer, 0, _cachedScr, 0, 4);
                             }
                         }
 
@@ -375,34 +375,34 @@ namespace Aaru.Devices
 
                             if(File.Exists("/sys/block/" + devPath + "/device/csd"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/csd", out cachedCsd);
+                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/csd", out _cachedCsd);
 
                                 if(len == 0)
-                                    cachedCsd = null;
+                                    _cachedCsd = null;
                             }
 
                             if(File.Exists("/sys/block/" + devPath + "/device/cid"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/cid", out cachedCid);
+                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/cid", out _cachedCid);
 
                                 if(len == 0)
-                                    cachedCid = null;
+                                    _cachedCid = null;
                             }
 
                             if(File.Exists("/sys/block/" + devPath + "/device/scr"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/scr", out cachedScr);
+                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/scr", out _cachedScr);
 
                                 if(len == 0)
-                                    cachedScr = null;
+                                    _cachedScr = null;
                             }
 
                             if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/ocr", out cachedOcr);
+                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/ocr", out _cachedOcr);
 
                                 if(len == 0)
-                                    cachedOcr = null;
+                                    _cachedOcr = null;
                             }
                         }
 
@@ -426,7 +426,7 @@ namespace Aaru.Devices
                         break;
                     case DeviceType.SecureDigital:
                     case DeviceType.MMC:
-                        if(!_remote.GetSdhciRegisters(out cachedCsd, out cachedCid, out cachedOcr, out cachedScr))
+                        if(!_remote.GetSdhciRegisters(out _cachedCsd, out _cachedCid, out _cachedOcr, out _cachedScr))
                         {
                             Type     = DeviceType.SCSI;
                             ScsiType = PeripheralDeviceTypes.DirectAccess;
@@ -437,15 +437,15 @@ namespace Aaru.Devices
             }
 
             #region SecureDigital / MultiMediaCard
-            if(cachedCid != null)
+            if(_cachedCid != null)
             {
                 ScsiType    = PeripheralDeviceTypes.DirectAccess;
                 IsRemovable = false;
 
-                if(cachedScr != null)
+                if(_cachedScr != null)
                 {
                     Type = DeviceType.SecureDigital;
-                    CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
+                    CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(_cachedCid);
                     Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                     Model        = decoded.ProductName;
 
@@ -457,7 +457,7 @@ namespace Aaru.Devices
                 else
                 {
                     Type = DeviceType.MMC;
-                    Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(cachedCid);
+                    Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(_cachedCid);
                     Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                     Model        = decoded.ProductName;
 
@@ -513,7 +513,7 @@ namespace Aaru.Devices
                                         string usbTemp = usbSr.ReadToEnd();
 
                                         ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                                        out usbProduct);
+                                                        out _usbProduct);
 
                                         usbSr.Close();
 
@@ -521,7 +521,7 @@ namespace Aaru.Devices
                                         usbTemp = usbSr.ReadToEnd();
 
                                         ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                                        out usbVendor);
+                                                        out _usbVendor);
 
                                         usbSr.Close();
 
@@ -574,8 +574,8 @@ namespace Aaru.Devices
                         if(usbDevice != null)
                         {
                             UsbDescriptors        = usbDevice.BinaryDescriptors;
-                            usbVendor             = (ushort)usbDevice.DeviceDescriptor.idVendor;
-                            usbProduct            = (ushort)usbDevice.DeviceDescriptor.idProduct;
+                            _usbVendor            = (ushort)usbDevice.DeviceDescriptor.idVendor;
+                            _usbProduct           = (ushort)usbDevice.DeviceDescriptor.idProduct;
                             UsbManufacturerString = usbDevice.Manufacturer;
                             UsbProductString      = usbDevice.Product;
 
@@ -599,8 +599,8 @@ namespace Aaru.Devices
                 {
                     IsUsb                 = true;
                     UsbDescriptors        = remoteUsbDescriptors;
-                    usbVendor             = remoteUsbVendor;
-                    usbProduct            = remoteUsbProduct;
+                    _usbVendor            = remoteUsbVendor;
+                    _usbProduct           = remoteUsbProduct;
                     UsbManufacturerString = remoteUsbManufacturer;
                     UsbProductString      = remoteUsbProductString;
                     UsbSerialString       = remoteUsbSerial;
@@ -611,7 +611,7 @@ namespace Aaru.Devices
             #region FireWire
             if(!(_remote is null))
             {
-                if(_remote.GetFireWireData(out firewireVendor, out firewireModel, out firewireGuid,
+                if(_remote.GetFireWireData(out _firewireVendor, out _firewireModel, out _firewireGuid,
                                            out string remoteFireWireVendorName, out string remoteFireWireModelName))
                 {
                     IsFireWire         = true;
@@ -648,7 +648,7 @@ namespace Aaru.Devices
                                     string fwTemp = fwSr.ReadToEnd();
 
                                     uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                                  out firewireModel);
+                                                  out _firewireModel);
 
                                     fwSr.Close();
 
@@ -656,7 +656,7 @@ namespace Aaru.Devices
                                     fwTemp = fwSr.ReadToEnd();
 
                                     uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                                  out firewireVendor);
+                                                  out _firewireVendor);
 
                                     fwSr.Close();
 
@@ -664,7 +664,7 @@ namespace Aaru.Devices
                                     fwTemp = fwSr.ReadToEnd();
 
                                     ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                                   out firewireGuid);
+                                                   out _firewireGuid);
 
                                     fwSr.Close();
 
@@ -886,7 +886,7 @@ namespace Aaru.Devices
                     Model = FireWireModelName;
 
                 if(string.IsNullOrEmpty(Serial))
-                    Serial = $"{firewireGuid:X16}";
+                    Serial = $"{_firewireGuid:X16}";
                 else
                     foreach(char c in Serial.Where(c => !char.IsControl(c)))
                         Serial = $"{(uint)c:X2}";

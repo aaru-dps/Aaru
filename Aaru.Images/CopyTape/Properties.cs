@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class CopyTape
     {
-        public ImageInfo              Info           => imageInfo;
+        public ImageInfo              Info           => _imageInfo;
         public string                 Name           => "CopyTape";
         public Guid                   Id             => new Guid("C537D41E-D6A7-4922-9AA9-8E8442D0E340");
         public string                 Author         => "Natalia Portillo";

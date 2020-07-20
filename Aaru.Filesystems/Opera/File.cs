@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
         {
             deviceBlock = 0;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
@@ -53,7 +53,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if((entry.entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             deviceBlock = entry.pointers[0] + fileBlock;
@@ -65,7 +65,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
@@ -91,7 +91,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if((entry.entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             if(entry.pointers.Length < 1)
@@ -119,15 +119,15 @@ namespace Aaru.Filesystems
 
             uint fileBlockSizeRatio;
 
-            if(image.Info.SectorSize == 2336 ||
-               image.Info.SectorSize == 2352 ||
-               image.Info.SectorSize == 2448)
+            if(_image.Info.SectorSize == 2336 ||
+               _image.Info.SectorSize == 2352 ||
+               _image.Info.SectorSize == 2448)
                 fileBlockSizeRatio = entry.entry.block_size / 2048;
             else
-                fileBlockSizeRatio = entry.entry.block_size / image.Info.SectorSize;
+                fileBlockSizeRatio = entry.entry.block_size / _image.Info.SectorSize;
 
-            byte[] buffer = image.ReadSectors((ulong)(entry.pointers[0] + (firstBlock * fileBlockSizeRatio)),
-                                              (uint)(sizeInBlocks * fileBlockSizeRatio));
+            byte[] buffer = _image.ReadSectors((ulong)(entry.pointers[0] + (firstBlock * fileBlockSizeRatio)),
+                                               (uint)(sizeInBlocks * fileBlockSizeRatio));
 
             buf = new byte[size];
             Array.Copy(buffer, offsetInBlock, buf, 0, size);
@@ -139,7 +139,7 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entryWithPointers);
@@ -188,7 +188,7 @@ namespace Aaru.Filesystems
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
-            if(!directoryCache.TryGetValue(parentPath, out _))
+            if(!_directoryCache.TryGetValue(parentPath, out _))
             {
                 Errno err = ReadDir(parentPath, out _);
 
@@ -199,8 +199,8 @@ namespace Aaru.Filesystems
             Dictionary<string, DirectoryEntryWithPointers> parent;
 
             if(pieces.Length == 1)
-                parent = rootDirectoryCache;
-            else if(!directoryCache.TryGetValue(parentPath, out parent))
+                parent = _rootDirectoryCache;
+            else if(!_directoryCache.TryGetValue(parentPath, out parent))
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntryWithPointers> dirent =

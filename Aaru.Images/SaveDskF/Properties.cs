@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "IBM SaveDskF";
         public Guid                   Id           => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "IBM SaveDskF";
         public List<DumpHardwareType> DumpHardware => null;

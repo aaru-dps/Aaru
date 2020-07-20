@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Apridisk
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string Name   => "ACT Apricot Disk Image";
         public Guid   Id     => new Guid("43408CF3-6DB3-449F-A779-2B0E497C5B14");

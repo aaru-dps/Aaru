@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "Apple Disk Archival/Retrieval Tool";
         public Guid                   Id           => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "Apple Disk Archival/Retrieval Tool";
         public List<DumpHardwareType> DumpHardware => null;

@@ -49,43 +49,43 @@ namespace Aaru.DiscImages
      SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
     public partial class Nero : IOpticalMediaImage
     {
-        bool                                 imageNewFormat;
-        Stream                               imageStream;
-        ImageInfo                            imageInfo;
-        NeroCdText                           neroCdtxt;
-        NeroV1Cuesheet                       neroCuesheetV1;
-        NeroV2Cuesheet                       neroCuesheetV2;
-        NeroV1Dao                            neroDaov1;
-        NeroV2Dao                            neroDaov2;
-        NeroDiscInformation                  neroDiscInfo;
-        IFilter                              neroFilter;
-        NeroMediaType                        neroMediaTyp;
-        NeroReloChunk                        neroRelo;
-        readonly Dictionary<ushort, uint>    neroSessions;
-        NeroV1Tao                            neroTaov1;
-        NeroV2Tao                            neroTaov2;
-        NeroTocChunk                         neroToc;
-        readonly Dictionary<uint, NeroTrack> neroTracks;
-        readonly Dictionary<uint, ulong>     offsetmap;
-        Dictionary<uint, byte[]>             trackIsrCs;
-        byte[]                               upc;
+        bool                                 _imageNewFormat;
+        Stream                               _imageStream;
+        ImageInfo                            _imageInfo;
+        NeroCdText                           _neroCdtxt;
+        NeroV1Cuesheet                       _neroCuesheetV1;
+        NeroV2Cuesheet                       _neroCuesheetV2;
+        NeroV1Dao                            _neroDaov1;
+        NeroV2Dao                            _neroDaov2;
+        NeroDiscInformation                  _neroDiscInfo;
+        IFilter                              _neroFilter;
+        NeroMediaType                        _neroMediaTyp;
+        NeroReloChunk                        _neroRelo;
+        readonly Dictionary<ushort, uint>    _neroSessions;
+        NeroV1Tao                            _neroTaov1;
+        NeroV2Tao                            _neroTaov2;
+        NeroTocChunk                         _neroToc;
+        readonly Dictionary<uint, NeroTrack> _neroTracks;
+        readonly Dictionary<uint, ulong>     _offsetmap;
+        Dictionary<uint, byte[]>             _trackIsrCs;
+        byte[]                               _upc;
         SectorBuilder                        _sectorBuilder;
 
         public Nero()
         {
-            imageNewFormat = false;
+            _imageNewFormat = false;
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 ReadableSectorTags = new List<SectorTagType>(),
                 ReadableMediaTags  = new List<MediaTagType>()
             };
 
-            neroSessions = new Dictionary<ushort, uint>();
-            neroTracks   = new Dictionary<uint, NeroTrack>();
-            offsetmap    = new Dictionary<uint, ulong>();
-            Sessions     = new List<Session>();
-            Partitions   = new List<Partition>();
+            _neroSessions = new Dictionary<ushort, uint>();
+            _neroTracks   = new Dictionary<uint, NeroTrack>();
+            _offsetmap    = new Dictionary<uint, ulong>();
+            Sessions      = new List<Session>();
+            Partitions    = new List<Partition>();
         }
     }
 }

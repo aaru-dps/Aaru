@@ -69,7 +69,7 @@ namespace Aaru.Core.Devices.Dumping
             byte               scsiMediumType     = 0;
             byte               scsiDensityCode    = 0;
             bool               containsFloppyPage = false;
-            const ushort       SBC_PROFILE        = 0x0001;
+            const ushort       sbcProfile         = 0x0001;
             DateTime           start;
             DateTime           end;
             double             totalDuration = 0;
@@ -338,7 +338,7 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
             var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
-            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SBC_PROFILE);
+            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sbcProfile);
             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image

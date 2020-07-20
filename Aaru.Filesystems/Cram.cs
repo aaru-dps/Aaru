@@ -76,17 +76,17 @@ namespace Aaru.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            var  crSb         = new CramSuperBlock();
+            var  crSb         = new SuperBlock();
             bool littleEndian = true;
 
             switch(magic)
             {
                 case CRAM_MAGIC:
-                    crSb = Marshal.ByteArrayToStructureLittleEndian<CramSuperBlock>(sector);
+                    crSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
                     break;
                 case CRAM_CIGAM:
-                    crSb         = Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
+                    crSb         = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
                     littleEndian = false;
 
                     break;
@@ -123,7 +123,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CramSuperBlock
+        struct SuperBlock
         {
             public readonly uint magic;
             public readonly uint size;

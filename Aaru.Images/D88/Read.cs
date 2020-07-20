@@ -65,7 +65,7 @@ namespace Aaru.DiscImages
                                        StringHandlers.CToString(d88Hdr.name, shiftjis));
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                       d88Hdr.reserved.SequenceEqual(reservedEmpty));
+                                       d88Hdr.reserved.SequenceEqual(_reservedEmpty));
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
 
@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
                d88Hdr.disk_type != DiskType.Hd2)
                 return false;
 
-            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty))
+            if(!d88Hdr.reserved.SequenceEqual(_reservedEmpty))
                 return false;
 
             int trkCounter = 0;
@@ -121,7 +121,7 @@ namespace Aaru.DiscImages
             short             spt      = sechdr.spt;
             IBMSectorSizeCode bps      = sechdr.n;
             bool              allEqual = true;
-            sectorsData = new List<byte[]>();
+            _sectorsData = new List<byte[]>();
 
             for(int i = 0; i < trkCounter; i++)
             {
@@ -169,38 +169,38 @@ namespace Aaru.DiscImages
                 sectors.Add(sechdr.r, secB);
 
                 foreach(KeyValuePair<byte, byte[]> kvp in sectors)
-                    sectorsData.Add(kvp.Value);
+                    _sectorsData.Add(kvp.Value);
             }
 
-            AaruConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
+            AaruConsole.DebugWriteLine("D88 plugin", "{0} sectors", _sectorsData.Count);
 
-            imageInfo.MediaType = MediaType.Unknown;
+            _imageInfo.MediaType = MediaType.Unknown;
 
             if(allEqual)
                 if(trkCounter == 154 &&
                    spt        == 26  &&
                    bps        == IBMSectorSizeCode.EighthKilo)
-                    imageInfo.MediaType = MediaType.NEC_8_SD;
+                    _imageInfo.MediaType = MediaType.NEC_8_SD;
                 else if(bps == IBMSectorSizeCode.QuarterKilo)
                     switch(trkCounter)
                     {
                         case 80 when spt == 16:
-                            imageInfo.MediaType = MediaType.NEC_525_SS;
+                            _imageInfo.MediaType = MediaType.NEC_525_SS;
 
                             break;
                         case 154 when spt == 26:
-                            imageInfo.MediaType = MediaType.NEC_8_DD;
+                            _imageInfo.MediaType = MediaType.NEC_8_DD;
 
                             break;
                         case 160 when spt == 16:
-                            imageInfo.MediaType = MediaType.NEC_525_DS;
+                            _imageInfo.MediaType = MediaType.NEC_525_DS;
 
                             break;
                     }
                 else if(trkCounter == 154 &&
                         spt        == 8   &&
                         bps        == IBMSectorSizeCode.Kilo)
-                    imageInfo.MediaType = MediaType.NEC_525_HD;
+                    _imageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
                     switch(d88Hdr.track_table.Length)
                     {
@@ -209,11 +209,11 @@ namespace Aaru.DiscImages
                             switch(spt)
                             {
                                 case 8:
-                                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
+                                    _imageInfo.MediaType = MediaType.DOS_525_SS_DD_8;
 
                                     break;
                                 case 9:
-                                    imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
+                                    _imageInfo.MediaType = MediaType.DOS_525_SS_DD_9;
 
                                     break;
                             }
@@ -225,11 +225,11 @@ namespace Aaru.DiscImages
                             switch(spt)
                             {
                                 case 8:
-                                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
+                                    _imageInfo.MediaType = MediaType.DOS_525_DS_DD_8;
 
                                     break;
                                 case 9:
-                                    imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
+                                    _imageInfo.MediaType = MediaType.DOS_525_DS_DD_9;
 
                                     break;
                             }
@@ -241,19 +241,19 @@ namespace Aaru.DiscImages
                             switch(spt)
                             {
                                 case 15:
-                                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
+                                    _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                                     break;
                                 case 9:
-                                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                                    _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
 
                                     break;
                                 case 18:
-                                    imageInfo.MediaType = MediaType.DOS_35_HD;
+                                    _imageInfo.MediaType = MediaType.DOS_35_HD;
 
                                     break;
                                 case 36:
-                                    imageInfo.MediaType = MediaType.DOS_35_ED;
+                                    _imageInfo.MediaType = MediaType.DOS_35_ED;
 
                                     break;
                             }
@@ -262,101 +262,101 @@ namespace Aaru.DiscImages
                             break;
                         case 480:
                             if(spt == 38)
-                                imageInfo.MediaType = MediaType.NEC_35_TD;
+                                _imageInfo.MediaType = MediaType.NEC_35_TD;
 
                             break;
                     }
 
-            AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
-            imageInfo.ImageSize            = (ulong)d88Hdr.disk_size;
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)sectorsData.Count;
-            imageInfo.Comments             = StringHandlers.CToString(d88Hdr.name, shiftjis);
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize           = (uint)(128 << (int)bps);
+            _imageInfo.ImageSize            = (ulong)d88Hdr.disk_size;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = (ulong)_sectorsData.Count;
+            _imageInfo.Comments             = StringHandlers.CToString(d88Hdr.name, shiftjis);
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.SectorSize           = (uint)(128 << (int)bps);
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.NEC_525_SS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.NEC_8_SD:
                 case MediaType.NEC_8_DD:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
                 case MediaType.NEC_525_DS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
                 case MediaType.NEC_525_HD:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.DOS_525_SS_DD_8:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.DOS_525_SS_DD_9:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_525_DS_DD_8:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.DOS_525_DS_DD_9:
-                    imageInfo.Cylinders       = 40;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 40;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.NEC_35_HD_15:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 18;
 
                     break;
                 case MediaType.DOS_35_ED:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 36;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 36;
 
                     break;
                 case MediaType.NEC_35_TD:
-                    imageInfo.Cylinders       = 240;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 38;
+                    _imageInfo.Cylinders       = 240;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 38;
 
                     break;
             }
@@ -368,16 +368,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var buffer = new MemoryStream();
 
             for(int i = 0; i < length; i++)
-                buffer.Write(sectorsData[(int)sectorAddress + i], 0, sectorsData[(int)sectorAddress + i].Length);
+                buffer.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
             return buffer.ToArray();
         }

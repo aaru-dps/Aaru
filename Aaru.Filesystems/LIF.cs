@@ -58,8 +58,8 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return false;
 
-            byte[]         sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            byte[]      sector = imagePlugin.ReadSector(partition.Start);
+            SystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
             AaruConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
@@ -74,8 +74,8 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return;
 
-            byte[]         sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            byte[]      sector = imagePlugin.ReadSector(partition.Start);
+            SystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
 
             if(lifSb.magic != LIF_MAGIC)
                 return;
@@ -109,7 +109,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LifSystemBlock
+        struct SystemBlock
         {
             public readonly ushort magic;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]

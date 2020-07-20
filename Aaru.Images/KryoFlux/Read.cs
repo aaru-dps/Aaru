@@ -186,22 +186,22 @@ namespace Aaru.DiscImages
 
                                 switch(kvp[0])
                                 {
-                                    case hostDate:
+                                    case _hostDate:
                                         if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
                                                                   DateTimeStyles.AssumeLocal, out blockDate))
                                             foundDate = true;
 
                                         break;
-                                    case hostTime:
+                                    case _hostTime:
                                         DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
                                                                DateTimeStyles.AssumeLocal, out blockTime);
 
                                         break;
-                                    case kfName:
+                                    case _kfName:
                                         imageInfo.Application = kvp[1];
 
                                         break;
-                                    case kfVersion:
+                                    case _kfVersion:
                                         imageInfo.ApplicationVersion = kvp[1];
 
                                         break;

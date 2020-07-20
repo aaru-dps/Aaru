@@ -45,19 +45,19 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public partial class ISO9660 : IReadOnlyFilesystem
     {
-        bool                                      cdi;
-        bool                                      debug;
-        bool                                      highSierra;
-        IMediaImage                               image;
-        bool                                      joliet;
-        bool                                      mounted;
-        Namespace                                 @namespace;
-        PathTableEntryInternal[]                  pathTable;
-        Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
-        FileSystemInfo                            statfs;
-        bool                                      useEvd;
-        bool                                      usePathTable;
-        bool                                      useTransTbl;
+        bool                                      _cdi;
+        bool                                      _debug;
+        bool                                      _highSierra;
+        IMediaImage                               _image;
+        bool                                      _joliet;
+        bool                                      _mounted;
+        Namespace                                 _namespace;
+        PathTableEntryInternal[]                  _pathTable;
+        Dictionary<string, DecodedDirectoryEntry> _rootDirectoryCache;
+        FileSystemInfo                            _statfs;
+        bool                                      _useEvd;
+        bool                                      _usePathTable;
+        bool                                      _useTransTbl;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

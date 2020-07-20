@@ -62,12 +62,12 @@ namespace Aaru.DiscImages
                 cmt.WriteByte(b);
             }
 
-            imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
-            sectorsData        = new List<byte[]>();
+            _imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
+            _sectorsData        = new List<byte[]>();
 
             byte currentCylinder = 0;
-            imageInfo.Cylinders = 1;
-            imageInfo.Heads     = 1;
+            _imageInfo.Cylinders = 1;
+            _imageInfo.Heads     = 1;
             ulong currentLba = 0;
 
             TransferRate mode = TransferRate.TwoHundred;
@@ -87,11 +87,11 @@ namespace Aaru.DiscImages
                 if(cylinder != currentCylinder)
                 {
                     currentCylinder = cylinder;
-                    imageInfo.Cylinders++;
+                    _imageInfo.Cylinders++;
                 }
 
                 if((head & 1) == 1)
-                    imageInfo.Heads = 2;
+                    _imageInfo.Heads = 2;
 
                 stream.Read(idmap, 0, idmap.Length);
 
@@ -113,8 +113,8 @@ namespace Aaru.DiscImages
                     for(int i = 0; i < spt; i++)
                         bps[i] = (ushort)(128 << n);
 
-                if(spt > imageInfo.SectorsPerTrack)
-                    imageInfo.SectorsPerTrack = spt;
+                if(spt > _imageInfo.SectorsPerTrack)
+                    _imageInfo.SectorsPerTrack = spt;
 
                 SortedDictionary<byte, byte[]> track = new SortedDictionary<byte, byte[]>();
 
@@ -124,8 +124,8 @@ namespace Aaru.DiscImages
                     byte[] data = new byte[bps[i]];
 
                     // TODO; Handle disks with different bps in track 0
-                    if(bps[i] > imageInfo.SectorSize)
-                        imageInfo.SectorSize = bps[i];
+                    if(bps[i] > _imageInfo.SectorSize)
+                        _imageInfo.SectorSize = bps[i];
 
                     switch(type)
                     {
@@ -143,7 +143,7 @@ namespace Aaru.DiscImages
                             if(!track.ContainsKey(idmap[i]))
                                 track.Add(idmap[i], data);
 
-                            imageInfo.ImageSize += (ulong)data.Length;
+                            _imageInfo.ImageSize += (ulong)data.Length;
 
                             break;
                         case SectorType.Compressed:
@@ -163,20 +163,20 @@ namespace Aaru.DiscImages
 
                 foreach(KeyValuePair<byte, byte[]> kvp in track)
                 {
-                    sectorsData.Add(kvp.Value);
+                    _sectorsData.Add(kvp.Value);
                     currentLba++;
                 }
             }
 
-            imageInfo.Application = "IMD";
+            _imageInfo.Application = "IMD";
 
             // TODO: The header is the date of dump or the date of the application compilation?
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Comments             = StringHandlers.CToString(cmt.ToArray());
-            imageInfo.Sectors              = currentLba;
-            imageInfo.MediaType            = MediaType.Unknown;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Comments             = StringHandlers.CToString(cmt.ToArray());
+            _imageInfo.Sectors              = currentLba;
+            _imageInfo.MediaType            = MediaType.Unknown;
 
             MediaEncoding mediaEncoding = MediaEncoding.MFM;
 
@@ -185,32 +185,32 @@ namespace Aaru.DiscImages
                mode == TransferRate.FiveHundred)
                 mediaEncoding = MediaEncoding.FM;
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                         mediaEncoding, false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                          (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
+                                                          mediaEncoding, false));
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.NEC_525_HD when mode == TransferRate.FiveHundredMfm:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                     break;
                 case MediaType.DOS_525_HD when mode == TransferRate.FiveHundredMfm:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                     break;
                 case MediaType.RX50 when mode == TransferRate.FiveHundredMfm:
-                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+                    _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                     break;
             }
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            AaruConsole.VerboseWriteLine("IMD image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("IMD image contains a disk of type {0}", _imageInfo.MediaType);
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("IMD comments: {0}", imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                AaruConsole.VerboseWriteLine("IMD comments: {0}", _imageInfo.Comments);
 
             return true;
         }
@@ -219,16 +219,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var buffer = new MemoryStream();
 
             for(int i = 0; i < length; i++)
-                buffer.Write(sectorsData[(int)sectorAddress + i], 0, sectorsData[(int)sectorAddress + i].Length);
+                buffer.Write(_sectorsData[(int)sectorAddress + i], 0, _sectorsData[(int)sectorAddress + i].Length);
 
             return buffer.ToArray();
         }

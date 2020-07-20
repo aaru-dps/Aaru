@@ -45,15 +45,15 @@ namespace Aaru.DiscImages
     {
         public bool Open(IFilter imageFilter)
         {
-            Header    = new ScpHeader();
-            scpStream = imageFilter.GetDataForkStream();
-            scpStream.Seek(0, SeekOrigin.Begin);
+            Header     = new ScpHeader();
+            _scpStream = imageFilter.GetDataForkStream();
+            _scpStream.Seek(0, SeekOrigin.Begin);
 
-            if(scpStream.Length < Marshal.SizeOf<ScpHeader>())
+            if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
                 return false;
 
             byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
-            scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
+            _scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
             Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
@@ -73,7 +73,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}", Header.reserved);
             AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}", Header.checksum);
 
-            if(!scpSignature.SequenceEqual(Header.signature))
+            if(!_scpSignature.SequenceEqual(Header.signature))
                 return false;
 
             ScpTracks = new Dictionary<byte, TrackHeader>();
@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
                 if(t >= Header.offsets.Length)
                     break;
 
-                scpStream.Position = Header.offsets[t];
+                _scpStream.Position = Header.offsets[t];
 
                 var trk = new TrackHeader
                 {
@@ -91,10 +91,10 @@ namespace Aaru.DiscImages
                     Entries   = new TrackEntry[Header.revolutions]
                 };
 
-                scpStream.Read(trk.Signature, 0, trk.Signature.Length);
-                trk.TrackNumber = (byte)scpStream.ReadByte();
+                _scpStream.Read(trk.Signature, 0, trk.Signature.Length);
+                trk.TrackNumber = (byte)_scpStream.ReadByte();
 
-                if(!trk.Signature.SequenceEqual(trkSignature))
+                if(!trk.Signature.SequenceEqual(_trkSignature))
                 {
                     AaruConsole.DebugWriteLine("SuperCardPro plugin",
                                                "Track header at {0} contains incorrect signature.", Header.offsets[t]);
@@ -115,7 +115,7 @@ namespace Aaru.DiscImages
                 for(byte r = 0; r < Header.revolutions; r++)
                 {
                     byte[] rev = new byte[Marshal.SizeOf<TrackEntry>()];
-                    scpStream.Read(rev, 0, Marshal.SizeOf<TrackEntry>());
+                    _scpStream.Read(rev, 0, Marshal.SizeOf<TrackEntry>());
 
                     trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
 
@@ -128,23 +128,23 @@ namespace Aaru.DiscImages
 
             if(Header.flags.HasFlag(ScpFlags.HasFooter))
             {
-                long position = scpStream.Position;
-                scpStream.Seek(-4, SeekOrigin.End);
+                long position = _scpStream.Position;
+                _scpStream.Seek(-4, SeekOrigin.End);
 
-                while(scpStream.Position >= position)
+                while(_scpStream.Position >= position)
                 {
                     byte[] footerSig = new byte[4];
-                    scpStream.Read(footerSig, 0, 4);
+                    _scpStream.Read(footerSig, 0, 4);
                     uint footerMagic = BitConverter.ToUInt32(footerSig, 0);
 
                     if(footerMagic == FOOTER_SIGNATURE)
                     {
-                        scpStream.Seek(-Marshal.SizeOf<ScpFooter>(), SeekOrigin.Current);
+                        _scpStream.Seek(-Marshal.SizeOf<ScpFooter>(), SeekOrigin.Current);
 
-                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", scpStream.Position);
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
 
                         byte[] ftr = new byte[Marshal.SizeOf<ScpFooter>()];
-                        scpStream.Read(ftr, 0, Marshal.SizeOf<ScpFooter>());
+                        _scpStream.Read(ftr, 0, Marshal.SizeOf<ScpFooter>());
 
                         ScpFooter footer = Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
 
@@ -188,66 +188,66 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"",
                                                    StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
-                        imageInfo.DriveManufacturer = ReadPStringUtf8(scpStream, footer.manufacturerOffset);
-                        imageInfo.DriveModel        = ReadPStringUtf8(scpStream, footer.modelOffset);
-                        imageInfo.DriveSerialNumber = ReadPStringUtf8(scpStream, footer.serialOffset);
-                        imageInfo.Creator           = ReadPStringUtf8(scpStream, footer.creatorOffset);
-                        imageInfo.Application       = ReadPStringUtf8(scpStream, footer.applicationOffset);
-                        imageInfo.Comments          = ReadPStringUtf8(scpStream, footer.commentsOffset);
+                        _imageInfo.DriveManufacturer = ReadPStringUtf8(_scpStream, footer.manufacturerOffset);
+                        _imageInfo.DriveModel        = ReadPStringUtf8(_scpStream, footer.modelOffset);
+                        _imageInfo.DriveSerialNumber = ReadPStringUtf8(_scpStream, footer.serialOffset);
+                        _imageInfo.Creator           = ReadPStringUtf8(_scpStream, footer.creatorOffset);
+                        _imageInfo.Application       = ReadPStringUtf8(_scpStream, footer.applicationOffset);
+                        _imageInfo.Comments          = ReadPStringUtf8(_scpStream, footer.commentsOffset);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
-                                                   imageInfo.DriveManufacturer);
+                                                   _imageInfo.DriveManufacturer);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"",
-                                                   imageInfo.DriveModel);
+                                                   _imageInfo.DriveModel);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"",
-                                                   imageInfo.DriveSerialNumber);
+                                                   _imageInfo.DriveSerialNumber);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"",
-                                                   imageInfo.Creator);
+                                                   _imageInfo.Creator);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"",
-                                                   imageInfo.Application);
+                                                   _imageInfo.Application);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
-                                                   imageInfo.Comments);
+                                                   _imageInfo.Comments);
 
-                        imageInfo.CreationTime = footer.creationTime != 0
-                                                     ? DateHandlers.UnixToDateTime(footer.creationTime)
-                                                     : imageFilter.GetCreationTime();
+                        _imageInfo.CreationTime = footer.creationTime != 0
+                                                      ? DateHandlers.UnixToDateTime(footer.creationTime)
+                                                      : imageFilter.GetCreationTime();
 
-                        imageInfo.LastModificationTime = footer.modificationTime != 0
-                                                             ? DateHandlers.UnixToDateTime(footer.modificationTime)
-                                                             : imageFilter.GetLastWriteTime();
+                        _imageInfo.LastModificationTime = footer.modificationTime != 0
+                                                              ? DateHandlers.UnixToDateTime(footer.modificationTime)
+                                                              : imageFilter.GetLastWriteTime();
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
-                                                   imageInfo.CreationTime);
+                                                   _imageInfo.CreationTime);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}",
-                                                   imageInfo.LastModificationTime);
+                                                   _imageInfo.LastModificationTime);
 
-                        imageInfo.ApplicationVersion =
+                        _imageInfo.ApplicationVersion =
                             $"{(footer.applicationVersion & 0xF0) >> 4}.{footer.applicationVersion & 0xF}";
 
-                        imageInfo.DriveFirmwareRevision =
+                        _imageInfo.DriveFirmwareRevision =
                             $"{(footer.firmwareVersion & 0xF0) >> 4}.{footer.firmwareVersion & 0xF}";
 
-                        imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
+                        _imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
 
                         break;
                     }
 
-                    scpStream.Seek(-8, SeekOrigin.Current);
+                    _scpStream.Seek(-8, SeekOrigin.Current);
                 }
             }
             else
             {
-                imageInfo.Application          = "SuperCardPro";
-                imageInfo.ApplicationVersion   = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
-                imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-                imageInfo.Version              = "1.5";
+                _imageInfo.Application          = "SuperCardPro";
+                _imageInfo.ApplicationVersion   = $"{(Header.version & 0xF0) >> 4}.{Header.version & 0xF}";
+                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.Version              = "1.5";
             }
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");

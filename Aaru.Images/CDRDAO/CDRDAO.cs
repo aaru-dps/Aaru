@@ -43,23 +43,23 @@ namespace Aaru.DiscImages
     // TODO: Doesn't support silences that are not in files
     public partial class Cdrdao : IWritableOpticalImage
     {
-        SectorBuilder _sectorBuilder;
-        IFilter       cdrdaoFilter;
-        StreamWriter  descriptorStream;
-        CdrdaoDisc    discimage;
-        ImageInfo     imageInfo;
-        Stream        imageStream;
+        IFilter      _cdrdaoFilter;
+        StreamWriter _descriptorStream;
+        CdrdaoDisc   _discimage;
+        ImageInfo    _imageInfo;
+        Stream       _imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
-        Dictionary<uint, ulong> offsetmap;
-        bool                         separateTracksWriting;
-        StreamReader                 tocStream;
-        Dictionary<byte, byte>       trackFlags;
-        Dictionary<byte, string>     trackIsrcs;
-        string                       writingBaseName;
-        Dictionary<uint, FileStream> writingStreams;
-        List<Track>                  writingTracks;
+        Dictionary<uint, ulong> _offsetmap;
+        SectorBuilder                _sectorBuilder;
+        bool                         _separateTracksWriting;
+        StreamReader                 _tocStream;
+        Dictionary<byte, byte>       _trackFlags;
+        Dictionary<byte, string>     _trackIsrcs;
+        string                       _writingBaseName;
+        Dictionary<uint, FileStream> _writingStreams;
+        List<Track>                  _writingTracks;
 
-        public Cdrdao() => imageInfo = new ImageInfo
+        public Cdrdao() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

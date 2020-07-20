@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class Ndif
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Apple New Disk Image Format";
         public Guid                   Id           => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
         public string                 Format       => "Apple New Disk Image Format";

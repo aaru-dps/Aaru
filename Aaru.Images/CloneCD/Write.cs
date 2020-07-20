@@ -57,7 +57,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -66,11 +66,11 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
-                descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
-                dataStream = new FileStream(writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
-                                            FileShare.None);
+                _dataStream = new FileStream(_writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                             FileShare.None);
             }
             catch(IOException e)
             {
@@ -79,9 +79,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.MediaType = mediaType;
+            _imageInfo.MediaType = mediaType;
 
-            trackFlags = new Dictionary<byte, byte>();
+            _trackFlags = new Dictionary<byte, byte>();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -101,11 +101,11 @@ namespace Aaru.DiscImages
             switch(tag)
             {
                 case MediaTagType.CD_MCN:
-                    catalog = Encoding.ASCII.GetString(data);
+                    _catalog = Encoding.ASCII.GetString(data);
 
                     return true;
                 case MediaTagType.CD_FullTOC:
-                    fulltoc = data;
+                    _fulltoc = data;
 
                     return true;
                 default:
@@ -172,10 +172,11 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            dataStream.Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
-                            SeekOrigin.Begin);
+            _dataStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
 
-            dataStream.Write(data, 0, data.Length);
+            _dataStream.Write(data, 0, data.Length);
 
             return true;
         }
@@ -214,10 +215,11 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            dataStream.Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
-                            SeekOrigin.Begin);
+            _dataStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
 
-            dataStream.Write(data, 0, data.Length);
+            _dataStream.Write(data, 0, data.Length);
 
             return true;
         }
@@ -287,21 +289,21 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            dataStream.Flush();
-            dataStream.Close();
+            _dataStream.Flush();
+            _dataStream.Close();
 
-            subStream?.Flush();
-            subStream?.Close();
+            _subStream?.Flush();
+            _subStream?.Close();
 
             FullTOC.CDFullTOC? nullableToc = null;
             FullTOC.CDFullTOC  toc;
 
             // Easy, just decode the real toc
-            if(fulltoc != null)
+            if(_fulltoc != null)
             {
-                byte[] tmp = new byte[fulltoc.Length + 2];
-                Array.Copy(BigEndianBitConverter.GetBytes((ushort)fulltoc.Length), 0, tmp, 0, 2);
-                Array.Copy(fulltoc, 0, tmp, 2, fulltoc.Length);
+                byte[] tmp = new byte[_fulltoc.Length + 2];
+                Array.Copy(BigEndianBitConverter.GetBytes((ushort)_fulltoc.Length), 0, tmp, 0, 2);
+                Array.Copy(_fulltoc, 0, tmp, 2, _fulltoc.Length);
                 nullableToc = FullTOC.Decode(tmp);
             }
 
@@ -337,7 +339,7 @@ namespace Aaru.DiscImages
 
                 foreach(Track track in Tracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence))
                 {
-                    trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+                    _trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
 
                     if(trackControl    == 0 &&
                        track.TrackType != TrackType.Audio)
@@ -449,20 +451,20 @@ namespace Aaru.DiscImages
             else
                 toc = nullableToc.Value;
 
-            descriptorStream.WriteLine("[CloneCD]");
-            descriptorStream.WriteLine("Version=2");
-            descriptorStream.WriteLine("[Disc]");
-            descriptorStream.WriteLine("TocEntries={0}", toc.TrackDescriptors.Length);
-            descriptorStream.WriteLine("Sessions={0}", toc.LastCompleteSession);
-            descriptorStream.WriteLine("DataTracksScrambled=0");
-            descriptorStream.WriteLine("CDTextLength=0");
+            _descriptorStream.WriteLine("[CloneCD]");
+            _descriptorStream.WriteLine("Version=2");
+            _descriptorStream.WriteLine("[Disc]");
+            _descriptorStream.WriteLine("TocEntries={0}", toc.TrackDescriptors.Length);
+            _descriptorStream.WriteLine("Sessions={0}", toc.LastCompleteSession);
+            _descriptorStream.WriteLine("DataTracksScrambled=0");
+            _descriptorStream.WriteLine("CDTextLength=0");
 
-            if(!string.IsNullOrEmpty(catalog))
-                descriptorStream.WriteLine("CATALOG={0}", catalog);
+            if(!string.IsNullOrEmpty(_catalog))
+                _descriptorStream.WriteLine("CATALOG={0}", _catalog);
 
             for(int i = 1; i <= toc.LastCompleteSession; i++)
             {
-                descriptorStream.WriteLine("[Session {0}]", i);
+                _descriptorStream.WriteLine("[Session {0}]", i);
 
                 Track firstSessionTrack = Tracks.FirstOrDefault(t => t.TrackSession == i);
 
@@ -472,24 +474,24 @@ namespace Aaru.DiscImages
                         // CloneCD always writes this value for first track in disc, however the Rainbow Books
                         // say the first track pregap is no different from other session pregaps, same mode as
                         // the track they belong to.
-                        descriptorStream.WriteLine("PreGapMode=0");
+                        _descriptorStream.WriteLine("PreGapMode=0");
 
                         break;
                     case TrackType.Data:
                     case TrackType.CdMode1:
-                        descriptorStream.WriteLine("PreGapMode=1");
+                        _descriptorStream.WriteLine("PreGapMode=1");
 
                         break;
                     case TrackType.CdMode2Formless:
                     case TrackType.CdMode2Form1:
                     case TrackType.CdMode2Form2:
-                        descriptorStream.WriteLine("PreGapMode=2");
+                        _descriptorStream.WriteLine("PreGapMode=2");
 
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }
 
-                descriptorStream.WriteLine("PreGapSubC=0");
+                _descriptorStream.WriteLine("PreGapSubC=0");
             }
 
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
@@ -506,29 +508,29 @@ namespace Aaru.DiscImages
                 if(plba > 405000)
                     plba = ((plba - 405000) + 300) * -1;
 
-                descriptorStream.WriteLine("[Entry {0}]", i);
-                descriptorStream.WriteLine("Session={0}", toc.TrackDescriptors[i].SessionNumber);
-                descriptorStream.WriteLine("Point=0x{0:x2}", toc.TrackDescriptors[i].POINT);
-                descriptorStream.WriteLine("ADR=0x{0:x2}", toc.TrackDescriptors[i].ADR);
-                descriptorStream.WriteLine("Control=0x{0:x2}", toc.TrackDescriptors[i].CONTROL);
-                descriptorStream.WriteLine("TrackNo={0}", toc.TrackDescriptors[i].TNO);
-                descriptorStream.WriteLine("AMin={0}", toc.TrackDescriptors[i].Min);
-                descriptorStream.WriteLine("ASec={0}", toc.TrackDescriptors[i].Sec);
-                descriptorStream.WriteLine("AFrame={0}", toc.TrackDescriptors[i].Frame);
-                descriptorStream.WriteLine("ALBA={0}", alba);
+                _descriptorStream.WriteLine("[Entry {0}]", i);
+                _descriptorStream.WriteLine("Session={0}", toc.TrackDescriptors[i].SessionNumber);
+                _descriptorStream.WriteLine("Point=0x{0:x2}", toc.TrackDescriptors[i].POINT);
+                _descriptorStream.WriteLine("ADR=0x{0:x2}", toc.TrackDescriptors[i].ADR);
+                _descriptorStream.WriteLine("Control=0x{0:x2}", toc.TrackDescriptors[i].CONTROL);
+                _descriptorStream.WriteLine("TrackNo={0}", toc.TrackDescriptors[i].TNO);
+                _descriptorStream.WriteLine("AMin={0}", toc.TrackDescriptors[i].Min);
+                _descriptorStream.WriteLine("ASec={0}", toc.TrackDescriptors[i].Sec);
+                _descriptorStream.WriteLine("AFrame={0}", toc.TrackDescriptors[i].Frame);
+                _descriptorStream.WriteLine("ALBA={0}", alba);
 
-                descriptorStream.WriteLine("Zero={0}",
-                                           ((toc.TrackDescriptors[i].HOUR & 0x0F) << 4) +
-                                           (toc.TrackDescriptors[i].PHOUR & 0x0F));
+                _descriptorStream.WriteLine("Zero={0}",
+                                            ((toc.TrackDescriptors[i].HOUR & 0x0F) << 4) +
+                                            (toc.TrackDescriptors[i].PHOUR & 0x0F));
 
-                descriptorStream.WriteLine("PMin={0}", toc.TrackDescriptors[i].PMIN);
-                descriptorStream.WriteLine("PSec={0}", toc.TrackDescriptors[i].PSEC);
-                descriptorStream.WriteLine("PFrame={0}", toc.TrackDescriptors[i].PFRAME);
-                descriptorStream.WriteLine("PLBA={0}", plba);
+                _descriptorStream.WriteLine("PMin={0}", toc.TrackDescriptors[i].PMIN);
+                _descriptorStream.WriteLine("PSec={0}", toc.TrackDescriptors[i].PSEC);
+                _descriptorStream.WriteLine("PFrame={0}", toc.TrackDescriptors[i].PFRAME);
+                _descriptorStream.WriteLine("PLBA={0}", plba);
             }
 
-            descriptorStream.Flush();
-            descriptorStream.Close();
+            _descriptorStream.Flush();
+            _descriptorStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -576,7 +578,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags[(byte)sectorAddress] = data[0];
+                    _trackFlags[(byte)sectorAddress] = data[0];
 
                     return true;
                 }
@@ -597,11 +599,11 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    if(subStream == null)
+                    if(_subStream == null)
                         try
                         {
-                            subStream = new FileStream(writingBaseName + ".sub", FileMode.OpenOrCreate,
-                                                       FileAccess.ReadWrite, FileShare.None);
+                            _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
+                                                        FileAccess.ReadWrite, FileShare.None);
                         }
                         catch(IOException e)
                         {
@@ -610,10 +612,11 @@ namespace Aaru.DiscImages
                             return false;
                         }
 
-                    subStream.Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
-                                   SeekOrigin.Begin);
+                    _subStream.
+                        Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
+                             SeekOrigin.Begin);
 
-                    subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
+                    _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
 
                     return true;
                 }
@@ -665,11 +668,11 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    if(subStream == null)
+                    if(_subStream == null)
                         try
                         {
-                            subStream = new FileStream(writingBaseName + ".sub", FileMode.OpenOrCreate,
-                                                       FileAccess.ReadWrite, FileShare.None);
+                            _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
+                                                        FileAccess.ReadWrite, FileShare.None);
                         }
                         catch(IOException e)
                         {
@@ -678,10 +681,11 @@ namespace Aaru.DiscImages
                             return false;
                         }
 
-                    subStream.Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
-                                   SeekOrigin.Begin);
+                    _subStream.
+                        Seek((long)(track.TrackSubchannelOffset + ((sectorAddress - track.TrackStartSector) * 96)),
+                             SeekOrigin.Begin);
 
-                    subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
+                    _subStream.Write(Subchannel.Deinterleave(data), 0, data.Length);
 
                     return true;
                 }

@@ -36,9 +36,9 @@ namespace Aaru.DiscImages
 {
     public partial class TeleDisk
     {
-        public bool? VerifyMediaImage() => aDiskCrcHasFailed;
+        public bool? VerifyMediaImage() => _aDiskCrcHasFailed;
 
-        public bool? VerifySector(ulong sectorAddress) => !sectorsWhereCrcHasFailed.Contains(sectorAddress);
+        public bool? VerifySector(ulong sectorAddress) => !_sectorsWhereCrcHasFailed.Contains(sectorAddress);
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
             unknownLbas = new List<ulong>();
 
             for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                if(sectorsWhereCrcHasFailed.Contains(sectorAddress))
+                if(_sectorsWhereCrcHasFailed.Contains(sectorAddress))
                     failingLbas.Add(sectorAddress);
 
             return failingLbas.Count <= 0;

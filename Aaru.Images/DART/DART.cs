@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
     public partial class Dart : IMediaImage
     {
         // DART images are at most 1474560 bytes, so let's cache the whole
-        byte[]    dataCache;
-        uint      dataChecksum;
-        ImageInfo imageInfo;
-        byte[]    tagCache;
-        uint      tagChecksum;
+        byte[]    _dataCache;
+        uint      _dataChecksum;
+        ImageInfo _imageInfo;
+        byte[]    _tagCache;
+        uint      _tagChecksum;
 
-        public Dart() => imageInfo = new ImageInfo
+        public Dart() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

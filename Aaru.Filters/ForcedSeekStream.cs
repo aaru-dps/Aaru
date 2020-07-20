@@ -42,20 +42,20 @@ namespace Aaru.Filters
     public class ForcedSeekStream<T> : Stream where T : Stream
     {
         const    int        BUFFER_LEN = 1048576;
-        readonly string     backFile;
-        readonly FileStream backStream;
-        readonly T          baseStream;
-        long                streamLength;
+        readonly string     _backFile;
+        readonly FileStream _backStream;
+        readonly T          _baseStream;
+        long                _streamLength;
 
         /// <summary>Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.</summary>
         /// <param name="length">The real (uncompressed) length of the stream.</param>
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(long length, params object[] args)
         {
-            streamLength = length;
-            baseStream   = (T)Activator.CreateInstance(typeof(T), args);
-            backFile     = Path.GetTempFileName();
-            backStream   = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            _streamLength = length;
+            _baseStream   = (T)Activator.CreateInstance(typeof(T), args);
+            _backFile     = Path.GetTempFileName();
+            _backStream   = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
             if(length == 0)
                 CalculateLength();
@@ -65,23 +65,23 @@ namespace Aaru.Filters
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(params object[] args)
         {
-            baseStream = (T)Activator.CreateInstance(typeof(T), args);
-            backFile   = Path.GetTempFileName();
-            backStream = new FileStream(backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            _baseStream = (T)Activator.CreateInstance(typeof(T), args);
+            _backFile   = Path.GetTempFileName();
+            _backStream = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             CalculateLength();
         }
 
-        public override bool CanRead => baseStream.CanRead;
+        public override bool CanRead => _baseStream.CanRead;
 
         public override bool CanSeek => true;
 
         public override bool CanWrite => false;
 
-        public override long Length => streamLength;
+        public override long Length => _streamLength;
 
         public override long Position
         {
-            get => backStream.Position;
+            get => _backStream.Position;
 
             set => SetPosition(value);
         }
@@ -98,28 +98,28 @@ namespace Aaru.Filters
             do
             {
                 byte[] buffer = new byte[BUFFER_LEN];
-                read = baseStream.Read(buffer, 0, BUFFER_LEN);
-                backStream.Write(buffer, 0, read);
+                read = _baseStream.Read(buffer, 0, BUFFER_LEN);
+                _backStream.Write(buffer, 0, read);
             } while(read == BUFFER_LEN);
 
-            streamLength        = backStream.Length;
-            backStream.Position = 0;
+            _streamLength        = _backStream.Length;
+            _backStream.Position = 0;
         }
 
         void SetPosition(long position)
         {
-            if(position == backStream.Position)
+            if(position == _backStream.Position)
                 return;
 
-            if(position < backStream.Length)
+            if(position < _backStream.Length)
             {
-                backStream.Position = position;
+                _backStream.Position = position;
 
                 return;
             }
 
-            backStream.Position = backStream.Length;
-            long   toposition      = position - backStream.Position;
+            _backStream.Position = _backStream.Length;
+            long   toposition      = position - _backStream.Position;
             int    fullBufferReads = (int)(toposition / BUFFER_LEN);
             int    restToRead      = (int)(toposition % BUFFER_LEN);
             byte[] buffer;
@@ -127,41 +127,41 @@ namespace Aaru.Filters
             for(int i = 0; i < fullBufferReads; i++)
             {
                 buffer = new byte[BUFFER_LEN];
-                baseStream.Read(buffer, 0, BUFFER_LEN);
-                backStream.Write(buffer, 0, BUFFER_LEN);
+                _baseStream.Read(buffer, 0, BUFFER_LEN);
+                _backStream.Write(buffer, 0, BUFFER_LEN);
             }
 
             buffer = new byte[restToRead];
-            baseStream.Read(buffer, 0, restToRead);
-            backStream.Write(buffer, 0, restToRead);
+            _baseStream.Read(buffer, 0, restToRead);
+            _backStream.Write(buffer, 0, restToRead);
         }
 
         public override void Flush()
         {
-            baseStream.Flush();
-            backStream.Flush();
+            _baseStream.Flush();
+            _backStream.Flush();
         }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(backStream.Position + count <= backStream.Length)
-                return backStream.Read(buffer, offset, count);
+            if(_backStream.Position + count <= _backStream.Length)
+                return _backStream.Read(buffer, offset, count);
 
-            SetPosition(backStream.Position + count);
-            SetPosition(backStream.Position - count);
+            SetPosition(_backStream.Position + count);
+            SetPosition(_backStream.Position - count);
 
-            return backStream.Read(buffer, offset, count);
+            return _backStream.Read(buffer, offset, count);
         }
 
         public override int ReadByte()
         {
-            if(backStream.Position + 1 <= backStream.Length)
-                return backStream.ReadByte();
+            if(_backStream.Position + 1 <= _backStream.Length)
+                return _backStream.ReadByte();
 
-            SetPosition(backStream.Position + 1);
-            SetPosition(backStream.Position - 1);
+            SetPosition(_backStream.Position + 1);
+            SetPosition(_backStream.Position - 1);
 
-            return backStream.ReadByte();
+            return _backStream.ReadByte();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -179,19 +179,19 @@ namespace Aaru.Filters
                     if(offset > 0)
                         throw new IOException("Cannot seek after stream end.");
 
-                    if(streamLength == 0)
+                    if(_streamLength == 0)
                         CalculateLength();
 
-                    SetPosition(streamLength + offset);
+                    SetPosition(_streamLength + offset);
 
                     break;
                 default:
-                    SetPosition(backStream.Position + offset);
+                    SetPosition(_backStream.Position + offset);
 
                     break;
             }
 
-            return backStream.Position;
+            return _backStream.Position;
         }
 
         public override void SetLength(long value) => throw new NotSupportedException();
@@ -200,14 +200,14 @@ namespace Aaru.Filters
 
         public override void Close()
         {
-            backStream?.Close();
-            File.Delete(backFile);
+            _backStream?.Close();
+            File.Delete(_backFile);
         }
 
         ~ForcedSeekStream()
         {
-            backStream?.Close();
-            File.Delete(backFile);
+            _backStream?.Close();
+            File.Delete(_backFile);
         }
     }
 }

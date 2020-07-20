@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
 {
     public partial class ZZZRawImage : IWritableOpticalImage
     {
-        string                           basepath;
-        bool                             differentTrackZeroSize;
-        string                           extension;
-        bool                             hasSubchannel;
-        ImageInfo                        imageInfo;
-        Dictionary<MediaTagType, byte[]> mediaTags;
-        bool                             mode2;
-        bool                             rawCompactDisc;
-        IFilter                          rawImageFilter;
-        FileStream                       writingStream;
+        string                           _basepath;
+        bool                             _differentTrackZeroSize;
+        string                           _extension;
+        bool                             _hasSubchannel;
+        ImageInfo                        _imageInfo;
+        Dictionary<MediaTagType, byte[]> _mediaTags;
+        bool                             _mode2;
+        bool                             _rawCompactDisc;
+        IFilter                          _rawImageFilter;
+        FileStream                       _writingStream;
 
-        public ZZZRawImage() => imageInfo = new ImageInfo
+        public ZZZRawImage() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

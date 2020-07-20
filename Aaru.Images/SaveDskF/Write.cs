@@ -61,22 +61,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(512 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(512 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -92,22 +92,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(512 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(512 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -137,50 +137,50 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(!string.IsNullOrWhiteSpace(imageInfo.Comments))
+            if(!string.IsNullOrWhiteSpace(_imageInfo.Comments))
             {
-                byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(imageInfo.Comments);
-                header.commentOffset = (ushort)Marshal.SizeOf<SaveDskFHeader>();
-                writingStream.Seek(header.commentOffset, SeekOrigin.Begin);
+                byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(_imageInfo.Comments);
+                _header.commentOffset = (ushort)Marshal.SizeOf<SaveDskFHeader>();
+                _writingStream.Seek(_header.commentOffset, SeekOrigin.Begin);
 
-                writingStream.Write(commentsBytes, 0,
-                                    commentsBytes.Length >= 512 - header.commentOffset ? 512 - header.commentOffset
-                                        : commentsBytes.Length);
+                _writingStream.Write(commentsBytes, 0,
+                                     commentsBytes.Length >= 512 - _header.commentOffset ? 512 - _header.commentOffset
+                                         : commentsBytes.Length);
             }
 
             byte[] hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            header.checksum = 0;
-            writingStream.Seek(0, SeekOrigin.Begin);
+            _header.checksum = 0;
+            _writingStream.Seek(0, SeekOrigin.Begin);
 
             int b;
 
             do
             {
-                b = writingStream.ReadByte();
+                b = _writingStream.ReadByte();
 
                 if(b >= 0)
-                    header.checksum += (uint)b;
+                    _header.checksum += (uint)b;
             } while(b >= 0);
 
             hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
             hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -190,7 +190,7 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.Comments = metadata.Comments;
+            _imageInfo.Comments = metadata.Comments;
 
             return true;
         }
@@ -219,7 +219,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -228,7 +228,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -240,7 +240,7 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            header = new SaveDskFHeader
+            _header = new SaveDskFHeader
             {
                 cylinders       = geometry.cylinders,
                 dataOffset      = 512,

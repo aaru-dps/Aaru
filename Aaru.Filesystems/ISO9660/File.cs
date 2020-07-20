@@ -51,7 +51,7 @@ namespace Aaru.Filesystems
         {
             deviceBlock = 0;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
@@ -60,7 +60,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(entry.Flags.HasFlag(FileFlags.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             // TODO: Multi-extents
@@ -76,7 +76,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -94,7 +94,7 @@ namespace Aaru.Filesystems
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
@@ -103,7 +103,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(entry.Flags.HasFlag(FileFlags.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             if(entry.Extents is null)
@@ -138,7 +138,7 @@ namespace Aaru.Filesystems
                         sizeInSectors++;
 
                     byte[] buffer =
-                        image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
+                        _image.ReadSectorsLong((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
 
                     buf = new byte[size];
                     Array.Copy(buffer, offsetInSector, buf, 0, size);
@@ -166,7 +166,7 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
@@ -357,8 +357,8 @@ namespace Aaru.Filesystems
                 stat.Attributes |= FileAttributes.Symlink;
 
             if(entry.XattrLength == 0 ||
-               cdi                    ||
-               highSierra)
+               _cdi                   ||
+               _highSierra)
                 return Errno.NoError;
 
             if(entry.CdiSystemArea != null)
@@ -453,7 +453,7 @@ namespace Aaru.Filesystems
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
-            if(!directoryCache.TryGetValue(parentPath, out _))
+            if(!_directoryCache.TryGetValue(parentPath, out _))
             {
                 Errno err = ReadDir(parentPath, out _);
 
@@ -464,8 +464,8 @@ namespace Aaru.Filesystems
             Dictionary<string, DecodedDirectoryEntry> parent;
 
             if(pieces.Length == 1)
-                parent = rootDirectoryCache;
-            else if(!directoryCache.TryGetValue(parentPath, out parent))
+                parent = _rootDirectoryCache;
+            else if(!_directoryCache.TryGetValue(parentPath, out parent))
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DecodedDirectoryEntry> dirent =
@@ -473,7 +473,7 @@ namespace Aaru.Filesystems
 
             if(string.IsNullOrEmpty(dirent.Key))
             {
-                if(!joliet &&
+                if(!_joliet &&
                    !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
                 {
                     dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) ==
@@ -575,8 +575,8 @@ namespace Aaru.Filesystems
                     try
                     {
                         byte[] fullSector =
-                            image.ReadSectorTag(extents[i].extent + currentExtentSector,
-                                                SectorTagType.CdSectorSubHeader);
+                            _image.ReadSectorTag(extents[i].extent + currentExtentSector,
+                                                 SectorTagType.CdSectorSubHeader);
 
                         ms.Write(fullSector, copy ? 0 : 4, 4);
                     }

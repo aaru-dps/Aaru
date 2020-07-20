@@ -56,23 +56,23 @@ namespace Aaru.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
+            _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
+            _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - 0xDC);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = v98Hdr.totals;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize           = v98Hdr.sectorsize;
-            imageInfo.Cylinders            = v98Hdr.cylinders;
-            imageInfo.Heads                = v98Hdr.surfaces;
-            imageInfo.SectorsPerTrack      = v98Hdr.sectors;
-            imageInfo.Comments             = StringHandlers.CToString(v98Hdr.comment, shiftjis);
+            _imageInfo.ImageSize            = (ulong)(stream.Length - 0xDC);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = _v98Hdr.totals;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.SectorSize           = _v98Hdr.sectorsize;
+            _imageInfo.Cylinders            = _v98Hdr.cylinders;
+            _imageInfo.Heads                = _v98Hdr.surfaces;
+            _imageInfo.SectorsPerTrack      = _v98Hdr.sectors;
+            _imageInfo.Comments             = StringHandlers.CToString(_v98Hdr.comment, shiftjis);
 
-            nhdImageFilter = imageFilter;
+            _nhdImageFilter = imageFilter;
 
             return true;
         }
@@ -81,23 +81,23 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = nhdImageFilter.GetDataForkStream();
+            Stream stream = _nhdImageFilter.GetDataForkStream();
 
             // V98 are lazy allocated
-            if((long)(0xDC + (sectorAddress * imageInfo.SectorSize)) >= stream.Length)
+            if((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)) >= stream.Length)
                 return buffer;
 
-            stream.Seek((long)(0xDC + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)(0xDC + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            int toRead = (int)(length * imageInfo.SectorSize);
+            int toRead = (int)(length * _imageInfo.SectorSize);
 
             if(toRead + stream.Position > stream.Length)
                 toRead = (int)(stream.Length - stream.Position);

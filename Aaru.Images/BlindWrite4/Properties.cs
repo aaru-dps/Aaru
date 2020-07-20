@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public partial class BlindWrite4
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string Name   => "BlindWrite 4";
         public Guid   Id     => new Guid("664568B2-15D4-4E64-8A7A-20BDA8B8386F");

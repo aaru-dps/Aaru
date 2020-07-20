@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            RT11HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<RT11HomeBlock>(hbSector);
+            HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
             /* TODO: Is this correct?
              * Assembler:
@@ -122,7 +122,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RT11HomeBlock
+        struct HomeBlock
         {
             /// <summary>Bad block replacement table</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)]

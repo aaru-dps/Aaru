@@ -49,11 +49,11 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[40];
             stream.Read(hdr, 0, 40);
 
-            header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
-            return (header.magic == SDF_MAGIC || header.magic == SDF_MAGIC_COMPRESSED ||
-                    header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2 && header.padding == 0 &&
-                   header.commentOffset < stream.Length && header.dataOffset < stream.Length;
+            return (_header.magic == SDF_MAGIC || _header.magic == SDF_MAGIC_COMPRESSED ||
+                    _header.magic == SDF_MAGIC_OLD) && _header.fatCopies <= 2 && _header.padding == 0 &&
+                   _header.commentOffset < stream.Length && _header.dataOffset < stream.Length;
         }
     }
 }

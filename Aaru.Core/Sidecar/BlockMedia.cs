@@ -64,7 +64,7 @@ namespace Aaru.Core
         void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
                         List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
-            if(aborted)
+            if(_aborted)
                 return;
 
             sidecar.BlockMedia = new[]
@@ -103,7 +103,7 @@ namespace Aaru.Core
 
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
             {
-                if(aborted)
+                if(_aborted)
                     return;
 
                 switch(tagType)
@@ -344,7 +344,7 @@ namespace Aaru.Core
 
                 while(doneSectors < sectors)
                 {
-                    if(aborted)
+                    if(_aborted)
                     {
                         EndProgress2();
 
@@ -413,7 +413,7 @@ namespace Aaru.Core
                     {
                         UpdateStatus($"Hashing partition {tapePartition.Number}...");
 
-                        if(aborted)
+                        if(_aborted)
                             return;
 
                         var tapePartitionChk = new Checksum();
@@ -429,7 +429,7 @@ namespace Aaru.Core
 
                         while(doneSectors < sectors)
                         {
-                            if(aborted)
+                            if(_aborted)
                             {
                                 EndProgress2();
 
@@ -491,7 +491,7 @@ namespace Aaru.Core
                         {
                             UpdateStatus($"Hashing file {tapeFile.File}...");
 
-                            if(aborted)
+                            if(_aborted)
                                 return;
 
                             var tapeFileChk = new Checksum();
@@ -507,7 +507,7 @@ namespace Aaru.Core
 
                             while(doneSectors < sectors)
                             {
-                                if(aborted)
+                                if(_aborted)
                                 {
                                     EndProgress2();
 
@@ -561,7 +561,7 @@ namespace Aaru.Core
 
             UpdateStatus("Checking filesystems...");
 
-            if(aborted)
+            if(_aborted)
                 return;
 
             List<Partition> partitions = Partitions.GetAll(image);
@@ -575,7 +575,7 @@ namespace Aaru.Core
 
                 for(int i = 0; i < partitions.Count; i++)
                 {
-                    if(aborted)
+                    if(_aborted)
                         return;
 
                     sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
@@ -593,7 +593,7 @@ namespace Aaru.Core
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
-                            if(aborted)
+                            if(_aborted)
                                 return;
 
                             if(!plugin.Identify(image, partitions[i]))
@@ -627,7 +627,7 @@ namespace Aaru.Core
             }
             else
             {
-                if(aborted)
+                if(_aborted)
                     return;
 
                 sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
@@ -648,7 +648,7 @@ namespace Aaru.Core
                 foreach(IFilesystem plugin in plugins.PluginsList.Values)
                     try
                     {
-                        if(aborted)
+                        if(_aborted)
                             return;
 
                         if(!plugin.Identify(image, wholePart))
@@ -857,7 +857,7 @@ namespace Aaru.Core
             string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                               Path.GetFileNameWithoutExtension(imagePath) + ".scp");
 
-            if(aborted)
+            if(_aborted)
                 return;
 
             if(File.Exists(scpFilePath))
@@ -886,7 +886,7 @@ namespace Aaru.Core
 
                             for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
                             {
-                                if(aborted)
+                                if(_aborted)
                                     return;
 
                                 var scpBlockTrackType = new BlockTrackType
@@ -950,7 +950,7 @@ namespace Aaru.Core
 
             bool kfDir = false;
 
-            if(aborted)
+            if(_aborted)
                 return;
 
             if(Directory.Exists(basename))
@@ -994,7 +994,7 @@ namespace Aaru.Core
 
                             foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                             {
-                                if(aborted)
+                                if(_aborted)
                                     return;
 
                                 var kfBlockTrackType = new BlockTrackType
@@ -1051,7 +1051,7 @@ namespace Aaru.Core
             string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                               Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
-            if(aborted)
+            if(_aborted)
                 return;
 
             if(!File.Exists(dfiFilePath))
@@ -1081,7 +1081,7 @@ namespace Aaru.Core
 
                     foreach(int t in dfiImage.TrackOffsets.Keys)
                     {
-                        if(aborted)
+                        if(_aborted)
                             return;
 
                         var dfiBlockTrackType = new BlockTrackType

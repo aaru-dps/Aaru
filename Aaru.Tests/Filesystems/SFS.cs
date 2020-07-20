@@ -40,37 +40,37 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class SfsMbr
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "aros.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             409600
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             408240
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             512
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             null
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             null
         };
@@ -78,17 +78,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (MBR)",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new SFS();
                 int             part       = -1;
@@ -101,14 +101,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
             }
         }
     }
@@ -116,37 +116,37 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class SfsMbrRdb
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "aros.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             409600
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             406224
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             512
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             null
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             null
         };
@@ -154,17 +154,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR+RDB)",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (MBR+RDB)",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new SFS();
                 int             part       = -1;
@@ -177,14 +177,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
             }
         }
     }
@@ -192,37 +192,37 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class SfsRdb
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "uae.aif", "aros.aif", "amigaos_4.0.aif", "amigaos_4.0_sfs2.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             1024128, 409600, 1024128, 1024128
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512, 512, 512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             127000, 407232, 511040, 511040
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             2048, 512, 1024, 1024
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             null, null, null, null
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             null, null, null, null
         };
@@ -230,17 +230,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (RDB)",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (RDB)",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new SFS();
                 int             part       = -1;
@@ -254,14 +254,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("SmartFileSystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
             }
         }
     }

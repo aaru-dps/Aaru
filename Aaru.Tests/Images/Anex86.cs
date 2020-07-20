@@ -38,31 +38,31 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Anex86
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "anex86_10mb.hdi.lz", "anex86_15mb.hdi.lz", "anex86_20mb.hdi.lz", "anex86_30mb.hdi.lz",
             "anex86_40mb.hdi.lz", "anex86_5mb.hdi.lz", "blank_md2hd.fdi.lz", "msdos33d_md2hd.fdi.lz",
             "msdos50_epson_md2hd.fdi.lz", "msdos50_md2hd.fdi.lz", "msdos62_md2hd.fdi.lz"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             40920, 61380, 81840, 121770, 162360, 20196, 1232, 1232, 1232, 1232, 1232
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             256, 256, 256, 256, 256, 256, 1024, 1024, 1024, 1024, 1024
         };
 
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD,
             MediaType.GENERIC_HDD, MediaType.GENERIC_HDD, MediaType.NEC_525_HD, MediaType.NEC_525_HD,
             MediaType.NEC_525_HD, MediaType.NEC_525_HD, MediaType.NEC_525_HD
         };
 
-        readonly string[] md5S =
+        readonly string[] _md5S =
         {
             "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e", "919c9eecf1b65b10870f617cb976668a",
             "02d35af02581afb2e56792dcaba2c1af", "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4",
@@ -73,20 +73,20 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "Anex86", testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86", _testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.Anex86();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
 
                 // How many sectors to read at once
-                const uint SECTORS_TO_READ = 256;
-                ulong      doneSectors     = 0;
+                const uint sectorsToRead = 256;
+                ulong      doneSectors   = 0;
 
                 var ctx = new Md5Context();
 
@@ -94,10 +94,10 @@ namespace Aaru.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                    if(image.Info.Sectors - doneSectors >= sectorsToRead)
                     {
-                        sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                        doneSectors += SECTORS_TO_READ;
+                        sector      =  image.ReadSectors(doneSectors, sectorsToRead);
+                        doneSectors += sectorsToRead;
                     }
                     else
                     {
@@ -108,7 +108,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
             }
         }
     }

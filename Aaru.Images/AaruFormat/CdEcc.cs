@@ -38,39 +38,39 @@ namespace Aaru.DiscImages
 {
     public partial class AaruFormat
     {
-        byte[] eccBTable;
-        byte[] eccFTable;
-        uint[] edcTable;
-        bool   initedEdc;
+        byte[] _eccBTable;
+        byte[] _eccFTable;
+        uint[] _edcTable;
+        bool   _initedEdc;
 
         void EccInit()
         {
-            if(initedEdc)
+            if(_initedEdc)
                 return;
 
-            eccFTable = new byte[256];
-            eccBTable = new byte[256];
-            edcTable  = new uint[256];
+            _eccFTable = new byte[256];
+            _eccBTable = new byte[256];
+            _edcTable  = new uint[256];
 
             for(uint i = 0; i < 256; i++)
             {
                 uint edc = i;
                 uint j   = (uint)((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
-                eccFTable[i]     = (byte)j;
-                eccBTable[i ^ j] = (byte)i;
+                _eccFTable[i]     = (byte)j;
+                _eccBTable[i ^ j] = (byte)i;
 
                 for(j = 0; j < 8; j++)
                     edc = (edc >> 1) ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
 
-                edcTable[i] = edc;
+                _edcTable[i] = edc;
             }
 
-            initedEdc = true;
+            _initedEdc = true;
         }
 
         bool SuffixIsCorrect(byte[] sector)
         {
-            if(!initedEdc)
+            if(!_initedEdc)
                 EccInit();
 
             if(sector[0x814] != 0x00 || // reserved (8 bytes)
@@ -99,7 +99,7 @@ namespace Aaru.DiscImages
             int  pos       = 0;
 
             for(; size > 0; size--)
-                edc = (edc >> 8) ^ edcTable[(edc ^ sector[pos++]) & 0xFF];
+                edc = (edc >> 8) ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
 
             uint calculatedEdc = edc;
 
@@ -108,7 +108,7 @@ namespace Aaru.DiscImages
 
         bool SuffixIsCorrectMode2(byte[] sector)
         {
-            if(!initedEdc)
+            if(!_initedEdc)
                 EccInit();
 
             byte[] zeroaddress = new byte[4];
@@ -129,7 +129,7 @@ namespace Aaru.DiscImages
             int  pos       = 0x10;
 
             for(; size > 0; size--)
-                edc = (edc >> 8) ^ edcTable[(edc ^ sector[pos++]) & 0xFF];
+                edc = (edc >> 8) ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
 
             uint calculatedEdc = edc;
 
@@ -159,10 +159,10 @@ namespace Aaru.DiscImages
 
                     eccA ^= temp;
                     eccB ^= temp;
-                    eccA =  eccFTable[eccA];
+                    eccA =  _eccFTable[eccA];
                 }
 
-                eccA = eccBTable[eccFTable[eccA] ^ eccB];
+                eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
                 if(ecc[major              + eccOffset] != eccA ||
                    ecc[major + majorCount + eccOffset] != (eccA ^ eccB))
@@ -195,10 +195,10 @@ namespace Aaru.DiscImages
 
                     eccA ^= temp;
                     eccB ^= temp;
-                    eccA =  eccFTable[eccA];
+                    eccA =  _eccFTable[eccA];
                 }
 
-                eccA                                = eccBTable[eccFTable[eccA] ^ eccB];
+                eccA                                = _eccBTable[_eccFTable[eccA] ^ eccB];
                 ecc[major              + eccOffset] = eccA;
                 ecc[major + majorCount + eccOffset] = (byte)(eccA ^ eccB);
             }
@@ -274,7 +274,7 @@ namespace Aaru.DiscImages
         {
             byte[] computedEdc;
 
-            if(!initedEdc)
+            if(!_initedEdc)
                 EccInit();
 
             switch(type)
@@ -345,13 +345,13 @@ namespace Aaru.DiscImages
 
         uint ComputeEdc(uint edc, byte[] src, int size, int srcOffset = 0)
         {
-            if(!initedEdc)
+            if(!_initedEdc)
                 EccInit();
 
             int pos = srcOffset;
 
             for(; size > 0; size--)
-                edc = (edc >> 8) ^ edcTable[(edc ^ src[pos++]) & 0xFF];
+                edc = (edc >> 8) ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
 
             return edc;
         }

@@ -44,14 +44,14 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = new List<string>(dirList);
+            contents = new List<string>(_dirList);
 
             return Errno.NoError;
         }
@@ -103,17 +103,17 @@ namespace Aaru.Filesystems
                                entry.extension[e] != 0x00)
                                 return false;
 
-                        label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
-                        labelCreationDate = new byte[4];
-                        labelUpdateDate   = new byte[4];
-                        Array.Copy(directory, off + 24, labelCreationDate, 0, 4);
-                        Array.Copy(directory, off + 28, labelUpdateDate, 0, 4);
+                        _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
+                        _labelCreationDate = new byte[4];
+                        _labelUpdateDate   = new byte[4];
+                        Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
+                        Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
                     }
                     else if(entry.statusUser == 0x21)
                         if(directory[off + 1] == 0x00)
-                            thirdPartyTimestamps = true;
+                            _thirdPartyTimestamps = true;
                         else
-                            standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
+                            _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
                 }
 
                 return fileCount > 0;

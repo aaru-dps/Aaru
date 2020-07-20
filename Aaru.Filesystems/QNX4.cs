@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public class QNX4 : IFilesystem
     {
-        readonly byte[] qnx4_rootDir_fname =
+        readonly byte[] _rootDirFname =
         {
             0x2F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
@@ -67,10 +67,10 @@ namespace Aaru.Filesystems
             if(sector.Length < 512)
                 return false;
 
-            QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
+            Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             // Check root directory name
-            if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname))
+            if(!_rootDirFname.SequenceEqual(qnxSb.rootDir.di_fname))
                 return false;
 
             // Check sizes are multiple of blocks
@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
             if(sector.Length < 512)
                 return;
 
-            QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
+            Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             // Too much useless information
             /*
@@ -201,36 +201,36 @@ namespace Aaru.Filesystems
             XmlFsType.Bootable |= qnxSb.boot.di_size != 0 || qnxSb.altBoot.di_size != 0;
         }
 
-        struct QNX4_Extent
+        struct Extent
         {
             public uint block;
             public uint length;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_Inode
+        struct Inode
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] di_fname;
-            public readonly uint        di_size;
-            public readonly QNX4_Extent di_first_xtnt;
-            public readonly uint        di_xblk;
-            public readonly uint        di_ftime;
-            public readonly uint        di_mtime;
-            public readonly uint        di_atime;
-            public readonly uint        di_ctime;
-            public readonly ushort      di_num_xtnts;
-            public readonly ushort      di_mode;
-            public readonly ushort      di_uid;
-            public readonly ushort      di_gid;
-            public readonly ushort      di_nlink;
-            public readonly uint        di_zero;
-            public readonly byte        di_type;
-            public readonly byte        di_status;
+            public readonly uint   di_size;
+            public readonly Extent di_first_xtnt;
+            public readonly uint   di_xblk;
+            public readonly uint   di_ftime;
+            public readonly uint   di_mtime;
+            public readonly uint   di_atime;
+            public readonly uint   di_ctime;
+            public readonly ushort di_num_xtnts;
+            public readonly ushort di_mode;
+            public readonly ushort di_uid;
+            public readonly ushort di_gid;
+            public readonly ushort di_nlink;
+            public readonly uint   di_zero;
+            public readonly byte   di_type;
+            public readonly byte   di_status;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_LinkInfo
+        struct LinkInfo
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
             public readonly byte[] dl_fname;
@@ -242,7 +242,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_ExtentBlock
+        struct ExtentBlock
         {
             public readonly uint next_xblk;
             public readonly uint prev_xblk;
@@ -251,19 +251,19 @@ namespace Aaru.Filesystems
             public readonly byte[] spare;
             public readonly uint num_blocks;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-            public readonly QNX4_Extent[] xtnts;
+            public readonly Extent[] xtnts;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] signature;
-            public readonly QNX4_Extent first_xtnt;
+            public readonly Extent first_xtnt;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QNX4_Superblock
+        struct Superblock
         {
-            public readonly QNX4_Inode rootDir;
-            public readonly QNX4_Inode inode;
-            public readonly QNX4_Inode boot;
-            public readonly QNX4_Inode altBoot;
+            public readonly Inode rootDir;
+            public readonly Inode inode;
+            public readonly Inode boot;
+            public readonly Inode altBoot;
         }
     }
 }

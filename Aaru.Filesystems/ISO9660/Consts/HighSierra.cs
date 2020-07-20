@@ -37,7 +37,7 @@ namespace Aaru.Filesystems
 {
     public partial class ISO9660
     {
-        const           string HIGH_SIERRA_MAGIC             = "CDROM";
-        static readonly int    HighSierraDirectoryRecordSize = Marshal.SizeOf<HighSierraDirectoryRecord>();
+        const           string HIGH_SIERRA_MAGIC              = "CDROM";
+        static readonly int    _highSierraDirectoryRecordSize = Marshal.SizeOf<HighSierraDirectoryRecord>();
     }
 }

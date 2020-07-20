@@ -55,7 +55,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -90,28 +90,28 @@ namespace Aaru.DiscImages
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
-            if(cylinder >= sectorsData.Length)
+            if(cylinder >= _sectorsData.Length)
             {
                 ErrorMessage = "Sector address not found";
 
                 return false;
             }
 
-            if(head >= sectorsData[cylinder].Length)
+            if(head >= _sectorsData[cylinder].Length)
             {
                 ErrorMessage = "Sector address not found";
 
                 return false;
             }
 
-            if(sector > sectorsData[cylinder][head].Length)
+            if(sector > _sectorsData[cylinder][head].Length)
             {
                 ErrorMessage = "Sector address not found";
 
                 return false;
             }
 
-            sectorsData[cylinder][head][sector] = data;
+            _sectorsData[cylinder][head][sector] = data;
 
             return true;
         }
@@ -122,28 +122,28 @@ namespace Aaru.DiscImages
             {
                 (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
-                if(cylinder >= sectorsData.Length)
+                if(cylinder >= _sectorsData.Length)
                 {
                     ErrorMessage = "Sector address not found";
 
                     return false;
                 }
 
-                if(head >= sectorsData[cylinder].Length)
+                if(head >= _sectorsData[cylinder].Length)
                 {
                     ErrorMessage = "Sector address not found";
 
                     return false;
                 }
 
-                if(sector > sectorsData[cylinder][head].Length)
+                if(sector > _sectorsData[cylinder][head].Length)
                 {
                     ErrorMessage = "Sector address not found";
 
                     return false;
                 }
 
-                sectorsData[cylinder][head][sector] = data;
+                _sectorsData[cylinder][head][sector] = data;
             }
 
             return true;
@@ -166,19 +166,19 @@ namespace Aaru.DiscImages
         // TODO: Try if apridisk software supports finding other chunks, to extend metadata support
         public bool Close()
         {
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(signature, 0, signature.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(_signature, 0, _signature.Length);
 
             byte[] hdr = new byte[Marshal.SizeOf<ApridiskRecord>()];
 
-            for(ushort c = 0; c < imageInfo.Cylinders; c++)
+            for(ushort c = 0; c < _imageInfo.Cylinders; c++)
             {
-                for(byte h = 0; h < imageInfo.Heads; h++)
+                for(byte h = 0; h < _imageInfo.Heads; h++)
                 {
-                    for(byte s = 0; s < imageInfo.SectorsPerTrack; s++)
+                    for(byte s = 0; s < _imageInfo.SectorsPerTrack; s++)
                     {
-                        if(sectorsData[c][h][s]        == null ||
-                           sectorsData[c][h][s].Length == 0)
+                        if(_sectorsData[c][h][s]        == null ||
+                           _sectorsData[c][h][s].Length == 0)
                             continue;
 
                         var record = new ApridiskRecord
@@ -186,7 +186,7 @@ namespace Aaru.DiscImages
                             type        = RecordType.Sector,
                             compression = CompressType.Uncompresed,
                             headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
-                            dataSize    = (uint)sectorsData[c][h][s].Length,
+                            dataSize    = (uint)_sectorsData[c][h][s].Length,
                             head        = h,
                             sector      = s,
                             cylinder    = c
@@ -194,15 +194,15 @@ namespace Aaru.DiscImages
 
                         MemoryMarshal.Write(hdr, ref record);
 
-                        writingStream.Write(hdr, 0, hdr.Length);
-                        writingStream.Write(sectorsData[c][h][s], 0, sectorsData[c][h][s].Length);
+                        _writingStream.Write(hdr, 0, hdr.Length);
+                        _writingStream.Write(_sectorsData[c][h][s], 0, _sectorsData[c][h][s].Length);
                     }
                 }
             }
 
-            if(!string.IsNullOrEmpty(imageInfo.Creator))
+            if(!string.IsNullOrEmpty(_imageInfo.Creator))
             {
-                byte[] creatorBytes = Encoding.UTF8.GetBytes(imageInfo.Creator);
+                byte[] creatorBytes = Encoding.UTF8.GetBytes(_imageInfo.Creator);
 
                 var creatorRecord = new ApridiskRecord
                 {
@@ -217,14 +217,14 @@ namespace Aaru.DiscImages
 
                 MemoryMarshal.Write(hdr, ref creatorRecord);
 
-                writingStream.Write(hdr, 0, hdr.Length);
-                writingStream.Write(creatorBytes, 0, creatorBytes.Length);
-                writingStream.WriteByte(0); // Termination
+                _writingStream.Write(hdr, 0, hdr.Length);
+                _writingStream.Write(creatorBytes, 0, creatorBytes.Length);
+                _writingStream.WriteByte(0); // Termination
             }
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
             {
-                byte[] commentBytes = Encoding.UTF8.GetBytes(imageInfo.Comments);
+                byte[] commentBytes = Encoding.UTF8.GetBytes(_imageInfo.Comments);
 
                 var commentRecord = new ApridiskRecord
                 {
@@ -239,13 +239,13 @@ namespace Aaru.DiscImages
 
                 MemoryMarshal.Write(hdr, ref commentRecord);
 
-                writingStream.Write(hdr, 0, hdr.Length);
-                writingStream.Write(commentBytes, 0, commentBytes.Length);
-                writingStream.WriteByte(0); // Termination
+                _writingStream.Write(hdr, 0, hdr.Length);
+                _writingStream.Write(commentBytes, 0, commentBytes.Length);
+                _writingStream.WriteByte(0); // Termination
             }
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -255,8 +255,8 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.Comments = metadata.Comments;
-            imageInfo.Creator  = metadata.Creator;
+            _imageInfo.Comments = metadata.Comments;
+            _imageInfo.Creator  = metadata.Creator;
 
             return true;
         }
@@ -284,19 +284,19 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            sectorsData = new byte[cylinders][][][];
+            _sectorsData = new byte[cylinders][][][];
 
             for(ushort c = 0; c < cylinders; c++)
             {
-                sectorsData[c] = new byte[heads][][];
+                _sectorsData[c] = new byte[heads][][];
 
                 for(byte h = 0; h < heads; h++)
-                    sectorsData[c][h] = new byte[sectorsPerTrack][];
+                    _sectorsData[c][h] = new byte[sectorsPerTrack][];
             }
 
-            imageInfo.Cylinders       = cylinders;
-            imageInfo.Heads           = heads;
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Cylinders       = cylinders;
+            _imageInfo.Heads           = heads;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
 
             return true;
         }

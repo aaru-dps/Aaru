@@ -56,23 +56,23 @@ namespace Aaru.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Nhdr0Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
+            _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
 
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
+            _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - nhdhdr.dwHeadSize);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)(nhdhdr.dwCylinder * nhdhdr.wHead * nhdhdr.wSect);
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize           = (uint)nhdhdr.wSectLen;
-            imageInfo.Cylinders            = (uint)nhdhdr.dwCylinder;
-            imageInfo.Heads                = (uint)nhdhdr.wHead;
-            imageInfo.SectorsPerTrack      = (uint)nhdhdr.wSect;
-            imageInfo.Comments             = StringHandlers.CToString(nhdhdr.szComment, shiftjis);
+            _imageInfo.ImageSize            = (ulong)(stream.Length - _nhdhdr.dwHeadSize);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;
+            _imageInfo.Cylinders            = (uint)_nhdhdr.dwCylinder;
+            _imageInfo.Heads                = (uint)_nhdhdr.wHead;
+            _imageInfo.SectorsPerTrack      = (uint)_nhdhdr.wSect;
+            _imageInfo.Comments             = StringHandlers.CToString(_nhdhdr.szComment, shiftjis);
 
-            nhdImageFilter = imageFilter;
+            _nhdImageFilter = imageFilter;
 
             return true;
         }
@@ -81,19 +81,19 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = nhdImageFilter.GetDataForkStream();
+            Stream stream = _nhdImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)nhdhdr.dwHeadSize + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
 {
     public partial class RsIde : IWritableImage
     {
-        ushort     dataOff;
-        byte[]     identify;
-        ImageInfo  imageInfo;
-        IFilter    rsIdeImageFilter;
-        FileStream writingStream;
+        ushort     _dataOff;
+        byte[]     _identify;
+        ImageInfo  _imageInfo;
+        IFilter    _rsIdeImageFilter;
+        FileStream _writingStream;
 
-        public RsIde() => imageInfo = new ImageInfo
+        public RsIde() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

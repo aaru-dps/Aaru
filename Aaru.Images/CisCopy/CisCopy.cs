@@ -55,12 +55,12 @@ namespace Aaru.DiscImages
      */
     public partial class CisCopy : IWritableImage
     {
-        byte[]     decodedDisk;
-        ImageInfo  imageInfo;
-        long       writingOffset;
-        FileStream writingStream;
+        byte[]     _decodedDisk;
+        ImageInfo  _imageInfo;
+        long       _writingOffset;
+        FileStream _writingStream;
 
-        public CisCopy() => imageInfo = new ImageInfo
+        public CisCopy() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

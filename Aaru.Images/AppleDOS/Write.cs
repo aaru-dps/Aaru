@@ -66,7 +66,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -75,7 +75,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -84,8 +84,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            deinterleaved = new byte[35 * 16 * 256];
-            extension     = Path.GetExtension(path);
+            _deinterleaved = new byte[35 * 16 * 256];
+            _extension     = Path.GetExtension(path);
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -111,21 +111,21 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            Array.Copy(data, 0, deinterleaved, (int)(sectorAddress * imageInfo.SectorSize), data.Length);
+            Array.Copy(data, 0, _deinterleaved, (int)(sectorAddress * _imageInfo.SectorSize), data.Length);
 
             ErrorMessage = "";
 
@@ -155,32 +155,32 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            bool isDos = deinterleaved[0x11001] == 17 && deinterleaved[0x11002] < 16 && deinterleaved[0x11027] <= 122 &&
-                         deinterleaved[0x11034] == 35 && deinterleaved[0x11035] == 16 && deinterleaved[0x11036] == 0 &&
-                         deinterleaved[0x11037] == 1;
+            bool isDos = _deinterleaved[0x11001] == 17  && _deinterleaved[0x11002] < 16 &&
+                         _deinterleaved[0x11027] <= 122 && _deinterleaved[0x11034] == 35 &&
+                         _deinterleaved[0x11035] == 16  && _deinterleaved[0x11036] == 0 && _deinterleaved[0x11037] == 1;
 
-            byte[] tmp = new byte[deinterleaved.Length];
+            byte[] tmp = new byte[_deinterleaved.Length];
 
-            int[] offsets = extension == ".do"
+            int[] offsets = _extension == ".do"
                                 ? isDos
-                                      ? deinterleave
-                                      : interleave
+                                      ? _deinterleave
+                                      : _interleave
                                 : isDos
-                                    ? interleave
-                                    : deinterleave;
+                                    ? _interleave
+                                    : _deinterleave;
 
             for(int t = 0; t < 35; t++)
             {
                 for(int s = 0; s < 16; s++)
-                    Array.Copy(deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
+                    Array.Copy(_deinterleaved, (t * 16 * 256) + (offsets[s] * 256), tmp, (t * 16 * 256) + (s * 256),
                                256);
             }
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(tmp, 0, tmp.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(tmp, 0, tmp.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

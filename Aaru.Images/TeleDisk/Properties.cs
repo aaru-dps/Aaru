@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class TeleDisk
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Sydex TeleDisk";
         public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");

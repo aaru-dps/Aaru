@@ -50,30 +50,30 @@ namespace Aaru.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
                 stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
-                vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
 
-                vmCHdr = new VMwareCowHeader();
+                _vmCHdr = new VMwareCowHeader();
 
                 if(stream.Length <= Marshal.SizeOf<VMwareCowHeader>())
-                    return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
-                           vmCHdr.magic                                          == VMWARE_COW_MAGIC;
+                    return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                           _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
 
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
                 stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
-                vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
 
-                return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
-                       vmCHdr.magic                                          == VMWARE_COW_MAGIC;
+                return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
+                       _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
             }
 
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(ddfMagic, 0, 0x15);
 
-            return ddfMagicBytes.SequenceEqual(ddfMagic);
+            return _ddfMagicBytes.SequenceEqual(ddfMagic);
         }
     }
 }

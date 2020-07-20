@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -73,7 +73,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -82,11 +82,11 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            chunks           = new Dictionary<ulong, BlockChunk>();
-            currentChunk     = new BlockChunk();
-            currentSector    = 0;
-            dataForkChecksum = new Crc32Context();
-            masterChecksum   = new Crc32Context();
+            _chunks           = new Dictionary<ulong, BlockChunk>();
+            _currentChunk     = new BlockChunk();
+            _currentSector    = 0;
+            _dataForkChecksum = new Crc32Context();
+            _masterChecksum   = new Crc32Context();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -110,59 +110,59 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            if(sectorAddress < currentSector)
+            if(sectorAddress < _currentSector)
             {
                 ErrorMessage = "Tried to rewind, this format rewinded on writing";
 
                 return false;
             }
 
-            masterChecksum.Update(data);
+            _masterChecksum.Update(data);
 
             bool isEmpty = ArrayHelpers.ArrayIsNullOrEmpty(data);
 
-            switch(currentChunk.type)
+            switch(_currentChunk.type)
             {
                 case CHUNK_TYPE_ZERO:
-                    currentChunk.type = isEmpty ? CHUNK_TYPE_NOCOPY : CHUNK_TYPE_COPY;
+                    _currentChunk.type = isEmpty ? CHUNK_TYPE_NOCOPY : CHUNK_TYPE_COPY;
 
                     break;
                 case CHUNK_TYPE_NOCOPY when !isEmpty:
                 case CHUNK_TYPE_COPY when isEmpty:
-                    chunks.Add(currentChunk.sector, currentChunk);
+                    _chunks.Add(_currentChunk.sector, _currentChunk);
 
-                    currentChunk = new BlockChunk
+                    _currentChunk = new BlockChunk
                     {
                         type   = isEmpty ? CHUNK_TYPE_NOCOPY : CHUNK_TYPE_COPY,
-                        sector = currentSector,
-                        offset = (ulong)(isEmpty ? 0 : writingStream.Position)
+                        sector = _currentSector,
+                        offset = (ulong)(isEmpty ? 0 : _writingStream.Position)
                     };
 
                     break;
             }
 
-            currentChunk.sectors++;
-            currentChunk.length += (ulong)(isEmpty ? 0 : 512);
-            currentSector++;
+            _currentChunk.sectors++;
+            _currentChunk.length += (ulong)(isEmpty ? 0 : 512);
+            _currentSector++;
 
             if(!isEmpty)
             {
-                dataForkChecksum.Update(data);
-                writingStream.Write(data, 0, data.Length);
+                _dataForkChecksum.Update(data);
+                _writingStream.Write(data, 0, data.Length);
             }
 
             ErrorMessage = "";
@@ -180,14 +180,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
@@ -197,20 +197,20 @@ namespace Aaru.DiscImages
             // Ignore empty sectors
             if(ArrayHelpers.ArrayIsNullOrEmpty(data))
             {
-                if(currentChunk.type == CHUNK_TYPE_COPY)
+                if(_currentChunk.type == CHUNK_TYPE_COPY)
                 {
-                    chunks.Add(currentChunk.sector, currentChunk);
+                    _chunks.Add(_currentChunk.sector, _currentChunk);
 
-                    currentChunk = new BlockChunk
+                    _currentChunk = new BlockChunk
                     {
                         type   = CHUNK_TYPE_NOCOPY,
-                        sector = currentSector
+                        sector = _currentSector
                     };
                 }
 
-                currentChunk.sectors += (ulong)(data.Length / imageInfo.SectorSize);
-                currentSector        += (ulong)(data.Length / imageInfo.SectorSize);
-                masterChecksum.Update(data);
+                _currentChunk.sectors += (ulong)(data.Length / _imageInfo.SectorSize);
+                _currentSector        += (ulong)(data.Length / _imageInfo.SectorSize);
+                _masterChecksum.Update(data);
 
                 ErrorMessage = "";
 
@@ -219,8 +219,8 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] tmp = new byte[imageInfo.SectorSize];
-                Array.Copy(data, i * imageInfo.SectorSize, tmp, 0, imageInfo.SectorSize);
+                byte[] tmp = new byte[_imageInfo.SectorSize];
+                Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
                 if(!WriteSector(tmp, sectorAddress + i))
                     return false;
@@ -254,26 +254,26 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(currentChunk.type != CHUNK_TYPE_NOCOPY)
-                currentChunk.length = currentChunk.sectors * 512;
+            if(_currentChunk.type != CHUNK_TYPE_NOCOPY)
+                _currentChunk.length = _currentChunk.sectors * 512;
 
-            chunks.Add(currentChunk.sector, currentChunk);
+            _chunks.Add(_currentChunk.sector, _currentChunk);
 
-            chunks.Add(imageInfo.Sectors, new BlockChunk
+            _chunks.Add(_imageInfo.Sectors, new BlockChunk
             {
                 type   = CHUNK_TYPE_END,
-                sector = imageInfo.Sectors
+                sector = _imageInfo.Sectors
             });
 
             var bHdr = new BlockHeader
             {
                 signature    = CHUNK_SIGNATURE,
                 version      = 1,
-                sectorCount  = imageInfo.Sectors,
+                sectorCount  = _imageInfo.Sectors,
                 checksumType = UDIF_CHECKSUM_TYPE_CRC32,
                 checksumLen  = 32,
-                checksum     = BitConverter.ToUInt32(dataForkChecksum.Final().Reverse().ToArray(), 0),
-                chunks       = (uint)chunks.Count
+                checksum     = BitConverter.ToUInt32(_dataForkChecksum.Final().Reverse().ToArray(), 0),
+                chunks       = (uint)_chunks.Count
             };
 
             var chunkMs = new MemoryStream();
@@ -296,7 +296,7 @@ namespace Aaru.DiscImages
             chunkMs.Write(new byte[124], 0, 124);
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.chunks), 0, 4);
 
-            foreach(BlockChunk chunk in chunks.Values)
+            foreach(BlockChunk chunk in _chunks.Values)
             {
                 chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.type), 0, 4);
                 chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.comment), 0, 4);
@@ -338,20 +338,20 @@ namespace Aaru.DiscImages
                 }
             }.ToXmlPropertyList());
 
-            footer = new UdifFooter
+            _footer = new UdifFooter
             {
                 signature       = UDIF_SIGNATURE,
                 version         = 4,
                 headerSize      = 512,
                 flags           = 1,
-                dataForkLen     = (ulong)writingStream.Length,
+                dataForkLen     = (ulong)_writingStream.Length,
                 segmentNumber   = 1,
                 segmentCount    = 1,
                 segmentId       = Guid.NewGuid(),
                 dataForkChkType = UDIF_CHECKSUM_TYPE_CRC32,
                 dataForkChkLen  = 32,
-                dataForkChk     = BitConverter.ToUInt32(dataForkChecksum.Final().Reverse().ToArray(), 0),
-                plistOff        = (ulong)writingStream.Length,
+                dataForkChk     = BitConverter.ToUInt32(_dataForkChecksum.Final().Reverse().ToArray(), 0),
+                plistOff        = (ulong)_writingStream.Length,
                 plistLen        = (ulong)plist.Length,
 
                 // TODO: Find how is this calculated
@@ -359,40 +359,40 @@ namespace Aaru.DiscImages
                 masterChkLen    = 32,
                 masterChk       = BitConverter.ToUInt32(masterChecksum.Final().Reverse().ToArray(), 0),*/
                 imageVariant = 2,
-                sectorCount  = imageInfo.Sectors
+                sectorCount  = _imageInfo.Sectors
             };
 
-            writingStream.Seek(0, SeekOrigin.End);
-            writingStream.Write(plist, 0, plist.Length);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.signature), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.version), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.headerSize), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.flags), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.runningDataForkOff), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.dataForkOff), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.dataForkLen), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.rsrcForkOff), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.rsrcForkLen), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.segmentNumber), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.segmentCount), 0, 4);
-            writingStream.Write(footer.segmentId.ToByteArray(), 0, 16);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.dataForkChkType), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.dataForkChkLen), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.dataForkChk), 0, 4);
-            writingStream.Write(new byte[124], 0, 124);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.plistOff), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.plistLen), 0, 8);
-            writingStream.Write(new byte[120], 0, 120);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.masterChkType), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.masterChkLen), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.masterChk), 0, 4);
-            writingStream.Write(new byte[124], 0, 124);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.imageVariant), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(footer.sectorCount), 0, 8);
-            writingStream.Write(new byte[12], 0, 12);
+            _writingStream.Seek(0, SeekOrigin.End);
+            _writingStream.Write(plist, 0, plist.Length);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.signature), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.version), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.headerSize), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.flags), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.runningDataForkOff), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkOff), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkLen), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkOff), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkLen), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentNumber), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentCount), 0, 4);
+            _writingStream.Write(_footer.segmentId.ToByteArray(), 0, 16);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkType), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkLen), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChk), 0, 4);
+            _writingStream.Write(new byte[124], 0, 124);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistOff), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistLen), 0, 8);
+            _writingStream.Write(new byte[120], 0, 120);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkType), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkLen), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChk), 0, 4);
+            _writingStream.Write(new byte[124], 0, 124);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.imageVariant), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.sectorCount), 0, 8);
+            _writingStream.Write(new byte[12], 0, 12);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

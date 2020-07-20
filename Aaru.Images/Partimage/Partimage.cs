@@ -43,17 +43,17 @@ namespace Aaru.DiscImages
 {
     public partial class Partimage : IMediaImage, IVerifiableImage
     {
-        byte[]                    bitmap;
-        PartimageMainHeader       cMainHeader;
-        PartimageHeader           cVolumeHeader;
-        long                      dataOff;
-        ExtentsULong              extents;
-        Dictionary<ulong, ulong>  extentsOff;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        Dictionary<ulong, byte[]> sectorCache;
+        byte[]                    _bitmap;
+        PartimageMainHeader       _cMainHeader;
+        PartimageHeader           _cVolumeHeader;
+        long                      _dataOff;
+        ExtentsULong              _extents;
+        Dictionary<ulong, ulong>  _extentsOff;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        Dictionary<ulong, byte[]> _sectorCache;
 
-        public Partimage() => imageInfo = new ImageInfo
+        public Partimage() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

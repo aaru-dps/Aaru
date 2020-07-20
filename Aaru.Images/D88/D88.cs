@@ -42,10 +42,10 @@ namespace Aaru.DiscImages
     // TODO: Solve media types
     public partial class D88 : IMediaImage
     {
-        ImageInfo    imageInfo;
-        List<byte[]> sectorsData;
+        ImageInfo    _imageInfo;
+        List<byte[]> _sectorsData;
 
-        public D88() => imageInfo = new ImageInfo
+        public D88() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

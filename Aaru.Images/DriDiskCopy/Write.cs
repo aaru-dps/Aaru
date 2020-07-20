@@ -69,7 +69,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            footer = new DriFooter
+            _footer = new DriFooter
             {
                 signature = new byte[51],
                 bpb = new DriBpb
@@ -99,19 +99,19 @@ namespace Aaru.DiscImages
                     five      = 5,
                     driveCode = DriDriveCodes.mf2ed,
                     cylinders = geometry.cylinders,
-                    bps       = (ushort)imageInfo.SectorSize,
-                    sectors   = (ushort)imageInfo.Sectors,
-                    sptrack   = (ushort)imageInfo.SectorsPerTrack,
-                    heads     = (ushort)imageInfo.Heads,
-                    sptrack2  = (ushort)imageInfo.SectorsPerTrack,
+                    bps       = (ushort)_imageInfo.SectorSize,
+                    sectors   = (ushort)_imageInfo.Sectors,
+                    sptrack   = (ushort)_imageInfo.SectorsPerTrack,
+                    heads     = (ushort)_imageInfo.Heads,
+                    sptrack2  = (ushort)_imageInfo.SectorsPerTrack,
                     unknown5  = new byte[144]
                 }
             };
 
             Array.Copy(Encoding.ASCII.GetBytes("DiskImage 2.01 (C) 1990,1991 Digital Research Inc"), 0,
-                       footer.signature, 0, 49);
+                       _footer.signature, 0, 49);
 
-            footer.bpbcopy = footer.bpb;
+            _footer.bpbcopy = _footer.bpb;
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -135,22 +135,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -166,22 +166,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -213,15 +213,15 @@ namespace Aaru.DiscImages
 
             byte[] hdr    = new byte[Marshal.SizeOf<DriFooter>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DriFooter>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(footer, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_footer, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.End);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.End);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

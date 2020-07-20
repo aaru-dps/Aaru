@@ -44,26 +44,26 @@ namespace Aaru.Filesystems
     // X68K uses cdate/adate from direntry for extending filename
     public partial class FAT : IReadOnlyFilesystem
     {
-        uint                                                           bytesPerCluster;
-        byte[]                                                         cachedEaData;
-        CultureInfo                                                    cultureInfo;
-        bool                                                           debug;
-        Dictionary<string, Dictionary<string, CompleteDirectoryEntry>> directoryCache;
-        DirectoryEntry                                                 eaDirEntry;
-        bool                                                           fat12;
-        bool                                                           fat16;
-        bool                                                           fat32;
-        ushort[]                                                       fatEntries;
-        ulong                                                          fatFirstSector;
-        ulong                                                          firstClusterSector;
-        bool                                                           mounted;
-        Namespace                                                      @namespace;
-        uint                                                           reservedSectors;
-        Dictionary<string, CompleteDirectoryEntry>                     rootDirectoryCache;
-        uint                                                           sectorsPerCluster;
-        uint                                                           sectorsPerFat;
-        FileSystemInfo                                                 statfs;
-        bool                                                           useFirstFat;
+        uint                                                           _bytesPerCluster;
+        byte[]                                                         _cachedEaData;
+        CultureInfo                                                    _cultureInfo;
+        bool                                                           _debug;
+        Dictionary<string, Dictionary<string, CompleteDirectoryEntry>> _directoryCache;
+        DirectoryEntry                                                 _eaDirEntry;
+        bool                                                           _fat12;
+        bool                                                           _fat16;
+        bool                                                           _fat32;
+        ushort[]                                                       _fatEntries;
+        ulong                                                          _fatFirstSector;
+        ulong                                                          _firstClusterSector;
+        bool                                                           _mounted;
+        Namespace                                                      _namespace;
+        uint                                                           _reservedSectors;
+        Dictionary<string, CompleteDirectoryEntry>                     _rootDirectoryCache;
+        uint                                                           _sectorsPerCluster;
+        uint                                                           _sectorsPerFat;
+        FileSystemInfo                                                 _statfs;
+        bool                                                           _useFirstFat;
 
         public FileSystemType XmlFsType { get; private set; }
 

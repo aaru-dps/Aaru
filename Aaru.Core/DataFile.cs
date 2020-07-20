@@ -40,40 +40,40 @@ namespace Aaru.Core
     [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
     public class DataFile
     {
-        readonly FileStream dataFs;
+        readonly FileStream _dataFs;
 
         /// <summary>Opens, or create, a new file</summary>
         /// <param name="outputFile">File</param>
         public DataFile(string outputFile) =>
-            dataFs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            _dataFs = new FileStream(outputFile, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
         /// <summary>Closes the file</summary>
-        public void Close() => dataFs?.Close();
+        public void Close() => _dataFs?.Close();
 
         /// <summary>Reads bytes at current position</summary>
         /// <param name="array">Array to place read data within</param>
         /// <param name="offset">Offset of <see cref="array" /> where data will be read</param>
         /// <param name="count">How many bytes to read</param>
         /// <returns>How many bytes were read</returns>
-        public int Read(byte[] array, int offset, int count) => dataFs.Read(array, offset, count);
+        public int Read(byte[] array, int offset, int count) => _dataFs.Read(array, offset, count);
 
         /// <summary>Seeks to the specified block</summary>
         /// <param name="block">Block to seek to</param>
         /// <param name="blockSize">Block size in bytes</param>
         /// <returns>Position</returns>
-        public long Seek(ulong block, ulong blockSize) => dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
+        public long Seek(ulong block, ulong blockSize) => _dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
 
         /// <summary>Seeks to specified byte position</summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
-        public long Seek(ulong offset, SeekOrigin origin) => dataFs.Seek((long)offset, origin);
+        public long Seek(ulong offset, SeekOrigin origin) => _dataFs.Seek((long)offset, origin);
 
         /// <summary>Seeks to specified byte position</summary>
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
-        public long Seek(long offset, SeekOrigin origin) => dataFs.Seek(offset, origin);
+        public long Seek(long offset, SeekOrigin origin) => _dataFs.Seek(offset, origin);
 
         /// <summary>Writes data at current position</summary>
         /// <param name="data">Data</param>
@@ -83,7 +83,7 @@ namespace Aaru.Core
         /// <param name="data">Data</param>
         /// <param name="offset">Offset of data from where to start taking data to write</param>
         /// <param name="count">How many bytes to write</param>
-        public void Write(byte[] data, int offset, int count) => dataFs.Write(data, offset, count);
+        public void Write(byte[] data, int offset, int count) => _dataFs.Write(data, offset, count);
 
         /// <summary>Writes data at specified block</summary>
         /// <param name="data">Data</param>
@@ -100,12 +100,12 @@ namespace Aaru.Core
         /// <param name="count">How many bytes to write</param>
         public void WriteAt(byte[] data, ulong block, uint blockSize, int offset, int count)
         {
-            dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
-            dataFs.Write(data, offset, count);
+            _dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
+            _dataFs.Write(data, offset, count);
         }
 
         /// <summary>Current file position</summary>
-        public long Position => dataFs.Position;
+        public long Position => _dataFs.Position;
 
         /// <summary>Writes data to a newly created file</summary>
         /// <param name="who">Who asked the file to be written (class, plugin, etc.)</param>

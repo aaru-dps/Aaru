@@ -68,8 +68,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            const ushort ATA_PROFILE        = 0x0001;
-            const uint   TIMEOUT            = 5;
+            const ushort ataProfile         = 0x0001;
+            const uint   timeout            = 5;
             double       imageWriteDuration = 0;
             MediaType    mediaType          = MediaType.Unknown;
 
@@ -99,7 +99,7 @@ namespace Aaru.Core.Devices.Dumping
                     // Initializate reader
                     UpdateStatus?.Invoke("Initializing reader.");
                     _dumpLog.WriteLine("Initializing reader.");
-                    var ataReader = new Reader(_dev, TIMEOUT, ataIdentify, _errorLog);
+                    var ataReader = new Reader(_dev, timeout, ataIdentify, _errorLog);
 
                     // Fill reader blocks
                     ulong blocks = ataReader.GetDeviceBlocks();
@@ -248,7 +248,7 @@ namespace Aaru.Core.Devices.Dumping
                         mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
                                               _private);
 
-                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ATA_PROFILE);
+                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
                         if(_resume.NextBlock > 0)
                         {
@@ -469,7 +469,7 @@ namespace Aaru.Core.Devices.Dumping
                         mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
                                               _private);
 
-                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ATA_PROFILE);
+                        ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
                         ulong currentBlock = 0;
                         blocks = (ulong)(cylinders * heads * sectors);

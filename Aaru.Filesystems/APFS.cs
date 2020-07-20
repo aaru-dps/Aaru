@@ -58,12 +58,12 @@ namespace Aaru.Filesystems
             if(partition.Start >= partition.End)
                 return false;
 
-            byte[]                  sector = imagePlugin.ReadSector(partition.Start);
-            ApfsContainerSuperBlock nxSb;
+            byte[]              sector = imagePlugin.ReadSector(partition.Start);
+            ContainerSuperBlock nxSb;
 
             try
             {
-                nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
+                nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
             }
             catch
             {
@@ -84,12 +84,12 @@ namespace Aaru.Filesystems
             if(partition.Start >= partition.End)
                 return;
 
-            byte[]                  sector = imagePlugin.ReadSector(partition.Start);
-            ApfsContainerSuperBlock nxSb;
+            byte[]              sector = imagePlugin.ReadSector(partition.Start);
+            ContainerSuperBlock nxSb;
 
             try
             {
-                nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
+                nxSb = Marshal.ByteArrayToStructureLittleEndian<ContainerSuperBlock>(sector);
             }
             catch
             {
@@ -118,7 +118,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApfsContainerSuperBlock
+        struct ContainerSuperBlock
         {
             public readonly ulong unknown1; // Varies between copies of the superblock
             public readonly ulong unknown2;

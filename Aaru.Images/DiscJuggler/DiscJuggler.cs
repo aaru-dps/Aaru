@@ -43,14 +43,14 @@ namespace Aaru.DiscImages
     // TODO: Too many unknowns to make this writable
     public partial class DiscJuggler : IOpticalMediaImage
     {
+        byte[]                  _cdtext;
+        ImageInfo               _imageInfo;
+        Stream                  _imageStream;
+        Dictionary<uint, ulong> _offsetmap;
         SectorBuilder           _sectorBuilder;
-        byte[]                  cdtext;
-        ImageInfo               imageInfo;
-        Stream                  imageStream;
-        Dictionary<uint, ulong> offsetmap;
-        Dictionary<uint, byte>  trackFlags;
+        Dictionary<uint, byte>  _trackFlags;
 
-        public DiscJuggler() => imageInfo = new ImageInfo
+        public DiscJuggler() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

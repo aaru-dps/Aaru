@@ -72,17 +72,17 @@ namespace Aaru.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start);
             uint   magic  = BitConverter.ToUInt32(sector, 0x00);
 
-            var  sqSb         = new SquashSuperBlock();
+            var  sqSb         = new SuperBlock();
             bool littleEndian = true;
 
             switch(magic)
             {
                 case SQUASH_MAGIC:
-                    sqSb = Marshal.ByteArrayToStructureLittleEndian<SquashSuperBlock>(sector);
+                    sqSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
                     break;
                 case SQUASH_CIGAM:
-                    sqSb         = Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                    sqSb         = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
                     littleEndian = false;
 
                     break;
@@ -157,7 +157,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SquashSuperBlock
+        struct SuperBlock
         {
             public readonly uint   magic;
             public readonly uint   inodes;

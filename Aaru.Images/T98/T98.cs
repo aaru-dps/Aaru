@@ -40,11 +40,11 @@ namespace Aaru.DiscImages
 {
     public partial class T98 : IWritableImage
     {
-        ImageInfo  imageInfo;
-        IFilter    t98ImageFilter;
-        FileStream writingStream;
+        ImageInfo  _imageInfo;
+        IFilter    _t98ImageFilter;
+        FileStream _writingStream;
 
-        public T98() => imageInfo = new ImageInfo
+        public T98() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

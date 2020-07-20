@@ -49,7 +49,7 @@ namespace Aaru.Filesystems
         {
             dest = null;
 
-            return !mounted ? Errno.AccessDenied : Errno.NotSupported;
+            return !_mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
         /// <inheritdoc />
@@ -60,16 +60,16 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = catalogCache.Keys.ToList();
+            contents = _catalogCache.Keys.ToList();
 
-            if(debug)
+            if(_debug)
             {
                 contents.Add("$");
                 contents.Add("$Boot");
@@ -84,24 +84,24 @@ namespace Aaru.Filesystems
         Errno ReadCatalog()
         {
             var   catalogMs = new MemoryStream();
-            ulong lba       = (ulong)((vtoc.catalogTrack * sectorsPerTrack) + vtoc.catalogSector);
-            totalFileEntries = 0;
-            catalogCache     = new Dictionary<string, ushort>();
-            fileTypeCache    = new Dictionary<string, byte>();
-            fileSizeCache    = new Dictionary<string, int>();
-            lockedFiles      = new List<string>();
+            ulong lba       = (ulong)((_vtoc.catalogTrack * _sectorsPerTrack) + _vtoc.catalogSector);
+            _totalFileEntries = 0;
+            _catalogCache     = new Dictionary<string, ushort>();
+            _fileTypeCache    = new Dictionary<string, byte>();
+            _fileSizeCache    = new Dictionary<string, int>();
+            _lockedFiles      = new List<string>();
 
             if(lba == 0 ||
-               lba > device.Info.Sectors)
+               lba > _device.Info.Sectors)
                 return Errno.InvalidArgument;
 
             while(lba != 0)
             {
-                usedSectors++;
-                byte[] catSectorB = device.ReadSector(lba);
-                totalFileEntries += 7;
+                _usedSectors++;
+                byte[] catSectorB = _device.ReadSector(lba);
+                _totalFileEntries += 7;
 
-                if(debug)
+                if(_debug)
                     catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
@@ -109,8 +109,8 @@ namespace Aaru.Filesystems
 
                 foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
                 {
-                    track1UsedByFiles |= entry.extentTrack == 1;
-                    track2UsedByFiles |= entry.extentTrack == 2;
+                    _track1UsedByFiles |= entry.extentTrack == 1;
+                    _track2UsedByFiles |= entry.extentTrack == 2;
 
                     byte[] filenameB = new byte[30];
                     ushort ts        = (ushort)((entry.extentTrack << 8) | entry.extentSector);
@@ -121,28 +121,28 @@ namespace Aaru.Filesystems
 
                     string filename = StringHandlers.SpacePaddedToString(filenameB, Encoding);
 
-                    if(!catalogCache.ContainsKey(filename))
-                        catalogCache.Add(filename, ts);
+                    if(!_catalogCache.ContainsKey(filename))
+                        _catalogCache.Add(filename, ts);
 
-                    if(!fileTypeCache.ContainsKey(filename))
-                        fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
+                    if(!_fileTypeCache.ContainsKey(filename))
+                        _fileTypeCache.Add(filename, (byte)(entry.typeAndFlags & 0x7F));
 
-                    if(!fileSizeCache.ContainsKey(filename))
-                        fileSizeCache.Add(filename, entry.length * vtoc.bytesPerSector);
+                    if(!_fileSizeCache.ContainsKey(filename))
+                        _fileSizeCache.Add(filename, entry.length * _vtoc.bytesPerSector);
 
                     if((entry.typeAndFlags & 0x80) == 0x80 &&
-                       !lockedFiles.Contains(filename))
-                        lockedFiles.Add(filename);
+                       !_lockedFiles.Contains(filename))
+                        _lockedFiles.Add(filename);
                 }
 
-                lba = (ulong)((catSector.trackOfNext * sectorsPerTrack) + catSector.sectorOfNext);
+                lba = (ulong)((catSector.trackOfNext * _sectorsPerTrack) + catSector.sectorOfNext);
 
-                if(lba > device.Info.Sectors)
+                if(lba > _device.Info.Sectors)
                     break;
             }
 
-            if(debug)
-                catalogBlocks = catalogMs.ToArray();
+            if(_debug)
+                _catalogBlocks = catalogMs.ToArray();
 
             return Errno.NoError;
         }

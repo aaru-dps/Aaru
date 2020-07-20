@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            ccdFilter = imageFilter;
+            _ccdFilter = imageFilter;
 
             try
             {
@@ -76,9 +76,9 @@ namespace Aaru.DiscImages
                         return false;
                 }
 
-                cueStream = new StreamReader(ccdFilter.GetDataForkStream());
+                _cueStream = new StreamReader(_ccdFilter.GetDataForkStream());
 
-                string line = cueStream.ReadLine();
+                string line = _cueStream.ReadLine();
 
                 var hdr = new Regex(CCD_IDENTIFIER);
 
@@ -88,7 +88,7 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", ccdFilter);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _ccdFilter);
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

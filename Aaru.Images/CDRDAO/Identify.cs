@@ -74,14 +74,14 @@ namespace Aaru.DiscImages
                         return false;
                 }
 
-                tocStream = new StreamReader(imageFilter.GetDataForkStream());
+                _tocStream = new StreamReader(imageFilter.GetDataForkStream());
 
                 var cr = new Regex(REGEX_COMMENT);
                 var dr = new Regex(REGEX_DISCTYPE);
 
-                while(tocStream.Peek() >= 0)
+                while(_tocStream.Peek() >= 0)
                 {
-                    string line = tocStream.ReadLine();
+                    string line = _tocStream.ReadLine();
 
                     Match dm = dr.Match(line ?? throw new InvalidOperationException());
                     Match cm = cr.Match(line);
@@ -97,7 +97,7 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", cdrdaoFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrdaoFilter.GetFilename());
                 AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
                 AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 

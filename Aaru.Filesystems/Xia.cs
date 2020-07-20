@@ -62,7 +62,7 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
+            int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
@@ -71,8 +71,8 @@ namespace Aaru.Filesystems
             if(sbSizeInSectors + partition.Start >= partition.End)
                 return false;
 
-            byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
+            byte[]     sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
+            SuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
@@ -85,14 +85,14 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
+            int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
                 sbSizeInSectors++;
 
-            byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
+            byte[]     sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
+            SuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
 
             sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
 
@@ -133,7 +133,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct XiaSuperBlock
+        struct SuperBlock
         {
             /// <summary>1st sector reserved for boot</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
@@ -174,7 +174,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia directory entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct XiaDirect
+        struct DirectoryEntry
         {
             public readonly uint   d_ino;
             public readonly ushort d_rec_len;
@@ -185,7 +185,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia inode</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct XiaInode
+        struct Inode
         {
             public readonly ushort i_mode;
             public readonly ushort i_nlinks;

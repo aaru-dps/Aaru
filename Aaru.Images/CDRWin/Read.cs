@@ -164,7 +164,7 @@ namespace Aaru.DiscImages
                 bool firstTrackInSession = false;
 
                 ulong gdRomSession2Offset = 45000;
-                densitySeparationSectors = 0;
+                _densitySeparationSectors = 0;
 
                 while(_cueStream.Peek() >= 0)
                 {
@@ -1186,8 +1186,8 @@ namespace Aaru.DiscImages
                             _discImage.Tracks[i].Sequence == 3)
                     {
                         _offsetMap.Add(_discImage.Tracks[i].Sequence, gdRomSession2Offset);
-                        densitySeparationSectors += gdRomSession2Offset - previousPartitionsSize;
-                        previousPartitionsSize   =  gdRomSession2Offset;
+                        _densitySeparationSectors += gdRomSession2Offset - previousPartitionsSize;
+                        previousPartitionsSize    =  gdRomSession2Offset;
                     }
                     else if(_discImage.Tracks[i].Sequence > 1)
                         _offsetMap.Add(_discImage.Tracks[i].Sequence,
@@ -1221,7 +1221,7 @@ namespace Aaru.DiscImages
                 foreach(CdrWinTrack track in _discImage.Tracks)
                     _imageInfo.Sectors += track.Sectors;
 
-                _imageInfo.Sectors += densitySeparationSectors;
+                _imageInfo.Sectors += _densitySeparationSectors;
 
                 if(_discImage.MediaType != MediaType.CDROMXA &&
                    _discImage.MediaType != MediaType.CDDA    &&

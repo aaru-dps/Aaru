@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
     {
         const uint REISER4_SUPER_OFFSET = 0x10000;
 
-        readonly byte[] reiser4_magic =
+        readonly byte[] _magic =
         {
             0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x34, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };
@@ -67,9 +67,9 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<Reiser4_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End)
@@ -77,12 +77,12 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            Reiser4_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
+            Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            return reiser4_magic.SequenceEqual(reiserSb.magic);
+            return _magic.SequenceEqual(reiserSb.magic);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -99,19 +99,19 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<Reiser4_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Reiser4_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<Reiser4_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            Reiser4_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
+            Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            if(!reiser4_magic.SequenceEqual(reiserSb.magic))
+            if(!_magic.SequenceEqual(reiserSb.magic))
                 return;
 
             var sb = new StringBuilder();
@@ -135,7 +135,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Reiser4_Superblock
+        struct Superblock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] magic;

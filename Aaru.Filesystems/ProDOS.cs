@@ -191,9 +191,9 @@ namespace Aaru.Filesystems
                 }
             }
 
-            var rootDirectoryKeyBlock = new ProDOSRootDirectoryKeyBlock
+            var rootDirectoryKeyBlock = new RootDirectoryKeyBlock
             {
-                header       = new ProDOSRootDirectoryHeader(),
+                header       = new RootDirectoryHeader(),
                 zero         = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x00),
                 next_pointer = BitConverter.ToUInt16(rootDirectoryKeyBlockBytes, 0x02)
             };
@@ -337,7 +337,7 @@ namespace Aaru.Filesystems
         }
 
         /// <summary>ProDOS directory entry, decoded structure</summary>
-        struct ProDOSEntry
+        struct Entry
         {
             /// <summary>Type of file pointed by this entry Offset 0x00, mask 0xF0</summary>
             public byte storage_type;
@@ -372,7 +372,7 @@ namespace Aaru.Filesystems
             public ushort header_pointer;
         }
 
-        struct ProDOSRootDirectoryHeader
+        struct RootDirectoryHeader
         {
             /// <summary>Constant 0x0F Offset 0x04, mask 0xF0</summary>
             public byte storage_type;
@@ -405,7 +405,7 @@ namespace Aaru.Filesystems
             public ushort total_blocks;
         }
 
-        struct ProDOSDirectoryHeader
+        struct DirectoryHeader
         {
             /// <summary>Constant 0x0E Offset 0x04, mask 0xF0</summary>
             public byte storage_type;
@@ -437,47 +437,47 @@ namespace Aaru.Filesystems
             public byte parent_entry_length;
         }
 
-        struct ProDOSDirectoryKeyBlock
+        struct DirectoryKeyBlock
         {
             /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
             public ushort zero;
             /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
             public ushort next_pointer;
             /// <summary>Directory header Offset 0x04, 39 bytes</summary>
-            public ProDOSDirectoryHeader header;
+            public DirectoryHeader header;
             /// <summary>Directory entries Offset 0x2F, 39 bytes each, 12 entries</summary>
-            public ProDOSEntry[] entries;
+            public Entry[] entries;
         }
 
-        struct ProDOSRootDirectoryKeyBlock
+        struct RootDirectoryKeyBlock
         {
             /// <summary>Always 0 Offset 0x00, 2 bytes</summary>
             public ushort zero;
             /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
             public ushort next_pointer;
             /// <summary>Directory header Offset 0x04, 39 bytes</summary>
-            public ProDOSRootDirectoryHeader header;
+            public RootDirectoryHeader header;
             /// <summary>Directory entries Offset 0x2F, 39 bytes each, 12 entries</summary>
-            public ProDOSEntry[] entries;
+            public Entry[] entries;
         }
 
-        struct ProDOSDirectoryBlock
+        struct DirectoryBlock
         {
             /// <summary>Pointer to previous directory block Offset 0x00, 2 bytes</summary>
             public ushort zero;
             /// <summary>Pointer to next directory block, 0 if last Offset 0x02, 2 bytes</summary>
             public ushort next_pointer;
             /// <summary>Directory entries Offset 0x2F, 39 bytes each, 13 entries</summary>
-            public ProDOSEntry[] entries;
+            public Entry[] entries;
         }
 
-        struct ProDOSIndexBlock
+        struct IndexBlock
         {
             /// <summary>Up to 256 pointers to blocks, 0 to indicate the block is sparsed (non-allocated)</summary>
             public ushort[] block_pointer;
         }
 
-        struct ProDOSMasterIndexBlock
+        struct MasterIndexBlock
         {
             /// <summary>Up to 128 pointers to index blocks</summary>
             public ushort[] index_block_pointer;

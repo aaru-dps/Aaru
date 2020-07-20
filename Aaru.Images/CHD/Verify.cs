@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
     {
         public bool? VerifySector(ulong sectorAddress)
         {
-            if(isHdd)
+            if(_isHdd)
                 return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress);
@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
             unknownLbas = new List<ulong>();
             failingLbas = new List<ulong>();
 
-            if(isHdd)
+            if(_isHdd)
                 return null;
 
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -93,7 +93,7 @@ namespace Aaru.DiscImages
             unknownLbas = new List<ulong>();
             failingLbas = new List<ulong>();
 
-            if(isHdd)
+            if(_isHdd)
                 return null;
 
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -128,11 +128,11 @@ namespace Aaru.DiscImages
         {
             byte[] calculated;
 
-            if(mapVersion >= 3)
+            if(_mapVersion >= 3)
             {
                 var sha1Ctx = new Sha1Context();
 
-                for(uint i = 0; i < totalHunks; i++)
+                for(uint i = 0; i < _totalHunks; i++)
                     sha1Ctx.Update(GetHunk(i));
 
                 calculated = sha1Ctx.Final();
@@ -141,18 +141,18 @@ namespace Aaru.DiscImages
             {
                 var md5Ctx = new Md5Context();
 
-                for(uint i = 0; i < totalHunks; i++)
+                for(uint i = 0; i < _totalHunks; i++)
                     md5Ctx.Update(GetHunk(i));
 
                 calculated = md5Ctx.Final();
             }
 
-            return expectedChecksum.SequenceEqual(calculated);
+            return _expectedChecksum.SequenceEqual(calculated);
         }
 
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
-            if(isHdd)
+            if(_isHdd)
                 throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
             return VerifySector(GetAbsoluteSector(sectorAddress, track));

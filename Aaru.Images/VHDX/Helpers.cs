@@ -43,10 +43,10 @@ namespace Aaru.DiscImages
             int  shift = (int)(sectorAddress  % 8);
             byte val   = (byte)(1 << shift);
 
-            if(index > sectorBitmap.LongLength)
+            if(index > _sectorBitmap.LongLength)
                 return false;
 
-            return (sectorBitmap[index] & val) == val;
+            return (_sectorBitmap[index] & val) == val;
         }
 
         static uint VhdxChecksum(IEnumerable<byte> data)

@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
 
             string mark = Encoding.ASCII.GetString(header);
 
-            var   blockRx = new Regex(BlockRegex);
+            var   blockRx = new Regex(_blockRegex);
             Match blockMt = blockRx.Match(mark);
 
             if(!blockMt.Success)

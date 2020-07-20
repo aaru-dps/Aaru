@@ -38,29 +38,29 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class Apple2Mg
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "blank140.2mg.lz", "dos32.2mg.lz", "dos33-do.2mg.lz", "dos33-nib.2mg.lz", "dos33-po.2mg.lz",
             "prodos1440.2mg.lz"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             560, 455, 560, 560, 560, 2880
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             256, 256, 256, 256, 256, 512
         };
 
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.Apple33SS, MediaType.Apple32SS, MediaType.Apple33SS, MediaType.Apple33SS, MediaType.Apple33SS,
             MediaType.DOS_35_HD
         };
 
-        readonly string[] md5S =
+        readonly string[] _md5S =
         {
             "7db5d585270ab858043d50e60068d45f", "906c1bdbf76bf089ea47aae98151df5d", "91d020725d081500caa1fd8aad959397",
             "91d020725d081500caa1fd8aad959397", "91d020725d081500caa1fd8aad959397", "eb9b60c78b30d2b6541ed0781944b6da"
@@ -69,20 +69,20 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "2mg", testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "2mg", _testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.Apple2Mg();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
 
                 // How many sectors to read at once
-                const uint SECTORS_TO_READ = 256;
-                ulong      doneSectors     = 0;
+                const uint sectorsToRead = 256;
+                ulong      doneSectors   = 0;
 
                 var ctx = new Md5Context();
 
@@ -90,10 +90,10 @@ namespace Aaru.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                    if(image.Info.Sectors - doneSectors >= sectorsToRead)
                     {
-                        sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                        doneSectors += SECTORS_TO_READ;
+                        sector      =  image.ReadSectors(doneSectors, sectorsToRead);
+                        doneSectors += sectorsToRead;
                     }
                     else
                     {
@@ -104,7 +104,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
             }
         }
     }

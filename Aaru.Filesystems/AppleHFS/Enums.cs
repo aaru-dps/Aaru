@@ -30,6 +30,8 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+// ReSharper disable InconsistentNaming
+
 namespace Aaru.Filesystems
 {
     public partial class AppleHFS

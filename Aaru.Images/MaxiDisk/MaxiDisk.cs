@@ -41,11 +41,11 @@ namespace Aaru.DiscImages
     public partial class MaxiDisk : IWritableImage
     {
         /// <summary>Disk image file</summary>
-        IFilter hdkImageFilter;
-        ImageInfo  imageInfo;
-        FileStream writingStream;
+        IFilter _hdkImageFilter;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
-        public MaxiDisk() => imageInfo = new ImageInfo
+        public MaxiDisk() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

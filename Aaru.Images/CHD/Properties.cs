@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
 {
     public partial class Chd
     {
-        public ImageInfo Info   => imageInfo;
+        public ImageInfo Info   => _imageInfo;
         public string    Name   => "MAME Compressed Hunks of Data";
         public Guid      Id     => new Guid("0D50233A-08BD-47D4-988B-27EAA0358597");
         public string    Format => "Compressed Hunks of Data";
@@ -52,11 +52,11 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(isHdd)
+                if(_isHdd)
                     throw new
                         FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-                return partitions;
+                return _partitions;
             }
         }
 
@@ -64,11 +64,11 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(isHdd)
+                if(_isHdd)
                     throw new
                         FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
 
-                return tracks.Values.ToList();
+                return _tracks.Values.ToList();
             }
         }
 
@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(isHdd)
+                if(_isHdd)
                     throw new
                         FeaturedNotSupportedByDiscImageException("Cannot access optical sessions on a hard disk image");
 

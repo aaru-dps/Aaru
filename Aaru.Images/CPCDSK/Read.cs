@@ -59,13 +59,13 @@ namespace Aaru.DiscImages
             stream.Read(headerB, 0, 256);
             CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
-            if(!cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) &&
-               !edskId.SequenceEqual(header.magic)                         &&
-               !du54Id.SequenceEqual(header.magic))
+            if(!_cpcdskId.SequenceEqual(header.magic.Take(_cpcdskId.Length)) &&
+               !_edskId.SequenceEqual(header.magic)                          &&
+               !_du54Id.SequenceEqual(header.magic))
                 return false;
 
-            extended = edskId.SequenceEqual(header.magic);
-            AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", extended);
+            _extended = _edskId.SequenceEqual(header.magic);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", _extended);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                        StringHandlers.CToString(header.magic));
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
 
-            if(!extended)
+            if(!_extended)
                 AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
             else
                 for(int i = 0; i < header.tracks; i++)
@@ -90,8 +90,8 @@ namespace Aaru.DiscImages
                 }
 
             ulong currentSector = 0;
-            sectors      = new Dictionary<ulong, byte[]>();
-            addressMarks = new Dictionary<ulong, byte[]>();
+            _sectors      = new Dictionary<ulong, byte[]>();
+            _addressMarks = new Dictionary<ulong, byte[]>();
             ulong readtracks        = 0;
             bool  allTracksSameSize = true;
             ulong sectorsPerTrack   = 0;
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
                 for(int j = 0; j < header.sides; j++)
                 {
                     // Track not stored in image
-                    if(extended && header.tracksizeTable[(i * header.sides) + j] == 0)
+                    if(_extended && header.tracksizeTable[(i * header.sides) + j] == 0)
                         continue;
 
                     long trackPos = stream.Position;
@@ -113,7 +113,7 @@ namespace Aaru.DiscImages
                     stream.Read(trackB, 0, 256);
                     CpcTrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<CpcTrackInfo>(trackB);
 
-                    if(!trackId.SequenceEqual(trackInfo.magic))
+                    if(!_trackId.SequenceEqual(trackInfo.magic))
                     {
                         AaruConsole.ErrorWriteLine("Not the expected track info.");
 
@@ -181,7 +181,7 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
                                                    trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
-                        int sectLen = extended ? trackInfo.sectorsInfo[k - 1].len
+                        int sectLen = _extended ? trackInfo.sectorsInfo[k - 1].len
                                           : SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size);
 
                         byte[] sector = new byte[sectLen];
@@ -223,43 +223,43 @@ namespace Aaru.DiscImages
 
                     for(int s = 0; s < thisTrackSectors.Length; s++)
                     {
-                        sectors.Add(currentSector, thisTrackSectors[s]);
-                        addressMarks.Add(currentSector, thisTrackAddressMarks[s]);
+                        _sectors.Add(currentSector, thisTrackSectors[s]);
+                        _addressMarks.Add(currentSector, thisTrackAddressMarks[s]);
                         currentSector++;
 
-                        if(thisTrackSectors[s].Length > imageInfo.SectorSize)
-                            imageInfo.SectorSize = (uint)thisTrackSectors[s].Length;
+                        if(thisTrackSectors[s].Length > _imageInfo.SectorSize)
+                            _imageInfo.SectorSize = (uint)thisTrackSectors[s].Length;
                     }
 
                     stream.Seek(trackPos, SeekOrigin.Begin);
 
-                    if(extended)
+                    if(_extended)
                     {
                         stream.Seek(header.tracksizeTable[(i * header.sides) + j] * 256, SeekOrigin.Current);
-                        imageInfo.ImageSize += (ulong)(header.tracksizeTable[(i * header.sides) + j] * 256) - 256;
+                        _imageInfo.ImageSize += (ulong)(header.tracksizeTable[(i * header.sides) + j] * 256) - 256;
                     }
                     else
                     {
                         stream.Seek(header.tracksize, SeekOrigin.Current);
-                        imageInfo.ImageSize += (ulong)header.tracksize - 256;
+                        _imageInfo.ImageSize += (ulong)header.tracksize - 256;
                     }
 
                     readtracks++;
                 }
             }
 
-            AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", sectors.Count);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", _sectors.Count);
             AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
             AaruConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
 
-            imageInfo.Application          = StringHandlers.CToString(header.creator);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)sectors.Count;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.CompactFloppy;
-            imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+            _imageInfo.Application          = StringHandlers.CToString(header.creator);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = (ulong)_sectors.Count;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.CompactFloppy;
+            _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
             // Debug writing full disk as raw
             /*
@@ -273,16 +273,16 @@ namespace Aaru.DiscImages
             foo.Close();
             */
 
-            imageInfo.Cylinders       = header.tracks;
-            imageInfo.Heads           = header.sides;
-            imageInfo.SectorsPerTrack = (uint)(imageInfo.Sectors / (imageInfo.Cylinders * imageInfo.Heads));
+            _imageInfo.Cylinders       = header.tracks;
+            _imageInfo.Heads           = header.sides;
+            _imageInfo.SectorsPerTrack = (uint)(_imageInfo.Sectors / (_imageInfo.Cylinders * _imageInfo.Heads));
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectors.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectors.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -290,11 +290,11 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();
@@ -313,7 +313,7 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(addressMarks.TryGetValue(sectorAddress, out byte[] addressMark))
+            if(_addressMarks.TryGetValue(sectorAddress, out byte[] addressMark))
                 return addressMark;
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
@@ -324,11 +324,11 @@ namespace Aaru.DiscImages
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

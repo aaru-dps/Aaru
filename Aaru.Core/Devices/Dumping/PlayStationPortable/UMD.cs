@@ -52,8 +52,8 @@ namespace Aaru.Core.Devices.Dumping
     {
         void DumpUmd()
         {
-            const uint      BLOCK_SIZE    = 2048;
-            const MediaType DSK_TYPE      = MediaType.UMD;
+            const uint      blockSize     = 2048;
+            const MediaType dskType       = MediaType.UMD;
             uint            blocksToRead  = 16;
             double          totalDuration = 0;
             double          currentSpeed  = 0;
@@ -95,47 +95,47 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             uint   umdSizeInBytes  = BitConverter.ToUInt32(readBuffer, 0x3C);
-            ulong  blocks          = umdSizeInBytes / BLOCK_SIZE;
+            ulong  blocks          = umdSizeInBytes / blockSize;
             string mediaPartNumber = Encoding.ASCII.GetString(readBuffer, 0, 11).Trim();
 
-            ulong totalSize = blocks * BLOCK_SIZE;
+            ulong totalSize = blocks * blockSize;
 
             if(totalSize > 1099511627776)
                 UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
             else if(totalSize > 1073741824)
                 UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
             else if(totalSize > 1048576)
                 UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
             else if(totalSize > 1024)
                 UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
             else
                 UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {BLOCK_SIZE} bytes/each. (for a total of {totalSize} bytes)");
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize} bytes)");
 
-            UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * BLOCK_SIZE} bytes).");
+            UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
             UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
-            UpdateStatus?.Invoke($"Device reports {BLOCK_SIZE} bytes per logical block.");
+            UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
             UpdateStatus?.Invoke($"Device reports {2048} bytes per physical block.");
             UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
-            UpdateStatus?.Invoke($"Media identified as {DSK_TYPE}.");
+            UpdateStatus?.Invoke($"Media identified as {dskType}.");
             UpdateStatus?.Invoke($"Media part number is {mediaPartNumber}.");
-            _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * BLOCK_SIZE);
+            _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
             _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
-            _dumpLog.WriteLine("Device reports {0} bytes per logical block.", BLOCK_SIZE);
+            _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
             _dumpLog.WriteLine("Device reports {0} bytes per physical block.", 2048);
             _dumpLog.WriteLine("SCSI device type: {0}.", _dev.ScsiType);
-            _dumpLog.WriteLine("Media identified as {0}.", DSK_TYPE);
+            _dumpLog.WriteLine("Media identified as {0}.", dskType);
             _dumpLog.WriteLine("Media part number is {0}.", mediaPartNumber);
 
             bool ret;
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead, _private);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
-            ret = _outputPlugin.Create(_outputPath, DSK_TYPE, _formatOptions, blocks, BLOCK_SIZE);
+            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
@@ -156,10 +156,10 @@ namespace Aaru.Core.Devices.Dumping
             {
                 new Track
                 {
-                    TrackBytesPerSector    = (int)BLOCK_SIZE,
+                    TrackBytesPerSector    = (int)blockSize,
                     TrackEndSector         = blocks - 1,
                     TrackSequence          = 1,
-                    TrackRawBytesPerSector = (int)BLOCK_SIZE,
+                    TrackRawBytesPerSector = (int)blockSize,
                     TrackSubchannelType    = TrackSubchannelType.None,
                     TrackSession           = 1,
                     TrackType              = TrackType.Data
@@ -246,7 +246,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[BLOCK_SIZE * _skip], i, _skip);
+                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     for(ulong b = i; b < i + _skip; b++)
@@ -268,7 +268,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * BLOCK_SIZE) / (1048576 * elapsed);
+                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -277,24 +277,24 @@ namespace Aaru.Core.Devices.Dumping
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            ibgLog.Close(_dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+            ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
 
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
@@ -562,7 +562,7 @@ namespace Aaru.Core.Devices.Dumping
             double totalChkDuration = 0;
 
             if(_metadata)
-                WriteOpticalSidecar(BLOCK_SIZE, blocks, DSK_TYPE, null, null, 1, out totalChkDuration, null);
+                WriteOpticalSidecar(blockSize, blocks, dskType, null, null, 1, out totalChkDuration, null);
 
             UpdateStatus?.Invoke("");
 
@@ -570,7 +570,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
@@ -582,7 +582,7 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
             UpdateStatus?.Invoke("");
 
-            Statistics.AddMedia(DSK_TYPE, true);
+            Statistics.AddMedia(dskType, true);
         }
     }
 }

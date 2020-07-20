@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "DiscJuggler";
         public Guid                   Id           => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Format       => "DiscJuggler";
         public string                 Author       => "Natalia Portillo";
         public List<Partition>        Partitions   { get; private set; }

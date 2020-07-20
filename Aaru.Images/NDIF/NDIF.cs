@@ -44,16 +44,16 @@ namespace Aaru.DiscImages
     // TODO: Implement compression
     public partial class Ndif : IMediaImage
     {
-        uint                          buffersize;
-        Dictionary<ulong, byte[]>     chunkCache;
-        Dictionary<ulong, BlockChunk> chunks;
-        uint                          currentChunkCacheSize;
-        ChunkHeader                   header;
-        ImageInfo                     imageInfo;
-        Stream                        imageStream;
-        Dictionary<ulong, byte[]>     sectorCache;
+        uint                          _buffersize;
+        Dictionary<ulong, byte[]>     _chunkCache;
+        Dictionary<ulong, BlockChunk> _chunks;
+        uint                          _currentChunkCacheSize;
+        ChunkHeader                   _header;
+        ImageInfo                     _imageInfo;
+        Stream                        _imageStream;
+        Dictionary<ulong, byte[]>     _sectorCache;
 
-        public Ndif() => imageInfo = new ImageInfo
+        public Ndif() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

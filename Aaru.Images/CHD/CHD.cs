@@ -46,40 +46,40 @@ namespace Aaru.DiscImages
     public partial class Chd : IOpticalMediaImage, IVerifiableImage
     {
         /// <summary>"MComprHD"</summary>
-        readonly byte[] chdTag =
+        readonly byte[] _chdTag =
         {
             0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44
         };
         SectorBuilder             _sectorBuilder;
-        uint                      bytesPerHunk;
-        byte[]                    cis;
-        byte[]                    expectedChecksum;
-        uint                      hdrCompression;
-        uint                      hdrCompression1;
-        uint                      hdrCompression2;
-        uint                      hdrCompression3;
-        Dictionary<ulong, byte[]> hunkCache;
-        byte[]                    hunkMap;
-        ulong[]                   hunkTable;
-        uint[]                    hunkTableSmall;
-        byte[]                    identify;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        bool                      isCdrom;
-        bool                      isGdrom;
-        bool                      isHdd;
-        uint                      mapVersion;
-        int                       maxBlockCache;
-        int                       maxSectorCache;
-        Dictionary<ulong, uint>   offsetmap;
-        List<Partition>           partitions;
-        Dictionary<ulong, byte[]> sectorCache;
-        uint                      sectorsPerHunk;
-        bool                      swapAudio;
-        uint                      totalHunks;
-        Dictionary<uint, Track>   tracks;
+        uint                      _bytesPerHunk;
+        byte[]                    _cis;
+        byte[]                    _expectedChecksum;
+        uint                      _hdrCompression;
+        uint                      _hdrCompression1;
+        uint                      _hdrCompression2;
+        uint                      _hdrCompression3;
+        Dictionary<ulong, byte[]> _hunkCache;
+        byte[]                    _hunkMap;
+        ulong[]                   _hunkTable;
+        uint[]                    _hunkTableSmall;
+        byte[]                    _identify;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        bool                      _isCdrom;
+        bool                      _isGdrom;
+        bool                      _isHdd;
+        uint                      _mapVersion;
+        int                       _maxBlockCache;
+        int                       _maxSectorCache;
+        Dictionary<ulong, uint>   _offsetmap;
+        List<Partition>           _partitions;
+        Dictionary<ulong, byte[]> _sectorCache;
+        uint                      _sectorsPerHunk;
+        bool                      _swapAudio;
+        uint                      _totalHunks;
+        Dictionary<uint, Track>   _tracks;
 
-        public Chd() => imageInfo = new ImageInfo
+        public Chd() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

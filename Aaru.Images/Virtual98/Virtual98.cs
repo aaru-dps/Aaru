@@ -41,12 +41,12 @@ namespace Aaru.DiscImages
     // Info from Neko Project II emulator
     public partial class Virtual98 : IWritableImage
     {
-        ImageInfo       imageInfo;
-        IFilter         nhdImageFilter;
-        Virtual98Header v98Hdr;
-        FileStream      writingStream;
+        ImageInfo       _imageInfo;
+        IFilter         _nhdImageFilter;
+        Virtual98Header _v98Hdr;
+        FileStream      _writingStream;
 
-        public Virtual98() => imageInfo = new ImageInfo
+        public Virtual98() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

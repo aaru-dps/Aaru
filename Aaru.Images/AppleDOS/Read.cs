@@ -51,36 +51,36 @@ namespace Aaru.DiscImages
             bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
                          tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
 
-            deinterleaved = new byte[tmp.Length];
+            _deinterleaved = new byte[tmp.Length];
 
-            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            int[] offsets = extension == ".do"
+            int[] offsets = _extension == ".do"
                                 ? isDos
-                                      ? deinterleave
-                                      : interleave
+                                      ? _deinterleave
+                                      : _interleave
                                 : isDos
-                                    ? interleave
-                                    : deinterleave;
+                                    ? _interleave
+                                    : _deinterleave;
 
             for(int t = 0; t < 35; t++)
             {
                 for(int s = 0; s < 16; s++)
-                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
+                    Array.Copy(tmp, (t * 16 * 256) + (s * 256), _deinterleaved, (t * 16 * 256) + (offsets[s] * 256),
                                256);
             }
 
-            imageInfo.SectorSize           = 256;
-            imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = 560;
-            imageInfo.MediaType            = MediaType.Apple33SS;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.Cylinders            = 35;
-            imageInfo.Heads                = 2;
-            imageInfo.SectorsPerTrack      = 16;
+            _imageInfo.SectorSize           = 256;
+            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = 560;
+            _imageInfo.MediaType            = MediaType.Apple33SS;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.Cylinders            = 35;
+            _imageInfo.Heads                = 2;
+            _imageInfo.SectorsPerTrack      = 16;
 
             return true;
         }
@@ -89,15 +89,15 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Array.Copy(deinterleaved, (int)(sectorAddress * imageInfo.SectorSize), buffer, 0, buffer.Length);
+            Array.Copy(_deinterleaved, (int)(sectorAddress * _imageInfo.SectorSize), buffer, 0, buffer.Length);
 
             return buffer;
         }

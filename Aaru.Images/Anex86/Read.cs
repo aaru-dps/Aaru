@@ -53,29 +53,29 @@ namespace Aaru.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
+            _fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
-                                                         (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,
-                                                         false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_fdihdr.cylinders, (byte)_fdihdr.heads,
+                                                          (ushort)_fdihdr.spt, (uint)_fdihdr.bps, MediaEncoding.MFM,
+                                                          false));
 
-            if(imageInfo.MediaType == MediaType.Unknown)
-                imageInfo.MediaType = MediaType.GENERIC_HDD;
+            if(_imageInfo.MediaType == MediaType.Unknown)
+                _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
-            imageInfo.ImageSize            = (ulong)fdihdr.dskSize;
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)(fdihdr.cylinders * fdihdr.heads * fdihdr.spt);
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize           = (uint)fdihdr.bps;
-            imageInfo.Cylinders            = (uint)fdihdr.cylinders;
-            imageInfo.Heads                = (uint)fdihdr.heads;
-            imageInfo.SectorsPerTrack      = (uint)fdihdr.spt;
+            _imageInfo.ImageSize            = (ulong)_fdihdr.dskSize;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = (ulong)(_fdihdr.cylinders * _fdihdr.heads * _fdihdr.spt);
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.SectorSize           = (uint)_fdihdr.bps;
+            _imageInfo.Cylinders            = (uint)_fdihdr.cylinders;
+            _imageInfo.Heads                = (uint)_fdihdr.heads;
+            _imageInfo.SectorsPerTrack      = (uint)_fdihdr.spt;
 
-            anexImageFilter = imageFilter;
+            _anexImageFilter = imageFilter;
 
             return true;
         }
@@ -84,19 +84,19 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = anexImageFilter.GetDataForkStream();
+            Stream stream = _anexImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)fdihdr.hdrSize + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)_fdihdr.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

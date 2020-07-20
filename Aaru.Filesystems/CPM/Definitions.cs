@@ -52,10 +52,10 @@ namespace Aaru.Filesystems
                                      throw new InvalidOperationException());
 
                 var defsSerializer = new XmlSerializer(typeof(CpmDefinitions));
-                definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
+                _definitions = (CpmDefinitions)defsSerializer.Deserialize(defsReader);
 
                 // Patch definitions
-                foreach(CpmDefinition def in definitions.definitions)
+                foreach(CpmDefinition def in _definitions.definitions)
                 {
                     if(def.side1 == null)
                     {

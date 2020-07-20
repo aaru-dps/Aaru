@@ -47,7 +47,7 @@ namespace Aaru.Filesystems
         {
             deviceBlock = new long();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -60,13 +60,13 @@ namespace Aaru.Filesystems
 
             path = pathElements[0];
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
-            if(fileBlock > entry.flPyLen / volMDB.drAlBlkSiz)
+            if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
                 return Errno.InvalidArgument;
 
             uint nextBlock = entry.flStBlk;
@@ -76,16 +76,16 @@ namespace Aaru.Filesystems
             {
                 if(relBlock == fileBlock)
                 {
-                    deviceBlock = ((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + (long)partitionStart;
+                    deviceBlock = ((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + (long)_partitionStart;
 
                     return Errno.NoError;
                 }
 
-                if(blockMap[nextBlock] == BMAP_FREE ||
-                   blockMap[nextBlock] == BMAP_LAST)
+                if(_blockMap[nextBlock] == BMAP_FREE ||
+                   _blockMap[nextBlock] == BMAP_LAST)
                     break;
 
-                nextBlock = blockMap[nextBlock];
+                nextBlock = _blockMap[nextBlock];
                 relBlock++;
             }
 
@@ -96,7 +96,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -109,10 +109,10 @@ namespace Aaru.Filesystems
 
             path = pathElements[0];
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
@@ -157,22 +157,22 @@ namespace Aaru.Filesystems
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             byte[] file;
             Errno  error = Errno.NoError;
 
-            if(debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                file = directoryBlocks;
-            else if(debug                                                                 &&
+            if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
+                file = _directoryBlocks;
+            else if(_debug                                                                &&
                     string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                    bootBlocks                                                       != null)
-                file = bootBlocks;
-            else if(debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-                file = blockMapBytes;
-            else if(debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-                file = mdbBlocks;
+                    _bootBlocks                                                      != null)
+                file = _bootBlocks;
+            else if(_debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
+                file = _blockMapBytes;
+            else if(_debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
+                file = _mdbBlocks;
             else
                 error = ReadFile(path, out file, false, false);
 
@@ -203,7 +203,7 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -216,7 +216,7 @@ namespace Aaru.Filesystems
 
             path = pathElements[0];
 
-            if(debug)
+            if(_debug)
                 if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
@@ -224,7 +224,7 @@ namespace Aaru.Filesystems
                 {
                     stat = new FileEntryInfo
                     {
-                        BlockSize  = device.Info.SectorSize,
+                        BlockSize  = _device.Info.SectorSize,
                         Inode      = 0,
                         Links      = 1,
                         Attributes = FileAttributes.System
@@ -232,26 +232,28 @@ namespace Aaru.Filesystems
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (directoryBlocks.Length / stat.BlockSize) +
-                                      (directoryBlocks.Length % stat.BlockSize);
+                        stat.Blocks = (_directoryBlocks.Length / stat.BlockSize) +
+                                      (_directoryBlocks.Length % stat.BlockSize);
 
-                        stat.Length = directoryBlocks.Length;
+                        stat.Length = _directoryBlocks.Length;
                     }
                     else if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (blockMapBytes.Length / stat.BlockSize) + (blockMapBytes.Length % stat.BlockSize);
-                        stat.Length = blockMapBytes.Length;
+                        stat.Blocks = (_blockMapBytes.Length / stat.BlockSize) +
+                                      (_blockMapBytes.Length % stat.BlockSize);
+
+                        stat.Length = _blockMapBytes.Length;
                     }
                     else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                            bootBlocks                                                       != null)
+                            _bootBlocks                                                      != null)
                     {
-                        stat.Blocks = (bootBlocks.Length / stat.BlockSize) + (bootBlocks.Length % stat.BlockSize);
-                        stat.Length = bootBlocks.Length;
+                        stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_bootBlocks.Length % stat.BlockSize);
+                        stat.Length = _bootBlocks.Length;
                     }
                     else if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (mdbBlocks.Length / stat.BlockSize) + (mdbBlocks.Length % stat.BlockSize);
-                        stat.Length = mdbBlocks.Length;
+                        stat.Blocks = (_mdbBlocks.Length / stat.BlockSize) + (_mdbBlocks.Length % stat.BlockSize);
+                        stat.Length = _mdbBlocks.Length;
                     }
                     else
                         return Errno.InvalidArgument;
@@ -259,10 +261,10 @@ namespace Aaru.Filesystems
                     return Errno.NoError;
                 }
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             Errno error = GetAttributes(path, out FileAttributes attr);
@@ -273,8 +275,8 @@ namespace Aaru.Filesystems
             stat = new FileEntryInfo
             {
                 Attributes    = attr,
-                Blocks        = entry.flLgLen / volMDB.drAlBlkSiz,
-                BlockSize     = volMDB.drAlBlkSiz,
+                Blocks        = entry.flLgLen / _volMdb.drAlBlkSiz,
+                BlockSize     = _volMdb.drAlBlkSiz,
                 CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
                 Inode         = entry.flFlNum,
                 LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
@@ -296,7 +298,7 @@ namespace Aaru.Filesystems
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -309,10 +311,10 @@ namespace Aaru.Filesystems
 
             path = pathElements[0];
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             uint nextBlock;
@@ -348,23 +350,25 @@ namespace Aaru.Filesystems
 
                 if(tags)
                     sectors =
-                        device.ReadSectorsTag((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
-                                              (uint)sectorsPerBlock, SectorTagType.AppleSectorTag);
+                        _device.
+                            ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                           (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag);
                 else
                     sectors =
-                        device.ReadSectors((ulong)((nextBlock - 2) * sectorsPerBlock) + volMDB.drAlBlSt + partitionStart,
-                                           (uint)sectorsPerBlock);
+                        _device.
+                            ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
+                                        (uint)_sectorsPerBlock);
 
                 ms.Write(sectors, 0, sectors.Length);
 
-                if(blockMap[nextBlock] == BMAP_FREE)
+                if(_blockMap[nextBlock] == BMAP_FREE)
                 {
                     AaruConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
 
                     break;
                 }
 
-                nextBlock = blockMap[nextBlock];
+                nextBlock = _blockMap[nextBlock];
             } while(nextBlock > BMAP_LAST);
 
             if(tags)

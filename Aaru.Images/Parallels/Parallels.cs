@@ -42,19 +42,19 @@ namespace Aaru.DiscImages
 {
     public partial class Parallels : IWritableImage
     {
-        uint[]                    bat;
-        uint                      clusterBytes;
-        long                      currentWritingPosition;
-        long                      dataOffset;
-        bool                      empty;
-        bool                      extended;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        ParallelsHeader           pHdr;
-        Dictionary<ulong, byte[]> sectorCache;
-        FileStream                writingStream;
+        uint[]                    _bat;
+        uint                      _clusterBytes;
+        long                      _currentWritingPosition;
+        long                      _dataOffset;
+        bool                      _empty;
+        bool                      _extended;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        ParallelsHeader           _pHdr;
+        Dictionary<ulong, byte[]> _sectorCache;
+        FileStream                _writingStream;
 
-        public Parallels() => imageInfo = new ImageInfo
+        public Parallels() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

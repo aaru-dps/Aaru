@@ -44,18 +44,17 @@ namespace Aaru.Filters
     /// <summary>Decodes MacBinary files</summary>
     public class MacBinary : IFilter
     {
-        const uint MACBINARY_MAGIC = 0x6D42494E;
-        string     basePath;
-        byte[]     bytes;
-        DateTime   creationTime;
-
-        long            dataForkOff;
-        string          filename;
-        MacBinaryHeader header;
-        bool            isBytes, isStream, isPath, opened;
-        DateTime        lastWriteTime;
-        long            rsrcForkOff;
-        Stream          stream;
+        const uint      MAGIC = 0x6D42494E;
+        string          _basePath;
+        byte[]          _bytes;
+        DateTime        _creationTime;
+        long            _dataForkOff;
+        string          _filename;
+        MacBinaryHeader _header;
+        bool            _isBytes, _isStream, _isPath, _opened;
+        DateTime        _lastWriteTime;
+        long            _rsrcForkOff;
+        Stream          _stream;
 
         public string Name   => "MacBinary";
         public Guid   Id     => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
@@ -63,69 +62,69 @@ namespace Aaru.Filters
 
         public void Close()
         {
-            bytes = null;
-            stream?.Close();
-            isBytes  = false;
-            isStream = false;
-            isPath   = false;
-            opened   = false;
+            _bytes = null;
+            _stream?.Close();
+            _isBytes  = false;
+            _isStream = false;
+            _isPath   = false;
+            _opened   = false;
         }
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => header.dataLength;
+        public long GetDataForkLength() => _header.dataLength;
 
         public Stream GetDataForkStream()
         {
-            if(header.dataLength == 0)
+            if(_header.dataLength == 0)
                 return null;
 
-            if(isBytes)
-                return new OffsetStream(bytes, dataForkOff, (dataForkOff + header.dataLength) - 1);
+            if(_isBytes)
+                return new OffsetStream(_bytes, _dataForkOff, (_dataForkOff + _header.dataLength) - 1);
 
-            if(isStream)
-                return new OffsetStream(stream, dataForkOff, (dataForkOff + header.dataLength) - 1);
+            if(_isStream)
+                return new OffsetStream(_stream, _dataForkOff, (_dataForkOff + _header.dataLength) - 1);
 
-            if(isPath)
-                return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, dataForkOff,
-                                        (dataForkOff + header.dataLength) - 1);
+            if(_isPath)
+                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _dataForkOff,
+                                        (_dataForkOff + _header.dataLength) - 1);
 
             return null;
         }
 
-        public string GetFilename() => filename;
+        public string GetFilename() => _filename;
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => header.dataLength + header.resourceLength;
+        public long GetLength() => _header.dataLength + _header.resourceLength;
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
-        public long GetResourceForkLength() => header.resourceLength;
+        public long GetResourceForkLength() => _header.resourceLength;
 
         public Stream GetResourceForkStream()
         {
-            if(header.resourceLength == 0)
+            if(_header.resourceLength == 0)
                 return null;
 
-            if(isBytes)
-                return new OffsetStream(bytes, rsrcForkOff, (rsrcForkOff + header.resourceLength) - 1);
+            if(_isBytes)
+                return new OffsetStream(_bytes, _rsrcForkOff, (_rsrcForkOff + _header.resourceLength) - 1);
 
-            if(isStream)
-                return new OffsetStream(stream, rsrcForkOff, (rsrcForkOff + header.resourceLength) - 1);
+            if(_isStream)
+                return new OffsetStream(_stream, _rsrcForkOff, (_rsrcForkOff + _header.resourceLength) - 1);
 
-            if(isPath)
-                return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, rsrcForkOff,
-                                        (rsrcForkOff + header.resourceLength) - 1);
+            if(_isPath)
+                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _rsrcForkOff,
+                                        (_rsrcForkOff + _header.resourceLength) - 1);
 
             return null;
         }
 
-        public bool HasResourceFork() => header.resourceLength > 0;
+        public bool HasResourceFork() => _header.resourceLength > 0;
 
         public bool Identify(byte[] buffer)
         {
@@ -133,14 +132,14 @@ namespace Aaru.Filters
                buffer.Length < 128)
                 return false;
 
-            byte[] hdr_b = new byte[128];
-            Array.Copy(buffer, 0, hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            byte[] hdrB = new byte[128];
+            Array.Copy(buffer, 0, hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
-            return header.magic == MACBINARY_MAGIC || (header.version     == 0 && header.filename[0] > 0  &&
-                                                       header.filename[0] < 64 && header.zero1       == 0 &&
-                                                       header.zero2       == 0 && header.reserved    == 0 &&
-                                                       (header.dataLength > 0 || header.resourceLength > 0));
+            return _header.magic == MAGIC || (_header.version     == 0 && _header.filename[0] > 0 &&
+                                              _header.filename[0] < 64 && _header.zero1 == 0 && _header.zero2 == 0 &&
+                                              _header.reserved    == 0 &&
+                                              (_header.dataLength > 0 || _header.resourceLength > 0));
         }
 
         public bool Identify(Stream stream)
@@ -149,15 +148,15 @@ namespace Aaru.Filters
                stream.Length < 128)
                 return false;
 
-            byte[] hdr_b = new byte[128];
+            byte[] hdrB = new byte[128];
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            stream.Read(hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
-            return header.magic == MACBINARY_MAGIC || (header.version     == 0 && header.filename[0] > 0  &&
-                                                       header.filename[0] < 64 && header.zero1       == 0 &&
-                                                       header.zero2       == 0 && header.reserved    == 0 &&
-                                                       (header.dataLength > 0 || header.resourceLength > 0));
+            return _header.magic == MAGIC || (_header.version     == 0 && _header.filename[0] > 0 &&
+                                              _header.filename[0] < 64 && _header.zero1 == 0 && _header.zero2 == 0 &&
+                                              _header.reserved    == 0 &&
+                                              (_header.dataLength > 0 || _header.resourceLength > 0));
         }
 
         public bool Identify(string path)
@@ -167,83 +166,83 @@ namespace Aaru.Filters
             if(fstream.Length < 128)
                 return false;
 
-            byte[] hdr_b = new byte[128];
-            fstream.Read(hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            byte[] hdrB = new byte[128];
+            fstream.Read(hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
             fstream.Close();
 
-            return header.magic == MACBINARY_MAGIC || (header.version     == 0 && header.filename[0] > 0  &&
-                                                       header.filename[0] < 64 && header.zero1       == 0 &&
-                                                       header.zero2       == 0 && header.reserved    == 0 &&
-                                                       (header.dataLength > 0 || header.resourceLength > 0));
+            return _header.magic == MAGIC || (_header.version     == 0 && _header.filename[0] > 0 &&
+                                              _header.filename[0] < 64 && _header.zero1 == 0 && _header.zero2 == 0 &&
+                                              _header.reserved    == 0 &&
+                                              (_header.dataLength > 0 || _header.resourceLength > 0));
         }
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
 
         public void Open(byte[] buffer)
         {
             var ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[128];
-            ms.Read(hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            byte[] hdrB = new byte[128];
+            ms.Read(hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
             uint blocks = 1;
-            blocks += (uint)(header.secondaryHeaderLength / 128);
+            blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-            if(header.secondaryHeaderLength % 128 > 0)
+            if(_header.secondaryHeaderLength % 128 > 0)
                 blocks++;
 
-            dataForkOff =  blocks            * 128;
-            blocks      += header.dataLength / 128;
+            _dataForkOff =  blocks             * 128;
+            blocks       += _header.dataLength / 128;
 
-            if(header.dataLength % 128 > 0)
+            if(_header.dataLength % 128 > 0)
                 blocks++;
 
-            rsrcForkOff = blocks * 128;
+            _rsrcForkOff = blocks * 128;
 
-            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
-            lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
+            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             ms.Close();
-            opened  = true;
-            isBytes = true;
-            bytes   = buffer;
+            _opened  = true;
+            _isBytes = true;
+            _bytes   = buffer;
         }
 
         public void Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[128];
-            stream.Read(hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            byte[] hdrB = new byte[128];
+            stream.Read(hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
             uint blocks = 1;
-            blocks += (uint)(header.secondaryHeaderLength / 128);
+            blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-            if(header.secondaryHeaderLength % 128 > 0)
+            if(_header.secondaryHeaderLength % 128 > 0)
                 blocks++;
 
-            dataForkOff =  blocks            * 128;
-            blocks      += header.dataLength / 128;
+            _dataForkOff =  blocks             * 128;
+            blocks       += _header.dataLength / 128;
 
-            if(header.dataLength % 128 > 0)
+            if(_header.dataLength % 128 > 0)
                 blocks++;
 
-            rsrcForkOff = blocks * 128;
+            _rsrcForkOff = blocks * 128;
 
-            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
-            lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
+            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             stream.Seek(0, SeekOrigin.Begin);
-            opened      = true;
-            isStream    = true;
-            this.stream = stream;
+            _opened   = true;
+            _isStream = true;
+            _stream   = stream;
         }
 
         public void Open(string path)
@@ -251,32 +250,32 @@ namespace Aaru.Filters
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[128];
-            fs.Read(hdr_b, 0, 128);
-            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            byte[] hdrB = new byte[128];
+            fs.Read(hdrB, 0, 128);
+            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
 
             uint blocks = 1;
-            blocks += (uint)(header.secondaryHeaderLength / 128);
+            blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-            if(header.secondaryHeaderLength % 128 > 0)
+            if(_header.secondaryHeaderLength % 128 > 0)
                 blocks++;
 
-            dataForkOff =  blocks            * 128;
-            blocks      += header.dataLength / 128;
+            _dataForkOff =  blocks             * 128;
+            blocks       += _header.dataLength / 128;
 
-            if(header.dataLength % 128 > 0)
+            if(_header.dataLength % 128 > 0)
                 blocks++;
 
-            rsrcForkOff = blocks * 128;
+            _rsrcForkOff = blocks * 128;
 
-            filename      = StringHandlers.PascalToString(header.filename, Encoding.GetEncoding("macintosh"));
-            creationTime  = DateHandlers.MacToDateTime(header.creationTime);
-            lastWriteTime = DateHandlers.MacToDateTime(header.modificationTime);
+            _filename      = StringHandlers.PascalToString(_header.filename, Encoding.GetEncoding("macintosh"));
+            _creationTime  = DateHandlers.MacToDateTime(_header.creationTime);
+            _lastWriteTime = DateHandlers.MacToDateTime(_header.modificationTime);
 
             fs.Close();
-            opened   = true;
-            isPath   = true;
-            basePath = path;
+            _opened   = true;
+            _isPath   = true;
+            _basePath = path;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

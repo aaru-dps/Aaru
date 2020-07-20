@@ -41,13 +41,13 @@ namespace Aaru.Filesystems
 {
     public partial class OperaFS : IReadOnlyFilesystem
     {
-        bool                                                               debug;
-        Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> directoryCache;
-        IMediaImage                                                        image;
-        bool                                                               mounted;
-        Dictionary<string, DirectoryEntryWithPointers>                     rootDirectoryCache;
-        FileSystemInfo                                                     statfs;
-        uint                                                               volumeBlockSizeRatio;
+        bool                                                               _debug;
+        Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> _directoryCache;
+        IMediaImage                                                        _image;
+        bool                                                               _mounted;
+        Dictionary<string, DirectoryEntryWithPointers>                     _rootDirectoryCache;
+        FileSystemInfo                                                     _statfs;
+        uint                                                               _volumeBlockSizeRatio;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

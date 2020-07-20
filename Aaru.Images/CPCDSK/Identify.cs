@@ -55,8 +55,8 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                        StringHandlers.CToString(header.magic));
 
-            return cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) || edskId.SequenceEqual(header.magic) ||
-                   du54Id.SequenceEqual(header.magic);
+            return _cpcdskId.SequenceEqual(header.magic.Take(_cpcdskId.Length)) ||
+                   _edskId.SequenceEqual(header.magic)                          || _du54Id.SequenceEqual(header.magic);
         }
     }
 }

@@ -41,23 +41,23 @@ namespace Aaru.DiscImages
     // TODO: CloneCD stores subchannel deinterleaved
     public partial class CloneCd : IWritableOpticalImage
     {
-        string                  catalog; // TODO: Use it
-        IFilter                 ccdFilter;
-        byte[]                  cdtext;
-        StreamReader            cueStream;
-        IFilter                 dataFilter;
-        Stream                  dataStream;
-        StreamWriter            descriptorStream;
-        byte[]                  fulltoc;
-        ImageInfo               imageInfo;
-        Dictionary<uint, ulong> offsetmap;
-        bool                    scrambled;
-        IFilter                 subFilter;
-        Stream                  subStream;
-        Dictionary<byte, byte>  trackFlags;
-        string                  writingBaseName;
+        string                  _catalog; // TODO: Use it
+        IFilter                 _ccdFilter;
+        byte[]                  _cdtext;
+        StreamReader            _cueStream;
+        IFilter                 _dataFilter;
+        Stream                  _dataStream;
+        StreamWriter            _descriptorStream;
+        byte[]                  _fulltoc;
+        ImageInfo               _imageInfo;
+        Dictionary<uint, ulong> _offsetmap;
+        bool                    _scrambled;
+        IFilter                 _subFilter;
+        Stream                  _subStream;
+        Dictionary<byte, byte>  _trackFlags;
+        string                  _writingBaseName;
 
-        public CloneCd() => imageInfo = new ImageInfo
+        public CloneCd() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

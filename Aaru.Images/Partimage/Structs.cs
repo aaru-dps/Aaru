@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PartimageHeader
         {
-            /// <summary>Magic, <see cref="Partimage.partimageMagic" /></summary>
+            /// <summary>Magic, <see cref="Partimage._partimageMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] magic;
             /// <summary>Source filesystem</summary>

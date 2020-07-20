@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
         const uint MAX_CACHE_SIZE     = 16777216;
         const uint SECTOR_SIZE        = 512;
         const uint MAX_CACHED_SECTORS = MAX_CACHE_SIZE / SECTOR_SIZE;
-        readonly byte[] ddfMagicBytes =
+        readonly byte[] _ddfMagicBytes =
         {
             0x23, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x20, 0x44, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x6F, 0x72, 0x46,
             0x69, 0x6C, 0x65

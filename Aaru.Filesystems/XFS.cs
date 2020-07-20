@@ -61,26 +61,26 @@ namespace Aaru.Filesystems
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf<XFS_Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-                if((Marshal.SizeOf<XFS_Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
+                if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<XFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf<XFS_Superblock>()];
+                byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
                 foreach(int location in new[]
                 {
                     0, 0x200, 0x400
                 })
                 {
-                    Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<XFS_Superblock>());
+                    Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
-                    XFS_Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
+                    Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
                     AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                                location, xfsSb.magicnum, XFS_MAGIC);
@@ -97,17 +97,17 @@ namespace Aaru.Filesystems
                 {
                     ulong location = (ulong)i;
 
-                    uint sbSize = (uint)(Marshal.SizeOf<XFS_Superblock>() / imagePlugin.Info.SectorSize);
+                    uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                    if(Marshal.SizeOf<XFS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                    if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                         sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                    if(sector.Length < Marshal.SizeOf<XFS_Superblock>())
+                    if(sector.Length < Marshal.SizeOf<Superblock>())
                         return false;
 
-                    XFS_Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
+                    Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
                     AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                                xfsSb.magicnum, XFS_MAGIC);
@@ -128,31 +128,31 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return;
 
-            var xfsSb = new XFS_Superblock();
+            var xfsSb = new Superblock();
 
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf<XFS_Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-                if((Marshal.SizeOf<XFS_Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
+                if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<XFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf<XFS_Superblock>()];
+                byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
                 foreach(int location in new[]
                 {
                     0, 0x200, 0x400
                 })
                 {
-                    Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<XFS_Superblock>());
+                    Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
-                    xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
+                    xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
                     AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                                location, xfsSb.magicnum, XFS_MAGIC);
@@ -168,17 +168,17 @@ namespace Aaru.Filesystems
                 })
                 {
                     ulong location = (ulong)i;
-                    uint  sbSize   = (uint)(Marshal.SizeOf<XFS_Superblock>() / imagePlugin.Info.SectorSize);
+                    uint  sbSize   = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                    if(Marshal.SizeOf<XFS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                    if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                         sbSize++;
 
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                    if(sector.Length < Marshal.SizeOf<XFS_Superblock>())
+                    if(sector.Length < Marshal.SizeOf<Superblock>())
                         return;
 
-                    xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
+                    xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
                     AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                                xfsSb.magicnum, XFS_MAGIC);
@@ -226,7 +226,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct XFS_Superblock
+        struct Superblock
         {
             public readonly uint   magicnum;
             public readonly uint   blocksize;

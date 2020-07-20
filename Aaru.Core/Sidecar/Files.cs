@@ -264,7 +264,7 @@ namespace Aaru.Core
 
                 while(position < stat.Length - 1048576)
                 {
-                    if(aborted)
+                    if(_aborted)
                         return file;
 
                     data = new byte[1048576];
@@ -289,7 +289,7 @@ namespace Aaru.Core
                 file.Checksums = fileChkWorker.End().ToArray();
             }
             else
-                file.Checksums = emptyChecksums;
+                file.Checksums = _emptyChecksums;
 
             Errno ret = filesystem.ListXAttr(path + "/" + filename, out List<string> xattrs);
 

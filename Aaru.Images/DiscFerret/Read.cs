@@ -107,18 +107,18 @@ namespace Aaru.DiscImages
                     t++;
                 }
 
-                if(blockHeader.cylinder > imageInfo.Cylinders)
-                    imageInfo.Cylinders = blockHeader.cylinder;
+                if(blockHeader.cylinder > _imageInfo.Cylinders)
+                    _imageInfo.Cylinders = blockHeader.cylinder;
 
-                if(blockHeader.head > imageInfo.Heads)
-                    imageInfo.Heads = blockHeader.head;
+                if(blockHeader.head > _imageInfo.Heads)
+                    _imageInfo.Heads = blockHeader.head;
             }
 
-            imageInfo.Heads++;
-            imageInfo.Cylinders++;
+            _imageInfo.Heads++;
+            _imageInfo.Cylinders++;
 
-            imageInfo.Application        = "DiscFerret";
-            imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
+            _imageInfo.Application        = "DiscFerret";
+            _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }

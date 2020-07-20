@@ -46,45 +46,45 @@ namespace Aaru.DiscImages
         void SetMetadataFromTags()
         {
             // Search for SecureDigital CID
-            if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
+            if(_mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
             {
                 CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
-                    imageInfo.DriveManufacturer = VendorString.Prettify(decoded.Manufacturer);
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
+                    _imageInfo.DriveManufacturer = VendorString.Prettify(decoded.Manufacturer);
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                    imageInfo.DriveModel = decoded.ProductName;
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
+                    _imageInfo.DriveModel = decoded.ProductName;
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
-                    imageInfo.DriveFirmwareRevision =
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
+                    _imageInfo.DriveFirmwareRevision =
                         $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
-                    imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveSerialNumber))
+                    _imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
 
             // Search for MultiMediaCard CID
-            if(mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
+            if(_mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
             {
                 Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
-                    imageInfo.DriveManufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
+                    _imageInfo.DriveManufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                    imageInfo.DriveModel = decoded.ProductName;
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
+                    _imageInfo.DriveModel = decoded.ProductName;
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
-                    imageInfo.DriveFirmwareRevision =
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
+                    _imageInfo.DriveFirmwareRevision =
                         $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
 
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
-                    imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveSerialNumber))
+                    _imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
 
             // Search for SCSI INQUIRY
-            if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] scsiInquiry))
+            if(_mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] scsiInquiry))
             {
                 Inquiry? nullableInquiry = Inquiry.Decode(scsiInquiry);
 
@@ -92,21 +92,21 @@ namespace Aaru.DiscImages
                 {
                     Inquiry inquiry = nullableInquiry.Value;
 
-                    if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
-                        imageInfo.DriveManufacturer = StringHandlers.CToString(inquiry.VendorIdentification)?.Trim();
+                    if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
+                        _imageInfo.DriveManufacturer = StringHandlers.CToString(inquiry.VendorIdentification)?.Trim();
 
-                    if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                        imageInfo.DriveModel = StringHandlers.CToString(inquiry.ProductIdentification)?.Trim();
+                    if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
+                        _imageInfo.DriveModel = StringHandlers.CToString(inquiry.ProductIdentification)?.Trim();
 
-                    if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
-                        imageInfo.DriveFirmwareRevision =
+                    if(string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
+                        _imageInfo.DriveFirmwareRevision =
                             StringHandlers.CToString(inquiry.ProductRevisionLevel)?.Trim();
                 }
             }
 
             // Search for ATA or ATAPI IDENTIFY
-            if(!mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] ataIdentify) &&
-               !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify))
+            if(!_mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] ataIdentify) &&
+               !_mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify))
                 return;
 
             Identify.IdentifyDevice? nullableIdentify = CommonTypes.Structs.Devices.ATA.Identify.Decode(ataIdentify);
@@ -119,22 +119,22 @@ namespace Aaru.DiscImages
             string[] separated = identify.Model.Split(' ');
 
             if(separated.Length == 1)
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                    imageInfo.DriveModel = separated[0];
+                if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
+                    _imageInfo.DriveModel = separated[0];
                 else
                 {
-                    if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
-                        imageInfo.DriveManufacturer = separated[0];
+                    if(string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
+                        _imageInfo.DriveManufacturer = separated[0];
 
-                    if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                        imageInfo.DriveModel = separated[^1];
+                    if(string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
+                        _imageInfo.DriveModel = separated[^1];
                 }
 
-            if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
-                imageInfo.DriveFirmwareRevision = identify.FirmwareRevision;
+            if(string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
+                _imageInfo.DriveFirmwareRevision = identify.FirmwareRevision;
 
-            if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
-                imageInfo.DriveSerialNumber = identify.SerialNumber;
+            if(string.IsNullOrWhiteSpace(_imageInfo.DriveSerialNumber))
+                _imageInfo.DriveSerialNumber = identify.SerialNumber;
         }
 
         // Get the CICM XML media type from Aaru media type
@@ -241,24 +241,24 @@ namespace Aaru.DiscImages
         // Gets a DDT entry
         ulong GetDdtEntry(ulong sectorAddress)
         {
-            if(inMemoryDdt)
-                return userDataDdt[sectorAddress];
+            if(_inMemoryDdt)
+                return _userDataDdt[sectorAddress];
 
-            if(ddtEntryCache.TryGetValue(sectorAddress, out ulong entry))
+            if(_ddtEntryCache.TryGetValue(sectorAddress, out ulong entry))
                 return entry;
 
-            long oldPosition = imageStream.Position;
-            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
-            imageStream.Position += (long)(sectorAddress * sizeof(ulong));
+            long oldPosition = _imageStream.Position;
+            _imageStream.Position =  _outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
+            _imageStream.Position += (long)(sectorAddress * sizeof(ulong));
             byte[] temp = new byte[sizeof(ulong)];
-            imageStream.Read(temp, 0, sizeof(ulong));
-            imageStream.Position = oldPosition;
-            entry                = BitConverter.ToUInt64(temp, 0);
+            _imageStream.Read(temp, 0, sizeof(ulong));
+            _imageStream.Position = oldPosition;
+            entry                 = BitConverter.ToUInt64(temp, 0);
 
-            if(ddtEntryCache.Count >= MAX_DDT_ENTRY_CACHE)
-                ddtEntryCache.Clear();
+            if(_ddtEntryCache.Count >= MAX_DDT_ENTRY_CACHE)
+                _ddtEntryCache.Clear();
 
-            ddtEntryCache.Add(sectorAddress, entry);
+            _ddtEntryCache.Add(sectorAddress, entry);
 
             return entry;
         }
@@ -266,21 +266,21 @@ namespace Aaru.DiscImages
         // Sets a DDT entry
         void SetDdtEntry(ulong sectorAddress, ulong pointer)
         {
-            if(inMemoryDdt)
+            if(_inMemoryDdt)
             {
                 if(IsTape)
-                    tapeDdt[sectorAddress] = pointer;
+                    _tapeDdt[sectorAddress] = pointer;
                 else
-                    userDataDdt[sectorAddress] = pointer;
+                    _userDataDdt[sectorAddress] = pointer;
 
                 return;
             }
 
-            long oldPosition = imageStream.Position;
-            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
-            imageStream.Position += (long)(sectorAddress * sizeof(ulong));
-            imageStream.Write(BitConverter.GetBytes(pointer), 0, sizeof(ulong));
-            imageStream.Position = oldPosition;
+            long oldPosition = _imageStream.Position;
+            _imageStream.Position =  _outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
+            _imageStream.Position += (long)(sectorAddress * sizeof(ulong));
+            _imageStream.Write(BitConverter.GetBytes(pointer), 0, sizeof(ulong));
+            _imageStream.Position = oldPosition;
         }
 
         // Converts between image data type and Aaru media tag type

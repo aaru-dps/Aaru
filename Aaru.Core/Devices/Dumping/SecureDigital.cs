@@ -69,8 +69,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             bool         sense;
-            const ushort SD_PROFILE = 0x0001;
-            const uint   TIMEOUT    = 5;
+            const ushort sdProfile = 0x0001;
+            const uint   timeout   = 5;
             double       duration;
 
             uint   blocksToRead      = 1;
@@ -92,7 +92,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     UpdateStatus?.Invoke("Reading Extended CSD");
                     _dumpLog.WriteLine("Reading Extended CSD");
-                    sense = _dev.ReadExtendedCsd(out ecsd, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
 
                     if(!sense)
                     {
@@ -118,7 +118,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Reading CSD");
                     _dumpLog.WriteLine("Reading CSD");
-                    sense = _dev.ReadCsd(out csd, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadCsd(out csd, out response, timeout, out duration);
 
                     if(!sense)
                     {
@@ -139,7 +139,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Reading OCR");
                     _dumpLog.WriteLine("Reading OCR");
-                    sense = _dev.ReadOcr(out ocr, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadOcr(out ocr, out response, timeout, out duration);
 
                     if(sense)
                     {
@@ -156,7 +156,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     UpdateStatus?.Invoke("Reading CSD");
                     _dumpLog.WriteLine("Reading CSD");
-                    sense = _dev.ReadCsd(out csd, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadCsd(out csd, out response, timeout, out duration);
 
                     if(!sense)
                     {
@@ -180,7 +180,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Reading OCR");
                     _dumpLog.WriteLine("Reading OCR");
-                    sense = _dev.ReadSdocr(out ocr, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadSdocr(out ocr, out response, timeout, out duration);
 
                     if(sense)
                     {
@@ -192,7 +192,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Reading SCR");
                     _dumpLog.WriteLine("Reading SCR");
-                    sense = _dev.ReadScr(out scr, out response, TIMEOUT, out duration);
+                    sense = _dev.ReadScr(out scr, out response, timeout, out duration);
 
                     if(sense)
                     {
@@ -208,7 +208,7 @@ namespace Aaru.Core.Devices.Dumping
 
             UpdateStatus?.Invoke("Reading CID");
             _dumpLog.WriteLine("Reading CID");
-            sense = _dev.ReadCid(out byte[] cid, out response, TIMEOUT, out duration);
+            sense = _dev.ReadCid(out byte[] cid, out response, timeout, out duration);
 
             if(sense)
             {
@@ -241,7 +241,7 @@ namespace Aaru.Core.Devices.Dumping
 
             while(true)
             {
-                error = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, TIMEOUT, out duration);
+                error = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
 
                 if(error)
                     blocksToRead /= 2;
@@ -308,7 +308,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
-            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SD_PROFILE);
+            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sdProfile);
 
             ret = _outputPlugin.Create(_outputPath,
                                        _dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
@@ -367,7 +367,7 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                error = _dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
+                error = _dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout,
                                   out duration);
 
                 if(!error)
@@ -462,7 +462,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, TIMEOUT,
+                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout,
                                       out duration);
 
                     totalDuration += duration;
@@ -514,7 +514,7 @@ namespace Aaru.Core.Devices.Dumping
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
-                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, TIMEOUT,
+                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout,
                                       out duration);
 
                     totalDuration += duration;

@@ -66,7 +66,7 @@ namespace Aaru.Filesystems
             if(sector.Length < 512)
                 return false;
 
-            JfsSuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
+            SuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
             return jfsSb.s_magic == JFS_MAGIC;
         }
@@ -83,80 +83,80 @@ namespace Aaru.Filesystems
             if(sector.Length < 512)
                 return;
 
-            JfsSuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
+            SuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
             sb.AppendLine("JFS filesystem");
             sb.AppendFormat("Version {0}", jfsSb.s_version).AppendLine();
             sb.AppendFormat("{0} blocks of {1} bytes", jfsSb.s_size, jfsSb.s_bsize).AppendLine();
             sb.AppendFormat("{0} blocks per allocation group", jfsSb.s_agsize).AppendLine();
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Unicode))
+            if(jfsSb.s_flags.HasFlag(Flags.Unicode))
                 sb.AppendLine("Volume uses Unicode for directory entries");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.RemountRO))
+            if(jfsSb.s_flags.HasFlag(Flags.RemountRO))
                 sb.AppendLine("Volume remounts read-only on error");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Continue))
+            if(jfsSb.s_flags.HasFlag(Flags.Continue))
                 sb.AppendLine("Volume continues on error");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Panic))
+            if(jfsSb.s_flags.HasFlag(Flags.Panic))
                 sb.AppendLine("Volume panics on error");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.UserQuota))
+            if(jfsSb.s_flags.HasFlag(Flags.UserQuota))
                 sb.AppendLine("Volume has user quotas enabled");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.GroupQuota))
+            if(jfsSb.s_flags.HasFlag(Flags.GroupQuota))
                 sb.AppendLine("Volume has group quotas enabled");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.NoJournal))
+            if(jfsSb.s_flags.HasFlag(Flags.NoJournal))
                 sb.AppendLine("Volume is not using any journal");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Discard))
+            if(jfsSb.s_flags.HasFlag(Flags.Discard))
                 sb.AppendLine("Volume sends TRIM/UNMAP commands to underlying device");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.GroupCommit))
+            if(jfsSb.s_flags.HasFlag(Flags.GroupCommit))
                 sb.AppendLine("Volume commits in groups of 1");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.LazyCommit))
+            if(jfsSb.s_flags.HasFlag(Flags.LazyCommit))
                 sb.AppendLine("Volume commits lazy");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Temporary))
+            if(jfsSb.s_flags.HasFlag(Flags.Temporary))
                 sb.AppendLine("Volume does not commit to log");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.InlineLog))
+            if(jfsSb.s_flags.HasFlag(Flags.InlineLog))
                 sb.AppendLine("Volume has log withing itself");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.InlineMoving))
+            if(jfsSb.s_flags.HasFlag(Flags.InlineMoving))
                 sb.AppendLine("Volume has log withing itself and is moving it out");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.BadSAIT))
+            if(jfsSb.s_flags.HasFlag(Flags.BadSAIT))
                 sb.AppendLine("Volume has bad current secondary ait");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Sparse))
+            if(jfsSb.s_flags.HasFlag(Flags.Sparse))
                 sb.AppendLine("Volume supports sparse files");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.DASDEnabled))
+            if(jfsSb.s_flags.HasFlag(Flags.DASDEnabled))
                 sb.AppendLine("Volume has DASD limits enabled");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.DASDPrime))
+            if(jfsSb.s_flags.HasFlag(Flags.DASDPrime))
                 sb.AppendLine("Volume primes DASD on boot");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.SwapBytes))
+            if(jfsSb.s_flags.HasFlag(Flags.SwapBytes))
                 sb.AppendLine("Volume is in a big-endian system");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.DirIndex))
+            if(jfsSb.s_flags.HasFlag(Flags.DirIndex))
                 sb.AppendLine("Volume has presistent indexes");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.Linux))
+            if(jfsSb.s_flags.HasFlag(Flags.Linux))
                 sb.AppendLine("Volume supports Linux");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.DFS))
+            if(jfsSb.s_flags.HasFlag(Flags.DFS))
                 sb.AppendLine("Volume supports DCE DFS LFS");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.OS2))
+            if(jfsSb.s_flags.HasFlag(Flags.OS2))
                 sb.AppendLine("Volume supports OS/2, and is case insensitive");
 
-            if(jfsSb.s_flags.HasFlag(JfsFlags.AIX))
+            if(jfsSb.s_flags.HasFlag(Flags.AIX))
                 sb.AppendLine("Volume supports AIX");
 
             if(jfsSb.s_state != 0)
@@ -192,7 +192,7 @@ namespace Aaru.Filesystems
         }
 
         [Flags]
-        enum JfsFlags : uint
+        enum Flags : uint
         {
             Unicode      = 0x00000001, RemountRO = 0x00000002, Continue    = 0x00000004,
             Panic        = 0x00000008, UserQuota = 0x00000010, GroupQuota  = 0x00000020,
@@ -205,14 +205,14 @@ namespace Aaru.Filesystems
         }
 
         [Flags]
-        enum JfsState : uint
+        enum State : uint
         {
             Clean   = 0, Mounted  = 1, Dirty = 2,
             Logredo = 4, Extendfs = 8
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JfsExtent
+        struct Extent
         {
             /// <summary>Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2" /></summary>
             public readonly uint len_addr;
@@ -220,43 +220,43 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JfsTimeStruct
+        struct TimeStruct
         {
             public readonly uint tv_sec;
             public readonly uint tv_nsec;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JfsSuperBlock
+        struct SuperBlock
         {
-            public readonly uint          s_magic;
-            public readonly uint          s_version;
-            public readonly ulong         s_size;
-            public readonly uint          s_bsize;
-            public readonly ushort        s_l2bsize;
-            public readonly ushort        s_l2bfactor;
-            public readonly uint          s_pbsize;
-            public readonly ushort        s_l1pbsize;
-            public readonly ushort        pad;
-            public readonly uint          s_agsize;
-            public readonly JfsFlags      s_flags;
-            public readonly JfsState      s_state;
-            public readonly uint          s_compress;
-            public readonly JfsExtent     s_ait2;
-            public readonly JfsExtent     s_aim2;
-            public readonly uint          s_logdev;
-            public readonly uint          s_logserial;
-            public readonly JfsExtent     s_logpxd;
-            public readonly JfsExtent     s_fsckpxd;
-            public readonly JfsTimeStruct s_time;
-            public readonly uint          s_fsckloglen;
-            public readonly sbyte         s_fscklog;
+            public readonly uint       s_magic;
+            public readonly uint       s_version;
+            public readonly ulong      s_size;
+            public readonly uint       s_bsize;
+            public readonly ushort     s_l2bsize;
+            public readonly ushort     s_l2bfactor;
+            public readonly uint       s_pbsize;
+            public readonly ushort     s_l1pbsize;
+            public readonly ushort     pad;
+            public readonly uint       s_agsize;
+            public readonly Flags      s_flags;
+            public readonly State      s_state;
+            public readonly uint       s_compress;
+            public readonly Extent     s_ait2;
+            public readonly Extent     s_aim2;
+            public readonly uint       s_logdev;
+            public readonly uint       s_logserial;
+            public readonly Extent     s_logpxd;
+            public readonly Extent     s_fsckpxd;
+            public readonly TimeStruct s_time;
+            public readonly uint       s_fsckloglen;
+            public readonly sbyte      s_fscklog;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public readonly byte[] s_fpack;
-            public readonly ulong     s_xsize;
-            public readonly JfsExtent s_xfsckpxd;
-            public readonly JfsExtent s_xlogpxd;
-            public readonly Guid      s_uuid;
+            public readonly ulong  s_xsize;
+            public readonly Extent s_xfsckpxd;
+            public readonly Extent s_xlogpxd;
+            public readonly Guid   s_uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] s_label;
             public readonly Guid s_loguuid;

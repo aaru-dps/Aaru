@@ -49,30 +49,30 @@ namespace Aaru.DiscImages
         {
             if(options != null)
             {
-                if(options.TryGetValue("adapter", out adapter_type))
-                    switch(adapter_type.ToLowerInvariant())
+                if(options.TryGetValue("adapter", out _adapterType))
+                    switch(_adapterType.ToLowerInvariant())
                     {
                         case "ide":
                         case "lsilogic":
                         case "buslogic":
-                            adapter_type = adapter_type.ToLowerInvariant();
+                            _adapterType = _adapterType.ToLowerInvariant();
 
                             break;
                         case "legacyesx":
-                            adapter_type = "legacyESX";
+                            _adapterType = "legacyESX";
 
                             break;
                         default:
-                            ErrorMessage = $"Invalid adapter type {adapter_type}";
+                            ErrorMessage = $"Invalid adapter type {_adapterType}";
 
                             return false;
                     }
                 else
-                    adapter_type = "ide";
+                    _adapterType = "ide";
 
                 if(options.TryGetValue("hwversion", out string tmpValue))
                 {
-                    if(!uint.TryParse(tmpValue, out hwversion))
+                    if(!uint.TryParse(tmpValue, out _hwversion))
                     {
                         ErrorMessage = "Invalid value for hwversion option";
 
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
                     }
                 }
                 else
-                    hwversion = 4;
+                    _hwversion = 4;
 
                 if(options.TryGetValue("split", out tmpValue))
                 {
@@ -118,8 +118,8 @@ namespace Aaru.DiscImages
             }
             else
             {
-                adapter_type = "ide";
-                hwversion    = 4;
+                _adapterType = "ide";
+                _hwversion   = 4;
             }
 
             if(sectorSize != 512)
@@ -136,7 +136,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -145,12 +145,12 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
-                descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
+                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
                 // TODO: Support split
-                writingStream = new FileStream(writingBaseName + "-flat.vmdk", FileMode.OpenOrCreate,
-                                               FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(_writingBaseName + "-flat.vmdk", FileMode.OpenOrCreate,
+                                                FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -188,15 +188,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -220,15 +220,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * 512), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -259,54 +259,54 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
-            if(imageInfo.Cylinders == 0)
+            if(_imageInfo.Cylinders == 0)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
 
-                while(imageInfo.Cylinders == 0)
+                while(_imageInfo.Cylinders == 0)
                 {
-                    imageInfo.Heads--;
+                    _imageInfo.Heads--;
 
-                    if(imageInfo.Heads == 0)
+                    if(_imageInfo.Heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        imageInfo.Heads = 16;
+                        _imageInfo.SectorsPerTrack--;
+                        _imageInfo.Heads = 16;
                     }
 
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+                    _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders       == 0 &&
-                       imageInfo.Heads           == 0 &&
-                       imageInfo.SectorsPerTrack == 0)
+                    if(_imageInfo.Cylinders       == 0 &&
+                       _imageInfo.Heads           == 0 &&
+                       _imageInfo.SectorsPerTrack == 0)
                         break;
                 }
             }
 
-            descriptorStream.WriteLine("# Disk DescriptorFile");
-            descriptorStream.WriteLine("version=1");
-            descriptorStream.WriteLine($"CID={new Random().Next(int.MinValue, int.MaxValue):x8}");
-            descriptorStream.WriteLine("parentCID=ffffffff");
-            descriptorStream.WriteLine("createType=\"monolithicFlat\"");
-            descriptorStream.WriteLine();
-            descriptorStream.WriteLine("# Extent description");
-            descriptorStream.WriteLine($"RW {imageInfo.Sectors} FLAT \"{writingBaseName + "-flat.vmdk"}\" 0");
-            descriptorStream.WriteLine();
-            descriptorStream.WriteLine("# The Disk Data Base");
-            descriptorStream.WriteLine("#DDB");
-            descriptorStream.WriteLine();
-            descriptorStream.WriteLine($"ddb.virtualHWVersion = \"{hwversion}\"");
-            descriptorStream.WriteLine($"ddb.geometry.cylinders = \"{imageInfo.Cylinders}\"");
-            descriptorStream.WriteLine($"ddb.geometry.heads = \"{imageInfo.Heads}\"");
-            descriptorStream.WriteLine($"ddb.geometry.sectors = \"{imageInfo.SectorsPerTrack}\"");
-            descriptorStream.WriteLine($"ddb.adapterType = \"{adapter_type}\"");
+            _descriptorStream.WriteLine("# Disk DescriptorFile");
+            _descriptorStream.WriteLine("version=1");
+            _descriptorStream.WriteLine($"CID={new Random().Next(int.MinValue, int.MaxValue):x8}");
+            _descriptorStream.WriteLine("parentCID=ffffffff");
+            _descriptorStream.WriteLine("createType=\"monolithicFlat\"");
+            _descriptorStream.WriteLine();
+            _descriptorStream.WriteLine("# Extent description");
+            _descriptorStream.WriteLine($"RW {_imageInfo.Sectors} FLAT \"{_writingBaseName + "-flat.vmdk"}\" 0");
+            _descriptorStream.WriteLine();
+            _descriptorStream.WriteLine("# The Disk Data Base");
+            _descriptorStream.WriteLine("#DDB");
+            _descriptorStream.WriteLine();
+            _descriptorStream.WriteLine($"ddb.virtualHWVersion = \"{_hwversion}\"");
+            _descriptorStream.WriteLine($"ddb.geometry.cylinders = \"{_imageInfo.Cylinders}\"");
+            _descriptorStream.WriteLine($"ddb.geometry.heads = \"{_imageInfo.Heads}\"");
+            _descriptorStream.WriteLine($"ddb.geometry.sectors = \"{_imageInfo.SectorsPerTrack}\"");
+            _descriptorStream.WriteLine($"ddb.adapterType = \"{_adapterType}\"");
 
-            descriptorStream.Flush();
-            descriptorStream.Close();
+            _descriptorStream.Flush();
+            _descriptorStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -339,9 +339,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
-            imageInfo.Heads           = heads;
-            imageInfo.Cylinders       = cylinders;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Heads           = heads;
+            _imageInfo.Cylinders       = cylinders;
 
             return true;
         }

@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
         /// <param name="buf">Buffer.</param>
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -57,17 +57,17 @@ namespace Aaru.Filesystems
             if(pathElements.Length != 1)
                 return Errno.NotSupported;
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+            if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 return Errno.NoSuchFile;
 
             if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
-                if(!passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
+                if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
                     return Errno.NoError;
 
             if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 
-            return !passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError
+            return !_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf) ? Errno.NoError
                        : Errno.NoSuchExtendedAttribute;
         }
 
@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -91,15 +91,15 @@ namespace Aaru.Filesystems
             if(pathElements.Length != 1)
                 return Errno.NotSupported;
 
-            if(!fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+            if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 return Errno.NoSuchFile;
 
             xattrs = new List<string>();
 
-            if(passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+            if(_passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 xattrs.Add("com.caldera.cpm.password");
 
-            if(decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
+            if(_decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
                 xattrs.Add("com.caldera.cpm.password.text");
 
             return Errno.NoError;

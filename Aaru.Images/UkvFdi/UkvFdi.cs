@@ -39,12 +39,12 @@ namespace Aaru.DiscImages
 {
     public partial class UkvFdi : IMediaImage
     {
-        ImageInfo imageInfo;
+        ImageInfo _imageInfo;
 
         // Cylinder by head, sector data matrix
-        byte[][][][] sectorsData;
+        byte[][][][] _sectorsData;
 
-        public UkvFdi() => imageInfo = new ImageInfo
+        public UkvFdi() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

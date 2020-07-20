@@ -252,12 +252,12 @@ namespace Aaru.Filesystems
 
             if(minix3)
             {
-                Minix3SuperBlock mnxSb;
+                SuperBlock3 mnxSb;
 
                 if(littleEndian)
-                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
+                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector);
                 else
-                    mnxSb = Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
+                    mnxSb = Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
 
                 if(magic != MINIX3_MAGIC &&
                    magic != MINIX3_CIGAM)
@@ -293,12 +293,12 @@ namespace Aaru.Filesystems
             }
             else
             {
-                MinixSuperBlock mnxSb;
+                SuperBlock mnxSb;
 
                 if(littleEndian)
-                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);
+                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(minixSbSector);
                 else
-                    mnxSb = Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
+                    mnxSb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();
@@ -332,7 +332,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Superblock for Minix v1 and V2 filesystems</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MinixSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
             public readonly ushort s_ninodes;
@@ -358,7 +358,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Superblock for Minix v3 filesystems</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Minix3SuperBlock
+        struct SuperBlock3
         {
             /// <summary>0x00, inodes on volume</summary>
             public readonly uint s_ninodes;

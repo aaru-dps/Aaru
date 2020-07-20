@@ -69,7 +69,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -87,7 +87,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            fdihdr = new Anex86Header
+            _fdihdr = new Anex86Header
             {
                 hdrSize = 4096,
                 dskSize = (int)(sectors * sectorSize),
@@ -116,22 +116,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(4096 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -147,22 +147,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(4096 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(4096 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -192,44 +192,44 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if((imageInfo.MediaType == MediaType.Unknown           || imageInfo.MediaType == MediaType.GENERIC_HDD   ||
-                imageInfo.MediaType == MediaType.FlashDrive        || imageInfo.MediaType == MediaType.CompactFlash  ||
-                imageInfo.MediaType == MediaType.CompactFlashType2 || imageInfo.MediaType == MediaType.PCCardTypeI   ||
-                imageInfo.MediaType == MediaType.PCCardTypeII      || imageInfo.MediaType == MediaType.PCCardTypeIII ||
-                imageInfo.MediaType == MediaType.PCCardTypeIV) &&
-               fdihdr.cylinders == 0)
+            if((_imageInfo.MediaType == MediaType.Unknown || _imageInfo.MediaType == MediaType.GENERIC_HDD ||
+                _imageInfo.MediaType == MediaType.FlashDrive || _imageInfo.MediaType == MediaType.CompactFlash ||
+                _imageInfo.MediaType == MediaType.CompactFlashType2 || _imageInfo.MediaType == MediaType.PCCardTypeI ||
+                _imageInfo.MediaType == MediaType.PCCardTypeII || _imageInfo.MediaType == MediaType.PCCardTypeIII ||
+                _imageInfo.MediaType == MediaType.PCCardTypeIV) &&
+               _fdihdr.cylinders == 0)
             {
-                fdihdr.cylinders = (int)(imageInfo.Sectors / 8 / 33);
-                fdihdr.heads     = 8;
-                fdihdr.spt       = 33;
+                _fdihdr.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
+                _fdihdr.heads     = 8;
+                _fdihdr.spt       = 33;
 
-                while(fdihdr.cylinders == 0)
+                while(_fdihdr.cylinders == 0)
                 {
-                    fdihdr.heads--;
+                    _fdihdr.heads--;
 
-                    if(fdihdr.heads == 0)
+                    if(_fdihdr.heads == 0)
                     {
-                        fdihdr.spt--;
-                        fdihdr.heads = 8;
+                        _fdihdr.spt--;
+                        _fdihdr.heads = 8;
                     }
 
-                    fdihdr.cylinders = (int)imageInfo.Sectors / fdihdr.heads / fdihdr.spt;
+                    _fdihdr.cylinders = (int)_imageInfo.Sectors / _fdihdr.heads / _fdihdr.spt;
 
-                    if(fdihdr.cylinders == 0 &&
-                       fdihdr.heads     == 0 &&
-                       fdihdr.spt       == 0)
+                    if(_fdihdr.cylinders == 0 &&
+                       _fdihdr.heads     == 0 &&
+                       _fdihdr.spt       == 0)
                         break;
                 }
             }
 
             byte[] hdr = new byte[Marshal.SizeOf<Anex86Header>()];
-            MemoryMarshal.Write(hdr, ref fdihdr);
+            MemoryMarshal.Write(hdr, ref _fdihdr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -262,9 +262,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            fdihdr.spt       = (int)sectorsPerTrack;
-            fdihdr.heads     = (int)heads;
-            fdihdr.cylinders = (int)cylinders;
+            _fdihdr.spt       = (int)sectorsPerTrack;
+            _fdihdr.heads     = (int)heads;
+            _fdihdr.cylinders = (int)cylinders;
 
             return true;
         }

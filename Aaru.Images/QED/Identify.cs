@@ -48,9 +48,9 @@ namespace Aaru.DiscImages
 
             byte[] qHdrB = new byte[68];
             stream.Read(qHdrB, 0, 68);
-            qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
+            _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
-            return qHdr.magic == QED_MAGIC;
+            return _qHdr.magic == QED_MAGIC;
         }
     }
 }

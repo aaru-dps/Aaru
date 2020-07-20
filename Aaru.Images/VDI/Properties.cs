@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Vdi
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "VirtualBox Disk Image";
         public Guid                   Id           => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");

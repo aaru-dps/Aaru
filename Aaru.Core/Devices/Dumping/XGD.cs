@@ -62,7 +62,7 @@ namespace Aaru.Core.Devices.Dumping
         internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType)
         {
             bool       sense;
-            const uint BLOCK_SIZE   = 2048;
+            const uint blockSize    = 2048;
             uint       blocksToRead = 64;
             DateTime   start;
             DateTime   end;
@@ -371,7 +371,7 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("Total 0 size: {0} sectors", totalSize);
             _dumpLog.WriteLine("Real layer break: {0}", layerBreak);
 
-            bool read12 = !_dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, BLOCK_SIZE, 0, 1,
+            bool read12 = !_dev.Read12(out readBuffer, out senseBuf, 0, false, true, false, false, 0, blockSize, 0, 1,
                                        false, _dev.Timeout, out _);
 
             if(!read12)
@@ -404,7 +404,7 @@ namespace Aaru.Core.Devices.Dumping
             {
                 if(read12)
                 {
-                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, BLOCK_SIZE, 0,
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, blockSize, 0,
                                         blocksToRead, false, _dev.Timeout, out _);
 
                     if(sense || _dev.Error)
@@ -458,9 +458,9 @@ namespace Aaru.Core.Devices.Dumping
             _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, BLOCK_SIZE, blocksToRead, _private);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
             var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0010);
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, BLOCK_SIZE);
+            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
@@ -493,10 +493,10 @@ namespace Aaru.Core.Devices.Dumping
             {
                 new Track
                 {
-                    TrackBytesPerSector    = (int)BLOCK_SIZE,
+                    TrackBytesPerSector    = (int)blockSize,
                     TrackEndSector         = blocks - 1,
                     TrackSequence          = 1,
-                    TrackRawBytesPerSector = (int)BLOCK_SIZE,
+                    TrackRawBytesPerSector = (int)blockSize,
                     TrackSubchannelType    = TrackSubchannelType.None,
                     TrackSession           = 1,
                     TrackType              = TrackType.Data
@@ -591,8 +591,8 @@ namespace Aaru.Core.Devices.Dumping
                     UpdateProgress?.Invoke($"Reading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                            (long)totalSize);
 
-                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i,
-                                        BLOCK_SIZE, 0, blocksToRead, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, blockSize,
+                                        0, blocksToRead, false, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
 
@@ -619,7 +619,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         // Write empty data
                         DateTime writeStart = DateTime.Now;
-                        _outputPlugin.WriteSectors(new byte[BLOCK_SIZE * _skip], i, _skip);
+                        _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
                         imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                         for(ulong b = i; b < i + _skip; b++)
@@ -654,7 +654,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(elapsed < 1)
                         continue;
 
-                    currentSpeed     = (sectorSpeedStart * BLOCK_SIZE) / (1048576 * elapsed);
+                    currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
@@ -680,7 +680,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[BLOCK_SIZE * blocksToRead], i, blocksToRead);
+                    _outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     blocksToRead       =  saveBlocksToRead;
                     extents.Add(i, blocksToRead, true);
@@ -722,8 +722,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 // Write empty data
                 DateTime writeStart = DateTime.Now;
-                _outputPlugin.WriteSectors(new byte[BLOCK_SIZE * blocksToRead], middle + currentSector, blocksToRead);
-                imageWriteDuration += (DateTime.Now                                    - writeStart).TotalSeconds;
+                _outputPlugin.WriteSectors(new byte[blockSize * blocksToRead], middle + currentSector, blocksToRead);
+                imageWriteDuration += (DateTime.Now                                   - writeStart).TotalSeconds;
                 extents.Add(currentSector, blocksToRead, true);
 
                 currentSector     += blocksToRead;
@@ -787,8 +787,8 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
                                        (long)currentSector, (long)totalSize);
 
-                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, BLOCK_SIZE,
-                                    0, blocksToRead, false, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, blockSize, 0,
+                                    blocksToRead, false, _dev.Timeout, out cmdDuration);
 
                 totalDuration += cmdDuration;
 
@@ -812,7 +812,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[BLOCK_SIZE * _skip], currentSector, _skip);
+                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], currentSector, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
                     // TODO: Handle errors in video partition
@@ -843,7 +843,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * BLOCK_SIZE) / (1048576 * elapsed);
+                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -876,24 +876,24 @@ namespace Aaru.Core.Devices.Dumping
             AaruConsole.WriteLine();
             mhddLog.Close();
 
-            ibgLog.Close(_dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+            ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)BLOCK_SIZE * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
 
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
@@ -921,7 +921,7 @@ namespace Aaru.Core.Devices.Dumping
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector,
-                                        BLOCK_SIZE, 0, 1, false, _dev.Timeout, out cmdDuration);
+                                        blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
 
@@ -1084,7 +1084,7 @@ namespace Aaru.Core.Devices.Dumping
                                                         runningPersistent ? "recovering partial data, " : ""));
 
                     sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector,
-                                        BLOCK_SIZE, 0, 1, false, _dev.Timeout, out cmdDuration);
+                                        blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
 
@@ -1224,7 +1224,7 @@ namespace Aaru.Core.Devices.Dumping
                     Value = layerBreak
                 };
 
-                WriteOpticalSidecar(BLOCK_SIZE, blocks, dskType, layers, mediaTags, 1, out totalChkDuration, null);
+                WriteOpticalSidecar(blockSize, blocks, dskType, layers, mediaTags, 1, out totalChkDuration, null);
             }
 
             UpdateStatus?.Invoke("");
@@ -1233,7 +1233,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)BLOCK_SIZE * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

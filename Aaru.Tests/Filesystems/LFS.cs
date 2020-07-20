@@ -36,37 +36,37 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class LfsMbr
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "netbsd_1.6.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             409600
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             409600
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             512
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             null
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             null
         };

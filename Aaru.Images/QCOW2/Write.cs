@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -92,7 +92,7 @@ namespace Aaru.DiscImages
             string extension = Path.GetExtension(path);
             bool   version3  = extension == ".qcow3" || extension == ".qc3";
 
-            qHdr = new QCow2Header
+            _qHdr = new QCow2Header
             {
                 magic         = QCOW_MAGIC,
                 version       = version3 ? QCOW_VERSION3 : QCOW_VERSION2,
@@ -101,66 +101,66 @@ namespace Aaru.DiscImages
                 header_length = (uint)Marshal.SizeOf<QCow2Header>()
             };
 
-            clusterSize    = 1 << (int)qHdr.cluster_bits;
-            clusterSectors = 1 << ((int)qHdr.cluster_bits - 9);
-            l2Bits         = (int)(qHdr.cluster_bits      - 3);
-            l2Size         = 1 << l2Bits;
+            _clusterSize    = 1 << (int)_qHdr.cluster_bits;
+            _clusterSectors = 1 << ((int)_qHdr.cluster_bits - 9);
+            _l2Bits         = (int)(_qHdr.cluster_bits      - 3);
+            _l2Size         = 1 << _l2Bits;
 
-            l1Mask = 0;
+            _l1Mask = 0;
             int c = 0;
-            l1Shift = (int)(l2Bits + qHdr.cluster_bits);
+            _l1Shift = (int)(_l2Bits + _qHdr.cluster_bits);
 
             for(int i = 0; i < 64; i++)
             {
-                l1Mask <<= 1;
+                _l1Mask <<= 1;
 
-                if(c >= 64 - l1Shift)
+                if(c >= 64 - _l1Shift)
                     continue;
 
-                l1Mask += 1;
+                _l1Mask += 1;
                 c++;
             }
 
-            l2Mask = 0;
+            _l2Mask = 0;
 
-            for(int i = 0; i < l2Bits; i++)
-                l2Mask = (l2Mask << 1) + 1;
+            for(int i = 0; i < _l2Bits; i++)
+                _l2Mask = (_l2Mask << 1) + 1;
 
-            l2Mask <<= (int)qHdr.cluster_bits;
+            _l2Mask <<= (int)_qHdr.cluster_bits;
 
-            sectorMask = 0;
+            _sectorMask = 0;
 
-            for(int i = 0; i < qHdr.cluster_bits; i++)
-                sectorMask = (sectorMask << 1) + 1;
+            for(int i = 0; i < _qHdr.cluster_bits; i++)
+                _sectorMask = (_sectorMask << 1) + 1;
 
-            qHdr.l1_size = (uint)(qHdr.size >> l1Shift);
+            _qHdr.l1_size = (uint)(_qHdr.size >> _l1Shift);
 
-            if(qHdr.l1_size == 0)
-                qHdr.l1_size = 1;
+            if(_qHdr.l1_size == 0)
+                _qHdr.l1_size = 1;
 
-            l1Table = new ulong[qHdr.l1_size];
+            _l1Table = new ulong[_qHdr.l1_size];
 
-            ulong clusters       = qHdr.size      / (ulong)clusterSize;
-            ulong refCountBlocks = (clusters * 2) / (ulong)clusterSize;
+            ulong clusters       = _qHdr.size     / (ulong)_clusterSize;
+            ulong refCountBlocks = (clusters * 2) / (ulong)_clusterSize;
 
             if(refCountBlocks == 0)
                 refCountBlocks = 1;
 
-            qHdr.refcount_table_offset   = (ulong)clusterSize;
-            qHdr.refcount_table_clusters = (uint)((refCountBlocks * 8) / (ulong)clusterSize);
+            _qHdr.refcount_table_offset   = (ulong)_clusterSize;
+            _qHdr.refcount_table_clusters = (uint)((refCountBlocks * 8) / (ulong)_clusterSize);
 
-            if(qHdr.refcount_table_clusters == 0)
-                qHdr.refcount_table_clusters = 1;
+            if(_qHdr.refcount_table_clusters == 0)
+                _qHdr.refcount_table_clusters = 1;
 
-            refCountTable        = new ulong[refCountBlocks];
-            qHdr.l1_table_offset = qHdr.refcount_table_offset + (ulong)(qHdr.refcount_table_clusters * clusterSize);
-            ulong l1TableClusters = (qHdr.l1_size * 8) / (ulong)clusterSize;
+            _refCountTable        = new ulong[refCountBlocks];
+            _qHdr.l1_table_offset = _qHdr.refcount_table_offset + (ulong)(_qHdr.refcount_table_clusters * _clusterSize);
+            ulong l1TableClusters = (_qHdr.l1_size * 8) / (ulong)_clusterSize;
 
             if(l1TableClusters == 0)
                 l1TableClusters = 1;
 
-            byte[] empty = new byte[qHdr.l1_table_offset + (l1TableClusters * (ulong)clusterSize)];
-            writingStream.Write(empty, 0, empty.Length);
+            byte[] empty = new byte[_qHdr.l1_table_offset + (l1TableClusters * (ulong)_clusterSize)];
+            _writingStream.Write(empty, 0, empty.Length);
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -184,14 +184,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
@@ -204,63 +204,63 @@ namespace Aaru.DiscImages
 
             ulong byteAddress = sectorAddress * 512;
 
-            ulong l1Off = (byteAddress & l1Mask) >> l1Shift;
+            ulong l1Off = (byteAddress & _l1Mask) >> _l1Shift;
 
-            if((long)l1Off >= l1Table.LongLength)
+            if((long)l1Off >= _l1Table.LongLength)
                 throw new ArgumentOutOfRangeException(nameof(l1Off),
-                                                      $"Trying to write past L1 table, position {l1Off} of a max {l1Table.LongLength}");
+                                                      $"Trying to write past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
 
-            if(l1Table[l1Off] == 0)
+            if(_l1Table[l1Off] == 0)
             {
-                writingStream.Seek(0, SeekOrigin.End);
-                l1Table[l1Off] = (ulong)writingStream.Position;
-                byte[] l2TableB = new byte[l2Size * 8];
-                writingStream.Seek(0, SeekOrigin.End);
-                writingStream.Write(l2TableB, 0, l2TableB.Length);
+                _writingStream.Seek(0, SeekOrigin.End);
+                _l1Table[l1Off] = (ulong)_writingStream.Position;
+                byte[] l2TableB = new byte[_l2Size * 8];
+                _writingStream.Seek(0, SeekOrigin.End);
+                _writingStream.Write(l2TableB, 0, l2TableB.Length);
             }
 
-            writingStream.Position = (long)l1Table[l1Off];
+            _writingStream.Position = (long)_l1Table[l1Off];
 
-            ulong l2Off = (byteAddress & l2Mask) >> (int)qHdr.cluster_bits;
+            ulong l2Off = (byteAddress & _l2Mask) >> (int)_qHdr.cluster_bits;
 
-            writingStream.Seek((long)(l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
+            _writingStream.Seek((long)(_l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
 
             byte[] entry = new byte[8];
-            writingStream.Read(entry, 0, 8);
+            _writingStream.Read(entry, 0, 8);
             ulong offset = BigEndianBitConverter.ToUInt64(entry, 0);
 
             if(offset == 0)
             {
-                offset = (ulong)writingStream.Length;
-                byte[] cluster = new byte[clusterSize];
+                offset = (ulong)_writingStream.Length;
+                byte[] cluster = new byte[_clusterSize];
                 entry = BigEndianBitConverter.GetBytes(offset);
-                writingStream.Seek((long)(l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
-                writingStream.Write(entry, 0, 8);
-                writingStream.Seek(0, SeekOrigin.End);
-                writingStream.Write(cluster, 0, cluster.Length);
+                _writingStream.Seek((long)(_l1Table[l1Off] + (l2Off * 8)), SeekOrigin.Begin);
+                _writingStream.Write(entry, 0, 8);
+                _writingStream.Seek(0, SeekOrigin.End);
+                _writingStream.Write(cluster, 0, cluster.Length);
             }
 
-            writingStream.Seek((long)(offset + (byteAddress & sectorMask)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(offset + (byteAddress & _sectorMask)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
-            int   refCountBlockEntries = (clusterSize * 8)                  / 16;
-            ulong refCountBlockIndex   = (offset      / (ulong)clusterSize) % (ulong)refCountBlockEntries;
-            ulong refCountTableIndex   = offset / (ulong)clusterSize        / (ulong)refCountBlockEntries;
+            int   refCountBlockEntries = (_clusterSize * 8)                   / 16;
+            ulong refCountBlockIndex   = (offset       / (ulong)_clusterSize) % (ulong)refCountBlockEntries;
+            ulong refCountTableIndex   = offset / (ulong)_clusterSize         / (ulong)refCountBlockEntries;
 
-            ulong refBlockOffset = refCountTable[refCountTableIndex];
+            ulong refBlockOffset = _refCountTable[refCountTableIndex];
 
             if(refBlockOffset == 0)
             {
-                refBlockOffset                    = (ulong)writingStream.Length;
-                refCountTable[refCountTableIndex] = refBlockOffset;
-                byte[] cluster = new byte[clusterSize];
-                writingStream.Seek(0, SeekOrigin.End);
-                writingStream.Write(cluster, 0, cluster.Length);
+                refBlockOffset                     = (ulong)_writingStream.Length;
+                _refCountTable[refCountTableIndex] = refBlockOffset;
+                byte[] cluster = new byte[_clusterSize];
+                _writingStream.Seek(0, SeekOrigin.End);
+                _writingStream.Write(cluster, 0, cluster.Length);
             }
 
-            writingStream.Seek((long)(refBlockOffset + refCountBlockIndex), SeekOrigin.Begin);
+            _writingStream.Seek((long)(refBlockOffset + refCountBlockIndex), SeekOrigin.Begin);
 
-            writingStream.Write(new byte[]
+            _writingStream.Write(new byte[]
             {
                 0, 1
             }, 0, 2);
@@ -280,14 +280,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
@@ -300,8 +300,8 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] tmp = new byte[imageInfo.SectorSize];
-                Array.Copy(data, i * imageInfo.SectorSize, tmp, 0, imageInfo.SectorSize);
+                byte[] tmp = new byte[_imageInfo.SectorSize];
+                Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
                 if(!WriteSector(tmp, sectorAddress + i))
                     return false;
@@ -335,45 +335,45 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.magic), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.version), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.backing_file_offset), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.backing_file_size), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.cluster_bits), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.size), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.crypt_method), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.l1_size), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.l1_table_offset), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.refcount_table_offset), 0, 8);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.refcount_table_clusters), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.nb_snapshots), 0, 4);
-            writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.snapshots_offset), 0, 8);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.magic), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.version), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_offset), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.backing_file_size), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.cluster_bits), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.size), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.crypt_method), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_size), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.l1_table_offset), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_table_offset), 0, 8);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_table_clusters), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.nb_snapshots), 0, 4);
+            _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.snapshots_offset), 0, 8);
 
-            if(qHdr.version == QCOW_VERSION3)
+            if(_qHdr.version == QCOW_VERSION3)
             {
-                writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.features), 0, 8);
-                writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.compat_features), 0, 8);
-                writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.autoclear_features), 0, 8);
-                writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.refcount_order), 0, 4);
-                writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.header_length), 0, 4);
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.features), 0, 8);
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.compat_features), 0, 8);
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.autoclear_features), 0, 8);
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.refcount_order), 0, 4);
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_qHdr.header_length), 0, 4);
             }
 
-            writingStream.Seek((long)qHdr.refcount_table_offset, SeekOrigin.Begin);
+            _writingStream.Seek((long)_qHdr.refcount_table_offset, SeekOrigin.Begin);
 
-            for(long i = 0; i < refCountTable.LongLength; i++)
-                writingStream.Write(BigEndianBitConverter.GetBytes(refCountTable[i]), 0, 8);
+            for(long i = 0; i < _refCountTable.LongLength; i++)
+                _writingStream.Write(BigEndianBitConverter.GetBytes(_refCountTable[i]), 0, 8);
 
-            writingStream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
+            _writingStream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
 
-            for(long i = 0; i < l1Table.LongLength; i++)
-                l1Table[i] = Swapping.Swap(l1Table[i]);
+            for(long i = 0; i < _l1Table.LongLength; i++)
+                _l1Table[i] = Swapping.Swap(_l1Table[i]);
 
-            byte[] l1TableB = MemoryMarshal.Cast<ulong, byte>(l1Table).ToArray();
-            writingStream.Write(l1TableB, 0, l1TableB.Length);
+            byte[] l1TableB = MemoryMarshal.Cast<ulong, byte>(_l1Table).ToArray();
+            _writingStream.Write(l1TableB, 0, l1TableB.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

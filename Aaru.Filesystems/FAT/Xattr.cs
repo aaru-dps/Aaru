@@ -42,25 +42,25 @@ namespace Aaru.Filesystems
 {
     public partial class FAT
     {
-        Dictionary<string, Dictionary<string, byte[]>> eaCache;
+        Dictionary<string, Dictionary<string, byte[]>> _eaCache;
 
         /// <inheritdoc />
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             // No other xattr recognized yet
-            if(cachedEaData is null &&
-               !fat32)
+            if(_cachedEaData is null &&
+               !_fat32)
                 return Errno.NotSupported;
 
             if(path[0] == '/')
                 path = path.Substring(1);
 
-            if(eaCache.TryGetValue(path.ToLower(cultureInfo), out Dictionary<string, byte[]> eas))
+            if(_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
             {
                 xattrs = eas.Keys.ToList();
 
@@ -75,7 +75,7 @@ namespace Aaru.Filesystems
 
             xattrs = new List<string>();
 
-            if(!fat32)
+            if(!_fat32)
             {
                 if(entry.Dirent.ea_handle == 0)
                     return Errno.NoError;
@@ -93,7 +93,7 @@ namespace Aaru.Filesystems
             if(eas is null)
                 return Errno.NoError;
 
-            eaCache.Add(path.ToLower(cultureInfo), eas);
+            _eaCache.Add(path.ToLower(_cultureInfo), eas);
             xattrs = eas.Keys.ToList();
 
             return Errno.NoError;
@@ -102,7 +102,7 @@ namespace Aaru.Filesystems
         /// <inheritdoc />
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = ListXAttr(path, out List<string> xattrs);
@@ -113,13 +113,13 @@ namespace Aaru.Filesystems
             if(path[0] == '/')
                 path = path.Substring(1);
 
-            if(!xattrs.Contains(xattr.ToLower(cultureInfo)))
+            if(!xattrs.Contains(xattr.ToLower(_cultureInfo)))
                 return Errno.NoSuchExtendedAttribute;
 
-            if(!eaCache.TryGetValue(path.ToLower(cultureInfo), out Dictionary<string, byte[]> eas))
+            if(!_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
                 return Errno.InvalidArgument;
 
-            if(!eas.TryGetValue(xattr.ToLower(cultureInfo), out byte[] data))
+            if(!eas.TryGetValue(xattr.ToLower(_cultureInfo), out byte[] data))
                 return Errno.InvalidArgument;
 
             buf = new byte[data.Length];
@@ -136,7 +136,7 @@ namespace Aaru.Filesystems
             foreach(uint cluster in rootDirectoryClusters)
             {
                 byte[] buffer =
-                    image.ReadSectors(firstClusterSector + (cluster * sectorsPerCluster), sectorsPerCluster);
+                    _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster), _sectorsPerCluster);
 
                 eaMs.Write(buffer, 0, buffer.Length);
             }
@@ -157,9 +157,9 @@ namespace Aaru.Filesystems
             int aIndex = eaHandle >> 7;
 
             // First 0x20 bytes are the magic number and unused words
-            ushort a = BitConverter.ToUInt16(cachedEaData, (aIndex * 2) + 0x20);
+            ushort a = BitConverter.ToUInt16(_cachedEaData, (aIndex * 2) + 0x20);
 
-            ushort b = BitConverter.ToUInt16(cachedEaData, (eaHandle * 2) + 0x200);
+            ushort b = BitConverter.ToUInt16(_cachedEaData, (eaHandle * 2) + 0x200);
 
             uint eaCluster = (uint)(a + b);
 
@@ -167,17 +167,19 @@ namespace Aaru.Filesystems
                 return null;
 
             EaHeader header =
-                Marshal.ByteArrayToStructureLittleEndian<EaHeader>(cachedEaData, (int)(eaCluster * bytesPerCluster),
+                Marshal.ByteArrayToStructureLittleEndian<EaHeader>(_cachedEaData, (int)(eaCluster * _bytesPerCluster),
                                                                    Marshal.SizeOf<EaHeader>());
 
             if(header.magic != 0x4145)
                 return null;
 
-            uint eaLen = BitConverter.ToUInt32(cachedEaData,
-                                               (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>());
+            uint eaLen = BitConverter.ToUInt32(_cachedEaData,
+                                               (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>());
 
             byte[] eaData = new byte[eaLen];
-            Array.Copy(cachedEaData, (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
+
+            Array.Copy(_cachedEaData, (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0,
+                       eaLen);
 
             return GetEas(eaData);
         }
@@ -190,7 +192,7 @@ namespace Aaru.Filesystems
 
             Dictionary<string, byte[]> eas = new Dictionary<string, byte[]>();
 
-            if(debug)
+            if(_debug)
                 eas.Add("com.microsoft.os2.fea", eaData);
 
             int pos = 4;
@@ -228,17 +230,17 @@ namespace Aaru.Filesystems
 
         void CacheEaData()
         {
-            if(eaDirEntry.start_cluster == 0)
+            if(_eaDirEntry.start_cluster == 0)
                 return;
 
             var eaDataMs = new MemoryStream();
 
-            foreach(byte[] buffer in GetClusters(eaDirEntry.start_cluster).
-                Select(cluster => image.ReadSectors(firstClusterSector + (cluster * sectorsPerCluster),
-                                                    sectorsPerCluster)))
+            foreach(byte[] buffer in GetClusters(_eaDirEntry.start_cluster).
+                Select(cluster => _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                     _sectorsPerCluster)))
                 eaDataMs.Write(buffer, 0, buffer.Length);
 
-            cachedEaData = eaDataMs.ToArray();
+            _cachedEaData = eaDataMs.ToArray();
         }
     }
 }

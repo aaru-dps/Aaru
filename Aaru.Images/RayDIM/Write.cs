@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType       = mediaType,
                 SectorSize      = sectorSize,
@@ -84,7 +84,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -122,17 +122,17 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -155,17 +155,17 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -221,10 +221,10 @@ namespace Aaru.DiscImages
             var header = new RayHdr
             {
                 signature       = Encoding.ASCII.GetBytes(headerSignature),
-                cylinders       = (byte)imageInfo.Cylinders,
+                cylinders       = (byte)_imageInfo.Cylinders,
                 diskType        = RayDiskTypes.Mf2ed,
-                heads           = (byte)imageInfo.Heads,
-                sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
+                heads           = (byte)_imageInfo.Heads,
+                sectorsPerTrack = (byte)_imageInfo.SectorsPerTrack
             };
 
             header.signature[0x4A] = 0x00;
@@ -235,11 +235,11 @@ namespace Aaru.DiscImages
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

@@ -43,9 +43,9 @@ namespace Aaru.DiscImages
 {
     public partial class CopyTape
     {
-        FileStream               dataStream;
-        ulong                    lastWrittenBlock;
-        Dictionary<ulong, ulong> writtenBlockPositions;
+        FileStream               _dataStream;
+        ulong                    _lastWrittenBlock;
+        Dictionary<ulong, ulong> _writtenBlockPositions;
 
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -57,7 +57,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -66,7 +66,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -75,13 +75,13 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.MediaType = mediaType;
+            _imageInfo.MediaType = mediaType;
 
-            IsWriting             = true;
-            IsTape                = false;
-            ErrorMessage          = null;
-            lastWrittenBlock      = 0;
-            writtenBlockPositions = new Dictionary<ulong, ulong>();
+            IsWriting              = true;
+            IsTape                 = false;
+            ErrorMessage           = null;
+            _lastWrittenBlock      = 0;
+            _writtenBlockPositions = new Dictionary<ulong, ulong>();
 
             return true;
         }
@@ -95,19 +95,19 @@ namespace Aaru.DiscImages
 
         public bool WriteSector(byte[] data, ulong sectorAddress)
         {
-            if(!writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
+            if(!_writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
             {
-                if(dataStream.Length != 0 &&
-                   lastWrittenBlock  >= sectorAddress)
+                if(_dataStream.Length != 0 &&
+                   _lastWrittenBlock  >= sectorAddress)
                 {
                     ErrorMessage = "Cannot write unwritten blocks";
 
                     return false;
                 }
 
-                if(lastWrittenBlock + 1 != sectorAddress &&
-                   sectorAddress        != 0             &&
-                   lastWrittenBlock     != 0)
+                if(_lastWrittenBlock + 1 != sectorAddress &&
+                   sectorAddress         != 0             &&
+                   _lastWrittenBlock     != 0)
                 {
                     ErrorMessage = "Cannot skip blocks";
 
@@ -115,19 +115,19 @@ namespace Aaru.DiscImages
                 }
             }
             else
-                dataStream.Position = (long)position;
+                _dataStream.Position = (long)position;
 
             byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:D6}\n");
 
-            writtenBlockPositions[sectorAddress] = (ulong)dataStream.Position;
-            dataStream.Write(header, 0, header.Length);
-            dataStream.Write(data, 0, data.Length);
-            dataStream.WriteByte(0x0A);
+            _writtenBlockPositions[sectorAddress] = (ulong)_dataStream.Position;
+            _dataStream.Write(header, 0, header.Length);
+            _dataStream.Write(data, 0, data.Length);
+            _dataStream.WriteByte(0x0A);
 
-            if(sectorAddress > lastWrittenBlock)
-                lastWrittenBlock = sectorAddress;
+            if(sectorAddress > _lastWrittenBlock)
+                _lastWrittenBlock = sectorAddress;
 
-            dataStream.Seek(0, SeekOrigin.End);
+            _dataStream.Seek(0, SeekOrigin.End);
 
             return true;
         }
@@ -170,9 +170,9 @@ namespace Aaru.DiscImages
 
             byte[] footer = Encoding.ASCII.GetBytes("CPTP:EOT\n");
 
-            dataStream.Write(footer, 0, footer.Length);
-            dataStream.Flush();
-            dataStream.Close();
+            _dataStream.Write(footer, 0, footer.Length);
+            _dataStream.Flush();
+            _dataStream.Close();
 
             IsWriting = false;
 
@@ -217,7 +217,7 @@ namespace Aaru.DiscImages
 
             byte[] marker = Encoding.ASCII.GetBytes("CPTP:MRK\n");
 
-            dataStream.Write(marker, 0, marker.Length);
+            _dataStream.Write(marker, 0, marker.Length);
 
             return true;
         }

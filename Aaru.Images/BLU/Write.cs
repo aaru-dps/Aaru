@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
 
         public bool WriteSector(byte[] data, ulong sectorAddress)
         {
-            int longSectorSize = imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
+            int longSectorSize = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
 
             if(!IsWriting)
             {
@@ -120,15 +120,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -137,7 +137,7 @@ namespace Aaru.DiscImages
 
         public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
         {
-            int longSectorSize = imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
+            int longSectorSize = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
 
             if(!IsWriting)
             {
@@ -153,15 +153,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -177,14 +177,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            int longSectorSize = imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
+            int longSectorSize = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
 
             byte[] oldTag;
             byte[] newTag;
@@ -249,9 +249,9 @@ namespace Aaru.DiscImages
             if(newTag == null)
                 newTag = new byte[longSectorSize - 512];
 
-            writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, 512);
-            writingStream.Write(newTag, 0, newTag.Length);
+            _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, 512);
+            _writingStream.Write(newTag, 0, newTag.Length);
 
             ErrorMessage = "";
 
@@ -267,14 +267,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            int  longSectorSize  = imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
+            int  longSectorSize  = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
             long givenSectorSize = data.Length / length;
 
             switch(givenSectorSize)
@@ -354,9 +354,9 @@ namespace Aaru.DiscImages
                 if(newTag == null)
                     newTag = new byte[longSectorSize - 512];
 
-                writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
-                writingStream.Write(data, (int)(givenSectorSize          * i), 512);
-                writingStream.Write(newTag, 0, newTag.Length);
+                _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
+                _writingStream.Write(data, (int)(givenSectorSize          * i), 512);
+                _writingStream.Write(newTag, 0, newTag.Length);
             }
 
             ErrorMessage = "";
@@ -376,22 +376,22 @@ namespace Aaru.DiscImages
             byte[] markerTag = Encoding.UTF8.GetBytes("Aaru " + Version.GetVersion());
             byte[] driveName;
             byte[] driveType      = new byte[3];
-            byte[] driveBlocks    = BigEndianBitConverter.GetBytes((uint)imageInfo.Sectors);
-            int    longSectorSize = imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
+            byte[] driveBlocks    = BigEndianBitConverter.GetBytes((uint)_imageInfo.Sectors);
+            int    longSectorSize = _imageInfo.MediaType == MediaType.PriamDataTower ? 536 : 532;
             byte[] blockSize      = BigEndianBitConverter.GetBytes((ushort)longSectorSize);
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
-                case MediaType.AppleProfile when imageInfo.Sectors == 0x4C00:
+                case MediaType.AppleProfile when _imageInfo.Sectors == 0x4C00:
                     driveName = Encoding.ASCII.GetBytes(PROFILE10_NAME);
 
                     break;
-                case MediaType.AppleWidget when imageInfo.Sectors == 0x4C00:
+                case MediaType.AppleWidget when _imageInfo.Sectors == 0x4C00:
                     driveType[1] = 0x01;
                     driveName    = Encoding.ASCII.GetBytes(PROFILE10_NAME);
 
                     break;
-                case MediaType.PriamDataTower when imageInfo.Sectors == 0x22C7C:
+                case MediaType.PriamDataTower when _imageInfo.Sectors == 0x22C7C:
                     driveType[1] = 0xFF;
                     driveName    = Encoding.ASCII.GetBytes(PRIAM_NAME);
 
@@ -402,21 +402,21 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(driveName, 0, driveName.Length >= 0xD ? 0xD : driveName.Length);
-            writingStream.Seek(0xD, SeekOrigin.Begin);
-            writingStream.Write(driveType, 0, 3);
-            writingStream.Seek(0x12, SeekOrigin.Begin);
-            writingStream.Write(driveBlocks, 1, 3);
-            writingStream.Seek(0x15, SeekOrigin.Begin);
-            writingStream.Write(blockSize, 1, 2);
-            writingStream.Seek(512, SeekOrigin.Begin);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(driveName, 0, driveName.Length >= 0xD ? 0xD : driveName.Length);
+            _writingStream.Seek(0xD, SeekOrigin.Begin);
+            _writingStream.Write(driveType, 0, 3);
+            _writingStream.Seek(0x12, SeekOrigin.Begin);
+            _writingStream.Write(driveBlocks, 1, 3);
+            _writingStream.Seek(0x15, SeekOrigin.Begin);
+            _writingStream.Write(blockSize, 1, 2);
+            _writingStream.Seek(512, SeekOrigin.Begin);
 
-            writingStream.Write(markerTag, 0,
-                                markerTag.Length >= longSectorSize - 512 ? longSectorSize - 512 : markerTag.Length);
+            _writingStream.Write(markerTag, 0,
+                                 markerTag.Length >= longSectorSize - 512 ? longSectorSize - 512 : markerTag.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

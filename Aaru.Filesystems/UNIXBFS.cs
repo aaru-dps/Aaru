@@ -71,7 +71,7 @@ namespace Aaru.Filesystems
             byte[] bfsSbSector = imagePlugin.ReadSector(0 + partition.Start);
             byte[] sbStrings   = new byte[6];
 
-            var bfsSb = new BFSSuperBlock
+            var bfsSb = new SuperBlock
             {
                 s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00),
                 s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
@@ -116,7 +116,7 @@ namespace Aaru.Filesystems
             information = sb.ToString();
         }
 
-        struct BFSSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x00, 0x1BADFACE</summary>
             public uint s_magic;

@@ -40,25 +40,25 @@ namespace Aaru.DiscImages
 {
     public partial class Qed : IWritableImage
     {
-        int                        clusterBits;
-        Dictionary<ulong, byte[]>  clusterCache;
-        uint                       clusterSectors;
-        ImageInfo                  imageInfo;
-        Stream                     imageStream;
-        ulong                      l1Mask;
-        int                        l1Shift;
-        ulong[]                    l1Table;
-        ulong                      l2Mask;
-        Dictionary<ulong, ulong[]> l2TableCache;
-        uint                       maxClusterCache;
-        uint                       maxL2TableCache;
-        QedHeader                  qHdr;
-        Dictionary<ulong, byte[]>  sectorCache;
-        ulong                      sectorMask;
-        uint                       tableSize;
-        FileStream                 writingStream;
+        int                        _clusterBits;
+        Dictionary<ulong, byte[]>  _clusterCache;
+        uint                       _clusterSectors;
+        ImageInfo                  _imageInfo;
+        Stream                     _imageStream;
+        ulong                      _l1Mask;
+        int                        _l1Shift;
+        ulong[]                    _l1Table;
+        ulong                      _l2Mask;
+        Dictionary<ulong, ulong[]> _l2TableCache;
+        uint                       _maxClusterCache;
+        uint                       _maxL2TableCache;
+        QedHeader                  _qHdr;
+        Dictionary<ulong, byte[]>  _sectorCache;
+        ulong                      _sectorMask;
+        uint                       _tableSize;
+        FileStream                 _writingStream;
 
-        public Qed() => imageInfo = new ImageInfo
+        public Qed() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

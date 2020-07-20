@@ -45,17 +45,17 @@ namespace Aaru.DiscImages
         public Dictionary<(int cylinder, int head, int sector), bool> badSectors =
             new Dictionary<(int cylinder, int head, int sector), bool>();
         /// <summary>The file header after the image has been opened</summary>
-        WCDiskImageFileHeader fileHeader;
-        ImageInfo imageInfo;
+        WcDiskImageFileHeader _fileHeader;
+        ImageInfo _imageInfo;
 
         /* the sectors are cached here */
         public Dictionary<(int cylinder, int head, int sector), byte[]> sectorCache =
             new Dictionary<(int cylinder, int head, int sector), byte[]>();
 
         /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
-        IFilter wcImageFilter;
+        IFilter _wcImageFilter;
 
-        public WCDiskImage() => imageInfo = new ImageInfo
+        public WCDiskImage() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

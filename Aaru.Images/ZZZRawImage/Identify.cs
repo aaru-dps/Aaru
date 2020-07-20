@@ -44,9 +44,9 @@ namespace Aaru.DiscImages
             if(imageFilter.GetDataForkLength() % 512 == 0)
                 return true;
 
-            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            if(extension                             == ".hdf" &&
+            if(_extension                            == ".hdf" &&
                imageFilter.GetDataForkLength() % 256 == 0)
                 return true;
 
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
                 stream.Position = 0;
                 stream.Read(sync, 0, 12);
 
-                return cdSync.SequenceEqual(sync);
+                return _cdSync.SequenceEqual(sync);
             }
 
             // Check known disk sizes with sectors smaller than 512

@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
@@ -83,7 +83,7 @@ namespace Aaru.Filesystems
                entry.Extents.Count == 0)
                 return Errno.NoError;
 
-            byte[] sector = image.ReadSectorLong(entry.Extents[0].extent);
+            byte[] sector = _image.ReadSectorLong(entry.Extents[0].extent);
 
             if(sector[15] != 2)
                 return Errno.NoError;
@@ -98,7 +98,7 @@ namespace Aaru.Filesystems
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);

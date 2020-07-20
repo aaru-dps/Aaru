@@ -43,21 +43,21 @@ namespace Aaru.DiscImages
 {
     public partial class Udif : IWritableImage
     {
-        uint                          buffersize;
-        Dictionary<ulong, byte[]>     chunkCache;
-        Dictionary<ulong, BlockChunk> chunks;
-        BlockChunk                    currentChunk;
-        uint                          currentChunkCacheSize;
-        ulong                         currentSector;
-        Crc32Context                  dataForkChecksum;
-        UdifFooter                    footer;
-        ImageInfo                     imageInfo;
-        Stream                        imageStream;
-        Crc32Context                  masterChecksum;
-        Dictionary<ulong, byte[]>     sectorCache;
-        FileStream                    writingStream;
+        uint                          _buffersize;
+        Dictionary<ulong, byte[]>     _chunkCache;
+        Dictionary<ulong, BlockChunk> _chunks;
+        BlockChunk                    _currentChunk;
+        uint                          _currentChunkCacheSize;
+        ulong                         _currentSector;
+        Crc32Context                  _dataForkChecksum;
+        UdifFooter                    _footer;
+        ImageInfo                     _imageInfo;
+        Stream                        _imageStream;
+        Crc32Context                  _masterChecksum;
+        Dictionary<ulong, byte[]>     _sectorCache;
+        FileStream                    _writingStream;
 
-        public Udif() => imageInfo = new ImageInfo
+        public Udif() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

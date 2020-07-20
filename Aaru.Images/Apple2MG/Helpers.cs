@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     {
         MediaType GetMediaType()
         {
-            switch(imageInfo.Sectors)
+            switch(_imageInfo.Sectors)
             {
                 case 455:  return MediaType.Apple32SS;
                 case 910:  return MediaType.Apple32DS;

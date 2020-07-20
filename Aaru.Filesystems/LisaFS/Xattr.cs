@@ -82,13 +82,13 @@ namespace Aaru.Filesystems.LisaFS
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug ||
+                if(!_debug ||
                    fileId == 0)
                     return Errno.InvalidArgument;
 
@@ -97,7 +97,7 @@ namespace Aaru.Filesystems.LisaFS
                 // Only MDDF contains an extended attributes
                 if(fileId == FILEID_MDDF)
                 {
-                    byte[] buf = Encoding.ASCII.GetBytes(mddf.password);
+                    byte[] buf = Encoding.ASCII.GetBytes(_mddf.password);
 
                     // If the MDDF contains a password, show it
                     if(buf.Length > 0)
@@ -128,7 +128,7 @@ namespace Aaru.Filesystems.LisaFS
             }
 
             // On debug mode allow sector tags to be accessed as an xattr
-            if(debug)
+            if(_debug)
                 xattrs.Add("com.apple.lisa.tags");
 
             xattrs.Sort();
@@ -145,13 +145,13 @@ namespace Aaru.Filesystems.LisaFS
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             // System files
             if(fileId < 4)
             {
-                if(!debug ||
+                if(!_debug ||
                    fileId == 0)
                     return Errno.InvalidArgument;
 
@@ -159,13 +159,13 @@ namespace Aaru.Filesystems.LisaFS
                 if(fileId == FILEID_MDDF)
                     if(xattr == "com.apple.lisa.password")
                     {
-                        buf = Encoding.ASCII.GetBytes(mddf.password);
+                        buf = Encoding.ASCII.GetBytes(_mddf.password);
 
                         return Errno.NoError;
                     }
 
                 // But on debug mode even system files contain tags
-                if(debug && xattr == "com.apple.lisa.tags")
+                if(_debug && xattr == "com.apple.lisa.tags")
                     return ReadSystemFile(fileId, out buf, true);
 
                 return Errno.NoSuchExtendedAttribute;
@@ -199,7 +199,7 @@ namespace Aaru.Filesystems.LisaFS
                 return Errno.NoError;
             }
 
-            if(debug && xattr == "com.apple.lisa.tags")
+            if(_debug && xattr == "com.apple.lisa.tags")
                 return ReadFile(fileId, out buf, true);
 
             return Errno.NoSuchExtendedAttribute;

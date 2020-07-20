@@ -40,15 +40,16 @@ namespace Aaru.Tests.Filters
         const    string EXPECTED_FILE     = "a8daa55a65432353e95dc4c61d42660f";
         const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
         const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
-        readonly string location;
+        readonly string _location;
 
-        public MacBinary2() => location = Path.Combine(Consts.TestFilesRoot, "Filters", "MacBinary", "macbinary2.bin");
+        public MacBinary2() =>
+            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "MacBinary", "macbinary2.bin");
 
         [Test]
         public void CheckContents()
         {
             IFilter filter = new MacBinary();
-            filter.Open(location);
+            filter.Open(_location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[737280];
             str.Read(data, 0, 737280);
@@ -62,7 +63,7 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            string result = Md5Context.File(location, out _);
+            string result = Md5Context.File(_location, out _);
             Assert.AreEqual(EXPECTED_FILE, result);
         }
 
@@ -70,14 +71,14 @@ namespace Aaru.Tests.Filters
         public void CheckFilterId()
         {
             IFilter filter = new MacBinary();
-            Assert.AreEqual(true, filter.Identify(location));
+            Assert.AreEqual(true, filter.Identify(_location));
         }
 
         [Test]
         public void CheckResource()
         {
             IFilter filter = new MacBinary();
-            filter.Open(location);
+            filter.Open(_location);
             Stream str  = filter.GetResourceForkStream();
             byte[] data = new byte[286];
             str.Read(data, 0, 286);
@@ -92,7 +93,7 @@ namespace Aaru.Tests.Filters
         public void Test()
         {
             IFilter filter = new MacBinary();
-            filter.Open(location);
+            filter.Open(_location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());

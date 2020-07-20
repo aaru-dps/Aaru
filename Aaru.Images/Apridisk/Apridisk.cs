@@ -41,13 +41,13 @@ namespace Aaru.DiscImages
     // TODO: Check writing
     public partial class Apridisk : IWritableImage
     {
-        ImageInfo imageInfo;
+        ImageInfo _imageInfo;
 
         // Cylinder by head, sector data matrix
-        byte[][][][] sectorsData;
-        FileStream   writingStream;
+        byte[][][][] _sectorsData;
+        FileStream   _writingStream;
 
-        public Apridisk() => imageInfo = new ImageInfo
+        public Apridisk() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

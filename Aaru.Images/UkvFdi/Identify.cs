@@ -53,7 +53,7 @@ namespace Aaru.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
             hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
-            return hdr.magic.SequenceEqual(signature);
+            return hdr.magic.SequenceEqual(_signature);
         }
     }
 }

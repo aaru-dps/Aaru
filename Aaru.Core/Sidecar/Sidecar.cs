@@ -44,27 +44,27 @@ namespace Aaru.Core
 {
     public partial class Sidecar
     {
-        readonly ChecksumType[] emptyChecksums;
-        readonly Encoding       encoding;
-        readonly FileInfo       fi;
-        readonly Guid           filterId;
-        readonly IMediaImage    image;
-        readonly string         imagePath;
-        readonly Checksum       imgChkWorker;
-        readonly PluginBase     plugins;
-        bool                    aborted;
-        FileStream              fs;
-        CICMMetadataType        sidecar;
+        readonly ChecksumType[] _emptyChecksums;
+        readonly Encoding       _encoding;
+        readonly FileInfo       _fi;
+        readonly Guid           _filterId;
+        readonly IMediaImage    _image;
+        readonly string         _imagePath;
+        readonly Checksum       _imgChkWorker;
+        readonly PluginBase     _plugins;
+        bool                    _aborted;
+        FileStream              _fs;
+        CICMMetadataType        _sidecar;
 
         public Sidecar()
         {
-            plugins      = GetPluginBase.Instance;
-            imgChkWorker = new Checksum();
-            aborted      = false;
+            _plugins      = GetPluginBase.Instance;
+            _imgChkWorker = new Checksum();
+            _aborted      = false;
 
             var emptyChkWorker = new Checksum();
             emptyChkWorker.Update(new byte[0]);
-            emptyChecksums = emptyChkWorker.End().ToArray();
+            _emptyChecksums = emptyChkWorker.End().ToArray();
         }
 
         /// <param name="image">Image</param>
@@ -73,19 +73,16 @@ namespace Aaru.Core
         /// <param name="encoding">Encoding for analysis</param>
         public Sidecar(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
         {
-            this.image     = image;
-            this.imagePath = imagePath;
-            this.filterId  = filterId;
-            this.encoding  = encoding;
-
-            sidecar = image.CicmMetadata ?? new CICMMetadataType();
-            plugins = GetPluginBase.Instance;
-
-            fi = new FileInfo(imagePath);
-            fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
-
-            imgChkWorker = new Checksum();
-            aborted      = false;
+            _image        = image;
+            _imagePath    = imagePath;
+            _filterId     = filterId;
+            _encoding     = encoding;
+            _sidecar      = image.CicmMetadata ?? new CICMMetadataType();
+            _plugins      = GetPluginBase.Instance;
+            _fi           = new FileInfo(imagePath);
+            _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            _imgChkWorker = new Checksum();
+            _aborted      = false;
         }
 
         /// <summary>Implements creating a metadata sidecar</summary>
@@ -100,50 +97,50 @@ namespace Aaru.Core
             UpdateStatus("Hashing image file...");
             InitProgress();
 
-            while(position < fi.Length - 1048576)
+            while(position < _fi.Length - 1048576)
             {
-                if(aborted)
-                    return sidecar;
+                if(_aborted)
+                    return _sidecar;
 
                 data = new byte[1048576];
-                fs.Read(data, 0, 1048576);
+                _fs.Read(data, 0, 1048576);
 
-                UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);
+                UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 
-                imgChkWorker.Update(data);
+                _imgChkWorker.Update(data);
 
                 position += 1048576;
             }
 
-            data = new byte[fi.Length - position];
-            fs.Read(data, 0, (int)(fi.Length - position));
+            data = new byte[_fi.Length - position];
+            _fs.Read(data, 0, (int)(_fi.Length - position));
 
-            UpdateProgress("Hashing image file byte {0} of {1}", position, fi.Length);
+            UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
 
-            imgChkWorker.Update(data);
+            _imgChkWorker.Update(data);
 
             // For fast debugging, skip checksum
             //skipImageChecksum:
 
             EndProgress();
-            fs.Close();
+            _fs.Close();
 
-            List<ChecksumType> imgChecksums = imgChkWorker.End();
+            List<ChecksumType> imgChecksums = _imgChkWorker.End();
 
-            sidecar.OpticalDisc = null;
-            sidecar.BlockMedia  = null;
-            sidecar.AudioMedia  = null;
-            sidecar.LinearMedia = null;
+            _sidecar.OpticalDisc = null;
+            _sidecar.BlockMedia  = null;
+            _sidecar.AudioMedia  = null;
+            _sidecar.LinearMedia = null;
 
-            if(aborted)
-                return sidecar;
+            if(_aborted)
+                return _sidecar;
 
-            switch(image.Info.XmlMediaType)
+            switch(_image.Info.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
-                    if(image is IOpticalMediaImage opticalImage)
-                        OpticalDisc(opticalImage, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar,
-                                    encoding);
+                    if(_image is IOpticalMediaImage opticalImage)
+                        OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                                    _encoding);
                     else
                     {
                         AaruConsole.
@@ -154,26 +151,26 @@ namespace Aaru.Core
 
                     break;
                 case XmlMediaType.BlockMedia:
-                    BlockMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+                    BlockMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
 
                     break;
                 case XmlMediaType.LinearMedia:
-                    LinearMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+                    LinearMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
 
                     break;
                 case XmlMediaType.AudioMedia:
-                    AudioMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+                    AudioMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
 
                     break;
             }
 
-            return sidecar;
+            return _sidecar;
         }
 
         public void Abort()
         {
             UpdateStatus("Aborting...");
-            aborted = true;
+            _aborted = true;
         }
     }
 }

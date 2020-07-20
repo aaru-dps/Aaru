@@ -40,18 +40,18 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            imageStream = imageFilter.GetDataForkStream();
-            imageStream.Seek(0, SeekOrigin.Begin);
+            _imageStream = imageFilter.GetDataForkStream();
+            _imageStream.Seek(0, SeekOrigin.Begin);
 
-            if(imageStream.Length < Marshal.SizeOf<AaruHeader>())
+            if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
                 return false;
 
-            structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
-            imageStream.Read(structureBytes, 0, structureBytes.Length);
-            header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(structureBytes);
+            _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
+            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+            _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
-            return (header.identifier == DIC_MAGIC || header.identifier == AARU_MAGIC) &&
-                   header.imageMajorVersion <= AARUFMT_VERSION;
+            return (_header.identifier == DIC_MAGIC || _header.identifier == AARU_MAGIC) &&
+                   _header.imageMajorVersion <= AARUFMT_VERSION;
         }
     }
 }

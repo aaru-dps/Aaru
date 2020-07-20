@@ -44,7 +44,7 @@ namespace Aaru.Core.Logging
     /// <summary>Creates a dump log</summary>
     public class DumpLog
     {
-        readonly StreamWriter logSw;
+        readonly StreamWriter _logSw;
 
         /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
@@ -55,9 +55,9 @@ namespace Aaru.Core.Logging
             if(string.IsNullOrEmpty(outputFile))
                 return;
 
-            logSw = new StreamWriter(outputFile, true);
+            _logSw = new StreamWriter(outputFile, true);
 
-            logSw.WriteLine("Start logging at {0}", DateTime.Now);
+            _logSw.WriteLine("Start logging at {0}", DateTime.Now);
 
             PlatformID platId  = DetectOS.GetRealPlatformID();
             string     platVer = DetectOS.GetVersion();
@@ -66,25 +66,25 @@ namespace Aaru.Core.Logging
                 Attribute.GetCustomAttribute(typeof(DumpLog).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
 
-            logSw.WriteLine("################# System information #################");
+            _logSw.WriteLine("################# System information #################");
 
-            logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
-                            Environment.Is64BitOperatingSystem ? 64 : 32);
+            _logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
+                             Environment.Is64BitOperatingSystem ? 64 : 32);
 
             if(DetectOS.IsMono)
-                logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
+                _logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
             else if(DetectOS.IsNetCore)
-                logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
+                _logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
             else
-                logSw.WriteLine(RuntimeInformation.FrameworkDescription);
+                _logSw.WriteLine(RuntimeInformation.FrameworkDescription);
 
-            logSw.WriteLine();
+            _logSw.WriteLine();
 
-            logSw.WriteLine("################# Program information ################");
-            logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
-            logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
+            _logSw.WriteLine("################# Program information ################");
+            _logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
+            _logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
         #if DEBUG
-            logSw.WriteLine("DEBUG version");
+            _logSw.WriteLine("DEBUG version");
         #endif
             if(@private)
             {
@@ -106,72 +106,72 @@ namespace Aaru.Core.Logging
                     }
                 }
 
-                logSw.WriteLine("Command line: {0}", string.Join(" ", args));
+                _logSw.WriteLine("Command line: {0}", string.Join(" ", args));
             }
             else
-                logSw.WriteLine("Command line: {0}", Environment.CommandLine);
+                _logSw.WriteLine("Command line: {0}", Environment.CommandLine);
 
-            logSw.WriteLine();
+            _logSw.WriteLine();
 
             if(dev.IsRemote)
             {
-                logSw.WriteLine("################# Remote information #################");
-                logSw.WriteLine("Server: {0}", dev.RemoteApplication);
-                logSw.WriteLine("Version: {0}", dev.RemoteVersion);
+                _logSw.WriteLine("################# Remote information #################");
+                _logSw.WriteLine("Server: {0}", dev.RemoteApplication);
+                _logSw.WriteLine("Version: {0}", dev.RemoteVersion);
 
-                logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem,
-                                dev.RemoteOperatingSystemVersion);
+                _logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem,
+                                 dev.RemoteOperatingSystemVersion);
 
-                logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
-                logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
-                logSw.WriteLine("######################################################");
+                _logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
+                _logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
+                _logSw.WriteLine("######################################################");
             }
 
-            logSw.WriteLine("################# Device information #################");
-            logSw.WriteLine("Manufacturer: {0}", dev.Manufacturer);
-            logSw.WriteLine("Model: {0}", dev.Model);
-            logSw.WriteLine("Firmware revision: {0}", dev.FirmwareRevision);
+            _logSw.WriteLine("################# Device information #################");
+            _logSw.WriteLine("Manufacturer: {0}", dev.Manufacturer);
+            _logSw.WriteLine("Model: {0}", dev.Model);
+            _logSw.WriteLine("Firmware revision: {0}", dev.FirmwareRevision);
 
             if(!@private)
-                logSw.WriteLine("Serial number: {0}", dev.Serial);
+                _logSw.WriteLine("Serial number: {0}", dev.Serial);
 
-            logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
-            logSw.WriteLine("Device type: {0}", dev.Type);
-            logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
-            logSw.WriteLine("PCMCIA device: {0}", dev.IsPcmcia);
-            logSw.WriteLine("USB device: {0}", dev.IsUsb);
+            _logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
+            _logSw.WriteLine("Device type: {0}", dev.Type);
+            _logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
+            _logSw.WriteLine("PCMCIA device: {0}", dev.IsPcmcia);
+            _logSw.WriteLine("USB device: {0}", dev.IsUsb);
 
             if(dev.IsUsb)
             {
-                logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
-                logSw.WriteLine("USB product: {0}", dev.UsbProductString);
+                _logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
+                _logSw.WriteLine("USB product: {0}", dev.UsbProductString);
 
                 if(!@private)
-                    logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
+                    _logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
 
-                logSw.WriteLine("USB vendor ID: {0:X4}h", dev.UsbVendorId);
-                logSw.WriteLine("USB product ID: {0:X4}h", dev.UsbProductId);
+                _logSw.WriteLine("USB vendor ID: {0:X4}h", dev.UsbVendorId);
+                _logSw.WriteLine("USB product ID: {0:X4}h", dev.UsbProductId);
             }
 
-            logSw.WriteLine("FireWire device: {0}", dev.IsFireWire);
+            _logSw.WriteLine("FireWire device: {0}", dev.IsFireWire);
 
             if(dev.IsFireWire)
             {
-                logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
-                logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
+                _logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
+                _logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
 
                 if(!@private)
-                    logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
+                    _logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
 
-                logSw.WriteLine("FireWire vendor ID: 0x{0:X8}", dev.FireWireVendor);
-                logSw.WriteLine("FireWire product ID: 0x{0:X8}", dev.FireWireModel);
+                _logSw.WriteLine("FireWire vendor ID: 0x{0:X8}", dev.FireWireVendor);
+                _logSw.WriteLine("FireWire product ID: 0x{0:X8}", dev.FireWireModel);
             }
 
-            logSw.WriteLine("######################################################");
+            _logSw.WriteLine("######################################################");
 
-            logSw.WriteLine();
-            logSw.WriteLine("################ Dumping progress log ################");
-            logSw.Flush();
+            _logSw.WriteLine();
+            _logSw.WriteLine("################ Dumping progress log ################");
+            _logSw.Flush();
         }
 
         /// <summary>Adds a new line to the dump log</summary>
@@ -179,20 +179,20 @@ namespace Aaru.Core.Logging
         /// <param name="args">Arguments</param>
         public void WriteLine(string format, params object[] args)
         {
-            if(logSw == null)
+            if(_logSw == null)
                 return;
 
             string text = string.Format(format, args);
-            logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
-            logSw.Flush();
+            _logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
+            _logSw.Flush();
         }
 
         /// <summary>Finishes and closes the dump log</summary>
         public void Close()
         {
-            logSw?.WriteLine("######################################################");
-            logSw?.WriteLine("End logging at {0}", DateTime.Now);
-            logSw?.Close();
+            _logSw?.WriteLine("######################################################");
+            _logSw?.WriteLine("End logging at {0}", DateTime.Now);
+            _logSw?.Close();
         }
     }
 }

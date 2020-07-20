@@ -61,21 +61,21 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
-                contents = rootDirectoryCache.Keys.ToList();
+                contents = _rootDirectoryCache.Keys.ToList();
 
                 return Errno.NoError;
             }
 
-            string cutPath = path.StartsWith("/", StringComparison.Ordinal) ? path.Substring(1).ToLower(cultureInfo)
-                                 : path.ToLower(cultureInfo);
+            string cutPath = path.StartsWith("/", StringComparison.Ordinal) ? path.Substring(1).ToLower(_cultureInfo)
+                                 : path.ToLower(_cultureInfo);
 
-            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, CompleteDirectoryEntry> currentDirectory))
+            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, CompleteDirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
 
@@ -88,7 +88,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, CompleteDirectoryEntry> entry =
-                rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[0]);
+                _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
                 return Errno.NoSuchFile;
@@ -98,11 +98,11 @@ namespace Aaru.Filesystems
 
             string currentPath = pieces[0];
 
-            currentDirectory = rootDirectoryCache;
+            currentDirectory = _rootDirectoryCache;
 
             for(int p = 0; p < pieces.Length; p++)
             {
-                entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[p]);
+                entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
                 if(string.IsNullOrEmpty(entry.Key))
                     return Errno.NoSuchFile;
@@ -113,10 +113,10 @@ namespace Aaru.Filesystems
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.Dirent.start_cluster;
 
-                if(fat32)
+                if(_fat32)
                     currentCluster += (uint)(entry.Value.Dirent.ea_handle << 16);
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
                 uint[] clusters = GetClusters(currentCluster);
@@ -124,14 +124,14 @@ namespace Aaru.Filesystems
                 if(clusters is null)
                     return Errno.InvalidArgument;
 
-                byte[] directoryBuffer = new byte[bytesPerCluster * clusters.Length];
+                byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
-                    byte[] buffer = image.ReadSectors(firstClusterSector + (clusters[i] * sectorsPerCluster),
-                                                      sectorsPerCluster);
+                    byte[] buffer = _image.ReadSectors(_firstClusterSector + (clusters[i] * _sectorsPerCluster),
+                                                       _sectorsPerCluster);
 
-                    Array.Copy(buffer, 0, directoryBuffer, i * bytesPerCluster, bytesPerCluster);
+                    Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
                 }
 
                 currentDirectory = new Dictionary<string, CompleteDirectoryEntry>();
@@ -149,8 +149,8 @@ namespace Aaru.Filesystems
 
                     if(dirent.attributes.HasFlag(FatAttributes.LFN))
                     {
-                        if(@namespace != Namespace.Lfn &&
-                           @namespace != Namespace.Ecs)
+                        if(_namespace != Namespace.Lfn &&
+                           _namespace != Namespace.Ecs)
                             continue;
 
                         LfnEntry lfnEntry =
@@ -210,7 +210,7 @@ namespace Aaru.Filesystems
                         Dirent = dirent
                     };
 
-                    if((@namespace == Namespace.Lfn || @namespace == Namespace.Ecs) &&
+                    if((_namespace == Namespace.Lfn || _namespace == Namespace.Ecs) &&
                        lastLfnName != null)
                     {
                         byte calculatedLfnChecksum = LfnChecksum(dirent.filename, dirent.extension);
@@ -231,7 +231,7 @@ namespace Aaru.Filesystems
                     string name      = Encoding.GetString(dirent.filename).TrimEnd();
                     string extension = Encoding.GetString(dirent.extension).TrimEnd();
 
-                    if(@namespace == Namespace.Nt)
+                    if(_namespace == Namespace.Nt)
                     {
                         if(dirent.caseinfo.HasFlag(CaseInfo.LowerCaseExtension))
                             extension = extension.ToLower(CultureInfo.CurrentCulture);
@@ -245,7 +245,7 @@ namespace Aaru.Filesystems
                     else
                         filename = name;
 
-                    if(@namespace == Namespace.Human)
+                    if(_namespace == Namespace.Human)
                     {
                         HumanDirectoryEntry humanEntry =
                             Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(directoryBuffer, pos,
@@ -275,9 +275,9 @@ namespace Aaru.Filesystems
                 }
 
                 // Check OS/2 .LONGNAME
-                if(eaCache != null                                              &&
-                   (@namespace == Namespace.Os2 || @namespace == Namespace.Ecs) &&
-                   !fat32)
+                if(_eaCache != null                                             &&
+                   (_namespace == Namespace.Os2 || _namespace == Namespace.Ecs) &&
+                   !_fat32)
                 {
                     List<KeyValuePair<string, CompleteDirectoryEntry>> filesWithEas =
                         currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
@@ -319,14 +319,14 @@ namespace Aaru.Filesystems
                 }
 
                 // Check FAT32.IFS EAs
-                if(fat32 || debug)
+                if(_fat32 || _debug)
                 {
                     List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars = currentDirectory.
                                                                                          Where(t =>
                                                                                                    t.Key.
                                                                                                      EndsWith(FAT32_EA_TAIL,
                                                                                                               true,
-                                                                                                              cultureInfo)).
+                                                                                                              _cultureInfo)).
                                                                                          ToList();
 
                     foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
@@ -338,7 +338,7 @@ namespace Aaru.Filesystems
                             continue;
 
                         // If not in debug mode we will consider the lack of EA bitflags to mean the EAs are corrupted or not real
-                        if(!debug)
+                        if(!_debug)
                             if(!fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEaOld) &&
                                !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa)  &&
                                !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEa)    &&
@@ -347,12 +347,12 @@ namespace Aaru.Filesystems
 
                         fileWithEa.Fat32Ea = sidecar.Value.Dirent;
 
-                        if(!debug)
+                        if(!_debug)
                             currentDirectory.Remove(sidecar.Key);
                     }
                 }
 
-                directoryCache.Add(currentPath, currentDirectory);
+                _directoryCache.Add(currentPath, currentDirectory);
             }
 
             contents = currentDirectory?.Keys.ToList();

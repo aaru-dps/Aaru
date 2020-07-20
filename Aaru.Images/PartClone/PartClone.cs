@@ -43,16 +43,16 @@ namespace Aaru.DiscImages
     {
         // The used block "bitmap" uses one byte per block
         // TODO: Convert on-image bytemap to on-memory bitmap
-        byte[]                    byteMap;
-        long                      dataOff;
-        ExtentsULong              extents;
-        Dictionary<ulong, ulong>  extentsOff;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        PartCloneHeader           pHdr;
-        Dictionary<ulong, byte[]> sectorCache;
+        byte[]                    _byteMap;
+        long                      _dataOff;
+        ExtentsULong              _extents;
+        Dictionary<ulong, ulong>  _extentsOff;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        PartCloneHeader           _pHdr;
+        Dictionary<ulong, byte[]> _sectorCache;
 
-        public PartClone() => imageInfo = new ImageInfo
+        public PartClone() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

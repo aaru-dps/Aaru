@@ -72,8 +72,8 @@ namespace Aaru.Filesystems
             Encoding    = Encoding.GetEncoding("shift_jis");
             information = "";
 
-            byte[]     sector = imagePlugin.ReadSectors(partition.Start, 2);
-            PcfxHeader header = Marshal.ByteArrayToStructureLittleEndian<PcfxHeader>(sector);
+            byte[] sector = imagePlugin.ReadSectors(partition.Start, 2);
+            Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
             string   date;
             DateTime dateTime = DateTime.MinValue;
@@ -127,7 +127,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PcfxHeader
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] signature;

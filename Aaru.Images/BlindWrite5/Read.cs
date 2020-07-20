@@ -65,157 +65,157 @@ namespace Aaru.DiscImages
 
             byte[] hdr = new byte[260];
             stream.Read(hdr, 0, 260);
-            header = Marshal.ByteArrayToStructureLittleEndian<Bw5Header>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<Bw5Header>(hdr);
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
-                                       StringHandlers.CToString(header.signature));
+                                       StringHandlers.CToString(_header.signature));
 
-            for(int i = 0; i < header.unknown1.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", header.unknown1[i],
+            for(int i = 0; i < _header.unknown1.Length; i++)
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", _header.unknown1[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", header.profile);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", header.sessions);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", _header.profile);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", _header.sessions);
 
-            for(int i = 0; i < header.unknown2.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", header.unknown2[i],
+            for(int i = 0; i < _header.unknown2.Length; i++)
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", _header.unknown2[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", header.mcnIsValid);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(header.mcn));
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", header.unknown3);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", _header.mcnIsValid);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(_header.mcn));
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", _header.unknown3);
 
-            for(int i = 0; i < header.unknown4.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", header.unknown4[i],
+            for(int i = 0; i < _header.unknown4.Length; i++)
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", header.pmaLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.atipLen = {0}", header.atipLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdtLen = {0}", header.cdtLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", header.cdInfoLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", header.bcaLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", _header.pmaLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.atipLen = {0}", _header.atipLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdtLen = {0}", _header.cdtLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", _header.cdInfoLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", _header.bcaLen);
 
-            for(int i = 0; i < header.unknown5.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", header.unknown5[i],
+            for(int i = 0; i < _header.unknown5.Length; i++)
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", _header.unknown5[i],
                                            i);
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", header.dvdStrLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", header.dvdInfoLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", _header.dvdStrLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", _header.dvdInfoLen);
 
-            for(int i = 0; i < header.unknown6.Length; i++)
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", header.unknown6[i],
+            for(int i = 0; i < _header.unknown6.Length; i++)
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", _header.unknown6[i],
                                            i);
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.manufacturer = {0}",
-                                       StringHandlers.CToString(header.manufacturer));
+                                       StringHandlers.CToString(_header.manufacturer));
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.product = {0}",
-                                       StringHandlers.CToString(header.product));
+                                       StringHandlers.CToString(_header.product));
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.revision = {0}",
-                                       StringHandlers.CToString(header.revision));
+                                       StringHandlers.CToString(_header.revision));
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.vendor = {0}",
-                                       StringHandlers.CToString(header.vendor));
+                                       StringHandlers.CToString(_header.vendor));
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.volumeId = {0}",
-                                       StringHandlers.CToString(header.volumeId));
+                                       StringHandlers.CToString(_header.volumeId));
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mode2ALen = {0}", header.mode2ALen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unkBlkLen = {0}", header.unkBlkLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dataLen = {0}", header.dataLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessionsLen = {0}", header.sessionsLen);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dpmLen = {0}", header.dpmLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mode2ALen = {0}", _header.mode2ALen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unkBlkLen = {0}", _header.unkBlkLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dataLen = {0}", _header.dataLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessionsLen = {0}", _header.sessionsLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dpmLen = {0}", _header.dpmLen);
 
-            mode2A = new byte[header.mode2ALen];
+            _mode2A = new byte[_header.mode2ALen];
 
-            if(mode2A.Length > 0)
+            if(_mode2A.Length > 0)
             {
-                stream.Read(mode2A, 0, mode2A.Length);
-                mode2A[1] -= 2;
-                var decoded2A = ModePage_2A.Decode(mode2A);
+                stream.Read(_mode2A, 0, _mode2A.Length);
+                _mode2A[1] -= 2;
+                var decoded2A = ModePage_2A.Decode(_mode2A);
 
                 if(!(decoded2A is null))
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
                                                Modes.PrettifyModePage_2A(decoded2A));
                 else
-                    mode2A = null;
+                    _mode2A = null;
             }
 
-            unkBlock = new byte[header.unkBlkLen];
+            _unkBlock = new byte[_header.unkBlkLen];
 
-            if(unkBlock.Length > 0)
-                stream.Read(unkBlock, 0, unkBlock.Length);
+            if(_unkBlock.Length > 0)
+                stream.Read(_unkBlock, 0, _unkBlock.Length);
 
-            byte[] temp = new byte[header.pmaLen];
+            byte[] temp = new byte[_header.pmaLen];
 
             if(temp.Length > 0)
             {
                 byte[] tushort = BitConverter.GetBytes((ushort)(temp.Length + 2));
                 stream.Read(temp, 0, temp.Length);
-                pma    = new byte[temp.Length + 4];
-                pma[0] = tushort[1];
-                pma[1] = tushort[0];
-                Array.Copy(temp, 0, pma, 4, temp.Length);
+                _pma    = new byte[temp.Length + 4];
+                _pma[0] = tushort[1];
+                _pma[1] = tushort[0];
+                Array.Copy(temp, 0, _pma, 4, temp.Length);
 
-                PMA.CDPMA? decodedPma = PMA.Decode(pma);
+                PMA.CDPMA? decodedPma = PMA.Decode(_pma);
 
                 if(decodedPma.HasValue)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PMA: {0}", PMA.Prettify(decodedPma));
                 else
-                    pma = null;
+                    _pma = null;
             }
 
-            atip = new byte[header.atipLen];
+            _atip = new byte[_header.atipLen];
 
-            if(atip.Length > 0)
-                stream.Read(atip, 0, atip.Length);
+            if(_atip.Length > 0)
+                stream.Read(_atip, 0, _atip.Length);
             else
-                atip = null;
+                _atip = null;
 
-            cdtext = new byte[header.cdtLen];
+            _cdtext = new byte[_header.cdtLen];
 
-            if(cdtext.Length > 0)
-                stream.Read(cdtext, 0, cdtext.Length);
+            if(_cdtext.Length > 0)
+                stream.Read(_cdtext, 0, _cdtext.Length);
             else
-                cdtext = null;
+                _cdtext = null;
 
-            bca = new byte[header.bcaLen];
+            _bca = new byte[_header.bcaLen];
 
-            if(bca.Length > 0)
-                stream.Read(bca, 0, bca.Length);
+            if(_bca.Length > 0)
+                stream.Read(_bca, 0, _bca.Length);
             else
-                bca = null;
+                _bca = null;
 
-            temp = new byte[header.dvdStrLen];
+            temp = new byte[_header.dvdStrLen];
 
             if(temp.Length > 0)
             {
                 stream.Read(temp, 0, temp.Length);
-                dmi = new byte[2052];
-                pfi = new byte[2052];
+                _dmi = new byte[2052];
+                _pfi = new byte[2052];
 
                 // TODO: CMI
-                Array.Copy(temp, 2, dmi, 4, 2048);
-                Array.Copy(temp, 0x802, pfi, 4, 2048);
+                Array.Copy(temp, 2, _dmi, 4, 2048);
+                Array.Copy(temp, 0x802, _pfi, 4, 2048);
 
-                pfi[0] = 0x08;
-                pfi[1] = 0x02;
-                dmi[0] = 0x08;
-                dmi[1] = 0x02;
+                _pfi[0] = 0x08;
+                _pfi[1] = 0x02;
+                _dmi[0] = 0x08;
+                _dmi[1] = 0x02;
 
-                PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(pfi);
+                PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(_pfi);
 
                 if(decodedPfi.HasValue)
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PFI: {0}", PFI.Prettify(decodedPfi));
                 else
                 {
-                    pfi = null;
-                    dmi = null;
+                    _pfi = null;
+                    _dmi = null;
                 }
             }
 
-            switch(header.profile)
+            switch(_header.profile)
             {
                 case ProfileNumber.CDR:
                 case ProfileNumber.CDROM:
@@ -226,24 +226,24 @@ namespace Aaru.DiscImages
                 case ProfileNumber.HDBURNROM:
                 case ProfileNumber.HDBURNR:
                 case ProfileNumber.HDBURNRW:
-                    discInformation = new byte[header.cdInfoLen];
+                    _discInformation = new byte[_header.cdInfoLen];
 
                     break;
                 default:
-                    discInformation = new byte[header.dvdInfoLen];
+                    _discInformation = new byte[_header.dvdInfoLen];
 
                     break;
             }
 
-            if(discInformation.Length > 0)
+            if(_discInformation.Length > 0)
             {
-                stream.Read(discInformation, 0, discInformation.Length);
+                stream.Read(_discInformation, 0, _discInformation.Length);
 
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Disc information: {0}",
-                                           PrintHex.ByteArrayToHexArrayString(discInformation, 40));
+                                           PrintHex.ByteArrayToHexArrayString(_discInformation, 40));
             }
             else
-                discInformation = null;
+                _discInformation = null;
 
             // How many data blocks
             byte[] tmpArray = new byte[4];
@@ -254,10 +254,10 @@ namespace Aaru.DiscImages
             uint   dataPathLen   = BitConverter.ToUInt32(tmpArray, 0);
             byte[] dataPathBytes = new byte[dataPathLen];
             stream.Read(dataPathBytes, 0, dataPathBytes.Length);
-            dataPath = Encoding.Unicode.GetString(dataPathBytes);
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", dataPath);
+            _dataPath = Encoding.Unicode.GetString(dataPathBytes);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", _dataPath);
 
-            dataFiles = new List<Bw5DataFile>();
+            _dataFiles = new List<Bw5DataFile>();
 
             for(int cD = 0; cD < dataBlockCount; cD++)
             {
@@ -293,7 +293,7 @@ namespace Aaru.DiscImages
                 dataFile.Unknown3 = BitConverter.ToUInt32(tmpArray, 0);
 
                 dataFile.Filename = Encoding.Unicode.GetString(dataFile.FilenameBytes);
-                dataFiles.Add(dataFile);
+                _dataFiles.Add(dataFile);
 
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.type = 0x{0:X8}", dataFile.Type);
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.length = {0}", dataFile.Length);
@@ -315,9 +315,9 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown3 = {0}", dataFile.Unknown3);
             }
 
-            bwSessions = new List<Bw5SessionDescriptor>();
+            _bwSessions = new List<Bw5SessionDescriptor>();
 
-            for(int ses = 0; ses < header.sessions; ses++)
+            for(int ses = 0; ses < _header.sessions; ses++)
             {
                 var session = new Bw5SessionDescriptor();
                 tmpArray = new byte[16];
@@ -447,11 +447,11 @@ namespace Aaru.DiscImages
                     }
                 }
 
-                bwSessions.Add(session);
+                _bwSessions.Add(session);
             }
 
-            dpm = new byte[header.dpmLen];
-            stream.Read(dpm, 0, dpm.Length);
+            _dpm = new byte[_header.dpmLen];
+            stream.Read(_dpm, 0, _dpm.Length);
 
             // Unused
             tmpArray = new byte[4];
@@ -460,18 +460,18 @@ namespace Aaru.DiscImages
             byte[] footer = new byte[16];
             stream.Read(footer, 0, footer.Length);
 
-            if(bw5Footer.SequenceEqual(footer))
+            if(_bw5Footer.SequenceEqual(footer))
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Correctly arrived end of image");
             else
                 AaruConsole.
                     ErrorWriteLine("BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.");
 
-            filePaths = new List<DataFileCharacteristics>();
+            _filePaths = new List<DataFileCharacteristics>();
 
-            foreach(Bw5DataFile dataFile in dataFiles)
+            foreach(Bw5DataFile dataFile in _dataFiles)
             {
                 var    chars       = new DataFileCharacteristics();
-                string path        = Path.Combine(dataPath, dataFile.Filename);
+                string path        = Path.Combine(_dataPath, dataFile.Filename);
                 var    filtersList = new FiltersList();
 
                 if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
@@ -481,7 +481,7 @@ namespace Aaru.DiscImages
                 }
                 else
                 {
-                    path = Path.Combine(dataPath, dataFile.Filename.ToLower(CultureInfo.CurrentCulture));
+                    path = Path.Combine(_dataPath, dataFile.Filename.ToLower(CultureInfo.CurrentCulture));
 
                     if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                     {
@@ -490,7 +490,7 @@ namespace Aaru.DiscImages
                     }
                     else
                     {
-                        path = Path.Combine(dataPath, dataFile.Filename.ToUpper(CultureInfo.CurrentCulture));
+                        path = Path.Combine(_dataPath, dataFile.Filename.ToUpper(CultureInfo.CurrentCulture));
 
                         if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                         {
@@ -499,7 +499,7 @@ namespace Aaru.DiscImages
                         }
                         else
                         {
-                            path = Path.Combine(dataPath.ToLower(CultureInfo.CurrentCulture), dataFile.Filename);
+                            path = Path.Combine(_dataPath.ToLower(CultureInfo.CurrentCulture), dataFile.Filename);
 
                             if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                             {
@@ -510,7 +510,7 @@ namespace Aaru.DiscImages
                             }
                             else
                             {
-                                path = Path.Combine(dataPath.ToUpper(CultureInfo.CurrentCulture), dataFile.Filename);
+                                path = Path.Combine(_dataPath.ToUpper(CultureInfo.CurrentCulture), dataFile.Filename);
 
                                 if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), path)) != null)
                                 {
@@ -521,7 +521,7 @@ namespace Aaru.DiscImages
                                 }
                                 else
                                 {
-                                    path = Path.Combine(dataPath, dataFile.Filename);
+                                    path = Path.Combine(_dataPath, dataFile.Filename);
 
                                     if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                           path.ToLower(CultureInfo.CurrentCulture))) !=
@@ -618,7 +618,7 @@ namespace Aaru.DiscImages
                 chars.Sectors    = dataFile.Sectors;
                 chars.Offset     = dataFile.Offset;
 
-                filePaths.Add(chars);
+                _filePaths.Add(chars);
             }
 
             Sessions   = new List<Session>();
@@ -632,16 +632,16 @@ namespace Aaru.DiscImages
             }, 0, 2);
 
             ulong offsetBytes = 0;
-            offsetmap = new Dictionary<uint, ulong>();
+            _offsetmap = new Dictionary<uint, ulong>();
             bool isDvd        = false;
             byte firstSession = byte.MaxValue;
             byte lastSession  = 0;
-            trackFlags        = new Dictionary<uint, byte>();
-            imageInfo.Sectors = 0;
+            _trackFlags        = new Dictionary<uint, byte>();
+            _imageInfo.Sectors = 0;
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Building maps");
 
-            foreach(Bw5SessionDescriptor ses in bwSessions)
+            foreach(Bw5SessionDescriptor ses in _bwSessions)
             {
                 // TODO: This does nothing, should it?
                 /*
@@ -680,7 +680,7 @@ namespace Aaru.DiscImages
                     var track     = new Track();
                     var partition = new Partition();
 
-                    trackFlags.Add(trk.point, trk.ctl);
+                    _trackFlags.Add(trk.point, trk.ctl);
 
                     switch(trk.type)
                     {
@@ -688,80 +688,80 @@ namespace Aaru.DiscImages
                             track.TrackBytesPerSector    = 2352;
                             track.TrackRawBytesPerSector = 2352;
 
-                            if(imageInfo.SectorSize < 2352)
-                                imageInfo.SectorSize = 2352;
+                            if(_imageInfo.SectorSize < 2352)
+                                _imageInfo.SectorSize = 2352;
 
                             break;
                         case Bw5TrackType.Mode1:
                         case Bw5TrackType.Mode2F1:
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                             track.TrackBytesPerSector    = 2048;
                             track.TrackRawBytesPerSector = 2352;
 
-                            if(imageInfo.SectorSize < 2048)
-                                imageInfo.SectorSize = 2048;
+                            if(_imageInfo.SectorSize < 2048)
+                                _imageInfo.SectorSize = 2048;
 
                             break;
                         case Bw5TrackType.Mode2:
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
                             track.TrackBytesPerSector    = 2336;
                             track.TrackRawBytesPerSector = 2352;
 
-                            if(imageInfo.SectorSize < 2336)
-                                imageInfo.SectorSize = 2336;
+                            if(_imageInfo.SectorSize < 2336)
+                                _imageInfo.SectorSize = 2336;
 
                             break;
                         case Bw5TrackType.Mode2F2:
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                             track.TrackBytesPerSector    = 2336;
                             track.TrackRawBytesPerSector = 2352;
 
-                            if(imageInfo.SectorSize < 2324)
-                                imageInfo.SectorSize = 2324;
+                            if(_imageInfo.SectorSize < 2324)
+                                _imageInfo.SectorSize = 2324;
 
                             break;
                         case Bw5TrackType.Dvd:
                             track.TrackBytesPerSector    = 2048;
                             track.TrackRawBytesPerSector = 2048;
 
-                            if(imageInfo.SectorSize < 2048)
-                                imageInfo.SectorSize = 2048;
+                            if(_imageInfo.SectorSize < 2048)
+                                _imageInfo.SectorSize = 2048;
 
                             isDvd = true;
 
@@ -772,9 +772,9 @@ namespace Aaru.DiscImages
                     track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
                     track.TrackEndSector   = (ulong)(trk.sectors  + trk.startLba);
 
-                    foreach(DataFileCharacteristics chars in filePaths.Where(chars => trk.startLba >= chars.StartLba &&
-                                                                                      trk.startLba   + trk.sectors <=
-                                                                                      chars.StartLba + chars.Sectors))
+                    foreach(DataFileCharacteristics chars in _filePaths.Where(chars => trk.startLba >= chars.StartLba &&
+                                                                                       trk.startLba   + trk.sectors <=
+                                                                                       chars.StartLba + chars.Sectors))
                     {
                         track.TrackFilter = chars.FileFilter;
                         track.TrackFile   = chars.FileFilter.GetFilename();
@@ -795,8 +795,8 @@ namespace Aaru.DiscImages
                             track.TrackSubchannelOffset = track.TrackFileOffset;
 
                             if(chars.Subchannel == TrackSubchannelType.PackedInterleaved)
-                                if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                                    imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                         }
 
                         break;
@@ -836,8 +836,8 @@ namespace Aaru.DiscImages
 
                     Tracks.Add(track);
                     Partitions.Add(partition);
-                    offsetmap.Add(track.TrackSequence, track.TrackStartSector);
-                    imageInfo.Sectors += partition.Length;
+                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _imageInfo.Sectors += partition.Length;
                 }
             }
 
@@ -877,21 +877,21 @@ namespace Aaru.DiscImages
             {
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Rebuilding TOC");
 
-                fullToc = fullTocStream.ToArray();
-                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", fullToc.Length);
+                _fullToc = fullTocStream.ToArray();
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", _fullToc.Length);
 
-                fullToc[0] = firstSession;
-                fullToc[1] = lastSession;
+                _fullToc[0] = firstSession;
+                _fullToc[1] = lastSession;
 
-                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
 
-            imageInfo.MediaType = BlindWriteProfileToMediaType(header.profile);
+            _imageInfo.MediaType = BlindWriteProfileToMediaType(_header.profile);
 
-            if(dmi != null &&
-               pfi != null)
+            if(_dmi != null &&
+               _pfi != null)
             {
-                PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(pfi);
+                PFI.PhysicalFormatInformation? pfi0 = PFI.Decode(_pfi);
 
                 // All discs I tested the disk category and part version (as well as the start PSN for DVD-RAM) where modified by Alcohol
                 // So much for archival value
@@ -900,71 +900,72 @@ namespace Aaru.DiscImages
                     switch(pfi0.Value.DiskCategory)
                     {
                         case DiskCategory.DVDPR:
-                            imageInfo.MediaType = MediaType.DVDPR;
+                            _imageInfo.MediaType = MediaType.DVDPR;
 
                             break;
                         case DiskCategory.DVDPRDL:
-                            imageInfo.MediaType = MediaType.DVDPRDL;
+                            _imageInfo.MediaType = MediaType.DVDPRDL;
 
                             break;
                         case DiskCategory.DVDPRW:
-                            imageInfo.MediaType = MediaType.DVDPRW;
+                            _imageInfo.MediaType = MediaType.DVDPRW;
 
                             break;
                         case DiskCategory.DVDPRWDL:
-                            imageInfo.MediaType = MediaType.DVDPRWDL;
+                            _imageInfo.MediaType = MediaType.DVDPRWDL;
 
                             break;
                         case DiskCategory.DVDR:
-                            imageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                            _imageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                             break;
                         case DiskCategory.DVDRAM:
-                            imageInfo.MediaType = MediaType.DVDRAM;
+                            _imageInfo.MediaType = MediaType.DVDRAM;
 
                             break;
                         default:
-                            imageInfo.MediaType = MediaType.DVDROM;
+                            _imageInfo.MediaType = MediaType.DVDROM;
 
                             break;
                         case DiskCategory.DVDRW:
-                            imageInfo.MediaType = pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                            _imageInfo.MediaType = pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                             break;
                         case DiskCategory.HDDVDR:
-                            imageInfo.MediaType = MediaType.HDDVDR;
+                            _imageInfo.MediaType = MediaType.HDDVDR;
 
                             break;
                         case DiskCategory.HDDVDRAM:
-                            imageInfo.MediaType = MediaType.HDDVDRAM;
+                            _imageInfo.MediaType = MediaType.HDDVDRAM;
 
                             break;
                         case DiskCategory.HDDVDROM:
-                            imageInfo.MediaType = MediaType.HDDVDROM;
+                            _imageInfo.MediaType = MediaType.HDDVDROM;
 
                             break;
                         case DiskCategory.HDDVDRW:
-                            imageInfo.MediaType = MediaType.HDDVDRW;
+                            _imageInfo.MediaType = MediaType.HDDVDRW;
 
                             break;
                         case DiskCategory.Nintendo:
-                            imageInfo.MediaType = pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
+                            _imageInfo.MediaType =
+                                pfi0.Value.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
 
                             break;
                         case DiskCategory.UMD:
-                            imageInfo.MediaType = MediaType.UMD;
+                            _imageInfo.MediaType = MediaType.UMD;
 
                             break;
                     }
 
-                    if(DMI.IsXbox(dmi))
-                        imageInfo.MediaType = MediaType.XGD;
-                    else if(DMI.IsXbox360(dmi))
-                        imageInfo.MediaType = MediaType.XGD2;
+                    if(DMI.IsXbox(_dmi))
+                        _imageInfo.MediaType = MediaType.XGD;
+                    else if(DMI.IsXbox360(_dmi))
+                        _imageInfo.MediaType = MediaType.XGD2;
                 }
             }
-            else if(imageInfo.MediaType == MediaType.CD ||
-                    imageInfo.MediaType == MediaType.CDROM)
+            else if(_imageInfo.MediaType == MediaType.CD ||
+                    _imageInfo.MediaType == MediaType.CDROM)
             {
                 bool data       = false;
                 bool mode2      = false;
@@ -999,142 +1000,142 @@ namespace Aaru.DiscImages
 
                 if(!data &&
                    !firstdata)
-                    imageInfo.MediaType = MediaType.CDDA;
+                    _imageInfo.MediaType = MediaType.CDDA;
                 else if(firstaudio         &&
                         data               &&
                         Sessions.Count > 1 &&
                         mode2)
-                    imageInfo.MediaType = MediaType.CDPLUS;
+                    _imageInfo.MediaType = MediaType.CDPLUS;
                 else if((firstdata && audio) || mode2)
-                    imageInfo.MediaType = MediaType.CDROMXA;
+                    _imageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio)
-                    imageInfo.MediaType = MediaType.CDROM;
+                    _imageInfo.MediaType = MediaType.CDROM;
                 else
-                    imageInfo.MediaType = MediaType.CD;
+                    _imageInfo.MediaType = MediaType.CD;
             }
 
-            imageInfo.DriveManufacturer     = StringHandlers.CToString(header.manufacturer);
-            imageInfo.DriveModel            = StringHandlers.CToString(header.product);
-            imageInfo.DriveFirmwareRevision = StringHandlers.CToString(header.revision);
-            imageInfo.Application           = "BlindWrite";
+            _imageInfo.DriveManufacturer     = StringHandlers.CToString(_header.manufacturer);
+            _imageInfo.DriveModel            = StringHandlers.CToString(_header.product);
+            _imageInfo.DriveFirmwareRevision = StringHandlers.CToString(_header.revision);
+            _imageInfo.Application           = "BlindWrite";
 
             if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B5T",
                               StringComparison.OrdinalIgnoreCase) == 0)
-                imageInfo.ApplicationVersion = "5";
+                _imageInfo.ApplicationVersion = "5";
             else if(string.Compare(Path.GetExtension(imageFilter.GetFilename()), ".B6T",
                                    StringComparison.OrdinalIgnoreCase) == 0)
-                imageInfo.ApplicationVersion = "6";
+                _imageInfo.ApplicationVersion = "6";
 
-            imageInfo.Version = "5";
+            _imageInfo.Version = "5";
 
-            imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
-            if(pma != null)
+            if(_pma != null)
             {
-                PMA.CDPMA pma0 = PMA.Decode(pma).Value;
+                PMA.CDPMA pma0 = PMA.Decode(_pma).Value;
 
                 foreach(uint id in from descriptor in pma0.PMADescriptors where descriptor.ADR == 2
                                    select (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame))
-                    imageInfo.MediaSerialNumber = $"{id & 0x00FFFFFF:X6}";
+                    _imageInfo.MediaSerialNumber = $"{id & 0x00FFFFFF:X6}";
             }
 
-            if(atip != null)
+            if(_atip != null)
             {
-                byte[] atipTmp = new byte[atip.Length + 4];
-                Array.Copy(atip, 0, atipTmp, 4, atip.Length);
-                atipTmp[0] = (byte)((atip.Length & 0xFF00) >> 8);
-                atipTmp[1] = (byte)(atip.Length & 0xFF);
+                byte[] atipTmp = new byte[_atip.Length + 4];
+                Array.Copy(_atip, 0, atipTmp, 4, _atip.Length);
+                atipTmp[0] = (byte)((_atip.Length & 0xFF00) >> 8);
+                atipTmp[1] = (byte)(_atip.Length & 0xFF);
 
                 ATIP.CDATIP atip0 = ATIP.Decode(atipTmp).Value;
 
-                imageInfo.MediaType = atip0.DiscType ? MediaType.CDRW : MediaType.CDR;
+                _imageInfo.MediaType = atip0.DiscType ? MediaType.CDRW : MediaType.CDR;
 
                 if(atip0.LeadInStartMin == 97)
                 {
                     int type = atip0.LeadInStartFrame % 10;
                     int frm  = atip0.LeadInStartFrame - type;
-                    imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(atip0.LeadInStartSec, frm);
+                    _imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(atip0.LeadInStartSec, frm);
                 }
             }
 
             bool isBd = false;
 
-            if(imageInfo.MediaType == MediaType.BDR  ||
-               imageInfo.MediaType == MediaType.BDRE ||
-               imageInfo.MediaType == MediaType.BDROM)
+            if(_imageInfo.MediaType == MediaType.BDR  ||
+               _imageInfo.MediaType == MediaType.BDRE ||
+               _imageInfo.MediaType == MediaType.BDROM)
             {
                 isDvd = false;
                 isBd  = true;
             }
 
-            if(isBd && imageInfo.Sectors > 24438784)
-                switch(imageInfo.MediaType)
+            if(isBd && _imageInfo.Sectors > 24438784)
+                switch(_imageInfo.MediaType)
                 {
                     case MediaType.BDR:
-                        imageInfo.MediaType = MediaType.BDRXL;
+                        _imageInfo.MediaType = MediaType.BDRXL;
 
                         break;
                     case MediaType.BDRE:
-                        imageInfo.MediaType = MediaType.BDREXL;
+                        _imageInfo.MediaType = MediaType.BDREXL;
 
                         break;
                 }
 
-            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
-            if(mode2A != null)
-                imageInfo.ReadableMediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A);
+            if(_mode2A != null)
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A);
 
-            if(pma != null)
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_PMA);
+            if(_pma != null)
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_PMA);
 
-            if(atip != null)
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_ATIP);
+            if(_atip != null)
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_ATIP);
 
-            if(cdtext != null)
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_TEXT);
+            if(_cdtext != null)
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_TEXT);
 
-            if(bca != null)
+            if(_bca != null)
                 if(isDvd)
-                    imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_BCA);
+                    _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_BCA);
                 else if(isBd)
-                    imageInfo.ReadableMediaTags.Add(MediaTagType.BD_BCA);
+                    _imageInfo.ReadableMediaTags.Add(MediaTagType.BD_BCA);
 
             byte[] tmp;
 
-            if(dmi != null)
+            if(_dmi != null)
             {
                 tmp = new byte[2048];
-                Array.Copy(dmi, 4, tmp, 0, 2048);
-                dmi = tmp;
-                imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
+                Array.Copy(_dmi, 4, tmp, 0, 2048);
+                _dmi = tmp;
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_DMI);
             }
 
-            if(pfi != null)
+            if(_pfi != null)
             {
                 tmp = new byte[2048];
-                Array.Copy(pfi, 4, tmp, 0, 2048);
-                pfi = tmp;
-                imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
+                Array.Copy(_pfi, 4, tmp, 0, 2048);
+                _pfi = tmp;
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.DVD_PFI);
             }
 
-            if(fullToc != null)
-                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
+            if(_fullToc != null)
+                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-            if(imageInfo.MediaType == MediaType.XGD2)
-                if(imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
-                   imageInfo.Sectors == 4229664 || // Xtreme unlock
-                   imageInfo.Sectors == 4246304)   // Wxripper unlock
-                    imageInfo.MediaType = MediaType.XGD3;
+            if(_imageInfo.MediaType == MediaType.XGD2)
+                if(_imageInfo.Sectors == 25063   || // Locked (or non compatible drive)
+                   _imageInfo.Sectors == 4229664 || // Xtreme unlock
+                   _imageInfo.Sectors == 4246304)   // Wxripper unlock
+                    _imageInfo.MediaType = MediaType.XGD3;
 
-            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
 
-            if(header.profile != ProfileNumber.CDR  &&
-               header.profile != ProfileNumber.CDRW &&
-               header.profile != ProfileNumber.CDROM)
+            if(_header.profile != ProfileNumber.CDR  &&
+               _header.profile != ProfileNumber.CDRW &&
+               _header.profile != ProfileNumber.CDROM)
                 foreach(Track track in Tracks)
                 {
                     track.TrackPregap = 0;
@@ -1150,58 +1151,58 @@ namespace Aaru.DiscImages
             {
                 case MediaTagType.SCSI_MODEPAGE_2A:
                 {
-                    if(mode2A != null)
-                        return (byte[])mode2A.Clone();
+                    if(_mode2A != null)
+                        return (byte[])_mode2A.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain SCSI MODE PAGE 2Ah.");
                 }
                 case MediaTagType.CD_PMA:
                 {
-                    if(pma != null)
-                        return (byte[])pma.Clone();
+                    if(_pma != null)
+                        return (byte[])_pma.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain PMA information.");
                 }
                 case MediaTagType.CD_ATIP:
                 {
-                    if(atip != null)
-                        return (byte[])atip.Clone();
+                    if(_atip != null)
+                        return (byte[])_atip.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain ATIP information.");
                 }
                 case MediaTagType.CD_TEXT:
                 {
-                    if(cdtext != null)
-                        return (byte[])cdtext.Clone();
+                    if(_cdtext != null)
+                        return (byte[])_cdtext.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain CD-Text information.");
                 }
                 case MediaTagType.DVD_BCA:
                 case MediaTagType.BD_BCA:
                 {
-                    if(bca != null)
-                        return (byte[])bca.Clone();
+                    if(_bca != null)
+                        return (byte[])_bca.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain BCA information.");
                 }
                 case MediaTagType.DVD_PFI:
                 {
-                    if(pfi != null)
-                        return (byte[])pfi.Clone();
+                    if(_pfi != null)
+                        return (byte[])_pfi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain PFI.");
                 }
                 case MediaTagType.DVD_DMI:
                 {
-                    if(dmi != null)
-                        return (byte[])dmi.Clone();
+                    if(_dmi != null)
+                        return (byte[])_dmi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain DMI.");
                 }
                 case MediaTagType.CD_FullTOC:
                 {
-                    if(fullToc != null)
-                        return (byte[])fullToc.Clone();
+                    if(_fullToc != null)
+                        return (byte[])_fullToc.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain TOC information.");
                 }
@@ -1221,7 +1222,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1232,7 +1233,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1262,7 +1263,7 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+            DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  (firstSector + characteristics.Sectors) - 1 let wantedSector =
                                                  (int)(sectorAddress + aaruTrack.TrackStartSector)
@@ -1337,8 +1338,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = chars.FileFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = chars.FileFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1396,7 +1397,7 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+            DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  (firstSector + characteristics.Sectors) - 1 let wantedSector =
                                                  (int)(sectorAddress + aaruTrack.TrackStartSector)
@@ -1421,7 +1422,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    if(trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
+                    if(_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
                         return new[]
                         {
                             flag
@@ -1769,8 +1770,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1805,7 +1806,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1835,7 +1836,7 @@ namespace Aaru.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            DataFileCharacteristics chars = (from characteristics in filePaths let firstSector =
+            DataFileCharacteristics chars = (from characteristics in _filePaths let firstSector =
                                                  characteristics.StartLba let lastSector =
                                                  (firstSector + characteristics.Sectors) - 1 let wantedSector =
                                                  (int)(sectorAddress + aaruTrack.TrackStartSector)
@@ -1894,8 +1895,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),

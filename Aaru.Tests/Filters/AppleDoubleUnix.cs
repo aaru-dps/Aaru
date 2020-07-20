@@ -41,20 +41,20 @@ namespace Aaru.Tests.Filters
         const    string EXPECTED_SIDECAR  = "7b0c25bf8cb70f6fb1a15eca31585250";
         const    string EXPECTED_CONTENTS = "c2be571406cf6353269faa59a4a8c0a4";
         const    string EXPECTED_RESOURCE = "a972d27c44193a7587b21416c0953cc3";
-        readonly string location;
-        readonly string sidecar;
+        readonly string _location;
+        readonly string _sidecar;
 
         public AppleDoubleUnix()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "unix", "DOS_720.dmg");
-            sidecar  = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "unix", "%DOS_720.dmg");
+            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "unix", "DOS_720.dmg");
+            _sidecar  = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "AppleDouble", "unix", "%DOS_720.dmg");
         }
 
         [Test]
         public void CheckContents()
         {
             IFilter filter = new AppleDouble();
-            filter.Open(location);
+            filter.Open(_location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[737280];
             str.Read(data, 0, 737280);
@@ -68,10 +68,10 @@ namespace Aaru.Tests.Filters
         [Test]
         public void CheckCorrectFile()
         {
-            string result = Md5Context.File(location, out _);
+            string result = Md5Context.File(_location, out _);
             Assert.AreEqual(EXPECTED_FILE, result);
 
-            result = Md5Context.File(sidecar, out _);
+            result = Md5Context.File(_sidecar, out _);
             Assert.AreEqual(EXPECTED_SIDECAR, result);
         }
 
@@ -79,14 +79,14 @@ namespace Aaru.Tests.Filters
         public void CheckFilterId()
         {
             IFilter filter = new AppleDouble();
-            Assert.AreEqual(true, filter.Identify(location));
+            Assert.AreEqual(true, filter.Identify(_location));
         }
 
         [Test]
         public void CheckResource()
         {
             IFilter filter = new AppleDouble();
-            filter.Open(location);
+            filter.Open(_location);
             Stream str  = filter.GetResourceForkStream();
             byte[] data = new byte[286];
             str.Read(data, 0, 286);
@@ -101,7 +101,7 @@ namespace Aaru.Tests.Filters
         public void Test()
         {
             IFilter filter = new AppleDouble();
-            filter.Open(location);
+            filter.Open(_location);
             Assert.AreEqual(true, filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
             Assert.AreNotEqual(null, filter.GetDataForkStream());

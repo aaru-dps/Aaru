@@ -40,38 +40,38 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Jfs2
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "linux.aif", "linux_caseinsensitive.aif", "ecs20_fstester.aif", "linux_4.19_jfs_flashdrive.aif",
             "linux_4.19_jfs_os2_flashdrive.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             262144, 262144, 1024000, 1024000, 1024000
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512, 512, 512, 512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             257632, 257632, 1017512, 1017416, 1017416
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             4096, 4096, 4096, 4096, 4096
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "Volume labe", "Volume labe", "Volume labe", "DicSetter", "DicSetter"
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             "8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",
             "f4077ce9-0000-0000-0000-000000007c10", "91746c77-eb51-7441-85e2-902c925969f8",
@@ -81,15 +81,15 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2", testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "JFS2", _testfiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new JFS();
                 int             part       = -1;
@@ -103,14 +103,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("JFS filesystem", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("JFS filesystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
             }
         }
     }

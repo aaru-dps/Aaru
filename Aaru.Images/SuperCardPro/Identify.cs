@@ -53,7 +53,7 @@ namespace Aaru.DiscImages
 
             Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
-            return scpSignature.SequenceEqual(Header.signature);
+            return _scpSignature.SequenceEqual(Header.signature);
         }
     }
 }

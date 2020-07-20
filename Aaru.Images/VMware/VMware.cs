@@ -40,30 +40,30 @@ namespace Aaru.DiscImages
 {
     public partial class VMware : IWritableImage
     {
-        string                          adapter_type;
-        uint                            cid;
-        StreamWriter                    descriptorStream;
-        Dictionary<ulong, VMwareExtent> extents;
-        IFilter                         gdFilter;
-        Dictionary<ulong, byte[]>       grainCache;
-        ulong                           grainSize;
-        uint[]                          gTable;
-        bool                            hasParent;
-        uint                            hwversion;
-        ImageInfo                       imageInfo;
-        string                          imageType;
-        uint                            maxCachedGrains;
-        uint                            parentCid;
-        IMediaImage                     parentImage;
-        string                          parentName;
-        Dictionary<ulong, byte[]>       sectorCache;
-        uint                            version;
-        VMwareCowHeader                 vmCHdr;
-        VMwareExtentHeader              vmEHdr;
-        string                          writingBaseName;
-        FileStream                      writingStream;
+        string                          _adapterType;
+        uint                            _cid;
+        StreamWriter                    _descriptorStream;
+        Dictionary<ulong, VMwareExtent> _extents;
+        IFilter                         _gdFilter;
+        Dictionary<ulong, byte[]>       _grainCache;
+        ulong                           _grainSize;
+        uint[]                          _gTable;
+        bool                            _hasParent;
+        uint                            _hwversion;
+        ImageInfo                       _imageInfo;
+        string                          _imageType;
+        uint                            _maxCachedGrains;
+        uint                            _parentCid;
+        IMediaImage                     _parentImage;
+        string                          _parentName;
+        Dictionary<ulong, byte[]>       _sectorCache;
+        uint                            _version;
+        VMwareCowHeader                 _vmCHdr;
+        VMwareExtentHeader              _vmEHdr;
+        string                          _writingBaseName;
+        FileStream                      _writingStream;
 
-        public VMware() => imageInfo = new ImageInfo
+        public VMware() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

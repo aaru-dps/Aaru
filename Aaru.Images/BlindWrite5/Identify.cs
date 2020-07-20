@@ -53,7 +53,7 @@ namespace Aaru.DiscImages
             stream.Seek(-16, SeekOrigin.End);
             stream.Read(footer, 0, 16);
 
-            return bw5Signature.SequenceEqual(signature) && bw5Footer.SequenceEqual(footer);
+            return _bw5Signature.SequenceEqual(signature) && _bw5Footer.SequenceEqual(footer);
         }
     }
 }

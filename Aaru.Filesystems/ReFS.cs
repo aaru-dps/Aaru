@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
     public class ReFS : IFilesystem
     {
         const uint FSRS = 0x53525346;
-        readonly byte[] refsSignature =
+        readonly byte[] _signature =
         {
             0x52, 0x65, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00
         };
@@ -58,9 +58,9 @@ namespace Aaru.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            uint sbSize = (uint)(Marshal.SizeOf<RefsVolumeHeader>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<RefsVolumeHeader>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbSize >= partition.End)
@@ -68,13 +68,13 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<RefsVolumeHeader>())
+            if(sector.Length < Marshal.SizeOf<VolumeHeader>())
                 return false;
 
-            RefsVolumeHeader refsVhdr = Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
+            VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
-            return refsVhdr.identifier == FSRS && ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero) &&
-                   refsVhdr.signature.SequenceEqual(refsSignature);
+            return vhdr.identifier == FSRS && ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero) &&
+                   vhdr.signature.SequenceEqual(_signature);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -83,9 +83,9 @@ namespace Aaru.Filesystems
             Encoding    = Encoding.UTF8;
             information = "";
 
-            uint sbSize = (uint)(Marshal.SizeOf<RefsVolumeHeader>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<RefsVolumeHeader>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbSize >= partition.End)
@@ -93,67 +93,66 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<RefsVolumeHeader>())
+            if(sector.Length < Marshal.SizeOf<VolumeHeader>())
                 return;
 
-            RefsVolumeHeader refsVhdr = Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
+            VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
             AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.jump));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(vhdr.jump));
 
             AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.signature = {0}",
-                                       StringHandlers.CToString(refsVhdr.signature));
+                                       StringHandlers.CToString(vhdr.signature));
 
             AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.mustBeZero empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero));
 
             AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.identifier = {0}",
-                                       StringHandlers.CToString(BitConverter.GetBytes(refsVhdr.identifier)));
+                                       StringHandlers.CToString(BitConverter.GetBytes(vhdr.identifier)));
 
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.length = {0}", refsVhdr.length);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.checksum = 0x{0:X4}", refsVhdr.checksum);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectors = {0}", refsVhdr.sectors);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.bytesPerSector = {0}", refsVhdr.bytesPerSector);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.length = {0}", vhdr.length);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.checksum = 0x{0:X4}", vhdr.checksum);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectors = {0}", vhdr.sectors);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.bytesPerSector = {0}", vhdr.bytesPerSector);
 
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectorsPerCluster = {0}",
-                                       refsVhdr.sectorsPerCluster);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectorsPerCluster = {0}", vhdr.sectorsPerCluster);
 
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown1 zero? = {0}", refsVhdr.unknown1 == 0);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown2 zero? = {0}", refsVhdr.unknown2 == 0);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown3 zero? = {0}", refsVhdr.unknown3 == 0);
-            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown4 zero? = {0}", refsVhdr.unknown4 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown1 zero? = {0}", vhdr.unknown1 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown2 zero? = {0}", vhdr.unknown2 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown3 zero? = {0}", vhdr.unknown3 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown4 zero? = {0}", vhdr.unknown4 == 0);
 
             AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown5 empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.unknown5));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(vhdr.unknown5));
 
-            if(refsVhdr.identifier != FSRS                           ||
-               !ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero) ||
-               !refsVhdr.signature.SequenceEqual(refsSignature))
+            if(vhdr.identifier != FSRS                           ||
+               !ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero) ||
+               !vhdr.signature.SequenceEqual(_signature))
                 return;
 
             var sb = new StringBuilder();
 
             sb.AppendLine("Microsoft Resilient File System");
-            sb.AppendFormat("Volume uses {0} bytes per sector", refsVhdr.bytesPerSector).AppendLine();
+            sb.AppendFormat("Volume uses {0} bytes per sector", vhdr.bytesPerSector).AppendLine();
 
-            sb.AppendFormat("Volume uses {0} sectors per cluster ({1} bytes)", refsVhdr.sectorsPerCluster,
-                            refsVhdr.sectorsPerCluster * refsVhdr.bytesPerSector).AppendLine();
+            sb.AppendFormat("Volume uses {0} sectors per cluster ({1} bytes)", vhdr.sectorsPerCluster,
+                            vhdr.sectorsPerCluster * vhdr.bytesPerSector).AppendLine();
 
-            sb.AppendFormat("Volume has {0} sectors ({1} bytes)", refsVhdr.sectors,
-                            refsVhdr.sectors * refsVhdr.bytesPerSector).AppendLine();
+            sb.AppendFormat("Volume has {0} sectors ({1} bytes)", vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector).
+               AppendLine();
 
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
                 Type        = "Resilient File System",
-                ClusterSize = refsVhdr.bytesPerSector * refsVhdr.sectorsPerCluster,
-                Clusters    = refsVhdr.sectors        / refsVhdr.sectorsPerCluster
+                ClusterSize = vhdr.bytesPerSector * vhdr.sectorsPerCluster,
+                Clusters    = vhdr.sectors        / vhdr.sectorsPerCluster
             };
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RefsVolumeHeader
+        struct VolumeHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] jump;

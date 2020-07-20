@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class Vhdx
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Microsoft VHDX";
         public Guid                   Id           => new Guid("536B141B-D09C-4799-AB70-34631286EB9D");

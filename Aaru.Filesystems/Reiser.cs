@@ -46,15 +46,15 @@ namespace Aaru.Filesystems
     {
         const uint REISER_SUPER_OFFSET = 0x10000;
 
-        readonly byte[] reiser35_magic =
+        readonly byte[] _magic35 =
         {
             0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x46, 0x73, 0x00, 0x00
         };
-        readonly byte[] reiser36_magic =
+        readonly byte[] _magic36 =
         {
             0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x32, 0x46, 0x73, 0x00
         };
-        readonly byte[] reiserJr_magic =
+        readonly byte[] _magicJr =
         {
             0x52, 0x65, 0x49, 0x73, 0x45, 0x72, 0x33, 0x46, 0x73, 0x00
         };
@@ -75,9 +75,9 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<Reiser_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Reiser_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End)
@@ -85,13 +85,13 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<Reiser_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            Reiser_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
+            Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            return reiser35_magic.SequenceEqual(reiserSb.magic) || reiser36_magic.SequenceEqual(reiserSb.magic) ||
-                   reiserJr_magic.SequenceEqual(reiserSb.magic);
+            return _magic35.SequenceEqual(reiserSb.magic) || _magic36.SequenceEqual(reiserSb.magic) ||
+                   _magicJr.SequenceEqual(reiserSb.magic);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -108,30 +108,30 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<Reiser_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Reiser_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<Reiser_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            Reiser_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
+            Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            if(!reiser35_magic.SequenceEqual(reiserSb.magic) &&
-               !reiser36_magic.SequenceEqual(reiserSb.magic) &&
-               !reiserJr_magic.SequenceEqual(reiserSb.magic))
+            if(!_magic35.SequenceEqual(reiserSb.magic) &&
+               !_magic36.SequenceEqual(reiserSb.magic) &&
+               !_magicJr.SequenceEqual(reiserSb.magic))
                 return;
 
             var sb = new StringBuilder();
 
-            if(reiser35_magic.SequenceEqual(reiserSb.magic))
+            if(_magic35.SequenceEqual(reiserSb.magic))
                 sb.AppendLine("Reiser 3.5 filesystem");
-            else if(reiser36_magic.SequenceEqual(reiserSb.magic))
+            else if(_magic36.SequenceEqual(reiserSb.magic))
                 sb.AppendLine("Reiser 3.6 filesystem");
-            else if(reiserJr_magic.SequenceEqual(reiserSb.magic))
+            else if(_magicJr.SequenceEqual(reiserSb.magic))
                 sb.AppendLine("Reiser Jr. filesystem");
 
             sb.AppendFormat("Volume has {0} blocks with {1} blocks free", reiserSb.block_count, reiserSb.free_blocks).
@@ -156,11 +156,11 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType();
 
-            if(reiser35_magic.SequenceEqual(reiserSb.magic))
+            if(_magic35.SequenceEqual(reiserSb.magic))
                 XmlFsType.Type = "Reiser 3.5 filesystem";
-            else if(reiser36_magic.SequenceEqual(reiserSb.magic))
+            else if(_magic36.SequenceEqual(reiserSb.magic))
                 XmlFsType.Type = "Reiser 3.6 filesystem";
-            else if(reiserJr_magic.SequenceEqual(reiserSb.magic))
+            else if(_magicJr.SequenceEqual(reiserSb.magic))
                 XmlFsType.Type = "Reiser Jr. filesystem";
 
             XmlFsType.ClusterSize           = reiserSb.blocksize;
@@ -177,7 +177,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ReiserJournalParams
+        struct JournalParameters
         {
             public readonly uint journal_1stblock;
             public readonly uint journal_dev;
@@ -190,16 +190,16 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Reiser_Superblock
+        struct Superblock
         {
-            public readonly uint                block_count;
-            public readonly uint                free_blocks;
-            public readonly uint                root_block;
-            public readonly ReiserJournalParams journal;
-            public readonly ushort              blocksize;
-            public readonly ushort              oid_maxsize;
-            public readonly ushort              oid_cursize;
-            public readonly ushort              umount_state;
+            public readonly uint              block_count;
+            public readonly uint              free_blocks;
+            public readonly uint              root_block;
+            public readonly JournalParameters journal;
+            public readonly ushort            blocksize;
+            public readonly ushort            oid_maxsize;
+            public readonly ushort            oid_cursize;
+            public readonly ushort            umount_state;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public readonly byte[] magic;
             public readonly ushort fs_state;

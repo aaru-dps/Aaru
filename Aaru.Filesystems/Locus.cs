@@ -92,9 +92,9 @@ namespace Aaru.Filesystems
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
@@ -102,10 +102,10 @@ namespace Aaru.Filesystems
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<Locus_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
 
-                Locus_Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
+                Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
                 AaruConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
 
@@ -128,22 +128,22 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return;
 
-            var    locusSb = new Locus_Superblock();
+            var    locusSb = new Superblock();
             byte[] sector  = null;
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<Locus_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
-                locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
+                locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
                 if(locusSb.s_magic == LOCUS_MAGIC     ||
                    locusSb.s_magic == LOCUS_CIGAM     ||
@@ -163,15 +163,15 @@ namespace Aaru.Filesystems
             if(locusSb.s_magic == LOCUS_CIGAM ||
                locusSb.s_magic == LOCUS_CIGAM_OLD)
             {
-                locusSb         = Marshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
-                locusSb.s_flags = (LocusFlags)Swapping.Swap((ushort)locusSb.s_flags);
+                locusSb         = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
+                locusSb.s_flags = (Flags)Swapping.Swap((ushort)locusSb.s_flags);
             }
 
             var sb = new StringBuilder();
 
             sb.AppendLine(locusSb.s_magic == LOCUS_MAGIC_OLD ? "Locus filesystem (old)" : "Locus filesystem");
 
-            int blockSize = locusSb.s_version == LocusVersion.SB_SB4096 ? 4096 : 1024;
+            int blockSize = locusSb.s_version == Version.SB_SB4096 ? 4096 : 1024;
 
             string s_fsmnt = StringHandlers.CToString(locusSb.s_fsmnt, Encoding);
             string s_fpack = StringHandlers.CToString(locusSb.s_fpack, Encoding);
@@ -212,40 +212,40 @@ namespace Aaru.Filesystems
             sb.AppendFormat("There are an estimate of {0} free inodes before next search start", locusSb.s_nbehind).
                AppendLine();
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RDONLY))
+            if(locusSb.s_flags.HasFlag(Flags.SB_RDONLY))
                 sb.AppendLine("Read-only volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN))
+            if(locusSb.s_flags.HasFlag(Flags.SB_CLEAN))
                 sb.AppendLine("Clean volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY))
+            if(locusSb.s_flags.HasFlag(Flags.SB_DIRTY))
                 sb.AppendLine("Dirty volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_RMV))
+            if(locusSb.s_flags.HasFlag(Flags.SB_RMV))
                 sb.AppendLine("Removable volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_PRIMPACK))
+            if(locusSb.s_flags.HasFlag(Flags.SB_PRIMPACK))
                 sb.AppendLine("This is the primary pack");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_REPLTYPE))
+            if(locusSb.s_flags.HasFlag(Flags.SB_REPLTYPE))
                 sb.AppendLine("Replicated volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_USER))
+            if(locusSb.s_flags.HasFlag(Flags.SB_USER))
                 sb.AppendLine("User replicated volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BACKBONE))
+            if(locusSb.s_flags.HasFlag(Flags.SB_BACKBONE))
                 sb.AppendLine("Backbone volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NFS))
+            if(locusSb.s_flags.HasFlag(Flags.SB_NFS))
                 sb.AppendLine("NFS volume");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_BYHAND))
+            if(locusSb.s_flags.HasFlag(Flags.SB_BYHAND))
                 sb.AppendLine("Volume inhibits automatic fsck");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_NOSUID))
+            if(locusSb.s_flags.HasFlag(Flags.SB_NOSUID))
                 sb.AppendLine("Set-uid/set-gid is disabled");
 
-            if(locusSb.s_flags.HasFlag(LocusFlags.SB_SYNCW))
+            if(locusSb.s_flags.HasFlag(Flags.SB_SYNCW))
                 sb.AppendLine("Volume uses synchronous writes");
 
             sb.AppendFormat("Volume label: {0}", s_fsmnt).AppendLine();
@@ -265,7 +265,7 @@ namespace Aaru.Filesystems
                 VolumeName = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
                 ModificationDate = DateHandlers.UnixToDateTime(locusSb.s_time),
                 ModificationDateSpecified = true,
-                Dirty = !locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) || locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
+                Dirty = !locusSb.s_flags.HasFlag(Flags.SB_CLEAN) || locusSb.s_flags.HasFlag(Flags.SB_DIRTY),
                 FreeClusters = (ulong)locusSb.s_tfree,
                 FreeClustersSpecified = true
             };
@@ -273,7 +273,7 @@ namespace Aaru.Filesystems
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Locus_Superblock
+        struct Superblock
         {
             public readonly uint s_magic; /* identifies this as a locus filesystem */
             /* defined as a constant below */
@@ -295,14 +295,14 @@ namespace Aaru.Filesystems
             public readonly time_t  s_time;  /* last super block update */
             public readonly daddr_t s_tfree; /* total free blocks*/
 
-            public readonly ino_t      s_isize;   /* size in blocks of i-list */
-            public readonly short      s_nfree;   /* number of addresses in s_free */
-            public          LocusFlags s_flags;   /* filsys flags, defined below */
-            public readonly ino_t      s_tinode;  /* total free inodes */
-            public readonly ino_t      s_lasti;   /* start place for circular search */
-            public readonly ino_t      s_nbehind; /* est # free inodes before s_lasti */
-            public readonly pckno_t    s_gfspack; /* global filesystem pack number */
-            public readonly short      s_ninode;  /* number of i-nodes in s_inode */
+            public readonly ino_t   s_isize;   /* size in blocks of i-list */
+            public readonly short   s_nfree;   /* number of addresses in s_free */
+            public          Flags   s_flags;   /* filsys flags, defined below */
+            public readonly ino_t   s_tinode;  /* total free inodes */
+            public readonly ino_t   s_lasti;   /* start place for circular search */
+            public readonly ino_t   s_nbehind; /* est # free inodes before s_lasti */
+            public readonly pckno_t s_gfspack; /* global filesystem pack number */
+            public readonly short   s_ninode;  /* number of i-nodes in s_inode */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly short[] s_dinfo; /* interleave stuff */
 
@@ -310,10 +310,10 @@ namespace Aaru.Filesystems
             //#define s_skip  s_dinfo[0]      /* AIX defines  */
             //#define s_n s_dinfo[1]
             //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public readonly byte         s_flock;   /* lock during free list manipulation */
-            public readonly byte         s_ilock;   /* lock during i-list manipulation */
-            public readonly byte         s_fmod;    /* super block modified flag */
-            public readonly LocusVersion s_version; /* version of the data format in fs. */
+            public readonly byte    s_flock;   /* lock during free list manipulation */
+            public readonly byte    s_ilock;   /* lock during i-list manipulation */
+            public readonly byte    s_fmod;    /* super block modified flag */
+            public readonly Version s_version; /* version of the data format in fs. */
             /*  defined below. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] s_fsmnt; /* name of this file system */
@@ -328,7 +328,7 @@ namespace Aaru.Filesystems
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Locus_OldSuperblock
+        struct OldSuperblock
         {
             public readonly uint s_magic; /* identifies this as a locus filesystem */
             /* defined as a constant below */
@@ -350,14 +350,14 @@ namespace Aaru.Filesystems
             public readonly time_t  s_time;  /* last super block update */
             public readonly daddr_t s_tfree; /* total free blocks*/
 
-            public readonly ino_t      s_isize;   /* size in blocks of i-list */
-            public readonly short      s_nfree;   /* number of addresses in s_free */
-            public readonly LocusFlags s_flags;   /* filsys flags, defined below */
-            public readonly ino_t      s_tinode;  /* total free inodes */
-            public readonly ino_t      s_lasti;   /* start place for circular search */
-            public readonly ino_t      s_nbehind; /* est # free inodes before s_lasti */
-            public readonly pckno_t    s_gfspack; /* global filesystem pack number */
-            public readonly short      s_ninode;  /* number of i-nodes in s_inode */
+            public readonly ino_t   s_isize;   /* size in blocks of i-list */
+            public readonly short   s_nfree;   /* number of addresses in s_free */
+            public readonly Flags   s_flags;   /* filsys flags, defined below */
+            public readonly ino_t   s_tinode;  /* total free inodes */
+            public readonly ino_t   s_lasti;   /* start place for circular search */
+            public readonly ino_t   s_nbehind; /* est # free inodes before s_lasti */
+            public readonly pckno_t s_gfspack; /* global filesystem pack number */
+            public readonly short   s_ninode;  /* number of i-nodes in s_inode */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly short[] s_dinfo; /* interleave stuff */
 
@@ -365,10 +365,10 @@ namespace Aaru.Filesystems
             //#define s_skip  s_dinfo[0]      /* AIX defines  */
             //#define s_n s_dinfo[1]
             //#define s_cyl   s_dinfo[1]      /* AIX defines  */
-            public readonly byte         s_flock;   /* lock during free list manipulation */
-            public readonly byte         s_ilock;   /* lock during i-list manipulation */
-            public readonly byte         s_fmod;    /* super block modified flag */
-            public readonly LocusVersion s_version; /* version of the data format in fs. */
+            public readonly byte    s_flock;   /* lock during free list manipulation */
+            public readonly byte    s_ilock;   /* lock during i-list manipulation */
+            public readonly byte    s_fmod;    /* super block modified flag */
+            public readonly Version s_version; /* version of the data format in fs. */
             /*  defined below. */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] s_fsmnt; /* name of this file system */
@@ -383,7 +383,7 @@ namespace Aaru.Filesystems
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          Flags]
-        enum LocusFlags : ushort
+        enum Flags : ushort
         {
             SB_RDONLY   = 0x1, /* no writes on filesystem */ SB_CLEAN = 0x2, /* fs unmounted cleanly (or checks run) */
             SB_DIRTY    = 0x4, /* fs mounted without CLEAN bit set */ SB_RMV = 0x8, /* fs is a removable file system */
@@ -398,7 +398,7 @@ namespace Aaru.Filesystems
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          Flags]
-        enum LocusVersion : byte
+        enum Version : byte
         {
             SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */ SB_B1024 = 2, /* 1024 byte block filesystem */
             NUMSCANDEV = 5 /* Used by scangfs(), refed in space.h */

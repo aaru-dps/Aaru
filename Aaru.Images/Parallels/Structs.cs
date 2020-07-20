@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ParallelsHeader
         {
-            /// <summary>Magic, <see cref="Parallels.parallelsMagic" /> or <see cref="Parallels.parallelsExtMagic" /></summary>
+            /// <summary>Magic, <see cref="Parallels._parallelsMagic" /> or <see cref="Parallels._parallelsExtMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] magic;
             /// <summary>Version</summary>

@@ -78,23 +78,23 @@ namespace Aaru.DiscImages
             if(expectedFileSize != stream.Length)
                 return false;
 
-            imageInfo.Cylinders       = tmpHeader.cylinders;
-            imageInfo.Heads           = tmpHeader.heads;
-            imageInfo.SectorsPerTrack = tmpHeader.sectorsPerTrack;
-            imageInfo.Sectors         = (ulong)(tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack);
-            imageInfo.SectorSize      = (uint)(128 << tmpHeader.bytesPerSector);
+            _imageInfo.Cylinders       = tmpHeader.cylinders;
+            _imageInfo.Heads           = tmpHeader.heads;
+            _imageInfo.SectorsPerTrack = tmpHeader.sectorsPerTrack;
+            _imageInfo.Sectors         = (ulong)(tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack);
+            _imageInfo.SectorSize      = (uint)(128 << tmpHeader.bytesPerSector);
 
-            hdkImageFilter = imageFilter;
+            _hdkImageFilter = imageFilter;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - 8);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.ImageSize            = (ulong)(stream.Length - 8);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                         MediaEncoding.MFM, false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                          (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
+                                                          MediaEncoding.MFM, false));
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             return true;
         }
@@ -103,17 +103,17 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = hdkImageFilter.GetDataForkStream();
-            stream.Seek((long)(8 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            Stream stream = _hdkImageFilter.GetDataForkStream();
+            stream.Seek((long)(8 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

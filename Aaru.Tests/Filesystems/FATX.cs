@@ -48,66 +48,66 @@ namespace Aaru.Tests.Filesystems
         [SetUp]
         public void Init()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "le", "fatx.img.lz");
-            filter   = new LZip();
-            filter.Open(location);
-            image = new ZZZRawImage();
-            Assert.AreEqual(true, image.Open(filter));
-            fs = new XboxFatPlugin();
+            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le", "fatx.img.lz");
+            _filter   = new LZip();
+            _filter.Open(_location);
+            _image = new ZZZRawImage();
+            Assert.AreEqual(true, _image.Open(_filter));
+            _fs = new XboxFatPlugin();
 
-            wholePart = new Partition
+            _wholePart = new Partition
             {
                 Name   = "Whole device",
-                Length = image.Info.Sectors,
-                Size   = image.Info.Sectors * image.Info.SectorSize
+                Length = _image.Info.Sectors,
+                Size   = _image.Info.Sectors * _image.Info.SectorSize
             };
 
-            Errno error = fs.Mount(image, wholePart, null, null, null);
+            Errno error = _fs.Mount(_image, _wholePart, null, null, null);
             Assert.AreEqual(Errno.NoError, error);
         }
 
         [TearDown]
         public void Destroy()
         {
-            fs?.Unmount();
-            fs = null;
+            _fs?.Unmount();
+            _fs = null;
         }
 
-        string              location;
-        IFilter             filter;
-        IMediaImage         image;
-        IReadOnlyFilesystem fs;
-        Partition           wholePart;
+        string              _location;
+        IFilter             _filter;
+        IMediaImage         _image;
+        IReadOnlyFilesystem _fs;
+        Partition           _wholePart;
 
         [Test]
         public void Information()
         {
-            Assert.AreEqual(62720, image.Info.Sectors);
-            Assert.AreEqual(1960, fs.XmlFsType.Clusters);
-            Assert.AreEqual(16384, fs.XmlFsType.ClusterSize);
-            Assert.AreEqual("FATX filesystem", fs.XmlFsType.Type);
-            Assert.AreEqual("Volume láb€l", fs.XmlFsType.VolumeName);
-            Assert.AreEqual("4639B7D0", fs.XmlFsType.VolumeSerial);
+            Assert.AreEqual(62720, _image.Info.Sectors);
+            Assert.AreEqual(1960, _fs.XmlFsType.Clusters);
+            Assert.AreEqual(16384, _fs.XmlFsType.ClusterSize);
+            Assert.AreEqual("FATX filesystem", _fs.XmlFsType.Type);
+            Assert.AreEqual("Volume láb€l", _fs.XmlFsType.VolumeName);
+            Assert.AreEqual("4639B7D0", _fs.XmlFsType.VolumeSerial);
         }
 
         [Test]
         public void MapBlock()
         {
-            Errno error = fs.MapBlock("49470015", 0, out long block);
+            Errno error = _fs.MapBlock("49470015", 0, out long block);
             Assert.AreEqual(Errno.IsDirectory, error);
 
-            error = fs.MapBlock("49470015/TitleImage", 0, out block);
+            error = _fs.MapBlock("49470015/TitleImage", 0, out block);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.MapBlock("49470015/TitleImage.xbx", 0, out block);
+            error = _fs.MapBlock("49470015/TitleImage.xbx", 0, out block);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(80, block);
 
-            error = fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 2, out block);
+            error = _fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 2, out block);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(272, block);
 
-            error = fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 200, out block);
+            error = _fs.MapBlock("49470015/7AC2FE88C908/savedata.dat", 200, out block);
             Assert.AreEqual(Errno.InvalidArgument, error);
         }
 
@@ -115,41 +115,41 @@ namespace Aaru.Tests.Filesystems
         public void Read()
         {
             byte[] buffer = new byte[0];
-            Errno  error  = fs.Read("49470015", 0, 0, ref buffer);
+            Errno  error  = _fs.Read("49470015", 0, 0, ref buffer);
             Assert.AreEqual(Errno.IsDirectory, error);
 
-            error = fs.Read("49470015/TitleImage", 0, 0, ref buffer);
+            error = _fs.Read("49470015/TitleImage", 0, 0, ref buffer);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.Read("49470015/7AC2FE88C908/savedata.dat", 0, 0, ref buffer);
+            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 0, 0, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(0, buffer.Length);
 
             Assert.AreEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("49470015/7AC2FE88C908/savedata.dat", 1, 16, ref buffer);
+            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 1, 16, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(16, buffer.Length);
 
             Assert.AreEqual("ff82559d2d0c610ac25b78dcb53a8312e32b56192044deb1f01540581bd54e80",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("49470015/7AC2FE88C908/savedata.dat", 248, 131072, ref buffer);
+            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 248, 131072, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(61996, buffer.Length);
 
             Assert.AreEqual("2eb0d62a96ad28473ce0dd67052efdfae31f371992e1d8309beeeff6f2b46a59",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("49470015/7AC2FE88C908/savedata.dat", 131072, 0, ref buffer);
+            error = _fs.Read("49470015/7AC2FE88C908/savedata.dat", 131072, 0, ref buffer);
             Assert.AreEqual(Errno.InvalidArgument, error);
         }
 
         [Test]
         public void RootDirectory()
         {
-            Errno error = fs.ReadDir("", out List<string> directory);
+            Errno error = _fs.ReadDir("", out List<string> directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(6, directory.Count);
 
@@ -167,7 +167,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Stat()
         {
-            Errno error = fs.Stat("49470015", out FileEntryInfo stat);
+            Errno error = _fs.Stat("49470015", out FileEntryInfo stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2007, 3, 6, 15, 8, 44, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.Directory, stat.Attributes);
@@ -185,10 +185,10 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(null, stat.StatusChangeTimeUtc);
             Assert.AreEqual(null, stat.UID);
 
-            error = fs.Stat("49470015/TitleImage", out stat);
+            error = _fs.Stat("49470015/TitleImage", out stat);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.Stat("49470015/TitleImage.xbx", out stat);
+            error = _fs.Stat("49470015/TitleImage.xbx", out stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2013, 5, 14, 12, 50, 8, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.None, stat.Attributes);
@@ -210,7 +210,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Statfs()
         {
-            Errno error = fs.StatFs(out FileSystemInfo stat);
+            Errno error = _fs.StatFs(out FileSystemInfo stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(1960, stat.Blocks);
             Assert.AreEqual(42, stat.FilenameLength);
@@ -224,7 +224,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void SubDirectory()
         {
-            Errno error = fs.ReadDir("49470015", out List<string> directory);
+            Errno error = _fs.ReadDir("49470015", out List<string> directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(4, directory.Count);
 
@@ -238,7 +238,7 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(false, directory.Contains("7ac2fe88c908"));
             Assert.AreEqual(false, directory.Contains("xbx"));
 
-            error = fs.ReadDir("49470015/7AC2FE88C908", out directory);
+            error = _fs.ReadDir("49470015/7AC2FE88C908", out directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(3, directory.Count);
 
@@ -258,61 +258,63 @@ namespace Aaru.Tests.Filesystems
         [SetUp]
         public void Init()
         {
-            location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "be", "microsoft256mb.img.lz");
-            filter   = new LZip();
-            filter.Open(location);
-            image = new ZZZRawImage();
-            Assert.AreEqual(true, image.Open(filter));
-            fs = new XboxFatPlugin();
-            List<Partition> partitions = Core.Partitions.GetAll(image);
+            _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be",
+                                     "microsoft256mb.img.lz");
+
+            _filter = new LZip();
+            _filter.Open(_location);
+            _image = new ZZZRawImage();
+            Assert.AreEqual(true, _image.Open(_filter));
+            _fs = new XboxFatPlugin();
+            List<Partition> partitions = Core.Partitions.GetAll(_image);
             Assert.AreEqual(2, partitions.Count);
-            dataPartition = partitions[1];
-            Errno error = fs.Mount(image, dataPartition, null, null, null);
+            _dataPartition = partitions[1];
+            Errno error = _fs.Mount(_image, _dataPartition, null, null, null);
             Assert.AreEqual(Errno.NoError, error);
         }
 
         [TearDown]
         public void Destroy()
         {
-            fs?.Unmount();
-            fs = null;
+            _fs?.Unmount();
+            _fs = null;
         }
 
-        string              location;
-        IFilter             filter;
-        IMediaImage         image;
-        IReadOnlyFilesystem fs;
-        Partition           dataPartition;
+        string              _location;
+        IFilter             _filter;
+        IMediaImage         _image;
+        IReadOnlyFilesystem _fs;
+        Partition           _dataPartition;
 
         [Test]
         public void Information()
         {
-            Assert.AreEqual(491520, image.Info.Sectors);
-            Assert.AreEqual(14848, fs.XmlFsType.Clusters);
-            Assert.AreEqual(16384, fs.XmlFsType.ClusterSize);
-            Assert.AreEqual("FATX filesystem", fs.XmlFsType.Type);
-            Assert.AreEqual(string.Empty, fs.XmlFsType.VolumeName);
-            Assert.AreEqual("66C2E9D0", fs.XmlFsType.VolumeSerial);
+            Assert.AreEqual(491520, _image.Info.Sectors);
+            Assert.AreEqual(14848, _fs.XmlFsType.Clusters);
+            Assert.AreEqual(16384, _fs.XmlFsType.ClusterSize);
+            Assert.AreEqual("FATX filesystem", _fs.XmlFsType.Type);
+            Assert.AreEqual(string.Empty, _fs.XmlFsType.VolumeName);
+            Assert.AreEqual("66C2E9D0", _fs.XmlFsType.VolumeSerial);
         }
 
         [Test]
         public void MapBlock()
         {
-            Errno error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000", 0, out long block);
+            Errno error = _fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000", 0, out long block);
             Assert.AreEqual(Errno.IsDirectory, error);
 
-            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, out block);
+            error = _fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, out block);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, out block);
+            error = _fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, out block);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(16992, block);
 
-            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2, out block);
+            error = _fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2, out block);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(17056, block);
 
-            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2000000, out block);
+            error = _fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2000000, out block);
             Assert.AreEqual(Errno.InvalidArgument, error);
         }
 
@@ -320,41 +322,41 @@ namespace Aaru.Tests.Filesystems
         public void Read()
         {
             byte[] buffer = new byte[0];
-            Errno  error  = fs.Read("Content/0000000000000000/FFFE07DF/00040000", 0, 0, ref buffer);
+            Errno  error  = _fs.Read("Content/0000000000000000/FFFE07DF/00040000", 0, 0, ref buffer);
             Assert.AreEqual(Errno.IsDirectory, error);
 
-            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, 0, ref buffer);
+            error = _fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, 0, ref buffer);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, 0, ref buffer);
+            error = _fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, 0, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(0, buffer.Length);
 
             Assert.AreEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 1, 16, ref buffer);
+            error = _fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 1, 16, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(16, buffer.Length);
 
             Assert.AreEqual("f73a941675b8df16b0fc908f242c3c51382c5b159e709e0f9ffc1e5aac35f77d",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 248, 131072, ref buffer);
+            error = _fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 248, 131072, ref buffer);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(85768, buffer.Length);
 
             Assert.AreEqual("19caf1365e1b7d5446ca0c2518d15e94c3ab0faaf2f8f3b31c9e1656dff57bd9",
                             Sha256Context.Data(buffer, out _));
 
-            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 131072, 0, ref buffer);
+            error = _fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 131072, 0, ref buffer);
             Assert.AreEqual(Errno.InvalidArgument, error);
         }
 
         [Test]
         public void RootDirectory()
         {
-            Errno error = fs.ReadDir("", out List<string> directory);
+            Errno error = _fs.ReadDir("", out List<string> directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(2, directory.Count);
 
@@ -368,7 +370,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Stat()
         {
-            Errno error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000", out FileEntryInfo stat);
+            Errno error = _fs.Stat("Content/0000000000000000/FFFE07DF/00040000", out FileEntryInfo stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.Directory, stat.Attributes);
@@ -386,10 +388,10 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(null, stat.StatusChangeTimeUtc);
             Assert.AreEqual(null, stat.UID);
 
-            error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache", out stat);
+            error = _fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache", out stat);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
-            error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", out stat);
+            error = _fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", out stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.AccessTimeUtc);
             Assert.AreEqual(FileAttributes.None, stat.Attributes);
@@ -411,7 +413,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Statfs()
         {
-            Errno error = fs.StatFs(out FileSystemInfo stat);
+            Errno error = _fs.StatFs(out FileSystemInfo stat);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(14848, stat.Blocks);
             Assert.AreEqual(42, stat.FilenameLength);
@@ -425,7 +427,7 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void SubDirectory()
         {
-            Errno error = fs.ReadDir("Content", out List<string> directory);
+            Errno error = _fs.ReadDir("Content", out List<string> directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(2, directory.Count);
 
@@ -435,7 +437,7 @@ namespace Aaru.Tests.Filesystems
             Assert.AreEqual(false, directory.Contains("000000000000000"));
             Assert.AreEqual(false, directory.Contains("eba4FD1C82295965"));
 
-            error = fs.ReadDir("Content/EBA4FD1C82295965/454108CF/00000001", out directory);
+            error = _fs.ReadDir("Content/EBA4FD1C82295965/454108CF/00000001", out directory);
             Assert.AreEqual(Errno.NoError, error);
             Assert.AreEqual(3, directory.Count);
 

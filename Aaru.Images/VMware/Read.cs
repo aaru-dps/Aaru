@@ -52,8 +52,8 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            vmEHdr = new VMwareExtentHeader();
-            vmCHdr = new VMwareCowHeader();
+            _vmEHdr = new VMwareExtentHeader();
+            _vmCHdr = new VMwareCowHeader();
             bool embedded = false;
 
             if(stream.Length > Marshal.SizeOf<VMwareExtentHeader>())
@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
                 stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
-                vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
             }
 
             if(stream.Length > Marshal.SizeOf<VMwareCowHeader>())
@@ -69,34 +69,34 @@ namespace Aaru.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
                 stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
-                vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
             }
 
             var  ddfStream = new MemoryStream();
             bool vmEHdrSet = false;
             bool cowD      = false;
 
-            if(vmEHdr.magic == VMWARE_EXTENT_MAGIC)
+            if(_vmEHdr.magic == VMWARE_EXTENT_MAGIC)
             {
                 vmEHdrSet = true;
-                gdFilter  = imageFilter;
+                _gdFilter = imageFilter;
 
-                if(vmEHdr.descriptorOffset == 0 ||
-                   vmEHdr.descriptorSize   == 0)
+                if(_vmEHdr.descriptorOffset == 0 ||
+                   _vmEHdr.descriptorSize   == 0)
                     throw new Exception("Please open VMDK descriptor.");
 
-                byte[] ddfEmbed = new byte[vmEHdr.descriptorSize * SECTOR_SIZE];
+                byte[] ddfEmbed = new byte[_vmEHdr.descriptorSize * SECTOR_SIZE];
 
-                stream.Seek((long)(vmEHdr.descriptorOffset * SECTOR_SIZE), SeekOrigin.Begin);
+                stream.Seek((long)(_vmEHdr.descriptorOffset * SECTOR_SIZE), SeekOrigin.Begin);
                 stream.Read(ddfEmbed, 0, ddfEmbed.Length);
                 ddfStream.Write(ddfEmbed, 0, ddfEmbed.Length);
 
                 embedded = true;
             }
-            else if(vmCHdr.magic == VMWARE_COW_MAGIC)
+            else if(_vmCHdr.magic == VMWARE_COW_MAGIC)
             {
-                gdFilter = imageFilter;
-                cowD     = true;
+                _gdFilter = imageFilter;
+                cowD      = true;
             }
             else
             {
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
 
-                if(!ddfMagicBytes.SequenceEqual(ddfMagic))
+                if(!_ddfMagicBytes.SequenceEqual(ddfMagic))
                     throw new Exception("Not a descriptor.");
 
                 stream.Seek(0, SeekOrigin.Begin);
@@ -113,7 +113,7 @@ namespace Aaru.DiscImages
                 ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
             }
 
-            extents = new Dictionary<ulong, VMwareExtent>();
+            _extents = new Dictionary<ulong, VMwareExtent>();
             ulong currentSector = 0;
 
             bool matchedCyls = false, matchedHds = false, matchedSpt = false;
@@ -163,7 +163,7 @@ namespace Aaru.DiscImages
                                                    newExtent.Sectors, newExtent.Type, newExtent.Filename,
                                                    newExtent.Offset);
 
-                        extents.Add(currentSector, newExtent);
+                        _extents.Add(currentSector, newExtent);
                         currentSector += newExtent.Sectors;
                     }
                     else
@@ -172,7 +172,7 @@ namespace Aaru.DiscImages
                     cowCount++;
                 }
 
-                imageType = VM_TYPE_SPLIT_SPARSE;
+                _imageType = VM_TYPE_SPLIT_SPARSE;
             }
             else
             {
@@ -206,23 +206,23 @@ namespace Aaru.DiscImages
 
                     if(matchVersion.Success)
                     {
-                        uint.TryParse(matchVersion.Groups["version"].Value, out version);
-                        AaruConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
+                        uint.TryParse(matchVersion.Groups["version"].Value, out _version);
+                        AaruConsole.DebugWriteLine("VMware plugin", "version = {0}", _version);
                     }
                     else if(matchCid.Success)
                     {
-                        cid = Convert.ToUInt32(matchCid.Groups["cid"].Value, 16);
-                        AaruConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
+                        _cid = Convert.ToUInt32(matchCid.Groups["cid"].Value, 16);
+                        AaruConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", _cid);
                     }
                     else if(matchParentCid.Success)
                     {
-                        parentCid = Convert.ToUInt32(matchParentCid.Groups["cid"].Value, 16);
-                        AaruConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
+                        _parentCid = Convert.ToUInt32(matchParentCid.Groups["cid"].Value, 16);
+                        AaruConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", _parentCid);
                     }
                     else if(matchType.Success)
                     {
-                        imageType = matchType.Groups["type"].Value;
-                        AaruConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
+                        _imageType = matchType.Groups["type"].Value;
+                        AaruConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", _imageType);
                     }
                     else if(matchExtent.Success)
                     {
@@ -247,37 +247,37 @@ namespace Aaru.DiscImages
                                                    newExtent.Sectors, newExtent.Type, newExtent.Filename,
                                                    newExtent.Offset);
 
-                        extents.Add(currentSector, newExtent);
+                        _extents.Add(currentSector, newExtent);
                         currentSector += newExtent.Sectors;
                     }
                     else if(matchParent.Success)
                     {
-                        parentName = matchParent.Groups["filename"].Value;
-                        AaruConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
-                        hasParent = true;
+                        _parentName = matchParent.Groups["filename"].Value;
+                        AaruConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", _parentName);
+                        _hasParent = true;
                     }
                     else if(matchCylinders.Success)
                     {
-                        uint.TryParse(matchCylinders.Groups["cylinders"].Value, out imageInfo.Cylinders);
+                        uint.TryParse(matchCylinders.Groups["cylinders"].Value, out _imageInfo.Cylinders);
                         matchedCyls = true;
                     }
                     else if(matchHeads.Success)
                     {
-                        uint.TryParse(matchHeads.Groups["heads"].Value, out imageInfo.Heads);
+                        uint.TryParse(matchHeads.Groups["heads"].Value, out _imageInfo.Heads);
                         matchedHds = true;
                     }
                     else if(matchSectors.Success)
                     {
-                        uint.TryParse(matchSectors.Groups["sectors"].Value, out imageInfo.SectorsPerTrack);
+                        uint.TryParse(matchSectors.Groups["sectors"].Value, out _imageInfo.SectorsPerTrack);
                         matchedSpt = true;
                     }
                 }
             }
 
-            if(extents.Count == 0)
+            if(_extents.Count == 0)
                 throw new Exception("Did not find any extent");
 
-            switch(imageType)
+            switch(_imageType)
             {
                 case VM_TYPE_MONO_SPARSE:  //"monolithicSparse";
                 case VM_TYPE_MONO_FLAT:    //"monolithicFlat";
@@ -299,12 +299,12 @@ namespace Aaru.DiscImages
                 case VMFS_TYPE_RAW:       //"vmfsRaw";
                     throw new
                         ImageNotSupportedException("Raw device image files are not supported, try accessing the device directly.");
-                default: throw new ImageNotSupportedException($"Dunno how to handle \"{imageType}\" extents.");
+                default: throw new ImageNotSupportedException($"Dunno how to handle \"{_imageType}\" extents.");
             }
 
             bool oneNoFlat = cowD;
 
-            foreach(VMwareExtent extent in extents.Values)
+            foreach(VMwareExtent extent in _extents.Values)
             {
                 if(extent.Filter == null)
                     throw new Exception($"Extent file {extent.Filename} not found.");
@@ -341,8 +341,8 @@ namespace Aaru.DiscImages
 
                 if(!vmEHdrSet)
                 {
-                    vmEHdr    = extentHdr;
-                    gdFilter  = extent.Filter;
+                    _vmEHdr   = extentHdr;
+                    _gdFilter = extent.Filter;
                     vmEHdrSet = true;
                 }
 
@@ -355,7 +355,7 @@ namespace Aaru.DiscImages
                 throw new
                     Exception("There are sparse extents but there is no header to find the grain tables, cannot proceed.");
 
-            imageInfo.Sectors = currentSector;
+            _imageInfo.Sectors = currentSector;
 
             uint grains    = 0;
             uint gdEntries = 0;
@@ -364,72 +364,74 @@ namespace Aaru.DiscImages
 
             if(oneNoFlat && !cowD)
             {
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}", vmEHdr.magic);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}", vmEHdr.version);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}", vmEHdr.flags);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}", vmEHdr.capacity);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}", vmEHdr.grainSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", vmEHdr.descriptorOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}", vmEHdr.descriptorSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}", vmEHdr.GTEsPerGT);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}", vmEHdr.rgdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}", vmEHdr.gdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}", vmEHdr.overhead);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}", vmEHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}", _vmEHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}", _vmEHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}", _vmEHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}", _vmEHdr.capacity);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}", _vmEHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", _vmEHdr.descriptorOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}", _vmEHdr.descriptorSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}", _vmEHdr.GTEsPerGT);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}", _vmEHdr.rgdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}", _vmEHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}", _vmEHdr.overhead);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}", _vmEHdr.uncleanShutdown);
 
                 AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
-                                           vmEHdr.singleEndLineChar);
+                                           _vmEHdr.singleEndLineChar);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", vmEHdr.nonEndLineChar);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
 
                 AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
-                                           vmEHdr.doubleEndLineChar1);
+                                           _vmEHdr.doubleEndLineChar1);
 
                 AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
-                                           vmEHdr.doubleEndLineChar2);
+                                           _vmEHdr.doubleEndLineChar2);
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
 
-                grainSize = vmEHdr.grainSize;
-                grains    = (uint)(imageInfo.Sectors / vmEHdr.grainSize) + 1;
-                gdEntries = grains / vmEHdr.GTEsPerGT;
-                gtEsPerGt = vmEHdr.GTEsPerGT;
+                _grainSize = _vmEHdr.grainSize;
+                grains     = (uint)(_imageInfo.Sectors / _vmEHdr.grainSize) + 1;
+                gdEntries  = grains / _vmEHdr.GTEsPerGT;
+                gtEsPerGt  = _vmEHdr.GTEsPerGT;
 
-                if((vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
-                    gdOffset = (long)vmEHdr.rgdOffset;
+                if((_vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
+                    gdOffset = (long)_vmEHdr.rgdOffset;
                 else
-                    gdOffset = (long)vmEHdr.gdOffset;
+                    gdOffset = (long)_vmEHdr.gdOffset;
             }
             else if(oneNoFlat && cowD)
             {
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}", vmCHdr.magic);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}", vmCHdr.version);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}", vmCHdr.flags);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}", vmCHdr.sectors);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}", vmCHdr.grainSize);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}", vmCHdr.gdOffset);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", vmCHdr.numGDEntries);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}", vmCHdr.freeSector);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}", vmCHdr.cylinders);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}", vmCHdr.heads);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}", vmCHdr.spt);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}", vmCHdr.generation);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}", StringHandlers.CToString(vmCHdr.name));
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}", _vmCHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}", _vmCHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}", _vmCHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}", _vmCHdr.sectors);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}", _vmCHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}", _vmCHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", _vmCHdr.numGDEntries);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}", _vmCHdr.freeSector);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}", _vmCHdr.cylinders);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}", _vmCHdr.heads);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}", _vmCHdr.spt);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}", _vmCHdr.generation);
+
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}",
+                                           StringHandlers.CToString(_vmCHdr.name));
 
                 AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
-                                           StringHandlers.CToString(vmCHdr.description));
+                                           StringHandlers.CToString(_vmCHdr.description));
 
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", vmCHdr.savedGeneration);
-                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", _vmCHdr.uncleanShutdown);
 
-                grainSize            = vmCHdr.grainSize;
-                grains               = (uint)(imageInfo.Sectors / vmCHdr.grainSize) + 1;
-                gdEntries            = vmCHdr.numGDEntries;
-                gdOffset             = vmCHdr.gdOffset;
-                gtEsPerGt            = grains / gdEntries;
-                imageInfo.MediaTitle = StringHandlers.CToString(vmCHdr.name);
-                imageInfo.Comments   = StringHandlers.CToString(vmCHdr.description);
-                version              = vmCHdr.version;
+                _grainSize            = _vmCHdr.grainSize;
+                grains                = (uint)(_imageInfo.Sectors / _vmCHdr.grainSize) + 1;
+                gdEntries             = _vmCHdr.numGDEntries;
+                gdOffset              = _vmCHdr.gdOffset;
+                gtEsPerGt             = grains / gdEntries;
+                _imageInfo.MediaTitle = StringHandlers.CToString(_vmCHdr.name);
+                _imageInfo.Comments   = StringHandlers.CToString(_vmCHdr.description);
+                _version              = _vmCHdr.version;
             }
 
             if(oneNoFlat)
@@ -439,9 +441,9 @@ namespace Aaru.DiscImages
                     throw new Exception("Some error ocurred setting GD sizes");
 
                 AaruConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables",
-                                           imageInfo.Sectors, grains, gdEntries);
+                                           _imageInfo.Sectors, grains, gdEntries);
 
-                Stream gdStream = gdFilter.GetDataForkStream();
+                Stream gdStream = _gdFilter.GetDataForkStream();
 
                 gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
@@ -452,7 +454,7 @@ namespace Aaru.DiscImages
 
                 AaruConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
                 uint currentGrain = 0;
-                gTable = new uint[grains];
+                _gTable = new uint[grains];
 
                 foreach(uint gtOff in gd)
                 {
@@ -461,7 +463,7 @@ namespace Aaru.DiscImages
                     gdStream.Read(gtBytes, 0, gtBytes.Length);
 
                     uint[] currentGt = MemoryMarshal.Cast<byte, uint>(gtBytes).ToArray();
-                    Array.Copy(currentGt, 0, gTable, currentGrain, gtEsPerGt);
+                    Array.Copy(currentGt, 0, _gTable, currentGrain, gtEsPerGt);
                     currentGrain += gtEsPerGt;
 
                     // TODO: Check speed here
@@ -474,51 +476,51 @@ namespace Aaru.DiscImages
                 */
                 }
 
-                maxCachedGrains = (uint)(MAX_CACHE_SIZE / (grainSize * SECTOR_SIZE));
+                _maxCachedGrains = (uint)(MAX_CACHE_SIZE / (_grainSize * SECTOR_SIZE));
 
-                grainCache = new Dictionary<ulong, byte[]>();
+                _grainCache = new Dictionary<ulong, byte[]>();
             }
 
-            if(hasParent)
+            if(_hasParent)
             {
                 IFilter parentFilter =
-                    new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentName));
+                    new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), _parentName));
 
                 if(parentFilter == null)
-                    throw new Exception($"Cannot find parent \"{parentName}\".");
+                    throw new Exception($"Cannot find parent \"{_parentName}\".");
 
-                parentImage = new VMware();
+                _parentImage = new VMware();
 
-                if(!parentImage.Open(parentFilter))
-                    throw new Exception($"Cannot open parent \"{parentName}\".");
+                if(!_parentImage.Open(parentFilter))
+                    throw new Exception($"Cannot open parent \"{_parentName}\".");
             }
 
-            sectorCache = new Dictionary<ulong, byte[]>();
+            _sectorCache = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorSize           = SECTOR_SIZE;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize            = imageInfo.Sectors * SECTOR_SIZE;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.SectorSize           = SECTOR_SIZE;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
 
             // VMDK version 1 started on VMware 4, so there is a previous version, "COWD"
-            imageInfo.Version = cowD ? $"{version}" : $"{version + 3}";
+            _imageInfo.Version = cowD ? $"{_version}" : $"{_version + 3}";
 
             if(cowD)
             {
-                imageInfo.Cylinders       = vmCHdr.cylinders;
-                imageInfo.Heads           = vmCHdr.heads;
-                imageInfo.SectorsPerTrack = vmCHdr.spt;
+                _imageInfo.Cylinders       = _vmCHdr.cylinders;
+                _imageInfo.Heads           = _vmCHdr.heads;
+                _imageInfo.SectorsPerTrack = _vmCHdr.spt;
             }
             else if(!matchedCyls ||
                     !matchedHds  ||
                     !matchedSpt)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
             }
 
             return true;
@@ -526,18 +528,18 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
             var   currentExtent     = new VMwareExtent();
             bool  extentFound       = false;
             ulong extentStartSector = 0;
 
-            foreach(KeyValuePair<ulong, VMwareExtent> kvp in extents.Where(kvp => sectorAddress >= kvp.Key))
+            foreach(KeyValuePair<ulong, VMwareExtent> kvp in _extents.Where(kvp => sectorAddress >= kvp.Key))
             {
                 currentExtent     = kvp.Value;
                 extentFound       = true;
@@ -555,10 +557,10 @@ namespace Aaru.DiscImages
                 case "ZERO":
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
                 case "FLAT":
@@ -571,66 +573,66 @@ namespace Aaru.DiscImages
                     sector = new byte[SECTOR_SIZE];
                     dataStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
             }
 
-            ulong index  = sectorAddress               / grainSize;
-            ulong secOff = (sectorAddress % grainSize) * SECTOR_SIZE;
+            ulong index  = sectorAddress                / _grainSize;
+            ulong secOff = (sectorAddress % _grainSize) * SECTOR_SIZE;
 
-            uint grainOff = gTable[index];
+            uint grainOff = _gTable[index];
 
-            if(grainOff == 0 && hasParent)
-                return parentImage.ReadSector(sectorAddress);
+            if(grainOff == 0 && _hasParent)
+                return _parentImage.ReadSector(sectorAddress);
 
             if(grainOff == 0 ||
                grainOff == 1)
             {
                 sector = new byte[SECTOR_SIZE];
 
-                if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
 
                 return sector;
             }
 
-            if(!grainCache.TryGetValue(grainOff, out byte[] grain))
+            if(!_grainCache.TryGetValue(grainOff, out byte[] grain))
             {
-                grain      = new byte[SECTOR_SIZE * grainSize];
+                grain      = new byte[SECTOR_SIZE * _grainSize];
                 dataStream = currentExtent.Filter.GetDataForkStream();
                 dataStream.Seek((long)((grainOff - extentStartSector) * SECTOR_SIZE), SeekOrigin.Begin);
                 dataStream.Read(grain, 0, grain.Length);
 
-                if(grainCache.Count >= maxCachedGrains)
-                    grainCache.Clear();
+                if(_grainCache.Count >= _maxCachedGrains)
+                    _grainCache.Clear();
 
-                grainCache.Add(grainOff, grain);
+                _grainCache.Add(grainOff, grain);
             }
 
             sector = new byte[SECTOR_SIZE];
             Array.Copy(grain, (int)secOff, sector, 0, SECTOR_SIZE);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS)
-                sectorCache.Clear();
+            if(_sectorCache.Count > MAX_CACHED_SECTORS)
+                _sectorCache.Clear();
 
-            sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, sector);
 
             return sector;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

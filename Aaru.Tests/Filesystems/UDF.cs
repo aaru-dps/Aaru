@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Udf
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "1.02/linux.aif", "1.02/macosx_10.11.aif", "1.50/linux.aif", "1.50/macosx_10.11.aif", "2.00/linux.aif",
             "2.00/macosx_10.11.aif", "2.01/linux.aif", "2.01/macosx_10.11.aif", "2.50/linux.aif",
@@ -48,43 +48,43 @@ namespace Aaru.Tests.Filesystems
             "2.00/linux_4.19_udf_2.00_flashdrive.aif", "2.01/linux_4.19_udf_2.01_flashdrive.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             1024000, 204800, 1024000, 409600, 1024000, 614400, 1024000, 819200, 1024000, 1024000, 1228800, 8388608,
             8388608, 8388608, 1024000, 1024000, 1024000, 1024000
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             1024000, 204800, 1024000, 409600, 1024000, 614400, 1024000, 819200, 1024000, 1024000, 1228800, 8388608,
             8388608, 8388608, 1024000, 1024000, 1024000, 1024000
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly string[] udfversion =
+        readonly string[] _udfversion =
         {
             "UDF v1.02", "UDF v1.02", "UDF v1.50", "UDF v1.50", "UDF v2.00", "UDF v2.00", "UDF v2.01", "UDF v2.01",
             "UDF v2.50", "UDF v2.50", "UDF v2.60", "UDF v1.50", "UDF v1.50", "UDF v2.01", "UDF v2.01", "UDF v2.01",
             "UDF v2.01", "UDF v2.01"
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "*NoLabel*", "*NoLabel*",
             "anonymous", "DicSetter", "DicSetter", "DicSetter", "DicSetter", "DicSetter", "DicSetter"
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             "595c5cfa38ce8b66LinuxUDF", "6D02A231 (Mac OS X newfs_udf) UDF Volume Set", "595c5d00c5b3405aLinuxUDF",
             "4DD0458B (Mac OS X newfs_udf) UDF Volume Set", "595c5d07f4fc8e8dLinuxUDF",
@@ -95,7 +95,7 @@ namespace Aaru.Tests.Filesystems
             "5cc7f4183e0d5f7aLinuxUDF", "5cc8816fcb3a3b38LinuxUDF", "595EB55A", "7cc94d726669d773"
         };
 
-        readonly string[] oemid =
+        readonly string[] _oemid =
         {
             "*Linux UDFFS", "*Apple Mac OS X UDF FS", "*Linux UDFFS", "*Apple Mac OS X UDF FS", "*Linux UDFFS",
             "*Apple Mac OS X UDF FS", "*Linux UDFFS", "*Apple Mac OS X UDF FS", "*Linux UDFFS",
@@ -107,17 +107,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 IFilesystem fs = new UDF();
 
                 var wholePart = new Partition
@@ -127,14 +127,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(udfversion[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSetIdentifier, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual(_udfversion[i], fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSetIdentifier, _testfiles[i]);
+                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
             }
         }
     }
@@ -142,47 +142,47 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class UdfOptical
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "1.50/ecs20.aif", "2.00/ecs20.aif", "2.01/ecs20.aif", "2.01/ecs20_cdrw.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             2295104, 2295104, 2295104, 295264
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             2048, 2048, 2048, 2048
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             2295104, 2295104, 2295104, 295264
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             2048, 2048, 2048, 2048
         };
 
-        readonly string[] udfversion =
+        readonly string[] _udfversion =
         {
             "UDF v2.01", "UDF v2.01", "UDF v2.01", "UDF v2.01"
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "Volume label", "UDF5A5DEF48", "VolLabel", "UDF5A5DFF10"
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             "Volume Set ID not specified", "Volume Set ID not specified", "VolumeSetId", "Volume Set ID not specified"
         };
 
-        readonly string[] oemid =
+        readonly string[] _oemid =
         {
             "*ExpressUDF", "*ExpressUDF", "*ExpressUDF", "*ExpressUDF"
         };
@@ -190,17 +190,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 IFilesystem fs = new UDF();
 
                 var wholePart = new Partition
@@ -210,14 +210,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual(udfversion[i], fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSetIdentifier, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual(_udfversion[i], fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSetIdentifier, _testfiles[i]);
+                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
             }
         }
     }

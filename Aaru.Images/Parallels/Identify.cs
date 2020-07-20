@@ -49,9 +49,9 @@ namespace Aaru.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
-            pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
+            _pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
-            return parallelsMagic.SequenceEqual(pHdr.magic) || parallelsExtMagic.SequenceEqual(pHdr.magic);
+            return _parallelsMagic.SequenceEqual(_pHdr.magic) || _parallelsExtMagic.SequenceEqual(_pHdr.magic);
         }
     }
 }

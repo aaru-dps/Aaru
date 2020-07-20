@@ -42,17 +42,15 @@ namespace Aaru.Filesystems.UCSDPascal
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin : IReadOnlyFilesystem
     {
-        byte[] bootBlocks;
-        byte[] catalogBlocks;
-
-        bool                  debug;
-        IMediaImage           device;
-        List<PascalFileEntry> fileEntries;
-        bool                  mounted;
-
-        PascalVolumeEntry mountedVolEntry;
+        byte[]                _bootBlocks;
+        byte[]                _catalogBlocks;
+        bool                  _debug;
+        IMediaImage           _device;
+        List<PascalFileEntry> _fileEntries;
+        bool                  _mounted;
+        PascalVolumeEntry     _mountedVolEntry;
         /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
-        uint multiplier;
+        uint _multiplier;
 
         public FileSystemType XmlFsType { get; private set; }
         public string         Name      => "U.C.S.D. Pascal filesystem";

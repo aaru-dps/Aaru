@@ -39,8 +39,8 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class ISO9660
     {
-        const           byte MODE2_FORM2         = 0x20;
-        static readonly int  DirectoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+        const           byte MODE2_FORM2          = 0x20;
+        static readonly int  _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
 
         enum Namespace
         {

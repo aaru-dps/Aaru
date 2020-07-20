@@ -46,9 +46,9 @@ namespace Aaru.Filesystems
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class exFAT : IFilesystem
     {
-        readonly Guid OEM_FLASH_PARAMETER_GUID = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
+        readonly Guid _oemFlashParameterGuid = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 
-        readonly byte[] signature =
+        readonly byte[] _signature =
         {
             0x45, 0x58, 0x46, 0x41, 0x54, 0x20, 0x20, 0x20
         };
@@ -71,7 +71,7 @@ namespace Aaru.Filesystems
 
             VolumeBootRecord vbr = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
-            return signature.SequenceEqual(vbr.signature);
+            return _signature.SequenceEqual(vbr.signature);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -132,7 +132,7 @@ namespace Aaru.Filesystems
 
             foreach(OemParameter parameter in parametersTable.parameters)
             {
-                if(parameter.OemParameterType == OEM_FLASH_PARAMETER_GUID)
+                if(parameter.OemParameterType == _oemFlashParameterGuid)
                 {
                     sb.AppendFormat("OEM Parameters {0}:", count).AppendLine();
                     sb.AppendFormat("\t{0} bytes in erase block", parameter.eraseBlockSize).AppendLine();

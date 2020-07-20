@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -111,22 +111,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0x40 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -142,22 +142,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0x40 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0x40 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -187,48 +187,48 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            writingStream.Seek(0x40 + (17 * 16 * 256), SeekOrigin.Begin);
+            _writingStream.Seek(0x40 + (17 * 16 * 256), SeekOrigin.Begin);
             byte[] tmp = new byte[256];
-            writingStream.Read(tmp, 0, tmp.Length);
+            _writingStream.Read(tmp, 0, tmp.Length);
 
             bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
                          tmp[0x36] == 0  && tmp[0x37] == 1;
 
-            imageHeader = new A2ImgHeader
+            _imageHeader = new A2ImgHeader
             {
-                Blocks     = (uint)(imageInfo.Sectors * imageInfo.SectorSize) / 512,
+                Blocks     = (uint)(_imageInfo.Sectors * _imageInfo.SectorSize) / 512,
                 Creator    = CREATOR_AARU,
                 DataOffset = 0x40,
-                DataSize   = (uint)(imageInfo.Sectors * imageInfo.SectorSize),
-                Flags = (uint)(imageInfo.LastMediaSequence != 0 ? VALID_VOLUME_NUMBER + (imageInfo.MediaSequence & 0xFF)
-                                   : 0),
+                DataSize   = (uint)(_imageInfo.Sectors * _imageInfo.SectorSize),
+                Flags = (uint)(_imageInfo.LastMediaSequence != 0
+                                   ? VALID_VOLUME_NUMBER + (_imageInfo.MediaSequence & 0xFF) : 0),
                 HeaderSize  = 0x40,
                 ImageFormat = isDos ? SectorOrder.Dos : SectorOrder.ProDos,
                 Magic       = MAGIC,
                 Version     = 1
             };
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
             {
-                writingStream.Seek(0, SeekOrigin.End);
-                tmp                       = Encoding.UTF8.GetBytes(imageInfo.Comments);
-                imageHeader.CommentOffset = (uint)writingStream.Position;
-                imageHeader.CommentSize   = (uint)(tmp.Length + 1);
-                writingStream.Write(tmp, 0, tmp.Length);
-                writingStream.WriteByte(0);
+                _writingStream.Seek(0, SeekOrigin.End);
+                tmp                        = Encoding.UTF8.GetBytes(_imageInfo.Comments);
+                _imageHeader.CommentOffset = (uint)_writingStream.Position;
+                _imageHeader.CommentSize   = (uint)(tmp.Length + 1);
+                _writingStream.Write(tmp, 0, tmp.Length);
+                _writingStream.WriteByte(0);
             }
 
             byte[] hdr    = new byte[Marshal.SizeOf<A2ImgHeader>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<A2ImgHeader>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(imageHeader, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_imageHeader, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -238,9 +238,9 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.Comments          = metadata.Comments;
-            imageInfo.LastMediaSequence = metadata.LastMediaSequence;
-            imageInfo.MediaSequence     = metadata.MediaSequence;
+            _imageInfo.Comments          = metadata.Comments;
+            _imageInfo.LastMediaSequence = metadata.LastMediaSequence;
+            _imageInfo.MediaSequence     = metadata.MediaSequence;
 
             return true;
         }

@@ -50,10 +50,10 @@ namespace Aaru.Filesystems.UCSDPascal
             if(partition.Length < 3)
                 return false;
 
-            multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+            _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSectors((multiplier * 2) + partition.Start, multiplier);
+            byte[] volBlock = imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier);
 
             // On Apple II, it's little endian
             // TODO: Fix
@@ -91,7 +91,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-               (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / multiplier) - 2)
+               (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
                 return false;
 
             // Volume record entry type must be volume or secure
@@ -105,7 +105,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
             // Volume blocks is equal to volume sectors
             if(volEntry.Blocks        < 0 ||
-               (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / multiplier)
+               (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
                 return false;
 
             // There can be not less than zero files
@@ -118,13 +118,13 @@ namespace Aaru.Filesystems.UCSDPascal
             Encoding = encoding ?? new Apple2();
             var sbInformation = new StringBuilder();
             information = "";
-            multiplier  = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
+            _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
             if(imagePlugin.Info.Sectors < 3)
                 return;
 
             // Blocks 0 and 1 are boot code
-            byte[] volBlock = imagePlugin.ReadSectors((multiplier * 2) + partition.Start, multiplier);
+            byte[] volBlock = imagePlugin.ReadSectors((_multiplier * 2) + partition.Start, _multiplier);
 
             // On Apple //, it's little endian
             // TODO: Fix
@@ -152,7 +152,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
             // Last volume record block must be after first block, and before end of device
             if(volEntry.LastBlock        <= volEntry.FirstBlock ||
-               (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / multiplier) - 2)
+               (ulong)volEntry.LastBlock > (imagePlugin.Info.Sectors / _multiplier) - 2)
                 return;
 
             // Volume record entry type must be volume or secure
@@ -166,7 +166,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
             // Volume blocks is equal to volume sectors
             if(volEntry.Blocks        < 0 ||
-               (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / multiplier)
+               (ulong)volEntry.Blocks != imagePlugin.Info.Sectors / _multiplier)
                 return;
 
             // There can be not less than zero files
@@ -191,7 +191,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
             XmlFsType = new FileSystemType
             {
-                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, multiplier * 2)),
+                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, _multiplier * 2)),
                 Clusters = (ulong)volEntry.Blocks,
                 ClusterSize = imagePlugin.Info.SectorSize,
                 Files = (ulong)volEntry.Files,

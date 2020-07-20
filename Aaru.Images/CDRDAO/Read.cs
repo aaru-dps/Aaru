@@ -54,12 +54,12 @@ namespace Aaru.DiscImages
             if(imageFilter == null)
                 return false;
 
-            cdrdaoFilter = imageFilter;
+            _cdrdaoFilter = imageFilter;
 
             try
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
-                tocStream = new StreamReader(imageFilter.GetDataForkStream());
+                _tocStream = new StreamReader(imageFilter.GetDataForkStream());
                 bool intrack = false;
 
                 // Initialize all RegExs
@@ -97,7 +97,7 @@ namespace Aaru.DiscImages
                 Match matchDiskType;
 
                 // Initialize disc
-                discimage = new CdrdaoDisc
+                _discimage = new CdrdaoDisc
                 {
                     Tracks  = new List<CdrdaoTrack>(),
                     Comment = ""
@@ -111,14 +111,14 @@ namespace Aaru.DiscImages
                 int   nextindex      = 2;
                 var   commentBuilder = new StringBuilder();
 
-                tocStream = new StreamReader(cdrdaoFilter.GetDataForkStream());
+                _tocStream = new StreamReader(_cdrdaoFilter.GetDataForkStream());
                 string line;
                 int    lineNumber = 0;
 
-                while(tocStream.Peek() >= 0)
+                while(_tocStream.Peek() >= 0)
                 {
                     lineNumber++;
-                    line = tocStream.ReadLine();
+                    line = _tocStream.ReadLine();
 
                     matchDiskType = regexDiskType.Match(line ?? throw new InvalidOperationException());
                     matchComment  = regexComment.Match(line);
@@ -138,15 +138,15 @@ namespace Aaru.DiscImages
                     break;
                 }
 
-                tocStream  = new StreamReader(cdrdaoFilter.GetDataForkStream());
+                _tocStream = new StreamReader(_cdrdaoFilter.GetDataForkStream());
                 lineNumber = 0;
 
-                tocStream.BaseStream.Position = 0;
+                _tocStream.BaseStream.Position = 0;
 
-                while(tocStream.Peek() >= 0)
+                while(_tocStream.Peek() >= 0)
                 {
                     lineNumber++;
-                    line = tocStream.ReadLine();
+                    line = _tocStream.ReadLine();
 
                     matchComment  = regexComment.Match(line ?? throw new InvalidOperationException());
                     matchDiskType = regexDiskType.Match(line);
@@ -193,28 +193,28 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} at line {0}", lineNumber,
                                                    matchDiskType.Groups["type"].Value);
 
-                        discimage.Disktypestr = matchDiskType.Groups["type"].Value;
+                        _discimage.Disktypestr = matchDiskType.Groups["type"].Value;
 
                         switch(matchDiskType.Groups["type"].Value)
                         {
                             case "CD_DA":
-                                discimage.Disktype = MediaType.CDDA;
+                                _discimage.Disktype = MediaType.CDDA;
 
                                 break;
                             case "CD_ROM":
-                                discimage.Disktype = MediaType.CDROM;
+                                _discimage.Disktype = MediaType.CDROM;
 
                                 break;
                             case "CD_ROM_XA":
-                                discimage.Disktype = MediaType.CDROMXA;
+                                _discimage.Disktype = MediaType.CDROMXA;
 
                                 break;
                             case "CD_I":
-                                discimage.Disktype = MediaType.CDI;
+                                _discimage.Disktype = MediaType.CDI;
 
                                 break;
                             default:
-                                discimage.Disktype = MediaType.CD;
+                                _discimage.Disktype = MediaType.CD;
 
                                 break;
                         }
@@ -224,7 +224,7 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found CATALOG \"{1}\" at line {0}", lineNumber,
                                                    matchMcn.Groups["catalog"].Value);
 
-                        discimage.Mcn = matchMcn.Groups["catalog"].Value;
+                        _discimage.Mcn = matchMcn.Groups["catalog"].Value;
                     }
                     else if(matchTrack.Success)
                     {
@@ -246,7 +246,7 @@ namespace Aaru.DiscImages
                                !currenttrack.Indexes.ContainsKey(1))
                                 currenttrack.Indexes.Add(1, currenttrack.StartSector + currenttrack.Pregap);
 
-                            discimage.Tracks.Add(currenttrack);
+                            _discimage.Tracks.Add(currenttrack);
 
                             currenttrack = new CdrdaoTrack
                             {
@@ -471,7 +471,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Title = matchTitle.Groups["title"].Value;
                             else
-                                discimage.Title = matchTitle.Groups["title"].Value;
+                                _discimage.Title = matchTitle.Groups["title"].Value;
                         }
                         else if(matchPerformer.Success)
                         {
@@ -481,7 +481,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Performer = matchPerformer.Groups["performer"].Value;
                             else
-                                discimage.Performer = matchPerformer.Groups["performer"].Value;
+                                _discimage.Performer = matchPerformer.Groups["performer"].Value;
                         }
                         else if(matchSongwriter.Success)
                         {
@@ -491,7 +491,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                             else
-                                discimage.Songwriter = matchSongwriter.Groups["songwriter"].Value;
+                                _discimage.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                         }
                         else if(matchComposer.Success)
                         {
@@ -501,7 +501,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Composer = matchComposer.Groups["composer"].Value;
                             else
-                                discimage.Composer = matchComposer.Groups["composer"].Value;
+                                _discimage.Composer = matchComposer.Groups["composer"].Value;
                         }
                         else if(matchArranger.Success)
                         {
@@ -511,7 +511,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Arranger = matchArranger.Groups["arranger"].Value;
                             else
-                                discimage.Arranger = matchArranger.Groups["arranger"].Value;
+                                _discimage.Arranger = matchArranger.Groups["arranger"].Value;
                         }
                         else if(matchMessage.Success)
                         {
@@ -521,7 +521,7 @@ namespace Aaru.DiscImages
                             if(intrack)
                                 currenttrack.Message = matchMessage.Groups["message"].Value;
                             else
-                                discimage.Message = matchMessage.Groups["message"].Value;
+                                _discimage.Message = matchMessage.Groups["message"].Value;
                         }
                         else if(matchDiscId.Success)
                         {
@@ -529,7 +529,7 @@ namespace Aaru.DiscImages
                                                        matchDiscId.Groups["discid"].Value);
 
                             if(!intrack)
-                                discimage.DiskId = matchDiscId.Groups["discid"].Value;
+                                _discimage.DiskId = matchDiscId.Groups["discid"].Value;
                         }
                         else if(matchUpc.Success)
                         {
@@ -537,7 +537,7 @@ namespace Aaru.DiscImages
                                                        matchUpc.Groups["catalog"].Value);
 
                             if(!intrack)
-                                discimage.Barcode = matchUpc.Groups["catalog"].Value;
+                                _discimage.Barcode = matchUpc.Groups["catalog"].Value;
                         }
 
                         // Ignored fields
@@ -565,176 +565,176 @@ namespace Aaru.DiscImages
                        !currenttrack.Indexes.ContainsKey(1))
                         currenttrack.Indexes.Add(1, currenttrack.StartSector + currenttrack.Pregap);
 
-                    discimage.Tracks.Add(currenttrack);
+                    _discimage.Tracks.Add(currenttrack);
                 }
 
-                discimage.Comment = commentBuilder.ToString();
+                _discimage.Comment = commentBuilder.ToString();
 
                 // DEBUG information
                 AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc image parsing results");
                 AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc CD-TEXT:");
 
-                if(discimage.Arranger == null)
+                if(_discimage.Arranger == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger: {0}", discimage.Arranger);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger: {0}", _discimage.Arranger);
 
-                if(discimage.Composer == null)
+                if(_discimage.Composer == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer: {0}", discimage.Composer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer: {0}", _discimage.Composer);
 
-                if(discimage.Performer == null)
+                if(_discimage.Performer == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer: {0}", discimage.Performer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer: {0}", _discimage.Performer);
 
-                if(discimage.Songwriter == null)
+                if(_discimage.Songwriter == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter: {0}", discimage.Songwriter);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter: {0}", _discimage.Songwriter);
 
-                if(discimage.Title == null)
+                if(_discimage.Title == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle is not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle: {0}", discimage.Title);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle: {0}", _discimage.Title);
 
                 AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc information:");
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tGuessed disk type: {0}", discimage.Disktype);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tGuessed disk type: {0}", _discimage.Disktype);
 
-                if(discimage.Barcode == null)
+                if(_discimage.Barcode == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode: {0}", discimage.Barcode);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode: {0}", _discimage.Barcode);
 
-                if(discimage.DiskId == null)
+                if(_discimage.DiskId == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID: {0}", discimage.DiskId);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID: {0}", _discimage.DiskId);
 
-                if(discimage.Mcn == null)
+                if(_discimage.Mcn == null)
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN: {0}", discimage.Mcn);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN: {0}", _discimage.Mcn);
 
-                if(string.IsNullOrEmpty(discimage.Comment))
+                if(string.IsNullOrEmpty(_discimage.Comment))
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment not set.");
                 else
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment: \"{0}\"", discimage.Comment);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment: \"{0}\"", _discimage.Comment);
 
                 AaruConsole.DebugWriteLine("CDRDAO plugin", "Track information:");
-                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc contains {0} tracks", discimage.Tracks.Count);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc contains {0} tracks", _discimage.Tracks.Count);
 
-                for(int i = 0; i < discimage.Tracks.Count; i++)
+                for(int i = 0; i < _discimage.Tracks.Count; i++)
                 {
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTrack {0} information:",
-                                               discimage.Tracks[i].Sequence);
+                                               _discimage.Tracks[i].Sequence);
 
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t{0} bytes per sector", discimage.Tracks[i].Bps);
-                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPregap: {0} sectors", discimage.Tracks[i].Pregap);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t{0} bytes per sector", _discimage.Tracks[i].Bps);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPregap: {0} sectors", _discimage.Tracks[i].Pregap);
 
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tData: {0} sectors starting at sector {1}",
-                                               discimage.Tracks[i].Sectors, discimage.Tracks[i].StartSector);
+                                               _discimage.Tracks[i].Sectors, _discimage.Tracks[i].StartSector);
 
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPostgap: {0} sectors",
-                                               discimage.Tracks[i].Postgap);
+                                               _discimage.Tracks[i].Postgap);
 
-                    if(discimage.Tracks[i].Flag_4Ch)
+                    if(_discimage.Tracks[i].Flag_4Ch)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack is flagged as quadraphonic");
 
-                    if(discimage.Tracks[i].FlagDcp)
+                    if(_discimage.Tracks[i].FlagDcp)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack allows digital copy");
 
-                    if(discimage.Tracks[i].FlagPre)
+                    if(_discimage.Tracks[i].FlagPre)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack has pre-emphasis applied");
 
                     AaruConsole.DebugWriteLine("CDRDAO plugin",
                                                "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                               discimage.Tracks[i].Trackfile.Datafilter.GetFilename(),
-                                               discimage.Tracks[i].Trackfile.Filetype,
-                                               discimage.Tracks[i].Trackfile.Offset);
+                                               _discimage.Tracks[i].Trackfile.Datafilter.GetFilename(),
+                                               _discimage.Tracks[i].Trackfile.Filetype,
+                                               _discimage.Tracks[i].Trackfile.Offset);
 
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tIndexes:");
 
-                    foreach(KeyValuePair<int, ulong> kvp in discimage.Tracks[i].Indexes)
+                    foreach(KeyValuePair<int, ulong> kvp in _discimage.Tracks[i].Indexes)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
                                                    kvp.Value);
 
-                    if(discimage.Tracks[i].Isrc == null)
+                    if(_discimage.Tracks[i].Isrc == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC is not set.");
                     else
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC: {0}", discimage.Tracks[i].Isrc);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC: {0}", _discimage.Tracks[i].Isrc);
 
-                    if(discimage.Tracks[i].Arranger == null)
+                    if(_discimage.Tracks[i].Arranger == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger is not set.");
                     else
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger: {0}", discimage.Tracks[i].Arranger);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger: {0}", _discimage.Tracks[i].Arranger);
 
-                    if(discimage.Tracks[i].Composer == null)
+                    if(_discimage.Tracks[i].Composer == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer is not set.");
                     else
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer: {0}", discimage.Tracks[i].Composer);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer: {0}", _discimage.Tracks[i].Composer);
 
-                    if(discimage.Tracks[i].Performer == null)
+                    if(_discimage.Tracks[i].Performer == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer is not set.");
                     else
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer: {0}",
-                                                   discimage.Tracks[i].Performer);
+                                                   _discimage.Tracks[i].Performer);
 
-                    if(discimage.Tracks[i].Songwriter == null)
+                    if(_discimage.Tracks[i].Songwriter == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter is not set.");
                     else
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter: {0}",
-                                                   discimage.Tracks[i].Songwriter);
+                                                   _discimage.Tracks[i].Songwriter);
 
-                    if(discimage.Tracks[i].Title == null)
+                    if(_discimage.Tracks[i].Title == null)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle is not set.");
                     else
-                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle: {0}", discimage.Tracks[i].Title);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle: {0}", _discimage.Tracks[i].Title);
                 }
 
                 AaruConsole.DebugWriteLine("CDRDAO plugin", "Building offset map");
 
                 Partitions = new List<Partition>();
-                offsetmap  = new Dictionary<uint, ulong>();
+                _offsetmap = new Dictionary<uint, ulong>();
 
                 ulong byteOffset        = 0;
                 ulong partitionSequence = 0;
 
-                for(int i = 0; i < discimage.Tracks.Count; i++)
+                for(int i = 0; i < _discimage.Tracks.Count; i++)
                 {
                     ulong index0Len = 0;
 
-                    if(discimage.Tracks[i].Sequence == 1 &&
-                       i                            != 0)
+                    if(_discimage.Tracks[i].Sequence == 1 &&
+                       i                             != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
                     // Index 01
                     var partition = new Partition
                     {
-                        Description = $"Track {discimage.Tracks[i].Sequence}.",
-                        Name        = discimage.Tracks[i].Title,
-                        Start       = discimage.Tracks[i].StartSector,
-                        Size        = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps,
-                        Length      = discimage.Tracks[i].Sectors - index0Len,
+                        Description = $"Track {_discimage.Tracks[i].Sequence}.",
+                        Name        = _discimage.Tracks[i].Title,
+                        Start       = _discimage.Tracks[i].StartSector,
+                        Size        = (_discimage.Tracks[i].Sectors - index0Len) * _discimage.Tracks[i].Bps,
+                        Length      = _discimage.Tracks[i].Sectors - index0Len,
                         Sequence    = partitionSequence,
                         Offset      = byteOffset,
-                        Type        = discimage.Tracks[i].Tracktype
+                        Type        = _discimage.Tracks[i].Tracktype
                     };
 
                     byteOffset += partition.Size;
                     partitionSequence++;
 
-                    if(!offsetmap.ContainsKey(discimage.Tracks[i].Sequence))
-                        offsetmap.Add(discimage.Tracks[i].Sequence, partition.Start);
+                    if(!_offsetmap.ContainsKey(_discimage.Tracks[i].Sequence))
+                        _offsetmap.Add(_discimage.Tracks[i].Sequence, partition.Start);
                     else
                     {
-                        offsetmap.TryGetValue(discimage.Tracks[i].Sequence, out ulong oldStart);
+                        _offsetmap.TryGetValue(_discimage.Tracks[i].Sequence, out ulong oldStart);
 
                         if(partition.Start < oldStart)
                         {
-                            offsetmap.Remove(discimage.Tracks[i].Sequence);
-                            offsetmap.Add(discimage.Tracks[i].Sequence, partition.Start);
+                            _offsetmap.Remove(_discimage.Tracks[i].Sequence);
+                            _offsetmap.Add(_discimage.Tracks[i].Sequence, partition.Start);
                         }
                     }
 
@@ -756,114 +756,114 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
 
-                foreach(CdrdaoTrack track in discimage.Tracks)
+                foreach(CdrdaoTrack track in _discimage.Tracks)
                 {
-                    imageInfo.ImageSize += track.Bps * track.Sectors;
-                    imageInfo.Sectors   += track.Sectors;
+                    _imageInfo.ImageSize += track.Bps * track.Sectors;
+                    _imageInfo.Sectors   += track.Sectors;
                 }
 
-                if(discimage.Disktype != MediaType.CDG     &&
-                   discimage.Disktype != MediaType.CDEG    &&
-                   discimage.Disktype != MediaType.CDMIDI  &&
-                   discimage.Disktype != MediaType.CDROMXA &&
-                   discimage.Disktype != MediaType.CDDA    &&
-                   discimage.Disktype != MediaType.CDI     &&
-                   discimage.Disktype != MediaType.CDPLUS)
-                    imageInfo.SectorSize = 2048; // Only data tracks
+                if(_discimage.Disktype != MediaType.CDG     &&
+                   _discimage.Disktype != MediaType.CDEG    &&
+                   _discimage.Disktype != MediaType.CDMIDI  &&
+                   _discimage.Disktype != MediaType.CDROMXA &&
+                   _discimage.Disktype != MediaType.CDDA    &&
+                   _discimage.Disktype != MediaType.CDI     &&
+                   _discimage.Disktype != MediaType.CDPLUS)
+                    _imageInfo.SectorSize = 2048; // Only data tracks
                 else
-                    imageInfo.SectorSize = 2352; // All others
+                    _imageInfo.SectorSize = 2352; // All others
 
-                if(discimage.Mcn != null)
-                    imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                if(_discimage.Mcn != null)
+                    _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
 
-                imageInfo.Application = "CDRDAO";
+                _imageInfo.Application = "CDRDAO";
 
-                imageInfo.CreationTime         = imageFilter.GetCreationTime();
-                imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+                _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+                _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-                imageInfo.Comments          = discimage.Comment;
-                imageInfo.MediaSerialNumber = discimage.Mcn;
-                imageInfo.MediaBarcode      = discimage.Barcode;
-                imageInfo.MediaType         = discimage.Disktype;
+                _imageInfo.Comments          = _discimage.Comment;
+                _imageInfo.MediaSerialNumber = _discimage.Mcn;
+                _imageInfo.MediaBarcode      = _discimage.Barcode;
+                _imageInfo.MediaType         = _discimage.Disktype;
 
-                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-                foreach(CdrdaoTrack track in discimage.Tracks)
+                foreach(CdrdaoTrack track in _discimage.Tracks)
                 {
                     if(track.Subchannel)
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
                     switch(track.Tracktype)
                     {
                         case CDRDAO_TRACK_TYPE_AUDIO:
                         {
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
                             break;
                         }
                         case CDRDAO_TRACK_TYPE_MODE2:
                         case CDRDAO_TRACK_TYPE_MODE2_MIX:
                         {
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                             break;
                         }
                         case CDRDAO_TRACK_TYPE_MODE2_RAW:
                         {
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                             break;
                         }
                         case CDRDAO_TRACK_TYPE_MODE1_RAW:
                         {
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
                             break;
                         }
                     }
                 }
 
-                imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                AaruConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", imageInfo.MediaType);
+                AaruConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", _imageInfo.MediaType);
 
-                if(!string.IsNullOrEmpty(imageInfo.Comments))
-                    AaruConsole.VerboseWriteLine("CDRDAO comments: {0}", imageInfo.Comments);
+                if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                    AaruConsole.VerboseWriteLine("CDRDAO comments: {0}", _imageInfo.Comments);
 
                 _sectorBuilder = new SectorBuilder();
 
@@ -885,8 +885,8 @@ namespace Aaru.DiscImages
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(discimage.Mcn != null)
-                        return Encoding.ASCII.GetBytes(discimage.Mcn);
+                    if(_discimage.Mcn != null)
+                        return Encoding.ASCII.GetBytes(_discimage.Mcn);
 
                     throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                 }
@@ -906,8 +906,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
-                                                     from cdrdaoTrack in discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
@@ -917,8 +917,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
-                                                     from cdrdaoTrack in discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
@@ -933,7 +933,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            foreach(CdrdaoTrack cdrdaoTrack in _discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
             {
                 aaruTrack = cdrdaoTrack;
 
@@ -1014,8 +1014,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Trackfile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1075,7 +1075,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            foreach(CdrdaoTrack cdrdaoTrack in _discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
             {
                 aaruTrack = cdrdaoTrack;
 
@@ -1243,8 +1243,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Trackfile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1271,8 +1271,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress >= kvp.Value
-                                                     from cdrdaoTrack in discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+                                                     from cdrdaoTrack in _discimage.Tracks
                                                      where cdrdaoTrack.Sequence      == kvp.Key
                                                      where sectorAddress - kvp.Value < cdrdaoTrack.Sectors select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
@@ -1287,7 +1287,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(CdrdaoTrack cdrdaoTrack in discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
+            foreach(CdrdaoTrack cdrdaoTrack in _discimage.Tracks.Where(cdrdaoTrack => cdrdaoTrack.Sequence == track))
             {
                 aaruTrack = cdrdaoTrack;
 
@@ -1351,8 +1351,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Trackfile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),

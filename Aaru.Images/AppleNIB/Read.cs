@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
                 spt = tracks[0].sectors.Length;
 
             bool    skewed  = spt == 16;
-            ulong[] skewing = proDosSkewing;
+            ulong[] skewing = _proDosSkewing;
 
             // Detect ProDOS skewed disks
             if(skewed)
@@ -93,10 +93,10 @@ namespace Aaru.DiscImages
                                  sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0 && sector0[0x37] == 1;
 
                     if(isDos)
-                        skewing = dosSkewing;
+                        skewing = _dosSkewing;
 
                     AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
-                                               skewing.SequenceEqual(dosSkewing) ? "" : "Pro");
+                                               skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
                 }
 
             for(int i = 0; i < tracks.Count; i++)
@@ -111,60 +111,60 @@ namespace Aaru.DiscImages
                                                    sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
 
                         rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
-                        imageInfo.Sectors++;
+                        _imageInfo.Sectors++;
                     }
                     else
                     {
-                        rawSectors.Add(imageInfo.Sectors, sector);
-                        imageInfo.Sectors++;
+                        rawSectors.Add(_imageInfo.Sectors, sector);
+                        _imageInfo.Sectors++;
                     }
 
-            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", imageInfo.Sectors);
+            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", _imageInfo.Sectors);
 
             AaruConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
 
-            longSectors   = new Dictionary<ulong, byte[]>();
-            cookedSectors = new Dictionary<ulong, byte[]>();
-            addressFields = new Dictionary<ulong, byte[]>();
+            _longSectors   = new Dictionary<ulong, byte[]>();
+            _cookedSectors = new Dictionary<ulong, byte[]>();
+            _addressFields = new Dictionary<ulong, byte[]>();
 
             foreach(KeyValuePair<ulong, Apple2.RawSector> kvp in rawSectors)
             {
                 byte[] cooked = Apple2.DecodeSector(kvp.Value);
                 byte[] raw    = Apple2.MarshalSector(kvp.Value);
                 byte[] addr   = Apple2.MarshalAddressField(kvp.Value.addressField);
-                longSectors.Add(kvp.Key, raw);
-                cookedSectors.Add(kvp.Key, cooked);
-                addressFields.Add(kvp.Key, addr);
+                _longSectors.Add(kvp.Key, raw);
+                _cookedSectors.Add(kvp.Key, cooked);
+                _addressFields.Add(kvp.Key, addr);
             }
 
-            imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.ImageSize            = (ulong)imageFilter.GetDataForkLength();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            if(imageInfo.Sectors == 455)
-                imageInfo.MediaType = MediaType.Apple32SS;
-            else if(imageInfo.Sectors == 560)
-                imageInfo.MediaType = MediaType.Apple33SS;
+            if(_imageInfo.Sectors == 455)
+                _imageInfo.MediaType = MediaType.Apple32SS;
+            else if(_imageInfo.Sectors == 560)
+                _imageInfo.MediaType = MediaType.Apple33SS;
             else
-                imageInfo.MediaType = MediaType.Unknown;
+                _imageInfo.MediaType = MediaType.Unknown;
 
-            imageInfo.SectorSize   = 256;
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
+            _imageInfo.SectorSize   = 256;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.Apple32SS:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 13;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 13;
 
                     break;
                 case MediaType.Apple33SS:
-                    imageInfo.Cylinders       = 35;
-                    imageInfo.Heads           = 1;
-                    imageInfo.SectorsPerTrack = 16;
+                    _imageInfo.Cylinders       = 35;
+                    _imageInfo.Heads           = 1;
+                    _imageInfo.SectorsPerTrack = 16;
 
                     break;
             }
@@ -174,22 +174,22 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            cookedSectors.TryGetValue(sectorAddress, out byte[] temp);
+            _cookedSectors.TryGetValue(sectorAddress, out byte[] temp);
 
             return temp;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();
@@ -205,25 +205,25 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
             if(tag != SectorTagType.FloppyAddressMark)
                 throw new FeatureUnsupportedImageException($"Tag {tag} not supported by image format");
 
-            addressFields.TryGetValue(sectorAddress, out byte[] temp);
+            _addressFields.TryGetValue(sectorAddress, out byte[] temp);
 
             return temp;
         }
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             if(tag != SectorTagType.FloppyAddressMark)
@@ -242,22 +242,22 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            longSectors.TryGetValue(sectorAddress, out byte[] temp);
+            _longSectors.TryGetValue(sectorAddress, out byte[] temp);
 
             return temp;
         }
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

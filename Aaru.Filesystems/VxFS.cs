@@ -74,7 +74,7 @@ namespace Aaru.Filesystems
             ulong  vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VxSuperBlock vxSb = Marshal.ByteArrayToStructureLittleEndian<VxSuperBlock>(sector);
+            SuperBlock vxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
             var sbInformation = new StringBuilder();
 
@@ -119,7 +119,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VxSuperBlock
+        struct SuperBlock
         {
             /// <summary>Magic number</summary>
             public readonly uint vs_magic;

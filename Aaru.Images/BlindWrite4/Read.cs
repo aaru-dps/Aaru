@@ -65,95 +65,95 @@ namespace Aaru.DiscImages
 
             stream.Read(tmpArray, 0, 19);
 
-            if(!bw4Signature.SequenceEqual(tmpArray))
+            if(!_bw4Signature.SequenceEqual(tmpArray))
                 return false;
 
-            header = new Bw4Header
+            _header = new Bw4Header
             {
                 Signature = tmpArray
             };
 
             // Seems to always be 2
             stream.Read(tmpUInt, 0, 4);
-            header.Unknown1 = BitConverter.ToUInt32(tmpUInt, 0);
+            _header.Unknown1 = BitConverter.ToUInt32(tmpUInt, 0);
 
             // Seems to be a timetamp
             stream.Read(tmpULong, 0, 8);
-            header.Timestamp = BitConverter.ToUInt64(tmpULong, 0);
+            _header.Timestamp = BitConverter.ToUInt64(tmpULong, 0);
 
             stream.Read(tmpUInt, 0, 4);
-            header.VolumeIdLength = BitConverter.ToUInt32(tmpUInt, 0);
-            tmpArray              = new byte[header.VolumeIdLength];
+            _header.VolumeIdLength = BitConverter.ToUInt32(tmpUInt, 0);
+            tmpArray               = new byte[_header.VolumeIdLength];
             stream.Read(tmpArray, 0, tmpArray.Length);
-            header.VolumeIdBytes    = tmpArray;
-            header.VolumeIdentifier = StringHandlers.CToString(header.VolumeIdBytes, Encoding.Default);
+            _header.VolumeIdBytes    = tmpArray;
+            _header.VolumeIdentifier = StringHandlers.CToString(_header.VolumeIdBytes, Encoding.Default);
 
             stream.Read(tmpUInt, 0, 4);
-            header.SysIdLength = BitConverter.ToUInt32(tmpUInt, 0);
-            tmpArray           = new byte[header.SysIdLength];
+            _header.SysIdLength = BitConverter.ToUInt32(tmpUInt, 0);
+            tmpArray            = new byte[_header.SysIdLength];
             stream.Read(tmpArray, 0, tmpArray.Length);
-            header.SysIdBytes       = tmpArray;
-            header.SystemIdentifier = StringHandlers.CToString(header.SysIdBytes, Encoding.Default);
+            _header.SysIdBytes       = tmpArray;
+            _header.SystemIdentifier = StringHandlers.CToString(_header.SysIdBytes, Encoding.Default);
 
             stream.Read(tmpUInt, 0, 4);
-            header.CommentsLength = BitConverter.ToUInt32(tmpUInt, 0);
-            tmpArray              = new byte[header.CommentsLength];
+            _header.CommentsLength = BitConverter.ToUInt32(tmpUInt, 0);
+            tmpArray               = new byte[_header.CommentsLength];
             stream.Read(tmpArray, 0, tmpArray.Length);
-            header.CommentsBytes = tmpArray;
-            header.Comments      = StringHandlers.CToString(header.CommentsBytes, Encoding.Default);
+            _header.CommentsBytes = tmpArray;
+            _header.Comments      = StringHandlers.CToString(_header.CommentsBytes, Encoding.Default);
 
             stream.Read(tmpUInt, 0, 4);
-            header.TrackDescriptors = BitConverter.ToUInt32(tmpUInt, 0);
+            _header.TrackDescriptors = BitConverter.ToUInt32(tmpUInt, 0);
 
             stream.Read(tmpUInt, 0, 4);
-            header.DataFileLength = BitConverter.ToUInt32(tmpUInt, 0);
-            tmpArray              = new byte[header.DataFileLength];
+            _header.DataFileLength = BitConverter.ToUInt32(tmpUInt, 0);
+            tmpArray               = new byte[_header.DataFileLength];
             stream.Read(tmpArray, 0, tmpArray.Length);
-            header.DataFileBytes = tmpArray;
-            header.DataFile      = StringHandlers.CToString(header.DataFileBytes, Encoding.Default);
+            _header.DataFileBytes = tmpArray;
+            _header.DataFile      = StringHandlers.CToString(_header.DataFileBytes, Encoding.Default);
 
             stream.Read(tmpUInt, 0, 4);
-            header.SubchannelFileLength = BitConverter.ToUInt32(tmpUInt, 0);
-            tmpArray                    = new byte[header.SubchannelFileLength];
+            _header.SubchannelFileLength = BitConverter.ToUInt32(tmpUInt, 0);
+            tmpArray                     = new byte[_header.SubchannelFileLength];
             stream.Read(tmpArray, 0, tmpArray.Length);
-            header.SubchannelFileBytes = tmpArray;
-            header.SubchannelFile      = StringHandlers.CToString(header.SubchannelFileBytes, Encoding.Default);
+            _header.SubchannelFileBytes = tmpArray;
+            _header.SubchannelFile      = StringHandlers.CToString(_header.SubchannelFileBytes, Encoding.Default);
 
             stream.Read(tmpUInt, 0, 4);
-            header.Unknown2 = BitConverter.ToUInt32(tmpUInt, 0);
-            header.Unknown3 = (byte)stream.ReadByte();
-            tmpArray        = new byte[header.Unknown3];
-            stream.Read(tmpArray, 0, header.Unknown3);
-            header.Unknown4 = tmpArray;
+            _header.Unknown2 = BitConverter.ToUInt32(tmpUInt, 0);
+            _header.Unknown3 = (byte)stream.ReadByte();
+            tmpArray         = new byte[_header.Unknown3];
+            stream.Read(tmpArray, 0, _header.Unknown3);
+            _header.Unknown4 = tmpArray;
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.signature = {0}",
-                                       StringHandlers.CToString(header.Signature));
+                                       StringHandlers.CToString(_header.Signature));
 
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown1 = {0}", header.Unknown1);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.timestamp = {0}", header.Timestamp);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdLength = {0}", header.VolumeIdLength);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdentifier = {0}", header.VolumeIdentifier);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.sysIdLength = {0}", header.SysIdLength);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.systemIdentifier = {0}", header.SystemIdentifier);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.commentsLength = {0}", header.CommentsLength);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.comments = {0}", header.Comments);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.trackDescriptors = {0}", header.TrackDescriptors);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFileLength = {0}", header.DataFileLength);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFilter = {0}", header.DataFilter);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", header.DataFile);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown1 = {0}", _header.Unknown1);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.timestamp = {0}", _header.Timestamp);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdLength = {0}", _header.VolumeIdLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdentifier = {0}", _header.VolumeIdentifier);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.sysIdLength = {0}", _header.SysIdLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.systemIdentifier = {0}", _header.SystemIdentifier);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.commentsLength = {0}", _header.CommentsLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.comments = {0}", _header.Comments);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.trackDescriptors = {0}", _header.TrackDescriptors);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFileLength = {0}", _header.DataFileLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFilter = {0}", _header.DataFilter);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", _header.DataFile);
 
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFileLength = {0}",
-                                       header.SubchannelFileLength);
+                                       _header.SubchannelFileLength);
 
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", header.SubchannelFilter);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", header.SubchannelFile);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown2 = {0}", header.Unknown2);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", header.Unknown3);
-            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown4.Length = {0}", header.Unknown4.Length);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", _header.SubchannelFilter);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", _header.SubchannelFile);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown2 = {0}", _header.Unknown2);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", _header.Unknown3);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown4.Length = {0}", _header.Unknown4.Length);
 
-            bwTracks = new List<Bw4TrackDescriptor>();
+            _bwTracks = new List<Bw4TrackDescriptor>();
 
-            for(int i = 0; i < header.TrackDescriptors; i++)
+            for(int i = 0; i < _header.TrackDescriptors; i++)
             {
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "stream.Position = {0}", stream.Position);
 
@@ -381,90 +381,90 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcLen = {0}", track.isrcLen);
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcUpc = {0}", track.isrcUpc);
 
-                bwTracks.Add(track);
+                _bwTracks.Add(track);
             }
 
             var filtersList = new FiltersList();
 
-            if(!string.IsNullOrEmpty(header.DataFile))
+            if(!string.IsNullOrEmpty(_header.DataFile))
                 while(true)
                 {
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.DataFile));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                    header.DataFile.ToLower(CultureInfo.
-                                                                                                CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                     _header.DataFile.ToLower(CultureInfo.
+                                                                                                  CurrentCulture)));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                    header.DataFile.ToUpper(CultureInfo.
-                                                                                                CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                                                                     _header.DataFile.ToUpper(CultureInfo.
+                                                                                                  CurrentCulture)));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
-                                                                                                   DataFile.Split(new[]
-                                                                                                                  {
-                                                                                                                      '\\'
-                                                                                                                  },
-                                                                                                                  StringSplitOptions.
-                                                                                                                      RemoveEmptyEntries).
-                                                                                                   Last()));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
+                                                                                                    DataFile.Split(new[]
+                                                                                                                   {
+                                                                                                                       '\\'
+                                                                                                                   },
+                                                                                                                   StringSplitOptions.
+                                                                                                                       RemoveEmptyEntries).
+                                                                                                    Last()));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
-                                                                                                   DataFile.Split(new[]
-                                                                                                                  {
-                                                                                                                      '\\'
-                                                                                                                  },
-                                                                                                                  StringSplitOptions.
-                                                                                                                      RemoveEmptyEntries).
-                                                                                                   Last().
-                                                                                                   ToLower(CultureInfo.
-                                                                                                               CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
+                                                                                                    DataFile.Split(new[]
+                                                                                                                   {
+                                                                                                                       '\\'
+                                                                                                                   },
+                                                                                                                   StringSplitOptions.
+                                                                                                                       RemoveEmptyEntries).
+                                                                                                    Last().
+                                                                                                    ToLower(CultureInfo.
+                                                                                                                CurrentCulture)));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
-                                                                                                   DataFile.Split(new[]
-                                                                                                                  {
-                                                                                                                      '\\'
-                                                                                                                  },
-                                                                                                                  StringSplitOptions.
-                                                                                                                      RemoveEmptyEntries).
-                                                                                                   Last().
-                                                                                                   ToUpper(CultureInfo.
-                                                                                                               CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
+                                                                                                    DataFile.Split(new[]
+                                                                                                                   {
+                                                                                                                       '\\'
+                                                                                                                   },
+                                                                                                                   StringSplitOptions.
+                                                                                                                       RemoveEmptyEntries).
+                                                                                                    Last().
+                                                                                                    ToUpper(CultureInfo.
+                                                                                                                CurrentCulture)));
 
-                    if(dataFilter != null)
+                    if(_dataFilter != null)
                         break;
 
-                    throw new ArgumentException($"Data file {header.DataFile} not found");
+                    throw new ArgumentException($"Data file {_header.DataFile} not found");
                 }
             else
                 throw new ArgumentException("Unable to find data file");
 
-            if(!string.IsNullOrEmpty(header.SubchannelFile))
+            if(!string.IsNullOrEmpty(_header.SubchannelFile))
             {
                 filtersList = new FiltersList();
 
-                subFilter =
-                    ((((filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.SubchannelFile)) ??
+                _subFilter =
+                    ((((filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile)) ??
                         filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                           header.SubchannelFile.ToLower(CultureInfo.CurrentCulture)))
+                                                           _header.SubchannelFile.ToLower(CultureInfo.CurrentCulture)))
                        ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                               header.SubchannelFile.
-                                                                      ToUpper(CultureInfo.CurrentCulture)))) ??
-                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
+                                                               _header.SubchannelFile.
+                                                                       ToUpper(CultureInfo.CurrentCulture)))) ??
+                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
                                                                                         SubchannelFile.Split(new[]
                                                                                                              {
                                                                                                                  '\\'
@@ -472,7 +472,7 @@ namespace Aaru.DiscImages
                                                                                                              StringSplitOptions.
                                                                                                                  RemoveEmptyEntries).
                                                                                         Last()))
-                     ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
+                     ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
                                                                                             SubchannelFile.Split(new[]
                                                                                                                  {
                                                                                                                      '\\'
@@ -481,7 +481,7 @@ namespace Aaru.DiscImages
                                                                                                                      RemoveEmptyEntries).
                                                                                             Last().ToLower(CultureInfo.
                                                                                                                CurrentCulture)))
-                    ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), header.
+                    ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
                                                                                            SubchannelFile.Split(new[]
                                                                                                                 {
                                                                                                                     '\\'
@@ -492,14 +492,14 @@ namespace Aaru.DiscImages
                                                                                                               CurrentCulture)));
             }
 
-            Tracks     = new List<Track>();
-            Partitions = new List<Partition>();
-            offsetmap  = new Dictionary<uint, ulong>();
-            trackFlags = new Dictionary<uint, byte>();
+            Tracks      = new List<Track>();
+            Partitions  = new List<Partition>();
+            _offsetmap  = new Dictionary<uint, ulong>();
+            _trackFlags = new Dictionary<uint, byte>();
             ushort maxSession = 0;
             ulong  currentPos = 0;
 
-            foreach(Bw4TrackDescriptor bwTrack in bwTracks)
+            foreach(Bw4TrackDescriptor bwTrack in _bwTracks)
                 if(bwTrack.point < 0xA0)
                 {
                     var track = new Track
@@ -570,12 +570,12 @@ namespace Aaru.DiscImages
                                                                                            ToUpper(CultureInfo.
                                                                                                        CurrentCulture)));
 
-                            track.TrackFilter = dataFilter;
+                            track.TrackFilter = _dataFilter;
                         } while(true);
                     else
-                        track.TrackFilter = dataFilter;
+                        track.TrackFilter = _dataFilter;
 
-                    track.TrackFile = dataFilter.GetFilename();
+                    track.TrackFile = _dataFilter.GetFilename();
 
                     track.TrackFileOffset       = currentPos * 2352;
                     track.TrackSubchannelOffset = currentPos * 96;
@@ -601,16 +601,16 @@ namespace Aaru.DiscImages
                     if(track.TrackSession > maxSession)
                         maxSession = track.TrackSession;
 
-                    track.TrackSubchannelFilter = subFilter;
-                    track.TrackSubchannelFile   = subFilter?.GetFilename();
+                    track.TrackSubchannelFilter = _subFilter;
+                    track.TrackSubchannelFile   = _subFilter?.GetFilename();
 
-                    if(subFilter          != null &&
+                    if(_subFilter         != null &&
                        bwTrack.subchannel > 0)
                     {
                         track.TrackSubchannelType = TrackSubchannelType.Packed;
 
-                        if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                            imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                        if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                            _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
                     }
                     else
                         track.TrackSubchannelType = TrackSubchannelType.None;
@@ -619,36 +619,36 @@ namespace Aaru.DiscImages
                     {
                         case Bw4TrackType.Audio:
                             track.TrackType           = TrackType.Audio;
-                            imageInfo.SectorSize      = 2352;
+                            _imageInfo.SectorSize     = 2352;
                             track.TrackBytesPerSector = 2352;
 
                             break;
                         case Bw4TrackType.Mode1:
                             track.TrackType = TrackType.CdMode1;
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                            if(imageInfo.SectorSize < 2048)
-                                imageInfo.SectorSize = 2048;
+                            if(_imageInfo.SectorSize < 2048)
+                                _imageInfo.SectorSize = 2048;
 
                             track.TrackBytesPerSector = 2048;
 
@@ -656,14 +656,14 @@ namespace Aaru.DiscImages
                         case Bw4TrackType.Mode2:
                             track.TrackType = TrackType.CdMode2Formless;
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                            if(imageInfo.SectorSize < 2336)
-                                imageInfo.SectorSize = 2336;
+                            if(_imageInfo.SectorSize < 2336)
+                                _imageInfo.SectorSize = 2336;
 
                             track.TrackBytesPerSector = 2336;
 
@@ -671,7 +671,7 @@ namespace Aaru.DiscImages
                         default:
                             track.TrackType              = TrackType.Data;
                             track.TrackRawBytesPerSector = 2048;
-                            imageInfo.SectorSize         = 2048;
+                            _imageInfo.SectorSize        = 2048;
                             track.TrackBytesPerSector    = 2048;
 
                             break;
@@ -697,23 +697,23 @@ namespace Aaru.DiscImages
                     Partitions.Add(partition);
                     Tracks.Add(track);
 
-                    if(!offsetmap.ContainsKey(track.TrackSequence))
-                        offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    if(!_offsetmap.ContainsKey(track.TrackSequence))
+                        _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
 
-                    if(!trackFlags.ContainsKey(track.TrackSequence))
-                        trackFlags.Add(track.TrackSequence, (byte)(bwTrack.adrCtl & 0x0F));
+                    if(!_trackFlags.ContainsKey(track.TrackSequence))
+                        _trackFlags.Add(track.TrackSequence, (byte)(bwTrack.adrCtl & 0x0F));
 
-                    imageInfo.Sectors += (ulong)((bwTrack.lastSector - bwTrack.startSector) + 1);
+                    _imageInfo.Sectors += (ulong)((bwTrack.lastSector - bwTrack.startSector) + 1);
                 }
                 else
                 {
-                    imageInfo.MediaBarcode      = bwTrack.isrcUpc;
-                    imageInfo.MediaSerialNumber = bwTrack.discId;
-                    imageInfo.MediaTitle        = bwTrack.title;
+                    _imageInfo.MediaBarcode      = bwTrack.isrcUpc;
+                    _imageInfo.MediaSerialNumber = bwTrack.discId;
+                    _imageInfo.MediaTitle        = bwTrack.title;
 
                     if(!string.IsNullOrEmpty(bwTrack.isrcUpc) &&
-                       !imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
-                        imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                       !_imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+                        _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
                 }
 
             Sessions = new List<Session>();
@@ -745,16 +745,16 @@ namespace Aaru.DiscImages
                 Sessions.Add(session);
             }
 
-            imageInfo.MediaType = MediaType.CD;
+            _imageInfo.MediaType = MediaType.CD;
 
-            imageInfo.Application        = "BlindWrite";
-            imageInfo.ApplicationVersion = "4";
-            imageInfo.Version            = "4";
+            _imageInfo.Application        = "BlindWrite";
+            _imageInfo.ApplicationVersion = "4";
+            _imageInfo.Version            = "4";
 
-            imageInfo.ImageSize            = (ulong)dataFilter.GetDataForkLength();
-            imageInfo.CreationTime         = dataFilter.GetCreationTime();
-            imageInfo.LastModificationTime = dataFilter.GetLastWriteTime();
-            imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
+            _imageInfo.ImageSize            = (ulong)_dataFilter.GetDataForkLength();
+            _imageInfo.CreationTime         = _dataFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = _dataFilter.GetLastWriteTime();
+            _imageInfo.XmlMediaType         = XmlMediaType.OpticalDisc;
 
             bool data       = false;
             bool mode2      = false;
@@ -787,25 +787,25 @@ namespace Aaru.DiscImages
 
             if(!data &&
                !firstdata)
-                imageInfo.MediaType = MediaType.CDDA;
+                _imageInfo.MediaType = MediaType.CDDA;
             else if(firstaudio         &&
                     data               &&
                     Sessions.Count > 1 &&
                     mode2)
-                imageInfo.MediaType = MediaType.CDPLUS;
+                _imageInfo.MediaType = MediaType.CDPLUS;
             else if((firstdata && audio) || mode2)
-                imageInfo.MediaType = MediaType.CDROMXA;
+                _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
-                imageInfo.MediaType = MediaType.CDROM;
+                _imageInfo.MediaType = MediaType.CDROM;
             else
-                imageInfo.MediaType = MediaType.CD;
+                _imageInfo.MediaType = MediaType.CD;
 
-            imageInfo.Comments = header.Comments;
+            _imageInfo.Comments = _header.Comments;
 
-            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("BlindrWrite comments: {0}", imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                AaruConsole.VerboseWriteLine("BlindrWrite comments: {0}", _imageInfo.Comments);
 
             return true;
         }
@@ -816,8 +816,8 @@ namespace Aaru.DiscImages
             {
                 case MediaTagType.CD_MCN:
                 {
-                    if(imageInfo.MediaSerialNumber != null)
-                        return Encoding.ASCII.GetBytes(imageInfo.MediaSerialNumber);
+                    if(_imageInfo.MediaSerialNumber != null)
+                        return Encoding.ASCII.GetBytes(_imageInfo.MediaSerialNumber);
 
                     throw new FeatureNotPresentImageException("Image does not contain MCN information.");
                 }
@@ -837,7 +837,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -849,7 +849,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -925,8 +925,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1002,7 +1002,7 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    if(trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
+                    if(_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
                         return new[]
                         {
                             flag
@@ -1140,10 +1140,10 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = tag == SectorTagType.CdSectorSubchannel ? aaruTrack.TrackSubchannelFilter.GetDataForkStream()
-                              : aaruTrack.TrackFilter.GetDataForkStream();
+            _imageStream = tag == SectorTagType.CdSectorSubchannel ? aaruTrack.TrackSubchannelFilter.GetDataForkStream()
+                               : aaruTrack.TrackFilter.GetDataForkStream();
 
-            var br = new BinaryReader(imageStream);
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)(tag == SectorTagType.CdSectorSubchannel ? aaruTrack.TrackSubchannelOffset : aaruTrack.TrackFileOffset) + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1170,7 +1170,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1221,8 +1221,8 @@ namespace Aaru.DiscImages
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
-            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),

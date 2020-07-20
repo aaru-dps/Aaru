@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -111,8 +111,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            identify = new byte[106];
-            Array.Copy(data, 0, identify, 0, 106);
+            _identify = new byte[106];
+            Array.Copy(data, 0, _identify, 0, 106);
 
             return true;
         }
@@ -126,24 +126,24 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -159,24 +159,24 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -206,44 +206,44 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(imageInfo.Cylinders == 0)
+            if(_imageInfo.Cylinders == 0)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
 
-                while(imageInfo.Cylinders == 0)
+                while(_imageInfo.Cylinders == 0)
                 {
-                    imageInfo.Heads--;
+                    _imageInfo.Heads--;
 
-                    if(imageInfo.Heads == 0)
+                    if(_imageInfo.Heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        imageInfo.Heads = 16;
+                        _imageInfo.SectorsPerTrack--;
+                        _imageInfo.Heads = 16;
                     }
 
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+                    _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders       == 0 &&
-                       imageInfo.Heads           == 0 &&
-                       imageInfo.SectorsPerTrack == 0)
+                    if(_imageInfo.Cylinders       == 0 &&
+                       _imageInfo.Heads           == 0 &&
+                       _imageInfo.SectorsPerTrack == 0)
                         break;
                 }
             }
 
             var header = new RsIdeHeader
             {
-                magic    = signature,
+                magic    = _signature,
                 identify = new byte[106],
                 dataOff  = (ushort)Marshal.SizeOf<RsIdeHeader>(),
                 revision = 1,
                 reserved = new byte[11]
             };
 
-            if(imageInfo.SectorSize == 256)
+            if(_imageInfo.SectorSize == 256)
                 header.flags = RsIdeFlags.HalfSectors;
 
-            if(identify == null)
+            if(_identify == null)
             {
                 var ataId = new Identify.IdentifyDevice
                 {
@@ -252,34 +252,34 @@ namespace Aaru.DiscImages
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
-                    Cylinders       = (ushort)imageInfo.Cylinders,
-                    Heads           = (ushort)imageInfo.Heads,
-                    SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
+                    Cylinders       = (ushort)_imageInfo.Cylinders,
+                    Heads           = (ushort)_imageInfo.Heads,
+                    SectorsPerTrack = (ushort)_imageInfo.SectorsPerTrack,
                     VendorWord47    = 0x80,
                     Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
                                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
                                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
                     ExtendedIdentify = CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
-                    CurrentCylinders = (ushort)imageInfo.Cylinders,
-                    CurrentHeads = (ushort)imageInfo.Heads,
-                    CurrentSectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
-                    CurrentSectors = (uint)imageInfo.Sectors,
-                    LBASectors = (uint)imageInfo.Sectors,
+                    CurrentCylinders = (ushort)_imageInfo.Cylinders,
+                    CurrentHeads = (ushort)_imageInfo.Heads,
+                    CurrentSectorsPerTrack = (ushort)_imageInfo.SectorsPerTrack,
+                    CurrentSectors = (uint)_imageInfo.Sectors,
+                    LBASectors = (uint)_imageInfo.Sectors,
                     DMASupported = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
                     DMAActive = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
                 };
 
-                if(string.IsNullOrEmpty(imageInfo.DriveManufacturer))
-                    imageInfo.DriveManufacturer = "Aaru";
+                if(string.IsNullOrEmpty(_imageInfo.DriveManufacturer))
+                    _imageInfo.DriveManufacturer = "Aaru";
 
-                if(string.IsNullOrEmpty(imageInfo.DriveModel))
-                    imageInfo.DriveModel = "";
+                if(string.IsNullOrEmpty(_imageInfo.DriveModel))
+                    _imageInfo.DriveModel = "";
 
-                if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision))
+                if(string.IsNullOrEmpty(_imageInfo.DriveFirmwareRevision))
                     Version.GetVersion();
 
-                if(string.IsNullOrEmpty(imageInfo.DriveSerialNumber))
-                    imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
+                if(string.IsNullOrEmpty(_imageInfo.DriveSerialNumber))
+                    _imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
                 byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
                 IntPtr ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
@@ -290,15 +290,15 @@ namespace Aaru.DiscImages
 
                 System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
-                Array.Copy(ScrambleAtaString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
+                Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40), 0,
                            ataIdBytes, 27 * 2, 40);
 
-                Array.Copy(ScrambleAtaString(imageInfo.DriveFirmwareRevision, 8), 0, ataIdBytes, 23 * 2, 8);
-                Array.Copy(ScrambleAtaString(imageInfo.DriveSerialNumber, 20), 0, ataIdBytes, 10    * 2, 20);
+                Array.Copy(ScrambleAtaString(_imageInfo.DriveFirmwareRevision, 8), 0, ataIdBytes, 23 * 2, 8);
+                Array.Copy(ScrambleAtaString(_imageInfo.DriveSerialNumber, 20), 0, ataIdBytes, 10    * 2, 20);
                 Array.Copy(ataIdBytes, 0, header.identify, 0, 106);
             }
             else
-                Array.Copy(identify, 0, header.identify, 0, 106);
+                Array.Copy(_identify, 0, header.identify, 0, 106);
 
             byte[] hdr    = new byte[Marshal.SizeOf<RsIdeHeader>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RsIdeHeader>());
@@ -306,11 +306,11 @@ namespace Aaru.DiscImages
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -320,10 +320,10 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.DriveManufacturer     = metadata.DriveManufacturer;
-            imageInfo.DriveModel            = metadata.DriveModel;
-            imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
-            imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
+            _imageInfo.DriveManufacturer     = metadata.DriveManufacturer;
+            _imageInfo.DriveModel            = metadata.DriveModel;
+            _imageInfo.DriveFirmwareRevision = metadata.DriveFirmwareRevision;
+            _imageInfo.DriveSerialNumber     = metadata.DriveSerialNumber;
 
             return true;
         }
@@ -351,9 +351,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
-            imageInfo.Heads           = heads;
-            imageInfo.Cylinders       = cylinders;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Heads           = heads;
+            _imageInfo.Cylinders       = cylinders;
 
             return true;
         }

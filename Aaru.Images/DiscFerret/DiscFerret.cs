@@ -39,13 +39,13 @@ namespace Aaru.DiscImages
 {
     public partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
     {
-        ImageInfo imageInfo;
+        ImageInfo _imageInfo;
 
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<int, long> TrackLengths;
         public SortedDictionary<int, long> TrackOffsets;
 
-        public DiscFerret() => imageInfo = new ImageInfo
+        public DiscFerret() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

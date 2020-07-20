@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class AppleNib
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Apple NIB";
         public Guid                   Id           => new Guid("AE171AE8-6747-49CC-B861-9D450B7CD42E");

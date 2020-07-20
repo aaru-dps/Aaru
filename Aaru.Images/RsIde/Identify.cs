@@ -46,7 +46,7 @@ namespace Aaru.DiscImages
             byte[] magic = new byte[7];
             stream.Read(magic, 0, magic.Length);
 
-            return magic.SequenceEqual(signature);
+            return magic.SequenceEqual(_signature);
         }
     }
 }

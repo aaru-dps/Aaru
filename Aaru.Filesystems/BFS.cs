@@ -106,7 +106,7 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            var besb = new BeSuperBlock();
+            var besb = new SuperBlock();
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
@@ -145,9 +145,9 @@ namespace Aaru.Filesystems
             }
 
             if(littleEndian)
-                besb = Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
+                besb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
             else
-                besb = Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
+                besb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 
@@ -239,7 +239,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Be superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BeSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]

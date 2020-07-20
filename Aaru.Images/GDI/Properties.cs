@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
     {
         public string    Name   => "Dreamcast GDI image";
         public Guid      Id     => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");
-        public ImageInfo Info   => imageInfo;
+        public ImageInfo Info   => _imageInfo;
         public string    Author => "Natalia Portillo";
         public string    Format => "Dreamcast GDI image";
 
@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
             {
                 List<Track> tracks = new List<Track>();
 
-                foreach(GdiTrack gdiTrack in discimage.Tracks)
+                foreach(GdiTrack gdiTrack in _discimage.Tracks)
                 {
                     var track = new Track
                     {
@@ -84,7 +84,7 @@ namespace Aaru.DiscImages
             }
         }
 
-        public List<Session>          Sessions     => discimage.Sessions;
+        public List<Session>          Sessions     => _discimage.Sessions;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

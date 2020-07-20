@@ -69,9 +69,9 @@ namespace Aaru.Filesystems
             {
                 ulong location = (ulong)i;
 
-                uint sbSize = (uint)(Marshal.SizeOf<RBF_IdSector>() / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<RBF_IdSector>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
@@ -79,11 +79,11 @@ namespace Aaru.Filesystems
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<RBF_IdSector>())
+                if(sector.Length < Marshal.SizeOf<IdSector>())
                     return false;
 
-                RBF_IdSector    rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                RBF_NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                IdSector    rbfSb     = Marshal.ByteArrayToStructureBigEndian<IdSector>(sector);
+                NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
                 AaruConsole.DebugWriteLine("RBF plugin",
                                            "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -107,8 +107,8 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 256)
                 return;
 
-            var rbfSb     = new RBF_IdSector();
-            var rbf9000Sb = new RBF_NewIdSector();
+            var rbfSb     = new IdSector();
+            var rbf9000Sb = new NewIdSector();
 
             foreach(int i in new[]
             {
@@ -116,18 +116,18 @@ namespace Aaru.Filesystems
             })
             {
                 ulong location = (ulong)i;
-                uint  sbSize   = (uint)(Marshal.SizeOf<RBF_IdSector>() / imagePlugin.Info.SectorSize);
+                uint  sbSize   = (uint)(Marshal.SizeOf<IdSector>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<RBF_IdSector>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<IdSector>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<RBF_IdSector>())
+                if(sector.Length < Marshal.SizeOf<IdSector>())
                     return;
 
-                rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                rbfSb     = Marshal.ByteArrayToStructureBigEndian<IdSector>(sector);
+                rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<NewIdSector>(sector);
 
                 AaruConsole.DebugWriteLine("RBF plugin",
                                            "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -145,7 +145,7 @@ namespace Aaru.Filesystems
                 return;
 
             if(rbf9000Sb.rid_sync == RBF_CNYS)
-                rbf9000Sb = (RBF_NewIdSector)Marshal.SwapStructureMembersEndian(rbf9000Sb);
+                rbf9000Sb = (NewIdSector)Marshal.SwapStructureMembersEndian(rbf9000Sb);
 
             var sb = new StringBuilder();
 
@@ -285,7 +285,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Identification sector. Wherever the sector this resides on, becomes LSN 0.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RBF_IdSector
+        struct IdSector
         {
             /// <summary>Sectors on disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -342,7 +342,7 @@ namespace Aaru.Filesystems
         ///     big or little endian.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RBF_NewIdSector
+        struct NewIdSector
         {
             /// <summary>Magic number</summary>
             public readonly uint rid_sync;

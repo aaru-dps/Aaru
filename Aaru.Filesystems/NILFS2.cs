@@ -64,9 +64,9 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End)
@@ -74,10 +74,10 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
+            Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             return nilfsSb.magic == NILFS2_MAGIC;
         }
@@ -96,17 +96,17 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
+            Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             if(nilfsSb.magic != NILFS2_MAGIC)
                 return;
@@ -156,49 +156,49 @@ namespace Aaru.Filesystems
             XmlFsType.Clusters = nilfsSb.dev_size / XmlFsType.ClusterSize;
         }
 
-        enum NILFS2_State : ushort
+        enum State : ushort
         {
             Valid = 0x0001, Error = 0x0002, Resize = 0x0004
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NILFS2_Superblock
+        struct Superblock
         {
-            public readonly uint         rev_level;
-            public readonly ushort       minor_rev_level;
-            public readonly ushort       magic;
-            public readonly ushort       bytes;
-            public readonly ushort       flags;
-            public readonly uint         crc_seed;
-            public readonly uint         sum;
-            public readonly uint         log_block_size;
-            public readonly ulong        nsegments;
-            public readonly ulong        dev_size;
-            public readonly ulong        first_data_block;
-            public readonly uint         blocks_per_segment;
-            public readonly uint         r_segments_percentage;
-            public readonly ulong        last_cno;
-            public readonly ulong        last_pseg;
-            public readonly ulong        last_seq;
-            public readonly ulong        free_blocks_count;
-            public readonly ulong        ctime;
-            public readonly ulong        mtime;
-            public readonly ulong        wtime;
-            public readonly ushort       mnt_count;
-            public readonly ushort       max_mnt_count;
-            public readonly NILFS2_State state;
-            public readonly ushort       errors;
-            public readonly ulong        lastcheck;
-            public readonly uint         checkinterval;
-            public readonly uint         creator_os;
-            public readonly ushort       def_resuid;
-            public readonly ushort       def_resgid;
-            public readonly uint         first_ino;
-            public readonly ushort       inode_size;
-            public readonly ushort       dat_entry_size;
-            public readonly ushort       checkpoint_size;
-            public readonly ushort       segment_usage_size;
-            public readonly Guid         uuid;
+            public readonly uint   rev_level;
+            public readonly ushort minor_rev_level;
+            public readonly ushort magic;
+            public readonly ushort bytes;
+            public readonly ushort flags;
+            public readonly uint   crc_seed;
+            public readonly uint   sum;
+            public readonly uint   log_block_size;
+            public readonly ulong  nsegments;
+            public readonly ulong  dev_size;
+            public readonly ulong  first_data_block;
+            public readonly uint   blocks_per_segment;
+            public readonly uint   r_segments_percentage;
+            public readonly ulong  last_cno;
+            public readonly ulong  last_pseg;
+            public readonly ulong  last_seq;
+            public readonly ulong  free_blocks_count;
+            public readonly ulong  ctime;
+            public readonly ulong  mtime;
+            public readonly ulong  wtime;
+            public readonly ushort mnt_count;
+            public readonly ushort max_mnt_count;
+            public readonly State  state;
+            public readonly ushort errors;
+            public readonly ulong  lastcheck;
+            public readonly uint   checkinterval;
+            public readonly uint   creator_os;
+            public readonly ushort def_resuid;
+            public readonly ushort def_resgid;
+            public readonly uint   first_ino;
+            public readonly ushort inode_size;
+            public readonly ushort dat_entry_size;
+            public readonly ushort checkpoint_size;
+            public readonly ushort segment_usage_size;
+            public readonly Guid   uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
             public readonly byte[] volume_name;
             public readonly uint  c_interval;

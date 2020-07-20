@@ -40,12 +40,12 @@ namespace Aaru.DiscImages
 {
     public partial class Anex86 : IWritableImage
     {
-        IFilter      anexImageFilter;
-        Anex86Header fdihdr;
-        ImageInfo    imageInfo;
-        FileStream   writingStream;
+        IFilter      _anexImageFilter;
+        Anex86Header _fdihdr;
+        ImageInfo    _imageInfo;
+        FileStream   _writingStream;
 
-        public Anex86() => imageInfo = new ImageInfo
+        public Anex86() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

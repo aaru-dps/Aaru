@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
     // This may be missing fields, or not, I don't know russian so any help is appreciated
     public class AODOS : IFilesystem
     {
-        readonly byte[] AODOSIdentifier =
+        readonly byte[] _identifier =
         {
             0x20, 0x41, 0x4F, 0x2D, 0x44, 0x4F, 0x53, 0x20
         };
@@ -71,18 +71,18 @@ namespace Aaru.Filesystems
                imagePlugin.Info.Sectors != 1600)
                 return false;
 
-            byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
+            byte[]    sector = imagePlugin.ReadSector(0);
+            BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
-            return bb.identifier.SequenceEqual(AODOSIdentifier);
+            return bb.identifier.SequenceEqual(_identifier);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
                                    Encoding encoding)
         {
             Encoding = Encoding.GetEncoding("koi8-r");
-            byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
+            byte[]    sector = imagePlugin.ReadSector(0);
+            BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
             var sbInformation = new StringBuilder();
 
@@ -111,7 +111,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AODOS_BootBlock
+        struct BootBlock
         {
             /// <summary>A NOP opcode</summary>
             public readonly byte nop;

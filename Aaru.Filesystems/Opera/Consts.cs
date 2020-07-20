@@ -48,7 +48,7 @@ namespace Aaru.Filesystems
         const uint TYPE_LBL = 0x2A6C626C;
         /// <summary>Catapult</summary>
         const uint TYPE_ZAP = 0x2A7A6170;
-        static readonly int DirectoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
+        static readonly int _directoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
 
         enum FileFlags : uint
         {

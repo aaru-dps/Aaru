@@ -85,7 +85,7 @@ namespace Aaru.Filesystems
 
             var sb = new StringBuilder();
 
-            HammerSuperBlock hammerSb;
+            SuperBlock superBlock;
 
             uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
@@ -97,24 +97,24 @@ namespace Aaru.Filesystems
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
             if(magic == HAMMER_FSBUF_VOLUME)
-                hammerSb = Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
+                superBlock = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
             else
-                hammerSb = Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
+                superBlock = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 
-            sb.AppendFormat("Volume version: {0}", hammerSb.vol_version).AppendLine();
+            sb.AppendFormat("Volume version: {0}", superBlock.vol_version).AppendLine();
 
-            sb.AppendFormat("Volume {0} of {1} on this filesystem", hammerSb.vol_no + 1, hammerSb.vol_count).
+            sb.AppendFormat("Volume {0} of {1} on this filesystem", superBlock.vol_no + 1, superBlock.vol_count).
                AppendLine();
 
-            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(hammerSb.vol_label, Encoding)).AppendLine();
-            sb.AppendFormat("Volume serial: {0}", hammerSb.vol_fsid).AppendLine();
-            sb.AppendFormat("Filesystem type: {0}", hammerSb.vol_fstype).AppendLine();
-            sb.AppendFormat("Boot area starts at {0}", hammerSb.vol_bot_beg).AppendLine();
-            sb.AppendFormat("Memory log starts at {0}", hammerSb.vol_mem_beg).AppendLine();
-            sb.AppendFormat("First volume buffer starts at {0}", hammerSb.vol_buf_beg).AppendLine();
-            sb.AppendFormat("Volume ends at {0}", hammerSb.vol_buf_end).AppendLine();
+            sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(superBlock.vol_label, Encoding)).AppendLine();
+            sb.AppendFormat("Volume serial: {0}", superBlock.vol_fsid).AppendLine();
+            sb.AppendFormat("Filesystem type: {0}", superBlock.vol_fstype).AppendLine();
+            sb.AppendFormat("Boot area starts at {0}", superBlock.vol_bot_beg).AppendLine();
+            sb.AppendFormat("Memory log starts at {0}", superBlock.vol_mem_beg).AppendLine();
+            sb.AppendFormat("First volume buffer starts at {0}", superBlock.vol_buf_beg).AppendLine();
+            sb.AppendFormat("Volume ends at {0}", superBlock.vol_buf_end).AppendLine();
 
             XmlFsType = new FileSystemType
             {
@@ -122,24 +122,25 @@ namespace Aaru.Filesystems
                 ClusterSize  = HAMMER_BIGBLOCK_SIZE,
                 Dirty        = false,
                 Type         = "HAMMER",
-                VolumeName   = StringHandlers.CToString(hammerSb.vol_label, Encoding),
-                VolumeSerial = hammerSb.vol_fsid.ToString()
+                VolumeName   = StringHandlers.CToString(superBlock.vol_label, Encoding),
+                VolumeSerial = superBlock.vol_fsid.ToString()
             };
 
-            if(hammerSb.vol_no == hammerSb.vol_rootvol)
+            if(superBlock.vol_no == superBlock.vol_rootvol)
             {
-                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", hammerSb.vol0_stat_bigblocks,
-                                hammerSb.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem contains {0} \"big-blocks\" ({1} bytes)", superBlock.vol0_stat_bigblocks,
+                                superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
-                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)", hammerSb.vol0_stat_freebigblocks,
-                                hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
+                sb.AppendFormat("Filesystem has {0} \"big-blocks\" free ({1} bytes)",
+                                superBlock.vol0_stat_freebigblocks,
+                                superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
 
-                sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
+                sb.AppendFormat("Filesystem has {0} inode used", superBlock.vol0_stat_inodes).AppendLine();
 
-                XmlFsType.Clusters              = (ulong)hammerSb.vol0_stat_bigblocks;
-                XmlFsType.FreeClusters          = (ulong)hammerSb.vol0_stat_freebigblocks;
+                XmlFsType.Clusters              = (ulong)superBlock.vol0_stat_bigblocks;
+                XmlFsType.FreeClusters          = (ulong)superBlock.vol0_stat_freebigblocks;
                 XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Files                 = (ulong)hammerSb.vol0_stat_inodes;
+                XmlFsType.Files                 = (ulong)superBlock.vol0_stat_inodes;
                 XmlFsType.FilesSpecified        = true;
             }
 
@@ -151,7 +152,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Hammer superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        struct HammerSuperBlock
+        struct SuperBlock
         {
             /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
             public readonly ulong vol_signature;

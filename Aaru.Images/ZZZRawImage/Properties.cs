@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
 
         // Non-random UUID to recognize this specific plugin
         public Guid      Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
-        public ImageInfo Info   => imageInfo;
+        public ImageInfo Info   => _imageInfo;
         public string    Author => "Natalia Portillo";
         public string    Format => "Raw disk image (sector by sector copy)";
 
@@ -60,25 +60,26 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     return null;
 
                 var trk = new Track
                 {
-                    TrackBytesPerSector = rawCompactDisc ? mode2
-                                                               ? 2336
-                                                               : 2048 : (int)imageInfo.SectorSize,
-                    TrackEndSector = imageInfo.Sectors - 1,
-                    TrackFile = rawImageFilter.GetFilename(),
-                    TrackFileOffset = 0,
-                    TrackFileType = "BINARY",
-                    TrackRawBytesPerSector = rawCompactDisc ? 2352 : (int)imageInfo.SectorSize,
-                    TrackSequence = 1,
-                    TrackStartSector = 0,
-                    TrackSubchannelType = hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
-                    TrackType = rawCompactDisc ? mode2
-                                                     ? TrackType.CdMode2Formless
-                                                     : TrackType.CdMode1 : TrackType.Data,
+                    TrackBytesPerSector = _rawCompactDisc ? _mode2
+                                                                ? 2336
+                                                                : 2048 : (int)_imageInfo.SectorSize,
+                    TrackEndSector         = _imageInfo.Sectors - 1,
+                    TrackFile              = _rawImageFilter.GetFilename(),
+                    TrackFileOffset        = 0,
+                    TrackFileType          = "BINARY",
+                    TrackRawBytesPerSector = _rawCompactDisc ? 2352 : (int)_imageInfo.SectorSize,
+                    TrackSequence          = 1,
+                    TrackStartSector       = 0,
+                    TrackSubchannelType =
+                        _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
+                    TrackType = _rawCompactDisc ? _mode2
+                                                      ? TrackType.CdMode2Formless
+                                                      : TrackType.CdMode1 : TrackType.Data,
                     TrackSession = 1
                 };
 
@@ -95,12 +96,12 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
                 var sess = new Session
                 {
-                    EndSector       = imageInfo.Sectors - 1,
+                    EndSector       = _imageInfo.Sectors - 1,
                     EndTrack        = 1,
                     SessionSequence = 1,
                     StartSector     = 0,
@@ -120,7 +121,7 @@ namespace Aaru.DiscImages
         {
             get
             {
-                if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
+                if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                     return null;
 
                 List<Partition> parts = new List<Partition>();
@@ -128,17 +129,17 @@ namespace Aaru.DiscImages
                 var part = new Partition
                 {
                     Start    = 0,
-                    Length   = imageInfo.Sectors,
+                    Length   = _imageInfo.Sectors,
                     Offset   = 0,
                     Sequence = 0,
-                    Type = rawCompactDisc
-                               ? mode2
+                    Type = _rawCompactDisc
+                               ? _mode2
                                      ? "MODE2/2352"
                                      : "MODE1/2352"
-                               : imageInfo.MediaType == MediaType.PD650 || imageInfo.MediaType == MediaType.PD650_WORM
+                               : _imageInfo.MediaType == MediaType.PD650 || _imageInfo.MediaType == MediaType.PD650_WORM
                                    ? "DATA/512"
                                    : "MODE1/2048",
-                    Size = imageInfo.Sectors * imageInfo.SectorSize
+                    Size = _imageInfo.Sectors * _imageInfo.SectorSize
                 };
 
                 parts.Add(part);
@@ -149,8 +150,8 @@ namespace Aaru.DiscImages
 
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata { get; private set; }
-        public IEnumerable<MediaTagType> SupportedMediaTags => readWriteSidecars.
-                                                               Concat(writeOnlySidecars).OrderBy(t => t.tag).
+        public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.
+                                                               Concat(_writeOnlySidecars).OrderBy(t => t.tag).
                                                                Select(t => t.tag).ToArray();
 
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]

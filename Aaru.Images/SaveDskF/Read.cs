@@ -52,40 +52,40 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[40];
 
             stream.Read(hdr, 0, 40);
-            header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", header.magic);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}", header.mediaType);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}", header.sectorSize);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}", header.clusterMask);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}", header.clusterShift);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", header.reservedSectors);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}", header.fatCopies);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}", header.rootEntries);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}", header.firstCluster);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}", header.clustersCopied);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}", header.sectorsPerFat);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}", header.checksum);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}", header.cylinders);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}", header.heads);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}", header.padding);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}", header.sectorsCopied);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}", header.commentOffset);
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}", header.dataOffset);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", _header.magic);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}", _header.mediaType);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}", _header.sectorSize);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}", _header.clusterMask);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}", _header.clusterShift);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", _header.reservedSectors);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}", _header.fatCopies);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}", _header.rootEntries);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}", _header.firstCluster);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}", _header.clustersCopied);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}", _header.sectorsPerFat);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}", _header.checksum);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}", _header.cylinders);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}", _header.heads);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}", _header.padding);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}", _header.sectorsCopied);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}", _header.commentOffset);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}", _header.dataOffset);
 
-            if(header.dataOffset == 0 &&
-               header.magic      == SDF_MAGIC_OLD)
-                header.dataOffset = 512;
+            if(_header.dataOffset == 0 &&
+               _header.magic      == SDF_MAGIC_OLD)
+                _header.dataOffset = 512;
 
-            byte[] cmt = new byte[header.dataOffset - header.commentOffset];
-            stream.Seek(header.commentOffset, SeekOrigin.Begin);
+            byte[] cmt = new byte[_header.dataOffset - _header.commentOffset];
+            stream.Seek(_header.commentOffset, SeekOrigin.Begin);
             stream.Read(cmt, 0, cmt.Length);
 
             if(cmt.Length > 1)
-                imageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
+                _imageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
 
-            calculatedChk = 0;
+            _calculatedChk = 0;
             stream.Seek(0, SeekOrigin.Begin);
 
             int b;
@@ -95,43 +95,44 @@ namespace Aaru.DiscImages
                 b = stream.ReadByte();
 
                 if(b >= 0)
-                    calculatedChk += (uint)b;
+                    _calculatedChk += (uint)b;
             } while(b >= 0);
 
-            AaruConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
-                                       calculatedChk == header.checksum);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", _calculatedChk,
+                                       _calculatedChk == _header.checksum);
 
-            imageInfo.Application          = "SaveDskF";
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = imageFilter.GetFilename();
-            imageInfo.ImageSize            = (ulong)(stream.Length - header.dataOffset);
-            imageInfo.Sectors              = (ulong)(header.sectorsPerTrack * header.heads * header.cylinders);
-            imageInfo.SectorSize           = header.sectorSize;
+            _imageInfo.Application          = "SaveDskF";
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = imageFilter.GetFilename();
+            _imageInfo.ImageSize            = (ulong)(stream.Length - _header.dataOffset);
+            _imageInfo.Sectors              = (ulong)(_header.sectorsPerTrack * _header.heads * _header.cylinders);
+            _imageInfo.SectorSize           = _header.sectorSize;
 
-            imageInfo.MediaType = Geometry.GetMediaType((header.cylinders, (byte)header.heads, header.sectorsPerTrack,
-                                                         header.sectorSize, MediaEncoding.MFM, false));
+            _imageInfo.MediaType = Geometry.GetMediaType((_header.cylinders, (byte)_header.heads,
+                                                          _header.sectorsPerTrack, _header.sectorSize,
+                                                          MediaEncoding.MFM, false));
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            AaruConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", _imageInfo.MediaType);
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("SaveDskF comments: {0}", imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                AaruConsole.VerboseWriteLine("SaveDskF comments: {0}", _imageInfo.Comments);
 
             // TODO: Support compressed images
-            if(header.magic == SDF_MAGIC_COMPRESSED)
+            if(_header.magic == SDF_MAGIC_COMPRESSED)
                 throw new
                     FeatureSupportedButNotImplementedImageException("Compressed SaveDskF images are not supported.");
 
             // SaveDskF only ommits ending clusters, leaving no gaps behind, so reading all data we have...
-            stream.Seek(header.dataOffset, SeekOrigin.Begin);
-            decodedDisk = new byte[imageInfo.Sectors * imageInfo.SectorSize];
-            stream.Read(decodedDisk, 0, (int)(stream.Length - header.dataOffset));
+            stream.Seek(_header.dataOffset, SeekOrigin.Begin);
+            _decodedDisk = new byte[_imageInfo.Sectors * _imageInfo.SectorSize];
+            stream.Read(_decodedDisk, 0, (int)(stream.Length - _header.dataOffset));
 
-            imageInfo.Cylinders       = header.cylinders;
-            imageInfo.Heads           = header.heads;
-            imageInfo.SectorsPerTrack = header.sectorsPerTrack;
+            _imageInfo.Cylinders       = _header.cylinders;
+            _imageInfo.Heads           = _header.heads;
+            _imageInfo.SectorsPerTrack = _header.sectorsPerTrack;
 
             return true;
         }
@@ -140,16 +141,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
-                       length                          * imageInfo.SectorSize);
+            Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
+                       length                           * _imageInfo.SectorSize);
 
             return buffer;
         }

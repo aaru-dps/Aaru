@@ -49,17 +49,17 @@ namespace Aaru.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf<PartCloneHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<PartCloneHeader>());
-            pHdr = Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
+            _pHdr = Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
 
-            if(stream.Position + (long)pHdr.totalBlocks > stream.Length)
+            if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
                 return false;
 
-            stream.Seek((long)pHdr.totalBlocks, SeekOrigin.Current);
+            stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 
             byte[] bitmagic = new byte[8];
             stream.Read(bitmagic, 0, 8);
 
-            return partCloneMagic.SequenceEqual(pHdr.magic) && biTmAgIc.SequenceEqual(bitmagic);
+            return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);
         }
     }
 }

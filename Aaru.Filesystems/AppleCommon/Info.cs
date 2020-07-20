@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
     internal static partial class AppleCommon
     {
-        internal static string GetBootBlockInformation(byte[] bbSector, Encoding Encoding)
+        internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
         {
             if(bbSector is null ||
                bbSector.Length < 0x100)
@@ -75,24 +75,24 @@ namespace Aaru.Filesystems
             else if(bb.bbPageFlags < 0)
                 sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
-            sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, Encoding)).AppendLine();
+            sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
 
-            sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, Encoding)).
+            sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).
                AppendLine();
 
-            sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, Encoding)).
+            sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).
                AppendLine();
 
-            sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, Encoding)).
+            sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
                AppendLine();
 
-            sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, Encoding)).
+            sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, encoding)).
                AppendLine();
 
             sb.AppendFormat("First program to execute at boot: {0}",
-                            StringHandlers.PascalToString(bb.bbHelloName, Encoding)).AppendLine();
+                            StringHandlers.PascalToString(bb.bbHelloName, encoding)).AppendLine();
 
-            sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, Encoding)).
+            sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, encoding)).
                AppendLine();
 
             sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();

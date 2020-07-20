@@ -40,14 +40,14 @@ namespace Aaru.DiscImages
     {
         void ReadTrackIntoCache(Stream stream, int tracknum)
         {
-            byte[] trackData = new byte[imageInfo.SectorSize * imageInfo.SectorsPerTrack];
+            byte[] trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
 
             // check that track is present
-            if(trackOffset[tracknum] == -1)
+            if(_trackOffset[tracknum] == -1)
                 throw new InvalidDataException("Tried reading a track that is not present in image");
 
-            stream.Seek(trackOffset[tracknum], SeekOrigin.Begin);
+            stream.Seek(_trackOffset[tracknum], SeekOrigin.Begin);
 
             // read the compressed track data
             stream.Read(blkHeader, 0, 3);
@@ -76,11 +76,11 @@ namespace Aaru.DiscImages
                     trackData[dIndex++] = cBuffer[sIndex++];
 
             // check that the number of bytes decompressed matches a whole track
-            if(dIndex != imageInfo.SectorSize * imageInfo.SectorsPerTrack)
+            if(dIndex != _imageInfo.SectorSize * _imageInfo.SectorsPerTrack)
                 throw new InvalidDataException("Track decompression yielded incomplete data");
 
             // store track in cache
-            trackCache[tracknum] = trackData;
+            _trackCache[tracknum] = trackData;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Aaru.DiscImages
         const byte   COPYQM_35_HD  = 4;
         const byte   COPYQM_35_ED  = 6;
 
-        readonly uint[] copyQmCrcTable =
+        readonly uint[] _copyQmCrcTable =
         {
             0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3, 0x0EDB8832,
             0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91, 0x1DB71064, 0x6AB020F2,

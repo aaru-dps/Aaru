@@ -56,8 +56,8 @@ namespace Aaru.Filesystems
 
         enum ElToritoEmulation : byte
         {
-            None  = 0, Md2hd = 1, Mf2hd = 2,
-            Mf2ed = 3, Hdd   = 4
+            None  = 0, Md2Hd = 1, Mf2Hd = 2,
+            Mf2Ed = 3, Hdd   = 4
         }
 
         [Flags]

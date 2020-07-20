@@ -40,12 +40,12 @@ namespace Aaru.DiscImages
 {
     public partial class AppleDos : IWritableImage
     {
-        byte[]     deinterleaved;
-        string     extension;
-        ImageInfo  imageInfo;
-        FileStream writingStream;
+        byte[]     _deinterleaved;
+        string     _extension;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
-        public AppleDos() => imageInfo = new ImageInfo
+        public AppleDos() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

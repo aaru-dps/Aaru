@@ -65,71 +65,71 @@ namespace Aaru.DiscImages
             byte[] footerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
             stream.Read(footerB, 0, Marshal.SizeOf<UdifFooter>());
-            footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+            _footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-            if(footer.signature != UDIF_SIGNATURE)
+            if(_footer.signature != UDIF_SIGNATURE)
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 footerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
                 stream.Read(footerB, 0, Marshal.SizeOf<UdifFooter>());
-                footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+                _footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
-                if(footer.signature != UDIF_SIGNATURE)
+                if(_footer.signature != UDIF_SIGNATURE)
                     throw new Exception("Unable to find UDIF signature.");
 
                 AaruConsole.VerboseWriteLine("Found obsolete UDIF format.");
             }
 
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.signature = 0x{0:X8}", footer.signature);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.version = {0}", footer.version);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.headerSize = {0}", footer.headerSize);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.flags = {0}", footer.flags);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.runningDataForkOff = {0}", footer.runningDataForkOff);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkOff = {0}", footer.dataForkOff);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}", footer.dataForkLen);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkOff = {0}", footer.rsrcForkOff);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkLen = {0}", footer.rsrcForkLen);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentNumber = {0}", footer.segmentNumber);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentCount = {0}", footer.segmentCount);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentId = {0}", footer.segmentId);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChkType = {0}", footer.dataForkChkType);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}", footer.dataForkLen);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChk = 0x{0:X8}", footer.dataForkChk);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistOff = {0}", footer.plistOff);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistLen = {0}", footer.plistLen);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkType = {0}", footer.masterChkType);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkLen = {0}", footer.masterChkLen);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChk = 0x{0:X8}", footer.masterChk);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.imageVariant = {0}", footer.imageVariant);
-            AaruConsole.DebugWriteLine("UDIF plugin", "footer.sectorCount = {0}", footer.sectorCount);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.signature = 0x{0:X8}", _footer.signature);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.version = {0}", _footer.version);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.headerSize = {0}", _footer.headerSize);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.flags = {0}", _footer.flags);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.runningDataForkOff = {0}", _footer.runningDataForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkOff = {0}", _footer.dataForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}", _footer.dataForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkOff = {0}", _footer.rsrcForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkLen = {0}", _footer.rsrcForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentNumber = {0}", _footer.segmentNumber);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentCount = {0}", _footer.segmentCount);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentId = {0}", _footer.segmentId);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChkType = {0}", _footer.dataForkChkType);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}", _footer.dataForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChk = 0x{0:X8}", _footer.dataForkChk);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistOff = {0}", _footer.plistOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistLen = {0}", _footer.plistLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkType = {0}", _footer.masterChkType);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkLen = {0}", _footer.masterChkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChk = 0x{0:X8}", _footer.masterChk);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.imageVariant = {0}", _footer.imageVariant);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.sectorCount = {0}", _footer.sectorCount);
 
             AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved1 is empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved1));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved1));
 
             AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved2 is empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved2));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved2));
 
             AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved3 is empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved3));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved3));
 
             AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved4 is empty? = {0}",
-                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved4));
+                                       ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved4));
 
             // Block chunks and headers
             List<byte[]> blkxList = new List<byte[]>();
-            chunks = new Dictionary<ulong, BlockChunk>();
+            _chunks = new Dictionary<ulong, BlockChunk>();
 
             bool fakeBlockChunks = false;
 
             byte[] vers = null;
 
-            if(footer.plistLen    == 0 &&
-               footer.rsrcForkLen != 0)
+            if(_footer.plistLen    == 0 &&
+               _footer.rsrcForkLen != 0)
             {
                 AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
-                byte[] rsrcB = new byte[footer.rsrcForkLen];
-                stream.Seek((long)footer.rsrcForkOff, SeekOrigin.Begin);
+                byte[] rsrcB = new byte[_footer.rsrcForkLen];
+                stream.Seek((long)_footer.rsrcForkOff, SeekOrigin.Begin);
                 stream.Read(rsrcB, 0, rsrcB.Length);
 
                 var rsrc = new ResourceFork(rsrcB);
@@ -155,11 +155,11 @@ namespace Aaru.DiscImages
                 if(versRez != null)
                     vers = versRez.GetResource(versRez.GetIds()[0]);
             }
-            else if(footer.plistLen != 0)
+            else if(_footer.plistLen != 0)
             {
                 AaruConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
-                byte[] plistB = new byte[footer.plistLen];
-                stream.Seek((long)footer.plistOff, SeekOrigin.Begin);
+                byte[] plistB = new byte[_footer.plistLen];
+                stream.Seek((long)_footer.plistOff, SeekOrigin.Begin);
                 stream.Read(plistB, 0, plistB.Length);
 
                 AaruConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
@@ -203,16 +203,16 @@ namespace Aaru.DiscImages
                 // So let's falsify a block chunk
                 var bChnk = new BlockChunk
                 {
-                    length  = footer.dataForkLen,
-                    offset  = footer.dataForkOff,
+                    length  = _footer.dataForkLen,
+                    offset  = _footer.dataForkOff,
                     sector  = 0,
-                    sectors = footer.sectorCount,
+                    sectors = _footer.sectorCount,
                     type    = CHUNK_TYPE_COPY
                 };
 
-                imageInfo.Sectors = footer.sectorCount;
-                chunks.Add(bChnk.sector, bChnk);
-                buffersize      = 2048 * SECTOR_SIZE;
+                _imageInfo.Sectors = _footer.sectorCount;
+                _chunks.Add(bChnk.sector, bChnk);
+                _buffersize     = 2048 * SECTOR_SIZE;
                 fakeBlockChunks = true;
             }
 
@@ -253,22 +253,22 @@ namespace Aaru.DiscImages
                 if(dev != null)
                     pre = $"{version.PreReleaseVersion}";
 
-                imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                imageInfo.Application        = version.VersionString;
-                imageInfo.Comments           = version.VersionMessage;
+                _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                _imageInfo.Application        = version.VersionString;
+                _imageInfo.Comments           = version.VersionMessage;
 
                 if(version.MajorVersion == 3)
-                    imageInfo.Application = "ShrinkWrap™";
+                    _imageInfo.Application = "ShrinkWrap™";
                 else if(version.MajorVersion == 6)
-                    imageInfo.Application = "DiskCopy";
+                    _imageInfo.Application = "DiskCopy";
             }
             else
-                imageInfo.Application = "DiskCopy";
+                _imageInfo.Application = "DiskCopy";
 
-            AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
-                                       imageInfo.ApplicationVersion);
+            AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
+                                       _imageInfo.ApplicationVersion);
 
-            imageInfo.Sectors = 0;
+            _imageInfo.Sectors = 0;
 
             if(!fakeBlockChunks)
             {
@@ -276,7 +276,7 @@ namespace Aaru.DiscImages
                     throw new
                         ImageNotSupportedException("Could not retrieve block chunks. Please fill an issue and send it to us.");
 
-                buffersize = 0;
+                _buffersize = 0;
 
                 foreach(byte[] blkxBytes in blkxList)
                 {
@@ -306,8 +306,8 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
                                                ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
-                    if(bHdr.buffers > buffersize)
-                        buffersize = bHdr.buffers * SECTOR_SIZE;
+                    if(bHdr.buffers > _buffersize)
+                        _buffersize = bHdr.buffers * SECTOR_SIZE;
 
                     for(int i = 0; i < bHdr.chunks; i++)
                     {
@@ -329,7 +329,7 @@ namespace Aaru.DiscImages
                         if(bChnk.type == CHUNK_TYPE_END)
                             break;
 
-                        imageInfo.Sectors += bChnk.sectors;
+                        _imageInfo.Sectors += bChnk.sectors;
 
                         // Chunk offset is relative
                         bChnk.sector += bHdr.sectorStart;
@@ -357,46 +357,46 @@ namespace Aaru.DiscImages
                             throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
 
                         if(bChnk.sectors > 0)
-                            chunks.Add(bChnk.sector, bChnk);
+                            _chunks.Add(bChnk.sector, bChnk);
                     }
                 }
             }
 
-            sectorCache           = new Dictionary<ulong, byte[]>();
-            chunkCache            = new Dictionary<ulong, byte[]>();
-            currentChunkCacheSize = 0;
-            imageStream           = stream;
+            _sectorCache           = new Dictionary<ulong, byte[]>();
+            _chunkCache            = new Dictionary<ulong, byte[]>();
+            _currentChunkCacheSize = 0;
+            _imageStream           = stream;
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorSize           = SECTOR_SIZE;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize            = imageInfo.Sectors * SECTOR_SIZE;
-            imageInfo.Version              = $"{footer.version}";
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.SectorSize           = SECTOR_SIZE;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
+            _imageInfo.Version              = $"{_footer.version}";
 
-            imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-            imageInfo.Heads           = 16;
-            imageInfo.SectorsPerTrack = 63;
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
             var   readChunk        = new BlockChunk();
             bool  chunkFound       = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in _chunks.Where(kvp => sectorAddress >= kvp.Key))
             {
                 readChunk        = kvp.Value;
                 chunkFound       = true;
@@ -415,11 +415,11 @@ namespace Aaru.DiscImages
 
             if((readChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
-                if(!chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
+                if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
                     byte[] cmpBuffer = new byte[readChunk.length];
-                    imageStream.Seek((long)readChunk.offset, SeekOrigin.Begin);
-                    imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+                    _imageStream.Seek((long)readChunk.offset, SeekOrigin.Begin);
+                    _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     var    cmpMs     = new MemoryStream(cmpBuffer);
                     Stream decStream = null;
 
@@ -455,27 +455,27 @@ namespace Aaru.DiscImages
                             case CHUNK_TYPE_ADC:
                             case CHUNK_TYPE_ZLIB:
                             case CHUNK_TYPE_BZIP:
-                                tmpBuffer = new byte[buffersize];
-                                realSize  = decStream.Read(tmpBuffer, 0, (int)buffersize);
+                                tmpBuffer = new byte[_buffersize];
+                                realSize  = decStream.Read(tmpBuffer, 0, (int)_buffersize);
                                 buffer    = new byte[realSize];
                                 Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
 
-                                if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
+                                if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                                 {
-                                    chunkCache.Clear();
-                                    currentChunkCacheSize = 0;
+                                    _chunkCache.Clear();
+                                    _currentChunkCacheSize = 0;
                                 }
 
-                                chunkCache.Add(chunkStartSector, buffer);
-                                currentChunkCacheSize += (uint)realSize;
+                                _chunkCache.Add(chunkStartSector, buffer);
+                                _currentChunkCacheSize += (uint)realSize;
 
                                 break;
                             case CHUNK_TYPE_RLE:
-                                tmpBuffer = new byte[buffersize];
+                                tmpBuffer = new byte[_buffersize];
                                 realSize  = 0;
                                 var rle = new AppleRle(cmpMs);
 
-                                for(int i = 0; i < buffersize; i++)
+                                for(int i = 0; i < _buffersize; i++)
                                 {
                                     int b = rle.ProduceByte();
 
@@ -505,10 +505,10 @@ namespace Aaru.DiscImages
                 sector = new byte[SECTOR_SIZE];
                 Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
 
-                if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
 
                 return sector;
             }
@@ -519,21 +519,21 @@ namespace Aaru.DiscImages
                 case CHUNK_TYPE_ZERO:
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
                 case CHUNK_TYPE_COPY:
-                    imageStream.Seek((long)readChunk.offset + relOff, SeekOrigin.Begin);
+                    _imageStream.Seek((long)readChunk.offset + relOff, SeekOrigin.Begin);
                     sector = new byte[SECTOR_SIZE];
-                    imageStream.Read(sector, 0, sector.Length);
+                    _imageStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
             }
@@ -543,11 +543,11 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

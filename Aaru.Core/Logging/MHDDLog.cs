@@ -42,8 +42,9 @@ namespace Aaru.Core.Logging
     /// <summary>Implements a log in the format used by MHDD</summary>
     internal class MhddLog
     {
-        readonly string       logFile;
-        readonly MemoryStream mhddFs;
+        const    string       MHDD_VER = "VER:2 ";
+        readonly string       _logFile;
+        readonly MemoryStream _mhddFs;
 
         /// <summary>Initializes the MHDD log</summary>
         /// <param name="outputFile">Log file</param>
@@ -59,8 +60,8 @@ namespace Aaru.Core.Logging
                string.IsNullOrEmpty(outputFile))
                 return;
 
-            mhddFs  = new MemoryStream();
-            logFile = outputFile;
+            _mhddFs  = new MemoryStream();
+            _logFile = outputFile;
 
             string mode;
 
@@ -102,8 +103,6 @@ namespace Aaru.Core.Logging
             string scanblocksize =
                 string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
 
-            const string MHDD_VER = "VER:2 ";
-
             byte[] deviceBytes        = Encoding.ASCII.GetBytes(device);
             byte[] modeBytes          = Encoding.ASCII.GetBytes(mode);
             byte[] fwBytes            = Encoding.ASCII.GetBytes(fw);
@@ -122,24 +121,24 @@ namespace Aaru.Core.Logging
             newLine[0] = 0x0D;
             newLine[1] = 0x0A;
 
-            mhddFs.Write(BitConverter.GetBytes(pointer), 0, 4);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(verBytes, 0, verBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(modeBytes, 0, modeBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(fwBytes, 0, fwBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(snBytes, 0, snBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
-            mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
-            mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(BitConverter.GetBytes(pointer), 0, 4);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(verBytes, 0, verBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(modeBytes, 0, modeBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(fwBytes, 0, fwBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(snBytes, 0, snBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
+            _mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
+            _mhddFs.Write(newLine, 0, 2);
         }
 
         /// <summary>Logs a new read</summary>
@@ -147,25 +146,25 @@ namespace Aaru.Core.Logging
         /// <param name="duration">Duration in milliseconds</param>
         internal void Write(ulong sector, double duration)
         {
-            if(logFile == null)
+            if(_logFile == null)
                 return;
 
             byte[] sectorBytes   = BitConverter.GetBytes(sector);
             byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
 
-            mhddFs.Write(sectorBytes, 0, 8);
-            mhddFs.Write(durationBytes, 0, 8);
+            _mhddFs.Write(sectorBytes, 0, 8);
+            _mhddFs.Write(durationBytes, 0, 8);
         }
 
         /// <summary>Closes and writes to file the MHDD log</summary>
         internal void Close()
         {
-            if(logFile == null)
+            if(_logFile == null)
                 return;
 
-            var fs = new FileStream(logFile, FileMode.Create);
-            mhddFs.WriteTo(fs);
-            mhddFs.Close();
+            var fs = new FileStream(_logFile, FileMode.Create);
+            _mhddFs.WriteTo(fs);
+            _mhddFs.Close();
             fs.Close();
         }
     }

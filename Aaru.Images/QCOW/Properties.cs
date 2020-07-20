@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Qcow
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "QEMU Copy-On-Write disk image";
         public Guid                   Id           => new Guid("A5C35765-9FE2-469D-BBBF-ACDEBDB7B954");

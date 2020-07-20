@@ -44,14 +44,14 @@ namespace Aaru.Filesystems.UCSDPascal
         {
             deviceBlock = 0;
 
-            return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -74,7 +74,7 @@ namespace Aaru.Filesystems.UCSDPascal
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -87,9 +87,9 @@ namespace Aaru.Filesystems.UCSDPascal
 
             byte[] file;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
-                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? catalogBlocks : bootBlocks;
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+                file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
             else
             {
                 Errno error = GetFileEntry(path, out PascalFileEntry entry);
@@ -97,10 +97,10 @@ namespace Aaru.Filesystems.UCSDPascal
                 if(error != Errno.NoError)
                     return error;
 
-                byte[] tmp = device.ReadSectors((ulong)entry.FirstBlock                    * multiplier,
-                                                (uint)(entry.LastBlock - entry.FirstBlock) * multiplier);
+                byte[] tmp = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
+                                                 (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier);
 
-                file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * device.Info.SectorSize * multiplier) +
+                file = new byte[((entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier) +
                                 entry.LastBytes];
 
                 Array.Copy(tmp, 0, file, 0, file.Length);
@@ -131,26 +131,28 @@ namespace Aaru.Filesystems.UCSDPascal
             if(pathElements.Length != 1)
                 return Errno.NotSupported;
 
-            if(debug)
+            if(_debug)
                 if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
                 {
                     stat = new FileEntryInfo
                     {
                         Attributes = FileAttributes.System,
-                        BlockSize  = device.Info.SectorSize * multiplier,
+                        BlockSize  = _device.Info.SectorSize * _multiplier,
                         Links      = 1
                     };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                     {
-                        stat.Blocks = (catalogBlocks.Length / stat.BlockSize) + (catalogBlocks.Length % stat.BlockSize);
-                        stat.Length = catalogBlocks.Length;
+                        stat.Blocks = (_catalogBlocks.Length / stat.BlockSize) +
+                                      (_catalogBlocks.Length % stat.BlockSize);
+
+                        stat.Length = _catalogBlocks.Length;
                     }
                     else
                     {
-                        stat.Blocks = (bootBlocks.Length / stat.BlockSize) + (catalogBlocks.Length % stat.BlockSize);
-                        stat.Length = bootBlocks.Length;
+                        stat.Blocks = (_bootBlocks.Length / stat.BlockSize) + (_catalogBlocks.Length % stat.BlockSize);
+                        stat.Length = _bootBlocks.Length;
                     }
 
                     return Errno.NoError;
@@ -163,11 +165,12 @@ namespace Aaru.Filesystems.UCSDPascal
 
             stat = new FileEntryInfo
             {
-                Attributes = FileAttributes.File,
-                Blocks = entry.LastBlock - entry.FirstBlock,
-                BlockSize = device.Info.SectorSize * multiplier,
+                Attributes       = FileAttributes.File,
+                Blocks           = entry.LastBlock - entry.FirstBlock,
+                BlockSize        = _device.Info.SectorSize * _multiplier,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-                Length = ((entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier) + entry.LastBytes,
+                Length = ((entry.LastBlock - entry.FirstBlock) * _device.Info.SectorSize * _multiplier) +
+                         entry.LastBytes,
                 Links = 1
             };
 
@@ -178,13 +181,13 @@ namespace Aaru.Filesystems.UCSDPascal
         {
             entry = new PascalFileEntry();
 
-            foreach(PascalFileEntry ent in fileEntries.Where(ent =>
-                                                                 string.Compare(path,
-                                                                                StringHandlers.
-                                                                                    PascalToString(ent.Filename,
-                                                                                                   Encoding),
-                                                                                StringComparison.
-                                                                                    InvariantCultureIgnoreCase) == 0))
+            foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
+                                                                  string.Compare(path,
+                                                                                 StringHandlers.
+                                                                                     PascalToString(ent.Filename,
+                                                                                                    Encoding),
+                                                                                 StringComparison.
+                                                                                     InvariantCultureIgnoreCase) == 0))
             {
                 entry = ent;
 

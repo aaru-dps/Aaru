@@ -63,48 +63,48 @@ namespace Aaru.Filesystems
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf<EFS_Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
-                if((Marshal.SizeOf<EFS_Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
+                if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<EFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf<EFS_Superblock>()];
+                byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<EFS_Superblock>());
+                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
-                EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
                 AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
-                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+                                           0x200, sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-                if(efsSb.sb_magic == EFS_MAGIC ||
-                   efsSb.sb_magic == EFS_MAGIC_NEW)
+                if(sb.sb_magic == EFS_MAGIC ||
+                   sb.sb_magic == EFS_MAGIC_NEW)
                     return true;
             }
             else
             {
-                uint sbSize = (uint)(Marshal.SizeOf<EFS_Superblock>() / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<EFS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<EFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return false;
 
-                EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
                 AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
-                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+                                           sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
-                if(efsSb.sb_magic == EFS_MAGIC ||
-                   efsSb.sb_magic == EFS_MAGIC_NEW)
+                if(sb.sb_magic == EFS_MAGIC ||
+                   sb.sb_magic == EFS_MAGIC_NEW)
                     return true;
             }
 
@@ -120,43 +120,43 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return;
 
-            var efsSb = new EFS_Superblock();
+            var efsSb = new Superblock();
 
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf<EFS_Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-                if((Marshal.SizeOf<EFS_Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
+                if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<EFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf<EFS_Superblock>()];
+                byte[] sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
-                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<EFS_Superblock>());
+                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
-                efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
                 AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                            0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
             else
             {
-                uint sbSize = (uint)(Marshal.SizeOf<EFS_Superblock>() / imagePlugin.Info.SectorSize);
+                uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<EFS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                     sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
 
-                if(sector.Length < Marshal.SizeOf<EFS_Superblock>())
+                if(sector.Length < Marshal.SizeOf<Superblock>())
                     return;
 
-                efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
                 AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                            efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -219,7 +219,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct EFS_Superblock
+        struct Superblock
         {
             /* 0:   fs size incl. bb 0 (in bb) */
             public readonly int sb_size;

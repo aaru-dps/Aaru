@@ -45,16 +45,16 @@ namespace Aaru.Filesystems.UCSDPascal
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
+            contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
 
-            if(debug)
+            if(_debug)
             {
                 contents.Add("$");
                 contents.Add("$Boot");

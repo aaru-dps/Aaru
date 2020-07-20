@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Blu
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Basic Lisa Utility";
         public Guid                   Id           => new Guid("A153E2F8-4235-432D-9A7F-20807B0BCD74");
         public string                 Author       => "Natalia Portillo";

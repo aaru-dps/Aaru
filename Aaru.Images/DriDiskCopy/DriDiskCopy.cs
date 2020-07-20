@@ -41,14 +41,14 @@ namespace Aaru.DiscImages
     public partial class DriDiskCopy : IWritableImage
     {
         /// <summary>Disk image file</summary>
-        IFilter driImageFilter;
+        IFilter _driImageFilter;
 
         /// <summary>Footer of opened image</summary>
-        DriFooter footer;
-        ImageInfo  imageInfo;
-        FileStream writingStream;
+        DriFooter _footer;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
-        public DriDiskCopy() => imageInfo = new ImageInfo
+        public DriDiskCopy() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

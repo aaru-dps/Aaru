@@ -80,42 +80,45 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.Sectors = 0;
+            _imageInfo.Sectors = 0;
 
             foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(NDIF_RESOURCEID)))
             {
                 if(bcem.Length < 128)
                     return false;
 
-                header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
+                _header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", header.version);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", _header.version);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", _header.driver);
 
                 AaruConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}",
-                                           StringHandlers.PascalToString(header.name,
+                                           StringHandlers.PascalToString(_header.name,
                                                                          Encoding.GetEncoding("macintosh")));
 
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", header.sectors);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", header.dataOffset);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", header.crc);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", header.segmented);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", header.p1);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", header.p2);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", header.unknown[0]);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", header.unknown[1]);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", header.unknown[2]);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", header.unknown[3]);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", header.unknown[4]);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", header.encrypted);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", header.hash);
-                AaruConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", header.chunks);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", _header.sectors);
+
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}",
+                                           _header.maxSectorsPerChunk);
+
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", _header.dataOffset);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", _header.crc);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", _header.segmented);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", _header.p1);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", _header.p2);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", _header.unknown[0]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", _header.unknown[1]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", _header.unknown[2]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", _header.unknown[3]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", _header.unknown[4]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", _header.encrypted);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", _header.hash);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", _header.chunks);
 
                 // Block chunks and headers
-                chunks = new Dictionary<ulong, BlockChunk>();
+                _chunks = new Dictionary<ulong, BlockChunk>();
 
-                for(int i = 0; i < header.chunks; i++)
+                for(int i = 0; i < _header.chunks; i++)
                 {
                     // Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
                     // So let's falsify a block chunk
@@ -135,8 +138,8 @@ namespace Aaru.DiscImages
                     if(bChnk.type == CHUNK_TYPE_END)
                         break;
 
-                    bChnk.offset += header.dataOffset;
-                    bChnk.sector += (uint)imageInfo.Sectors;
+                    bChnk.offset += _header.dataOffset;
+                    bChnk.sector += (uint)_imageInfo.Sectors;
 
                     // TODO: Handle compressed chunks
                     switch(bChnk.type)
@@ -158,38 +161,38 @@ namespace Aaru.DiscImages
                        bChnk.type == 1)
                         throw new ImageNotSupportedException($"Unsupported chunk type 0x{bChnk.type:X8} found");
 
-                    chunks.Add(bChnk.sector, bChnk);
+                    _chunks.Add(bChnk.sector, bChnk);
                 }
 
-                imageInfo.Sectors += header.sectors;
+                _imageInfo.Sectors += _header.sectors;
             }
 
-            if(header.segmented > 0)
+            if(_header.segmented > 0)
                 throw new ImageNotSupportedException("Segmented images are not yet supported.");
 
-            if(header.encrypted > 0)
+            if(_header.encrypted > 0)
                 throw new ImageNotSupportedException("Encrypted images are not yet supported.");
 
-            switch(imageInfo.Sectors)
+            switch(_imageInfo.Sectors)
             {
                 case 1440:
-                    imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
+                    _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
 
                     break;
                 case 1600:
-                    imageInfo.MediaType = MediaType.AppleSonyDS;
+                    _imageInfo.MediaType = MediaType.AppleSonyDS;
 
                     break;
                 case 2880:
-                    imageInfo.MediaType = MediaType.DOS_35_HD;
+                    _imageInfo.MediaType = MediaType.DOS_35_HD;
 
                     break;
                 case 3360:
-                    imageInfo.MediaType = MediaType.DMF;
+                    _imageInfo.MediaType = MediaType.DMF;
 
                     break;
                 default:
-                    imageInfo.MediaType = MediaType.GENERIC_HDD;
+                    _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
                     break;
             }
@@ -237,68 +240,68 @@ namespace Aaru.DiscImages
                     if(dev != null)
                         pre = $"{version.PreReleaseVersion}";
 
-                    imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
-                    imageInfo.Application        = version.VersionString;
-                    imageInfo.Comments           = version.VersionMessage;
+                    _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
+                    _imageInfo.Application        = version.VersionString;
+                    _imageInfo.Comments           = version.VersionMessage;
 
                     if(version.MajorVersion == 3)
-                        imageInfo.Application = "ShrinkWrap™";
+                        _imageInfo.Application = "ShrinkWrap™";
                     else if(version.MajorVersion == 6)
-                        imageInfo.Application = "DiskCopy";
+                        _imageInfo.Application = "DiskCopy";
                 }
             }
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
-                                       imageInfo.ApplicationVersion);
+            AaruConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
+                                       _imageInfo.ApplicationVersion);
 
-            sectorCache           = new Dictionary<ulong, byte[]>();
-            chunkCache            = new Dictionary<ulong, byte[]>();
-            currentChunkCacheSize = 0;
-            imageStream           = imageFilter.GetDataForkStream();
-            buffersize            = header.maxSectorsPerChunk * SECTOR_SIZE;
+            _sectorCache           = new Dictionary<ulong, byte[]>();
+            _chunkCache            = new Dictionary<ulong, byte[]>();
+            _currentChunkCacheSize = 0;
+            _imageStream           = imageFilter.GetDataForkStream();
+            _buffersize            = _header.maxSectorsPerChunk * SECTOR_SIZE;
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            imageInfo.MediaTitle = StringHandlers.PascalToString(header.name, Encoding.GetEncoding("macintosh"));
+            _imageInfo.MediaTitle = StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh"));
 
-            imageInfo.SectorSize         = SECTOR_SIZE;
-            imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
-            imageInfo.ImageSize          = imageInfo.Sectors * SECTOR_SIZE;
-            imageInfo.ApplicationVersion = "6";
-            imageInfo.Application        = "Apple DiskCopy";
+            _imageInfo.SectorSize         = SECTOR_SIZE;
+            _imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
+            _imageInfo.ImageSize          = _imageInfo.Sectors * SECTOR_SIZE;
+            _imageInfo.ApplicationVersion = "6";
+            _imageInfo.Application        = "Apple DiskCopy";
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.AppleSonyDS:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 10;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 10;
 
                     break;
                 case MediaType.DOS_35_DS_DD_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 18;
 
                     break;
                 case MediaType.DMF:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 21;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 21;
 
                     break;
                 default:
-                    imageInfo.MediaType       = MediaType.GENERIC_HDD;
-                    imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                    imageInfo.Heads           = 16;
-                    imageInfo.SectorsPerTrack = 63;
+                    _imageInfo.MediaType       = MediaType.GENERIC_HDD;
+                    _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                    _imageInfo.Heads           = 16;
+                    _imageInfo.SectorsPerTrack = 63;
 
                     break;
             }
@@ -308,18 +311,18 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
             var   currentChunk     = new BlockChunk();
             bool  chunkFound       = false;
             ulong chunkStartSector = 0;
 
-            foreach(KeyValuePair<ulong, BlockChunk> kvp in chunks.Where(kvp => sectorAddress >= kvp.Key))
+            foreach(KeyValuePair<ulong, BlockChunk> kvp in _chunks.Where(kvp => sectorAddress >= kvp.Key))
             {
                 currentChunk     = kvp.Value;
                 chunkFound       = true;
@@ -338,11 +341,11 @@ namespace Aaru.DiscImages
 
             if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
             {
-                if(!chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
+                if(!_chunkCache.TryGetValue(chunkStartSector, out byte[] buffer))
                 {
                     byte[] cmpBuffer = new byte[currentChunk.length];
-                    imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
-                    imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+                    _imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
+                    _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
                     var cmpMs = new MemoryStream(cmpBuffer);
                     int realSize;
 
@@ -351,8 +354,8 @@ namespace Aaru.DiscImages
                         case CHUNK_TYPE_ADC:
                         {
                             Stream decStream = new ADCStream(cmpMs);
-                            byte[] tmpBuffer = new byte[buffersize];
-                            realSize = decStream.Read(tmpBuffer, 0, (int)buffersize);
+                            byte[] tmpBuffer = new byte[_buffersize];
+                            realSize = decStream.Read(tmpBuffer, 0, (int)_buffersize);
                             buffer   = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
 
@@ -361,11 +364,11 @@ namespace Aaru.DiscImages
 
                         case CHUNK_TYPE_RLE:
                         {
-                            byte[] tmpBuffer = new byte[buffersize];
+                            byte[] tmpBuffer = new byte[_buffersize];
                             realSize = 0;
                             var rle = new AppleRle(cmpMs);
 
-                            for(int i = 0; i < buffersize; i++)
+                            for(int i = 0; i < _buffersize; i++)
                             {
                                 int b = rle.ProduceByte();
 
@@ -387,23 +390,23 @@ namespace Aaru.DiscImages
                                 ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");
                     }
 
-                    if(currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
+                    if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
                     {
-                        chunkCache.Clear();
-                        currentChunkCacheSize = 0;
+                        _chunkCache.Clear();
+                        _currentChunkCacheSize = 0;
                     }
 
-                    chunkCache.Add(chunkStartSector, buffer);
-                    currentChunkCacheSize += (uint)realSize;
+                    _chunkCache.Add(chunkStartSector, buffer);
+                    _currentChunkCacheSize += (uint)realSize;
                 }
 
                 sector = new byte[SECTOR_SIZE];
                 Array.Copy(buffer, relOff, sector, 0, SECTOR_SIZE);
 
-                if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                    sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                    _sectorCache.Clear();
 
-                sectorCache.Add(sectorAddress, sector);
+                _sectorCache.Add(sectorAddress, sector);
 
                 return sector;
             }
@@ -413,21 +416,21 @@ namespace Aaru.DiscImages
                 case CHUNK_TYPE_NOCOPY:
                     sector = new byte[SECTOR_SIZE];
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
                 case CHUNK_TYPE_COPY:
-                    imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
+                    _imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
                     sector = new byte[SECTOR_SIZE];
-                    imageStream.Read(sector, 0, sector.Length);
+                    _imageStream.Read(sector, 0, sector.Length);
 
-                    if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                        sectorCache.Clear();
+                    if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                        _sectorCache.Clear();
 
-                    sectorCache.Add(sectorAddress, sector);
+                    _sectorCache.Add(sectorAddress, sector);
 
                     return sector;
             }
@@ -437,11 +440,11 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

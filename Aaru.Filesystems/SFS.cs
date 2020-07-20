@@ -105,10 +105,10 @@ namespace Aaru.Filesystems
             sbInformation.AppendFormat("Root node of the object B-tree resides in block {0}", rootBlock.objectnoderoot).
                           AppendLine();
 
-            if(rootBlock.bits.HasFlag(SFSFlags.CaseSensitive))
+            if(rootBlock.bits.HasFlag(Flags.CaseSensitive))
                 sbInformation.AppendLine("Volume is case sensitive");
 
-            if(rootBlock.bits.HasFlag(SFSFlags.RecyledFolder))
+            if(rootBlock.bits.HasFlag(Flags.RecyledFolder))
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
 
             information = sbInformation.ToString();
@@ -124,7 +124,7 @@ namespace Aaru.Filesystems
         }
 
         [Flags]
-        enum SFSFlags : byte
+        enum Flags : byte
         {
             RecyledFolder = 64, CaseSensitive = 128
         }
@@ -132,15 +132,15 @@ namespace Aaru.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RootBlock
         {
-            public readonly uint     blockId;
-            public readonly uint     blockChecksum;
-            public readonly uint     blockSelfPointer;
-            public readonly ushort   version;
-            public readonly ushort   sequence;
-            public readonly uint     datecreated;
-            public readonly SFSFlags bits;
-            public readonly byte     padding1;
-            public readonly ushort   padding2;
+            public readonly uint   blockId;
+            public readonly uint   blockChecksum;
+            public readonly uint   blockSelfPointer;
+            public readonly ushort version;
+            public readonly ushort sequence;
+            public readonly uint   datecreated;
+            public readonly Flags  bits;
+            public readonly byte   padding1;
+            public readonly ushort padding2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public readonly uint[] reserved1;
             public readonly ulong firstbyte;

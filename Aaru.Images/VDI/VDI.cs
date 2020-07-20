@@ -43,15 +43,15 @@ namespace Aaru.DiscImages
     // TODO: Support version 1.2 geometry
     public partial class Vdi : IWritableImage
     {
-        uint                      currentWritingPosition;
-        uint[]                    ibm;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        Dictionary<ulong, byte[]> sectorCache;
-        VdiHeader                 vHdr;
-        FileStream                writingStream;
+        uint                      _currentWritingPosition;
+        uint[]                    _ibm;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        Dictionary<ulong, byte[]> _sectorCache;
+        VdiHeader                 _vHdr;
+        FileStream                _writingStream;
 
-        public Vdi() => imageInfo = new ImageInfo
+        public Vdi() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

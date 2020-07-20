@@ -53,23 +53,23 @@ namespace Aaru.DiscImages
         {
             try
             {
-                imageStream = imageFilter.GetDataForkStream();
+                _imageStream = imageFilter.GetDataForkStream();
                 var footerV1 = new NeroV1Footer();
                 var footerV2 = new NeroV2Footer();
 
-                imageStream.Seek(-8, SeekOrigin.End);
+                _imageStream.Seek(-8, SeekOrigin.End);
                 byte[] buffer = new byte[8];
-                imageStream.Read(buffer, 0, 8);
+                _imageStream.Read(buffer, 0, 8);
                 footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
                 footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);
 
-                imageStream.Seek(-12, SeekOrigin.End);
+                _imageStream.Seek(-12, SeekOrigin.End);
                 buffer = new byte[12];
-                imageStream.Read(buffer, 0, 12);
+                _imageStream.Read(buffer, 0, 12);
                 footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
                 footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-                AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", imageStream.Length);
+                AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", _imageStream.Length);
 
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8} (\"{1}\")", footerV1.ChunkId,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(footerV1.ChunkId)));
@@ -82,11 +82,11 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
                 if(footerV1.ChunkId          == NERO_FOOTER_V1 &&
-                   footerV1.FirstChunkOffset < (ulong)imageStream.Length)
-                    imageNewFormat = false;
+                   footerV1.FirstChunkOffset < (ulong)_imageStream.Length)
+                    _imageNewFormat = false;
                 else if(footerV2.ChunkId          == NERO_FOOTER_V2 &&
-                        footerV2.FirstChunkOffset < (ulong)imageStream.Length)
-                    imageNewFormat = true;
+                        footerV2.FirstChunkOffset < (ulong)_imageStream.Length)
+                    _imageNewFormat = true;
                 else
                 {
                     AaruConsole.DebugWrite("Nero plugin", "Nero version not recognized.");
@@ -94,28 +94,28 @@ namespace Aaru.DiscImages
                     return false;
                 }
 
-                if(imageNewFormat)
-                    imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
+                if(_imageNewFormat)
+                    _imageStream.Seek((long)footerV2.FirstChunkOffset, SeekOrigin.Begin);
                 else
-                    imageStream.Seek(footerV1.FirstChunkOffset, SeekOrigin.Begin);
+                    _imageStream.Seek(footerV1.FirstChunkOffset, SeekOrigin.Begin);
 
                 bool   parsing        = true;
                 ushort currentsession = 1;
                 uint   currenttrack   = 1;
 
-                Tracks     = new List<Track>();
-                trackIsrCs = new Dictionary<uint, byte[]>();
+                Tracks      = new List<Track>();
+                _trackIsrCs = new Dictionary<uint, byte[]>();
 
-                imageInfo.MediaType  = MediaType.CD;
-                imageInfo.Sectors    = 0;
-                imageInfo.SectorSize = 0;
+                _imageInfo.MediaType  = MediaType.CD;
+                _imageInfo.Sectors    = 0;
+                _imageInfo.SectorSize = 0;
                 ulong currentSector = 0;
 
                 while(parsing)
                 {
                     byte[] chunkHeaderBuffer = new byte[8];
 
-                    imageStream.Read(chunkHeaderBuffer, 0, 8);
+                    _imageStream.Read(chunkHeaderBuffer, 0, 8);
                     uint chunkId     = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 0);
                     uint chunkLength = BigEndianBitConverter.ToUInt32(chunkHeaderBuffer, 4);
 
@@ -143,7 +143,7 @@ namespace Aaru.DiscImages
                             for(int i = 0; i < newCuesheetV1.ChunkSize; i += 8)
                             {
                                 var entry = new NeroV1CueEntry();
-                                imageStream.Read(tmpbuffer, 0, 8);
+                                _imageStream.Read(tmpbuffer, 0, 8);
                                 entry.Mode        = tmpbuffer[0];
                                 entry.TrackNumber = tmpbuffer[1];
                                 entry.IndexNumber = tmpbuffer[2];
@@ -178,10 +178,10 @@ namespace Aaru.DiscImages
                                 newCuesheetV1.Entries.Add(entry);
                             }
 
-                            if(neroCuesheetV1 is null)
-                                neroCuesheetV1 = newCuesheetV1;
+                            if(_neroCuesheetV1 is null)
+                                _neroCuesheetV1 = newCuesheetV1;
                             else
-                                neroCuesheetV1.Entries.AddRange(newCuesheetV1.Entries);
+                                _neroCuesheetV1.Entries.AddRange(newCuesheetV1.Entries);
 
                             break;
                         }
@@ -203,7 +203,7 @@ namespace Aaru.DiscImages
                             for(int i = 0; i < newCuesheetV2.ChunkSize; i += 8)
                             {
                                 var entry = new NeroV2CueEntry();
-                                imageStream.Read(tmpbuffer, 0, 8);
+                                _imageStream.Read(tmpbuffer, 0, 8);
                                 entry.Mode        = tmpbuffer[0];
                                 entry.TrackNumber = tmpbuffer[1];
                                 entry.IndexNumber = tmpbuffer[2];
@@ -230,10 +230,10 @@ namespace Aaru.DiscImages
                                 newCuesheetV2.Entries.Add(entry);
                             }
 
-                            if(neroCuesheetV2 is null)
-                                neroCuesheetV2 = newCuesheetV2;
+                            if(_neroCuesheetV2 is null)
+                                _neroCuesheetV2 = newCuesheetV2;
                             else
-                                neroCuesheetV2.Entries.AddRange(newCuesheetV2.Entries);
+                                _neroCuesheetV2.Entries.AddRange(newCuesheetV2.Entries);
 
                             break;
                         }
@@ -243,50 +243,51 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DAOI\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroDaov1 = new NeroV1Dao
+                            _neroDaov1 = new NeroV1Dao
                             {
                                 ChunkId     = chunkId,
                                 ChunkSizeBe = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[22];
-                            imageStream.Read(tmpbuffer, 0, 22);
-                            neroDaov1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                            neroDaov1.Upc         = new byte[14];
-                            Array.Copy(tmpbuffer, 4, neroDaov1.Upc, 0, 14);
-                            neroDaov1.TocType    = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
-                            neroDaov1.FirstTrack = tmpbuffer[20];
-                            neroDaov1.LastTrack  = tmpbuffer[21];
-                            neroDaov1.Tracks     = new List<NeroV1DaoEntry>();
+                            _imageStream.Read(tmpbuffer, 0, 22);
+                            _neroDaov1.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            _neroDaov1.Upc         = new byte[14];
+                            Array.Copy(tmpbuffer, 4, _neroDaov1.Upc, 0, 14);
+                            _neroDaov1.TocType    = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
+                            _neroDaov1.FirstTrack = tmpbuffer[20];
+                            _neroDaov1.LastTrack  = tmpbuffer[21];
+                            _neroDaov1.Tracks     = new List<NeroV1DaoEntry>();
 
-                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
-                                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                            if(!_imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+                                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.ChunkSizeLe = {0} bytes",
-                                                       neroDaov1.ChunkSizeLe);
+                                                       _neroDaov1.ChunkSizeLe);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.UPC = \"{0}\"",
-                                                       StringHandlers.CToString(neroDaov1.Upc));
+                                                       StringHandlers.CToString(_neroDaov1.Upc));
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.TocType = 0x{0:X4}",
-                                                       neroDaov1.TocType);
+                                                       _neroDaov1.TocType);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.FirstTrack = {0}",
-                                                       neroDaov1.FirstTrack);
+                                                       _neroDaov1.FirstTrack);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}", neroDaov1.LastTrack);
+                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV1.LastTrack = {0}",
+                                                       _neroDaov1.LastTrack);
 
-                            upc = neroDaov1.Upc;
+                            _upc = _neroDaov1.Upc;
 
                             tmpbuffer = new byte[30];
 
-                            for(int i = 0; i < neroDaov1.ChunkSizeBe - 22; i += 30)
+                            for(int i = 0; i < _neroDaov1.ChunkSizeBe - 22; i += 30)
                             {
                                 var entry = new NeroV1DaoEntry();
-                                imageStream.Read(tmpbuffer, 0, 30);
+                                _imageStream.Read(tmpbuffer, 0, 30);
                                 entry.Isrc = new byte[12];
                                 Array.Copy(tmpbuffer, 4, entry.Isrc, 0, 12);
                                 entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
@@ -319,12 +320,12 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
                                                            (i / 32) + 1, entry.EndOfTrack);
 
-                                neroDaov1.Tracks.Add(entry);
+                                _neroDaov1.Tracks.Add(entry);
 
-                                if(entry.SectorSize > imageInfo.SectorSize)
-                                    imageInfo.SectorSize = entry.SectorSize;
+                                if(entry.SectorSize > _imageInfo.SectorSize)
+                                    _imageInfo.SectorSize = entry.SectorSize;
 
-                                trackIsrCs.Add(currenttrack, entry.Isrc);
+                                _trackIsrCs.Add(currenttrack, entry.Isrc);
 
                                 if(currenttrack == 1)
                                     entry.Index0 = entry.Index1;
@@ -344,10 +345,10 @@ namespace Aaru.DiscImages
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
-                                neroTracks.Add(currenttrack, neroTrack);
+                                _neroTracks.Add(currenttrack, neroTrack);
 
-                                imageInfo.Sectors += neroTrack.Sectors;
-                                currentSector     += neroTrack.Sectors;
+                                _imageInfo.Sectors += neroTrack.Sectors;
+                                currentSector      += neroTrack.Sectors;
 
                                 currenttrack++;
                             }
@@ -360,50 +361,51 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DAOX\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroDaov2 = new NeroV2Dao
+                            _neroDaov2 = new NeroV2Dao
                             {
                                 ChunkId     = chunkId,
                                 ChunkSizeBe = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[22];
-                            imageStream.Read(tmpbuffer, 0, 22);
-                            neroDaov2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                            neroDaov2.Upc         = new byte[14];
-                            Array.Copy(tmpbuffer, 4, neroDaov2.Upc, 0, 14);
-                            neroDaov2.TocType    = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
-                            neroDaov2.FirstTrack = tmpbuffer[20];
-                            neroDaov2.LastTrack  = tmpbuffer[21];
-                            neroDaov2.Tracks     = new List<NeroV2DaoEntry>();
+                            _imageStream.Read(tmpbuffer, 0, 22);
+                            _neroDaov2.ChunkSizeLe = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            _neroDaov2.Upc         = new byte[14];
+                            Array.Copy(tmpbuffer, 4, _neroDaov2.Upc, 0, 14);
+                            _neroDaov2.TocType    = BigEndianBitConverter.ToUInt16(tmpbuffer, 18);
+                            _neroDaov2.FirstTrack = tmpbuffer[20];
+                            _neroDaov2.LastTrack  = tmpbuffer[21];
+                            _neroDaov2.Tracks     = new List<NeroV2DaoEntry>();
 
-                            if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
-                                imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
+                            if(!_imageInfo.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+                                _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_MCN);
 
-                            if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
-                                imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+                            if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
 
-                            upc = neroDaov2.Upc;
+                            _upc = _neroDaov2.Upc;
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.ChunkSizeLe = {0} bytes",
-                                                       neroDaov2.ChunkSizeLe);
+                                                       _neroDaov2.ChunkSizeLe);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.UPC = \"{0}\"",
-                                                       StringHandlers.CToString(neroDaov2.Upc));
+                                                       StringHandlers.CToString(_neroDaov2.Upc));
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.TocType = 0x{0:X4}",
-                                                       neroDaov2.TocType);
+                                                       _neroDaov2.TocType);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.FirstTrack = {0}",
-                                                       neroDaov2.FirstTrack);
+                                                       _neroDaov2.FirstTrack);
 
-                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}", neroDaov2.LastTrack);
+                            AaruConsole.DebugWriteLine("Nero plugin", "neroDAOV2.LastTrack = {0}",
+                                                       _neroDaov2.LastTrack);
 
                             tmpbuffer = new byte[42];
 
-                            for(int i = 0; i < neroDaov2.ChunkSizeBe - 22; i += 42)
+                            for(int i = 0; i < _neroDaov2.ChunkSizeBe - 22; i += 42)
                             {
                                 var entry = new NeroV2DaoEntry();
-                                imageStream.Read(tmpbuffer, 0, 42);
+                                _imageStream.Read(tmpbuffer, 0, 42);
                                 entry.Isrc = new byte[12];
                                 Array.Copy(tmpbuffer, 4, entry.Isrc, 0, 12);
                                 entry.SectorSize = BigEndianBitConverter.ToUInt16(tmpbuffer, 12);
@@ -436,12 +438,12 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].EndOfTrack = {1}",
                                                            (i / 32) + 1, entry.EndOfTrack);
 
-                                neroDaov2.Tracks.Add(entry);
+                                _neroDaov2.Tracks.Add(entry);
 
-                                if(entry.SectorSize > imageInfo.SectorSize)
-                                    imageInfo.SectorSize = entry.SectorSize;
+                                if(entry.SectorSize > _imageInfo.SectorSize)
+                                    _imageInfo.SectorSize = entry.SectorSize;
 
-                                trackIsrCs.Add(currenttrack, entry.Isrc);
+                                _trackIsrCs.Add(currenttrack, entry.Isrc);
 
                                 if(currenttrack == 1)
                                     entry.Index0 = entry.Index1;
@@ -461,10 +463,10 @@ namespace Aaru.DiscImages
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
-                                neroTracks.Add(currenttrack, neroTrack);
+                                _neroTracks.Add(currenttrack, neroTrack);
 
-                                imageInfo.Sectors += neroTrack.Sectors;
-                                currentSector     += neroTrack.Sectors;
+                                _imageInfo.Sectors += neroTrack.Sectors;
+                                currentSector      += neroTrack.Sectors;
 
                                 currenttrack++;
                             }
@@ -477,7 +479,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"CDTX\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroCdtxt = new NeroCdText
+                            _neroCdtxt = new NeroCdText
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength,
@@ -486,10 +488,10 @@ namespace Aaru.DiscImages
 
                             byte[] tmpbuffer = new byte[18];
 
-                            for(int i = 0; i < neroCdtxt.ChunkSize; i += 18)
+                            for(int i = 0; i < _neroCdtxt.ChunkSize; i += 18)
                             {
                                 var entry = new NeroCdTextPack();
-                                imageStream.Read(tmpbuffer, 0, 18);
+                                _imageStream.Read(tmpbuffer, 0, 18);
 
                                 entry.PackType    = tmpbuffer[0];
                                 entry.TrackNumber = tmpbuffer[1];
@@ -519,7 +521,7 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].CRC = 0x{1:X4}", (i / 18) + 1,
                                                            entry.Crc);
 
-                                neroCdtxt.Packs.Add(entry);
+                                _neroCdtxt.Packs.Add(entry);
                             }
 
                             break;
@@ -530,7 +532,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroTaov1 = new NeroV1Tao
+                            _neroTaov1 = new NeroV1Tao
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength,
@@ -539,10 +541,10 @@ namespace Aaru.DiscImages
 
                             byte[] tmpbuffer = new byte[20];
 
-                            for(int i = 0; i < neroTaov1.ChunkSize; i += 20)
+                            for(int i = 0; i < _neroTaov1.ChunkSize; i += 20)
                             {
                                 var entry = new NeroV1TaoEntry();
-                                imageStream.Read(tmpbuffer, 0, 20);
+                                _imageStream.Read(tmpbuffer, 0, 20);
 
                                 entry.Offset   = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
                                 entry.Length   = BigEndianBitConverter.ToUInt32(tmpbuffer, 4);
@@ -567,10 +569,10 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Unknown = 0x{1:X4}",
                                                            (i / 20) + 1, entry.Unknown);
 
-                                neroTaov1.Tracks.Add(entry);
+                                _neroTaov1.Tracks.Add(entry);
 
-                                if(NeroTrackModeToBytesPerSector((DaoMode)entry.Mode) > imageInfo.SectorSize)
-                                    imageInfo.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
+                                if(NeroTrackModeToBytesPerSector((DaoMode)entry.Mode) > _imageInfo.SectorSize)
+                                    _imageInfo.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
 
                                 var neroTrack = new NeroTrack
                                 {
@@ -588,9 +590,9 @@ namespace Aaru.DiscImages
                                 neroTrack.Sectors =
                                     neroTrack.Length / NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
 
-                                neroTracks.Add(currenttrack, neroTrack);
+                                _neroTracks.Add(currenttrack, neroTrack);
 
-                                imageInfo.Sectors += neroTrack.Sectors;
+                                _imageInfo.Sectors += neroTrack.Sectors;
 
                                 currenttrack++;
                             }
@@ -603,7 +605,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"ETN2\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroTaov2 = new NeroV2Tao
+                            _neroTaov2 = new NeroV2Tao
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength,
@@ -612,10 +614,10 @@ namespace Aaru.DiscImages
 
                             byte[] tmpbuffer = new byte[32];
 
-                            for(int i = 0; i < neroTaov2.ChunkSize; i += 32)
+                            for(int i = 0; i < _neroTaov2.ChunkSize; i += 32)
                             {
                                 var entry = new NeroV2TaoEntry();
-                                imageStream.Read(tmpbuffer, 0, 32);
+                                _imageStream.Read(tmpbuffer, 0, 32);
 
                                 entry.Offset   = BigEndianBitConverter.ToUInt64(tmpbuffer, 0);
                                 entry.Length   = BigEndianBitConverter.ToUInt64(tmpbuffer, 8);
@@ -644,10 +646,10 @@ namespace Aaru.DiscImages
                                 AaruConsole.DebugWriteLine("Nero plugin", "\t _entry[{0}].Sectors = {1}", (i / 32) + 1,
                                                            entry.Sectors);
 
-                                neroTaov2.Tracks.Add(entry);
+                                _neroTaov2.Tracks.Add(entry);
 
-                                if(NeroTrackModeToBytesPerSector((DaoMode)entry.Mode) > imageInfo.SectorSize)
-                                    imageInfo.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
+                                if(NeroTrackModeToBytesPerSector((DaoMode)entry.Mode) > _imageInfo.SectorSize)
+                                    _imageInfo.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
 
                                 var neroTrack = new NeroTrack
                                 {
@@ -665,9 +667,9 @@ namespace Aaru.DiscImages
                                 neroTrack.SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode);
                                 neroTrack.StartLba   = entry.StartLba;
                                 neroTrack.Sequence   = currenttrack;
-                                neroTracks.Add(currenttrack, neroTrack);
+                                _neroTracks.Add(currenttrack, neroTrack);
 
-                                imageInfo.Sectors += neroTrack.Sectors;
+                                _imageInfo.Sectors += neroTrack.Sectors;
 
                                 currenttrack++;
                             }
@@ -681,9 +683,9 @@ namespace Aaru.DiscImages
                                                        chunkLength);
 
                             byte[] tmpbuffer = new byte[4];
-                            imageStream.Read(tmpbuffer, 0, 4);
+                            _imageStream.Read(tmpbuffer, 0, 4);
                             uint sessionTracks = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
-                            neroSessions.Add(currentsession, sessionTracks);
+                            _neroSessions.Add(currentsession, sessionTracks);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tSession {0} has {1} tracks", currentsession,
                                                        sessionTracks);
@@ -698,20 +700,20 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"MTYP\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroMediaTyp = new NeroMediaType
+                            _neroMediaTyp = new NeroMediaType
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
-                            imageStream.Read(tmpbuffer, 0, 4);
-                            neroMediaTyp.Type = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            _imageStream.Read(tmpbuffer, 0, 4);
+                            _neroMediaTyp.Type = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tMedia type is {0} ({1})",
-                                                       (NeroMediaTypes)neroMediaTyp.Type, neroMediaTyp.Type);
+                                                       (NeroMediaTypes)_neroMediaTyp.Type, _neroMediaTyp.Type);
 
-                            imageInfo.MediaType = NeroMediaTypeToMediaType((NeroMediaTypes)neroMediaTyp.Type);
+                            _imageInfo.MediaType = NeroMediaTypeToMediaType((NeroMediaTypes)_neroMediaTyp.Type);
 
                             break;
                         }
@@ -721,18 +723,18 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"DINF\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroDiscInfo = new NeroDiscInformation
+                            _neroDiscInfo = new NeroDiscInformation
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
-                            imageStream.Read(tmpbuffer, 0, 4);
-                            neroDiscInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            _imageStream.Read(tmpbuffer, 0, 4);
+                            _neroDiscInfo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroDiscInfo.Unknown = 0x{0:X4} ({0})",
-                                                       neroDiscInfo.Unknown);
+                                                       _neroDiscInfo.Unknown);
 
                             break;
                         }
@@ -742,18 +744,18 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"RELO\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroRelo = new NeroReloChunk
+                            _neroRelo = new NeroReloChunk
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
-                            imageStream.Read(tmpbuffer, 0, 4);
-                            neroRelo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
+                            _imageStream.Read(tmpbuffer, 0, 4);
+                            _neroRelo.Unknown = BigEndianBitConverter.ToUInt32(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroRELO.Unknown = 0x{0:X4} ({0})",
-                                                       neroRelo.Unknown);
+                                                       _neroRelo.Unknown);
 
                             break;
                         }
@@ -763,18 +765,18 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("Nero plugin", "Found \"TOCT\" chunk, parsing {0} bytes",
                                                        chunkLength);
 
-                            neroToc = new NeroTocChunk
+                            _neroToc = new NeroTocChunk
                             {
                                 ChunkId   = chunkId,
                                 ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[2];
-                            imageStream.Read(tmpbuffer, 0, 2);
-                            neroToc.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 0);
+                            _imageStream.Read(tmpbuffer, 0, 2);
+                            _neroToc.Unknown = BigEndianBitConverter.ToUInt16(tmpbuffer, 0);
 
                             AaruConsole.DebugWriteLine("Nero plugin", "\tneroTOC.Unknown = 0x{0:X4} ({0})",
-                                                       neroToc.Unknown);
+                                                       _neroToc.Unknown);
 
                             break;
                         }
@@ -793,62 +795,62 @@ namespace Aaru.DiscImages
                                                        Encoding.ASCII.GetString(BigEndianBitConverter.
                                                                                     GetBytes(chunkId)));
 
-                            imageStream.Seek(chunkLength, SeekOrigin.Current);
+                            _imageStream.Seek(chunkLength, SeekOrigin.Current);
 
                             break;
                         }
                     }
                 }
 
-                imageInfo.HasPartitions         = true;
-                imageInfo.HasSessions           = true;
-                imageInfo.Creator               = null;
-                imageInfo.CreationTime          = imageFilter.GetCreationTime();
-                imageInfo.LastModificationTime  = imageFilter.GetLastWriteTime();
-                imageInfo.MediaTitle            = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-                imageInfo.Comments              = null;
-                imageInfo.MediaManufacturer     = null;
-                imageInfo.MediaModel            = null;
-                imageInfo.MediaSerialNumber     = null;
-                imageInfo.MediaBarcode          = null;
-                imageInfo.MediaPartNumber       = null;
-                imageInfo.DriveManufacturer     = null;
-                imageInfo.DriveModel            = null;
-                imageInfo.DriveSerialNumber     = null;
-                imageInfo.DriveFirmwareRevision = null;
-                imageInfo.MediaSequence         = 0;
-                imageInfo.LastMediaSequence     = 0;
+                _imageInfo.HasPartitions         = true;
+                _imageInfo.HasSessions           = true;
+                _imageInfo.Creator               = null;
+                _imageInfo.CreationTime          = imageFilter.GetCreationTime();
+                _imageInfo.LastModificationTime  = imageFilter.GetLastWriteTime();
+                _imageInfo.MediaTitle            = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+                _imageInfo.Comments              = null;
+                _imageInfo.MediaManufacturer     = null;
+                _imageInfo.MediaModel            = null;
+                _imageInfo.MediaSerialNumber     = null;
+                _imageInfo.MediaBarcode          = null;
+                _imageInfo.MediaPartNumber       = null;
+                _imageInfo.DriveManufacturer     = null;
+                _imageInfo.DriveModel            = null;
+                _imageInfo.DriveSerialNumber     = null;
+                _imageInfo.DriveFirmwareRevision = null;
+                _imageInfo.MediaSequence         = 0;
+                _imageInfo.LastMediaSequence     = 0;
 
-                if(imageNewFormat)
+                if(_imageNewFormat)
                 {
-                    imageInfo.ImageSize          = footerV2.FirstChunkOffset;
-                    imageInfo.Version            = "Nero Burning ROM >= 5.5";
-                    imageInfo.Application        = "Nero Burning ROM";
-                    imageInfo.ApplicationVersion = ">= 5.5";
+                    _imageInfo.ImageSize          = footerV2.FirstChunkOffset;
+                    _imageInfo.Version            = "Nero Burning ROM >= 5.5";
+                    _imageInfo.Application        = "Nero Burning ROM";
+                    _imageInfo.ApplicationVersion = ">= 5.5";
                 }
                 else
                 {
-                    imageInfo.ImageSize          = footerV1.FirstChunkOffset;
-                    imageInfo.Version            = "Nero Burning ROM <= 5.0";
-                    imageInfo.Application        = "Nero Burning ROM";
-                    imageInfo.ApplicationVersion = "<= 5.0";
+                    _imageInfo.ImageSize          = footerV1.FirstChunkOffset;
+                    _imageInfo.Version            = "Nero Burning ROM <= 5.0";
+                    _imageInfo.Application        = "Nero Burning ROM";
+                    _imageInfo.ApplicationVersion = "<= 5.0";
                 }
 
-                if(neroSessions.Count == 0)
-                    neroSessions.Add(1, currenttrack);
+                if(_neroSessions.Count == 0)
+                    _neroSessions.Add(1, currenttrack);
 
                 AaruConsole.DebugWriteLine("Nero plugin", "Building offset, track and session maps");
 
                 currentsession = 1;
-                neroSessions.TryGetValue(1, out uint currentsessionmaxtrack);
+                _neroSessions.TryGetValue(1, out uint currentsessionmaxtrack);
                 uint  currentsessioncurrenttrack = 1;
                 var   currentsessionstruct       = new Session();
                 ulong partitionSequence          = 0;
                 ulong partitionStartByte         = 0;
 
-                for(uint i = 1; i <= neroTracks.Count; i++)
+                for(uint i = 1; i <= _neroTracks.Count; i++)
                 {
-                    if(!neroTracks.TryGetValue(i, out NeroTrack neroTrack))
+                    if(!_neroTracks.TryGetValue(i, out NeroTrack neroTrack))
                         continue;
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\tcurrentsession = {0}", currentsession);
@@ -859,9 +861,9 @@ namespace Aaru.DiscImages
 
                     var track = new Track();
 
-                    if(neroCuesheetV1?.Entries?.Count > 0)
+                    if(_neroCuesheetV1?.Entries?.Count > 0)
                     {
-                        foreach(NeroV1CueEntry entry in neroCuesheetV1.
+                        foreach(NeroV1CueEntry entry in _neroCuesheetV1.
                                                         Entries.Where(e => e.TrackNumber == neroTrack.Sequence).
                                                         OrderBy(e => e.IndexNumber))
                         {
@@ -874,8 +876,8 @@ namespace Aaru.DiscImages
                             track.Indexes[entry.IndexNumber] = indexSector;
                         }
                     }
-                    else if(neroCuesheetV2?.Entries?.Count > 0)
-                        foreach(NeroV2CueEntry entry in neroCuesheetV2.
+                    else if(_neroCuesheetV2?.Entries?.Count > 0)
+                        foreach(NeroV2CueEntry entry in _neroCuesheetV2.
                                                         Entries.Where(e => e.TrackNumber == neroTrack.Sequence).
                                                         OrderBy(e => e.IndexNumber))
                             track.Indexes[entry.IndexNumber] = entry.LbaStart;
@@ -1005,23 +1007,23 @@ namespace Aaru.DiscImages
                     if(currentsessioncurrenttrack > currentsessionmaxtrack)
                     {
                         currentsession++;
-                        neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
+                        _neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
                         currentsessioncurrenttrack     = 1;
                         currentsessionstruct.EndTrack  = track.TrackSequence;
                         currentsessionstruct.EndSector = track.TrackEndSector;
                         Sessions.Add(currentsessionstruct);
                     }
 
-                    else if(i == neroTracks.Count)
+                    else if(i == _neroTracks.Count)
                     {
-                        neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
+                        _neroSessions.TryGetValue(currentsession, out currentsessionmaxtrack);
                         currentsessioncurrenttrack     = 1;
                         currentsessionstruct.EndTrack  = track.TrackSequence;
                         currentsessionstruct.EndSector = track.TrackEndSector;
                         Sessions.Add(currentsessionstruct);
                     }
 
-                    offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
 
                     AaruConsole.DebugWriteLine("Nero plugin", "\t\t Offset[{0}]: {1}", track.TrackSequence,
                                                track.TrackStartSector);
@@ -1069,10 +1071,10 @@ namespace Aaru.DiscImages
                     track.TrackStartSector -= 150;
                 }
 
-                neroFilter = imageFilter;
+                _neroFilter = imageFilter;
 
-                if(imageInfo.MediaType == MediaType.Unknown ||
-                   imageInfo.MediaType == MediaType.CD)
+                if(_imageInfo.MediaType == MediaType.Unknown ||
+                   _imageInfo.MediaType == MediaType.CD)
                 {
                     bool data       = false;
                     bool mode2      = false;
@@ -1080,25 +1082,25 @@ namespace Aaru.DiscImages
                     bool firstdata  = false;
                     bool audio      = false;
 
-                    for(int i = 0; i < neroTracks.Count; i++)
+                    for(int i = 0; i < _neroTracks.Count; i++)
                     {
                         // First track is audio
-                        firstaudio |= i == 0 && ((DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
-                                                 (DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
+                        firstaudio |= i == 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
+                                                 (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
                         // First track is data
-                        firstdata |= i == 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
-                                     (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
+                        firstdata |= i == 0 && (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                     (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is data
-                        data |= i != 0 && (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
-                                (DaoMode)neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
+                        data |= i != 0 && (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.Audio &&
+                                (DaoMode)_neroTracks.ElementAt(i).Value.Mode != DaoMode.AudioSub;
 
                         // Any non first track is audio
-                        audio |= i != 0 && ((DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
-                                            (DaoMode)neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
+                        audio |= i != 0 && ((DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.Audio ||
+                                            (DaoMode)_neroTracks.ElementAt(i).Value.Mode == DaoMode.AudioSub);
 
-                        switch((DaoMode)neroTracks.ElementAt(i).Value.Mode)
+                        switch((DaoMode)_neroTracks.ElementAt(i).Value.Mode)
                         {
                             case DaoMode.DataM2F1:
                             case DaoMode.DataM2F2:
@@ -1112,65 +1114,65 @@ namespace Aaru.DiscImages
 
                     if(!data &&
                        !firstdata)
-                        imageInfo.MediaType = MediaType.CDDA;
+                        _imageInfo.MediaType = MediaType.CDDA;
                     else if(firstaudio         &&
                             data               &&
                             Sessions.Count > 1 &&
                             mode2)
-                        imageInfo.MediaType = MediaType.CDPLUS;
+                        _imageInfo.MediaType = MediaType.CDPLUS;
                     else if((firstdata && audio) || mode2)
-                        imageInfo.MediaType = MediaType.CDROMXA;
+                        _imageInfo.MediaType = MediaType.CDROMXA;
                     else if(!audio)
-                        imageInfo.MediaType = MediaType.CDROM;
+                        _imageInfo.MediaType = MediaType.CDROM;
                     else
-                        imageInfo.MediaType = MediaType.CD;
+                        _imageInfo.MediaType = MediaType.CD;
                 }
 
-                imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
-                AaruConsole.VerboseWriteLine("Nero image contains a disc of type {0}", imageInfo.MediaType);
+                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                AaruConsole.VerboseWriteLine("Nero image contains a disc of type {0}", _imageInfo.MediaType);
 
                 _sectorBuilder = new SectorBuilder();
 
-                if(imageInfo.MediaType != MediaType.CD            &&
-                   imageInfo.MediaType != MediaType.CDDA          &&
-                   imageInfo.MediaType != MediaType.CDG           &&
-                   imageInfo.MediaType != MediaType.CDEG          &&
-                   imageInfo.MediaType != MediaType.CDI           &&
-                   imageInfo.MediaType != MediaType.CDROM         &&
-                   imageInfo.MediaType != MediaType.CDROMXA       &&
-                   imageInfo.MediaType != MediaType.CDPLUS        &&
-                   imageInfo.MediaType != MediaType.CDMO          &&
-                   imageInfo.MediaType != MediaType.CDR           &&
-                   imageInfo.MediaType != MediaType.CDRW          &&
-                   imageInfo.MediaType != MediaType.CDMRW         &&
-                   imageInfo.MediaType != MediaType.VCD           &&
-                   imageInfo.MediaType != MediaType.SVCD          &&
-                   imageInfo.MediaType != MediaType.PCD           &&
-                   imageInfo.MediaType != MediaType.DTSCD         &&
-                   imageInfo.MediaType != MediaType.CDMIDI        &&
-                   imageInfo.MediaType != MediaType.CDV           &&
-                   imageInfo.MediaType != MediaType.CDIREADY      &&
-                   imageInfo.MediaType != MediaType.FMTOWNS       &&
-                   imageInfo.MediaType != MediaType.PS1CD         &&
-                   imageInfo.MediaType != MediaType.PS2CD         &&
-                   imageInfo.MediaType != MediaType.MEGACD        &&
-                   imageInfo.MediaType != MediaType.SATURNCD      &&
-                   imageInfo.MediaType != MediaType.GDROM         &&
-                   imageInfo.MediaType != MediaType.GDR           &&
-                   imageInfo.MediaType != MediaType.MilCD         &&
-                   imageInfo.MediaType != MediaType.SuperCDROM2   &&
-                   imageInfo.MediaType != MediaType.JaguarCD      &&
-                   imageInfo.MediaType != MediaType.ThreeDO       &&
-                   imageInfo.MediaType != MediaType.PCFX          &&
-                   imageInfo.MediaType != MediaType.NeoGeoCD      &&
-                   imageInfo.MediaType != MediaType.CDTV          &&
-                   imageInfo.MediaType != MediaType.CD32          &&
-                   imageInfo.MediaType != MediaType.Playdia       &&
-                   imageInfo.MediaType != MediaType.Pippin        &&
-                   imageInfo.MediaType != MediaType.VideoNow      &&
-                   imageInfo.MediaType != MediaType.VideoNowColor &&
-                   imageInfo.MediaType != MediaType.VideoNowXp    &&
-                   imageInfo.MediaType != MediaType.CVD)
+                if(_imageInfo.MediaType != MediaType.CD            &&
+                   _imageInfo.MediaType != MediaType.CDDA          &&
+                   _imageInfo.MediaType != MediaType.CDG           &&
+                   _imageInfo.MediaType != MediaType.CDEG          &&
+                   _imageInfo.MediaType != MediaType.CDI           &&
+                   _imageInfo.MediaType != MediaType.CDROM         &&
+                   _imageInfo.MediaType != MediaType.CDROMXA       &&
+                   _imageInfo.MediaType != MediaType.CDPLUS        &&
+                   _imageInfo.MediaType != MediaType.CDMO          &&
+                   _imageInfo.MediaType != MediaType.CDR           &&
+                   _imageInfo.MediaType != MediaType.CDRW          &&
+                   _imageInfo.MediaType != MediaType.CDMRW         &&
+                   _imageInfo.MediaType != MediaType.VCD           &&
+                   _imageInfo.MediaType != MediaType.SVCD          &&
+                   _imageInfo.MediaType != MediaType.PCD           &&
+                   _imageInfo.MediaType != MediaType.DTSCD         &&
+                   _imageInfo.MediaType != MediaType.CDMIDI        &&
+                   _imageInfo.MediaType != MediaType.CDV           &&
+                   _imageInfo.MediaType != MediaType.CDIREADY      &&
+                   _imageInfo.MediaType != MediaType.FMTOWNS       &&
+                   _imageInfo.MediaType != MediaType.PS1CD         &&
+                   _imageInfo.MediaType != MediaType.PS2CD         &&
+                   _imageInfo.MediaType != MediaType.MEGACD        &&
+                   _imageInfo.MediaType != MediaType.SATURNCD      &&
+                   _imageInfo.MediaType != MediaType.GDROM         &&
+                   _imageInfo.MediaType != MediaType.GDR           &&
+                   _imageInfo.MediaType != MediaType.MilCD         &&
+                   _imageInfo.MediaType != MediaType.SuperCDROM2   &&
+                   _imageInfo.MediaType != MediaType.JaguarCD      &&
+                   _imageInfo.MediaType != MediaType.ThreeDO       &&
+                   _imageInfo.MediaType != MediaType.PCFX          &&
+                   _imageInfo.MediaType != MediaType.NeoGeoCD      &&
+                   _imageInfo.MediaType != MediaType.CDTV          &&
+                   _imageInfo.MediaType != MediaType.CD32          &&
+                   _imageInfo.MediaType != MediaType.Playdia       &&
+                   _imageInfo.MediaType != MediaType.Pippin        &&
+                   _imageInfo.MediaType != MediaType.VideoNow      &&
+                   _imageInfo.MediaType != MediaType.VideoNowColor &&
+                   _imageInfo.MediaType != MediaType.VideoNowXp    &&
+                   _imageInfo.MediaType != MediaType.CVD)
                     foreach(Track track in Tracks)
                     {
                         track.TrackPregap = 0;
@@ -1191,7 +1193,7 @@ namespace Aaru.DiscImages
         {
             switch(tag)
             {
-                case MediaTagType.CD_MCN:  return upc;
+                case MediaTagType.CD_MCN:  return _upc;
                 case MediaTagType.CD_TEXT: throw new NotImplementedException("Not yet implemented");
                 default:
                     throw new FeaturedNotSupportedByDiscImageException("Requested disk tag not supported by image");
@@ -1209,7 +1211,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <=
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1220,7 +1222,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <=
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1231,7 +1233,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
+            if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > aaruTrack.Sectors)
@@ -1327,8 +1329,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = neroFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _neroFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1371,7 +1373,7 @@ namespace Aaru.DiscImages
                tag == SectorTagType.CdTrackIsrc)
                 track = (uint)sectorAddress;
 
-            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
+            if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > aaruTrack.Sectors)
@@ -1612,8 +1614,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = neroFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _neroFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
@@ -1640,7 +1642,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in offsetmap where sectorAddress      >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress        - kvp.Value <=
                                                            track.TrackEndSector - track.TrackStartSector select kvp)
@@ -1651,7 +1653,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
+            if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
             if(length > aaruTrack.Sectors)
@@ -1710,8 +1712,8 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = neroFilter.GetDataForkStream();
-            var br = new BinaryReader(imageStream);
+            _imageStream = _neroFilter.GetDataForkStream();
+            var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
                Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),

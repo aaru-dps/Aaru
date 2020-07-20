@@ -40,26 +40,26 @@ namespace Aaru.DiscImages
 {
     public partial class Qcow : IWritableImage
     {
-        Dictionary<ulong, byte[]>  clusterCache;
-        int                        clusterSectors;
-        int                        clusterSize;
-        ImageInfo                  imageInfo;
-        Stream                     imageStream;
-        ulong                      l1Mask;
-        int                        l1Shift;
-        uint                       l1Size;
-        ulong[]                    l1Table;
-        ulong                      l2Mask;
-        int                        l2Size;
-        Dictionary<ulong, ulong[]> l2TableCache;
-        int                        maxClusterCache;
-        int                        maxL2TableCache;
-        QCowHeader                 qHdr;
-        Dictionary<ulong, byte[]>  sectorCache;
-        ulong                      sectorMask;
-        FileStream                 writingStream;
+        Dictionary<ulong, byte[]>  _clusterCache;
+        int                        _clusterSectors;
+        int                        _clusterSize;
+        ImageInfo                  _imageInfo;
+        Stream                     _imageStream;
+        ulong                      _l1Mask;
+        int                        _l1Shift;
+        uint                       _l1Size;
+        ulong[]                    _l1Table;
+        ulong                      _l2Mask;
+        int                        _l2Size;
+        Dictionary<ulong, ulong[]> _l2TableCache;
+        int                        _maxClusterCache;
+        int                        _maxL2TableCache;
+        QCowHeader                 _qHdr;
+        Dictionary<ulong, byte[]>  _sectorCache;
+        ulong                      _sectorMask;
+        FileStream                 _writingStream;
 
-        public Qcow() => imageInfo = new ImageInfo
+        public Qcow() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

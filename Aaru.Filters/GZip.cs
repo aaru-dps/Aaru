@@ -41,13 +41,13 @@ namespace Aaru.Filters
     /// <summary>Decompress gzip files while reading</summary>
     public class GZip : IFilter
     {
-        string   basePath;
-        DateTime creationTime;
-        Stream   dataStream;
-        uint     decompressedSize;
-        DateTime lastWriteTime;
-        bool     opened;
-        Stream   zStream;
+        string   _basePath;
+        DateTime _creationTime;
+        Stream   _dataStream;
+        uint     _decompressedSize;
+        DateTime _lastWriteTime;
+        bool     _opened;
+        Stream   _zStream;
 
         public string Name   => "GZip";
         public Guid   Id     => new Guid("F4996661-4A29-42C9-A2C7-3904EF40F3B0");
@@ -55,17 +55,17 @@ namespace Aaru.Filters
 
         public void Close()
         {
-            dataStream?.Close();
-            dataStream = null;
-            basePath   = null;
-            opened     = false;
+            _dataStream?.Close();
+            _dataStream = null;
+            _basePath   = null;
+            _opened     = false;
         }
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public Stream GetDataForkStream() => zStream;
+        public Stream GetDataForkStream() => _zStream;
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
         public Stream GetResourceForkStream() => null;
 
@@ -101,102 +101,102 @@ namespace Aaru.Filters
 
         public void Open(byte[] buffer)
         {
-            byte[] mtime_b = new byte[4];
-            byte[] isize_b = new byte[4];
+            byte[] mtimeB = new byte[4];
+            byte[] isizeB = new byte[4];
 
-            dataStream = new MemoryStream(buffer);
-            basePath   = null;
+            _dataStream = new MemoryStream(buffer);
+            _basePath   = null;
 
-            dataStream.Seek(4, SeekOrigin.Begin);
-            dataStream.Read(mtime_b, 0, 4);
-            dataStream.Seek(-4, SeekOrigin.End);
-            dataStream.Read(isize_b, 0, 4);
-            dataStream.Seek(0, SeekOrigin.Begin);
+            _dataStream.Seek(4, SeekOrigin.Begin);
+            _dataStream.Read(mtimeB, 0, 4);
+            _dataStream.Seek(-4, SeekOrigin.End);
+            _dataStream.Read(isizeB, 0, 4);
+            _dataStream.Seek(0, SeekOrigin.Begin);
 
-            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
-            uint isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtimeB, 0);
+            uint isize = BitConverter.ToUInt32(isizeB, 0);
 
-            decompressedSize = isize;
-            creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
-            lastWriteTime    = creationTime;
+            _decompressedSize = isize;
+            _creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
+            _lastWriteTime    = _creationTime;
 
-            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            opened = true;
+            _opened = true;
         }
 
         public void Open(Stream stream)
         {
-            byte[] mtime_b = new byte[4];
-            byte[] isize_b = new byte[4];
+            byte[] mtimeB = new byte[4];
+            byte[] isizeB = new byte[4];
 
-            dataStream = stream;
-            basePath   = null;
+            _dataStream = stream;
+            _basePath   = null;
 
-            dataStream.Seek(4, SeekOrigin.Begin);
-            dataStream.Read(mtime_b, 0, 4);
-            dataStream.Seek(-4, SeekOrigin.End);
-            dataStream.Read(isize_b, 0, 4);
-            dataStream.Seek(0, SeekOrigin.Begin);
+            _dataStream.Seek(4, SeekOrigin.Begin);
+            _dataStream.Read(mtimeB, 0, 4);
+            _dataStream.Seek(-4, SeekOrigin.End);
+            _dataStream.Read(isizeB, 0, 4);
+            _dataStream.Seek(0, SeekOrigin.Begin);
 
-            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
-            uint isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtimeB, 0);
+            uint isize = BitConverter.ToUInt32(isizeB, 0);
 
-            decompressedSize = isize;
-            creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
-            lastWriteTime    = creationTime;
+            _decompressedSize = isize;
+            _creationTime     = DateHandlers.UnixUnsignedToDateTime(mtime);
+            _lastWriteTime    = _creationTime;
 
-            zStream = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            opened = true;
+            _opened = true;
         }
 
         public void Open(string path)
         {
-            byte[] mtime_b = new byte[4];
-            byte[] isize_b = new byte[4];
+            byte[] mtimeB = new byte[4];
+            byte[] isizeB = new byte[4];
 
-            dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath   = Path.GetFullPath(path);
+            _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            _basePath   = Path.GetFullPath(path);
 
-            dataStream.Seek(4, SeekOrigin.Begin);
-            dataStream.Read(mtime_b, 0, 4);
-            dataStream.Seek(-4, SeekOrigin.End);
-            dataStream.Read(isize_b, 0, 4);
-            dataStream.Seek(0, SeekOrigin.Begin);
+            _dataStream.Seek(4, SeekOrigin.Begin);
+            _dataStream.Read(mtimeB, 0, 4);
+            _dataStream.Seek(-4, SeekOrigin.End);
+            _dataStream.Read(isizeB, 0, 4);
+            _dataStream.Seek(0, SeekOrigin.Begin);
 
-            uint mtime = BitConverter.ToUInt32(mtime_b, 0);
-            uint isize = BitConverter.ToUInt32(isize_b, 0);
+            uint mtime = BitConverter.ToUInt32(mtimeB, 0);
+            uint isize = BitConverter.ToUInt32(isizeB, 0);
 
-            decompressedSize = isize;
+            _decompressedSize = isize;
             var fi = new FileInfo(path);
-            creationTime  = fi.CreationTimeUtc;
-            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
-            zStream       = new ForcedSeekStream<GZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened        = true;
+            _creationTime = fi.CreationTimeUtc;
+            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(mtime);
+            _zStream = new ForcedSeekStream<GZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
+            _opened = true;
         }
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => decompressedSize;
+        public long GetDataForkLength() => _decompressedSize;
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => decompressedSize;
+        public long GetLength() => _decompressedSize;
 
         public long GetResourceForkLength() => 0;
 
         public string GetFilename()
         {
-            if(basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 3);
+            if(_basePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
+                return _basePath.Substring(0, _basePath.Length - 3);
 
-            return basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 5) : basePath;
+            return _basePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? _basePath.Substring(0, _basePath.Length - 5) : _basePath;
         }
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
     }
 }

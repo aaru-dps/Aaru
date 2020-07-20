@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class MaxiDisk
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Name         => "MAXI Disk image";
         public Guid                   Id           => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");

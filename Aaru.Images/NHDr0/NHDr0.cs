@@ -41,12 +41,12 @@ namespace Aaru.DiscImages
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
     public partial class Nhdr0 : IWritableImage
     {
-        ImageInfo   imageInfo;
-        Nhdr0Header nhdhdr;
-        IFilter     nhdImageFilter;
-        FileStream  writingStream;
+        ImageInfo   _imageInfo;
+        Nhdr0Header _nhdhdr;
+        IFilter     _nhdImageFilter;
+        FileStream  _writingStream;
 
-        public Nhdr0() => imageInfo = new ImageInfo
+        public Nhdr0() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

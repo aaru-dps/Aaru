@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
                                        StringHandlers.CToString(d88Hdr.name, shiftjis));
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                       d88Hdr.reserved.SequenceEqual(reservedEmpty));
+                                       d88Hdr.reserved.SequenceEqual(_reservedEmpty));
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
 
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
                d88Hdr.disk_type != DiskType.Hd2)
                 return false;
 
-            if(!d88Hdr.reserved.SequenceEqual(reservedEmpty))
+            if(!d88Hdr.reserved.SequenceEqual(_reservedEmpty))
                 return false;
 
             int counter = 0;

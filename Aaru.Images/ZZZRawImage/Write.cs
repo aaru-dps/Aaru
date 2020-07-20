@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -68,7 +68,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -77,8 +77,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            basepath  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
-            mediaTags = new Dictionary<MediaTagType, byte[]>();
+            _basepath  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            _mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -115,10 +115,10 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(mediaTags.ContainsKey(tag))
-                mediaTags.Remove(tag);
+            if(_mediaTags.ContainsKey(tag))
+                _mediaTags.Remove(tag);
 
-            mediaTags.Add(tag, data);
+            _mediaTags.Add(tag, data);
 
             return true;
         }
@@ -132,22 +132,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length != imageInfo.SectorSize)
+            if(data.Length != _imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -163,22 +163,22 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(data.Length % imageInfo.SectorSize != 0)
+            if(data.Length % _imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
 
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -218,19 +218,19 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
             IsWriting = false;
 
-            foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
+            foreach(KeyValuePair<MediaTagType, byte[]> tag in _mediaTags)
             {
-                string suffix = readWriteSidecars.Concat(writeOnlySidecars).Where(t => t.tag == tag.Key).
-                                                  Select(t => t.name).FirstOrDefault();
+                string suffix = _readWriteSidecars.Concat(_writeOnlySidecars).Where(t => t.tag == tag.Key).
+                                                   Select(t => t.name).FirstOrDefault();
 
                 if(suffix == null)
                     continue;
 
-                var tagStream = new FileStream(basepath + suffix, FileMode.Create, FileAccess.ReadWrite,
+                var tagStream = new FileStream(_basepath + suffix, FileMode.Create, FileAccess.ReadWrite,
                                                FileShare.None);
 
                 tagStream.Write(tag.Value, 0, tag.Value.Length);

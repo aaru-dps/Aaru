@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreRawData      |
                                                                OpticalImageCapabilities.CanStoreCookedData   |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
-        public ImageInfo Info   => imageInfo;
+        public ImageInfo Info   => _imageInfo;
         public string    Name   => "Alcohol 120% Media Descriptor Structure";
         public Guid      Id     => new Guid("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
         public string    Author => "Natalia Portillo";
@@ -67,14 +67,14 @@ namespace Aaru.DiscImages
             {
                 List<Track> tracks = new List<Track>();
 
-                foreach(AlcoholTrack alcTrack in alcTracks.Values)
+                foreach(AlcoholTrack alcTrack in _alcTracks.Values)
                 {
                     ushort sessionNo =
                         (from session in Sessions
                          where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
                          select session.SessionSequence).FirstOrDefault();
 
-                    if(!alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
+                    if(!_alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
                         continue;
 
                     var aaruTrack = new Track
@@ -85,8 +85,8 @@ namespace Aaru.DiscImages
                         TrackSession           = sessionNo,
                         TrackSequence          = alcTrack.point,
                         TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
-                        TrackFilter            = alcImage,
-                        TrackFile              = alcImage.GetFilename(),
+                        TrackFilter            = _alcImage,
+                        TrackFile              = _alcImage.GetFilename(),
                         TrackFileOffset        = alcTrack.startOffset,
                         TrackFileType          = "BINARY",
                         TrackRawBytesPerSector = alcTrack.sectorSize,
@@ -101,8 +101,8 @@ namespace Aaru.DiscImages
                     switch(alcTrack.subMode)
                     {
                         case AlcoholSubchannelMode.Interleaved:
-                            aaruTrack.TrackSubchannelFilter = alcImage;
-                            aaruTrack.TrackSubchannelFile   = alcImage.GetFilename();
+                            aaruTrack.TrackSubchannelFilter = _alcImage;
+                            aaruTrack.TrackSubchannelFile   = _alcImage.GetFilename();
                             aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
                             aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
@@ -113,9 +113,9 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                    if(header.type != AlcoholMediumType.CD  &&
-                       header.type != AlcoholMediumType.CDR &&
-                       header.type != AlcoholMediumType.CDRW)
+                    if(_header.type != AlcoholMediumType.CD  &&
+                       _header.type != AlcoholMediumType.CDR &&
+                       _header.type != AlcoholMediumType.CDRW)
                     {
                         aaruTrack.TrackPregap = 0;
                         aaruTrack.Indexes?.Clear();

@@ -48,9 +48,9 @@ namespace Aaru.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());
-            vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
+            _vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
 
-            return vhdxId.signature == VHDX_SIGNATURE;
+            return _vhdxId.signature == VHDX_SIGNATURE;
         }
     }
 }

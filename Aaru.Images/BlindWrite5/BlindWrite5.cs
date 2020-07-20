@@ -41,29 +41,29 @@ namespace Aaru.DiscImages
     // TODO: Too many unknowns to make this writable
     public partial class BlindWrite5 : IOpticalMediaImage
     {
-        byte[]                        atip;
-        byte[]                        bca;
-        List<Bw5SessionDescriptor>    bwSessions;
-        byte[]                        cdtext;
-        List<Bw5DataFile>             dataFiles;
-        string                        dataPath;
-        byte[]                        discInformation;
-        byte[]                        dmi;
-        byte[]                        dpm;
-        List<DataFileCharacteristics> filePaths;
-        byte[]                        fullToc;
+        byte[]                        _atip;
+        byte[]                        _bca;
+        List<Bw5SessionDescriptor>    _bwSessions;
+        byte[]                        _cdtext;
+        List<Bw5DataFile>             _dataFiles;
+        string                        _dataPath;
+        byte[]                        _discInformation;
+        byte[]                        _dmi;
+        byte[]                        _dpm;
+        List<DataFileCharacteristics> _filePaths;
+        byte[]                        _fullToc;
 
-        Bw5Header               header;
-        ImageInfo               imageInfo;
-        Stream                  imageStream;
-        byte[]                  mode2A;
-        Dictionary<uint, ulong> offsetmap;
-        byte[]                  pfi;
-        byte[]                  pma;
-        Dictionary<uint, byte>  trackFlags;
-        byte[]                  unkBlock;
+        Bw5Header               _header;
+        ImageInfo               _imageInfo;
+        Stream                  _imageStream;
+        byte[]                  _mode2A;
+        Dictionary<uint, ulong> _offsetmap;
+        byte[]                  _pfi;
+        byte[]                  _pma;
+        Dictionary<uint, byte>  _trackFlags;
+        byte[]                  _unkBlock;
 
-        public BlindWrite5() => imageInfo = new ImageInfo
+        public BlindWrite5() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

@@ -8,11 +8,11 @@ namespace Aaru.DiscImages
 {
     public partial class CopyTape : IWritableTapeImage
     {
-        long[]    blockPositionCache;
-        ImageInfo imageInfo;
-        Stream    imageStream;
+        long[]    _blockPositionCache;
+        ImageInfo _imageInfo;
+        Stream    _imageStream;
 
-        public CopyTape() => imageInfo = new ImageInfo
+        public CopyTape() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
         {
             deviceBlock = 0;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -55,7 +55,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             uint[] clusters = GetClusters((uint)stat.Inode);
@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
             if(fileBlock >= clusters.Length)
                 return Errno.InvalidArgument;
 
-            deviceBlock = (long)(firstClusterSector + ((clusters[fileBlock] - 1) * sectorsPerCluster));
+            deviceBlock = (long)(_firstClusterSector + ((clusters[fileBlock] - 1) * _sectorsPerCluster));
 
             return Errno.NoError;
         }
@@ -72,7 +72,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -87,7 +87,7 @@ namespace Aaru.Filesystems
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -96,7 +96,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             if(offset >= stat.Length)
@@ -107,11 +107,11 @@ namespace Aaru.Filesystems
 
             uint[] clusters = GetClusters((uint)stat.Inode);
 
-            long firstCluster    = offset                   / bytesPerCluster;
-            long offsetInCluster = offset                   % bytesPerCluster;
-            long sizeInClusters  = (size + offsetInCluster) / bytesPerCluster;
+            long firstCluster    = offset                   / _bytesPerCluster;
+            long offsetInCluster = offset                   % _bytesPerCluster;
+            long sizeInClusters  = (size + offsetInCluster) / _bytesPerCluster;
 
-            if((size + offsetInCluster) % bytesPerCluster > 0)
+            if((size + offsetInCluster) % _bytesPerCluster > 0)
                 sizeInClusters++;
 
             var ms = new MemoryStream();
@@ -122,8 +122,9 @@ namespace Aaru.Filesystems
                     return Errno.InvalidArgument;
 
                 byte[] buffer =
-                    imagePlugin.ReadSectors(firstClusterSector + ((clusters[i + firstCluster] - 1) * sectorsPerCluster),
-                                            sectorsPerCluster);
+                    _imagePlugin.
+                        ReadSectors(_firstClusterSector + ((clusters[i + firstCluster] - 1) * _sectorsPerCluster),
+                                    _sectorsPerCluster);
 
                 ms.Write(buffer, 0, buffer.Length);
             }
@@ -139,18 +140,18 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            if(debug && (string.IsNullOrEmpty(path) || path == "$" || path == "/"))
+            if(_debug && (string.IsNullOrEmpty(path) || path == "$" || path == "/"))
             {
                 stat = new FileEntryInfo
                 {
                     Attributes = FileAttributes.Directory | FileAttributes.System | FileAttributes.Hidden,
-                    Blocks     = GetClusters(superblock.rootDirectoryCluster).Length,
-                    BlockSize  = bytesPerCluster,
-                    Length     = GetClusters(superblock.rootDirectoryCluster).Length * bytesPerCluster,
-                    Inode      = superblock.rootDirectoryCluster,
+                    Blocks     = GetClusters(_superblock.rootDirectoryCluster).Length,
+                    BlockSize  = _bytesPerCluster,
+                    Length     = GetClusters(_superblock.rootDirectoryCluster).Length * _bytesPerCluster,
+                    Inode      = _superblock.rootDirectoryCluster,
                     Links      = 1
                 };
 
@@ -165,24 +166,24 @@ namespace Aaru.Filesystems
             stat = new FileEntryInfo
             {
                 Attributes = new FileAttributes(),
-                Blocks     = entry.length / bytesPerCluster,
-                BlockSize  = bytesPerCluster,
+                Blocks     = entry.length / _bytesPerCluster,
+                BlockSize  = _bytesPerCluster,
                 Length     = entry.length,
                 Inode      = entry.firstCluster,
                 Links      = 1,
-                CreationTime = littleEndian
+                CreationTime = _littleEndian
                                    ? DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20)
                                    : DateHandlers.DosToDateTime(entry.creationTime, entry.creationDate),
-                AccessTime = littleEndian
+                AccessTime = _littleEndian
                                  ? DateHandlers.DosToDateTime(entry.lastAccessDate, entry.lastAccessTime).AddYears(20)
                                  : DateHandlers.DosToDateTime(entry.lastAccessTime, entry.lastAccessDate),
-                LastWriteTime = littleEndian
+                LastWriteTime = _littleEndian
                                     ? DateHandlers.DosToDateTime(entry.lastWrittenDate, entry.lastWrittenTime).
                                                    AddYears(20)
                                     : DateHandlers.DosToDateTime(entry.lastWrittenTime, entry.lastWrittenDate)
             };
 
-            if(entry.length % bytesPerCluster > 0)
+            if(entry.length % _bytesPerCluster > 0)
                 stat.Blocks++;
 
             if(entry.attributes.HasFlag(Attributes.Directory))
@@ -212,31 +213,31 @@ namespace Aaru.Filesystems
             if(startCluster == 0)
                 return null;
 
-            if(fat16 is null)
+            if(_fat16 is null)
             {
-                if(startCluster >= fat32.Length)
+                if(startCluster >= _fat32.Length)
                     return null;
             }
-            else if(startCluster >= fat16.Length)
+            else if(startCluster >= _fat16.Length)
                 return null;
 
             List<uint> clusters = new List<uint>();
 
             uint nextCluster = startCluster;
 
-            if(fat16 is null)
+            if(_fat16 is null)
                 while((nextCluster & FAT32_MASK) > 0 &&
                       (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fat32[nextCluster];
+                    nextCluster = _fat32[nextCluster];
                 }
             else
                 while(nextCluster > 0 &&
                       nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fat16[nextCluster];
+                    nextCluster = _fat16[nextCluster];
                 }
 
             return clusters.ToArray();
@@ -246,7 +247,8 @@ namespace Aaru.Filesystems
         {
             entry = new DirectoryEntry();
 
-            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(_cultureInfo)
+                                 : path.ToLower(_cultureInfo);
 
             string[] pieces = cutPath.Split(new[]
             {
@@ -266,12 +268,12 @@ namespace Aaru.Filesystems
             Dictionary<string, DirectoryEntry> parent;
 
             if(pieces.Length == 1)
-                parent = rootDirectory;
-            else if(!directoryCache.TryGetValue(parentPath, out parent))
+                parent = _rootDirectory;
+            else if(!_directoryCache.TryGetValue(parentPath, out parent))
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntry> dirent =
-                parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[^1]);
+                parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
                 return Errno.NoSuchFile;

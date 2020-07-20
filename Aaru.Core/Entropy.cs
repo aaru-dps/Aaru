@@ -42,13 +42,13 @@ namespace Aaru.Core
 {
     public class Entropy
     {
-        readonly bool        debug;
-        readonly IMediaImage inputFormat;
+        readonly bool        _debug;
+        readonly IMediaImage _inputFormat;
 
         public Entropy(bool debug, IMediaImage inputFormat)
         {
-            this.debug       = debug;
-            this.inputFormat = inputFormat;
+            _debug       = debug;
+            _inputFormat = inputFormat;
         }
 
         public event InitProgressHandler   InitProgressEvent;
@@ -62,7 +62,7 @@ namespace Aaru.Core
         {
             List<EntropyResults> entropyResultses = new List<EntropyResults>();
 
-            if(!(inputFormat is IOpticalMediaImage opticalMediaImage))
+            if(!(_inputFormat is IOpticalMediaImage opticalMediaImage))
             {
                 AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
 
@@ -134,7 +134,7 @@ namespace Aaru.Core
             }
             catch(Exception ex)
             {
-                if(debug)
+                if(_debug)
                     AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                 else
                     AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
@@ -154,14 +154,14 @@ namespace Aaru.Core
             ulong        diskSize      = 0;
             List<string> uniqueSectors = new List<string>();
 
-            entropy.Sectors = inputFormat.Info.Sectors;
+            entropy.Sectors = _inputFormat.Info.Sectors;
             AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
             InitProgressEvent?.Invoke();
 
             for(ulong i = 0; i < entropy.Sectors; i++)
             {
                 UpdateProgressEvent?.Invoke($"Entropying sector {i + 1}", (long)(i + 1), (long)entropy.Sectors);
-                byte[] sector = inputFormat.ReadSector(i);
+                byte[] sector = _inputFormat.ReadSector(i);
 
                 if(duplicatedSectors)
                 {

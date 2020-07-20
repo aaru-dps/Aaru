@@ -44,6 +44,7 @@ namespace Aaru.DiscImages
     {
         IFilter      _cdrwinFilter;
         StreamReader _cueStream;
+        ulong        _densitySeparationSectors;
         StreamWriter _descriptorStream;
         CdrWinDisc   _discImage;
         ImageInfo    _imageInfo;
@@ -57,7 +58,6 @@ namespace Aaru.DiscImages
         string                       _writingBaseName;
         Dictionary<uint, FileStream> _writingStreams;
         List<Track>                  _writingTracks;
-        ulong                        densitySeparationSectors;
 
         public CdrWin() => _imageInfo = new ImageInfo
         {

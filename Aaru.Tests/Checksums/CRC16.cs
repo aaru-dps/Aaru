@@ -36,11 +36,11 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Crc16
     {
-        static readonly byte[] ExpectedEmpty =
+        static readonly byte[] _expectedEmpty =
         {
             0x00, 0x00
         };
-        static readonly byte[] ExpectedRandom =
+        static readonly byte[] _expectedRandom =
         {
             0x2d, 0x6d
         };
@@ -50,21 +50,23 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             CRC16CCITTContext.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
         public void Crc16EmptyFile()
         {
-            byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
-            Assert.AreEqual(ExpectedEmpty, result);
+            byte[] result =
+                CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -72,7 +74,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -81,7 +83,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -89,21 +91,23 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             CRC16CCITTContext.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
         public void Crc16RandomFile()
         {
-            byte[] result = CRC16CCITTContext.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
+            byte[] result =
+                CRC16CCITTContext.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
@@ -111,8 +115,8 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
@@ -120,7 +124,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new CRC16CCITTContext();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
     }
 }

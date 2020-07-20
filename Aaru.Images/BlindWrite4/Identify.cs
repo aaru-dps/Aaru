@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             byte[] signature = new byte[19];
             stream.Read(signature, 0, 19);
 
-            return bw4Signature.SequenceEqual(signature);
+            return _bw4Signature.SequenceEqual(signature);
         }
     }
 }

@@ -54,148 +54,148 @@ namespace Aaru.DiscImages
 
             byte[] qHdrB = new byte[68];
             stream.Read(qHdrB, 0, 68);
-            qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
+            _qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}", qHdr.cluster_size);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.table_size = {0}", qHdr.table_size);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.header_size = {0}", qHdr.header_size);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.features = {0}", qHdr.features);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.compat_features = {0}", qHdr.compat_features);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.autoclear_features = {0}", qHdr.autoclear_features);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1_table_offset = {0}", qHdr.l1_table_offset);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.image_size = {0}", qHdr.image_size);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_offset = {0}", qHdr.backing_file_offset);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}", qHdr.backing_file_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}", _qHdr.cluster_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.table_size = {0}", _qHdr.table_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.header_size = {0}", _qHdr.header_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.features = {0}", _qHdr.features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.compat_features = {0}", _qHdr.compat_features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.autoclear_features = {0}", _qHdr.autoclear_features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1_table_offset = {0}", _qHdr.l1_table_offset);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.image_size = {0}", _qHdr.image_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_offset = {0}", _qHdr.backing_file_offset);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}", _qHdr.backing_file_size);
 
-            if(qHdr.image_size <= 1)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.image_size), "Image size is too small");
+            if(_qHdr.image_size <= 1)
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.image_size), "Image size is too small");
 
-            if(!IsPowerOfTwo(qHdr.cluster_size))
-                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size), "Cluster size must be a power of 2");
+            if(!IsPowerOfTwo(_qHdr.cluster_size))
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.cluster_size), "Cluster size must be a power of 2");
 
-            if(qHdr.cluster_size < 4096 ||
-               qHdr.cluster_size > 67108864)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.cluster_size),
+            if(_qHdr.cluster_size < 4096 ||
+               _qHdr.cluster_size > 67108864)
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.cluster_size),
                                                       "Cluster size must be between 4 Kbytes and 64 Mbytes");
 
-            if(!IsPowerOfTwo(qHdr.table_size))
-                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size), "Table size must be a power of 2");
+            if(!IsPowerOfTwo(_qHdr.table_size))
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.table_size), "Table size must be a power of 2");
 
-            if(qHdr.table_size < 1 ||
-               qHdr.table_size > 16)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.table_size),
+            if(_qHdr.table_size < 1 ||
+               _qHdr.table_size > 16)
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.table_size),
                                                       "Table size must be between 1 and 16 clusters");
 
-            if((qHdr.features & QED_FEATURE_MASK) > 0)
-                throw new ArgumentOutOfRangeException(nameof(qHdr.features),
-                                                      $"Image uses unknown incompatible features {qHdr.features & QED_FEATURE_MASK:X}");
+            if((_qHdr.features & QED_FEATURE_MASK) > 0)
+                throw new ArgumentOutOfRangeException(nameof(_qHdr.features),
+                                                      $"Image uses unknown incompatible features {_qHdr.features & QED_FEATURE_MASK:X}");
 
-            if((qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
+            if((_qHdr.features & QED_FEATURE_BACKING_FILE) == QED_FEATURE_BACKING_FILE)
                 throw new NotImplementedException("Differencing images not yet supported");
 
-            clusterSectors = qHdr.cluster_size                     / 512;
-            tableSize      = (qHdr.cluster_size * qHdr.table_size) / 8;
+            _clusterSectors = _qHdr.cluster_size                      / 512;
+            _tableSize      = (_qHdr.cluster_size * _qHdr.table_size) / 8;
 
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", tableSize);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", _clusterSectors);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}", _tableSize);
 
-            byte[] l1TableB = new byte[tableSize * 8];
-            stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            stream.Read(l1TableB, 0, (int)tableSize * 8);
+            byte[] l1TableB = new byte[_tableSize * 8];
+            stream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
+            stream.Read(l1TableB, 0, (int)_tableSize * 8);
             AaruConsole.DebugWriteLine("QED plugin", "Reading L1 table");
-            l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
+            _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
-            l1Mask = 0;
+            _l1Mask = 0;
             int c = 0;
-            clusterBits = Ctz32(qHdr.cluster_size);
-            l2Mask      = (tableSize - 1) << clusterBits;
-            l1Shift     = clusterBits + Ctz32(tableSize);
+            _clusterBits = Ctz32(_qHdr.cluster_size);
+            _l2Mask      = (_tableSize - 1) << _clusterBits;
+            _l1Shift     = _clusterBits + Ctz32(_tableSize);
 
             for(int i = 0; i < 64; i++)
             {
-                l1Mask <<= 1;
+                _l1Mask <<= 1;
 
-                if(c >= 64 - l1Shift)
+                if(c >= 64 - _l1Shift)
                     continue;
 
-                l1Mask += 1;
+                _l1Mask += 1;
                 c++;
             }
 
-            sectorMask = 0;
+            _sectorMask = 0;
 
-            for(int i = 0; i < clusterBits; i++)
-                sectorMask = (sectorMask << 1) + 1;
+            for(int i = 0; i < _clusterBits; i++)
+                _sectorMask = (_sectorMask << 1) + 1;
 
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}", clusterBits);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}", l1Mask);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Shift = {0}", l1Shift);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", l2Mask);
-            AaruConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}", _clusterBits);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}", _l1Mask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Shift = {0}", _l1Shift);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}", _l2Mask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", _sectorMask);
 
-            maxL2TableCache = MAX_CACHE_SIZE / tableSize;
-            maxClusterCache = MAX_CACHE_SIZE / qHdr.cluster_size;
+            _maxL2TableCache = MAX_CACHE_SIZE / _tableSize;
+            _maxClusterCache = MAX_CACHE_SIZE / _qHdr.cluster_size;
 
-            imageStream = stream;
+            _imageStream = stream;
 
-            sectorCache  = new Dictionary<ulong, byte[]>();
-            l2TableCache = new Dictionary<ulong, ulong[]>();
-            clusterCache = new Dictionary<ulong, byte[]>();
+            _sectorCache  = new Dictionary<ulong, byte[]>();
+            _l2TableCache = new Dictionary<ulong, ulong[]>();
+            _clusterCache = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = qHdr.image_size / 512;
-            imageInfo.SectorSize           = 512;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize            = qHdr.image_size;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = _qHdr.image_size / 512;
+            _imageInfo.SectorSize           = 512;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.ImageSize            = _qHdr.image_size;
 
-            imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-            imageInfo.Heads           = 16;
-            imageInfo.SectorsPerTrack = 63;
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
             // Check cache
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
             ulong byteAddress = sectorAddress * 512;
 
-            ulong l1Off = (byteAddress & l1Mask) >> l1Shift;
+            ulong l1Off = (byteAddress & _l1Mask) >> _l1Shift;
 
-            if((long)l1Off >= l1Table.LongLength)
+            if((long)l1Off >= _l1Table.LongLength)
                 throw new ArgumentOutOfRangeException(nameof(l1Off),
-                                                      $"Trying to read past L1 table, position {l1Off} of a max {l1Table.LongLength}");
+                                                      $"Trying to read past L1 table, position {l1Off} of a max {_l1Table.LongLength}");
 
             // TODO: Implement differential images
-            if(l1Table[l1Off] == 0)
+            if(_l1Table[l1Off] == 0)
                 return new byte[512];
 
-            if(!l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
+            if(!_l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
-                imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
-                byte[] l2TableB = new byte[tableSize * 8];
-                imageStream.Read(l2TableB, 0, (int)tableSize * 8);
+                _imageStream.Seek((long)_l1Table[l1Off], SeekOrigin.Begin);
+                byte[] l2TableB = new byte[_tableSize * 8];
+                _imageStream.Read(l2TableB, 0, (int)_tableSize * 8);
                 AaruConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
                 l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
-                if(l2TableCache.Count >= maxL2TableCache)
-                    l2TableCache.Clear();
+                if(_l2TableCache.Count >= _maxL2TableCache)
+                    _l2TableCache.Clear();
 
-                l2TableCache.Add(l1Off, l2Table);
+                _l2TableCache.Add(l1Off, l2Table);
             }
 
-            ulong l2Off = (byteAddress & l2Mask) >> clusterBits;
+            ulong l2Off = (byteAddress & _l2Mask) >> _clusterBits;
 
             ulong offset = l2Table[l2Off];
 
@@ -204,36 +204,36 @@ namespace Aaru.DiscImages
             if(offset != 0 &&
                offset != 1)
             {
-                if(!clusterCache.TryGetValue(offset, out byte[] cluster))
+                if(!_clusterCache.TryGetValue(offset, out byte[] cluster))
                 {
-                    cluster = new byte[qHdr.cluster_size];
-                    imageStream.Seek((long)offset, SeekOrigin.Begin);
-                    imageStream.Read(cluster, 0, (int)qHdr.cluster_size);
+                    cluster = new byte[_qHdr.cluster_size];
+                    _imageStream.Seek((long)offset, SeekOrigin.Begin);
+                    _imageStream.Read(cluster, 0, (int)_qHdr.cluster_size);
 
-                    if(clusterCache.Count >= maxClusterCache)
-                        clusterCache.Clear();
+                    if(_clusterCache.Count >= _maxClusterCache)
+                        _clusterCache.Clear();
 
-                    clusterCache.Add(offset, cluster);
+                    _clusterCache.Add(offset, cluster);
                 }
 
-                Array.Copy(cluster, (int)(byteAddress & sectorMask), sector, 0, 512);
+                Array.Copy(cluster, (int)(byteAddress & _sectorMask), sector, 0, 512);
             }
 
-            if(sectorCache.Count >= MAX_CACHED_SECTORS)
-                sectorCache.Clear();
+            if(_sectorCache.Count >= MAX_CACHED_SECTORS)
+                _sectorCache.Clear();
 
-            sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, sector);
 
             return sector;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var ms = new MemoryStream();

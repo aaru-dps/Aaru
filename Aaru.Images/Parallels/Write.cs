@@ -69,7 +69,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -97,9 +97,9 @@ namespace Aaru.DiscImages
             if((uint)Marshal.SizeOf<ParallelsHeader>() + (batEntries % 4) > 0)
                 headerSectors++;
 
-            pHdr = new ParallelsHeader
+            _pHdr = new ParallelsHeader
             {
-                magic        = parallelsMagic,
+                magic        = _parallelsMagic,
                 version      = PARALLELS_VERSION,
                 sectors      = sectors,
                 in_use       = PARALLELS_CLOSED,
@@ -108,8 +108,8 @@ namespace Aaru.DiscImages
                 cluster_size = DEFAULT_CLUSTER_SIZE / 512
             };
 
-            bat                    = new uint[batEntries];
-            currentWritingPosition = headerSectors * 512;
+            _bat                    = new uint[batEntries];
+            _currentWritingPosition = headerSectors * 512;
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -140,7 +140,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
@@ -151,23 +151,23 @@ namespace Aaru.DiscImages
             if(ArrayHelpers.ArrayIsNullOrEmpty(data))
                 return true;
 
-            ulong index  = sectorAddress / pHdr.cluster_size;
-            ulong secOff = sectorAddress % pHdr.cluster_size;
+            ulong index  = sectorAddress / _pHdr.cluster_size;
+            ulong secOff = sectorAddress % _pHdr.cluster_size;
 
-            uint batOff = bat[index];
+            uint batOff = _bat[index];
 
             if(batOff == 0)
             {
-                batOff                 =  (uint)(currentWritingPosition / 512);
-                bat[index]             =  batOff;
-                currentWritingPosition += pHdr.cluster_size * 512;
+                batOff                  =  (uint)(_currentWritingPosition / 512);
+                _bat[index]             =  batOff;
+                _currentWritingPosition += _pHdr.cluster_size * 512;
             }
 
             ulong imageOff = batOff * 512;
 
-            writingStream.Seek((long)imageOff, SeekOrigin.Begin);
-            writingStream.Seek((long)secOff * 512, SeekOrigin.Current);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)imageOff, SeekOrigin.Begin);
+            _writingStream.Seek((long)secOff * 512, SeekOrigin.Current);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -191,7 +191,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
@@ -239,45 +239,45 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(pHdr.cylinders == 0)
+            if(_pHdr.cylinders == 0)
             {
-                pHdr.cylinders            = (uint)(imageInfo.Sectors / 16 / 63);
-                pHdr.heads                = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _pHdr.cylinders            = (uint)(_imageInfo.Sectors / 16 / 63);
+                _pHdr.heads                = 16;
+                _imageInfo.SectorsPerTrack = 63;
 
-                while(pHdr.cylinders == 0)
+                while(_pHdr.cylinders == 0)
                 {
-                    pHdr.heads--;
+                    _pHdr.heads--;
 
-                    if(pHdr.heads == 0)
+                    if(_pHdr.heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        pHdr.heads = 16;
+                        _imageInfo.SectorsPerTrack--;
+                        _pHdr.heads = 16;
                     }
 
-                    pHdr.cylinders = (uint)(imageInfo.Sectors / pHdr.heads / imageInfo.SectorsPerTrack);
+                    _pHdr.cylinders = (uint)(_imageInfo.Sectors / _pHdr.heads / _imageInfo.SectorsPerTrack);
 
-                    if(pHdr.cylinders            == 0 &&
-                       pHdr.heads                == 0 &&
-                       imageInfo.SectorsPerTrack == 0)
+                    if(_pHdr.cylinders            == 0 &&
+                       _pHdr.heads                == 0 &&
+                       _imageInfo.SectorsPerTrack == 0)
                         break;
                 }
             }
 
             byte[] hdr    = new byte[Marshal.SizeOf<ParallelsHeader>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ParallelsHeader>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(pHdr, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_pHdr, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            for(long i = 0; i < bat.LongLength; i++)
-                writingStream.Write(BitConverter.GetBytes(bat[i]), 0, 4);
+            for(long i = 0; i < _bat.LongLength; i++)
+                _writingStream.Write(BitConverter.GetBytes(_bat[i]), 0, 4);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -289,8 +289,8 @@ namespace Aaru.DiscImages
 
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
-            pHdr.cylinders = cylinders;
-            pHdr.heads     = heads;
+            _pHdr.cylinders = cylinders;
+            _pHdr.heads     = heads;
 
             return true;
         }

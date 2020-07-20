@@ -83,88 +83,88 @@ namespace Aaru.DiscImages
 {
     public partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {
-        bool alreadyWrittenZero;
+        bool _alreadyWrittenZero;
         /// <summary>Cache of uncompressed blocks.</summary>
-        Dictionary<ulong, byte[]> blockCache;
+        Dictionary<ulong, byte[]> _blockCache;
         /// <summary>Cache of block headers.</summary>
-        Dictionary<ulong, BlockHeader> blockHeaderCache;
+        Dictionary<ulong, BlockHeader> _blockHeaderCache;
         /// <summary>Stream used for writing blocks.</summary>
-        NonClosableStream blockStream;
+        NonClosableStream _blockStream;
         /// <summary>Provides checksum for deduplication of sectors.</summary>
-        SHA256 checksumProvider;
-        bool compress;
+        SHA256 _checksumProvider;
+        bool _compress;
         /// <summary>Provides CRC64.</summary>
-        Crc64Context crc64;
+        Crc64Context _crc64;
         /// <summary>Header of the currently writing block.</summary>
-        BlockHeader currentBlockHeader;
+        BlockHeader _currentBlockHeader;
         /// <summary>Sector offset of writing position in currently writing block.</summary>
-        uint currentBlockOffset;
+        uint _currentBlockOffset;
         /// <summary>Current size in bytes of the block cache</summary>
-        uint currentCacheSize;
+        uint _currentCacheSize;
         /// <summary>Cache of DDT entries.</summary>
-        Dictionary<ulong, ulong> ddtEntryCache;
-        NonClosableStream decompressedStream;
-        bool              deduplicate;
+        Dictionary<ulong, ulong> _ddtEntryCache;
+        NonClosableStream _decompressedStream;
+        bool              _deduplicate;
         /// <summary>On-memory deduplication table indexed by checksum.</summary>
-        Dictionary<string, ulong> deduplicationTable;
+        Dictionary<string, ulong> _deduplicationTable;
         /// <summary><see cref="CUETools.Codecs.Flake" /> writer.</summary>
-        AudioEncoder flakeWriter;
+        AudioEncoder _flakeWriter;
         /// <summary><see cref="CUETools.Codecs.Flake" /> settings.</summary>
-        EncoderSettings flakeWriterSettings;
+        EncoderSettings _flakeWriterSettings;
         /// <summary>Block with logical geometry.</summary>
-        GeometryBlock geometryBlock;
+        GeometryBlock _geometryBlock;
         /// <summary>Image header.</summary>
-        AaruHeader header;
+        AaruHeader _header;
         /// <summary>Image information.</summary>
-        ImageInfo imageInfo;
+        ImageInfo _imageInfo;
         /// <summary>Image data stream.</summary>
-        Stream imageStream;
+        Stream _imageStream;
         /// <summary>Index.</summary>
-        List<IndexEntry> index;
+        List<IndexEntry> _index;
         /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
-        bool inMemoryDdt;
-        ulong lastWrittenBlock;
+        bool _inMemoryDdt;
+        ulong _lastWrittenBlock;
         /// <summary>LZMA stream.</summary>
-        LzmaStream lzmaBlockStream;
+        LzmaStream _lzmaBlockStream;
         /// <summary>LZMA properties.</summary>
-        LzmaEncoderProperties lzmaEncoderProperties;
-        Md5Context md5Provider;
+        LzmaEncoderProperties _lzmaEncoderProperties;
+        Md5Context _md5Provider;
         /// <summary>Cache of media tags.</summary>
-        Dictionary<MediaTagType, byte[]> mediaTags;
-        byte[] mode2Subheaders;
+        Dictionary<MediaTagType, byte[]> _mediaTags;
+        byte[] _mode2Subheaders;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
-        long outMemoryDdtPosition;
-        bool rewinded;
+        long _outMemoryDdtPosition;
+        bool _rewinded;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
-        byte[] sectorPrefix;
-        uint[]            sectorPrefixDdt;
-        NonClosableStream sectorPrefixMs;
+        byte[] _sectorPrefix;
+        uint[]            _sectorPrefixDdt;
+        NonClosableStream _sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>
-        byte[] sectorSubchannel;
+        byte[] _sectorSubchannel;
         /// <summary>Cache for data that suffixes the user data on a sector (e.g. edc, ecc).</summary>
-        byte[] sectorSuffix;
-        uint[]            sectorSuffixDdt;
-        NonClosableStream sectorSuffixMs;
-        Sha1Context       sha1Provider;
-        Sha256Context     sha256Provider;
+        byte[] _sectorSuffix;
+        uint[]            _sectorSuffixDdt;
+        NonClosableStream _sectorSuffixMs;
+        Sha1Context       _sha1Provider;
+        Sha256Context     _sha256Provider;
         /// <summary>Shift for calculating number of sectors in a block.</summary>
-        byte shift;
-        SpamSumContext spamsumProvider;
+        byte _shift;
+        SpamSumContext _spamsumProvider;
         /// <summary>Cache for bytes to write/rad on-disk.</summary>
-        byte[] structureBytes;
+        byte[] _structureBytes;
         /// <summary>Cache for pointer for marshaling structures.</summary>
-        IntPtr structurePointer;
-        Dictionary<ulong, ulong> tapeDdt;
+        IntPtr _structurePointer;
+        Dictionary<ulong, ulong> _tapeDdt;
         /// <summary>Cache of CompactDisc track's flags</summary>
-        Dictionary<byte, byte> trackFlags;
+        Dictionary<byte, byte> _trackFlags;
         /// <summary>Cache of CompactDisc track's ISRC</summary>
-        Dictionary<byte, string> trackIsrcs;
+        Dictionary<byte, string> _trackIsrcs;
         /// <summary>In-memory deduplication table</summary>
-        ulong[] userDataDdt;
-        bool  writingLong;
-        ulong writtenSectors;
+        ulong[] _userDataDdt;
+        bool  _writingLong;
+        ulong _writtenSectors;
 
-        public AaruFormat() => imageInfo = new ImageInfo
+        public AaruFormat() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

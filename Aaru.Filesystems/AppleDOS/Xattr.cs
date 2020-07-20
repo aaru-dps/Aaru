@@ -47,7 +47,7 @@ namespace Aaru.Filesystems
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -65,17 +65,17 @@ namespace Aaru.Filesystems
 
             xattrs = new List<string>();
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) {}
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)) {}
             else
             {
-                if(!catalogCache.ContainsKey(filename))
+                if(!_catalogCache.ContainsKey(filename))
                     return Errno.NoSuchFile;
 
                 xattrs.Add("com.apple.dos.type");
 
-                if(debug)
+                if(_debug)
                     xattrs.Add("com.apple.dos.tracksectorlist");
             }
 
@@ -90,7 +90,7 @@ namespace Aaru.Filesystems
         /// <param name="buf">Buffer.</param>
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -106,17 +106,17 @@ namespace Aaru.Filesystems
             if(filename.Length > 30)
                 return Errno.NameTooLong;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 return Errno.NoSuchExtendedAttribute;
 
-            if(!catalogCache.ContainsKey(filename))
+            if(!_catalogCache.ContainsKey(filename))
                 return Errno.NoSuchFile;
 
             if(string.Compare(xattr, "com.apple.dos.type", StringComparison.InvariantCulture) == 0)
             {
-                if(!fileTypeCache.TryGetValue(filename, out byte type))
+                if(!_fileTypeCache.TryGetValue(filename, out byte type))
                     return Errno.InvalidArgument;
 
                 buf    = new byte[1];
@@ -126,10 +126,10 @@ namespace Aaru.Filesystems
             }
 
             if(string.Compare(xattr, "com.apple.dos.tracksectorlist", StringComparison.InvariantCulture) != 0 ||
-               !debug)
+               !_debug)
                 return Errno.NoSuchExtendedAttribute;
 
-            if(!extentCache.TryGetValue(filename, out byte[] ts))
+            if(!_extentCache.TryGetValue(filename, out byte[] ts))
                 return Errno.InvalidArgument;
 
             buf = new byte[ts.Length];

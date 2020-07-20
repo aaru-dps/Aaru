@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Udif
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "Apple Universal Disk Image Format";
         public Guid                   Id           => new Guid("5BEB9002-CF3D-429C-8E06-9A96F49203FF");

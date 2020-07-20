@@ -42,9 +42,9 @@ namespace Aaru.DiscImages
     {
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {
-            ushort cylinder = (ushort)(lba / (imageInfo.Heads * imageInfo.SectorsPerTrack));
-            byte   head     = (byte)((lba                     / imageInfo.SectorsPerTrack) % imageInfo.Heads);
-            byte   sector   = (byte)((lba                     % imageInfo.SectorsPerTrack) + 1);
+            ushort cylinder = (ushort)(lba / (_imageInfo.Heads * _imageInfo.SectorsPerTrack));
+            byte   head     = (byte)((lba                      / _imageInfo.SectorsPerTrack) % _imageInfo.Heads);
+            byte   sector   = (byte)((lba                      % _imageInfo.SectorsPerTrack) + 1);
 
             return (cylinder, head, sector);
         }
@@ -197,18 +197,18 @@ namespace Aaru.DiscImages
 
         MediaType DecodeTeleDiskDiskType()
         {
-            switch(header.DriveType)
+            switch(_header.DriveType)
             {
                 case DRIVE_TYPE_525_DD:
                 case DRIVE_TYPE_525_HD_DD_DISK:
                 case DRIVE_TYPE_525_HD:
                 {
-                    switch(totalDiskSize)
+                    switch(_totalDiskSize)
                     {
                         case 163840:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40
+                            return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_40
                                        : MediaType.DOS_525_SS_DD_8;
 
                             // DOS disks use 512 bytes/sector
@@ -216,14 +216,14 @@ namespace Aaru.DiscImages
                         case 184320:
                         {
                             // Atari disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256 ? MediaType.ATARI_525_DD : MediaType.DOS_525_SS_DD_9;
+                            return _imageInfo.SectorSize == 256 ? MediaType.ATARI_525_DD : MediaType.DOS_525_SS_DD_9;
 
                             // DOS disks use 512 bytes/sector
                         }
                         case 327680:
                         {
                             // Acorn disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80
+                            return _imageInfo.SectorSize == 256 ? MediaType.ACORN_525_SS_DD_80
                                        : MediaType.DOS_525_DS_DD_8;
 
                             // DOS disks use 512 bytes/sector
@@ -248,7 +248,7 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes",
-                                                       totalDiskSize);
+                                                       _totalDiskSize);
 
                             return MediaType.Unknown;
                         }
@@ -258,7 +258,7 @@ namespace Aaru.DiscImages
                 case DRIVE_TYPE_35_ED:
                 case DRIVE_TYPE_35_HD:
                 {
-                    switch(totalDiskSize)
+                    switch(_totalDiskSize)
                     {
                         case 322560:  return MediaType.Apricot_35;
                         case 327680:  return MediaType.DOS_35_SS_DD_8;
@@ -281,7 +281,7 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes",
-                                                       totalDiskSize);
+                                                       _totalDiskSize);
 
                             return MediaType.Unknown;
                         }
@@ -289,7 +289,7 @@ namespace Aaru.DiscImages
                 }
                 case DRIVE_TYPE_8_INCH:
                 {
-                    switch(totalDiskSize)
+                    switch(_totalDiskSize)
                     {
                         case 81664:   return MediaType.IBM23FD;
                         case 242944:  return MediaType.IBM33FD_128;
@@ -306,7 +306,7 @@ namespace Aaru.DiscImages
                         case 512512:
                         {
                             // DEC disk uses 256 bytes/sector
-                            return imageInfo.SectorSize == 256 ? MediaType.RX02 : MediaType.ECMA_59;
+                            return _imageInfo.SectorSize == 256 ? MediaType.RX02 : MediaType.ECMA_59;
 
                             // ECMA disks use 128 bytes/sector
                         }
@@ -317,7 +317,7 @@ namespace Aaru.DiscImages
                         default:
                         {
                             AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes",
-                                                       totalDiskSize);
+                                                       _totalDiskSize);
 
                             return MediaType.Unknown;
                         }
@@ -326,7 +326,7 @@ namespace Aaru.DiscImages
                 default:
                 {
                     AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes",
-                                               totalDiskSize, header.DriveType);
+                                               _totalDiskSize, _header.DriveType);
 
                     return MediaType.Unknown;
                 }

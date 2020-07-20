@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
 {
     public partial class Blu : IWritableImage, IVerifiableSectorsImage
     {
-        IFilter    bluImageFilter;
-        int        bptag;
-        BluHeader  imageHeader;
-        ImageInfo  imageInfo;
-        FileStream writingStream;
+        IFilter    _bluImageFilter;
+        int        _bptag;
+        BluHeader  _imageHeader;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
-        public Blu() => imageInfo = new ImageInfo
+        public Blu() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

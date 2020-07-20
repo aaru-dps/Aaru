@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreCookedData     |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks |
                                                                OpticalImageCapabilities.CanStoreIndexes;
-        public ImageInfo       Info       => imageInfo;
+        public ImageInfo       Info       => _imageInfo;
         public string          Name       => "CDRDAO tocfile";
         public Guid            Id         => new Guid("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
         public string          Format     => "CDRDAO tocfile";
@@ -66,7 +66,7 @@ namespace Aaru.DiscImages
             {
                 List<Track> tracks = new List<Track>();
 
-                foreach(CdrdaoTrack cdrTrack in discimage.Tracks)
+                foreach(CdrdaoTrack cdrTrack in _discimage.Tracks)
                 {
                     var aaruTrack = new Track
                     {

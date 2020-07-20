@@ -63,7 +63,7 @@ namespace Aaru.Core
         void OpticalDisc(IOpticalMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
                          List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
-            if(aborted)
+            if(_aborted)
                 return;
 
             sidecar.OpticalDisc = new[]
@@ -104,7 +104,7 @@ namespace Aaru.Core
 
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
             {
-                if(aborted)
+                if(_aborted)
                     return;
 
                 switch(tagType)
@@ -443,7 +443,7 @@ namespace Aaru.Core
                image.Info.MediaType              != MediaType.Unknown)
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
-            if(aborted)
+            if(_aborted)
                 return;
 
             InitProgress();
@@ -456,7 +456,7 @@ namespace Aaru.Core
 
             foreach(Track trk in tracks)
             {
-                if(aborted)
+                if(_aborted)
                 {
                     EndProgress();
 
@@ -587,7 +587,7 @@ namespace Aaru.Core
 
                     while(doneSectors < sectors)
                     {
-                        if(aborted)
+                        if(_aborted)
                         {
                             EndProgress();
                             EndProgress2();
@@ -674,7 +674,7 @@ namespace Aaru.Core
 
                     while(doneSectors < sectors)
                     {
-                        if(aborted)
+                        if(_aborted)
                         {
                             EndProgress();
                             EndProgress2();
@@ -746,7 +746,7 @@ namespace Aaru.Core
                         foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
                             {
-                                if(aborted)
+                                if(_aborted)
                                 {
                                     EndProgress();
 
@@ -813,7 +813,7 @@ namespace Aaru.Core
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
-                            if(aborted)
+                            if(_aborted)
                             {
                                 EndProgress();
 

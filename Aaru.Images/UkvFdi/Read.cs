@@ -67,24 +67,24 @@ namespace Aaru.DiscImages
             stream.Seek(hdr.descOff, SeekOrigin.Begin);
             byte[] description = new byte[hdr.dataOff - hdr.descOff];
             stream.Read(description, 0, description.Length);
-            imageInfo.Comments = StringHandlers.CToString(description);
+            _imageInfo.Comments = StringHandlers.CToString(description);
 
-            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", imageInfo.Comments);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", _imageInfo.Comments);
 
             stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
             long       spt        = long.MaxValue;
             uint[][][] sectorsOff = new uint[hdr.cylinders][][];
-            sectorsData = new byte[hdr.cylinders][][][];
+            _sectorsData = new byte[hdr.cylinders][][][];
 
-            imageInfo.Cylinders = hdr.cylinders;
-            imageInfo.Heads     = hdr.heads;
+            _imageInfo.Cylinders = hdr.cylinders;
+            _imageInfo.Heads     = hdr.heads;
 
             // Read track descriptors
             for(ushort cyl = 0; cyl < hdr.cylinders; cyl++)
             {
-                sectorsOff[cyl]  = new uint[hdr.heads][];
-                sectorsData[cyl] = new byte[hdr.heads][][];
+                sectorsOff[cyl]   = new uint[hdr.heads][];
+                _sectorsData[cyl] = new byte[hdr.heads][][];
 
                 for(ushort head = 0; head < hdr.heads; head++)
                 {
@@ -99,8 +99,8 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
                     AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}", trkOff);
 
-                    sectorsOff[cyl][head]  = new uint[sectors];
-                    sectorsData[cyl][head] = new byte[sectors][];
+                    sectorsOff[cyl][head]   = new uint[sectors];
+                    _sectorsData[cyl][head] = new byte[sectors][];
 
                     if(sectors < spt &&
                        sectors > 0)
@@ -127,11 +127,11 @@ namespace Aaru.DiscImages
                                                    secOff + trkOff + hdr.dataOff);
 
                         // TODO: This assumes sequential sectors.
-                        sectorsOff[cyl][head][sec]  = secOff + trkOff + hdr.dataOff;
-                        sectorsData[cyl][head][sec] = new byte[128 << n];
+                        sectorsOff[cyl][head][sec]   = secOff + trkOff + hdr.dataOff;
+                        _sectorsData[cyl][head][sec] = new byte[128 << n];
 
-                        if(128 << n > imageInfo.SectorSize)
-                            imageInfo.SectorSize = (uint)(128 << n);
+                        if(128 << n > _imageInfo.SectorSize)
+                            _imageInfo.SectorSize = (uint)(128 << n);
                     }
                 }
             }
@@ -146,7 +146,7 @@ namespace Aaru.DiscImages
                     for(ushort sec = 0; sec < sectorsOff[cyl][head].Length; sec++)
                     {
                         stream.Seek(sectorsOff[cyl][head][sec], SeekOrigin.Begin);
-                        stream.Read(sectorsData[cyl][head][sec], 0, sectorsData[cyl][head][sec].Length);
+                        stream.Read(_sectorsData[cyl][head][sec], 0, _sectorsData[cyl][head][sec].Length);
                     }
 
                     // For empty cylinders
@@ -162,26 +162,26 @@ namespace Aaru.DiscImages
                     // Create empty sectors
                     else
                     {
-                        sectorsData[cyl][head] = new byte[spt][];
+                        _sectorsData[cyl][head] = new byte[spt][];
 
                         for(int i = 0; i < spt; i++)
-                            sectorsData[cyl][head][i] = new byte[imageInfo.SectorSize];
+                            _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
                     }
                 }
 
                 if(emptyCyl)
-                    imageInfo.Cylinders--;
+                    _imageInfo.Cylinders--;
             }
 
             // TODO: What about double sided, half track pitch compact floppies?
-            imageInfo.MediaType            = MediaType.CompactFloppy;
-            imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorsPerTrack      = (uint)spt;
-            imageInfo.Sectors              = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.CompactFloppy;
+            _imageInfo.ImageSize            = (ulong)stream.Length - hdr.dataOff;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.SectorsPerTrack      = (uint)spt;
+            _imageInfo.Sectors              = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 
             return true;
         }
@@ -190,24 +190,24 @@ namespace Aaru.DiscImages
         {
             (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
-            if(cylinder >= sectorsData.Length)
+            if(cylinder >= _sectorsData.Length)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(head >= sectorsData[cylinder].Length)
+            if(head >= _sectorsData[cylinder].Length)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sector > sectorsData[cylinder][head].Length)
+            if(sector > _sectorsData[cylinder][head].Length)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            return sectorsData[cylinder][head][sector - 1];
+            return _sectorsData[cylinder][head][sector - 1];
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             var buffer = new MemoryStream();

@@ -42,24 +42,24 @@ namespace Aaru.DiscImages
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
     public partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
-        readonly List<ulong>       sectorsWhereCrcHasFailed;
-        bool                       aDiskCrcHasFailed;
-        byte[]                     commentBlock;
-        TeleDiskCommentBlockHeader commentHeader;
-        TeleDiskHeader             header;
-        ImageInfo                  imageInfo;
-        Stream                     inStream;
-        byte[]                     leadOut;
+        readonly List<ulong>       _sectorsWhereCrcHasFailed;
+        bool                       _aDiskCrcHasFailed;
+        byte[]                     _commentBlock;
+        TeleDiskCommentBlockHeader _commentHeader;
+        TeleDiskHeader             _header;
+        ImageInfo                  _imageInfo;
+        Stream                     _inStream;
+        byte[]                     _leadOut;
 
         // Cylinder by head, sector data matrix
-        byte[][][][] sectorsData;
+        byte[][][][] _sectorsData;
 
         // LBA, data
-        uint totalDiskSize;
+        uint _totalDiskSize;
 
         public TeleDisk()
         {
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 ReadableSectorTags    = new List<SectorTagType>(),
                 ReadableMediaTags     = new List<MediaTagType>(),
@@ -81,8 +81,8 @@ namespace Aaru.DiscImages
                 DriveFirmwareRevision = null
             };
 
-            aDiskCrcHasFailed        = false;
-            sectorsWhereCrcHasFailed = new List<ulong>();
+            _aDiskCrcHasFailed        = false;
+            _sectorsWhereCrcHasFailed = new List<ulong>();
         }
     }
 }

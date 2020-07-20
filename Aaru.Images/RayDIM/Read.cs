@@ -63,47 +63,47 @@ namespace Aaru.DiscImages
             if(!sm.Success)
                 return false;
 
-            imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
+            _imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
-            imageInfo.Cylinders       = (uint)(header.cylinders + 1);
-            imageInfo.Heads           = (uint)(header.heads     + 1);
-            imageInfo.SectorsPerTrack = header.sectorsPerTrack;
-            imageInfo.Sectors         = imageInfo.Cylinders * imageInfo.Heads * imageInfo.SectorsPerTrack;
-            imageInfo.SectorSize      = 512;
+            _imageInfo.Cylinders       = (uint)(header.cylinders + 1);
+            _imageInfo.Heads           = (uint)(header.heads     + 1);
+            _imageInfo.SectorsPerTrack = header.sectorsPerTrack;
+            _imageInfo.Sectors         = _imageInfo.Cylinders * _imageInfo.Heads * _imageInfo.SectorsPerTrack;
+            _imageInfo.SectorSize      = 512;
 
-            byte[] sectors = new byte[imageInfo.SectorsPerTrack * imageInfo.SectorSize];
-            disk = new MemoryStream();
+            byte[] sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
+            _disk = new MemoryStream();
 
-            for(int i = 0; i < imageInfo.SectorsPerTrack * imageInfo.SectorSize; i++)
+            for(int i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
             {
                 stream.Read(sectors, 0, sectors.Length);
-                stream.Seek(imageInfo.SectorsPerTrack, SeekOrigin.Current);
-                disk.Write(sectors, 0, sectors.Length);
+                stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);
+                _disk.Write(sectors, 0, sectors.Length);
             }
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                         false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                          (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                          false));
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.NEC_525_HD
                     when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                     break;
                 case MediaType.DOS_525_HD
                     when header.diskType == RayDiskTypes.Mf2hd || header.diskType == RayDiskTypes.Mf2ed:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                     break;
                 case MediaType.RX50 when header.diskType == RayDiskTypes.Md2dd || header.diskType == RayDiskTypes.Md2hd:
-                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+                    _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                     break;
             }
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             return true;
         }
@@ -112,16 +112,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            disk.Seek((long)(sectorAddress    * imageInfo.SectorSize), SeekOrigin.Begin);
-            disk.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            _disk.Seek((long)(sectorAddress    * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _disk.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

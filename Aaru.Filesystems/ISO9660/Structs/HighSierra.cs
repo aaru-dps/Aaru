@@ -42,7 +42,7 @@ namespace Aaru.Filesystems
     {
         static DecodedVolumeDescriptor DecodeVolumeDescriptor(HighSierraPrimaryVolumeDescriptor pvd)
         {
-            var decodedVD = new DecodedVolumeDescriptor
+            var decodedVd = new DecodedVolumeDescriptor
             {
                 SystemIdentifier       = Encoding.ASCII.GetString(pvd.system_id).TrimEnd().Trim('\0'),
                 VolumeIdentifier       = Encoding.ASCII.GetString(pvd.volume_id).TrimEnd().Trim('\0'),
@@ -54,41 +54,41 @@ namespace Aaru.Filesystems
 
             if(pvd.creation_date[0] == '0' ||
                pvd.creation_date[0] == 0x00)
-                decodedVD.CreationTime = DateTime.MinValue;
+                decodedVd.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
+                decodedVd.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
             if(pvd.modification_date[0] == '0' ||
                pvd.modification_date[0] == 0x00)
-                decodedVD.HasModificationTime = false;
+                decodedVd.HasModificationTime = false;
             else
             {
-                decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
+                decodedVd.HasModificationTime = true;
+                decodedVd.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
             }
 
             if(pvd.expiration_date[0] == '0' ||
                pvd.expiration_date[0] == 0x00)
-                decodedVD.HasExpirationTime = false;
+                decodedVd.HasExpirationTime = false;
             else
             {
-                decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
+                decodedVd.HasExpirationTime = true;
+                decodedVd.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
             }
 
             if(pvd.effective_date[0] == '0' ||
                pvd.effective_date[0] == 0x00)
-                decodedVD.HasEffectiveTime = false;
+                decodedVd.HasEffectiveTime = false;
             else
             {
-                decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime    = DateHandlers.HighSierraToDateTime(pvd.effective_date);
+                decodedVd.HasEffectiveTime = true;
+                decodedVd.EffectiveTime    = DateHandlers.HighSierraToDateTime(pvd.effective_date);
             }
 
-            decodedVD.Blocks    = pvd.volume_space_size;
-            decodedVD.BlockSize = pvd.logical_block_size;
+            decodedVd.Blocks    = pvd.volume_space_size;
+            decodedVd.BlockSize = pvd.logical_block_size;
 
-            return decodedVD;
+            return decodedVd;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

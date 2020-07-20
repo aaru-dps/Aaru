@@ -45,13 +45,13 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
-                contents = rootDirectoryCache.Keys.ToList();
+                contents = _rootDirectoryCache.Keys.ToList();
 
                 return Errno.NoError;
             }
@@ -60,7 +60,8 @@ namespace Aaru.Filesystems
                                  ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
 
-            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory))
+            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory)
+            )
             {
                 contents = currentDirectory.Keys.ToList();
 
@@ -73,7 +74,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DirectoryEntryWithPointers> entry =
-                rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+                _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
                 return Errno.NoSuchFile;
@@ -83,7 +84,7 @@ namespace Aaru.Filesystems
 
             string currentPath = pieces[0];
 
-            currentDirectory = rootDirectoryCache;
+            currentDirectory = _rootDirectoryCache;
 
             for(int p = 0; p < pieces.Length; p++)
             {
@@ -97,7 +98,7 @@ namespace Aaru.Filesystems
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
                 if(entry.Value.pointers.Length < 1)
@@ -105,7 +106,7 @@ namespace Aaru.Filesystems
 
                 currentDirectory = DecodeDirectory((int)entry.Value.pointers[0]);
 
-                directoryCache.Add(currentPath, currentDirectory);
+                _directoryCache.Add(currentPath, currentDirectory);
             }
 
             contents = currentDirectory?.Keys.ToList();
@@ -124,7 +125,7 @@ namespace Aaru.Filesystems
 
             do
             {
-                byte[] data = image.ReadSectors((ulong)(nextBlock * volumeBlockSizeRatio), volumeBlockSizeRatio);
+                byte[] data = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio), _volumeBlockSizeRatio);
                 header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
                 nextBlock = header.next_block + firstBlock;
 
@@ -132,9 +133,9 @@ namespace Aaru.Filesystems
 
                 var entry = new DirectoryEntry();
 
-                while(off + DirectoryEntrySize < data.Length)
+                while(off + _directoryEntrySize < data.Length)
                 {
-                    entry = Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(data, off, DirectoryEntrySize);
+                    entry = Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(data, off, _directoryEntrySize);
                     string name = StringHandlers.CToString(entry.name, Encoding);
 
                     var entryWithPointers = new DirectoryEntryWithPointers
@@ -145,7 +146,7 @@ namespace Aaru.Filesystems
 
                     for(int i = 0; i <= entry.last_copy; i++)
                         entryWithPointers.pointers[i] =
-                            BigEndianBitConverter.ToUInt32(data, off + DirectoryEntrySize + (i * 4));
+                            BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + (i * 4));
 
                     entries.Add(name, entryWithPointers);
 
@@ -153,7 +154,7 @@ namespace Aaru.Filesystems
                        (entry.flags & (uint)FileFlags.LastEntryInBlock) != 0)
                         break;
 
-                    off += (int)(DirectoryEntrySize + ((entry.last_copy + 1) * 4));
+                    off += (int)(_directoryEntrySize + ((entry.last_copy + 1) * 4));
                 }
 
                 if((entry.flags & (uint)FileFlags.LastEntry) != 0)

@@ -39,11 +39,11 @@ namespace Aaru.Filters
     /// <summary>No filter for reading files not recognized by any filter</summary>
     public class ZZZNoFilter : IFilter
     {
-        string   basePath;
-        DateTime creationTime;
-        Stream   dataStream;
-        DateTime lastWriteTime;
-        bool     opened;
+        string   _basePath;
+        DateTime _creationTime;
+        Stream   _dataStream;
+        DateTime _lastWriteTime;
+        bool     _opened;
 
         public string Name   => "No filter";
         public Guid   Id     => new Guid("12345678-AAAA-BBBB-CCCC-123456789000");
@@ -51,17 +51,17 @@ namespace Aaru.Filters
 
         public void Close()
         {
-            dataStream?.Close();
-            dataStream = null;
-            basePath   = null;
-            opened     = false;
+            _dataStream?.Close();
+            _dataStream = null;
+            _basePath   = null;
+            _opened     = false;
         }
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public Stream GetDataForkStream() => dataStream;
+        public Stream GetDataForkStream() => _dataStream;
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
         public Stream GetResourceForkStream() => null;
 
@@ -75,46 +75,46 @@ namespace Aaru.Filters
 
         public void Open(byte[] buffer)
         {
-            dataStream    = new MemoryStream(buffer);
-            basePath      = null;
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
-            opened        = true;
+            _dataStream    = new MemoryStream(buffer);
+            _basePath      = null;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
+            _opened        = true;
         }
 
         public void Open(Stream stream)
         {
-            dataStream    = stream;
-            basePath      = null;
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
-            opened        = true;
+            _dataStream    = stream;
+            _basePath      = null;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
+            _opened        = true;
         }
 
         public void Open(string path)
         {
-            dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath   = Path.GetFullPath(path);
+            _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            _basePath   = Path.GetFullPath(path);
             var fi = new FileInfo(path);
-            creationTime  = fi.CreationTimeUtc;
-            lastWriteTime = fi.LastWriteTimeUtc;
-            opened        = true;
+            _creationTime  = fi.CreationTimeUtc;
+            _lastWriteTime = fi.LastWriteTimeUtc;
+            _opened        = true;
         }
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => dataStream.Length;
+        public long GetDataForkLength() => _dataStream.Length;
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => dataStream.Length;
+        public long GetLength() => _dataStream.Length;
 
         public long GetResourceForkLength() => 0;
 
-        public string GetFilename() => Path.GetFileName(basePath);
+        public string GetFilename() => Path.GetFileName(_basePath);
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
     }
 }

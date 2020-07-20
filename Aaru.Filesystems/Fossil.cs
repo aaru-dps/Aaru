@@ -63,8 +63,8 @@ namespace Aaru.Filesystems
             if(partition.Start + hdrSector > imagePlugin.Info.Sectors)
                 return false;
 
-            byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
+            Header hdr    = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                        FOSSIL_HDR_MAGIC);
@@ -84,8 +84,8 @@ namespace Aaru.Filesystems
 
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-            byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            byte[] sector = imagePlugin.ReadSector(partition.Start + hdrSector);
+            Header hdr    = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
             AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                        FOSSIL_HDR_MAGIC);
@@ -112,7 +112,7 @@ namespace Aaru.Filesystems
             if(sbLocation <= partition.End)
             {
                 sector = imagePlugin.ReadSector(sbLocation);
-                FossilSuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
+                SuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sector);
 
                 AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
                                            FOSSIL_SB_MAGIC);
@@ -134,7 +134,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FossilHeader
+        struct Header
         {
             /// <summary>Magic number</summary>
             public readonly uint magic;
@@ -153,7 +153,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FossilSuperBlock
+        struct SuperBlock
         {
             /// <summary>Magic number</summary>
             public readonly uint magic;

@@ -42,11 +42,11 @@ namespace Aaru.DiscImages
             if(Header.flags.HasFlag(ScpFlags.Writable))
                 return null;
 
-            byte[] wholeFile = new byte[scpStream.Length];
+            byte[] wholeFile = new byte[_scpStream.Length];
             uint   sum       = 0;
 
-            scpStream.Position = 0;
-            scpStream.Read(wholeFile, 0, wholeFile.Length);
+            _scpStream.Position = 0;
+            _scpStream.Read(wholeFile, 0, wholeFile.Length);
 
             for(int i = 0x10; i < wholeFile.Length; i++)
                 sum += wholeFile[i];

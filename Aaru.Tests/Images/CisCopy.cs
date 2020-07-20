@@ -39,7 +39,7 @@ namespace Aaru.Tests.Images
     public class CisCopy
     {
         // TODO: Support compression
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "md1dd8_all.dcf.lz", "md1dd8_belelung.dcf.lz", "md1dd8_fat.dcf.lz", "md1dd_all.dcf.lz",
             "md1dd_belelung.dcf.lz", "md1dd_fat.dcf.lz", "md2dd8_all.dcf.lz", "md2dd8_belelung.dcf.lz",
@@ -48,18 +48,18 @@ namespace Aaru.Tests.Images
             "mf2dd_fat.dcf.lz", "mf2hd_all.dcf.lz", "mf2hd_belelung.dcf.lz", "mf2hd_fat.dcf.lz"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             320, 320, 320, 360, 360, 360, 640, 640, 640, 720, 720, 720, 2400, 2400, 2400, 1440, 1440, 1440, 2880, 2880,
             2880
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
             MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_8,
@@ -69,7 +69,7 @@ namespace Aaru.Tests.Images
             MediaType.DOS_35_HD
         };
 
-        readonly string[] md5S =
+        readonly string[] _md5S =
         {
             "95c0b76419c1c74db6dbe1d790f97dde", "95c0b76419c1c74db6dbe1d790f97dde", "6f6507e416b7320d583dc347b8e57844",
             "48b93e8619c4c13f4a3724b550e4b371", "48b93e8619c4c13f4a3724b550e4b371", "1d060d2e2543e1c2e8569f5451660060",
@@ -83,20 +83,20 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "CisCopy", testfiles[i]);
-                IFilter filter   = new LZip();
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CisCopy", _testfiles[i]);
+                IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.CisCopy();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
 
                 // How many sectors to read at once
-                const uint SECTORS_TO_READ = 256;
-                ulong      doneSectors     = 0;
+                const uint sectorsToRead = 256;
+                ulong      doneSectors   = 0;
 
                 var ctx = new Md5Context();
 
@@ -104,10 +104,10 @@ namespace Aaru.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                    if(image.Info.Sectors - doneSectors >= sectorsToRead)
                     {
-                        sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                        doneSectors += SECTORS_TO_READ;
+                        sector      =  image.ReadSectors(doneSectors, sectorsToRead);
+                        doneSectors += sectorsToRead;
                     }
                     else
                     {
@@ -118,7 +118,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
             }
         }
     }

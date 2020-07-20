@@ -949,6 +949,7 @@ namespace Aaru.Filesystems
             public readonly byte[] name;
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum UmsdosFlags : byte
         {
             /// <summary>Never show this entry in directory search</summary>

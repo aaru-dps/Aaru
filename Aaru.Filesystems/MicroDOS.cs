@@ -66,7 +66,7 @@ namespace Aaru.Filesystems
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
-            MicroDosBlock0 block0 = Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
+            Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
@@ -81,7 +81,7 @@ namespace Aaru.Filesystems
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
-            MicroDosBlock0 block0 = Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
+            Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
             sb.AppendLine("MicroDOS filesystem");
             sb.AppendFormat("Volume has {0} blocks ({1} bytes)", block0.blocks, block0.blocks * 512).AppendLine();
@@ -108,7 +108,7 @@ namespace Aaru.Filesystems
 
         // Followed by directory entries
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MicroDosBlock0
+        struct Block0
         {
             /// <summary>BK starts booting here</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]

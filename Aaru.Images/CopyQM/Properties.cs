@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
 {
     public partial class CopyQm
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Sydex CopyQM";
         public Guid                   Id           => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
         public string                 Format       => "Sydex CopyQM";

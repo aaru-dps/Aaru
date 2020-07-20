@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Virtual98
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Virtual98 Disk Image";
         public Guid                   Id           => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
         public string                 Author       => "Natalia Portillo";

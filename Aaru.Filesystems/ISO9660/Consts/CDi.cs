@@ -40,9 +40,9 @@ namespace Aaru.Filesystems
 {
     public partial class ISO9660
     {
-        const           string CDI_MAGIC              = "CD-I ";
-        static readonly int    CdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
-        static readonly int    CdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
+        const           string CDI_MAGIC               = "CD-I ";
+        static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
+        static readonly int    _cdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
 
         [Flags]
         enum CdiVolumeFlags : byte

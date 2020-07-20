@@ -57,16 +57,16 @@ namespace Aaru.Filesystems
                 options = GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out debug);
+                bool.TryParse(debugString, out _debug);
 
             if(options.TryGetValue("use_path_table", out string usePathTableString))
-                bool.TryParse(usePathTableString, out usePathTable);
+                bool.TryParse(usePathTableString, out _usePathTable);
 
             if(options.TryGetValue("use_trans_tbl", out string useTransTblString))
-                bool.TryParse(useTransTblString, out useTransTbl);
+                bool.TryParse(useTransTblString, out _useTransTbl);
 
             if(options.TryGetValue("use_evd", out string useEvdString))
-                bool.TryParse(useEvdString, out useEvd);
+                bool.TryParse(useEvdString, out _useEvd);
 
             // Default namespace
             if(@namespace is null)
@@ -75,23 +75,23 @@ namespace Aaru.Filesystems
             switch(@namespace.ToLowerInvariant())
             {
                 case "normal":
-                    this.@namespace = Namespace.Normal;
+                    _namespace = Namespace.Normal;
 
                     break;
                 case "vms":
-                    this.@namespace = Namespace.Vms;
+                    _namespace = Namespace.Vms;
 
                     break;
                 case "joliet":
-                    this.@namespace = Namespace.Joliet;
+                    _namespace = Namespace.Joliet;
 
                     break;
                 case "rrip":
-                    this.@namespace = Namespace.Rrip;
+                    _namespace = Namespace.Rrip;
 
                     break;
                 case "romeo":
-                    this.@namespace = Namespace.Romeo;
+                    _namespace = Namespace.Romeo;
 
                     break;
                 default: return Errno.InvalidArgument;
@@ -116,13 +116,13 @@ namespace Aaru.Filesystems
             byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
             int    xaOff    = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-            highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+            _highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
             int hsOff = 0;
 
-            if(highSierra)
+            if(_highSierra)
                 hsOff = 8;
 
-            cdi = false;
+            _cdi = false;
             List<ulong> bvdSectors = new List<ulong>();
             List<ulong> pvdSectors = new List<ulong>();
             List<ulong> svdSectors = new List<ulong>();
@@ -164,13 +164,13 @@ namespace Aaru.Filesystems
                     break;
                 }
 
-                cdi |= Encoding.GetString(vdMagic) == CDI_MAGIC;
+                _cdi |= Encoding.GetString(vdMagic) == CDI_MAGIC;
 
                 switch(vdType)
                 {
                     case 0:
                     {
-                        if(debug)
+                        if(_debug)
                             bvdSectors.Add(16 + counter + partition.Start);
 
                         break;
@@ -178,15 +178,15 @@ namespace Aaru.Filesystems
 
                     case 1:
                     {
-                        if(highSierra)
+                        if(_highSierra)
                             hsvd = Marshal.
                                 ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
-                        else if(cdi)
+                        else if(_cdi)
                             fsvd = Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                         else
                             pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
-                        if(debug)
+                        if(_debug)
                             pvdSectors.Add(16 + counter + partition.Start);
 
                         break;
@@ -211,20 +211,20 @@ namespace Aaru.Filesystems
                                     AaruConsole.DebugWriteLine("ISO9660 plugin",
                                                                "Found unknown supplementary volume descriptor");
 
-                            if(debug)
+                            if(_debug)
                                 svdSectors.Add(16 + counter + partition.Start);
                         }
                         else
                         {
-                            if(debug)
+                            if(_debug)
                                 evdSectors.Add(16 + counter + partition.Start);
 
-                            if(useEvd)
+                            if(_useEvd)
                             {
                                 // Basically until escape sequences are implemented, let the user chose the encoding.
                                 // This is the same as user chosing Romeo namespace, but using the EVD instead of the PVD
-                                this.@namespace = Namespace.Romeo;
-                                pvd             = svd;
+                                _namespace = Namespace.Romeo;
+                                pvd        = svd;
                             }
                         }
 
@@ -233,7 +233,7 @@ namespace Aaru.Filesystems
 
                     case 3:
                     {
-                        if(debug)
+                        if(_debug)
                             vpdSectors.Add(16 + counter + partition.Start);
 
                         break;
@@ -257,9 +257,9 @@ namespace Aaru.Filesystems
                 return Errno.InvalidArgument;
             }
 
-            if(highSierra)
+            if(_highSierra)
                 decodedVd = DecodeVolumeDescriptor(hsvd.Value);
-            else if(cdi)
+            else if(_cdi)
                 decodedVd = DecodeVolumeDescriptor(fsvd.Value);
             else
                 decodedVd = DecodeVolumeDescriptor(pvd.Value);
@@ -267,7 +267,7 @@ namespace Aaru.Filesystems
             if(jolietvd != null)
                 decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
-            if(this.@namespace != Namespace.Romeo)
+            if(_namespace != Namespace.Romeo)
                 Encoding = Encoding.ASCII;
 
             string fsFormat;
@@ -276,9 +276,9 @@ namespace Aaru.Filesystems
             uint pathTableMsbLocation;
             uint pathTableLsbLocation = 0; // Initialize to 0 as ignored in CD-i
 
-            image = imagePlugin;
+            _image = imagePlugin;
 
-            if(highSierra)
+            if(_highSierra)
             {
                 pathTableData = ReadSingleExtent(0, hsvd.Value.path_table_size,
                                                  Swapping.Swap(hsvd.Value.mandatory_path_table_msb));
@@ -288,7 +288,7 @@ namespace Aaru.Filesystems
                 pathTableMsbLocation = hsvd.Value.mandatory_path_table_msb;
                 pathTableLsbLocation = hsvd.Value.mandatory_path_table_lsb;
             }
-            else if(cdi)
+            else if(_cdi)
             {
                 pathTableData = ReadSingleExtent(0, fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
 
@@ -310,37 +310,37 @@ namespace Aaru.Filesystems
                 pathTableLsbLocation = pvd.Value.type_l_path_table;
             }
 
-            pathTable = highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
+            _pathTable = _highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
 
             // High Sierra and CD-i do not support Joliet or RRIP
-            if((highSierra || cdi)                 &&
-               this.@namespace != Namespace.Normal &&
-               this.@namespace != Namespace.Vms)
-                this.@namespace = Namespace.Normal;
+            if((_highSierra || _cdi)          &&
+               _namespace != Namespace.Normal &&
+               _namespace != Namespace.Vms)
+                _namespace = Namespace.Normal;
 
             if(jolietvd is null &&
-               this.@namespace == Namespace.Joliet)
-                this.@namespace = Namespace.Normal;
+               _namespace == Namespace.Joliet)
+                _namespace = Namespace.Normal;
 
             uint rootLocation;
             uint rootSize;
             byte rootXattrLength = 0;
 
-            if(!cdi)
+            if(!_cdi)
             {
-                rootLocation = highSierra ? hsvd.Value.root_directory_record.extent
+                rootLocation = _highSierra ? hsvd.Value.root_directory_record.extent
                                    : pvd.Value.root_directory_record.extent;
 
-                rootXattrLength = highSierra ? hsvd.Value.root_directory_record.xattr_len
+                rootXattrLength = _highSierra ? hsvd.Value.root_directory_record.xattr_len
                                       : pvd.Value.root_directory_record.xattr_len;
 
-                if(highSierra)
+                if(_highSierra)
                     rootSize = hsvd.Value.root_directory_record.size;
                 else
                     rootSize = pvd.Value.root_directory_record.size;
 
                 if(pathTableData.Length > 1 &&
-                   rootLocation         != pathTable[0].Extent)
+                   rootLocation         != _pathTable[0].Extent)
                 {
                     AaruConsole.DebugWriteLine("ISO9660 plugin",
                                                "Path table and PVD do not point to the same location for the root directory!");
@@ -349,7 +349,7 @@ namespace Aaru.Filesystems
 
                     bool pvdWrongRoot = false;
 
-                    if(highSierra)
+                    if(_highSierra)
                     {
                         HighSierraDirectoryRecord rootEntry =
                             Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
@@ -373,11 +373,11 @@ namespace Aaru.Filesystems
 
                         bool pathTableWrongRoot = false;
 
-                        rootLocation = pathTable[0].Extent;
+                        rootLocation = _pathTable[0].Extent;
 
-                        firstRootSector = ReadSector(pathTable[0].Extent);
+                        firstRootSector = ReadSector(_pathTable[0].Extent);
 
-                        if(highSierra)
+                        if(_highSierra)
                         {
                             HighSierraDirectoryRecord rootEntry =
                                 Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
@@ -401,13 +401,13 @@ namespace Aaru.Filesystems
                             return Errno.InvalidArgument;
                         }
 
-                        usePathTable = true;
+                        _usePathTable = true;
                     }
                 }
             }
             else
             {
-                rootLocation = pathTable[0].Extent;
+                rootLocation = _pathTable[0].Extent;
 
                 byte[] firstRootSector = ReadSector(rootLocation);
 
@@ -416,21 +416,21 @@ namespace Aaru.Filesystems
 
                 rootSize = rootEntry.size;
 
-                usePathTable = usePathTable || pathTable.Length == 1;
-                useTransTbl  = false;
+                _usePathTable = _usePathTable || _pathTable.Length == 1;
+                _useTransTbl  = false;
             }
 
             // In case the path table is incomplete
-            if(usePathTable && pathTableData.Length == 1)
-                usePathTable = false;
+            if(_usePathTable && pathTableData.Length == 1)
+                _usePathTable = false;
 
-            if(usePathTable && !cdi)
+            if(_usePathTable && !_cdi)
             {
-                rootLocation = pathTable[0].Extent;
+                rootLocation = _pathTable[0].Extent;
 
                 byte[] firstRootSector = ReadSector(rootLocation);
 
-                if(highSierra)
+                if(_highSierra)
                 {
                     HighSierraDirectoryRecord rootEntry =
                         Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
@@ -445,7 +445,7 @@ namespace Aaru.Filesystems
                     rootSize = rootEntry.size;
                 }
 
-                rootXattrLength = pathTable[0].XattrLength;
+                rootXattrLength = _pathTable[0].XattrLength;
             }
 
             try
@@ -462,37 +462,37 @@ namespace Aaru.Filesystems
             Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
             Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
 
-            if(this.@namespace == Namespace.Joliet ||
-               this.@namespace == Namespace.Rrip)
+            if(_namespace == Namespace.Joliet ||
+               _namespace == Namespace.Rrip)
             {
-                usePathTable = false;
-                useTransTbl  = false;
+                _usePathTable = false;
+                _useTransTbl  = false;
             }
 
             // Cannot traverse path table if we substitute the names for the ones in TRANS.TBL
-            if(useTransTbl)
-                usePathTable = false;
+            if(_useTransTbl)
+                _usePathTable = false;
 
-            if(this.@namespace != Namespace.Joliet)
-                rootDirectoryCache = cdi
-                                         ? DecodeCdiDirectory(rootLocation, rootSize, rootXattrLength)
-                                         : highSierra
-                                             ? DecodeHighSierraDirectory(rootLocation, rootSize, rootXattrLength)
-                                             : DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
+            if(_namespace != Namespace.Joliet)
+                _rootDirectoryCache = _cdi
+                                          ? DecodeCdiDirectory(rootLocation, rootSize, rootXattrLength)
+                                          : _highSierra
+                                              ? DecodeHighSierraDirectory(rootLocation, rootSize, rootXattrLength)
+                                              : DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
 
             XmlFsType.Type = fsFormat;
 
             if(jolietvd != null &&
-               (this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip))
+               (_namespace == Namespace.Joliet || _namespace == Namespace.Rrip))
             {
                 rootLocation    = jolietvd.Value.root_directory_record.extent;
                 rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;
 
                 rootSize = jolietvd.Value.root_directory_record.size;
 
-                joliet = true;
+                _joliet = true;
 
-                rootDirectoryCache = DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
+                _rootDirectoryCache = DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
 
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
@@ -584,9 +584,9 @@ namespace Aaru.Filesystems
                 }
             }
 
-            if(debug)
+            if(_debug)
             {
-                rootDirectoryCache.Add("$", new DecodedDirectoryEntry
+                _rootDirectoryCache.Add("$", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
                     {
@@ -597,8 +597,8 @@ namespace Aaru.Filesystems
                     Timestamp = decodedVd.CreationTime
                 });
 
-                if(!cdi)
-                    rootDirectoryCache.Add("$PATH_TABLE.LSB", new DecodedDirectoryEntry
+                if(!_cdi)
+                    _rootDirectoryCache.Add("$PATH_TABLE.LSB", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -609,7 +609,7 @@ namespace Aaru.Filesystems
                         Timestamp = decodedVd.CreationTime
                     });
 
-                rootDirectoryCache.Add("$PATH_TABLE.MSB", new DecodedDirectoryEntry
+                _rootDirectoryCache.Add("$PATH_TABLE.MSB", new DecodedDirectoryEntry
                 {
                     Extents = new List<(uint extent, uint size)>
                     {
@@ -621,7 +621,7 @@ namespace Aaru.Filesystems
                 });
 
                 for(int i = 0; i < bvdSectors.Count; i++)
-                    rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -633,7 +633,7 @@ namespace Aaru.Filesystems
                     });
 
                 for(int i = 0; i < pvdSectors.Count; i++)
-                    rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -645,7 +645,7 @@ namespace Aaru.Filesystems
                     });
 
                 for(int i = 0; i < svdSectors.Count; i++)
-                    rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -657,7 +657,7 @@ namespace Aaru.Filesystems
                     });
 
                 for(int i = 0; i < evdSectors.Count; i++)
-                    rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -669,7 +669,7 @@ namespace Aaru.Filesystems
                     });
 
                 for(int i = 0; i < vpdSectors.Count; i++)
-                    rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -681,7 +681,7 @@ namespace Aaru.Filesystems
                     });
 
                 if(segaCd != null)
-                    rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -693,7 +693,7 @@ namespace Aaru.Filesystems
                     });
 
                 if(saturn != null)
-                    rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -705,7 +705,7 @@ namespace Aaru.Filesystems
                     });
 
                 if(dreamcast != null)
-                    rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
+                    _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
                     {
                         Extents = new List<(uint extent, uint size)>
                         {
@@ -721,39 +721,39 @@ namespace Aaru.Filesystems
             XmlFsType.Clusters    =  decodedVd.Blocks;
             XmlFsType.ClusterSize =  decodedVd.BlockSize;
 
-            statfs = new FileSystemInfo
+            _statfs = new FileSystemInfo
             {
                 Blocks = decodedVd.Blocks,
-                FilenameLength = (ushort)(jolietvd != null ? this.@namespace == Namespace.Joliet
+                FilenameLength = (ushort)(jolietvd != null ? _namespace == Namespace.Joliet
                                                                  ? 110
                                                                  : 255 : 255),
                 PluginId = Id,
                 Type     = fsFormat
             };
 
-            directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
+            _directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
 
-            if(usePathTable)
-                foreach(DecodedDirectoryEntry subDirectory in cdi
+            if(_usePathTable)
+                foreach(DecodedDirectoryEntry subDirectory in _cdi
                                                                   ? GetSubdirsFromCdiPathTable("")
-                                                                  : highSierra
+                                                                  : _highSierra
                                                                       ? GetSubdirsFromHighSierraPathTable("")
                                                                       : GetSubdirsFromIsoPathTable(""))
-                    rootDirectoryCache[subDirectory.Filename] = subDirectory;
+                    _rootDirectoryCache[subDirectory.Filename] = subDirectory;
 
-            mounted = true;
+            _mounted = true;
 
             return Errno.NoError;
         }
 
         public Errno Unmount()
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            rootDirectoryCache = null;
-            directoryCache     = null;
-            mounted            = false;
+            _rootDirectoryCache = null;
+            _directoryCache     = null;
+            _mounted            = false;
 
             return Errno.NoError;
         }
@@ -762,10 +762,10 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            stat = statfs.ShallowCopy();
+            stat = _statfs.ShallowCopy();
 
             return Errno.NoError;
         }

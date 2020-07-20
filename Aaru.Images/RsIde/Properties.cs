@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "RS-IDE Hard Disk Image";
         public Guid                   Id           => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "RS-IDE disk image";
         public List<DumpHardwareType> DumpHardware => null;

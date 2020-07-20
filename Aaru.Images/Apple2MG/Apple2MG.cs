@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
 {
     public partial class Apple2Mg : IWritableImage
     {
-        IFilter     a2MgImageFilter;
-        byte[]      decodedImage;
-        A2ImgHeader imageHeader;
-        ImageInfo   imageInfo;
-        FileStream  writingStream;
+        IFilter     _a2MgImageFilter;
+        byte[]      _decodedImage;
+        A2ImgHeader _imageHeader;
+        ImageInfo   _imageInfo;
+        FileStream  _writingStream;
 
-        public Apple2Mg() => imageInfo = new ImageInfo
+        public Apple2Mg() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

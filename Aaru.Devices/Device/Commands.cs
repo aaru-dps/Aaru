@@ -163,11 +163,11 @@ namespace Aaru.Devices
         {
             switch(command)
             {
-                case MmcCommands.SendCid when cachedCid != null:
+                case MmcCommands.SendCid when _cachedCid != null:
                 {
                     DateTime start = DateTime.Now;
-                    buffer = new byte[cachedCid.Length];
-                    Array.Copy(cachedCid, buffer, buffer.Length);
+                    buffer = new byte[_cachedCid.Length];
+                    Array.Copy(_cachedCid, buffer, buffer.Length);
                     response = new uint[4];
                     sense    = false;
                     DateTime end = DateTime.Now;
@@ -175,11 +175,11 @@ namespace Aaru.Devices
 
                     return 0;
                 }
-                case MmcCommands.SendCsd when cachedCid != null:
+                case MmcCommands.SendCsd when _cachedCid != null:
                 {
                     DateTime start = DateTime.Now;
-                    buffer = new byte[cachedCsd.Length];
-                    Array.Copy(cachedCsd, buffer, buffer.Length);
+                    buffer = new byte[_cachedCsd.Length];
+                    Array.Copy(_cachedCsd, buffer, buffer.Length);
                     response = new uint[4];
                     sense    = false;
                     DateTime end = DateTime.Now;
@@ -187,11 +187,11 @@ namespace Aaru.Devices
 
                     return 0;
                 }
-                case (MmcCommands)SecureDigitalCommands.SendScr when cachedScr != null:
+                case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
                 {
                     DateTime start = DateTime.Now;
-                    buffer = new byte[cachedScr.Length];
-                    Array.Copy(cachedScr, buffer, buffer.Length);
+                    buffer = new byte[_cachedScr.Length];
+                    Array.Copy(_cachedScr, buffer, buffer.Length);
                     response = new uint[4];
                     sense    = false;
                     DateTime end = DateTime.Now;
@@ -199,12 +199,12 @@ namespace Aaru.Devices
 
                     return 0;
                 }
-                case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when cachedOcr != null:
-                case MmcCommands.SendOpCond when cachedOcr                                    != null:
+                case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
+                case MmcCommands.SendOpCond when _cachedOcr                                    != null:
                 {
                     DateTime start = DateTime.Now;
-                    buffer = new byte[cachedOcr.Length];
-                    Array.Copy(cachedOcr, buffer, buffer.Length);
+                    buffer = new byte[_cachedOcr.Length];
+                    Array.Copy(_cachedOcr, buffer, buffer.Length);
                     response = new uint[4];
                     sense    = false;
                     DateTime end = DateTime.Now;

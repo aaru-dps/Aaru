@@ -39,10 +39,10 @@ namespace Aaru.DiscImages
 {
     public partial class Cpcdsk
     {
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "CPCEMU Disk-File and Extended CPC Disk-File";
         public Guid                   Id           => new Guid("724B16CC-ADB9-492E-BA07-CAEEC1012B16");
-        public string                 Format       => extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
+        public string                 Format       => _extended ? "CPCEMU Extended disk image" : "CPCEMU disk image";
         public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;

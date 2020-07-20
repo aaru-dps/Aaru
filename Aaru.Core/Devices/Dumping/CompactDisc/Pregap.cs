@@ -179,7 +179,7 @@ namespace Aaru.Core.Devices.Dumping
                 int   trackRetries = 0;
 
                 // First track of each session has at least 150 sectors of pregap and is not always readable
-                if(tracks.Where(t => t.TrackSession == track.TrackSession).OrderBy(t => t.TrackSequence).
+                if(tracks.Where(trk => trk.TrackSession == track.TrackSession).OrderBy(trk => trk.TrackSequence).
                           FirstOrDefault().TrackSequence == track.TrackSequence)
                 {
                     AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
@@ -203,7 +203,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 int   lba           = (int)track.TrackStartSector - 1;
                 bool  pregapFound   = false;
-                Track previousTrack = tracks.FirstOrDefault(t => t.TrackSequence == track.TrackSequence - 1);
+                Track previousTrack = tracks.FirstOrDefault(trk => trk.TrackSequence == track.TrackSequence - 1);
 
                 bool goneBack                      = false;
                 bool goFront                       = false;

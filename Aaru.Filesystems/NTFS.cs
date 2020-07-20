@@ -89,7 +89,7 @@ namespace Aaru.Filesystems
 
             byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
 
-            NtfsBootBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<NtfsBootBlock>(ntfsBpb);
+            BiosParameterBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(ntfsBpb);
 
             sb.AppendFormat("{0} bytes per sector", ntfsBb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();
@@ -155,7 +155,7 @@ namespace Aaru.Filesystems
 
         /// <summary>NTFS $BOOT</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NtfsBootBlock
+        struct BiosParameterBlock
         {
             // Start of BIOS Parameter Block
             /// <summary>0x000, Jump to boot code</summary>

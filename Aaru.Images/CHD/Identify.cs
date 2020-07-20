@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
             byte[] magic = new byte[8];
             stream.Read(magic, 0, 8);
 
-            return chdTag.SequenceEqual(magic);
+            return _chdTag.SequenceEqual(magic);
         }
     }
 }

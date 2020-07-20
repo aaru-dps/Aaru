@@ -56,7 +56,7 @@ namespace Aaru.Filesystems
 
             BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
 
-            return bpb.fs_type.SequenceEqual(hpofsType);
+            return bpb.fs_type.SequenceEqual(_type);
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,

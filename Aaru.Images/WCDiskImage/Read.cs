@@ -54,33 +54,33 @@ namespace Aaru.DiscImages
             byte[] header = new byte[32];
             stream.Read(header, 0, 32);
 
-            WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
+            WcDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WcDiskImageFileHeader>(header);
 
             AaruConsole.DebugWriteLine("d2f plugin",
                                        "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
                                        fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
 
-            imageInfo.Cylinders       = fheader.cylinders;
-            imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
-            imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
-            imageInfo.Heads           = fheader.heads;
-            imageInfo.Sectors         = imageInfo.Heads * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
-            imageInfo.ImageSize       = imageInfo.Sectors                     * imageInfo.SectorSize;
+            _imageInfo.Cylinders       = fheader.cylinders;
+            _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
+            _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
+            _imageInfo.Heads           = fheader.heads;
+            _imageInfo.Sectors         = _imageInfo.Heads * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+            _imageInfo.ImageSize       = _imageInfo.Sectors                      * _imageInfo.SectorSize;
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                         false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
+                                                          (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                          false));
 
             /* buffer the entire disk in memory */
-            for(int cyl = 0; cyl < imageInfo.Cylinders; cyl++)
+            for(int cyl = 0; cyl < _imageInfo.Cylinders; cyl++)
             {
-                for(int head = 0; head < imageInfo.Heads; head++)
+                for(int head = 0; head < _imageInfo.Heads; head++)
                     ReadTrack(stream, cyl, head);
             }
 
@@ -88,35 +88,35 @@ namespace Aaru.DiscImages
             if(fheader.extraTracks[0] == 1)
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 0) present, reading");
-                ReadTrack(stream, (int)imageInfo.Cylinders, 0);
+                ReadTrack(stream, (int)_imageInfo.Cylinders, 0);
             }
 
             if(fheader.extraTracks[1] == 1)
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 1) present, reading");
-                ReadTrack(stream, (int)imageInfo.Cylinders, 1);
+                ReadTrack(stream, (int)_imageInfo.Cylinders, 1);
             }
 
             if(fheader.extraTracks[2] == 1)
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 0) present, reading");
-                ReadTrack(stream, (int)imageInfo.Cylinders + 1, 0);
+                ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 0);
             }
 
             if(fheader.extraTracks[3] == 1)
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 1) present, reading");
-                ReadTrack(stream, (int)imageInfo.Cylinders + 1, 1);
+                ReadTrack(stream, (int)_imageInfo.Cylinders + 1, 1);
             }
 
             /* adjust number of cylinders */
             if(fheader.extraTracks[0] == 1 ||
                fheader.extraTracks[1] == 1)
-                imageInfo.Cylinders++;
+                _imageInfo.Cylinders++;
 
             if(fheader.extraTracks[2] == 1 ||
                fheader.extraTracks[3] == 1)
-                imageInfo.Cylinders++;
+                _imageInfo.Cylinders++;
 
             /* read the comment and directory data if present */
             if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
@@ -125,8 +125,8 @@ namespace Aaru.DiscImages
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WCDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
+                WcDiskImageSectorHeader sheader =
+                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Comment)
                     throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
@@ -143,8 +143,8 @@ namespace Aaru.DiscImages
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WCDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
+                WcDiskImageSectorHeader sheader =
+                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Directory)
                     throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
@@ -156,21 +156,21 @@ namespace Aaru.DiscImages
             }
 
             if(comments.Length > 0)
-                imageInfo.Comments = comments;
+                _imageInfo.Comments = comments;
 
             // save some variables for later use
-            fileHeader    = fheader;
-            wcImageFilter = imageFilter;
+            _fileHeader    = fheader;
+            _wcImageFilter = imageFilter;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            int sectorNumber   = (int)(sectorAddress % imageInfo.SectorsPerTrack) + 1;
-            int trackNumber    = (int)(sectorAddress / imageInfo.SectorsPerTrack);
-            int headNumber     = imageInfo.Heads > 1 ? trackNumber % 2 : 0;
-            int cylinderNumber = imageInfo.Heads > 1 ? trackNumber / 2 : trackNumber;
+            int sectorNumber   = (int)(sectorAddress % _imageInfo.SectorsPerTrack) + 1;
+            int trackNumber    = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+            int headNumber     = _imageInfo.Heads > 1 ? trackNumber % 2 : 0;
+            int cylinderNumber = _imageInfo.Heads > 1 ? trackNumber / 2 : trackNumber;
 
             if(badSectors[(cylinderNumber, headNumber, sectorNumber)])
             {
@@ -190,13 +190,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            byte[] result = new byte[length * imageInfo.SectorSize];
+            byte[] result = new byte[length * _imageInfo.SectorSize];
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             for(int i = 0; i < length; i++)
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * imageInfo.SectorSize);
+                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * _imageInfo.SectorSize);
 
             return result;
         }
@@ -211,14 +211,14 @@ namespace Aaru.DiscImages
             byte[] crc;
             short  calculatedCRC;
 
-            for(int sect = 1; sect < imageInfo.SectorsPerTrack + 1; sect++)
+            for(int sect = 1; sect < _imageInfo.SectorsPerTrack + 1; sect++)
             {
                 /* read the sector header */
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WCDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
+                WcDiskImageSectorHeader sheader =
+                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
 
                 /* validate the sector header */
                 if(sheader.cylinder != cyl  ||

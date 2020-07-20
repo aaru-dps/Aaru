@@ -50,44 +50,44 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[133];
 
             stream.Read(hdr, 0, 133);
-            header = Marshal.ByteArrayToStructureLittleEndian<CopyQmHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<CopyQmHeader>(hdr);
 
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", header.magic);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}", header.mark);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}", header.sectorSize);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", header.sectorPerCluster);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}", header.reservedSectors);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}", header.fatCopy);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}", header.rootEntries);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}", header.sectors);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}", header.mediaType);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}", header.sectorsPerFat);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}", header.heads);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}", header.hidden);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}", header.sectorsBig);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}", header.description);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}", header.blind);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}", header.density);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}", header.imageCylinders);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}", header.totalCylinders);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}", header.crc);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}", header.volumeLabel);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}", header.time);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}", header.date);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}", header.commentLength);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}", header.secbs);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}", header.unknown);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}", header.interleave);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}", header.skew);
-            AaruConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", header.drive);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", _header.magic);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}", _header.mark);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}", _header.sectorSize);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", _header.sectorPerCluster);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}", _header.reservedSectors);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}", _header.fatCopy);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}", _header.rootEntries);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}", _header.sectors);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}", _header.mediaType);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}", _header.sectorsPerFat);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}", _header.sectorsPerTrack);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}", _header.heads);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}", _header.hidden);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}", _header.sectorsBig);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}", _header.description);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}", _header.blind);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}", _header.density);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}", _header.imageCylinders);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}", _header.totalCylinders);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}", _header.crc);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}", _header.volumeLabel);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}", _header.time);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}", _header.date);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}", _header.commentLength);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}", _header.secbs);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}", _header.unknown);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}", _header.interleave);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}", _header.skew);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}", _header.drive);
 
-            byte[] cmt = new byte[header.commentLength];
-            stream.Read(cmt, 0, header.commentLength);
-            imageInfo.Comments = StringHandlers.CToString(cmt);
-            decodedImage       = new MemoryStream();
+            byte[] cmt = new byte[_header.commentLength];
+            stream.Read(cmt, 0, _header.commentLength);
+            _imageInfo.Comments = StringHandlers.CToString(cmt);
+            _decodedImage       = new MemoryStream();
 
-            calculatedDataCrc = 0;
+            _calculatedDataCrc = 0;
 
             while(stream.Position + 2 < stream.Length)
             {
@@ -106,33 +106,34 @@ namespace Aaru.DiscImages
 
                     for(int i = 0; i < runLength * -1; i++)
                     {
-                        decodedImage.WriteByte(repeatedByte);
+                        _decodedImage.WriteByte(repeatedByte);
 
-                        calculatedDataCrc = copyQmCrcTable[(repeatedByte ^ calculatedDataCrc) & 0x3F] ^
-                                            (calculatedDataCrc >> 8);
+                        _calculatedDataCrc = _copyQmCrcTable[(repeatedByte ^ _calculatedDataCrc) & 0x3F] ^
+                                             (_calculatedDataCrc >> 8);
                     }
                 }
                 else if(runLength > 0)
                 {
                     byte[] nonRepeated = new byte[runLength];
                     stream.Read(nonRepeated, 0, runLength);
-                    decodedImage.Write(nonRepeated, 0, runLength);
+                    _decodedImage.Write(nonRepeated, 0, runLength);
 
                     foreach(byte c in nonRepeated)
-                        calculatedDataCrc = copyQmCrcTable[(c ^ calculatedDataCrc) & 0x3F] ^ (calculatedDataCrc >> 8);
+                        _calculatedDataCrc =
+                            _copyQmCrcTable[(c ^ _calculatedDataCrc) & 0x3F] ^ (_calculatedDataCrc >> 8);
                 }
             }
 
             // In case there is omitted data
-            long sectors = header.sectorsPerTrack * header.heads * header.totalCylinders;
+            long sectors = _header.sectorsPerTrack * _header.heads * _header.totalCylinders;
 
-            long fillingLen = (sectors * header.sectorSize) - decodedImage.Length;
+            long fillingLen = (sectors * _header.sectorSize) - _decodedImage.Length;
 
             if(fillingLen > 0)
             {
                 byte[] filling = new byte[fillingLen];
                 ArrayHelpers.ArrayFill(filling, (byte)0xF6);
-                decodedImage.Write(filling, 0, filling.Length);
+                _decodedImage.Write(filling, 0, filling.Length);
             }
 
             int sum = 0;
@@ -140,55 +141,55 @@ namespace Aaru.DiscImages
             for(int i = 0; i < hdr.Length - 1; i++)
                 sum += hdr[i];
 
-            headerChecksumOk = ((-1 * sum) & 0xFF) == header.headerChecksum;
+            _headerChecksumOk = ((-1 * sum) & 0xFF) == _header.headerChecksum;
 
             AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}", (-1 * sum) & 0xFF,
-                                       headerChecksumOk);
+                                       _headerChecksumOk);
 
-            AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
-                                       calculatedDataCrc == header.crc);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", _calculatedDataCrc,
+                                       _calculatedDataCrc == _header.crc);
 
-            imageInfo.Application          = "CopyQM";
-            imageInfo.CreationTime         = DateHandlers.DosToDateTime(header.date, header.time);
-            imageInfo.LastModificationTime = imageInfo.CreationTime;
-            imageInfo.MediaTitle           = header.volumeLabel;
-            imageInfo.ImageSize            = (ulong)(stream.Length - 133 - header.commentLength);
-            imageInfo.Sectors              = (ulong)sectors;
-            imageInfo.SectorSize           = header.sectorSize;
+            _imageInfo.Application          = "CopyQM";
+            _imageInfo.CreationTime         = DateHandlers.DosToDateTime(_header.date, _header.time);
+            _imageInfo.LastModificationTime = _imageInfo.CreationTime;
+            _imageInfo.MediaTitle           = _header.volumeLabel;
+            _imageInfo.ImageSize            = (ulong)(stream.Length - 133 - _header.commentLength);
+            _imageInfo.Sectors              = (ulong)sectors;
+            _imageInfo.SectorSize           = _header.sectorSize;
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads,
-                                                         header.sectorsPerTrack, (uint)header.sectorSize,
-                                                         MediaEncoding.MFM, false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_header.totalCylinders, (byte)_header.heads,
+                                                          _header.sectorsPerTrack, (uint)_header.sectorSize,
+                                                          MediaEncoding.MFM, false));
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
-                case MediaType.NEC_525_HD when header.drive == COPYQM_35_HD || header.drive == COPYQM_35_ED:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_8;
+                case MediaType.NEC_525_HD when _header.drive == COPYQM_35_HD || _header.drive == COPYQM_35_ED:
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                     break;
-                case MediaType.DOS_525_HD when header.drive == COPYQM_35_HD || header.drive == COPYQM_35_ED:
-                    imageInfo.MediaType = MediaType.NEC_35_HD_15;
+                case MediaType.DOS_525_HD when _header.drive == COPYQM_35_HD || _header.drive == COPYQM_35_ED:
+                    _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                     break;
-                case MediaType.RX50 when header.drive == COPYQM_525_DD || header.drive == COPYQM_525_HD:
-                    imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
+                case MediaType.RX50 when _header.drive == COPYQM_525_DD || _header.drive == COPYQM_525_HD:
+                    _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                     break;
             }
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            decodedDisk            = decodedImage.ToArray();
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _decodedDisk            = _decodedImage.ToArray();
 
-            decodedImage.Close();
+            _decodedImage.Close();
 
-            AaruConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", _imageInfo.MediaType);
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("CopyQM comments: {0}", imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                AaruConsole.VerboseWriteLine("CopyQM comments: {0}", _imageInfo.Comments);
 
-            imageInfo.Heads           = header.heads;
-            imageInfo.Cylinders       = header.totalCylinders;
-            imageInfo.SectorsPerTrack = header.sectorsPerTrack;
+            _imageInfo.Heads           = _header.heads;
+            _imageInfo.Cylinders       = _header.totalCylinders;
+            _imageInfo.SectorsPerTrack = _header.sectorsPerTrack;
 
             return true;
         }
@@ -197,20 +198,20 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Array.Copy(decodedDisk, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
-                       length                          * imageInfo.SectorSize);
+            Array.Copy(_decodedDisk, (int)sectorAddress * _imageInfo.SectorSize, buffer, 0,
+                       length                           * _imageInfo.SectorSize);
 
             return buffer;
         }
 
-        public bool? VerifyMediaImage() => calculatedDataCrc == header.crc && headerChecksumOk;
+        public bool? VerifyMediaImage() => _calculatedDataCrc == _header.crc && _headerChecksumOk;
     }
 }

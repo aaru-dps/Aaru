@@ -57,30 +57,30 @@ namespace Aaru.DiscImages
                                        "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                        fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
-            imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
-            imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
-            imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
-            imageInfo.Heads           = 2;   // only 2-sided floppies are supported
-            imageInfo.Sectors         = 2 * imageInfo.Cylinders * imageInfo.SectorsPerTrack;
-            imageInfo.ImageSize       = imageInfo.Sectors       * imageInfo.SectorSize;
+            _imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
+            _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
+            _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
+            _imageInfo.Heads           = 2;   // only 2-sided floppies are supported
+            _imageInfo.Sectors         = 2 * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+            _imageInfo.ImageSize       = _imageInfo.Sectors       * _imageInfo.SectorSize;
 
-            imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+            _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
 
-            imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2,
-                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                         false));
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, 2,
+                                                          (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                          false));
 
             // the start offset of the track data
             long currentOffset = 2 + (2 * 82);
 
             // build table of track offsets
-            for(int i = 0; i < imageInfo.Cylinders * 2; i++)
+            for(int i = 0; i < _imageInfo.Cylinders * 2; i++)
                 if(fheader.trackMap[i] == 0)
-                    trackOffset[i] = -1;
+                    _trackOffset[i] = -1;
                 else
                 {
                     // track is present, read the block header
@@ -98,7 +98,7 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i,
                                                currentOffset, blkLength);
 
-                    trackOffset[i] = currentOffset;
+                    _trackOffset[i] = currentOffset;
 
                     currentOffset += 2 + blkLength;
 
@@ -111,34 +111,35 @@ namespace Aaru.DiscImages
                 return false;
 
             // save some variables for later use
-            fileHeader      = fheader;
-            hdcpImageFilter = imageFilter;
+            _fileHeader      = fheader;
+            _hdcpImageFilter = imageFilter;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            int trackNum     = (int)(sectorAddress / imageInfo.SectorsPerTrack);
-            int sectorOffset = (int)(sectorAddress % imageInfo.SectorsPerTrack);
+            int trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
+            int sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(trackNum > 2 * imageInfo.Cylinders)
+            if(trackNum > 2 * _imageInfo.Cylinders)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            byte[] result = new byte[imageInfo.SectorSize];
+            byte[] result = new byte[_imageInfo.SectorSize];
 
-            if(trackOffset[trackNum] == -1)
-                Array.Clear(result, 0, (int)imageInfo.SectorSize);
+            if(_trackOffset[trackNum] == -1)
+                Array.Clear(result, 0, (int)_imageInfo.SectorSize);
             else
             {
                 // track is present in file, make sure it has been loaded
-                if(!trackCache.ContainsKey(trackNum))
-                    ReadTrackIntoCache(hdcpImageFilter.GetDataForkStream(), trackNum);
+                if(!_trackCache.ContainsKey(trackNum))
+                    ReadTrackIntoCache(_hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                Array.Copy(trackCache[trackNum], sectorOffset * imageInfo.SectorSize, result, 0, imageInfo.SectorSize);
+                Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, result, 0,
+                           _imageInfo.SectorSize);
             }
 
             return result;
@@ -146,13 +147,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            byte[] result = new byte[length * imageInfo.SectorSize];
+            byte[] result = new byte[length * _imageInfo.SectorSize];
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
             for(int i = 0; i < length; i++)
-                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * imageInfo.SectorSize);
+                ReadSector(sectorAddress + (ulong)i).CopyTo(result, i * _imageInfo.SectorSize);
 
             return result;
         }

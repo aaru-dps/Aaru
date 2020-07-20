@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Qed
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "QEMU Enhanced Disk image";
         public Guid                   Id           => new Guid("B9DBB155-A69A-4C10-BF91-96BF431B9BB6");

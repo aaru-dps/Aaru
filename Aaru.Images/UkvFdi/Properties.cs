@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
         public Guid                   Id           => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
         public string                 Format       => "Spectrum floppy disk image";
         public string                 Author       => "Natalia Portillo";
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

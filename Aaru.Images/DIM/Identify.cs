@@ -46,16 +46,16 @@ namespace Aaru.DiscImages
             if(stream.Length < DATA_OFFSET)
                 return false;
 
-            comment = new byte[60];
-            hdrId   = new byte[13];
+            _comment = new byte[60];
+            _hdrId   = new byte[13];
             stream.Seek(0, SeekOrigin.Begin);
-            dskType = (DiskType)stream.ReadByte();
+            _dskType = (DiskType)stream.ReadByte();
             stream.Seek(0xAB, SeekOrigin.Begin);
-            stream.Read(hdrId, 0, 13);
+            stream.Read(_hdrId, 0, 13);
             stream.Seek(0xC2, SeekOrigin.Begin);
-            stream.Read(comment, 0, 60);
+            stream.Read(_comment, 0, 60);
 
-            return headerId.SequenceEqual(hdrId);
+            return _headerId.SequenceEqual(_hdrId);
         }
     }
 }

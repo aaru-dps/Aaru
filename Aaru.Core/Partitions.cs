@@ -36,7 +36,6 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
-using Aaru.Partitions;
 
 namespace Aaru.Core
 {

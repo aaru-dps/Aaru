@@ -38,18 +38,18 @@ namespace Aaru.Devices
 {
     public partial class Device
     {
-        readonly ushort usbVendor;
-        readonly ushort usbProduct;
-        readonly ulong  firewireGuid;
-        readonly uint   firewireModel;
-        readonly uint   firewireVendor;
+        readonly ushort _usbVendor;
+        readonly ushort _usbProduct;
+        readonly ulong  _firewireGuid;
+        readonly uint   _firewireModel;
+        readonly uint   _firewireVendor;
 
         // MMC and SecureDigital, values that need to be get with card idle, something that may
         // not be possible to do but usually is already done by the SDHCI driver.
-        readonly byte[] cachedCsd;
-        readonly byte[] cachedCid;
-        readonly byte[] cachedScr;
-        readonly byte[] cachedOcr;
+        readonly byte[] _cachedCsd;
+        readonly byte[] _cachedCid;
+        readonly byte[] _cachedScr;
+        readonly byte[] _cachedOcr;
 
         /// <summary>Gets the Platform ID for this device</summary>
         /// <value>The Platform ID</value>
@@ -105,11 +105,11 @@ namespace Aaru.Devices
 
         /// <summary>Gets the USB vendor ID.</summary>
         /// <value>The USB vendor ID.</value>
-        public ushort UsbVendorId => usbVendor;
+        public ushort UsbVendorId => _usbVendor;
 
         /// <summary>Gets the USB product ID.</summary>
         /// <value>The USB product ID.</value>
-        public ushort UsbProductId => usbProduct;
+        public ushort UsbProductId => _usbProduct;
 
         /// <summary>Gets the USB descriptors.</summary>
         /// <value>The USB descriptors.</value>
@@ -133,11 +133,11 @@ namespace Aaru.Devices
 
         /// <summary>Gets the FireWire GUID</summary>
         /// <value>The FireWire GUID.</value>
-        public ulong FireWireGuid => firewireGuid;
+        public ulong FireWireGuid => _firewireGuid;
 
         /// <summary>Gets the FireWire model number</summary>
         /// <value>The FireWire model.</value>
-        public uint FireWireModel => firewireModel;
+        public uint FireWireModel => _firewireModel;
 
         /// <summary>Gets the FireWire model name.</summary>
         /// <value>The FireWire model name.</value>
@@ -145,7 +145,7 @@ namespace Aaru.Devices
 
         /// <summary>Gets the FireWire vendor number.</summary>
         /// <value>The FireWire vendor number.</value>
-        public uint FireWireVendor => firewireVendor;
+        public uint FireWireVendor => _firewireVendor;
 
         /// <summary>Gets the FireWire vendor name.</summary>
         /// <value>The FireWire vendor name.</value>

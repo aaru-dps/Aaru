@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Vhd
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string Name   => "VirtualPC";
         public Guid   Id     => new Guid("8014d88f-64cd-4484-9441-7635c632958a");
@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
         {
             get
             {
-                switch(thisFooter.DiskType)
+                switch(_thisFooter.DiskType)
                 {
                     case TYPE_FIXED:        return "Virtual PC fixed size disk image";
                     case TYPE_DYNAMIC:      return "Virtual PC dynamic size disk image";

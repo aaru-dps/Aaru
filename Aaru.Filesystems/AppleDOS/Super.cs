@@ -49,41 +49,41 @@ namespace Aaru.Filesystems
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
-            device   = imagePlugin;
-            start    = partition.Start;
+            _device  = imagePlugin;
+            _start   = partition.Start;
             Encoding = encoding ?? new Apple2();
 
-            if(device.Info.Sectors != 455 &&
-               device.Info.Sectors != 560)
+            if(_device.Info.Sectors != 455 &&
+               _device.Info.Sectors != 560)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
 
                 return Errno.InOutError;
             }
 
-            if(start > 0)
+            if(_start > 0)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
 
                 return Errno.InOutError;
             }
 
-            if(device.Info.SectorSize != 256)
+            if(_device.Info.SectorSize != 256)
             {
                 AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
 
                 return Errno.InOutError;
             }
 
-            sectorsPerTrack = device.Info.Sectors == 455 ? 13 : 16;
+            _sectorsPerTrack = _device.Info.Sectors == 455 ? 13 : 16;
 
             // Read the VTOC
-            vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
-            vtoc       = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocBlocks);
+            _vtocBlocks = _device.ReadSector((ulong)(17 * _sectorsPerTrack));
+            _vtoc       = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
 
-            track1UsedByFiles = false;
-            track2UsedByFiles = false;
-            usedSectors       = 1;
+            _track1UsedByFiles = false;
+            _track2UsedByFiles = false;
+            _usedSectors       = 1;
 
             Errno error = ReadCatalog();
 
@@ -107,23 +107,23 @@ namespace Aaru.Filesystems
             XmlFsType = new FileSystemType
             {
                 Bootable              = true,
-                Clusters              = device.Info.Sectors,
-                ClusterSize           = vtoc.bytesPerSector,
-                Files                 = (ulong)catalogCache.Count,
+                Clusters              = _device.Info.Sectors,
+                ClusterSize           = _vtoc.bytesPerSector,
+                Files                 = (ulong)_catalogCache.Count,
                 FilesSpecified        = true,
                 FreeClustersSpecified = true,
                 Type                  = "Apple DOS"
             };
 
-            XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
+            XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
 
             if(options == null)
                 options = GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
-                bool.TryParse(debugString, out debug);
+                bool.TryParse(debugString, out _debug);
 
-            mounted = true;
+            _mounted = true;
 
             return Errno.NoError;
         }
@@ -132,11 +132,11 @@ namespace Aaru.Filesystems
         /// <summary>Umounts this DOS filesystem</summary>
         public Errno Unmount()
         {
-            mounted       = false;
-            extentCache   = null;
-            fileCache     = null;
-            catalogCache  = null;
-            fileSizeCache = null;
+            _mounted       = false;
+            _extentCache   = null;
+            _fileCache     = null;
+            _catalogCache  = null;
+            _fileSizeCache = null;
 
             return Errno.NoError;
         }
@@ -148,15 +148,15 @@ namespace Aaru.Filesystems
         {
             stat = new FileSystemInfo
             {
-                Blocks         = device.Info.Sectors,
+                Blocks         = _device.Info.Sectors,
                 FilenameLength = 30,
-                Files          = (ulong)catalogCache.Count,
+                Files          = (ulong)_catalogCache.Count,
                 PluginId       = Id,
                 Type           = "Apple DOS"
             };
 
-            stat.FreeFiles  = totalFileEntries - stat.Files;
-            stat.FreeBlocks = stat.Blocks      - usedSectors;
+            stat.FreeFiles  = _totalFileEntries - stat.Files;
+            stat.FreeBlocks = stat.Blocks       - _usedSectors;
 
             return Errno.NoError;
         }

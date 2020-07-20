@@ -54,21 +54,21 @@ namespace Aaru.DiscImages
 
             long diskSize = stream.Length - DATA_OFFSET;
 
-            comment = new byte[60];
-            hdrId   = new byte[13];
+            _comment = new byte[60];
+            _hdrId   = new byte[13];
             stream.Seek(0, SeekOrigin.Begin);
-            dskType = (DiskType)stream.ReadByte();
+            _dskType = (DiskType)stream.ReadByte();
             stream.Seek(0xAB, SeekOrigin.Begin);
-            stream.Read(hdrId, 0, 13);
+            stream.Read(_hdrId, 0, 13);
             stream.Seek(0xC2, SeekOrigin.Begin);
-            stream.Read(comment, 0, 60);
+            stream.Read(_comment, 0, 60);
 
-            if(!headerId.SequenceEqual(hdrId))
+            if(!_headerId.SequenceEqual(_hdrId))
                 return false;
 
-            imageInfo.MediaType = MediaType.Unknown;
+            _imageInfo.MediaType = MediaType.Unknown;
 
-            switch(dskType)
+            switch(_dskType)
             {
                 // 8 spt, 1024 bps
                 case DiskType.Hd2:
@@ -81,9 +81,9 @@ namespace Aaru.DiscImages
                     }
 
                     if(diskSize / (2 * 8 * 1024) == 77)
-                        imageInfo.MediaType = MediaType.SHARP_525;
+                        _imageInfo.MediaType = MediaType.SHARP_525;
 
-                    imageInfo.SectorSize = 1024;
+                    _imageInfo.SectorSize = 1024;
 
                     break;
 
@@ -97,9 +97,9 @@ namespace Aaru.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80)
-                        imageInfo.MediaType = MediaType.SHARP_525_9;
+                        _imageInfo.MediaType = MediaType.SHARP_525_9;
 
-                    imageInfo.SectorSize = 512;
+                    _imageInfo.SectorSize = 512;
 
                     break;
 
@@ -114,9 +114,9 @@ namespace Aaru.DiscImages
                     }
 
                     if(diskSize / (2 * 15 * 512) == 80)
-                        imageInfo.MediaType = MediaType.DOS_525_HD;
+                        _imageInfo.MediaType = MediaType.DOS_525_HD;
 
-                    imageInfo.SectorSize = 512;
+                    _imageInfo.SectorSize = 512;
 
                     break;
 
@@ -130,9 +130,9 @@ namespace Aaru.DiscImages
                     }
 
                     if(diskSize / (2 * 9 * 512) == 80)
-                        imageInfo.MediaType = MediaType.SHARP_35_9;
+                        _imageInfo.MediaType = MediaType.SHARP_35_9;
 
-                    imageInfo.SectorSize = 512;
+                    _imageInfo.SectorSize = 512;
 
                     break;
 
@@ -147,9 +147,9 @@ namespace Aaru.DiscImages
                     }
 
                     if(diskSize / (2 * 18 * 512) == 80)
-                        imageInfo.MediaType = MediaType.DOS_35_HD;
+                        _imageInfo.MediaType = MediaType.DOS_35_HD;
 
-                    imageInfo.SectorSize = 512;
+                    _imageInfo.SectorSize = 512;
 
                     break;
 
@@ -158,16 +158,16 @@ namespace Aaru.DiscImages
                     if(diskSize % (2 * 26 * 256) == 0)
                     {
                         if(diskSize % (2 * 26 * 256) == 77)
-                            imageInfo.MediaType = MediaType.NEC_8_DD;
+                            _imageInfo.MediaType = MediaType.NEC_8_DD;
 
-                        imageInfo.SectorSize = 256;
+                        _imageInfo.SectorSize = 256;
                     }
                     else if(diskSize % (2 * 26 * 128) == 0)
                     {
                         if(diskSize % (2 * 26 * 128) == 77)
-                            imageInfo.MediaType = MediaType.NEC_8_SD;
+                            _imageInfo.MediaType = MediaType.NEC_8_SD;
 
-                        imageInfo.SectorSize = 256;
+                        _imageInfo.SectorSize = 256;
                     }
                     else
                     {
@@ -181,58 +181,58 @@ namespace Aaru.DiscImages
                 default: return false;
             }
 
-            AaruConsole.VerboseWriteLine("DIM image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("DIM image contains a disk of type {0}", _imageInfo.MediaType);
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("DIM comments: {0}", imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                AaruConsole.VerboseWriteLine("DIM comments: {0}", _imageInfo.Comments);
 
-            dimImageFilter = imageFilter;
+            _dimImageFilter = imageFilter;
 
-            imageInfo.ImageSize            = (ulong)diskSize;
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = imageInfo.ImageSize / imageInfo.SectorSize;
-            imageInfo.Comments             = StringHandlers.CToString(comment, Encoding.GetEncoding(932));
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.ImageSize            = (ulong)diskSize;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
+            _imageInfo.Comments             = StringHandlers.CToString(_comment, Encoding.GetEncoding(932));
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
 
-            switch(imageInfo.MediaType)
+            switch(_imageInfo.MediaType)
             {
                 case MediaType.SHARP_525:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 8;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 8;
 
                     break;
                 case MediaType.SHARP_525_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_525_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 15;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 15;
 
                     break;
                 case MediaType.SHARP_35_9:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 9;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 9;
 
                     break;
                 case MediaType.DOS_35_HD:
-                    imageInfo.Cylinders       = 80;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 18;
+                    _imageInfo.Cylinders       = 80;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 18;
 
                     break;
                 case MediaType.NEC_8_DD:
                 case MediaType.NEC_8_SD:
-                    imageInfo.Cylinders       = 77;
-                    imageInfo.Heads           = 2;
-                    imageInfo.SectorsPerTrack = 26;
+                    _imageInfo.Cylinders       = 77;
+                    _imageInfo.Heads           = 2;
+                    _imageInfo.SectorsPerTrack = 26;
 
                     break;
             }
@@ -244,19 +244,19 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = dimImageFilter.GetDataForkStream();
+            Stream stream = _dimImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(DATA_OFFSET + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)(DATA_OFFSET + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

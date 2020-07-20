@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PartCloneHeader
         {
-            /// <summary>Magic, <see cref="PartClone.partCloneMagic" /></summary>
+            /// <summary>Magic, <see cref="PartClone._partCloneMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
             public readonly byte[] magic;
             /// <summary>Source filesystem</summary>

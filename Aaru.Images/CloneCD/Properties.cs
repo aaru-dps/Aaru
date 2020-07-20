@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
                                                                OpticalImageCapabilities.CanStoreRawData      |
                                                                OpticalImageCapabilities.CanStoreCookedData   |
                                                                OpticalImageCapabilities.CanStoreMultipleTracks;
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "CloneCD";
         public Guid                   Id           => new Guid("EE9C2975-2E79-427A-8EE9-F86F19165784");
         public string                 Format       => "CloneCD";

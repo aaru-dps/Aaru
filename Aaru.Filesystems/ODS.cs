@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            OdsHomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
+            HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
             // Optical disc
             if(imagePlugin.Info.XmlMediaType              == XmlMediaType.OpticalDisc &&
@@ -121,7 +121,7 @@ namespace Aaru.Filesystems
                 hbSector = new byte[0x200];
                 Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 
-                homeblock = Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
+                homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
                 if(StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                    StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
@@ -273,7 +273,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OdsHomeBlock
+        struct HomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
             public readonly uint homelbn;

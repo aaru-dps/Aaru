@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public partial class D88
     {
         const byte READ_ONLY = 0x10;
-        readonly byte[] reservedEmpty =
+        readonly byte[] _reservedEmpty =
         {
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
         };

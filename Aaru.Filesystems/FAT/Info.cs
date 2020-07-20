@@ -1006,7 +1006,7 @@ namespace Aaru.Filesystems
 
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
-                string bootName = knownBootHashes.FirstOrDefault(t => t.hash == bootChk).name;
+                string bootName = _knownBootHashes.FirstOrDefault(t => t.hash == bootChk).name;
 
                 if(string.IsNullOrWhiteSpace(bootName))
                     sb.AppendLine("Unknown boot code.");

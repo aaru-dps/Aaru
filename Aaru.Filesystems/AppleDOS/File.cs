@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -59,18 +59,18 @@ namespace Aaru.Filesystems
 
             string filename = pathElements[0].ToUpperInvariant();
 
-            if(!fileCache.ContainsKey(filename))
+            if(!_fileCache.ContainsKey(filename))
                 return Errno.NoSuchFile;
 
             attributes =  FileAttributes.Extents;
             attributes |= FileAttributes.File;
 
-            if(lockedFiles.Contains(filename))
+            if(_lockedFiles.Contains(filename))
                 attributes |= FileAttributes.ReadOnly;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 attributes |= FileAttributes.System;
 
             return Errno.NoError;
@@ -78,7 +78,7 @@ namespace Aaru.Filesystems
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -95,25 +95,25 @@ namespace Aaru.Filesystems
             if(filename.Length > 30)
                 return Errno.NameTooLong;
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    file = catalogBlocks;
+                    file = _catalogBlocks;
                 else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
-                    file = vtocBlocks;
+                    file = _vtocBlocks;
                 else
-                    file = bootBlocks;
+                    file = _bootBlocks;
             else
             {
-                if(!fileCache.TryGetValue(filename, out file))
+                if(!_fileCache.TryGetValue(filename, out file))
                 {
                     Errno error = CacheFile(filename);
 
                     if(error != Errno.NoError)
                         return error;
 
-                    if(!fileCache.TryGetValue(filename, out file))
+                    if(!_fileCache.TryGetValue(filename, out file))
                         return Errno.InvalidArgument;
                 }
             }
@@ -135,7 +135,7 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -151,35 +151,35 @@ namespace Aaru.Filesystems
             if(filename.Length > 30)
                 return Errno.NameTooLong;
 
-            if(!fileCache.ContainsKey(filename))
+            if(!_fileCache.ContainsKey(filename))
                 return Errno.NoSuchFile;
 
             stat = new FileEntryInfo();
 
-            fileSizeCache.TryGetValue(filename, out int filesize);
+            _fileSizeCache.TryGetValue(filename, out int filesize);
             GetAttributes(path, out FileAttributes attrs);
 
-            if(debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                         string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
-                         string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
+            if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
+                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
             {
                 if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    stat.Length = catalogBlocks.Length;
+                    stat.Length = _catalogBlocks.Length;
                 else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
-                    stat.Length = bootBlocks.Length;
+                    stat.Length = _bootBlocks.Length;
                 else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0)
-                    stat.Length = vtocBlocks.Length;
+                    stat.Length = _vtocBlocks.Length;
 
-                stat.Blocks = stat.Length / vtoc.bytesPerSector;
+                stat.Blocks = stat.Length / _vtoc.bytesPerSector;
             }
             else
             {
                 stat.Length = filesize;
-                stat.Blocks = stat.Length / vtoc.bytesPerSector;
+                stat.Blocks = stat.Length / _vtoc.bytesPerSector;
             }
 
             stat.Attributes = attrs;
-            stat.BlockSize  = vtoc.bytesPerSector;
+            stat.BlockSize  = _vtoc.bytesPerSector;
             stat.Links      = 1;
 
             return Errno.NoError;
@@ -190,7 +190,7 @@ namespace Aaru.Filesystems
             deviceBlock = 0;
 
             // TODO: Not really important.
-            return !mounted ? Errno.AccessDenied : Errno.NotImplemented;
+            return !_mounted ? Errno.AccessDenied : Errno.NotImplemented;
         }
 
         Errno CacheFile(string path)
@@ -208,20 +208,20 @@ namespace Aaru.Filesystems
             if(filename.Length > 30)
                 return Errno.NameTooLong;
 
-            if(!catalogCache.TryGetValue(filename, out ushort ts))
+            if(!_catalogCache.TryGetValue(filename, out ushort ts))
                 return Errno.NoSuchFile;
 
-            ulong  lba           = (ulong)((((ts & 0xFF00) >> 8) * sectorsPerTrack) + (ts & 0xFF));
+            ulong  lba           = (ulong)((((ts & 0xFF00) >> 8) * _sectorsPerTrack) + (ts & 0xFF));
             var    fileMs        = new MemoryStream();
             var    tsListMs      = new MemoryStream();
             ushort expectedBlock = 0;
 
             while(lba != 0)
             {
-                usedSectors++;
-                byte[] tsSectorB = device.ReadSector(lba);
+                _usedSectors++;
+                byte[] tsSectorB = _device.ReadSector(lba);
 
-                if(debug)
+                if(_debug)
                     tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
 
                 // Read the track/sector list sector
@@ -229,60 +229,60 @@ namespace Aaru.Filesystems
 
                 if(tsSector.sectorOffset > expectedBlock)
                 {
-                    byte[] hole = new byte[(tsSector.sectorOffset - expectedBlock) * vtoc.bytesPerSector];
+                    byte[] hole = new byte[(tsSector.sectorOffset - expectedBlock) * _vtoc.bytesPerSector];
                     fileMs.Write(hole, 0, hole.Length);
                     expectedBlock = tsSector.sectorOffset;
                 }
 
                 foreach(TrackSectorListEntry entry in tsSector.entries)
                 {
-                    track1UsedByFiles |= entry.track == 1;
-                    track2UsedByFiles |= entry.track == 2;
-                    usedSectors++;
+                    _track1UsedByFiles |= entry.track == 1;
+                    _track2UsedByFiles |= entry.track == 2;
+                    _usedSectors++;
 
-                    ulong blockLba = (ulong)((entry.track * sectorsPerTrack) + entry.sector);
+                    ulong blockLba = (ulong)((entry.track * _sectorsPerTrack) + entry.sector);
 
                     if(blockLba == 0)
                         break;
 
-                    byte[] fileBlock = device.ReadSector(blockLba);
+                    byte[] fileBlock = _device.ReadSector(blockLba);
                     fileMs.Write(fileBlock, 0, fileBlock.Length);
                     expectedBlock++;
                 }
 
-                lba = (ulong)((tsSector.nextListTrack * sectorsPerTrack) + tsSector.nextListSector);
+                lba = (ulong)((tsSector.nextListTrack * _sectorsPerTrack) + tsSector.nextListSector);
             }
 
-            if(fileCache.ContainsKey(filename))
-                fileCache.Remove(filename);
+            if(_fileCache.ContainsKey(filename))
+                _fileCache.Remove(filename);
 
-            if(extentCache.ContainsKey(filename))
-                extentCache.Remove(filename);
+            if(_extentCache.ContainsKey(filename))
+                _extentCache.Remove(filename);
 
-            fileCache.Add(filename, fileMs.ToArray());
-            extentCache.Add(filename, tsListMs.ToArray());
+            _fileCache.Add(filename, fileMs.ToArray());
+            _extentCache.Add(filename, tsListMs.ToArray());
 
             return Errno.NoError;
         }
 
         Errno CacheAllFiles()
         {
-            fileCache   = new Dictionary<string, byte[]>();
-            extentCache = new Dictionary<string, byte[]>();
+            _fileCache   = new Dictionary<string, byte[]>();
+            _extentCache = new Dictionary<string, byte[]>();
 
-            foreach(Errno error in catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
+            foreach(Errno error in _catalogCache.Keys.Select(CacheFile).Where(error => error != Errno.NoError))
                 return error;
 
             uint tracksOnBoot = 1;
 
-            if(!track1UsedByFiles)
+            if(!_track1UsedByFiles)
                 tracksOnBoot++;
 
-            if(!track2UsedByFiles)
+            if(!_track2UsedByFiles)
                 tracksOnBoot++;
 
-            bootBlocks  =  device.ReadSectors(0, (uint)(tracksOnBoot * sectorsPerTrack));
-            usedSectors += (uint)(bootBlocks.Length / vtoc.bytesPerSector);
+            _bootBlocks  =  _device.ReadSectors(0, (uint)(tracksOnBoot * _sectorsPerTrack));
+            _usedSectors += (uint)(_bootBlocks.Length / _vtoc.bytesPerSector);
 
             return Errno.NoError;
         }

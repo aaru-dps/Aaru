@@ -30,6 +30,6 @@ namespace Aaru.Tests
 {
     internal static class Consts
     {
-        public const string TestFilesRoot = "/mnt/DiscImageChef";
+        public const string TEST_FILES_ROOT = "/mnt/DiscImageChef";
     }
 }

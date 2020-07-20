@@ -42,11 +42,11 @@ namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {
-        static readonly byte[] FatSignature =
+        static readonly byte[] _fatSignature =
         {
             0x46, 0x41, 0x54, 0x31, 0x36, 0x20, 0x20, 0x20
         };
-        static readonly byte[] IsoExtension =
+        static readonly byte[] _isoExtension =
         {
             0x49, 0x53, 0x4F
         };
@@ -114,7 +114,7 @@ namespace Aaru.Core.Devices.Dumping
             Array.Copy(buffer, 0x36, tmp, 0, 8);
 
             // UMDs are stored inside a FAT16 volume
-            if(!tmp.SequenceEqual(FatSignature))
+            if(!tmp.SequenceEqual(_fatSignature))
             {
                 DumpMs();
 
@@ -142,7 +142,7 @@ namespace Aaru.Core.Devices.Dumping
             tmp = new byte[3];
             Array.Copy(buffer, 0x28, tmp, 0, 3);
 
-            if(!tmp.SequenceEqual(IsoExtension))
+            if(!tmp.SequenceEqual(_isoExtension))
             {
                 DumpMs();
 

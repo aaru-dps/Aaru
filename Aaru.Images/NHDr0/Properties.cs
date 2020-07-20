@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "T98-Next NHD r0 Disk Image";
         public Guid                   Id           => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "NHDr0 disk image";
         public List<DumpHardwareType> DumpHardware => null;

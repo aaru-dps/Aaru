@@ -47,16 +47,16 @@ namespace Aaru.DiscImages
         public bool Open(IFilter imageFilter)
         {
             List<long> blockPositions = new List<long>();
-            var        partialBlockRx = new Regex(PartialBlockRegex);
-            var        blockRx        = new Regex(BlockRegex);
-            var        filemarkRx     = new Regex(FilemarkRegex);
-            var        eotRx          = new Regex(EndOfTapeRegex);
+            var        partialBlockRx = new Regex(_partialBlockRegex);
+            var        blockRx        = new Regex(_blockRegex);
+            var        filemarkRx     = new Regex(_filemarkRegex);
+            var        eotRx          = new Regex(_endOfTapeRegex);
 
             if(imageFilter.GetDataForkLength() <= 16)
                 return false;
 
-            imageStream          = imageFilter.GetDataForkStream();
-            imageStream.Position = 0;
+            _imageStream          = imageFilter.GetDataForkStream();
+            _imageStream.Position = 0;
 
             byte[] header           = new byte[9];
             byte[] blockHeader      = new byte[16];
@@ -67,9 +67,9 @@ namespace Aaru.DiscImages
 
             Files = new List<TapeFile>();
 
-            while(imageStream.Position + 9 < imageStream.Length)
+            while(_imageStream.Position + 9 < _imageStream.Length)
             {
-                imageStream.Read(header, 0, 9);
+                _imageStream.Read(header, 0, 9);
                 string mark = Encoding.ASCII.GetString(header);
 
                 Match partialBlockMt = partialBlockRx.Match(mark);
@@ -98,7 +98,7 @@ namespace Aaru.DiscImages
                 if(!partialBlockMt.Success)
                     throw new ArgumentException("Found unhandled header, cannot open.");
 
-                imageStream.Position -= 9;
+                _imageStream.Position -= 9;
 
                 if(!inFile)
                 {
@@ -106,7 +106,7 @@ namespace Aaru.DiscImages
                     inFile           = true;
                 }
 
-                imageStream.Read(blockHeader, 0, 16);
+                _imageStream.Read(blockHeader, 0, 16);
                 mark = Encoding.ASCII.GetString(blockHeader);
                 Match blockMt = blockRx.Match(mark);
 
@@ -125,22 +125,22 @@ namespace Aaru.DiscImages
                    blockSize + 17 > imageFilter.GetDataForkLength())
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
-                imageStream.Position += blockSize;
+                _imageStream.Position += blockSize;
 
-                int newLine = imageStream.ReadByte();
+                int newLine = _imageStream.ReadByte();
 
                 if(newLine != 0x0A)
                     throw new ArgumentException("Cannot decode block header, cannot open.");
 
-                blockPositions.Add(imageStream.Position - blockSize - 17);
+                blockPositions.Add(_imageStream.Position - blockSize - 17);
                 currentBlock++;
-                imageInfo.ImageSize += blockSize;
+                _imageInfo.ImageSize += blockSize;
 
-                if(imageInfo.SectorSize < blockSize)
-                    imageInfo.SectorSize = blockSize;
+                if(_imageInfo.SectorSize < blockSize)
+                    _imageInfo.SectorSize = blockSize;
             }
 
-            blockPositionCache = blockPositions.ToArray();
+            _blockPositionCache = blockPositions.ToArray();
 
             TapePartitions = new List<TapePartition>
             {
@@ -152,29 +152,29 @@ namespace Aaru.DiscImages
                 }
             };
 
-            imageInfo.Sectors              = (ulong)blockPositionCache.LongLength;
-            imageInfo.MediaType            = MediaType.UnknownTape;
-            imageInfo.Application          = "CopyTape";
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            IsTape                         = true;
+            _imageInfo.Sectors              = (ulong)_blockPositionCache.LongLength;
+            _imageInfo.MediaType            = MediaType.UnknownTape;
+            _imageInfo.Application          = "CopyTape";
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            IsTape                          = true;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress >= (ulong)blockPositionCache.LongLength)
+            if(sectorAddress >= (ulong)_blockPositionCache.LongLength)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            imageStream.Position = blockPositionCache[sectorAddress];
+            _imageStream.Position = _blockPositionCache[sectorAddress];
 
             byte[] blockHeader = new byte[16];
-            var    blockRx     = new Regex(BlockRegex);
+            var    blockRx     = new Regex(_blockRegex);
 
-            imageStream.Read(blockHeader, 0, 16);
+            _imageStream.Read(blockHeader, 0, 16);
             string mark    = Encoding.ASCII.GetString(blockHeader);
             Match  blockMt = blockRx.Match(mark);
 
@@ -190,14 +190,14 @@ namespace Aaru.DiscImages
                 throw new ArgumentException("Cannot decode block header, cannot read.");
 
             if(blockSize      == 0 ||
-               blockSize + 17 > imageStream.Length)
+               blockSize + 17 > _imageStream.Length)
                 throw new ArgumentException("Cannot decode block header, cannot read.");
 
             byte[] data = new byte[blockSize];
 
-            imageStream.Read(data, 0, (int)blockSize);
+            _imageStream.Read(data, 0, (int)blockSize);
 
-            if(imageStream.ReadByte() != 0x0A)
+            if(_imageStream.ReadByte() != 0x0A)
                 throw new ArgumentException("Cannot decode block header, cannot read.");
 
             return data;

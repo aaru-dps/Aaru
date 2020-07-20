@@ -176,7 +176,7 @@ namespace Aaru.Filesystems
             if(sbSectorOff + partition.Start >= partition.End)
                 return false;
 
-            int  sbSizeInBytes   = Marshal.SizeOf<ext2FSSuperBlock>();
+            int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
@@ -207,7 +207,7 @@ namespace Aaru.Filesystems
             bool ext3    = false;
             bool ext4    = false;
 
-            int  sbSizeInBytes   = Marshal.SizeOf<ext2FSSuperBlock>();
+            int  sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
@@ -219,7 +219,7 @@ namespace Aaru.Filesystems
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sblock   = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
-            ext2FSSuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<ext2FSSuperBlock>(sblock);
+            SuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sblock);
 
             XmlFsType = new FileSystemType();
 
@@ -750,7 +750,7 @@ namespace Aaru.Filesystems
 
         /// <summary>ext2/3/4 superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct ext2FSSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
             public readonly uint inodes;

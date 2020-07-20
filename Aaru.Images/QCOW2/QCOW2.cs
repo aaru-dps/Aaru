@@ -40,27 +40,27 @@ namespace Aaru.DiscImages
 {
     public partial class Qcow2 : IWritableImage
     {
-        Dictionary<ulong, byte[]>  clusterCache;
-        int                        clusterSectors;
-        int                        clusterSize;
-        ImageInfo                  imageInfo;
-        Stream                     imageStream;
-        ulong                      l1Mask;
-        int                        l1Shift;
-        ulong[]                    l1Table;
-        int                        l2Bits;
-        ulong                      l2Mask;
-        int                        l2Size;
-        Dictionary<ulong, ulong[]> l2TableCache;
-        int                        maxClusterCache;
-        int                        maxL2TableCache;
-        QCow2Header                qHdr;
-        ulong[]                    refCountTable;
-        Dictionary<ulong, byte[]>  sectorCache;
-        ulong                      sectorMask;
-        FileStream                 writingStream;
+        Dictionary<ulong, byte[]>  _clusterCache;
+        int                        _clusterSectors;
+        int                        _clusterSize;
+        ImageInfo                  _imageInfo;
+        Stream                     _imageStream;
+        ulong                      _l1Mask;
+        int                        _l1Shift;
+        ulong[]                    _l1Table;
+        int                        _l2Bits;
+        ulong                      _l2Mask;
+        int                        _l2Size;
+        Dictionary<ulong, ulong[]> _l2TableCache;
+        int                        _maxClusterCache;
+        int                        _maxL2TableCache;
+        QCow2Header                _qHdr;
+        ulong[]                    _refCountTable;
+        Dictionary<ulong, byte[]>  _sectorCache;
+        ulong                      _sectorMask;
+        FileStream                 _writingStream;
 
-        public Qcow2() => imageInfo = new ImageInfo
+        public Qcow2() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

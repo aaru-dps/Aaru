@@ -57,21 +57,21 @@ namespace Aaru.Filesystems.LisaFS
         {
             file = new ExtentFile();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(fileId < 4 ||
-               (fileId == 4 && mddf.fsversion != LISA_V2 && mddf.fsversion != LISA_V1))
+               (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
                 return Errno.InvalidArgument;
 
-            if(extentCache.TryGetValue(fileId, out file))
+            if(_extentCache.TryGetValue(fileId, out file))
                 return Errno.NoError;
 
             // A file ID that cannot be stored in the S-Records File
-            if(fileId >= srecords.Length)
+            if(fileId >= _srecords.Length)
                 return Errno.InvalidArgument;
 
-            ulong ptr = srecords[fileId].extent_ptr;
+            ulong ptr = _srecords[fileId].extent_ptr;
 
             // An invalid pointer denotes file does not exist
             if(ptr == 0xFFFFFFFF ||
@@ -79,20 +79,20 @@ namespace Aaru.Filesystems.LisaFS
                 return Errno.NoSuchFile;
 
             // Pointers are relative to MDDF
-            ptr += mddf.mddf_block + volumePrefix;
+            ptr += _mddf.mddf_block + _volumePrefix;
 
             LisaTag.PriamTag extTag;
 
             // This happens on some disks.
             // This is a filesystem corruption that makes LisaOS crash on scavenge.
             // This code just allow to ignore that corruption by searching the Extents File using sector tags
-            if(ptr >= device.Info.Sectors)
+            if(ptr >= _device.Info.Sectors)
             {
                 bool found = false;
 
-                for(ulong i = 0; i < device.Info.Sectors; i++)
+                for(ulong i = 0; i < _device.Info.Sectors; i++)
                 {
-                    DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
+                    DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out extTag);
 
                     if(extTag.FileId != fileId * -1)
                         continue;
@@ -108,12 +108,12 @@ namespace Aaru.Filesystems.LisaFS
             }
 
             // Checks that the sector tag indicates its the Extents File we are searching for
-            DecodeTag(device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
+            DecodeTag(_device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag), out extTag);
 
             if(extTag.FileId != (short)(-1 * fileId))
                 return Errno.NoSuchFile;
 
-            byte[] sector = mddf.fsversion == LISA_V1 ? device.ReadSectors(ptr, 2) : device.ReadSector(ptr);
+            byte[] sector = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2) : _device.ReadSector(ptr);
 
             if(sector[0] >= 32 ||
                sector[0] == 0)
@@ -163,7 +163,7 @@ namespace Aaru.Filesystems.LisaFS
             int extentsCount = 0;
             int extentsOffset;
 
-            if(mddf.fsversion == LISA_V1)
+            if(_mddf.fsversion == LISA_V1)
             {
                 file.length   = BigEndianBitConverter.ToInt32(sector, 0x200);
                 file.unknown9 = BigEndianBitConverter.ToInt32(sector, 0x204);
@@ -193,12 +193,12 @@ namespace Aaru.Filesystems.LisaFS
                     length = BigEndianBitConverter.ToInt16(sector, extentsOffset + (j * 6) + 4)
                 };
 
-            extentCache.Add(fileId, file);
+            _extentCache.Add(fileId, file);
 
-            if(!debug)
+            if(!_debug)
                 return Errno.NoError;
 
-            if(printedExtents.Contains(fileId))
+            if(_printedExtents.Contains(fileId))
                 return Errno.NoError;
 
             AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
@@ -274,7 +274,7 @@ namespace Aaru.Filesystems.LisaFS
 
             AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
 
-            printedExtents.Add(fileId);
+            _printedExtents.Add(fileId);
 
             return Errno.NoError;
         }
@@ -282,17 +282,17 @@ namespace Aaru.Filesystems.LisaFS
         /// <summary>Reads all the S-Records and caches it</summary>
         Errno ReadSRecords()
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             // Searches the S-Records place using MDDF pointers
-            byte[] sectors = device.ReadSectors(mddf.srec_ptr + mddf.mddf_block + volumePrefix, mddf.srec_len);
+            byte[] sectors = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len);
 
             // Each entry takes 14 bytes
-            srecords = new SRecord[sectors.Length / 14];
+            _srecords = new SRecord[sectors.Length / 14];
 
-            for(int s = 0; s < srecords.Length; s++)
-                srecords[s] = new SRecord
+            for(int s = 0; s < _srecords.Length; s++)
+                _srecords[s] = new SRecord
                 {
                     extent_ptr = BigEndianBitConverter.ToUInt32(sectors, 0x00 + (14 * s)),
                     unknown    = BigEndianBitConverter.ToUInt32(sectors, 0x04 + (14 * s)),

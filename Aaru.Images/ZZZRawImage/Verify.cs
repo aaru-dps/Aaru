@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     {
         public bool? VerifySector(ulong sectorAddress)
         {
-            if(!rawCompactDisc)
+            if(!_rawCompactDisc)
                 return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress);
@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
-            if(!rawCompactDisc)
+            if(!_rawCompactDisc)
             {
                 failingLbas = new List<ulong>();
                 unknownLbas = new List<ulong>();
@@ -95,7 +95,7 @@ namespace Aaru.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
-            if(!rawCompactDisc)
+            if(!_rawCompactDisc)
             {
                 failingLbas = new List<ulong>();
                 unknownLbas = new List<ulong>();
@@ -138,7 +138,7 @@ namespace Aaru.DiscImages
 
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
-            if(!rawCompactDisc)
+            if(!_rawCompactDisc)
                 return null;
 
             byte[] buffer = ReadSectorLong(sectorAddress, track);

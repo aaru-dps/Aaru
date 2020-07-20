@@ -78,7 +78,7 @@ namespace Aaru.Filesystems
         const ushort EAT_ASN1        = 0xFFDD;
         const string FAT32_EA_TAIL   = " EA. SF";
 
-        readonly (string hash, string name)[] knownBootHashes =
+        readonly (string hash, string name)[] _knownBootHashes =
         {
             ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
             ("9311151f13f7611b1431593da05ddd3153370574", "Amstrad MS-DOS 3.20 (Spanish)"),

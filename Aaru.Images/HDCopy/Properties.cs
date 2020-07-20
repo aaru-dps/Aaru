@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public partial class HdCopy
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "HD-Copy disk image";
         public Guid                   Id           => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");

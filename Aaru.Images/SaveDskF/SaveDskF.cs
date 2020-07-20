@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
 {
     public partial class SaveDskF : IWritableImage, IVerifiableImage
     {
-        uint           calculatedChk;
-        byte[]         decodedDisk;
-        SaveDskFHeader header;
-        ImageInfo      imageInfo;
-        FileStream     writingStream;
+        uint           _calculatedChk;
+        byte[]         _decodedDisk;
+        SaveDskFHeader _header;
+        ImageInfo      _imageInfo;
+        FileStream     _writingStream;
 
-        public SaveDskF() => imageInfo = new ImageInfo
+        public SaveDskF() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

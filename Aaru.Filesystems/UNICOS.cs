@@ -70,17 +70,17 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return false;
 
-            uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
             AaruConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
                                        UNICOS_MAGIC);
@@ -97,17 +97,17 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.SectorSize < 512)
                 return;
 
-            uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
             if(unicosSb.s_magic != UNICOS_MAGIC)
                 return;
@@ -167,7 +167,7 @@ namespace Aaru.Filesystems
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming"),
          SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        struct UNICOS_Superblock
+        struct Superblock
         {
             public readonly ulong s_magic; /* magic number to indicate file system type */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]

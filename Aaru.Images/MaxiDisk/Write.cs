@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType       = mediaType,
                 SectorSize      = sectorSize,
@@ -82,14 +82,14 @@ namespace Aaru.DiscImages
                 SectorsPerTrack = geometry.sectorsPerTrack
             };
 
-            if(imageInfo.Cylinders > 90)
+            if(_imageInfo.Cylinders > 90)
             {
                 ErrorMessage = "Too many cylinders";
 
                 return false;
             }
 
-            if(imageInfo.Heads > 2)
+            if(_imageInfo.Heads > 2)
             {
                 ErrorMessage = "Too many heads";
 
@@ -98,7 +98,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -136,17 +136,17 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -169,17 +169,17 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * imageInfo.SectorSize)),
-                               SeekOrigin.Begin);
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+                                SeekOrigin.Begin);
 
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -212,12 +212,12 @@ namespace Aaru.DiscImages
             var header = new HdkHeader
             {
                 diskType        = (byte)HdkDiskTypes.Dos2880,
-                cylinders       = (byte)imageInfo.Cylinders,
-                heads           = (byte)imageInfo.Heads,
-                sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
+                cylinders       = (byte)_imageInfo.Cylinders,
+                heads           = (byte)_imageInfo.Heads,
+                sectorsPerTrack = (byte)_imageInfo.SectorsPerTrack
             };
 
-            for(uint i = imageInfo.SectorSize / 128; i > 1;)
+            for(uint i = _imageInfo.SectorSize / 128; i > 1;)
             {
                 header.bytesPerSector++;
                 i >>= 1;
@@ -229,11 +229,11 @@ namespace Aaru.DiscImages
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -266,9 +266,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
-            imageInfo.Heads           = heads;
-            imageInfo.Cylinders       = cylinders;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Heads           = heads;
+            _imageInfo.Cylinders       = cylinders;
 
             return true;
         }

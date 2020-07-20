@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "Ray Arachelian's Disk IMage";
         public Guid                   Id           => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "Ray Arachelian's Disk IMage";
         public List<DumpHardwareType> DumpHardware => null;

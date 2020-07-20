@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
         {
             xattrs = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -61,36 +61,36 @@ namespace Aaru.Filesystems
 
             xattrs = new List<string>();
 
-            if(debug)
+            if(_debug)
                 if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
                 {
-                    if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                    if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
 
                     return Errno.NoError;
                 }
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0)
             {
                 xattrs.Add("com.apple.ResourceFork");
 
-                if(debug && device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(_debug && _device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
             xattrs.Add("com.apple.FinderInfo");
 
-            if(debug                                                                 &&
-               device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
+            if(_debug                                                                 &&
+               _device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                entry.flLgLen > 0)
                 xattrs.Add("com.apple.macintosh.tags");
 
@@ -101,7 +101,7 @@ namespace Aaru.Filesystems
 
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -114,42 +114,42 @@ namespace Aaru.Filesystems
 
             path = pathElements[0];
 
-            if(debug)
+            if(_debug)
                 if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
                    string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
                    string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
-                    if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
+                    if(_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
                         if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
                         {
-                            buf = new byte[directoryTags.Length];
-                            Array.Copy(directoryTags, 0, buf, 0, buf.Length);
+                            buf = new byte[_directoryTags.Length];
+                            Array.Copy(_directoryTags, 0, buf, 0, buf.Length);
 
                             return Errno.NoError;
                         }
 
                         if(string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
                         {
-                            buf = new byte[bitmapTags.Length];
-                            Array.Copy(bitmapTags, 0, buf, 0, buf.Length);
+                            buf = new byte[_bitmapTags.Length];
+                            Array.Copy(_bitmapTags, 0, buf, 0, buf.Length);
 
                             return Errno.NoError;
                         }
 
                         if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
                         {
-                            buf = new byte[bootTags.Length];
-                            Array.Copy(bootTags, 0, buf, 0, buf.Length);
+                            buf = new byte[_bootTags.Length];
+                            Array.Copy(_bootTags, 0, buf, 0, buf.Length);
 
                             return Errno.NoError;
                         }
 
                         if(string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
                         {
-                            buf = new byte[mdbTags.Length];
-                            Array.Copy(mdbTags, 0, buf, 0, buf.Length);
+                            buf = new byte[_mdbTags.Length];
+                            Array.Copy(_mdbTags, 0, buf, 0, buf.Length);
 
                             return Errno.NoError;
                         }
@@ -159,10 +159,10 @@ namespace Aaru.Filesystems
 
             Errno error;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+            if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
+            if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flRLgLen                                                                     > 0 &&
@@ -188,8 +188,8 @@ namespace Aaru.Filesystems
                 return Errno.NoError;
             }
 
-            if(!debug                                                                 ||
-               !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
+            if(!_debug                                                                 ||
+               !_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 

@@ -47,19 +47,19 @@ namespace Aaru.DiscImages
     /// </summary>
     public partial class Vhd : IWritableImage
     {
-        uint              bitmapSize;
-        uint[]            blockAllocationTable;
-        ImageInfo         imageInfo;
-        byte[][]          locatorEntriesData;
-        DateTime          parentDateTime;
-        IMediaImage       parentImage;
-        DateTime          thisDateTime;
-        DynamicDiskHeader thisDynamic;
-        IFilter           thisFilter;
-        HardDiskFooter    thisFooter;
-        FileStream        writingStream;
+        uint              _bitmapSize;
+        uint[]            _blockAllocationTable;
+        ImageInfo         _imageInfo;
+        byte[][]          _locatorEntriesData;
+        DateTime          _parentDateTime;
+        IMediaImage       _parentImage;
+        DateTime          _thisDateTime;
+        DynamicDiskHeader _thisDynamic;
+        IFilter           _thisFilter;
+        HardDiskFooter    _thisFooter;
+        FileStream        _writingStream;
 
-        public Vhd() => imageInfo = new ImageInfo
+        public Vhd() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

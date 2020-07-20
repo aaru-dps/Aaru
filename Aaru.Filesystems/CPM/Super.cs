@@ -53,54 +53,54 @@ namespace Aaru.Filesystems
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
-            device   = imagePlugin;
+            _device  = imagePlugin;
             Encoding = encoding ?? Encoding.GetEncoding("IBM437");
 
             // As the identification is so complex, just call Identify() and relay on its findings
-            if(!Identify(device, partition) ||
-               !cpmFound                    ||
-               workingDefinition == null    ||
-               dpb               == null)
+            if(!Identify(_device, partition) ||
+               !_cpmFound                    ||
+               _workingDefinition == null    ||
+               _dpb               == null)
                 return Errno.InvalidArgument;
 
             // Build the software interleaving sector mask
-            if(workingDefinition.sides == 1)
+            if(_workingDefinition.sides == 1)
             {
-                sectorMask = new int[workingDefinition.side1.sectorIds.Length];
+                _sectorMask = new int[_workingDefinition.side1.sectorIds.Length];
 
-                for(int m = 0; m < sectorMask.Length; m++)
-                    sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+                for(int m = 0; m < _sectorMask.Length; m++)
+                    _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
             }
             else
             {
                 // Head changes after every track
-                if(string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+                if(string.Compare(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    sectorMask = new int[workingDefinition.side1.sectorIds.Length +
-                                         workingDefinition.side2.sectorIds.Length];
+                    _sectorMask = new int[_workingDefinition.side1.sectorIds.Length +
+                                          _workingDefinition.side2.sectorIds.Length];
 
-                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
-                        sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+                    for(int m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
+                        _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
 
                     // Skip first track (first side)
-                    for(int m = 0; m < workingDefinition.side2.sectorIds.Length; m++)
-                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            (workingDefinition.side2.sectorIds[m] - workingDefinition.side2.sectorIds[0]) +
-                            workingDefinition.side1.sectorIds.Length;
+                    for(int m = 0; m < _workingDefinition.side2.sectorIds.Length; m++)
+                        _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
+                            (_workingDefinition.side2.sectorIds[m] - _workingDefinition.side2.sectorIds[0]) +
+                            _workingDefinition.side1.sectorIds.Length;
                 }
 
                 // Head changes after whole side
-                else if(string.Compare(workingDefinition.order, "CYLINDERS",
+                else if(string.Compare(_workingDefinition.order, "CYLINDERS",
                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
-                        sectorMask[m] = workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0];
+                    for(int m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
+                        _sectorMask[m] = _workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0];
 
                     // Skip first track (first side) and first track (second side)
-                    for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
-                        sectorMask[m + workingDefinition.side1.sectorIds.Length] =
-                            (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) +
-                            workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
+                    for(int m = 0; m < _workingDefinition.side1.sectorIds.Length; m++)
+                        _sectorMask[m + _workingDefinition.side1.sectorIds.Length] =
+                            (_workingDefinition.side1.sectorIds[m] - _workingDefinition.side1.sectorIds[0]) +
+                            _workingDefinition.side1.sectorIds.Length + _workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
                     AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
@@ -109,7 +109,7 @@ namespace Aaru.Filesystems
                 }
 
                 // TODO: Implement COLUMBIA ordering
-                else if(string.Compare(workingDefinition.order, "COLUMBIA",
+                else if(string.Compare(_workingDefinition.order, "COLUMBIA",
                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
@@ -119,8 +119,8 @@ namespace Aaru.Filesystems
                 }
 
                 // TODO: Implement EAGLE ordering
-                else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) ==
-                        0)
+                else if(string.Compare(_workingDefinition.order, "EAGLE",
+                                       StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
                                                "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
@@ -131,7 +131,7 @@ namespace Aaru.Filesystems
                 {
                     AaruConsole.DebugWriteLine("CP/M Plugin",
                                                "Unknown order type \"{0}\", not proceeding with this definition.",
-                                               workingDefinition.order);
+                                               _workingDefinition.order);
 
                     return Errno.NotSupported;
                 }
@@ -140,18 +140,19 @@ namespace Aaru.Filesystems
             // Deinterleave whole volume
             Dictionary<ulong, byte[]> deinterleavedSectors = new Dictionary<ulong, byte[]>();
 
-            if(workingDefinition.sides                                                                       == 1 ||
-               string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
+            if(_workingDefinition.sides                                                                       == 1 ||
+               string.Compare(_workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 AaruConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
 
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
                     byte[] readSector =
-                        device.ReadSector((ulong)((int)partition.Start + ((p / sectorMask.Length) * sectorMask.Length) +
-                                                  sectorMask[p               % sectorMask.Length]));
+                        _device.ReadSector((ulong)((int)partition.Start                                      +
+                                                   ((p           / _sectorMask.Length) * _sectorMask.Length) +
+                                                   _sectorMask[p % _sectorMask.Length]));
 
-                    if(workingDefinition.complement)
+                    if(_workingDefinition.complement)
                         for(int b = 0; b < readSector.Length; b++)
                             readSector[b] = (byte)(~readSector[b] & 0xFF);
 
@@ -159,7 +160,7 @@ namespace Aaru.Filesystems
                 }
             }
 
-            int                       blockSize        = 128 << dpb.bsh;
+            int                       blockSize        = 128 << _dpb.bsh;
             var                       blockMs          = new MemoryStream();
             ulong                     blockNo          = 0;
             int                       sectorsPerBlock  = 0;
@@ -203,12 +204,12 @@ namespace Aaru.Filesystems
             AaruConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
-            int dirSectors = ((dpb.drm + 1) * 32) / workingDefinition.bytesPerSector;
+            int dirSectors = ((_dpb.drm + 1) * 32) / _workingDefinition.bytesPerSector;
 
-            if(workingDefinition.sofs > 0)
-                dirOff = workingDefinition.sofs;
+            if(_workingDefinition.sofs > 0)
+                dirOff = _workingDefinition.sofs;
             else
-                dirOff = workingDefinition.ofs * workingDefinition.sectorsPerTrack;
+                dirOff = _workingDefinition.ofs * _workingDefinition.sectorsPerTrack;
 
             // Read the whole directory blocks
             var dirMs = new MemoryStream();
@@ -232,13 +233,13 @@ namespace Aaru.Filesystems
             Dictionary<string, Dictionary<int, List<ushort>>> fileExtents =
                 new Dictionary<string, Dictionary<int, List<ushort>>>();
 
-            statCache = new Dictionary<string, FileEntryInfo>();
-            cpmStat   = new FileSystemInfo();
+            _statCache = new Dictionary<string, FileEntryInfo>();
+            _cpmStat   = new FileSystemInfo();
             bool atime = false;
-            dirList           = new List<string>();
-            labelCreationDate = null;
-            labelUpdateDate   = null;
-            passwordCache     = new Dictionary<string, byte[]>();
+            _dirList           = new List<string>();
+            _labelCreationDate = null;
+            _labelUpdateDate   = null;
+            _passwordCache     = new Dictionary<string, byte[]>();
 
             AaruConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
 
@@ -286,11 +287,11 @@ namespace Aaru.Filesystems
                         if(!string.IsNullOrEmpty(extension))
                             filename = filename + "." + extension;
 
-                        int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (dpb.exm + 1);
+                        int entryNo = ((32 * entry.extentCounter) + entry.extentCounterHigh) / (_dpb.exm + 1);
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
-                            statCache.Remove(filename);
+                        if(_statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                            _statCache.Remove(filename);
                         else
                             fInfo = new FileEntryInfo
                             {
@@ -331,11 +332,11 @@ namespace Aaru.Filesystems
                         fInfo.UID = (ulong)user;
                         extentBlocks.Add(entryNo, blocks);
                         fileExtents.Add(filename, extentBlocks);
-                        statCache.Add(filename, fInfo);
+                        _statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename))
-                            dirList.Add(filename);
+                        if(!_dirList.Contains(filename))
+                            _dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
@@ -395,11 +396,11 @@ namespace Aaru.Filesystems
                         if(!string.IsNullOrEmpty(extension))
                             filename = filename + "." + extension;
 
-                        int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (dpb.exm + 1);
+                        int entryNo = ((32 * entry.extentCounterHigh) + entry.extentCounter) / (_dpb.exm + 1);
 
                         // Do we have a stat for the file already?
-                        if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
-                            statCache.Remove(filename);
+                        if(_statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                            _statCache.Remove(filename);
                         else
                             fInfo = new FileEntryInfo
                             {
@@ -440,11 +441,11 @@ namespace Aaru.Filesystems
                         fInfo.UID = (ulong)user;
                         extentBlocks.Add(entryNo, blocks);
                         fileExtents.Add(filename, extentBlocks);
-                        statCache.Add(filename, fInfo);
+                        _statCache.Add(filename, fInfo);
 
                         // Add the file to the directory listing
-                        if(!dirList.Contains(filename))
-                            dirList.Add(filename);
+                        if(!_dirList.Contains(filename))
+                            _dirList.Add(filename);
 
                         // Count entries 3 by 3 for timestamps
                         switch(dirCnt % 3)
@@ -491,13 +492,13 @@ namespace Aaru.Filesystems
                         filename = filename + "." + extension;
 
                     // Do not repeat passwords
-                    if(passwordCache.ContainsKey(filename))
-                        passwordCache.Remove(filename);
+                    if(_passwordCache.ContainsKey(filename))
+                        _passwordCache.Remove(filename);
 
                     // Copy whole password entry
                     byte[] tmp = new byte[32];
                     Array.Copy(directory, dOff, tmp, 0, 32);
-                    passwordCache.Add(filename, tmp);
+                    _passwordCache.Add(filename, tmp);
 
                     // Count entries 3 by 3 for timestamps
                     switch(dirCnt % 3)
@@ -531,11 +532,11 @@ namespace Aaru.Filesystems
                             // access time
                             atime |= (labelEntry.flags & 0x40) == 0x40;
 
-                            label             = Encoding.ASCII.GetString(directory, dOff + 1, 11).Trim();
-                            labelCreationDate = new byte[4];
-                            labelUpdateDate   = new byte[4];
-                            Array.Copy(directory, dOff + 24, labelCreationDate, 0, 4);
-                            Array.Copy(directory, dOff + 28, labelUpdateDate, 0, 4);
+                            _label             = Encoding.ASCII.GetString(directory, dOff + 1, 11).Trim();
+                            _labelCreationDate = new byte[4];
+                            _labelUpdateDate   = new byte[4];
+                            Array.Copy(directory, dOff + 24, _labelCreationDate, 0, 4);
+                            Array.Copy(directory, dOff + 28, _labelUpdateDate, 0, 4);
 
                             // Count entries 3 by 3 for timestamps
                             switch(dirCnt % 3)
@@ -571,8 +572,8 @@ namespace Aaru.Filesystems
                                 // Entry contains timestamps for last 3 entries, whatever the kind they are.
                                 if(!string.IsNullOrEmpty(file1))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo))
-                                        statCache.Remove(file1);
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file1);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -583,13 +584,13 @@ namespace Aaru.Filesystems
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date2);
 
-                                    statCache.Add(file1, fInfo);
+                                    _statCache.Add(file1, fInfo);
                                 }
 
                                 if(!string.IsNullOrEmpty(file2))
                                 {
-                                    if(statCache.TryGetValue(file2, out fInfo))
-                                        statCache.Remove(file2);
+                                    if(_statCache.TryGetValue(file2, out fInfo))
+                                        _statCache.Remove(file2);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -600,13 +601,13 @@ namespace Aaru.Filesystems
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date4);
 
-                                    statCache.Add(file2, fInfo);
+                                    _statCache.Add(file2, fInfo);
                                 }
 
                                 if(!string.IsNullOrEmpty(file3))
                                 {
-                                    if(statCache.TryGetValue(file3, out fInfo))
-                                        statCache.Remove(file3);
+                                    if(_statCache.TryGetValue(file3, out fInfo))
+                                        _statCache.Remove(file3);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -617,7 +618,7 @@ namespace Aaru.Filesystems
 
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(dateEntry.date6);
 
-                                    statCache.Add(file3, fInfo);
+                                    _statCache.Add(file3, fInfo);
                                 }
 
                                 file1  = null;
@@ -637,8 +638,8 @@ namespace Aaru.Filesystems
                                 // Entry contains timestamps for last 3 entries, whatever the kind they are.
                                 if(!string.IsNullOrEmpty(file1))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo))
-                                        statCache.Remove(file1);
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file1);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -650,13 +651,13 @@ namespace Aaru.Filesystems
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify1);
 
-                                    statCache.Add(file1, fInfo);
+                                    _statCache.Add(file1, fInfo);
                                 }
 
                                 if(!string.IsNullOrEmpty(file2))
                                 {
-                                    if(statCache.TryGetValue(file2, out fInfo))
-                                        statCache.Remove(file2);
+                                    if(_statCache.TryGetValue(file2, out fInfo))
+                                        _statCache.Remove(file2);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -668,13 +669,13 @@ namespace Aaru.Filesystems
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify2);
 
-                                    statCache.Add(file2, fInfo);
+                                    _statCache.Add(file2, fInfo);
                                 }
 
                                 if(!string.IsNullOrEmpty(file3))
                                 {
-                                    if(statCache.TryGetValue(file1, out fInfo))
-                                        statCache.Remove(file3);
+                                    if(_statCache.TryGetValue(file1, out fInfo))
+                                        _statCache.Remove(file3);
                                     else
                                         fInfo = new FileEntryInfo();
 
@@ -686,7 +687,7 @@ namespace Aaru.Filesystems
                                     fInfo.CreationTime  = DateHandlers.CpmToDateTime(ctime);
                                     fInfo.LastWriteTime = DateHandlers.CpmToDateTime(trdPartyDateEntry.modify3);
 
-                                    statCache.Add(file3, fInfo);
+                                    _statCache.Add(file3, fInfo);
                                 }
 
                                 file1  = null;
@@ -702,14 +703,14 @@ namespace Aaru.Filesystems
             // this should not be a problem
             AaruConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
             long usedBlocks = 0;
-            fileCache = new Dictionary<string, byte[]>();
+            _fileCache = new Dictionary<string, byte[]>();
 
-            foreach(string filename in dirList)
+            foreach(string filename in _dirList)
             {
                 var fileMs = new MemoryStream();
 
-                if(statCache.TryGetValue(filename, out FileEntryInfo fInfo))
-                    statCache.Remove(filename);
+                if(_statCache.TryGetValue(filename, out FileEntryInfo fInfo))
+                    _statCache.Remove(filename);
 
                 fInfo.Blocks = 0;
 
@@ -731,18 +732,18 @@ namespace Aaru.Filesystems
                 fInfo.Attributes |= FileAttributes.Extents;
                 fInfo.BlockSize  =  blockSize;
                 fInfo.Length     =  fileMs.Length;
-                cpmStat.Files++;
+                _cpmStat.Files++;
                 usedBlocks += fInfo.Blocks;
 
-                statCache.Add(filename, fInfo);
-                fileCache.Add(filename, fileMs.ToArray());
+                _statCache.Add(filename, fInfo);
+                _fileCache.Add(filename, fileMs.ToArray());
             }
 
-            decodedPasswordCache = new Dictionary<string, byte[]>();
+            _decodedPasswordCache = new Dictionary<string, byte[]>();
 
             // For each stored password, store a decoded version of it
-            if(passwordCache.Count > 0)
-                foreach(KeyValuePair<string, byte[]> kvp in passwordCache)
+            if(_passwordCache.Count > 0)
+                foreach(KeyValuePair<string, byte[]> kvp in _passwordCache)
                 {
                     byte[] tmp = new byte[8];
                     Array.Copy(kvp.Value, 16, tmp, 0, 8);
@@ -750,45 +751,45 @@ namespace Aaru.Filesystems
                     for(int t = 0; t < 8; t++)
                         tmp[t] ^= kvp.Value[13];
 
-                    decodedPasswordCache.Add(kvp.Key, tmp);
+                    _decodedPasswordCache.Add(kvp.Key, tmp);
                 }
 
             // Generate statfs.
-            cpmStat.Blocks         = (ulong)(dpb.dsm + 1);
-            cpmStat.FilenameLength = 11;
-            cpmStat.Files          = (ulong)fileCache.Count;
-            cpmStat.FreeBlocks     = cpmStat.Blocks - (ulong)usedBlocks;
-            cpmStat.PluginId       = Id;
-            cpmStat.Type           = "CP/M filesystem";
+            _cpmStat.Blocks         = (ulong)(_dpb.dsm + 1);
+            _cpmStat.FilenameLength = 11;
+            _cpmStat.Files          = (ulong)_fileCache.Count;
+            _cpmStat.FreeBlocks     = _cpmStat.Blocks - (ulong)usedBlocks;
+            _cpmStat.PluginId       = Id;
+            _cpmStat.Type           = "CP/M filesystem";
 
             // Generate XML info
             XmlFsType = new FileSystemType
             {
-                Clusters              = cpmStat.Blocks,
+                Clusters              = _cpmStat.Blocks,
                 ClusterSize           = (uint)blockSize,
-                Files                 = (ulong)fileCache.Count,
+                Files                 = (ulong)_fileCache.Count,
                 FilesSpecified        = true,
-                FreeClusters          = cpmStat.FreeBlocks,
+                FreeClusters          = _cpmStat.FreeBlocks,
                 FreeClustersSpecified = true,
                 Type                  = "CP/M filesystem"
             };
 
-            if(labelCreationDate != null)
+            if(_labelCreationDate != null)
             {
-                XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(labelCreationDate);
+                XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(_labelCreationDate);
                 XmlFsType.CreationDateSpecified = true;
             }
 
-            if(labelUpdateDate != null)
+            if(_labelUpdateDate != null)
             {
-                XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(labelUpdateDate);
+                XmlFsType.ModificationDate          = DateHandlers.CpmToDateTime(_labelUpdateDate);
                 XmlFsType.ModificationDateSpecified = true;
             }
 
-            if(!string.IsNullOrEmpty(label))
-                XmlFsType.VolumeName = label;
+            if(!string.IsNullOrEmpty(_label))
+                XmlFsType.VolumeName = _label;
 
-            mounted = true;
+            _mounted = true;
 
             return Errno.NoError;
         }
@@ -800,27 +801,27 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            stat = cpmStat;
+            stat = _cpmStat;
 
             return Errno.NoError;
         }
 
         public Errno Unmount()
         {
-            mounted              = false;
-            definitions          = null;
-            cpmFound             = false;
-            workingDefinition    = null;
-            dpb                  = null;
-            sectorMask           = null;
-            label                = null;
-            thirdPartyTimestamps = false;
-            standardTimestamps   = false;
-            labelCreationDate    = null;
-            labelUpdateDate      = null;
+            _mounted              = false;
+            _definitions          = null;
+            _cpmFound             = false;
+            _workingDefinition    = null;
+            _dpb                  = null;
+            _sectorMask           = null;
+            _label                = null;
+            _thirdPartyTimestamps = false;
+            _standardTimestamps   = false;
+            _labelCreationDate    = null;
+            _labelUpdateDate      = null;
 
             return Errno.NoError;
         }

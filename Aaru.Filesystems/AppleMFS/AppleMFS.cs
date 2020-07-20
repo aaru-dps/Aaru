@@ -41,24 +41,24 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : IReadOnlyFilesystem
     {
-        bool                        mounted;
-        bool                        debug;
-        IMediaImage                 device;
-        ulong                       partitionStart;
-        Dictionary<uint, string>    idToFilename;
-        Dictionary<uint, FileEntry> idToEntry;
-        Dictionary<string, uint>    filenameToId;
-        MasterDirectoryBlock        volMDB;
-        byte[]                      bootBlocks;
-        byte[]                      mdbBlocks;
-        byte[]                      directoryBlocks;
-        byte[]                      blockMapBytes;
-        uint[]                      blockMap;
-        int                         sectorsPerBlock;
-        byte[]                      bootTags;
-        byte[]                      mdbTags;
-        byte[]                      directoryTags;
-        byte[]                      bitmapTags;
+        bool                        _mounted;
+        bool                        _debug;
+        IMediaImage                 _device;
+        ulong                       _partitionStart;
+        Dictionary<uint, string>    _idToFilename;
+        Dictionary<uint, FileEntry> _idToEntry;
+        Dictionary<string, uint>    _filenameToId;
+        MasterDirectoryBlock        _volMdb;
+        byte[]                      _bootBlocks;
+        byte[]                      _mdbBlocks;
+        byte[]                      _directoryBlocks;
+        byte[]                      _blockMapBytes;
+        uint[]                      _blockMap;
+        int                         _sectorsPerBlock;
+        byte[]                      _bootTags;
+        byte[]                      _mdbTags;
+        byte[]                      _directoryTags;
+        byte[]                      _bitmapTags;
 
         public FileSystemType XmlFsType { get; private set; }
         public string         Name      => "Apple Macintosh File System";

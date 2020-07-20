@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "Dunfield's IMD";
         public Guid                   Id           => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "IMageDisk";
         public List<DumpHardwareType> DumpHardware => null;

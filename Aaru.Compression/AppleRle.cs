@@ -39,60 +39,60 @@ namespace Aaru.Compression
     {
         const uint DART_CHUNK = 20960;
 
-        readonly Stream inStream;
-        int             count;
-        bool            nextA; // true if A, false if B
+        readonly Stream _inStream;
+        int             _count;
+        bool            _nextA; // true if A, false if B
 
-        byte repeatedbyteA, repeatedbyteB;
-        bool repeatMode; // true if we're repeating, false if we're just copying
+        byte _repeatedByteA, _repeatedByteB;
+        bool _repeatMode; // true if we're repeating, false if we're just copying
 
         public AppleRle(Stream stream)
         {
-            inStream = stream;
+            _inStream = stream;
             Reset();
         }
 
         void Reset()
         {
-            repeatedbyteA = repeatedbyteB = 0;
-            count         = 0;
-            nextA         = true;
-            repeatMode    = false;
+            _repeatedByteA = _repeatedByteB = 0;
+            _count         = 0;
+            _nextA         = true;
+            _repeatMode    = false;
         }
 
         public int ProduceByte()
         {
-            if(repeatMode && count > 0)
+            if(_repeatMode && _count > 0)
             {
-                count--;
+                _count--;
 
-                if(nextA)
+                if(_nextA)
                 {
-                    nextA = false;
+                    _nextA = false;
 
-                    return repeatedbyteA;
+                    return _repeatedByteA;
                 }
 
-                nextA = true;
+                _nextA = true;
 
-                return repeatedbyteB;
+                return _repeatedByteB;
             }
 
-            if(!repeatMode &&
-               count > 0)
+            if(!_repeatMode &&
+               _count > 0)
             {
-                count--;
+                _count--;
 
-                return inStream.ReadByte();
+                return _inStream.ReadByte();
             }
 
-            if(inStream.Position == inStream.Length)
+            if(_inStream.Position == _inStream.Length)
                 return -1;
 
             while(true)
             {
-                byte  b1 = (byte)inStream.ReadByte();
-                byte  b2 = (byte)inStream.ReadByte();
+                byte  b1 = (byte)_inStream.ReadByte();
+                byte  b2 = (byte)_inStream.ReadByte();
                 short s  = (short)((b1 << 8) | b2);
 
                 if(s == 0          ||
@@ -102,22 +102,22 @@ namespace Aaru.Compression
 
                 if(s < 0)
                 {
-                    repeatMode    = true;
-                    repeatedbyteA = (byte)inStream.ReadByte();
-                    repeatedbyteB = (byte)inStream.ReadByte();
-                    count         = (-s * 2) - 1;
-                    nextA         = false;
+                    _repeatMode    = true;
+                    _repeatedByteA = (byte)_inStream.ReadByte();
+                    _repeatedByteB = (byte)_inStream.ReadByte();
+                    _count         = (-s * 2) - 1;
+                    _nextA         = false;
 
-                    return repeatedbyteA;
+                    return _repeatedByteA;
                 }
 
                 if(s <= 0)
                     continue;
 
-                repeatMode = false;
-                count      = (s * 2) - 1;
+                _repeatMode = false;
+                _count      = (s * 2) - 1;
 
-                return inStream.ReadByte();
+                return _inStream.ReadByte();
             }
         }
     }

@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public partial class WCDiskImage
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string                 Name         => "d2f disk image";
         public Guid                   Id           => new Guid("DDE01493-BCA2-41C2-A269-7E56D3716D2F");

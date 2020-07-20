@@ -55,109 +55,109 @@ namespace Aaru.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());
-            vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
+            _vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
 
-            if(vhdxId.signature != VHDX_SIGNATURE)
+            if(_vhdxId.signature != VHDX_SIGNATURE)
                 return false;
 
-            imageInfo.Application = Encoding.Unicode.GetString(vhdxId.creator);
+            _imageInfo.Application = Encoding.Unicode.GetString(_vhdxId.creator);
 
             stream.Seek(64 * 1024, SeekOrigin.Begin);
             byte[] vHdrB = new byte[Marshal.SizeOf<VhdxHeader>()];
             stream.Read(vHdrB, 0, Marshal.SizeOf<VhdxHeader>());
-            vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
+            _vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
 
-            if(vHdr.Signature != VHDX_HEADER_SIG)
+            if(_vHdr.Signature != VHDX_HEADER_SIG)
             {
                 stream.Seek(128 * 1024, SeekOrigin.Begin);
                 vHdrB = new byte[Marshal.SizeOf<VhdxHeader>()];
                 stream.Read(vHdrB, 0, Marshal.SizeOf<VhdxHeader>());
-                vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
+                _vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
 
-                if(vHdr.Signature != VHDX_HEADER_SIG)
+                if(_vHdr.Signature != VHDX_HEADER_SIG)
                     throw new ImageNotSupportedException("VHDX header not found");
             }
 
             stream.Seek(192 * 1024, SeekOrigin.Begin);
             byte[] vRegTableB = new byte[Marshal.SizeOf<VhdxRegionTableHeader>()];
             stream.Read(vRegTableB, 0, Marshal.SizeOf<VhdxRegionTableHeader>());
-            vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
+            _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
 
-            if(vRegHdr.signature != VHDX_REGION_SIG)
+            if(_vRegHdr.signature != VHDX_REGION_SIG)
             {
                 stream.Seek(256 * 1024, SeekOrigin.Begin);
                 vRegTableB = new byte[Marshal.SizeOf<VhdxRegionTableHeader>()];
                 stream.Read(vRegTableB, 0, Marshal.SizeOf<VhdxRegionTableHeader>());
-                vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
+                _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
 
-                if(vRegHdr.signature != VHDX_REGION_SIG)
+                if(_vRegHdr.signature != VHDX_REGION_SIG)
                     throw new ImageNotSupportedException("VHDX region table not found");
             }
 
-            vRegs = new VhdxRegionTableEntry[vRegHdr.entries];
+            _vRegs = new VhdxRegionTableEntry[_vRegHdr.entries];
 
-            for(int i = 0; i < vRegs.Length; i++)
+            for(int i = 0; i < _vRegs.Length; i++)
             {
-                byte[] vRegB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(vRegs[i])];
-                stream.Read(vRegB, 0, System.Runtime.InteropServices.Marshal.SizeOf(vRegs[i]));
-                vRegs[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableEntry>(vRegB);
+                byte[] vRegB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i])];
+                stream.Read(vRegB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i]));
+                _vRegs[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableEntry>(vRegB);
 
-                if(vRegs[i].guid == batGuid)
-                    batOffset = (long)vRegs[i].offset;
-                else if(vRegs[i].guid == metadataGuid)
-                    metadataOffset = (long)vRegs[i].offset;
-                else if((vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
+                if(_vRegs[i].guid == _batGuid)
+                    _batOffset = (long)_vRegs[i].offset;
+                else if(_vRegs[i].guid == _metadataGuid)
+                    _metadataOffset = (long)_vRegs[i].offset;
+                else if((_vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
                     throw new
-                        ImageNotSupportedException($"Found unsupported and required region Guid {vRegs[i].guid}, not proceeding with image.");
+                        ImageNotSupportedException($"Found unsupported and required region Guid {_vRegs[i].guid}, not proceeding with image.");
             }
 
-            if(batOffset == 0)
+            if(_batOffset == 0)
                 throw new Exception("BAT not found, cannot continue.");
 
-            if(metadataOffset == 0)
+            if(_metadataOffset == 0)
                 throw new Exception("Metadata not found, cannot continue.");
 
             uint fileParamsOff = 0, vdSizeOff = 0, p83Off = 0, logOff = 0, physOff = 0, parentOff = 0;
 
-            stream.Seek(metadataOffset, SeekOrigin.Begin);
+            stream.Seek(_metadataOffset, SeekOrigin.Begin);
             byte[] metTableB = new byte[Marshal.SizeOf<VhdxMetadataTableHeader>()];
             stream.Read(metTableB, 0, Marshal.SizeOf<VhdxMetadataTableHeader>());
-            vMetHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableHeader>(metTableB);
+            _vMetHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableHeader>(metTableB);
 
-            vMets = new VhdxMetadataTableEntry[vMetHdr.entries];
+            _vMets = new VhdxMetadataTableEntry[_vMetHdr.entries];
 
-            for(int i = 0; i < vMets.Length; i++)
+            for(int i = 0; i < _vMets.Length; i++)
             {
-                byte[] vMetB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(vMets[i])];
-                stream.Read(vMetB, 0, System.Runtime.InteropServices.Marshal.SizeOf(vMets[i]));
-                vMets[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableEntry>(vMetB);
+                byte[] vMetB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i])];
+                stream.Read(vMetB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i]));
+                _vMets[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableEntry>(vMetB);
 
-                if(vMets[i].itemId == fileParametersGuid)
-                    fileParamsOff = vMets[i].offset;
-                else if(vMets[i].itemId == virtualDiskSizeGuid)
-                    vdSizeOff = vMets[i].offset;
-                else if(vMets[i].itemId == page83DataGuid)
-                    p83Off = vMets[i].offset;
-                else if(vMets[i].itemId == logicalSectorSizeGuid)
-                    logOff = vMets[i].offset;
-                else if(vMets[i].itemId == physicalSectorSizeGuid)
-                    physOff = vMets[i].offset;
-                else if(vMets[i].itemId == parentLocatorGuid)
-                    parentOff = vMets[i].offset;
-                else if((vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
+                if(_vMets[i].itemId == _fileParametersGuid)
+                    fileParamsOff = _vMets[i].offset;
+                else if(_vMets[i].itemId == _virtualDiskSizeGuid)
+                    vdSizeOff = _vMets[i].offset;
+                else if(_vMets[i].itemId == _page83DataGuid)
+                    p83Off = _vMets[i].offset;
+                else if(_vMets[i].itemId == _logicalSectorSizeGuid)
+                    logOff = _vMets[i].offset;
+                else if(_vMets[i].itemId == _physicalSectorSizeGuid)
+                    physOff = _vMets[i].offset;
+                else if(_vMets[i].itemId == _parentLocatorGuid)
+                    parentOff = _vMets[i].offset;
+                else if((_vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
                     throw new
-                        ImageNotSupportedException($"Found unsupported and required metadata Guid {vMets[i].itemId}, not proceeding with image.");
+                        ImageNotSupportedException($"Found unsupported and required metadata Guid {_vMets[i].itemId}, not proceeding with image.");
             }
 
             byte[] tmp;
 
             if(fileParamsOff != 0)
             {
-                stream.Seek(fileParamsOff + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(fileParamsOff + _metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[8];
                 stream.Read(tmp, 0, 8);
 
-                vFileParms = new VhdxFileParameters
+                _vFileParms = new VhdxFileParameters
                 {
                     blockSize = BitConverter.ToUInt32(tmp, 0),
                     flags     = BitConverter.ToUInt32(tmp, 4)
@@ -168,75 +168,75 @@ namespace Aaru.DiscImages
 
             if(vdSizeOff != 0)
             {
-                stream.Seek(vdSizeOff + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(vdSizeOff + _metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[8];
                 stream.Read(tmp, 0, 8);
-                virtualDiskSize = BitConverter.ToUInt64(tmp, 0);
+                _virtualDiskSize = BitConverter.ToUInt64(tmp, 0);
             }
             else
                 throw new Exception("Virtual disk size not found.");
 
             if(p83Off != 0)
             {
-                stream.Seek(p83Off + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(p83Off + _metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[16];
                 stream.Read(tmp, 0, 16);
-                page83Data = new Guid(tmp);
+                _page83Data = new Guid(tmp);
             }
 
             if(logOff != 0)
             {
-                stream.Seek(logOff + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(logOff + _metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[4];
                 stream.Read(tmp, 0, 4);
-                logicalSectorSize = BitConverter.ToUInt32(tmp, 0);
+                _logicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
             else
                 throw new Exception("Logical sector size not found.");
 
             if(physOff != 0)
             {
-                stream.Seek(physOff + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(physOff + _metadataOffset, SeekOrigin.Begin);
                 tmp = new byte[4];
                 stream.Read(tmp, 0, 4);
-                physicalSectorSize = BitConverter.ToUInt32(tmp, 0);
+                _physicalSectorSize = BitConverter.ToUInt32(tmp, 0);
             }
             else
                 throw new Exception("Physical sector size not found.");
 
-            if(parentOff                                  != 0 &&
-               (vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
+            if(parentOff                                   != 0 &&
+               (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
             {
-                stream.Seek(parentOff + metadataOffset, SeekOrigin.Begin);
+                stream.Seek(parentOff + _metadataOffset, SeekOrigin.Begin);
                 byte[] vParHdrB = new byte[Marshal.SizeOf<VhdxParentLocatorHeader>()];
                 stream.Read(vParHdrB, 0, Marshal.SizeOf<VhdxParentLocatorHeader>());
-                vParHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorHeader>(vParHdrB);
+                _vParHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorHeader>(vParHdrB);
 
-                if(vParHdr.locatorType != parentTypeVhdxGuid)
+                if(_vParHdr.locatorType != _parentTypeVhdxGuid)
                     throw new
-                        ImageNotSupportedException($"Found unsupported and required parent locator type {vParHdr.locatorType}, not proceeding with image.");
+                        ImageNotSupportedException($"Found unsupported and required parent locator type {_vParHdr.locatorType}, not proceeding with image.");
 
-                vPars = new VhdxParentLocatorEntry[vParHdr.keyValueCount];
+                _vPars = new VhdxParentLocatorEntry[_vParHdr.keyValueCount];
 
-                for(int i = 0; i < vPars.Length; i++)
+                for(int i = 0; i < _vPars.Length; i++)
                 {
-                    byte[] vParB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(vPars[i])];
-                    stream.Read(vParB, 0, System.Runtime.InteropServices.Marshal.SizeOf(vPars[i]));
-                    vPars[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorEntry>(vParB);
+                    byte[] vParB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i])];
+                    stream.Read(vParB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i]));
+                    _vPars[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorEntry>(vParB);
                 }
             }
-            else if((vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
+            else if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
                 throw new Exception("Parent locator not found.");
 
-            if((vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT &&
-               vParHdr.locatorType                        == parentTypeVhdxGuid)
+            if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT &&
+               _vParHdr.locatorType                        == _parentTypeVhdxGuid)
             {
-                parentImage = new Vhdx();
+                _parentImage = new Vhdx();
                 bool parentWorks = false;
 
-                foreach(VhdxParentLocatorEntry parentEntry in vPars)
+                foreach(VhdxParentLocatorEntry parentEntry in _vPars)
                 {
-                    stream.Seek(parentEntry.keyOffset + metadataOffset, SeekOrigin.Begin);
+                    stream.Seek(parentEntry.keyOffset + _metadataOffset, SeekOrigin.Begin);
                     byte[] tmpKey = new byte[parentEntry.keyLength];
                     stream.Read(tmpKey, 0, tmpKey.Length);
                     string entryType = Encoding.Unicode.GetString(tmpKey);
@@ -245,7 +245,7 @@ namespace Aaru.DiscImages
 
                     if(string.Compare(entryType, RELATIVE_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        stream.Seek(parentEntry.valueOffset + metadataOffset, SeekOrigin.Begin);
+                        stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
                         byte[] tmpVal = new byte[parentEntry.valueLength];
                         stream.Read(tmpVal, 0, tmpVal.Length);
                         string entryValue = Encoding.Unicode.GetString(tmpVal);
@@ -256,7 +256,7 @@ namespace Aaru.DiscImages
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
 
                             if(parentFilter != null &&
-                               parentImage.Open(parentFilter))
+                               _parentImage.Open(parentFilter))
                             {
                                 parentWorks = true;
 
@@ -276,7 +276,7 @@ namespace Aaru.DiscImages
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), relEntry));
 
                             if(parentFilter == null ||
-                               !parentImage.Open(parentFilter))
+                               !_parentImage.Open(parentFilter))
                                 continue;
 
                             parentWorks = true;
@@ -291,7 +291,7 @@ namespace Aaru.DiscImages
                     else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        stream.Seek(parentEntry.valueOffset + metadataOffset, SeekOrigin.Begin);
+                        stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
                         byte[] tmpVal = new byte[parentEntry.valueLength];
                         stream.Read(tmpVal, 0, tmpVal.Length);
                         string entryValue = Encoding.Unicode.GetString(tmpVal);
@@ -302,7 +302,7 @@ namespace Aaru.DiscImages
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), entryValue));
 
                             if(parentFilter == null ||
-                               !parentImage.Open(parentFilter))
+                               !_parentImage.Open(parentFilter))
                                 continue;
 
                             parentWorks = true;
@@ -319,63 +319,63 @@ namespace Aaru.DiscImages
                 if(!parentWorks)
                     throw new Exception("Image is differential but parent cannot be opened.");
 
-                hasParent = true;
+                _hasParent = true;
             }
 
-            chunkRatio = (long)((Math.Pow(2, 23) * logicalSectorSize) / vFileParms.blockSize);
-            dataBlocks = virtualDiskSize / vFileParms.blockSize;
+            _chunkRatio = (long)((Math.Pow(2, 23) * _logicalSectorSize) / _vFileParms.blockSize);
+            _dataBlocks = _virtualDiskSize / _vFileParms.blockSize;
 
-            if(virtualDiskSize % vFileParms.blockSize > 0)
-                dataBlocks++;
+            if(_virtualDiskSize % _vFileParms.blockSize > 0)
+                _dataBlocks++;
 
             long batEntries;
 
-            if(hasParent)
+            if(_hasParent)
             {
-                long sectorBitmapBlocks = (long)dataBlocks / chunkRatio;
+                long sectorBitmapBlocks = (long)_dataBlocks / _chunkRatio;
 
-                if(dataBlocks % (ulong)chunkRatio > 0)
+                if(_dataBlocks % (ulong)_chunkRatio > 0)
                     sectorBitmapBlocks++;
 
-                sectorBitmapPointers = new ulong[sectorBitmapBlocks];
+                _sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
-                batEntries = sectorBitmapBlocks * (chunkRatio - 1);
+                batEntries = sectorBitmapBlocks * (_chunkRatio - 1);
             }
             else
-                batEntries = (long)(dataBlocks + ((dataBlocks - 1) / (ulong)chunkRatio));
+                batEntries = (long)(_dataBlocks + ((_dataBlocks - 1) / (ulong)_chunkRatio));
 
             AaruConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
             long readChunks = 0;
-            blockAllocationTable = new ulong[dataBlocks];
+            _blockAllocationTable = new ulong[_dataBlocks];
             byte[] batB = new byte[batEntries * 8];
-            stream.Seek(batOffset, SeekOrigin.Begin);
+            stream.Seek(_batOffset, SeekOrigin.Begin);
             stream.Read(batB, 0, batB.Length);
 
             ulong skipSize = 0;
 
-            for(ulong i = 0; i < dataBlocks; i++)
-                if(readChunks == chunkRatio)
+            for(ulong i = 0; i < _dataBlocks; i++)
+                if(readChunks == _chunkRatio)
                 {
-                    if(hasParent)
-                        sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
+                    if(_hasParent)
+                        _sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
 
                     readChunks =  0;
                     skipSize   += 8;
                 }
                 else
                 {
-                    blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
+                    _blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)((i * 8) + skipSize));
                     readChunks++;
                 }
 
-            if(hasParent)
+            if(_hasParent)
             {
                 AaruConsole.DebugWriteLine("VHDX plugin", "Reading Sector Bitmap");
 
                 var sectorBmpMs = new MemoryStream();
 
-                foreach(ulong pt in sectorBitmapPointers)
+                foreach(ulong pt in _sectorBitmapPointers)
                     switch(pt & BAT_FLAGS_MASK)
                     {
                         case SECTOR_BITMAP_NOT_PRESENT:
@@ -397,50 +397,50 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                sectorBitmap = sectorBmpMs.ToArray();
+                _sectorBitmap = sectorBmpMs.ToArray();
                 sectorBmpMs.Close();
             }
 
-            maxBlockCache  = (int)(MAX_CACHE_SIZE / vFileParms.blockSize);
-            maxSectorCache = (int)(MAX_CACHE_SIZE / logicalSectorSize);
+            _maxBlockCache  = (int)(MAX_CACHE_SIZE / _vFileParms.blockSize);
+            _maxSectorCache = (int)(MAX_CACHE_SIZE / _logicalSectorSize);
 
-            imageStream = stream;
+            _imageStream = stream;
 
-            sectorCache = new Dictionary<ulong, byte[]>();
-            blockCache  = new Dictionary<ulong, byte[]>();
+            _sectorCache = new Dictionary<ulong, byte[]>();
+            _blockCache  = new Dictionary<ulong, byte[]>();
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.SectorSize           = logicalSectorSize;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize            = virtualDiskSize;
-            imageInfo.Sectors              = imageInfo.ImageSize / imageInfo.SectorSize;
-            imageInfo.DriveSerialNumber    = page83Data.ToString();
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.SectorSize           = _logicalSectorSize;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.ImageSize            = _virtualDiskSize;
+            _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
+            _imageInfo.DriveSerialNumber    = _page83Data.ToString();
 
             // TODO: Separate image application from version, need several samples.
 
-            imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-            imageInfo.Heads           = 16;
-            imageInfo.SectorsPerTrack = 63;
+            _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+            _imageInfo.Heads           = 16;
+            _imageInfo.SectorsPerTrack = 63;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
-            ulong index  = (sectorAddress * logicalSectorSize) / vFileParms.blockSize;
-            ulong secOff = (sectorAddress * logicalSectorSize) % vFileParms.blockSize;
+            ulong index  = (sectorAddress * _logicalSectorSize) / _vFileParms.blockSize;
+            ulong secOff = (sectorAddress * _logicalSectorSize) % _vFileParms.blockSize;
 
-            ulong blkPtr   = blockAllocationTable[index];
+            ulong blkPtr   = _blockAllocationTable[index];
             ulong blkFlags = blkPtr & BAT_FLAGS_MASK;
 
             if((blkPtr & BAT_RESERVED_MASK) != 0)
@@ -450,52 +450,52 @@ namespace Aaru.DiscImages
             switch(blkFlags & BAT_FLAGS_MASK)
             {
                 case PAYLOAD_BLOCK_NOT_PRESENT:
-                    return hasParent ? parentImage.ReadSector(sectorAddress) : new byte[logicalSectorSize];
+                    return _hasParent ? _parentImage.ReadSector(sectorAddress) : new byte[_logicalSectorSize];
                 case PAYLOAD_BLOCK_UNDEFINED:
                 case PAYLOAD_BLOCK_ZERO:
-                case PAYLOAD_BLOCK_UNMAPPER: return new byte[logicalSectorSize];
+                case PAYLOAD_BLOCK_UNMAPPER: return new byte[_logicalSectorSize];
             }
 
             bool partialBlock;
             partialBlock = (blkFlags & BAT_FLAGS_MASK) == PAYLOAD_BLOCK_PARTIALLY_PRESENT;
 
             if(partialBlock &&
-               hasParent    &&
+               _hasParent   &&
                !CheckBitmap(sectorAddress))
-                return parentImage.ReadSector(sectorAddress);
+                return _parentImage.ReadSector(sectorAddress);
 
-            if(!blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out byte[] block))
+            if(!_blockCache.TryGetValue(blkPtr & BAT_FILE_OFFSET_MASK, out byte[] block))
             {
-                block = new byte[vFileParms.blockSize];
-                imageStream.Seek((long)(blkPtr & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);
-                imageStream.Read(block, 0, block.Length);
+                block = new byte[_vFileParms.blockSize];
+                _imageStream.Seek((long)(blkPtr & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);
+                _imageStream.Read(block, 0, block.Length);
 
-                if(blockCache.Count >= maxBlockCache)
-                    blockCache.Clear();
+                if(_blockCache.Count >= _maxBlockCache)
+                    _blockCache.Clear();
 
-                blockCache.Add(blkPtr & BAT_FILE_OFFSET_MASK, block);
+                _blockCache.Add(blkPtr & BAT_FILE_OFFSET_MASK, block);
             }
 
-            sector = new byte[logicalSectorSize];
+            sector = new byte[_logicalSectorSize];
             Array.Copy(block, (int)secOff, sector, 0, sector.Length);
 
-            if(sectorCache.Count >= maxSectorCache)
-                sectorCache.Clear();
+            if(_sectorCache.Count >= _maxSectorCache)
+                _sectorCache.Clear();
 
-            sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, sector);
 
             return sector;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
+                                                      $"Requested more sectors ({sectorAddress + length}) than available ({_imageInfo.Sectors})");
 
             var ms = new MemoryStream();
 

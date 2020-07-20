@@ -41,13 +41,13 @@ namespace Aaru.Filters
     /// <summary>Decompress lzip files while reading</summary>
     public class LZip : IFilter
     {
-        string   basePath;
-        DateTime creationTime;
-        Stream   dataStream;
-        long     decompressedSize;
-        Stream   innerStream;
-        DateTime lastWriteTime;
-        bool     opened;
+        string   _basePath;
+        DateTime _creationTime;
+        Stream   _dataStream;
+        long     _decompressedSize;
+        Stream   _innerStream;
+        DateTime _lastWriteTime;
+        bool     _opened;
 
         public string Name   => "LZip";
         public Guid   Id     => new Guid("09D715E9-20C0-48B1-A8D9-D8897CEC57C9");
@@ -55,17 +55,17 @@ namespace Aaru.Filters
 
         public void Close()
         {
-            dataStream?.Close();
-            dataStream = null;
-            basePath   = null;
-            opened     = false;
+            _dataStream?.Close();
+            _dataStream = null;
+            _basePath   = null;
+            _opened     = false;
         }
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public Stream GetDataForkStream() => innerStream;
+        public Stream GetDataForkStream() => _innerStream;
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
         public Stream GetResourceForkStream() => null;
 
@@ -104,70 +104,70 @@ namespace Aaru.Filters
 
         public void Open(byte[] buffer)
         {
-            dataStream       = new MemoryStream(buffer);
-            basePath         = null;
-            creationTime     = DateTime.UtcNow;
-            lastWriteTime    = creationTime;
-            decompressedSize = BitConverter.ToInt64(buffer, buffer.Length - 16);
+            _dataStream       = new MemoryStream(buffer);
+            _basePath         = null;
+            _creationTime     = DateTime.UtcNow;
+            _lastWriteTime    = _creationTime;
+            _decompressedSize = BitConverter.ToInt64(buffer, buffer.Length - 16);
 
-            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            _innerStream = new ForcedSeekStream<LZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
 
-            opened = true;
+            _opened = true;
         }
 
         public void Open(Stream stream)
         {
-            dataStream    = stream;
-            basePath      = null;
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
+            _dataStream    = stream;
+            _basePath      = null;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
             byte[] tmp = new byte[8];
-            dataStream.Seek(-16, SeekOrigin.End);
-            dataStream.Read(tmp, 0, 8);
-            decompressedSize = BitConverter.ToInt64(tmp, 0);
-            dataStream.Seek(0, SeekOrigin.Begin);
-            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened      = true;
+            _dataStream.Seek(-16, SeekOrigin.End);
+            _dataStream.Read(tmp, 0, 8);
+            _decompressedSize = BitConverter.ToInt64(tmp, 0);
+            _dataStream.Seek(0, SeekOrigin.Begin);
+            _innerStream = new ForcedSeekStream<LZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
+            _opened      = true;
         }
 
         public void Open(string path)
         {
-            dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            basePath   = Path.GetFullPath(path);
+            _dataStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            _basePath   = Path.GetFullPath(path);
 
             var fi = new FileInfo(path);
-            creationTime  = fi.CreationTimeUtc;
-            lastWriteTime = fi.LastWriteTimeUtc;
+            _creationTime  = fi.CreationTimeUtc;
+            _lastWriteTime = fi.LastWriteTimeUtc;
             byte[] tmp = new byte[8];
-            dataStream.Seek(-16, SeekOrigin.End);
-            dataStream.Read(tmp, 0, 8);
-            decompressedSize = BitConverter.ToInt64(tmp, 0);
-            dataStream.Seek(0, SeekOrigin.Begin);
-            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened      = true;
+            _dataStream.Seek(-16, SeekOrigin.End);
+            _dataStream.Read(tmp, 0, 8);
+            _decompressedSize = BitConverter.ToInt64(tmp, 0);
+            _dataStream.Seek(0, SeekOrigin.Begin);
+            _innerStream = new ForcedSeekStream<LZipStream>(_decompressedSize, _dataStream, CompressionMode.Decompress);
+            _opened      = true;
         }
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => decompressedSize;
+        public long GetDataForkLength() => _decompressedSize;
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => decompressedSize;
+        public long GetLength() => _decompressedSize;
 
         public long GetResourceForkLength() => 0;
 
         public string GetFilename()
         {
-            if(basePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return basePath.Substring(0, basePath.Length - 3);
+            if(_basePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
+                return _basePath.Substring(0, _basePath.Length - 3);
 
-            return basePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? basePath.Substring(0, basePath.Length - 5) : basePath;
+            return _basePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
+                       ? _basePath.Substring(0, _basePath.Length - 5) : _basePath;
         }
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
     }
 }

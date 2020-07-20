@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -68,7 +68,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -115,7 +115,7 @@ namespace Aaru.DiscImages
                     return false;
             }
 
-            writingStream.WriteByte((byte)diskType);
+            _writingStream.WriteByte((byte)diskType);
 
             byte tracks = 0;
 
@@ -144,14 +144,14 @@ namespace Aaru.DiscImages
 
             for(int i = 0; i < tracks; i += headstep)
             {
-                writingStream.WriteByte((byte)TrackType.Copied);
+                _writingStream.WriteByte((byte)TrackType.Copied);
 
                 if(headstep == 2)
-                    writingStream.WriteByte(0);
+                    _writingStream.WriteByte(0);
             }
 
-            writingStream.WriteByte((byte)Compression.None);
-            writingOffset = writingStream.Position;
+            _writingStream.WriteByte((byte)Compression.None);
+            _writingOffset = _writingStream.Position;
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -182,15 +182,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek(writingOffset + (long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek(_writingOffset + (long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -213,15 +213,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek(writingOffset + (long)(sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek(_writingOffset + (long)(sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -251,8 +251,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";

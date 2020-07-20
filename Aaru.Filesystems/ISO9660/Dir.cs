@@ -44,19 +44,19 @@ namespace Aaru.Filesystems
 {
     public partial class ISO9660
     {
-        Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> directoryCache;
+        Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
 
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
-                contents = GetFilenames(rootDirectoryCache);
+                contents = GetFilenames(_rootDirectoryCache);
 
                 return Errno.NoError;
             }
@@ -65,7 +65,7 @@ namespace Aaru.Filesystems
                                  ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
 
-            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
+            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
 
@@ -78,7 +78,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DecodedDirectoryEntry> entry =
-                rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+                _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
                 return Errno.NoSuchFile;
@@ -88,7 +88,7 @@ namespace Aaru.Filesystems
 
             string currentPath = pieces[0];
 
-            currentDirectory = rootDirectoryCache;
+            currentDirectory = _rootDirectoryCache;
 
             for(int p = 0; p < pieces.Length; p++)
             {
@@ -102,31 +102,31 @@ namespace Aaru.Filesystems
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
                 if(entry.Value.Extents.Count == 0)
                     return Errno.InvalidArgument;
 
-                currentDirectory = cdi
+                currentDirectory = _cdi
                                        ? DecodeCdiDirectory(entry.Value.Extents[0].extent, entry.Value.Extents[0].size,
                                                             entry.Value.XattrLength)
-                                       : highSierra
+                                       : _highSierra
                                            ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent,
                                                                        entry.Value.Extents[0].size,
                                                                        entry.Value.XattrLength)
                                            : DecodeIsoDirectory(entry.Value.Extents[0].extent,
                                                                 entry.Value.Extents[0].size, entry.Value.XattrLength);
 
-                if(usePathTable)
-                    foreach(DecodedDirectoryEntry subDirectory in cdi
+                if(_usePathTable)
+                    foreach(DecodedDirectoryEntry subDirectory in _cdi
                                                                       ? GetSubdirsFromCdiPathTable(currentPath)
-                                                                      : highSierra
+                                                                      : _highSierra
                                                                           ? GetSubdirsFromHighSierraPathTable(currentPath)
                                                                           : GetSubdirsFromIsoPathTable(currentPath))
                         currentDirectory[subDirectory.Filename] = subDirectory;
 
-                directoryCache.Add(currentPath, currentDirectory);
+                _directoryCache.Add(currentPath, currentDirectory);
             }
 
             contents = GetFilenames(currentDirectory);
@@ -139,7 +139,7 @@ namespace Aaru.Filesystems
             List<string> contents = new List<string>();
 
             foreach(DecodedDirectoryEntry entry in dirents.Values)
-                switch(@namespace)
+                switch(_namespace)
                 {
                     case Namespace.Normal:
                         contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal)
@@ -166,18 +166,18 @@ namespace Aaru.Filesystems
 
             byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
 
-            while(entryOff + CdiDirectoryRecordSize < data.Length)
+            while(entryOff + _cdiDirectoryRecordSize < data.Length)
             {
                 CdiDirectoryRecord record =
-                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff, CdiDirectoryRecordSize);
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff, _cdiDirectoryRecordSize);
 
                 if(record.length == 0)
                     break;
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
-                    if(data[entryOff + DirectoryRecordSize] == 0 ||
-                       data[entryOff + DirectoryRecordSize] == 1)
+                    if(data[entryOff + _directoryRecordSize] == 0 ||
+                       data[entryOff + _directoryRecordSize] == 1)
                     {
                         entryOff += record.length;
 
@@ -187,7 +187,7 @@ namespace Aaru.Filesystems
                 var entry = new DecodedDirectoryEntry
                 {
                     Size                 = record.size,
-                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = record.xattr_len
@@ -206,19 +206,19 @@ namespace Aaru.Filesystems
                     continue;
                 }
 
-                int systemAreaStart = entryOff + record.name_len + CdiDirectoryRecordSize;
+                int systemAreaStart = entryOff + record.name_len + _cdiDirectoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                     systemAreaStart++;
 
                 entry.CdiSystemArea =
-                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, CdiSystemAreaSize);
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, _cdiSystemAreaSize);
 
                 if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                     entry.Flags |= FileFlags.Directory;
 
                 if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) ||
-                   !usePathTable)
+                   !_usePathTable)
                     entries[entry.Filename] = entry;
 
                 entryOff += record.length;
@@ -234,19 +234,19 @@ namespace Aaru.Filesystems
 
             byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
 
-            while(entryOff + DirectoryRecordSize < data.Length)
+            while(entryOff + _directoryRecordSize < data.Length)
             {
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
-                                                                                        HighSierraDirectoryRecordSize);
+                                                                                        _highSierraDirectoryRecordSize);
 
                 if(record.length == 0)
                     break;
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
-                    if(data[entryOff + DirectoryRecordSize] == 0 ||
-                       data[entryOff + DirectoryRecordSize] == 1)
+                    if(data[entryOff + _directoryRecordSize] == 0 ||
+                       data[entryOff + _directoryRecordSize] == 1)
                     {
                         entryOff += record.length;
 
@@ -259,7 +259,7 @@ namespace Aaru.Filesystems
                     Flags                = record.flags,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    Filename             = Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = record.xattr_len
                 };
@@ -270,7 +270,7 @@ namespace Aaru.Filesystems
                         (record.extent, record.size)
                     };
 
-                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                if(entry.Flags.HasFlag(FileFlags.Directory) && _usePathTable)
                 {
                     entryOff += record.length;
 
@@ -283,7 +283,7 @@ namespace Aaru.Filesystems
                 entryOff += record.length;
             }
 
-            if(useTransTbl)
+            if(_useTransTbl)
                 DecodeTransTable(entries);
 
             return entries;
@@ -296,18 +296,18 @@ namespace Aaru.Filesystems
 
             byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
 
-            while(entryOff + DirectoryRecordSize < data.Length)
+            while(entryOff + _directoryRecordSize < data.Length)
             {
                 DirectoryRecord record =
-                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, DirectoryRecordSize);
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, _directoryRecordSize);
 
                 if(record.length == 0)
                     break;
 
                 // Special entries for current and parent directories, skip them
                 if(record.name_len == 1)
-                    if(data[entryOff + DirectoryRecordSize] == 0 ||
-                       data[entryOff + DirectoryRecordSize] == 1)
+                    if(data[entryOff + _directoryRecordSize] == 0 ||
+                       data[entryOff + _directoryRecordSize] == 1)
                     {
                         entryOff += record.length;
 
@@ -319,9 +319,9 @@ namespace Aaru.Filesystems
                     Size  = record.size,
                     Flags = record.flags,
                     Filename =
-                        joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
-                                                                     record.name_len)
-                            : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                        _joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + _directoryRecordSize,
+                                                                      record.name_len)
+                            : Encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
@@ -335,7 +335,7 @@ namespace Aaru.Filesystems
                         (record.extent, record.size)
                     };
 
-                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                if(entry.Flags.HasFlag(FileFlags.Directory) && _usePathTable)
                 {
                     entryOff += record.length;
 
@@ -353,11 +353,11 @@ namespace Aaru.Filesystems
                     entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 3) + ";1";
 
                 // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
-                if(joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
+                if(_joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
                     entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
 
-                int systemAreaStart  = entryOff + record.name_len      + DirectoryRecordSize;
-                int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
+                int systemAreaStart  = entryOff + record.name_len      + _directoryRecordSize;
+                int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                 {
@@ -432,11 +432,11 @@ namespace Aaru.Filesystems
                 entryOff += record.length;
             }
 
-            if(useTransTbl)
+            if(_useTransTbl)
                 DecodeTransTable(entries);
 
             // Relocated directories should be shown in correct place when using Rock Ridge namespace
-            return @namespace == Namespace.Rrip
+            return _namespace == Namespace.Rrip
                        ? entries.Where(e => !e.Value.RockRidgeRelocated).ToDictionary(x => x.Key, x => x.Value)
                        : entries;
         }
@@ -775,7 +775,7 @@ namespace Aaru.Filesystems
 
                         entry.SymbolicLink += slc.flags.HasFlag(SymlinkComponentFlags.Networkname)
                                                   ? Environment.MachineName
-                                                  : joliet
+                                                  : _joliet
                                                       ? Encoding.BigEndianUnicode.GetString(data,
                                                                                             systemAreaOff +
                                                                                             Marshal.
@@ -799,7 +799,7 @@ namespace Aaru.Filesystems
                     case RRIP_NAME:
                         byte nmLength = data[systemAreaOff + 2];
 
-                        if(@namespace != Namespace.Rrip)
+                        if(_namespace != Namespace.Rrip)
                         {
                             systemAreaOff += nmLength;
 
@@ -813,7 +813,7 @@ namespace Aaru.Filesystems
                         byte[] nm;
 
                         if(alternateName.flags.HasFlag(AlternateNameFlags.Networkname))
-                            nm = joliet ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
+                            nm = _joliet ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
                                      : Encoding.GetBytes(Environment.MachineName);
                         else
                         {
@@ -833,7 +833,7 @@ namespace Aaru.Filesystems
 
                         if(!alternateName.flags.HasFlag(AlternateNameFlags.Continue))
                         {
-                            entry.Filename = joliet ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
+                            entry.Filename = _joliet ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
                                                  : Encoding.GetString(entry.RockRidgeAlternateName);
 
                             entry.RockRidgeAlternateName = null;
@@ -846,7 +846,7 @@ namespace Aaru.Filesystems
                         byte clLength = data[systemAreaOff + 2];
 
                         // If we are not in Rock Ridge namespace, or we are using the Path Table, skip it
-                        if(@namespace != Namespace.Rrip || usePathTable)
+                        if(_namespace != Namespace.Rrip || _usePathTable)
                         {
                             systemAreaOff += clLength;
 
@@ -1023,11 +1023,11 @@ namespace Aaru.Filesystems
         PathTableEntryInternal[] GetPathTableEntries(string path)
         {
             IEnumerable<PathTableEntryInternal> tableEntries;
-            List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(pathTable);
+            List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(_pathTable);
 
             if(path == "" ||
                path == "/")
-                tableEntries = pathTable.Where(p => p.Parent == 1 && p != pathTable[0]);
+                tableEntries = _pathTable.Where(p => p.Parent == 1 && p != _pathTable[0]);
             else
             {
                 string cutPath = path.StartsWith("/", StringComparison.Ordinal)
@@ -1044,10 +1044,10 @@ namespace Aaru.Filesystems
 
                 while(currentPiece < pieces.Length)
                 {
-                    PathTableEntryInternal currentEntry = pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                                                                                        p.Name.ToLower(CultureInfo.
-                                                                                                           CurrentUICulture) ==
-                                                                                        pieces[currentPiece]);
+                    PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
+                                                                                         p.Name.ToLower(CultureInfo.
+                                                                                                            CurrentUICulture) ==
+                                                                                         pieces[currentPiece]);
 
                     if(currentEntry is null)
                         break;
@@ -1056,7 +1056,7 @@ namespace Aaru.Filesystems
                     currentParent = pathTableList.IndexOf(currentEntry) + 1;
                 }
 
-                tableEntries = pathTable.Where(p => p.Parent == currentParent);
+                tableEntries = _pathTable.Where(p => p.Parent == currentParent);
             }
 
             return tableEntries.ToArray();
@@ -1073,7 +1073,7 @@ namespace Aaru.Filesystems
 
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
-                                                                              CdiDirectoryRecordSize);
+                                                                              _cdiDirectoryRecordSize);
 
                 if(record.length == 0)
                     break;
@@ -1096,13 +1096,13 @@ namespace Aaru.Filesystems
                 if(record.flags.HasFlag(CdiFileFlags.Hidden))
                     entry.Flags |= FileFlags.Hidden;
 
-                int systemAreaStart = record.name_len + CdiDirectoryRecordSize;
+                int systemAreaStart = record.name_len + _cdiDirectoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                     systemAreaStart++;
 
                 entry.CdiSystemArea =
-                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector, systemAreaStart, CdiSystemAreaSize);
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector, systemAreaStart, _cdiSystemAreaSize);
 
                 if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                     entry.Flags |= FileFlags.Directory;
@@ -1124,7 +1124,7 @@ namespace Aaru.Filesystems
 
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
-                                                                              DirectoryRecordSize);
+                                                                              _directoryRecordSize);
 
                 if(record.length == 0)
                     break;
@@ -1147,8 +1147,8 @@ namespace Aaru.Filesystems
                         (record.extent, record.size)
                     };
 
-                int systemAreaStart  = record.name_len                 + DirectoryRecordSize;
-                int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
+                int systemAreaStart  = record.name_len                 + _directoryRecordSize;
+                int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                 {
@@ -1175,7 +1175,7 @@ namespace Aaru.Filesystems
 
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
-                                                                                        HighSierraDirectoryRecordSize);
+                                                                                        _highSierraDirectoryRecordSize);
 
                 var entry = new DecodedDirectoryEntry
                 {

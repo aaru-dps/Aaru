@@ -86,8 +86,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -122,7 +122,7 @@ namespace Aaru.Devices.Remote
                 throw new ArgumentException();
             }
 
-            if(hdr.version != Consts.PacketVersion)
+            if(hdr.version != Consts.PACKET_VERSION)
             {
                 AaruConsole.ErrorWriteLine("Unrecognized packet version...");
 
@@ -152,16 +152,16 @@ namespace Aaru.Devices.Remote
             {
                 application = "Aaru",
                 version     = Version.GetVersion(),
-                maxProtocol = Consts.MaxProtocol,
+                maxProtocol = Consts.MAX_PROTOCOL,
                 sysname     = DetectOS.GetPlatformName(DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
                 release     = DetectOS.GetVersion(),
                 machine     = RuntimeInformation.ProcessArchitecture.ToString(),
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketHello>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.Hello
                 }
             };
@@ -193,10 +193,10 @@ namespace Aaru.Devices.Remote
                 {
                     hdr = new AaruPacketHeader
                     {
-                        remote_id  = Consts.RemoteId,
-                        packet_id  = Consts.PacketId,
+                        remote_id  = Consts.REMOTE_ID,
+                        packet_id  = Consts.PACKET_ID,
                         len        = (uint)Marshal.SizeOf<AaruPacketCmdAmIRoot>(),
-                        version    = Consts.PacketVersion,
+                        version    = Consts.PACKET_VERSION,
                         packetType = AaruPacketType.CommandAmIRoot
                     }
                 };
@@ -225,8 +225,8 @@ namespace Aaru.Devices.Remote
 
                 AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-                if(hdr.remote_id != Consts.RemoteId ||
-                   hdr.packet_id != Consts.PacketId)
+                if(hdr.remote_id != Consts.REMOTE_ID ||
+                   hdr.packet_id != Consts.PACKET_ID)
                 {
                     AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -271,10 +271,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCommandListDevices>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandListDevices
                 }
             };
@@ -303,8 +303,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -338,7 +338,7 @@ namespace Aaru.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            if(hdr.version != Consts.PacketVersion)
+            if(hdr.version != Consts.PACKET_VERSION)
             {
                 AaruConsole.ErrorWriteLine("Unrecognized packet version...");
 
@@ -381,10 +381,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCommandOpenDevice>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandOpen
                 },
                 device_path = devicePath
@@ -416,8 +416,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 lastError = -1;
@@ -471,9 +471,9 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
-                    version    = Consts.PacketVersion,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandScsi
                 },
                 direction = (int)direction,
@@ -521,8 +521,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -570,9 +570,9 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
-                    version    = Consts.PacketVersion,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandAtaChs
                 },
                 registers        = registers,
@@ -617,8 +617,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -665,9 +665,9 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
-                    version    = Consts.PacketVersion,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandAtaLba28
                 },
                 registers        = registers,
@@ -712,8 +712,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -761,9 +761,9 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
-                    version    = Consts.PacketVersion,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandAtaLba48
                 },
                 registers        = registers,
@@ -808,8 +808,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -857,9 +857,9 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
-                    version    = Consts.PacketVersion,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandAtaLba48
                 },
                 command     = command,
@@ -907,8 +907,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -953,10 +953,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdGetDeviceType>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandGetType
                 }
             };
@@ -985,8 +985,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -1027,10 +1027,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdGetSdhciRegisters>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandGetSdhciRegisters
                 }
             };
@@ -1059,8 +1059,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -1145,10 +1145,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdGetUsbData>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandGetUsbData
                 }
             };
@@ -1177,8 +1177,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -1231,10 +1231,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdGetFireWireData>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandGetFireWireData
                 }
             };
@@ -1263,8 +1263,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -1312,10 +1312,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdGetPcmciaData>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandGetPcmciaData
                 }
             };
@@ -1344,8 +1344,8 @@ namespace Aaru.Devices.Remote
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.RemoteId ||
-               hdr.packet_id != Consts.PacketId)
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
             {
                 AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
 
@@ -1405,10 +1405,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId,
-                    packet_id  = Consts.PacketId,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
                     len        = (uint)Marshal.SizeOf<AaruPacketCmdClose>(),
-                    version    = Consts.PacketVersion,
+                    version    = Consts.PACKET_VERSION,
                     packetType = AaruPacketType.CommandCloseDevice
                 }
             };

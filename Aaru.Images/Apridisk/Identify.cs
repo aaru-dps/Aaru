@@ -43,13 +43,13 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < signature.Length)
+            if(stream.Length < _signature.Length)
                 return false;
 
-            byte[] sigB = new byte[signature.Length];
-            stream.Read(sigB, 0, signature.Length);
+            byte[] sigB = new byte[_signature.Length];
+            stream.Read(sigB, 0, _signature.Length);
 
-            return sigB.SequenceEqual(signature);
+            return sigB.SequenceEqual(_signature);
         }
     }
 }

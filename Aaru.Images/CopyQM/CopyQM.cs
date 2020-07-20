@@ -40,14 +40,14 @@ namespace Aaru.DiscImages
 {
     public partial class CopyQm : IMediaImage, IVerifiableImage
     {
-        uint         calculatedDataCrc;
-        byte[]       decodedDisk;
-        MemoryStream decodedImage;
-        CopyQmHeader header;
-        bool         headerChecksumOk;
-        ImageInfo    imageInfo;
+        uint         _calculatedDataCrc;
+        byte[]       _decodedDisk;
+        MemoryStream _decodedImage;
+        CopyQmHeader _header;
+        bool         _headerChecksumOk;
+        ImageInfo    _imageInfo;
 
-        public CopyQm() => imageInfo = new ImageInfo
+        public CopyQm() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

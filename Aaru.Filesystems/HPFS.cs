@@ -82,51 +82,49 @@ namespace Aaru.Filesystems
             byte[] hpfsSpSector =
                 imagePlugin.ReadSector(17 + partition.Start); // Seek to spareblock, on logical sector 17
 
-            HpfsBiosParameterBlock hpfsBpb =
-                Marshal.ByteArrayToStructureLittleEndian<HpfsBiosParameterBlock>(hpfsBpbSector);
+            BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpfsBpbSector);
 
-            HpfsSuperBlock hpfsSb = Marshal.ByteArrayToStructureLittleEndian<HpfsSuperBlock>(hpfsSbSector);
+            SuperBlock hpfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(hpfsSbSector);
 
-            HpfsSpareBlock hpfsSp = Marshal.ByteArrayToStructureLittleEndian<HpfsSpareBlock>(hpfsSpSector);
+            SpareBlock sp = Marshal.ByteArrayToStructureLittleEndian<SpareBlock>(hpfsSpSector);
 
-            if(StringHandlers.CToString(hpfsBpb.fs_type) != "HPFS    " ||
-               hpfsSb.magic1                             != 0xF995E849 ||
-               hpfsSb.magic2                             != 0xFA53E9C5 ||
-               hpfsSp.magic1                             != 0xF9911849 ||
-               hpfsSp.magic2                             != 0xFA5229C5)
+            if(StringHandlers.CToString(bpb.fs_type) != "HPFS    " ||
+               hpfsSb.magic1                         != 0xF995E849 ||
+               hpfsSb.magic2                         != 0xFA53E9C5 ||
+               sp.magic1                             != 0xF9911849 ||
+               sp.magic2                             != 0xFA5229C5)
             {
                 sb.AppendLine("This may not be HPFS, following information may be not correct.");
-                sb.AppendFormat("File system type: \"{0}\" (Should be \"HPFS    \")", hpfsBpb.fs_type).AppendLine();
+                sb.AppendFormat("File system type: \"{0}\" (Should be \"HPFS    \")", bpb.fs_type).AppendLine();
                 sb.AppendFormat("Superblock magic1: 0x{0:X8} (Should be 0xF995E849)", hpfsSb.magic1).AppendLine();
                 sb.AppendFormat("Superblock magic2: 0x{0:X8} (Should be 0xFA53E9C5)", hpfsSb.magic2).AppendLine();
-                sb.AppendFormat("Spareblock magic1: 0x{0:X8} (Should be 0xF9911849)", hpfsSp.magic1).AppendLine();
-                sb.AppendFormat("Spareblock magic2: 0x{0:X8} (Should be 0xFA5229C5)", hpfsSp.magic2).AppendLine();
+                sb.AppendFormat("Spareblock magic1: 0x{0:X8} (Should be 0xF9911849)", sp.magic1).AppendLine();
+                sb.AppendFormat("Spareblock magic2: 0x{0:X8} (Should be 0xFA5229C5)", sp.magic2).AppendLine();
             }
 
-            sb.AppendFormat("OEM name: {0}", StringHandlers.CToString(hpfsBpb.oem_name)).AppendLine();
-            sb.AppendFormat("{0} bytes per sector", hpfsBpb.bps).AppendLine();
+            sb.AppendFormat("OEM name: {0}", StringHandlers.CToString(bpb.oem_name)).AppendLine();
+            sb.AppendFormat("{0} bytes per sector", bpb.bps).AppendLine();
 
             //          sb.AppendFormat("{0} sectors per cluster", hpfs_bpb.spc).AppendLine();
             //          sb.AppendFormat("{0} reserved sectors", hpfs_bpb.rsectors).AppendLine();
             //          sb.AppendFormat("{0} FATs", hpfs_bpb.fats_no).AppendLine();
             //          sb.AppendFormat("{0} entries on root directory", hpfs_bpb.root_ent).AppendLine();
             //          sb.AppendFormat("{0} mini sectors on volume", hpfs_bpb.sectors).AppendLine();
-            sb.AppendFormat("Media descriptor: 0x{0:X2}", hpfsBpb.media).AppendLine();
+            sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();
 
             //          sb.AppendFormat("{0} sectors per FAT", hpfs_bpb.spfat).AppendLine();
             //          sb.AppendFormat("{0} sectors per track", hpfs_bpb.sptrk).AppendLine();
             //          sb.AppendFormat("{0} heads", hpfs_bpb.heads).AppendLine();
-            sb.AppendFormat("{0} sectors hidden before BPB", hpfsBpb.hsectors).AppendLine();
+            sb.AppendFormat("{0} sectors hidden before BPB", bpb.hsectors).AppendLine();
 
-            sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfsSb.sectors, hpfsSb.sectors * hpfsBpb.bps).
-               AppendLine();
+            sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfsSb.sectors, hpfsSb.sectors * bpb.bps).AppendLine();
 
             //          sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_bpb.big_sectors, hpfs_bpb.big_sectors * hpfs_bpb.bps).AppendLine();
-            sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", hpfsBpb.drive_no).AppendLine();
-            sb.AppendFormat("NT Flags: 0x{0:X2}", hpfsBpb.nt_flags).AppendLine();
-            sb.AppendFormat("Signature: 0x{0:X2}", hpfsBpb.signature).AppendLine();
-            sb.AppendFormat("Serial number: 0x{0:X8}", hpfsBpb.serial_no).AppendLine();
-            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(hpfsBpb.volume_label, Encoding)).AppendLine();
+            sb.AppendFormat("BIOS Drive Number: 0x{0:X2}", bpb.drive_no).AppendLine();
+            sb.AppendFormat("NT Flags: 0x{0:X2}", bpb.nt_flags).AppendLine();
+            sb.AppendFormat("Signature: 0x{0:X2}", bpb.signature).AppendLine();
+            sb.AppendFormat("Serial number: 0x{0:X8}", bpb.serial_no).AppendLine();
+            sb.AppendFormat("Volume label: {0}", StringHandlers.CToString(bpb.volume_label, Encoding)).AppendLine();
 
             //          sb.AppendFormat("Filesystem type: \"{0}\"", hpfs_bpb.fs_type).AppendLine();
 
@@ -156,92 +154,92 @@ namespace Aaru.Filesystems
             sb.AppendFormat("Sector of directory band bitmap: {0}", hpfsSb.dband_bitmap).AppendLine();
             sb.AppendFormat("Sector of ACL directory: {0}", hpfsSb.acl_start).AppendLine();
 
-            sb.AppendFormat("Sector of Hotfix directory: {0}", hpfsSp.hotfix_start).AppendLine();
-            sb.AppendFormat("{0} used Hotfix entries", hpfsSp.hotfix_used).AppendLine();
-            sb.AppendFormat("{0} total Hotfix entries", hpfsSp.hotfix_entries).AppendLine();
-            sb.AppendFormat("{0} free spare DNodes", hpfsSp.spare_dnodes_free).AppendLine();
-            sb.AppendFormat("{0} total spare DNodes", hpfsSp.spare_dnodes).AppendLine();
-            sb.AppendFormat("Sector of codepage directory: {0}", hpfsSp.codepage_lsn).AppendLine();
-            sb.AppendFormat("{0} codepages used in the volume", hpfsSp.codepages).AppendLine();
-            sb.AppendFormat("SuperBlock CRC32: {0:X8}", hpfsSp.sb_crc32).AppendLine();
-            sb.AppendFormat("SpareBlock CRC32: {0:X8}", hpfsSp.sp_crc32).AppendLine();
+            sb.AppendFormat("Sector of Hotfix directory: {0}", sp.hotfix_start).AppendLine();
+            sb.AppendFormat("{0} used Hotfix entries", sp.hotfix_used).AppendLine();
+            sb.AppendFormat("{0} total Hotfix entries", sp.hotfix_entries).AppendLine();
+            sb.AppendFormat("{0} free spare DNodes", sp.spare_dnodes_free).AppendLine();
+            sb.AppendFormat("{0} total spare DNodes", sp.spare_dnodes).AppendLine();
+            sb.AppendFormat("Sector of codepage directory: {0}", sp.codepage_lsn).AppendLine();
+            sb.AppendFormat("{0} codepages used in the volume", sp.codepages).AppendLine();
+            sb.AppendFormat("SuperBlock CRC32: {0:X8}", sp.sb_crc32).AppendLine();
+            sb.AppendFormat("SpareBlock CRC32: {0:X8}", sp.sp_crc32).AppendLine();
 
             sb.AppendLine("Flags:");
-            sb.AppendLine((hpfsSp.flags1 & 0x01) == 0x01 ? "Filesystem is dirty." : "Filesystem is clean.");
+            sb.AppendLine((sp.flags1 & 0x01) == 0x01 ? "Filesystem is dirty." : "Filesystem is clean.");
 
-            if((hpfsSp.flags1 & 0x02) == 0x02)
+            if((sp.flags1 & 0x02) == 0x02)
                 sb.AppendLine("Spare directory blocks are in use");
 
-            if((hpfsSp.flags1 & 0x04) == 0x04)
+            if((sp.flags1 & 0x04) == 0x04)
                 sb.AppendLine("Hotfixes are in use");
 
-            if((hpfsSp.flags1 & 0x08) == 0x08)
+            if((sp.flags1 & 0x08) == 0x08)
                 sb.AppendLine("Disk contains bad sectors");
 
-            if((hpfsSp.flags1 & 0x10) == 0x10)
+            if((sp.flags1 & 0x10) == 0x10)
                 sb.AppendLine("Disk has a bad bitmap");
 
-            if((hpfsSp.flags1 & 0x20) == 0x20)
+            if((sp.flags1 & 0x20) == 0x20)
                 sb.AppendLine("Filesystem was formatted fast");
 
-            if((hpfsSp.flags1 & 0x40) == 0x40)
+            if((sp.flags1 & 0x40) == 0x40)
                 sb.AppendLine("Unknown flag 0x40 on flags1 is active");
 
-            if((hpfsSp.flags1 & 0x80) == 0x80)
+            if((sp.flags1 & 0x80) == 0x80)
                 sb.AppendLine("Filesystem has been mounted by an old IFS");
 
-            if((hpfsSp.flags2 & 0x01) == 0x01)
+            if((sp.flags2 & 0x01) == 0x01)
                 sb.AppendLine("Install DASD limits");
 
-            if((hpfsSp.flags2 & 0x02) == 0x02)
+            if((sp.flags2 & 0x02) == 0x02)
                 sb.AppendLine("Resync DASD limits");
 
-            if((hpfsSp.flags2 & 0x04) == 0x04)
+            if((sp.flags2 & 0x04) == 0x04)
                 sb.AppendLine("DASD limits are operational");
 
-            if((hpfsSp.flags2 & 0x08) == 0x08)
+            if((sp.flags2 & 0x08) == 0x08)
                 sb.AppendLine("Multimedia is active");
 
-            if((hpfsSp.flags2 & 0x10) == 0x10)
+            if((sp.flags2 & 0x10) == 0x10)
                 sb.AppendLine("DCE ACLs are active");
 
-            if((hpfsSp.flags2 & 0x20) == 0x20)
+            if((sp.flags2 & 0x20) == 0x20)
                 sb.AppendLine("DASD limits are dirty");
 
-            if((hpfsSp.flags2 & 0x40) == 0x40)
+            if((sp.flags2 & 0x40) == 0x40)
                 sb.AppendLine("Unknown flag 0x40 on flags2 is active");
 
-            if((hpfsSp.flags2 & 0x80) == 0x80)
+            if((sp.flags2 & 0x80) == 0x80)
                 sb.AppendLine("Unknown flag 0x80 on flags2 is active");
 
             XmlFsType = new FileSystemType();
 
             // Theoretically everything from BPB to SB is boot code, should I hash everything or only the sector loaded by BIOS itself?
-            if(hpfsBpb.jump[0]    == 0xEB &&
-               hpfsBpb.jump[1]    > 0x3C  &&
-               hpfsBpb.jump[1]    < 0x80  &&
-               hpfsBpb.signature2 == 0xAA55)
+            if(bpb.jump[0]    == 0xEB &&
+               bpb.jump[1]    > 0x3C  &&
+               bpb.jump[1]    < 0x80  &&
+               bpb.signature2 == 0xAA55)
             {
                 XmlFsType.Bootable = true;
-                string bootChk = Sha1Context.Data(hpfsBpb.boot_code, out byte[] _);
+                string bootChk = Sha1Context.Data(bpb.boot_code, out byte[] _);
                 sb.AppendLine("Volume is bootable");
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            XmlFsType.Dirty            |= (hpfsSp.flags1 & 0x01) == 0x01;
+            XmlFsType.Dirty            |= (sp.flags1 & 0x01) == 0x01;
             XmlFsType.Clusters         =  hpfsSb.sectors;
-            XmlFsType.ClusterSize      =  hpfsBpb.bps;
+            XmlFsType.ClusterSize      =  bpb.bps;
             XmlFsType.Type             =  "HPFS";
-            XmlFsType.VolumeName       =  StringHandlers.CToString(hpfsBpb.volume_label, Encoding);
-            XmlFsType.VolumeSerial     =  $"{hpfsBpb.serial_no:X8}";
-            XmlFsType.SystemIdentifier =  StringHandlers.CToString(hpfsBpb.oem_name);
+            XmlFsType.VolumeName       =  StringHandlers.CToString(bpb.volume_label, Encoding);
+            XmlFsType.VolumeSerial     =  $"{bpb.serial_no:X8}";
+            XmlFsType.SystemIdentifier =  StringHandlers.CToString(bpb.oem_name);
 
             information = sb.ToString();
         }
 
         /// <summary>BIOS Parameter Block, at sector 0</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HpfsBiosParameterBlock
+        struct BiosParameterBlock
         {
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -296,7 +294,7 @@ namespace Aaru.Filesystems
 
         /// <summary>HPFS superblock at sector 16</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HpfsSuperBlock
+        struct SuperBlock
         {
             /// <summary>0x000, 0xF995E849</summary>
             public readonly uint magic1;
@@ -348,7 +346,7 @@ namespace Aaru.Filesystems
 
         /// <summary>HPFS spareblock at sector 17</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HpfsSpareBlock
+        struct SpareBlock
         {
             /// <summary>0x000, 0xF9911849</summary>
             public readonly uint magic1;

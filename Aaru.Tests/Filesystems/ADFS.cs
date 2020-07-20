@@ -39,50 +39,50 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Adfs
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "adfs_d.adf.lz", "adfs_e.adf.lz", "adfs_f.adf.lz", "adfs_e+.adf.lz", "adfs_f+.adf.lz", "adfs_s.adf.lz",
             "adfs_m.adf.lz", "adfs_l.adf.lz", "hdd_old.hdf.lz", "hdd_new.hdf.lz"
         };
 
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_DD, MediaType.ACORN_35_DS_HD, MediaType.ACORN_35_DS_DD,
             MediaType.ACORN_35_DS_HD, MediaType.ACORN_525_SS_DD_40, MediaType.ACORN_525_SS_DD_80,
             MediaType.ACORN_525_DS_DD, MediaType.GENERIC_HDD, MediaType.GENERIC_HDD
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             800, 800, 1600, 800, 1600, 640, 1280, 2560, 78336, 78336
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             1024, 1024, 1024, 1024, 1024, 256, 256, 256, 256, 256
         };
 
-        readonly bool[] bootable =
+        readonly bool[] _bootable =
         {
             false, false, false, false, false, false, false, false, false, false
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             800, 800, 1600, 800, 1600, 640, 1280, 2560, 78336, 78336
         };
 
-        readonly uint[] clustersize =
+        readonly uint[] _clustersize =
         {
             1024, 1024, 1024, 1024, 1024, 256, 256, 256, 256, 256
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "ADFSD", "ADFSE     ", null, "ADFSE+    ", null, "$", "$", "$", "VolLablOld", null
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             "3E48", "E13A", null, "1142", null, "F20D", "D6CA", "0CA6", "080E", null
         };
@@ -90,18 +90,18 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acorn Advanced Disc Filing System",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+                                               "Acorn Advanced Disc Filing System", _testfiles[i]);
 
                 IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 IFilesystem fs = new AcornADFS();
 
                 var wholePart = new Partition
@@ -111,14 +111,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(bootable[i], fs.XmlFsType.Bootable, testfiles[i]);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("Acorn Advanced Disc Filing System", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
+                Assert.AreEqual(_bootable[i], fs.XmlFsType.Bootable, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("Acorn Advanced Disc Filing System", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
             }
         }
     }

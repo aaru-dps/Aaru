@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "T98 Hard Disk Image";
         public Guid                   Id           => new Guid("0410003E-6E7B-40E6-9328-BA5651ADF6B7");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";
         public string                 Format       => "T98 disk image";
         public List<DumpHardwareType> DumpHardware => null;

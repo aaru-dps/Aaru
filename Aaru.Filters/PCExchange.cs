@@ -45,50 +45,49 @@ namespace Aaru.Filters
 {
     /// <summary>Decodes PCExchange files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class PCExchange : IFilter
+    public class PcExchange : IFilter
     {
         const string FILE_ID     = "FILEID.DAT";
         const string FINDER_INFO = "FINDER.DAT";
         const string RESOURCES   = "RESOURCE.FRK";
-        string       basePath;
-        DateTime     creationTime;
-        long         dataLen;
-        string       dataPath;
-        DateTime     lastWriteTime;
-
-        bool   opened;
-        long   rsrcLen;
-        string rsrcPath;
+        string       _basePath;
+        DateTime     _creationTime;
+        long         _dataLen;
+        string       _dataPath;
+        DateTime     _lastWriteTime;
+        bool         _opened;
+        long         _rsrcLen;
+        string       _rsrcPath;
 
         public string Name   => "PCExchange";
         public Guid   Id     => new Guid("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
         public string Author => "Natalia Portillo";
 
-        public void Close() => opened = false;
+        public void Close() => _opened = false;
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => dataLen;
+        public long GetDataForkLength() => _dataLen;
 
-        public Stream GetDataForkStream() => new FileStream(dataPath, FileMode.Open, FileAccess.Read);
+        public Stream GetDataForkStream() => new FileStream(_dataPath, FileMode.Open, FileAccess.Read);
 
-        public string GetFilename() => Path.GetFileName(basePath);
+        public string GetFilename() => Path.GetFileName(_basePath);
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => dataLen + rsrcLen;
+        public long GetLength() => _dataLen + _rsrcLen;
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
-        public long GetResourceForkLength() => rsrcLen;
+        public long GetResourceForkLength() => _rsrcLen;
 
-        public Stream GetResourceForkStream() => new FileStream(rsrcPath, FileMode.Open, FileAccess.Read);
+        public Stream GetResourceForkStream() => new FileStream(_rsrcPath, FileMode.Open, FileAccess.Read);
 
-        public bool HasResourceFork() => rsrcPath != null;
+        public bool HasResourceFork() => _rsrcPath != null;
 
         public bool Identify(byte[] buffer) => false;
 
@@ -116,21 +115,21 @@ namespace Aaru.Filters
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                var    datEntry   = new PCExchangeEntry();
-                byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
-                finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+                var    datEntry  = new PcExchangeEntry();
+                byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+                finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PcExchangeEntry>(datEntryB);
 
                 // TODO: Add support for encoding on filters
                 string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-                byte[] tmpDosName_b = new byte[8];
-                byte[] tmpDosExt_b  = new byte[3];
-                Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
-                Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
+                byte[] tmpDosNameB = new byte[8];
+                byte[] tmpDosExtB  = new byte[3];
+                Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
+                Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
 
-                string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
-                                 Encoding.ASCII.GetString(tmpDosExt_b).Trim();
+                string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+                                 Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
@@ -155,7 +154,7 @@ namespace Aaru.Filters
             return dataFound && rsrcFound;
         }
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
 
         public void Open(byte[] buffer) => throw new NotSupportedException();
 
@@ -173,20 +172,20 @@ namespace Aaru.Filters
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                var    datEntry   = new PCExchangeEntry();
-                byte[] datEntry_b = new byte[Marshal.SizeOf(datEntry)];
-                finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+                var    datEntry  = new PcExchangeEntry();
+                byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
+                finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PcExchangeEntry>(datEntryB);
 
                 string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
-                byte[] tmpDosName_b = new byte[8];
-                byte[] tmpDosExt_b  = new byte[3];
-                Array.Copy(datEntry.dosName, 0, tmpDosName_b, 0, 8);
-                Array.Copy(datEntry.dosName, 8, tmpDosExt_b, 0, 3);
+                byte[] tmpDosNameB = new byte[8];
+                byte[] tmpDosExtB  = new byte[3];
+                Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
+                Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
 
-                string dosName = Encoding.ASCII.GetString(tmpDosName_b).Trim() + "." +
-                                 Encoding.ASCII.GetString(tmpDosExt_b).Trim();
+                string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+                                 Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
                 string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
@@ -196,38 +195,38 @@ namespace Aaru.Filters
                     continue;
 
                 if(File.Exists(Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
-                    dataPath = Path.Combine(parentFolder, macName);
+                    _dataPath = Path.Combine(parentFolder, macName);
                 else if(File.Exists(Path.Combine(parentFolder, dosName)))
-                    dataPath = Path.Combine(parentFolder, dosName);
+                    _dataPath = Path.Combine(parentFolder, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, dosNameLow)))
-                    dataPath = Path.Combine(parentFolder, dosNameLow);
+                    _dataPath = Path.Combine(parentFolder, dosNameLow);
                 else
-                    dataPath = null;
+                    _dataPath = null;
 
                 if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosName)))
-                    rsrcPath = Path.Combine(parentFolder, RESOURCES, dosName);
+                    _rsrcPath = Path.Combine(parentFolder, RESOURCES, dosName);
                 else if(File.Exists(Path.Combine(parentFolder, RESOURCES, dosNameLow)))
-                    rsrcPath = Path.Combine(parentFolder, RESOURCES, dosNameLow);
+                    _rsrcPath = Path.Combine(parentFolder, RESOURCES, dosNameLow);
                 else
-                    rsrcPath = null;
+                    _rsrcPath = null;
 
-                lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
-                creationTime  = DateHandlers.MacToDateTime(datEntry.creationDate);
+                _lastWriteTime = DateHandlers.MacToDateTime(datEntry.modificationDate);
+                _creationTime  = DateHandlers.MacToDateTime(datEntry.creationDate);
 
                 break;
             }
 
-            dataLen = new FileInfo(dataPath ?? throw new InvalidOperationException()).Length;
-            rsrcLen = new FileInfo(rsrcPath ?? throw new InvalidOperationException()).Length;
+            _dataLen = new FileInfo(_dataPath ?? throw new InvalidOperationException()).Length;
+            _rsrcLen = new FileInfo(_rsrcPath ?? throw new InvalidOperationException()).Length;
 
-            basePath = path;
-            opened   = true;
+            _basePath = path;
+            _opened   = true;
 
             finderDatStream.Close();
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PCExchangeEntry
+        struct PcExchangeEntry
         {
             /// <summary>
             ///     Name in Macintosh. If PCExchange version supports FAT's LFN they are the same. Illegal characters for FAT get

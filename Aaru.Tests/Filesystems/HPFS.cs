@@ -40,46 +40,46 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Hpfs
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "ecs.aif", "msos2_1.21.aif", "msos2_1.30.1.aif", "os2_1.20.aif", "os2_1.30.aif", "os2_6.307.aif",
             "os2_6.514.aif", "os2_6.617.aif", "os2_8.162.aif", "os2_9.023.aif", "winnt_3.10.aif", "winnt_3.50.aif",
             "ecs20_fstester.aif"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             262144, 1024000, 1024000, 1024000, 1024000, 1024000, 262144, 262144, 262144, 262144, 262144, 262144, 1024000
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly long[] clusters =
+        readonly long[] _clusters =
         {
             261072, 1023056, 1023056, 1023056, 1023056, 1023056, 262016, 262016, 262016, 262016, 262016, 262112, 1022112
         };
 
-        readonly int[] clustersize =
+        readonly int[] _clustersize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly string[] volumename =
+        readonly string[] _volumename =
         {
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUME LABE"
         };
 
-        readonly string[] volumeserial =
+        readonly string[] _volumeserial =
         {
             "2BBBD814", "AC0DDC15", "ABEB2C15", "6C4EE015", "6C406015", "6C49B015", "2BCEB414", "2C157414", "2BF55414",
             "2BE31414", "E851CB14", "A4EDC29C", "AC096014"
         };
 
-        readonly string[] oemid =
+        readonly string[] _oemid =
         {
             "IBM 4.50", "OS2 10.1", "OS2 10.0", "OS2 10.0", "OS2 10.0", "OS2 20.0", "OS2 20.0", "OS2 20.1", "OS2 20.0",
             "OS2 20.0", "MSDOS5.0", "MSDOS5.0", "IBM 4.50"
@@ -88,27 +88,27 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance File System",
-                                               testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Performance File System",
+                                               _testfiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new HPFS();
-                Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, partitions[0]), _testfiles[i]);
                 fs.GetInformation(image, partitions[0], out _, null);
-                Assert.AreEqual(clusters[i], fs.XmlFsType.Clusters, testfiles[i]);
-                Assert.AreEqual(clustersize[i], fs.XmlFsType.ClusterSize, testfiles[i]);
-                Assert.AreEqual("HPFS", fs.XmlFsType.Type, testfiles[i]);
-                Assert.AreEqual(volumename[i], fs.XmlFsType.VolumeName, testfiles[i]);
-                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial, testfiles[i]);
-                Assert.AreEqual(oemid[i], fs.XmlFsType.SystemIdentifier, testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
+                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
+                Assert.AreEqual("HPFS", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
+                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
             }
         }
     }

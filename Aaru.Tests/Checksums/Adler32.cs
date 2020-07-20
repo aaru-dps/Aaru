@@ -36,11 +36,11 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Adler32
     {
-        static readonly byte[] ExpectedEmpty =
+        static readonly byte[] _expectedEmpty =
         {
             0x00, 0xf0, 0x00, 0x01
         };
-        static readonly byte[] ExpectedRandom =
+        static readonly byte[] _expectedRandom =
         {
             0x37, 0x28, 0xd1, 0x86
         };
@@ -50,21 +50,21 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Adler32Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
         public void Adler32EmptyFile()
         {
-            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
-            Assert.AreEqual(ExpectedEmpty, result);
+            byte[] result = Adler32Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -81,7 +81,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Adler32Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -89,21 +89,21 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Adler32Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
         public void Adler32RandomFile()
         {
-            byte[] result = Adler32Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
+            byte[] result = Adler32Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
@@ -111,8 +111,8 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
@@ -120,7 +120,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Adler32Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
     }
 }

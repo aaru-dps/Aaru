@@ -45,14 +45,14 @@ namespace Aaru.Filesystems
             // TODO: No more exceptions
             try
             {
-                data = image.ReadSectorLong(sector);
+                data = _image.ReadSectorLong(sector);
             }
             catch
             {
-                data = image.ReadSector(sector);
+                data = _image.ReadSector(sector);
             }
 
-            if(!debug)
+            if(!_debug)
                 return Sector.GetUserData(data, interleaved, fileNumber);
 
             switch(data.Length)

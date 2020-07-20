@@ -75,15 +75,15 @@ namespace Aaru.DiscImages
                         return false;
                 }
 
-                gdiStream = new StreamReader(imageFilter.GetDataForkStream());
+                _gdiStream = new StreamReader(imageFilter.GetDataForkStream());
                 int lineNumber  = 0;
                 int tracksFound = 0;
                 int tracks      = 0;
 
-                while(gdiStream.Peek() >= 0)
+                while(_gdiStream.Peek() >= 0)
                 {
                     lineNumber++;
-                    string line = gdiStream.ReadLine();
+                    string line = _gdiStream.ReadLine();
 
                     if(lineNumber == 1)
                     {

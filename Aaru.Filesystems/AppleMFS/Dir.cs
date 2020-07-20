@@ -46,22 +46,22 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(!string.IsNullOrEmpty(path) &&
                string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
                 return Errno.NotSupported;
 
-            contents = idToFilename.Select(kvp => kvp.Value).ToList();
+            contents = _idToFilename.Select(kvp => kvp.Value).ToList();
 
-            if(debug)
+            if(_debug)
             {
                 contents.Add("$");
                 contents.Add("$Bitmap");
                 contents.Add("$MDB");
 
-                if(bootBlocks != null)
+                if(_bootBlocks != null)
                     contents.Add("$Boot");
             }
 
@@ -72,54 +72,54 @@ namespace Aaru.Filesystems
 
         bool FillDirectory()
         {
-            idToFilename = new Dictionary<uint, string>();
-            idToEntry    = new Dictionary<uint, FileEntry>();
-            filenameToId = new Dictionary<string, uint>();
+            _idToFilename = new Dictionary<uint, string>();
+            _idToEntry    = new Dictionary<uint, FileEntry>();
+            _filenameToId = new Dictionary<string, uint>();
 
             int offset = 0;
 
-            while(offset + 51 < directoryBlocks.Length)
+            while(offset + 51 < _directoryBlocks.Length)
             {
                 var entry = new FileEntry
                 {
-                    flFlags = (FileFlags)directoryBlocks[offset + 0]
+                    flFlags = (FileFlags)_directoryBlocks[offset + 0]
                 };
 
                 if(!entry.flFlags.HasFlag(FileFlags.Used))
                     break;
 
-                entry.flTyp = directoryBlocks[offset + 1];
+                entry.flTyp = _directoryBlocks[offset + 1];
 
                 entry.flUsrWds =
-                    Marshal.ByteArrayToStructureBigEndian<AppleCommon.FInfo>(directoryBlocks, offset + 2, 16);
+                    Marshal.ByteArrayToStructureBigEndian<AppleCommon.FInfo>(_directoryBlocks, offset + 2, 16);
 
-                entry.flFlNum  = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 18);
-                entry.flStBlk  = BigEndianBitConverter.ToUInt16(directoryBlocks, offset + 22);
-                entry.flLgLen  = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 24);
-                entry.flPyLen  = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 28);
-                entry.flRStBlk = BigEndianBitConverter.ToUInt16(directoryBlocks, offset + 32);
-                entry.flRLgLen = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 34);
-                entry.flRPyLen = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 38);
-                entry.flCrDat  = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 42);
-                entry.flMdDat  = BigEndianBitConverter.ToUInt32(directoryBlocks, offset + 46);
-                entry.flNam    = new byte[directoryBlocks[offset + 50] + 1];
-                Array.Copy(directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
+                entry.flFlNum  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 18);
+                entry.flStBlk  = BigEndianBitConverter.ToUInt16(_directoryBlocks, offset + 22);
+                entry.flLgLen  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 24);
+                entry.flPyLen  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 28);
+                entry.flRStBlk = BigEndianBitConverter.ToUInt16(_directoryBlocks, offset + 32);
+                entry.flRLgLen = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 34);
+                entry.flRPyLen = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 38);
+                entry.flCrDat  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 42);
+                entry.flMdDat  = BigEndianBitConverter.ToUInt32(_directoryBlocks, offset + 46);
+                entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
+                Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
                 string lowerFilename = StringHandlers.
                                        PascalToString(entry.flNam, Encoding).ToLowerInvariant().Replace('/', ':');
 
-                if(entry.flFlags.HasFlag(FileFlags.Used)    &&
-                   !idToFilename.ContainsKey(entry.flFlNum) &&
-                   !idToEntry.ContainsKey(entry.flFlNum)    &&
-                   !filenameToId.ContainsKey(lowerFilename) &&
+                if(entry.flFlags.HasFlag(FileFlags.Used)     &&
+                   !_idToFilename.ContainsKey(entry.flFlNum) &&
+                   !_idToEntry.ContainsKey(entry.flFlNum)    &&
+                   !_filenameToId.ContainsKey(lowerFilename) &&
                    entry.flFlNum > 0)
                 {
-                    idToEntry.Add(entry.flFlNum, entry);
+                    _idToEntry.Add(entry.flFlNum, entry);
 
-                    idToFilename.Add(entry.flFlNum,
-                                     StringHandlers.PascalToString(entry.flNam, Encoding).Replace('/', ':'));
+                    _idToFilename.Add(entry.flFlNum,
+                                      StringHandlers.PascalToString(entry.flNam, Encoding).Replace('/', ':'));
 
-                    filenameToId.Add(lowerFilename, entry.flFlNum);
+                    _filenameToId.Add(lowerFilename, entry.flFlNum);
 
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
                     AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flTyp = {0}", entry.flTyp);

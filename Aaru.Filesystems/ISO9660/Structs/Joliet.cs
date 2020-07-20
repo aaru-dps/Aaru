@@ -41,7 +41,7 @@ namespace Aaru.Filesystems
     {
         static DecodedVolumeDescriptor DecodeJolietDescriptor(PrimaryVolumeDescriptor jolietvd)
         {
-            var decodedVD = new DecodedVolumeDescriptor
+            var decodedVd = new DecodedVolumeDescriptor
             {
                 SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).Replace('\u0000', ' ').
                                             TrimEnd(),
@@ -59,41 +59,41 @@ namespace Aaru.Filesystems
 
             if(jolietvd.creation_date[0] < 0x31 ||
                jolietvd.creation_date[0] > 0x39)
-                decodedVD.CreationTime = DateTime.MinValue;
+                decodedVd.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime = DateHandlers.Iso9660ToDateTime(jolietvd.creation_date);
+                decodedVd.CreationTime = DateHandlers.Iso9660ToDateTime(jolietvd.creation_date);
 
             if(jolietvd.modification_date[0] < 0x31 ||
                jolietvd.modification_date[0] > 0x39)
-                decodedVD.HasModificationTime = false;
+                decodedVd.HasModificationTime = false;
             else
             {
-                decodedVD.HasModificationTime = true;
-                decodedVD.ModificationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.modification_date);
+                decodedVd.HasModificationTime = true;
+                decodedVd.ModificationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.modification_date);
             }
 
             if(jolietvd.expiration_date[0] < 0x31 ||
                jolietvd.expiration_date[0] > 0x39)
-                decodedVD.HasExpirationTime = false;
+                decodedVd.HasExpirationTime = false;
             else
             {
-                decodedVD.HasExpirationTime = true;
-                decodedVD.ExpirationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.expiration_date);
+                decodedVd.HasExpirationTime = true;
+                decodedVd.ExpirationTime    = DateHandlers.Iso9660ToDateTime(jolietvd.expiration_date);
             }
 
             if(jolietvd.effective_date[0] < 0x31 ||
                jolietvd.effective_date[0] > 0x39)
-                decodedVD.HasEffectiveTime = false;
+                decodedVd.HasEffectiveTime = false;
             else
             {
-                decodedVD.HasEffectiveTime = true;
-                decodedVD.EffectiveTime    = DateHandlers.Iso9660ToDateTime(jolietvd.effective_date);
+                decodedVd.HasEffectiveTime = true;
+                decodedVd.EffectiveTime    = DateHandlers.Iso9660ToDateTime(jolietvd.effective_date);
             }
 
-            decodedVD.Blocks    = jolietvd.volume_space_size;
-            decodedVD.BlockSize = jolietvd.logical_block_size;
+            decodedVd.Blocks    = jolietvd.volume_space_size;
+            decodedVd.BlockSize = jolietvd.logical_block_size;
 
-            return decodedVD;
+            return decodedVd;
         }
     }
 }

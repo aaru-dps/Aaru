@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     {
         public string                 Name         => "D88 Disk Image";
         public Guid                   Id           => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public string                 Format       => "D88 disk image";
         public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;

@@ -77,7 +77,7 @@ namespace Aaru.Filesystems.LisaFS
 
             byte[] tmp;
 
-            if(debug)
+            if(_debug)
                 switch(fileId)
                 {
                     case FILEID_BOOT_SIGNED:
@@ -127,12 +127,12 @@ namespace Aaru.Filesystems.LisaFS
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(fileId < 4)
             {
-                if(!debug)
+                if(!_debug)
                     return Errno.NoSuchFile;
 
                 attributes =  new FileAttributes();
@@ -190,8 +190,8 @@ namespace Aaru.Filesystems.LisaFS
         {
             buf = null;
 
-            if(!mounted ||
-               !debug)
+            if(!_mounted ||
+               !_debug)
                 return Errno.AccessDenied;
 
             if(fileId > 4 ||
@@ -200,7 +200,7 @@ namespace Aaru.Filesystems.LisaFS
                    fileId != FILEID_LOADER_SIGNED)
                     return Errno.InvalidArgument;
 
-            if(systemFileCache.TryGetValue(fileId, out buf) &&
+            if(_systemFileCache.TryGetValue(fileId, out buf) &&
                !tags)
                 return Errno.NoError;
 
@@ -209,15 +209,15 @@ namespace Aaru.Filesystems.LisaFS
             if(fileId == FILEID_SRECORD)
                 if(!tags)
                 {
-                    buf = device.ReadSectors(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len);
-                    systemFileCache.Add(fileId, buf);
+                    buf = _device.ReadSectors(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len);
+                    _systemFileCache.Add(fileId, buf);
 
                     return Errno.NoError;
                 }
                 else
                 {
-                    buf = device.ReadSectorsTag(mddf.mddf_block + volumePrefix + mddf.srec_ptr, mddf.srec_len,
-                                                SectorTagType.AppleSectorTag);
+                    buf = _device.ReadSectorsTag(_mddf.mddf_block + _volumePrefix + _mddf.srec_ptr, _mddf.srec_len,
+                                                 SectorTagType.AppleSectorTag);
 
                     return Errno.NoError;
                 }
@@ -227,7 +227,7 @@ namespace Aaru.Filesystems.LisaFS
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
+                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
                 if(sysTag.FileId == fileId)
                     count++;
@@ -236,17 +236,17 @@ namespace Aaru.Filesystems.LisaFS
             if(count == 0)
                 return Errno.NoSuchFile;
 
-            buf = !tags ? new byte[count * device.Info.SectorSize] : new byte[count * devTagSize];
+            buf = !tags ? new byte[count * _device.Info.SectorSize] : new byte[count * _devTagSize];
 
             // Should be enough to check 100 sectors?
             for(ulong i = 0; i < 100; i++)
             {
-                DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
+                DecodeTag(_device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out sysTag);
 
                 if(sysTag.FileId != fileId)
                     continue;
 
-                byte[] sector = !tags ? device.ReadSector(i) : device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
+                byte[] sector = !tags ? _device.ReadSector(i) : _device.ReadSectorTag(i, SectorTagType.AppleSectorTag);
 
                 // Relative block for $Loader starts at $Boot block
                 if(sysTag.FileId == FILEID_LOADER_SIGNED)
@@ -256,7 +256,7 @@ namespace Aaru.Filesystems.LisaFS
             }
 
             if(!tags)
-                systemFileCache.Add(fileId, buf);
+                _systemFileCache.Add(fileId, buf);
 
             return Errno.NoError;
         }
@@ -265,14 +265,14 @@ namespace Aaru.Filesystems.LisaFS
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno      error;
             ExtentFile file;
 
             if(fileId <= 4)
-                if(!debug ||
+                if(!_debug ||
                    fileId == 0)
                     return Errno.NoSuchFile;
                 else
@@ -303,8 +303,8 @@ namespace Aaru.Filesystems.LisaFS
 
                         stat.Inode     = (ulong)fileId;
                         stat.Links     = 0;
-                        stat.Length    = mddf.datasize;
-                        stat.BlockSize = mddf.datasize;
+                        stat.Length    = _mddf.datasize;
+                        stat.BlockSize = _mddf.datasize;
                         stat.Blocks    = 1;
                     }
                     else
@@ -314,15 +314,15 @@ namespace Aaru.Filesystems.LisaFS
                         if(error != Errno.NoError)
                             return error;
 
-                        stat.CreationTime = fileId != 4 ? mddf.dtvc : mddf.dtcc;
+                        stat.CreationTime = fileId != 4 ? _mddf.dtvc : _mddf.dtcc;
 
-                        stat.BackupTime = mddf.dtvb;
+                        stat.BackupTime = _mddf.dtvb;
 
                         stat.Inode     = (ulong)fileId;
                         stat.Links     = 0;
                         stat.Length    = buf.Length;
-                        stat.BlockSize = mddf.datasize;
-                        stat.Blocks    = buf.Length / mddf.datasize;
+                        stat.BlockSize = _mddf.datasize;
+                        stat.Blocks    = buf.Length / _mddf.datasize;
                     }
 
                     return Errno.NoError;
@@ -351,12 +351,12 @@ namespace Aaru.Filesystems.LisaFS
             stat.Inode = (ulong)fileId;
             stat.Links = 1;
 
-            if(!fileSizeCache.TryGetValue(fileId, out int len))
-                stat.Length = srecords[fileId].filesize;
+            if(!_fileSizeCache.TryGetValue(fileId, out int len))
+                stat.Length = _srecords[fileId].filesize;
             else
                 stat.Length = len;
 
-            stat.BlockSize = mddf.datasize;
+            stat.BlockSize = _mddf.datasize;
             stat.Blocks    = file.length;
 
             return Errno.NoError;
@@ -368,17 +368,17 @@ namespace Aaru.Filesystems.LisaFS
         {
             buf = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
-            tags &= debug;
+            tags &= _debug;
 
             if(fileId < 4 ||
-               (fileId == 4 && mddf.fsversion != LISA_V2 && mddf.fsversion != LISA_V1))
+               (fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1))
                 return Errno.InvalidArgument;
 
             if(!tags &&
-               fileCache.TryGetValue(fileId, out buf))
+               _fileCache.TryGetValue(fileId, out buf))
                 return Errno.NoError;
 
             Errno error = ReadExtentsFile(fileId, out ExtentFile file);
@@ -389,9 +389,9 @@ namespace Aaru.Filesystems.LisaFS
             int sectorSize;
 
             if(tags)
-                sectorSize = devTagSize;
+                sectorSize = _devTagSize;
             else
-                sectorSize = (int)device.Info.SectorSize;
+                sectorSize = (int)_device.Info.SectorSize;
 
             byte[] temp = new byte[file.length * sectorSize];
 
@@ -402,11 +402,11 @@ namespace Aaru.Filesystems.LisaFS
                 byte[] sector;
 
                 if(!tags)
-                    sector = device.ReadSectors((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix,
-                                                (uint)file.extents[i].length);
+                    sector = _device.ReadSectors((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                 (uint)file.extents[i].length);
                 else
-                    sector = device.ReadSectorsTag((ulong)file.extents[i].start + mddf.mddf_block + volumePrefix,
-                                                   (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
+                    sector = _device.ReadSectorsTag((ulong)file.extents[i].start + _mddf.mddf_block + _volumePrefix,
+                                                    (uint)file.extents[i].length, SectorTagType.AppleSectorTag);
 
                 Array.Copy(sector, 0, temp, offset, sector.Length);
                 offset += sector.Length;
@@ -414,13 +414,13 @@ namespace Aaru.Filesystems.LisaFS
 
             if(!tags)
             {
-                if(fileSizeCache.TryGetValue(fileId, out int realSize))
+                if(_fileSizeCache.TryGetValue(fileId, out int realSize))
                     if(realSize > temp.Length)
                         AaruConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
 
                 buf = temp;
 
-                fileCache.Add(fileId, buf);
+                _fileCache.Add(fileId, buf);
             }
             else
                 buf = temp;
@@ -433,7 +433,7 @@ namespace Aaru.Filesystems.LisaFS
             fileId = 0;
             isDir  = false;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             string[] pathElements = path.Split(new[]
@@ -451,10 +451,10 @@ namespace Aaru.Filesystems.LisaFS
 
             // Only V3 supports subdirectories
             if(pathElements.Length > 1 &&
-               mddf.fsversion      != LISA_V3)
+               _mddf.fsversion     != LISA_V3)
                 return Errno.NotSupported;
 
-            if(debug && pathElements.Length == 1)
+            if(_debug && pathElements.Length == 1)
             {
                 if(string.Compare(pathElements[0], "$MDDF", StringComparison.InvariantCulture) == 0)
                 {
@@ -504,7 +504,7 @@ namespace Aaru.Filesystems.LisaFS
             {
                 string wantedFilename = pathElements[0].Replace('-', '/');
 
-                foreach(CatalogEntry entry in catalogCache)
+                foreach(CatalogEntry entry in _catalogCache)
                 {
                     string filename = StringHandlers.CToString(entry.filename, Encoding);
 

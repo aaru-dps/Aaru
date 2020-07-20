@@ -69,7 +69,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -116,15 +116,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -147,15 +147,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0xDC + (sectorAddress * 512)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -185,63 +185,63 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(imageInfo.Cylinders == 0)
+            if(_imageInfo.Cylinders == 0)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
 
-                while(imageInfo.Cylinders == 0)
+                while(_imageInfo.Cylinders == 0)
                 {
-                    imageInfo.Heads--;
+                    _imageInfo.Heads--;
 
-                    if(imageInfo.Heads == 0)
+                    if(_imageInfo.Heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        imageInfo.Heads = 16;
+                        _imageInfo.SectorsPerTrack--;
+                        _imageInfo.Heads = 16;
                     }
 
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+                    _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders       == 0 &&
-                       imageInfo.Heads           == 0 &&
-                       imageInfo.SectorsPerTrack == 0)
+                    if(_imageInfo.Cylinders       == 0 &&
+                       _imageInfo.Heads           == 0 &&
+                       _imageInfo.SectorsPerTrack == 0)
                         break;
                 }
             }
 
             byte[] commentsBytes = null;
 
-            if(!string.IsNullOrEmpty(imageInfo.Comments))
-                commentsBytes = Encoding.GetEncoding("shift_jis").GetBytes(imageInfo.Comments);
+            if(!string.IsNullOrEmpty(_imageInfo.Comments))
+                commentsBytes = Encoding.GetEncoding("shift_jis").GetBytes(_imageInfo.Comments);
 
-            v98Hdr = new Virtual98Header
+            _v98Hdr = new Virtual98Header
             {
                 comment    = new byte[128],
-                cylinders  = (ushort)imageInfo.Cylinders,
+                cylinders  = (ushort)_imageInfo.Cylinders,
                 padding2   = new byte[0x44],
-                sectors    = (byte)imageInfo.SectorsPerTrack,
-                sectorsize = (ushort)imageInfo.SectorSize,
-                signature  = signature,
-                surfaces   = (byte)imageInfo.Heads,
-                totals     = (uint)imageInfo.Sectors
+                sectors    = (byte)_imageInfo.SectorsPerTrack,
+                sectorsize = (ushort)_imageInfo.SectorSize,
+                signature  = _signature,
+                surfaces   = (byte)_imageInfo.Heads,
+                totals     = (uint)_imageInfo.Sectors
             };
 
             if(commentsBytes != null)
-                Array.Copy(commentsBytes, 0, v98Hdr.comment, 0,
+                Array.Copy(commentsBytes, 0, _v98Hdr.comment, 0,
                            commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
 
             byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(v98Hdr, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_v98Hdr, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
-            writingStream.Seek(0, SeekOrigin.Begin);
-            writingStream.Write(hdr, 0, hdr.Length);
+            _writingStream.Seek(0, SeekOrigin.Begin);
+            _writingStream.Write(hdr, 0, hdr.Length);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -251,7 +251,7 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            imageInfo.Comments = metadata.Comments;
+            _imageInfo.Comments = metadata.Comments;
 
             return true;
         }
@@ -279,9 +279,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
-            imageInfo.Heads           = heads;
-            imageInfo.Cylinders       = cylinders;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Heads           = heads;
+            _imageInfo.Cylinders       = cylinders;
 
             return true;
         }

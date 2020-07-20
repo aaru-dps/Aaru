@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     public partial class Apple2Mg
     {
-        public ImageInfo Info => imageInfo;
+        public ImageInfo Info => _imageInfo;
 
         public string Name   => "Apple 2IMG";
         public Guid   Id     => new Guid("CBAF8824-BA5F-415F-953A-19A03519B2D1");

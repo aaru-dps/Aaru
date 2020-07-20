@@ -36,8 +36,8 @@ namespace Aaru.DiscImages
     {
         ulong BlockOffset(ulong sectorAddress)
         {
-            extents.GetStart(sectorAddress, out ulong extentStart);
-            extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
+            _extents.GetStart(sectorAddress, out ulong extentStart);
+            _extentsOff.TryGetValue(extentStart, out ulong extentStartingOffset);
 
             return extentStartingOffset + (sectorAddress - extentStart);
         }

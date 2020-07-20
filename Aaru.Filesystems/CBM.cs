@@ -70,7 +70,7 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
-                CommodoreHeader cbmHdr = Marshal.ByteArrayToStructureLittleEndian<CommodoreHeader>(sector);
+                Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
                 if(cbmHdr.diskDosVersion == 0x44 &&
                    cbmHdr.dosVersion     == 0x33 &&
@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
             else
             {
                 sector = imagePlugin.ReadSector(357);
-                CommodoreBam cbmBam = Marshal.ByteArrayToStructureLittleEndian<CommodoreBam>(sector);
+                BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
                 if(cbmBam.dosVersion == 0x41                                  &&
                    (cbmBam.doubleSided == 0x00 || cbmBam.doubleSided == 0x80) &&
@@ -112,7 +112,7 @@ namespace Aaru.Filesystems
             if(imagePlugin.Info.Sectors == 3200)
             {
                 sector = imagePlugin.ReadSector(1560);
-                CommodoreHeader cbmHdr = Marshal.ByteArrayToStructureLittleEndian<CommodoreHeader>(sector);
+                Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmHdr.directoryTrack,
                                            cbmHdr.directorySector).AppendLine();
@@ -143,7 +143,7 @@ namespace Aaru.Filesystems
             else
             {
                 sector = imagePlugin.ReadSector(357);
-                CommodoreBam cbmBam = Marshal.ByteArrayToStructureLittleEndian<CommodoreBam>(sector);
+                BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
                 sbInformation.AppendFormat("Directory starts at track {0} sector {1}", cbmBam.directoryTrack,
                                            cbmBam.directorySector).AppendLine();
@@ -170,7 +170,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CommodoreBam
+        struct BAM
         {
             /// <summary>Track where directory starts</summary>
             public readonly byte directoryTrack;
@@ -213,7 +213,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CommodoreHeader
+        struct Header
         {
             /// <summary>Track where directory starts</summary>
             public readonly byte directoryTrack;

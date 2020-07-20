@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
             stream.Read(hdr, 0, 88);
             AlcoholHeader header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
 
-            return header.signature.SequenceEqual(alcoholSignature) && header.version[0] <= _maximumSupportedVersion;
+            return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= _maximumSupportedVersion;
         }
     }
 }

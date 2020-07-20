@@ -68,9 +68,9 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             if(partition.Start + sbAddr >= partition.End)
@@ -78,12 +78,12 @@ namespace Aaru.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return false;
 
-            F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
+            Superblock sb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            return f2fsSb.magic == F2FS_MAGIC;
+            return sb.magic == F2FS_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -101,17 +101,17 @@ namespace Aaru.Filesystems
             if(sbAddr == 0)
                 sbAddr = 1;
 
-            uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
+            uint sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0)
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
                 sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
 
-            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>())
+            if(sector.Length < Marshal.SizeOf<Superblock>())
                 return;
 
-            F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
+            Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             if(f2fsSb.magic != F2FS_MAGIC)
                 return;
@@ -158,7 +158,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct F2FS_Superblock
+        struct Superblock
         {
             public readonly uint   magic;
             public readonly ushort major_ver;

@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class D88
     {
-        readonly string[] testfiles =
+        readonly string[] _testfiles =
         {
             "1942 (1987)(ASCII)(JP).d77.lz", "'Ashe (1988)(Quasar)(Disk 4 of 4)(User Disk).d88.lz",
             "Crimsin (1988)(Xtalsoft)(Disk 3 of 3).d88.lz", "Dragon Slayer (1986)(Falcom - Login)(JP).d88.lz",
@@ -51,19 +51,19 @@ namespace Aaru.Tests.Images
             "Visual Instrument Player (198x)(Kamiya)(JP)(Disk 1 of 2).d88.lz"
         };
 
-        readonly ulong[] sectors =
+        readonly ulong[] _sectors =
         {
             1280, 1280, 1280, 411, 1440, 1280, 1280, 4033, 1440, 1232, 1440, 1232, 1440, 1232, 1440, 1232, 1284, 1232,
             1280
         };
 
-        readonly uint[] sectorsize =
+        readonly uint[] _sectorsize =
         {
             256, 256, 256, 256, 256, 256, 256, 128, 512, 1024, 512, 1024, 512, 1024, 512, 1024, 1024, 1024, 256
         };
 
         // TODO: Add "unknown" media types
-        readonly MediaType[] mediatypes =
+        readonly MediaType[] _mediatypes =
         {
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown,
             MediaType.NEC_525_SS, MediaType.NEC_525_SS, MediaType.Unknown, MediaType.Unknown, MediaType.NEC_525_HD,
@@ -71,7 +71,7 @@ namespace Aaru.Tests.Images
             MediaType.NEC_525_HD, MediaType.Unknown, MediaType.NEC_525_HD, MediaType.NEC_525_SS
         };
 
-        readonly string[] md5S =
+        readonly string[] _md5S =
         {
             "a4103c39cd7fd9fc3de8418dfcf22364", "b948048c03e0b3d34d77f5c9dced0b41", "f91152fab791d4dc0677a289d90478a5",
             "39b01df04a6312b09f1b83c9f3a46b22", "ef775ec1f41b8b725ea83ec8c5ca04e2", "5c2b22f824524cd6c539aaeb2ecb84cd",
@@ -85,20 +85,20 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < testfiles.Length; i++)
+            for(int i = 0; i < _testfiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TestFilesRoot, "Media image formats", "D88", testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88", _testfiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.D88();
-                Assert.AreEqual(true, image.Open(filter), testfiles[i]);
-                Assert.AreEqual(sectors[i], image.Info.Sectors, testfiles[i]);
-                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                Assert.AreEqual(mediatypes[i], image.Info.MediaType, testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
+                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
 
                 // How many sectors to read at once
-                const uint SECTORS_TO_READ = 256;
-                ulong      doneSectors     = 0;
+                const uint sectorsToRead = 256;
+                ulong      doneSectors   = 0;
 
                 var ctx = new Md5Context();
 
@@ -106,10 +106,10 @@ namespace Aaru.Tests.Images
                 {
                     byte[] sector;
 
-                    if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                    if(image.Info.Sectors - doneSectors >= sectorsToRead)
                     {
-                        sector      =  image.ReadSectors(doneSectors, SECTORS_TO_READ);
-                        doneSectors += SECTORS_TO_READ;
+                        sector      =  image.ReadSectors(doneSectors, sectorsToRead);
+                        doneSectors += sectorsToRead;
                     }
                     else
                     {
@@ -120,7 +120,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(md5S[i], ctx.End(), testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
             }
         }
     }

@@ -43,16 +43,16 @@ namespace Aaru.DiscImages
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
     public partial class Gdi : IOpticalMediaImage
     {
-        SectorBuilder _sectorBuilder;
-        ulong         densitySeparationSectors;
-        GdiDisc       discimage;
-        StreamReader  gdiStream;
-        ImageInfo     imageInfo;
-        Stream        imageStream;
+        ulong        _densitySeparationSectors;
+        GdiDisc      _discimage;
+        StreamReader _gdiStream;
+        ImageInfo    _imageInfo;
+        Stream       _imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
-        Dictionary<uint, ulong> offsetmap;
+        Dictionary<uint, ulong> _offsetmap;
+        SectorBuilder _sectorBuilder;
 
-        public Gdi() => imageInfo = new ImageInfo
+        public Gdi() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

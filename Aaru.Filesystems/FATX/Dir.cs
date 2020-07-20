@@ -44,20 +44,21 @@ namespace Aaru.Filesystems
         {
             contents = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             if(string.IsNullOrWhiteSpace(path) ||
                path == "/")
             {
-                contents = rootDirectory.Keys.ToList();
+                contents = _rootDirectory.Keys.ToList();
 
                 return Errno.NoError;
             }
 
-            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(_cultureInfo)
+                                 : path.ToLower(_cultureInfo);
 
-            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
+            if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
 
@@ -70,7 +71,7 @@ namespace Aaru.Filesystems
             }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DirectoryEntry> entry =
-                rootDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[0]);
+                _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key))
                 return Errno.NoSuchFile;
@@ -80,11 +81,11 @@ namespace Aaru.Filesystems
 
             string currentPath = pieces[0];
 
-            currentDirectory = rootDirectory;
+            currentDirectory = _rootDirectory;
 
             for(int p = 0; p < pieces.Length; p++)
             {
-                entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[p]);
+                entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
                 if(string.IsNullOrEmpty(entry.Key))
                     return Errno.NoSuchFile;
@@ -95,7 +96,7 @@ namespace Aaru.Filesystems
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.firstCluster;
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
                     continue;
 
                 uint[] clusters = GetClusters(currentCluster);
@@ -103,15 +104,15 @@ namespace Aaru.Filesystems
                 if(clusters is null)
                     return Errno.InvalidArgument;
 
-                byte[] directoryBuffer = new byte[bytesPerCluster * clusters.Length];
+                byte[] directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
                     byte[] buffer =
-                        imagePlugin.ReadSectors(firstClusterSector + ((clusters[i] - 1) * sectorsPerCluster),
-                                                sectorsPerCluster);
+                        _imagePlugin.ReadSectors(_firstClusterSector + ((clusters[i] - 1) * _sectorsPerCluster),
+                                                 _sectorsPerCluster);
 
-                    Array.Copy(buffer, 0, directoryBuffer, i * bytesPerCluster, bytesPerCluster);
+                    Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
                 }
 
                 currentDirectory = new Dictionary<string, DirectoryEntry>();
@@ -120,7 +121,7 @@ namespace Aaru.Filesystems
 
                 while(pos < directoryBuffer.Length)
                 {
-                    DirectoryEntry dirent = littleEndian
+                    DirectoryEntry dirent = _littleEndian
                                                 ? Marshal.
                                                     ByteArrayToStructureLittleEndian<DirectoryEntry
                                                     >(directoryBuffer, pos, Marshal.SizeOf<DirectoryEntry>())
@@ -146,7 +147,7 @@ namespace Aaru.Filesystems
                     currentDirectory.Add(filename, dirent);
                 }
 
-                directoryCache.Add(currentPath, currentDirectory);
+                _directoryCache.Add(currentPath, currentDirectory);
             }
 
             contents = currentDirectory?.Keys.ToList();

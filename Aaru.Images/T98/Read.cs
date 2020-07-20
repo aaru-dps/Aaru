@@ -57,20 +57,20 @@ namespace Aaru.DiscImages
 
             int cylinders = BitConverter.ToInt32(hdrB, 0);
 
-            imageInfo.MediaType = MediaType.GENERIC_HDD;
+            _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - 256);
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.SectorSize           = 256;
-            imageInfo.Cylinders            = (uint)cylinders;
-            imageInfo.Heads                = 8;
-            imageInfo.SectorsPerTrack      = 33;
+            _imageInfo.ImageSize            = (ulong)(stream.Length - 256);
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = (ulong)((stream.Length / 256) - 1);
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.SectorSize           = 256;
+            _imageInfo.Cylinders            = (uint)cylinders;
+            _imageInfo.Heads                = 8;
+            _imageInfo.SectorsPerTrack      = 33;
 
-            t98ImageFilter = imageFilter;
+            _t98ImageFilter = imageFilter;
 
             return true;
         }
@@ -79,19 +79,19 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = t98ImageFilter.GetDataForkStream();
+            Stream stream = _t98ImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(256 + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)(256 + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }

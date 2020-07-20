@@ -36,11 +36,11 @@ namespace Aaru.Tests.Checksums
     [TestFixture]
     public class Md5
     {
-        static readonly byte[] ExpectedEmpty =
+        static readonly byte[] _expectedEmpty =
         {
             0xb6, 0xd8, 0x1b, 0x36, 0x0a, 0x56, 0x72, 0xd8, 0x0c, 0x27, 0x43, 0x0f, 0x39, 0x15, 0x3e, 0x2c
         };
-        static readonly byte[] ExpectedRandom =
+        static readonly byte[] _expectedRandom =
         {
             0xd7, 0x8f, 0x0e, 0xec, 0x41, 0x7b, 0xe3, 0x86, 0x21, 0x9b, 0x21, 0xb7, 0x00, 0x04, 0x4b, 0x95
         };
@@ -50,21 +50,21 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Md5Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
         public void Md5EmptyFile()
         {
-            byte[] result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
-            Assert.AreEqual(ExpectedEmpty, result);
+            byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
                                     FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
@@ -81,7 +81,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Md5Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedEmpty, result);
+            Assert.AreEqual(_expectedEmpty, result);
         }
 
         [Test]
@@ -89,21 +89,21 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
             fs.Dispose();
             Md5Context.Data(data, out byte[] result);
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
         public void Md5RandomFile()
         {
-            byte[] result = Md5Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
-            Assert.AreEqual(ExpectedRandom, result);
+            byte[] result = Md5Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+            Assert.AreEqual(_expectedRandom, result);
         }
 
         [Test]
@@ -111,8 +111,8 @@ namespace Aaru.Tests.Checksums
         {
             byte[] data = new byte[1048576];
 
-            var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
-                                    FileAccess.Read);
+            var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"),
+                                    FileMode.Open, FileAccess.Read);
 
             fs.Read(data, 0, 1048576);
             fs.Close();
@@ -120,7 +120,7 @@ namespace Aaru.Tests.Checksums
             IChecksum ctx = new Md5Context();
             ctx.Update(data);
             byte[] result = ctx.Final();
-            Assert.AreEqual(ExpectedRandom, result);
+            Assert.AreEqual(_expectedRandom, result);
         }
     }
 }

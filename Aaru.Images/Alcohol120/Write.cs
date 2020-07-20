@@ -57,7 +57,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -66,9 +66,9 @@ namespace Aaru.DiscImages
 
             try
             {
-                descriptorStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+                _descriptorStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
-                imageStream =
+                _imageStream =
                     new
                         FileStream(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".mdf",
                                    FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.MediaType = mediaType;
+            _imageInfo.MediaType = mediaType;
 
             switch(mediaType)
             {
@@ -121,16 +121,16 @@ namespace Aaru.DiscImages
                 case MediaType.VideoNowColor:
                 case MediaType.VideoNowXp:
                 case MediaType.CVD:
-                    isDvd = false;
+                    _isDvd = false;
 
                     break;
                 default:
-                    isDvd = true;
+                    _isDvd = true;
 
                     break;
             }
 
-            trackFlags = new Dictionary<byte, byte>();
+            _trackFlags = new Dictionary<byte, byte>();
 
             IsWriting    = true;
             ErrorMessage = null;
@@ -150,47 +150,47 @@ namespace Aaru.DiscImages
             switch(tag)
             {
                 case MediaTagType.CD_FullTOC:
-                    if(isDvd)
+                    if(_isDvd)
                     {
-                        ErrorMessage = $"Unsupported media tag {tag} for medium type {imageInfo.MediaType}";
+                        ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
 
                         return false;
                     }
 
-                    fullToc = data;
+                    _fullToc = data;
 
                     return true;
                 case MediaTagType.DVD_PFI:
-                    if(!isDvd)
+                    if(!_isDvd)
                     {
-                        ErrorMessage = $"Unsupported media tag {tag} for medium type {imageInfo.MediaType}";
+                        ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
 
                         return false;
                     }
 
-                    pfi = data;
+                    _pfi = data;
 
                     return true;
                 case MediaTagType.DVD_DMI:
-                    if(!isDvd)
+                    if(!_isDvd)
                     {
-                        ErrorMessage = $"Unsupported media tag {tag} for medium type {imageInfo.MediaType}";
+                        ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
 
                         return false;
                     }
 
-                    dmi = data;
+                    _dmi = data;
 
                     return true;
                 case MediaTagType.DVD_BCA:
-                    if(!isDvd)
+                    if(!_isDvd)
                     {
-                        ErrorMessage = $"Unsupported media tag {tag} for medium type {imageInfo.MediaType}";
+                        ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
 
                         return false;
                     }
 
-                    bca = data;
+                    _bca = data;
 
                     return true;
                 default:
@@ -210,8 +210,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -234,11 +234,11 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageStream.
+            _imageStream.
                 Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
                      SeekOrigin.Begin);
 
-            imageStream.Write(data, 0, data.Length);
+            _imageStream.Write(data, 0, data.Length);
 
             return true;
         }
@@ -253,8 +253,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -287,25 +287,25 @@ namespace Aaru.DiscImages
             switch(track.TrackSubchannelType)
             {
                 case TrackSubchannelType.None:
-                    imageStream.
+                    _imageStream.
                         Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
                              SeekOrigin.Begin);
 
-                    imageStream.Write(data, 0, data.Length);
+                    _imageStream.Write(data, 0, data.Length);
 
                     ErrorMessage = "";
 
                     return true;
                 case TrackSubchannelType.Raw:
                 case TrackSubchannelType.RawInterleaved:
-                    imageStream.
+                    _imageStream.
                         Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))),
                              SeekOrigin.Begin);
 
                     for(uint i = 0; i < length; i++)
                     {
-                        imageStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
-                        imageStream.Position += 96;
+                        _imageStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
+                        _imageStream.Position += 96;
                     }
 
                     ErrorMessage = "";
@@ -328,8 +328,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -347,11 +347,11 @@ namespace Aaru.DiscImages
 
             uint subchannelSize = (uint)(track.TrackSubchannelType != TrackSubchannelType.None ? 96 : 0);
 
-            imageStream.
+            _imageStream.
                 Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
                      SeekOrigin.Begin);
 
-            imageStream.Write(data, 0, data.Length);
+            _imageStream.Write(data, 0, data.Length);
 
             return true;
         }
@@ -366,8 +366,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -394,11 +394,11 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                imageStream.
+                _imageStream.
                     Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + subchannelSize))),
                          SeekOrigin.Begin);
 
-                imageStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
+                _imageStream.Write(data, (int)(i * track.TrackRawBytesPerSector), track.TrackRawBytesPerSector);
             }
 
             return true;
@@ -408,9 +408,9 @@ namespace Aaru.DiscImages
         {
             ulong currentDataOffset = 0;
 
-            writingTracks = new List<Track>();
+            _writingTracks = new List<Track>();
 
-            if(!isDvd)
+            if(!_isDvd)
             {
                 Track[] tmpTracks = tracks.OrderBy(t => t.TrackSequence).ToArray();
 
@@ -461,7 +461,7 @@ namespace Aaru.DiscImages
                 currentDataOffset += (ulong)(newTrack.TrackRawBytesPerSector + subchannelSize) *
                                      ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
 
-                writingTracks.Add(newTrack);
+                _writingTracks.Add(newTrack);
             }
 
             return true;
@@ -478,21 +478,21 @@ namespace Aaru.DiscImages
 
             byte sessions = byte.MinValue;
 
-            foreach(Track t in writingTracks)
+            foreach(Track t in _writingTracks)
                 if(t.TrackSession > byte.MinValue)
                     sessions = (byte)t.TrackSession;
 
             var header = new AlcoholHeader
             {
-                signature = alcoholSignature,
+                signature = _alcoholSignature,
                 version = new byte[]
                 {
                     1, 5
                 },
-                type             = MediaTypeToAlcohol(imageInfo.MediaType),
+                type             = MediaTypeToAlcohol(_imageInfo.MediaType),
                 sessions         = sessions,
-                structuresOffset = (uint)(pfi == null ? 0 : 96),
-                sessionOffset    = (uint)(pfi == null ? 96 : 4196),
+                structuresOffset = (uint)(_pfi == null ? 0 : 96),
+                sessionOffset    = (uint)(_pfi == null ? 96 : 4196),
                 unknown1         = new ushort[2],
                 unknown2         = new uint[2],
                 unknown3         = new uint[6],
@@ -502,20 +502,20 @@ namespace Aaru.DiscImages
             // Alcohol sets this always, Daemon Tool expects this
             header.unknown1[0] = 2;
 
-            alcSessions    = new Dictionary<int, AlcoholSession>();
-            alcTracks      = new Dictionary<int, AlcoholTrack>();
-            alcToc         = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
-            writingTracks  = writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).ToList();
-            alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
+            _alcSessions    = new Dictionary<int, AlcoholSession>();
+            _alcTracks      = new Dictionary<int, AlcoholTrack>();
+            _alcToc         = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
+            _writingTracks  = _writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).ToList();
+            _alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
             long currentTrackOffset = header.sessionOffset + (Marshal.SizeOf<AlcoholSession>() * sessions);
 
             byte[] tmpToc = null;
 
-            if(fullToc != null)
+            if(_fullToc != null)
             {
-                byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)fullToc.Length);
-                tmpToc = new byte[fullToc.Length + 2];
-                Array.Copy(fullToc, 0, tmpToc, 2, fullToc.Length);
+                byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)_fullToc.Length);
+                tmpToc = new byte[_fullToc.Length + 2];
+                Array.Copy(_fullToc, 0, tmpToc, 2, _fullToc.Length);
                 tmpToc[0] = fullTocSize[0];
                 tmpToc[1] = fullTocSize[1];
             }
@@ -539,9 +539,9 @@ namespace Aaru.DiscImages
                     extraCount         += 3;
 
                     currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() *
-                                          writingTracks.Count(t => t.TrackSession == i);
+                                          _writingTracks.Count(t => t.TrackSession == i);
 
-                    extraCount += writingTracks.Count(t => t.TrackSession == i);
+                    extraCount += _writingTracks.Count(t => t.TrackSession == i);
 
                     if(i < sessions)
                     {
@@ -552,36 +552,36 @@ namespace Aaru.DiscImages
 
             long footerOffset = currentExtraOffset + (Marshal.SizeOf<AlcoholTrackExtra>() * extraCount);
 
-            if(bca != null)
+            if(_bca != null)
             {
                 header.bcaOffset =  (uint)footerOffset;
-                footerOffset     += bca.Length;
+                footerOffset     += _bca.Length;
             }
 
-            if(isDvd)
+            if(_isDvd)
             {
-                alcSessions.Add(1, new AlcoholSession
+                _alcSessions.Add(1, new AlcoholSession
                 {
-                    sessionEnd      = (int)((writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector) + 1),
+                    sessionEnd = (int)((_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector) + 1),
                     sessionSequence = 1,
-                    allBlocks       = 1,
-                    nonTrackBlocks  = 3,
-                    firstTrack      = 1,
-                    lastTrack       = 1,
-                    trackOffset     = 4220
+                    allBlocks = 1,
+                    nonTrackBlocks = 3,
+                    firstTrack = 1,
+                    lastTrack = 1,
+                    trackOffset = 4220
                 });
 
                 footerOffset = 4300;
 
-                if(bca != null)
-                    footerOffset += bca.Length;
+                if(_bca != null)
+                    footerOffset += _bca.Length;
 
-                alcTracks.Add(1, new AlcoholTrack
+                _alcTracks.Add(1, new AlcoholTrack
                 {
                     mode         = AlcoholTrackMode.DVD,
                     adrCtl       = 20,
                     point        = 1,
-                    extraOffset  = (uint)((writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector) + 1),
+                    extraOffset  = (uint)((_writingTracks[0].TrackEndSector - _writingTracks[0].TrackStartSector) + 1),
                     sectorSize   = 2048,
                     files        = 1,
                     footerOffset = (uint)footerOffset,
@@ -589,21 +589,21 @@ namespace Aaru.DiscImages
                     unknown2     = new byte[24]
                 });
 
-                alcToc.Add(1, alcTracks);
+                _alcToc.Add(1, _alcTracks);
             }
             else
                 for(int i = 1; i <= sessions; i++)
                 {
-                    Track firstTrack = writingTracks.First(t => t.TrackSession == i);
-                    Track lastTrack  = writingTracks.Last(t => t.TrackSession  == i);
+                    Track firstTrack = _writingTracks.First(t => t.TrackSession == i);
+                    Track lastTrack  = _writingTracks.Last(t => t.TrackSession  == i);
 
-                    alcSessions.Add(i, new AlcoholSession
+                    _alcSessions.Add(i, new AlcoholSession
                     {
                         sessionStart    = (int)firstTrack.TrackStartSector - 150,
                         sessionEnd      = (int)lastTrack.TrackEndSector    + 1,
                         sessionSequence = (ushort)i,
                         allBlocks = (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
-                                           writingTracks.Count(t => t.TrackSession == i) + 3),
+                                           _writingTracks.Count(t => t.TrackSession == i) + 3),
                         nonTrackBlocks =
                             (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
                                                                            t.POINT         <= 0xAF) ?? 3),
@@ -613,8 +613,8 @@ namespace Aaru.DiscImages
                     });
 
                     Dictionary<int, AlcoholTrack> thisSessionTracks = new Dictionary<int, AlcoholTrack>();
-                    trackFlags.TryGetValue((byte)firstTrack.TrackSequence, out byte firstTrackControl);
-                    trackFlags.TryGetValue((byte)lastTrack.TrackSequence, out byte lastTrackControl);
+                    _trackFlags.TryGetValue((byte)firstTrack.TrackSequence, out byte firstTrackControl);
+                    _trackFlags.TryGetValue((byte)lastTrack.TrackSequence, out byte lastTrackControl);
 
                     if(firstTrackControl    == 0 &&
                        firstTrack.TrackType != TrackType.Audio)
@@ -664,11 +664,11 @@ namespace Aaru.DiscImages
                             point    = 0xA0,
                             unknown  = new byte[18],
                             unknown2 = new byte[24],
-                            psec = (byte)(imageInfo.MediaType == MediaType.CDI
+                            psec = (byte)(_imageInfo.MediaType == MediaType.CDI
                                               ? 0x10
-                                              : writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
-                                                                       t.TrackType == TrackType.CdMode2Form2 ||
-                                                                       t.TrackType == TrackType.CdMode2Formless)
+                                              : _writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
+                                                                        t.TrackType == TrackType.CdMode2Form2 ||
+                                                                        t.TrackType == TrackType.CdMode2Formless)
                                                   ? 0x20
                                                   : 0),
                             extraOffset = (uint)currentExtraOffset
@@ -703,7 +703,7 @@ namespace Aaru.DiscImages
                         currentTrackOffset += Marshal.SizeOf<AlcoholTrack>()      * 3;
                     }
 
-                    foreach(Track track in writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
+                    foreach(Track track in _writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
                     {
                         var alcTrk = new AlcoholTrack();
 
@@ -729,7 +729,7 @@ namespace Aaru.DiscImages
                         else
                         {
                             (byte minute, byte second, byte frame) msf = LbaToMsf(track.TrackStartSector);
-                            trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
+                            _trackFlags.TryGetValue((byte)track.TrackSequence, out byte trackControl);
 
                             if(trackControl    == 0 &&
                                track.TrackType != TrackType.Audio)
@@ -790,19 +790,19 @@ namespace Aaru.DiscImages
                         // When track mode changes there's a mandatory gap, Alcohol needs it
                         else if(thisSessionTracks.TryGetValue((int)(track.TrackSequence - 1),
                                                               out AlcoholTrack previousTrack) &&
-                                alcTrackExtras.TryGetValue((int)(track.TrackSequence - 1),
-                                                           out AlcoholTrackExtra previousExtra) &&
+                                _alcTrackExtras.TryGetValue((int)(track.TrackSequence - 1),
+                                                            out AlcoholTrackExtra previousExtra) &&
                                 previousTrack.mode != alcTrk.mode)
                         {
                             previousExtra.sectors -= 150;
                             trkExtra.pregap       =  150;
-                            alcTrackExtras.Remove((int)(track.TrackSequence - 1));
-                            alcTrackExtras.Add((int)(track.TrackSequence    - 1), previousExtra);
+                            _alcTrackExtras.Remove((int)(track.TrackSequence - 1));
+                            _alcTrackExtras.Add((int)(track.TrackSequence    - 1), previousExtra);
                         }
                         else
                             trkExtra.pregap = 0;
 
-                        alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
+                        _alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
                     }
 
                     if(decodedToc.HasValue &&
@@ -834,11 +834,11 @@ namespace Aaru.DiscImages
                     else if(i < sessions)
                     {
                         (byte minute, byte second, byte frame) leadoutAmsf =
-                            LbaToMsf(writingTracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
+                            LbaToMsf(_writingTracks.First(t => t.TrackSession == i + 1).TrackStartSector - 150);
 
                         (byte minute, byte second, byte frame) leadoutPmsf =
-                            LbaToMsf(writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last().
-                                                   TrackStartSector);
+                            LbaToMsf(_writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).Last().
+                                                    TrackStartSector);
 
                         thisSessionTracks.Add(0xB0, new AlcoholTrack
                         {
@@ -869,10 +869,10 @@ namespace Aaru.DiscImages
                         currentTrackOffset += Marshal.SizeOf<AlcoholTrack>() * 2;
                     }
 
-                    alcToc.Add(i, thisSessionTracks);
+                    _alcToc.Add(i, thisSessionTracks);
                 }
 
-            alcFooter = new AlcoholFooter
+            _alcFooter = new AlcoholFooter
             {
                 filenameOffset = (uint)(footerOffset + Marshal.SizeOf<AlcoholFooter>()),
                 widechar       = 1
@@ -883,73 +883,73 @@ namespace Aaru.DiscImages
             IntPtr blockPtr;
 
             // Write header
-            descriptorStream.Seek(0, SeekOrigin.Begin);
+            _descriptorStream.Seek(0, SeekOrigin.Begin);
             byte[] block = new byte[Marshal.SizeOf<AlcoholHeader>()];
             blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholHeader>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, blockPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-            descriptorStream.Write(block, 0, block.Length);
+            _descriptorStream.Write(block, 0, block.Length);
 
             // Write DVD structures if pressent
             if(header.structuresOffset != 0)
             {
-                if(dmi != null)
+                if(_dmi != null)
                 {
-                    descriptorStream.Seek(header.structuresOffset, SeekOrigin.Begin);
+                    _descriptorStream.Seek(header.structuresOffset, SeekOrigin.Begin);
 
-                    if(dmi.Length == 2052)
-                        descriptorStream.Write(dmi, 0, 2052);
-                    else if(dmi.Length == 2048)
+                    if(_dmi.Length == 2052)
+                        _descriptorStream.Write(_dmi, 0, 2052);
+                    else if(_dmi.Length == 2048)
                     {
-                        descriptorStream.Write(new byte[]
+                        _descriptorStream.Write(new byte[]
                         {
                             0x08, 0x02, 0x00, 0x00
                         }, 0, 4);
 
-                        descriptorStream.Write(dmi, 0, 2048);
+                        _descriptorStream.Write(_dmi, 0, 2048);
                     }
                 }
 
                 // TODO: Create fake PFI if none present
-                if(pfi != null)
+                if(_pfi != null)
                 {
-                    descriptorStream.Seek(header.structuresOffset + 2052, SeekOrigin.Begin);
-                    descriptorStream.Write(pfi, pfi.Length        - 2048, 2048);
+                    _descriptorStream.Seek(header.structuresOffset + 2052, SeekOrigin.Begin);
+                    _descriptorStream.Write(_pfi, _pfi.Length      - 2048, 2048);
                 }
             }
 
             // Write sessions
-            descriptorStream.Seek(header.sessionOffset, SeekOrigin.Begin);
+            _descriptorStream.Seek(header.sessionOffset, SeekOrigin.Begin);
 
-            foreach(AlcoholSession session in alcSessions.Values)
+            foreach(AlcoholSession session in _alcSessions.Values)
             {
                 block    = new byte[Marshal.SizeOf<AlcoholSession>()];
                 blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholSession>());
                 System.Runtime.InteropServices.Marshal.StructureToPtr(session, blockPtr, true);
                 System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
                 System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-                descriptorStream.Write(block, 0, block.Length);
+                _descriptorStream.Write(block, 0, block.Length);
             }
 
             // Write tracks
-            foreach(KeyValuePair<int, Dictionary<int, AlcoholTrack>> kvp in alcToc)
+            foreach(KeyValuePair<int, Dictionary<int, AlcoholTrack>> kvp in _alcToc)
             {
-                descriptorStream.Seek(alcSessions.First(t => t.Key == kvp.Key).Value.trackOffset, SeekOrigin.Begin);
+                _descriptorStream.Seek(_alcSessions.First(t => t.Key == kvp.Key).Value.trackOffset, SeekOrigin.Begin);
 
                 foreach(AlcoholTrack track in kvp.Value.Values)
                 {
                     AlcoholTrack alcoholTrack = track;
 
                     // Write extra
-                    if(!isDvd)
+                    if(!_isDvd)
                     {
-                        long position = descriptorStream.Position;
-                        descriptorStream.Seek(alcoholTrack.extraOffset, SeekOrigin.Begin);
+                        long position = _descriptorStream.Position;
+                        _descriptorStream.Seek(alcoholTrack.extraOffset, SeekOrigin.Begin);
 
                         block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
 
-                        if(alcTrackExtras.TryGetValue(alcoholTrack.point, out AlcoholTrackExtra extra))
+                        if(_alcTrackExtras.TryGetValue(alcoholTrack.point, out AlcoholTrackExtra extra))
                         {
                             blockPtr =
                                 System.Runtime.InteropServices.Marshal.
@@ -962,9 +962,9 @@ namespace Aaru.DiscImages
                         else
                             alcoholTrack.extraOffset = 0;
 
-                        descriptorStream.Write(block, 0, block.Length);
+                        _descriptorStream.Write(block, 0, block.Length);
 
-                        descriptorStream.Seek(position, SeekOrigin.Begin);
+                        _descriptorStream.Seek(position, SeekOrigin.Begin);
                     }
 
                     block    = new byte[Marshal.SizeOf<AlcoholTrack>()];
@@ -972,39 +972,39 @@ namespace Aaru.DiscImages
                     System.Runtime.InteropServices.Marshal.StructureToPtr(alcoholTrack, blockPtr, true);
                     System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
                     System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-                    descriptorStream.Write(block, 0, block.Length);
+                    _descriptorStream.Write(block, 0, block.Length);
                 }
             }
 
             // Write BCA
-            if(bca != null)
+            if(_bca != null)
             {
-                descriptorStream.Seek(header.bcaOffset, SeekOrigin.Begin);
-                descriptorStream.Write(bca, 0, bca.Length);
+                _descriptorStream.Seek(header.bcaOffset, SeekOrigin.Begin);
+                _descriptorStream.Write(_bca, 0, _bca.Length);
             }
 
             // Write footer
-            descriptorStream.Seek(footerOffset, SeekOrigin.Begin);
+            _descriptorStream.Seek(footerOffset, SeekOrigin.Begin);
             block    = new byte[Marshal.SizeOf<AlcoholFooter>()];
             blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholFooter>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(alcFooter, blockPtr, true);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(_alcFooter, blockPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
-            descriptorStream.Write(block, 0, block.Length);
+            _descriptorStream.Write(block, 0, block.Length);
 
             // Write filename
-            descriptorStream.Write(filename, 0, filename.Length);
+            _descriptorStream.Write(filename, 0, filename.Length);
 
             // Write filename null termination
-            descriptorStream.Write(new byte[]
+            _descriptorStream.Write(new byte[]
             {
                 0, 0
             }, 0, 2);
 
-            descriptorStream.Flush();
-            descriptorStream.Close();
-            imageStream.Flush();
-            imageStream.Close();
+            _descriptorStream.Flush();
+            _descriptorStream.Close();
+            _imageStream.Flush();
+            _imageStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -1031,8 +1031,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -1052,7 +1052,7 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    trackFlags[(byte)sectorAddress] = data[0];
+                    _trackFlags[(byte)sectorAddress] = data[0];
 
                     return true;
                 }
@@ -1073,11 +1073,11 @@ namespace Aaru.DiscImages
                         return false;
                     }
 
-                    imageStream.
+                    _imageStream.
                         Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
                              SeekOrigin.Begin);
 
-                    imageStream.Write(data, 0, data.Length);
+                    _imageStream.Write(data, 0, data.Length);
 
                     return true;
                 }
@@ -1098,8 +1098,8 @@ namespace Aaru.DiscImages
             }
 
             Track track =
-                writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                    sectorAddress <= trk.TrackEndSector);
+                _writingTracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
+                                                     sectorAddress <= trk.TrackEndSector);
 
             if(track is null)
             {
@@ -1130,11 +1130,11 @@ namespace Aaru.DiscImages
 
                     for(uint i = 0; i < length; i++)
                     {
-                        imageStream.
+                        _imageStream.
                             Seek((long)(track.TrackFileOffset + (((i + sectorAddress) - track.TrackStartSector) * (ulong)(track.TrackRawBytesPerSector + 96))) + track.TrackRawBytesPerSector,
                                  SeekOrigin.Begin);
 
-                        imageStream.Write(data, (int)(i * 96), 96);
+                        _imageStream.Write(data, (int)(i * 96), 96);
                     }
 
                     return true;

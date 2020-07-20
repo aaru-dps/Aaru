@@ -43,9 +43,9 @@ namespace Aaru.Filters
     /// <summary>Creates a stream that is a subset of another stream.</summary>
     public class OffsetStream : Stream
     {
-        readonly Stream baseStream;
-        readonly long   streamEnd;
-        readonly long   streamStart;
+        readonly Stream _baseStream;
+        readonly long   _streamEnd;
+        readonly long   _streamStart;
 
         public OffsetStream(Stream stream, long start, long end)
         {
@@ -55,12 +55,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = stream;
+            _baseStream = stream;
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -73,12 +73,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode, access, share, bufferSize, options);
+            _baseStream = new FileStream(path, mode, access, share, bufferSize, options);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -90,12 +90,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(handle, access);
+            _baseStream = new FileStream(handle, access);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -107,12 +107,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(handle, access, bufferSize);
+            _baseStream = new FileStream(handle, access, bufferSize);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -125,12 +125,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(handle, access, bufferSize, isAsync);
+            _baseStream = new FileStream(handle, access, bufferSize, isAsync);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -143,12 +143,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode, access, share, bufferSize, useAsync);
+            _baseStream = new FileStream(path, mode, access, share, bufferSize, useAsync);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -161,12 +161,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode, access, share, bufferSize);
+            _baseStream = new FileStream(path, mode, access, share, bufferSize);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -178,12 +178,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode, access, share);
+            _baseStream = new FileStream(path, mode, access, share);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -195,12 +195,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode, access);
+            _baseStream = new FileStream(path, mode, access);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -212,12 +212,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new FileStream(path, mode);
+            _baseStream = new FileStream(path, mode);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -230,12 +230,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new MemoryStream(buffer, index, count, writable, publiclyVisible);
+            _baseStream = new MemoryStream(buffer, index, count, writable, publiclyVisible);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -247,12 +247,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new MemoryStream(buffer, index, count, writable);
+            _baseStream = new MemoryStream(buffer, index, count, writable);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -264,12 +264,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new MemoryStream(buffer, index, count);
+            _baseStream = new MemoryStream(buffer, index, count);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -281,12 +281,12 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new MemoryStream(buffer, writable);
+            _baseStream = new MemoryStream(buffer, writable);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
@@ -298,90 +298,90 @@ namespace Aaru.Filters
             if(end < 0)
                 throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
-            streamStart = start;
-            streamEnd   = end;
+            _streamStart = start;
+            _streamEnd   = end;
 
-            baseStream = new MemoryStream(buffer);
+            _baseStream = new MemoryStream(buffer);
 
-            if(end > baseStream.Length)
+            if(end > _baseStream.Length)
                 throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
 
-        public override bool CanRead => baseStream.CanRead;
+        public override bool CanRead => _baseStream.CanRead;
 
-        public override bool CanSeek => baseStream.CanSeek;
+        public override bool CanSeek => _baseStream.CanSeek;
 
-        public override bool CanWrite => baseStream.CanWrite;
+        public override bool CanWrite => _baseStream.CanWrite;
 
-        public override long Length => (streamEnd - streamStart) + 1;
+        public override long Length => (_streamEnd - _streamStart) + 1;
 
         public override long Position
         {
-            get => baseStream.Position - streamStart;
+            get => _baseStream.Position - _streamStart;
 
             set
             {
-                if(value + streamStart > streamEnd)
+                if(value + _streamStart > _streamEnd)
                     throw new IOException("Cannot set position past stream end.");
 
-                baseStream.Position = value;
+                _baseStream.Position = value;
             }
         }
 
         ~OffsetStream()
         {
-            baseStream.Close();
-            baseStream.Dispose();
+            _baseStream.Close();
+            _baseStream.Dispose();
         }
 
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback,
                                                object state)
         {
-            if(baseStream.Position + count > streamEnd)
+            if(_baseStream.Position + count > _streamEnd)
                 throw new IOException("Cannot read past stream end.");
 
-            return baseStream.BeginRead(buffer, offset, count, callback, state);
+            return _baseStream.BeginRead(buffer, offset, count, callback, state);
         }
 
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback,
                                                 object state)
         {
-            if(baseStream.Position + count > streamEnd)
+            if(_baseStream.Position + count > _streamEnd)
                 throw new IOException("Cannot write past stream end.");
 
-            return baseStream.BeginWrite(buffer, offset, count, callback, state);
+            return _baseStream.BeginWrite(buffer, offset, count, callback, state);
         }
 
-        public override void Close() => baseStream.Close();
+        public override void Close() => _baseStream.Close();
 
         protected new void Dispose()
         {
-            baseStream.Dispose();
+            _baseStream.Dispose();
             base.Dispose();
         }
 
-        public override int EndRead(IAsyncResult asyncResult) => baseStream.EndRead(asyncResult);
+        public override int EndRead(IAsyncResult asyncResult) => _baseStream.EndRead(asyncResult);
 
-        public override void EndWrite(IAsyncResult asyncResult) => baseStream.EndWrite(asyncResult);
+        public override void EndWrite(IAsyncResult asyncResult) => _baseStream.EndWrite(asyncResult);
 
-        public override int ReadByte() => baseStream.Position == streamEnd + 1 ? -1 : baseStream.ReadByte();
+        public override int ReadByte() => _baseStream.Position == _streamEnd + 1 ? -1 : _baseStream.ReadByte();
 
         public override void WriteByte(byte value)
         {
-            if(baseStream.Position + 1 > streamEnd)
+            if(_baseStream.Position + 1 > _streamEnd)
                 throw new IOException("Cannot write past stream end.");
 
-            baseStream.WriteByte(value);
+            _baseStream.WriteByte(value);
         }
 
-        public override void Flush() => baseStream.Flush();
+        public override void Flush() => _baseStream.Flush();
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if(baseStream.Position + count > streamEnd + 1)
+            if(_baseStream.Position + count > _streamEnd + 1)
                 throw new IOException("Cannot read past stream end.");
 
-            return baseStream.Read(buffer, offset, count);
+            return _baseStream.Read(buffer, offset, count);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -389,20 +389,20 @@ namespace Aaru.Filters
             switch(origin)
             {
                 case SeekOrigin.Begin:
-                    if(offset + streamStart > streamEnd)
+                    if(offset + _streamStart > _streamEnd)
                         throw new IOException("Cannot seek past stream end.");
 
-                    return baseStream.Seek(offset + streamStart, SeekOrigin.Begin) - streamStart;
+                    return _baseStream.Seek(offset + _streamStart, SeekOrigin.Begin) - _streamStart;
                 case SeekOrigin.End:
-                    if(offset - (baseStream.Length - streamEnd) < streamStart)
+                    if(offset - (_baseStream.Length - _streamEnd) < _streamStart)
                         throw new IOException("Cannot seek before stream start.");
 
-                    return baseStream.Seek(offset - (baseStream.Length - streamEnd), SeekOrigin.End) - streamStart;
+                    return _baseStream.Seek(offset - (_baseStream.Length - _streamEnd), SeekOrigin.End) - _streamStart;
                 default:
-                    if(offset + baseStream.Position > streamEnd)
+                    if(offset + _baseStream.Position > _streamEnd)
                         throw new IOException("Cannot seek past stream end.");
 
-                    return baseStream.Seek(offset, SeekOrigin.Current) - streamStart;
+                    return _baseStream.Seek(offset, SeekOrigin.Current) - _streamStart;
             }
         }
 
@@ -411,10 +411,10 @@ namespace Aaru.Filters
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if(baseStream.Position + count > streamEnd)
+            if(_baseStream.Position + count > _streamEnd)
                 throw new IOException("Cannot write past stream end.");
 
-            baseStream.Write(buffer, offset, count);
+            _baseStream.Write(buffer, offset, count);
         }
     }
 }

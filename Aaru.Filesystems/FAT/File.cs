@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
         {
             deviceBlock = 0;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -55,7 +55,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             uint[] clusters = GetClusters((uint)stat.Inode);
@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
             if(fileBlock >= clusters.Length)
                 return Errno.InvalidArgument;
 
-            deviceBlock = (long)(firstClusterSector + (clusters[fileBlock] * sectorsPerCluster));
+            deviceBlock = (long)(_firstClusterSector + (clusters[fileBlock] * _sectorsPerCluster));
 
             return Errno.NoError;
         }
@@ -72,7 +72,7 @@ namespace Aaru.Filesystems
         {
             attributes = new FileAttributes();
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -87,7 +87,7 @@ namespace Aaru.Filesystems
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = Stat(path, out FileEntryInfo stat);
@@ -96,7 +96,7 @@ namespace Aaru.Filesystems
                 return err;
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !debug)
+               !_debug)
                 return Errno.IsDirectory;
 
             if(offset >= stat.Length)
@@ -107,11 +107,11 @@ namespace Aaru.Filesystems
 
             uint[] clusters = GetClusters((uint)stat.Inode);
 
-            long firstCluster    = offset                   / bytesPerCluster;
-            long offsetInCluster = offset                   % bytesPerCluster;
-            long sizeInClusters  = (size + offsetInCluster) / bytesPerCluster;
+            long firstCluster    = offset                   / _bytesPerCluster;
+            long offsetInCluster = offset                   % _bytesPerCluster;
+            long sizeInClusters  = (size + offsetInCluster) / _bytesPerCluster;
 
-            if((size + offsetInCluster) % bytesPerCluster > 0)
+            if((size + offsetInCluster) % _bytesPerCluster > 0)
                 sizeInClusters++;
 
             var ms = new MemoryStream();
@@ -121,8 +121,9 @@ namespace Aaru.Filesystems
                 if(i + firstCluster >= clusters.Length)
                     return Errno.InvalidArgument;
 
-                byte[] buffer = image.ReadSectors(firstClusterSector + (clusters[i + firstCluster] * sectorsPerCluster),
-                                                  sectorsPerCluster);
+                byte[] buffer =
+                    _image.ReadSectors(_firstClusterSector + (clusters[i + firstCluster] * _sectorsPerCluster),
+                                       _sectorsPerCluster);
 
                 ms.Write(buffer, 0, buffer.Length);
             }
@@ -138,7 +139,7 @@ namespace Aaru.Filesystems
         {
             stat = null;
 
-            if(!mounted)
+            if(!_mounted)
                 return Errno.AccessDenied;
 
             Errno err = GetFileEntry(path, out CompleteDirectoryEntry completeEntry);
@@ -151,28 +152,28 @@ namespace Aaru.Filesystems
             stat = new FileEntryInfo
             {
                 Attributes   = new FileAttributes(),
-                Blocks       = entry.size / bytesPerCluster,
-                BlockSize    = bytesPerCluster,
+                Blocks       = entry.size / _bytesPerCluster,
+                BlockSize    = _bytesPerCluster,
                 Length       = entry.size,
-                Inode        = (ulong)(fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
+                Inode        = (ulong)(_fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
                 Links        = 1,
                 CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime)
             };
 
-            if(@namespace != Namespace.Human)
+            if(_namespace != Namespace.Human)
             {
                 stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
                 stat.CreationTime  = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
             }
 
-            if(entry.size % bytesPerCluster > 0)
+            if(entry.size % _bytesPerCluster > 0)
                 stat.Blocks++;
 
             if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
             {
                 stat.Attributes |= FileAttributes.Directory;
 
-                stat.Blocks = fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length
+                stat.Blocks = _fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length
                                   : GetClusters(entry.start_cluster).Length;
 
                 stat.Length = stat.Blocks * stat.BlockSize;
@@ -208,13 +209,15 @@ namespace Aaru.Filesystems
 
             uint nextCluster = startCluster;
 
-            ulong nextSector = (nextCluster / fatEntriesPerSector) + fatFirstSector + (useFirstFat ? 0 : sectorsPerFat);
-            int   nextEntry  = (int)(nextCluster % fatEntriesPerSector);
+            ulong nextSector = (nextCluster / _fatEntriesPerSector) + _fatFirstSector +
+                               (_useFirstFat ? 0 : _sectorsPerFat);
+
+            int nextEntry = (int)(nextCluster % _fatEntriesPerSector);
 
             ulong  currentSector = nextSector;
-            byte[] fatData       = image.ReadSector(currentSector);
+            byte[] fatData       = _image.ReadSector(currentSector);
 
-            if(fat32)
+            if(_fat32)
                 while((nextCluster & FAT32_MASK) > 0 &&
                       (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
                 {
@@ -222,30 +225,30 @@ namespace Aaru.Filesystems
 
                     if(currentSector != nextSector)
                     {
-                        fatData       = image.ReadSector(nextSector);
+                        fatData       = _image.ReadSector(nextSector);
                         currentSector = nextSector;
                     }
 
                     nextCluster = BitConverter.ToUInt32(fatData, nextEntry * 4);
 
-                    nextSector = (nextCluster / fatEntriesPerSector) + fatFirstSector +
-                                 (useFirstFat ? 0 : sectorsPerFat);
+                    nextSector = (nextCluster / _fatEntriesPerSector) + _fatFirstSector +
+                                 (_useFirstFat ? 0 : _sectorsPerFat);
 
-                    nextEntry = (int)(nextCluster % fatEntriesPerSector);
+                    nextEntry = (int)(nextCluster % _fatEntriesPerSector);
                 }
-            else if(fat16)
+            else if(_fat16)
                 while(nextCluster > 0 &&
                       nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fatEntries[nextCluster];
+                    nextCluster = _fatEntries[nextCluster];
                 }
             else
                 while(nextCluster > 0 &&
                       nextCluster <= FAT12_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fatEntries[nextCluster];
+                    nextCluster = _fatEntries[nextCluster];
                 }
 
             return clusters.ToArray();
@@ -255,7 +258,8 @@ namespace Aaru.Filesystems
         {
             entry = null;
 
-            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(_cultureInfo)
+                                 : path.ToLower(_cultureInfo);
 
             string[] pieces = cutPath.Split(new[]
             {
@@ -267,7 +271,7 @@ namespace Aaru.Filesystems
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
-            if(!directoryCache.TryGetValue(parentPath, out _))
+            if(!_directoryCache.TryGetValue(parentPath, out _))
             {
                 Errno err = ReadDir(parentPath, out _);
 
@@ -278,12 +282,12 @@ namespace Aaru.Filesystems
             Dictionary<string, CompleteDirectoryEntry> parent;
 
             if(pieces.Length == 1)
-                parent = rootDirectoryCache;
-            else if(!directoryCache.TryGetValue(parentPath, out parent))
+                parent = _rootDirectoryCache;
+            else if(!_directoryCache.TryGetValue(parentPath, out parent))
                 return Errno.InvalidArgument;
 
             KeyValuePair<string, CompleteDirectoryEntry> dirent =
-                parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[^1]);
+                parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
 
             if(string.IsNullOrEmpty(dirent.Key))
                 return Errno.NoSuchFile;

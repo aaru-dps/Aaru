@@ -42,14 +42,13 @@ namespace Aaru.Filesystems.LisaFS
     // Variable names from Lisa API
     public partial class LisaFS : IReadOnlyFilesystem
     {
-        bool        debug;
-        IMediaImage device;
-        int         devTagSize;
-
-        MDDF      mddf;
-        bool      mounted;
-        SRecord[] srecords;
-        ulong     volumePrefix;
+        bool        _debug;
+        IMediaImage _device;
+        int         _devTagSize;
+        MDDF        _mddf;
+        bool        _mounted;
+        SRecord[]   _srecords;
+        ulong       _volumePrefix;
 
         public string         Name      => "Apple Lisa File System";
         public Guid           Id        => new Guid("7E6034D1-D823-4248-A54D-239742B28391");
@@ -81,19 +80,19 @@ namespace Aaru.Filesystems.LisaFS
 
         #region Caches
         /// <summary>Caches Extents Files</summary>
-        Dictionary<short, ExtentFile> extentCache;
+        Dictionary<short, ExtentFile> _extentCache;
         /// <summary>Caches system files</summary>
-        Dictionary<short, byte[]> systemFileCache;
+        Dictionary<short, byte[]> _systemFileCache;
         /// <summary>Caches user files files</summary>
-        Dictionary<short, byte[]> fileCache;
+        Dictionary<short, byte[]> _fileCache;
         /// <summary>Caches catalogs</summary>
-        List<CatalogEntry> catalogCache;
+        List<CatalogEntry> _catalogCache;
         /// <summary>Caches file size</summary>
-        Dictionary<short, int> fileSizeCache;
+        Dictionary<short, int> _fileSizeCache;
         /// <summary>Lists Extents Files already printed in debug mode to not repeat them</summary>
-        List<short> printedExtents;
+        List<short> _printedExtents;
         /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
-        Dictionary<short, DateTime> directoryDtcCache;
+        Dictionary<short, DateTime> _directoryDtcCache;
         #endregion Caches
     }
 }

@@ -45,44 +45,43 @@ namespace Aaru.Filters
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class AppleSingle : IFilter
     {
-        const uint AppleSingleMagic    = 0x00051600;
-        const uint AppleSingleVersion  = 0x00010000;
-        const uint AppleSingleVersion2 = 0x00020000;
-        readonly byte[] DOSHome =
+        const uint MAGIC    = 0x00051600;
+        const uint VERSION  = 0x00010000;
+        const uint VERSION2 = 0x00020000;
+        readonly byte[] _dosHome =
         {
             0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
 
-        readonly byte[] MacintoshHome =
+        readonly byte[] _macintoshHome =
         {
             0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        readonly byte[] OSXHome =
+        readonly byte[] _osxHome =
         {
             0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        readonly byte[] ProDOSHome =
+        readonly byte[] _proDosHome =
         {
             0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        readonly byte[] UNIXHome =
+        readonly byte[] _unixHome =
         {
             0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        readonly byte[] VMSHome =
+        readonly byte[] _vmsHome =
         {
             0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        string   basePath;
-        byte[]   bytes;
-        DateTime creationTime;
-
-        AppleSingleEntry  dataFork;
-        AppleSingleHeader header;
-        bool              isBytes, isStream, isPath, opened;
-        DateTime          lastWriteTime;
-        AppleSingleEntry  rsrcFork;
-        Stream            stream;
+        string            _basePath;
+        byte[]            _bytes;
+        DateTime          _creationTime;
+        AppleSingleEntry  _dataFork;
+        AppleSingleHeader _header;
+        bool              _isBytes, _isStream, _isPath, _opened;
+        DateTime          _lastWriteTime;
+        AppleSingleEntry  _rsrcFork;
+        Stream            _stream;
 
         public string Name   => "AppleSingle";
         public Guid   Id     => new Guid("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
@@ -90,69 +89,69 @@ namespace Aaru.Filters
 
         public void Close()
         {
-            bytes = null;
-            stream?.Close();
-            isBytes  = false;
-            isStream = false;
-            isPath   = false;
-            opened   = false;
+            _bytes = null;
+            _stream?.Close();
+            _isBytes  = false;
+            _isStream = false;
+            _isPath   = false;
+            _opened   = false;
         }
 
-        public string GetBasePath() => basePath;
+        public string GetBasePath() => _basePath;
 
-        public DateTime GetCreationTime() => creationTime;
+        public DateTime GetCreationTime() => _creationTime;
 
-        public long GetDataForkLength() => dataFork.length;
+        public long GetDataForkLength() => _dataFork.length;
 
         public Stream GetDataForkStream()
         {
-            if(dataFork.length == 0)
+            if(_dataFork.length == 0)
                 return null;
 
-            if(isBytes)
-                return new OffsetStream(bytes, dataFork.offset, (dataFork.offset + dataFork.length) - 1);
+            if(_isBytes)
+                return new OffsetStream(_bytes, _dataFork.offset, (_dataFork.offset + _dataFork.length) - 1);
 
-            if(isStream)
-                return new OffsetStream(stream, dataFork.offset, (dataFork.offset + dataFork.length) - 1);
+            if(_isStream)
+                return new OffsetStream(_stream, _dataFork.offset, (_dataFork.offset + _dataFork.length) - 1);
 
-            if(isPath)
-                return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, dataFork.offset,
-                                        (dataFork.offset + dataFork.length) - 1);
+            if(_isPath)
+                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _dataFork.offset,
+                                        (_dataFork.offset + _dataFork.length) - 1);
 
             return null;
         }
 
-        public string GetFilename() => Path.GetFileName(basePath);
+        public string GetFilename() => Path.GetFileName(_basePath);
 
-        public DateTime GetLastWriteTime() => lastWriteTime;
+        public DateTime GetLastWriteTime() => _lastWriteTime;
 
-        public long GetLength() => dataFork.length + rsrcFork.length;
+        public long GetLength() => _dataFork.length + _rsrcFork.length;
 
-        public string GetParentFolder() => Path.GetDirectoryName(basePath);
+        public string GetParentFolder() => Path.GetDirectoryName(_basePath);
 
-        public string GetPath() => basePath;
+        public string GetPath() => _basePath;
 
-        public long GetResourceForkLength() => rsrcFork.length;
+        public long GetResourceForkLength() => _rsrcFork.length;
 
         public Stream GetResourceForkStream()
         {
-            if(rsrcFork.length == 0)
+            if(_rsrcFork.length == 0)
                 return null;
 
-            if(isBytes)
-                return new OffsetStream(bytes, rsrcFork.offset, (rsrcFork.offset + rsrcFork.length) - 1);
+            if(_isBytes)
+                return new OffsetStream(_bytes, _rsrcFork.offset, (_rsrcFork.offset + _rsrcFork.length) - 1);
 
-            if(isStream)
-                return new OffsetStream(stream, rsrcFork.offset, (rsrcFork.offset + rsrcFork.length) - 1);
+            if(_isStream)
+                return new OffsetStream(_stream, _rsrcFork.offset, (_rsrcFork.offset + _rsrcFork.length) - 1);
 
-            if(isPath)
-                return new OffsetStream(basePath, FileMode.Open, FileAccess.Read, rsrcFork.offset,
-                                        (rsrcFork.offset + rsrcFork.length) - 1);
+            if(_isPath)
+                return new OffsetStream(_basePath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
+                                        (_rsrcFork.offset + _rsrcFork.length) - 1);
 
             return null;
         }
 
-        public bool HasResourceFork() => rsrcFork.length > 0;
+        public bool HasResourceFork() => _rsrcFork.length > 0;
 
         public bool Identify(byte[] buffer)
         {
@@ -160,12 +159,11 @@ namespace Aaru.Filters
                buffer.Length < 26)
                 return false;
 
-            byte[] hdr_b = new byte[26];
-            Array.Copy(buffer, 0, hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            byte[] hdrB = new byte[26];
+            Array.Copy(buffer, 0, hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
-            return header.magic == AppleSingleMagic &&
-                   (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
+            return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
         }
 
         public bool Identify(Stream stream)
@@ -174,13 +172,12 @@ namespace Aaru.Filters
                stream.Length < 26)
                 return false;
 
-            byte[] hdr_b = new byte[26];
+            byte[] hdrB = new byte[26];
             stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            stream.Read(hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
-            return header.magic == AppleSingleMagic &&
-                   (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
+            return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
         }
 
         public bool Identify(string path)
@@ -190,56 +187,55 @@ namespace Aaru.Filters
             if(fstream.Length < 26)
                 return false;
 
-            byte[] hdr_b = new byte[26];
-            fstream.Read(hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            byte[] hdrB = new byte[26];
+            fstream.Read(hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
             fstream.Close();
 
-            return header.magic == AppleSingleMagic &&
-                   (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
+            return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
         }
 
-        public bool IsOpened() => opened;
+        public bool IsOpened() => _opened;
 
         public void Open(byte[] buffer)
         {
             var ms = new MemoryStream(buffer);
             ms.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[26];
-            ms.Read(hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            byte[] hdrB = new byte[26];
+            ms.Read(hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
-            AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
+            AppleSingleEntry[] entries = new AppleSingleEntry[_header.entries];
 
-            for(int i = 0; i < header.entries; i++)
+            for(int i = 0; i < _header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 ms.Read(entry, 0, 12);
                 entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
 
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
-                        dataFork = entry;
+                        _dataFork = entry;
 
                         break;
                     case AppleSingleEntryID.FileDates:
                         ms.Seek(entry.offset, SeekOrigin.Begin);
-                        byte[] dates_b = new byte[16];
-                        ms.Read(dates_b, 0, 16);
+                        byte[] datesB = new byte[16];
+                        ms.Read(datesB, 0, 16);
 
                         AppleSingleFileDates dates =
-                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(datesB);
 
-                        creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
+                        _creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
+                        _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
 
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -247,89 +243,89 @@ namespace Aaru.Filters
                         byte[] finfo = new byte[entry.length];
                         ms.Read(finfo, 0, finfo.Length);
 
-                        if(MacintoshHome.SequenceEqual(header.homeFilesystem))
+                        if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
-                        else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
-                        else if(UNIXHome.SequenceEqual(header.homeFilesystem))
+                        else if(_unixHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleSingleUNIXFileInfo unixinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                            AppleSingleUnixFileInfo unixinfo =
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUnixFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
+                            _creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
-                        else if(DOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_dosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
 
-                            lastWriteTime =
+                            _lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
 
                         break;
                     case AppleSingleEntryID.ResourceFork:
-                        rsrcFork = entry;
+                        _rsrcFork = entry;
 
                         break;
                 }
 
             ms.Close();
-            opened  = true;
-            isBytes = true;
-            bytes   = buffer;
+            _opened  = true;
+            _isBytes = true;
+            _bytes   = buffer;
         }
 
         public void Open(Stream stream)
         {
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[26];
-            stream.Read(hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            byte[] hdrB = new byte[26];
+            stream.Read(hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
-            AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
+            AppleSingleEntry[] entries = new AppleSingleEntry[_header.entries];
 
-            for(int i = 0; i < header.entries; i++)
+            for(int i = 0; i < _header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 stream.Read(entry, 0, 12);
                 entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
 
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
-                        dataFork = entry;
+                        _dataFork = entry;
 
                         break;
                     case AppleSingleEntryID.FileDates:
                         stream.Seek(entry.offset, SeekOrigin.Begin);
-                        byte[] dates_b = new byte[16];
-                        stream.Read(dates_b, 0, 16);
+                        byte[] datesB = new byte[16];
+                        stream.Read(datesB, 0, 16);
 
                         AppleSingleFileDates dates =
-                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(datesB);
 
-                        creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
+                        _creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
+                        _lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
 
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -337,50 +333,50 @@ namespace Aaru.Filters
                         byte[] finfo = new byte[entry.length];
                         stream.Read(finfo, 0, finfo.Length);
 
-                        if(MacintoshHome.SequenceEqual(header.homeFilesystem))
+                        if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
-                        else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
-                        else if(UNIXHome.SequenceEqual(header.homeFilesystem))
+                        else if(_unixHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleSingleUNIXFileInfo unixinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                            AppleSingleUnixFileInfo unixinfo =
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUnixFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
+                            _creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
-                        else if(DOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_dosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
 
-                            lastWriteTime =
+                            _lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
 
                         break;
                     case AppleSingleEntryID.ResourceFork:
-                        rsrcFork = entry;
+                        _rsrcFork = entry;
 
                         break;
                 }
 
             stream.Seek(0, SeekOrigin.Begin);
-            opened      = true;
-            isStream    = true;
-            this.stream = stream;
+            _opened   = true;
+            _isStream = true;
+            _stream   = stream;
         }
 
         public void Open(string path)
@@ -388,39 +384,39 @@ namespace Aaru.Filters
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             fs.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdr_b = new byte[26];
-            fs.Read(hdr_b, 0, 26);
-            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            byte[] hdrB = new byte[26];
+            fs.Read(hdrB, 0, 26);
+            _header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdrB);
 
-            AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
+            AppleSingleEntry[] entries = new AppleSingleEntry[_header.entries];
 
-            for(int i = 0; i < header.entries; i++)
+            for(int i = 0; i < _header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 fs.Read(entry, 0, 12);
                 entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
-            creationTime  = DateTime.UtcNow;
-            lastWriteTime = creationTime;
+            _creationTime  = DateTime.UtcNow;
+            _lastWriteTime = _creationTime;
 
             foreach(AppleSingleEntry entry in entries)
                 switch((AppleSingleEntryID)entry.id)
                 {
                     case AppleSingleEntryID.DataFork:
-                        dataFork = entry;
+                        _dataFork = entry;
 
                         break;
                     case AppleSingleEntryID.FileDates:
                         fs.Seek(entry.offset, SeekOrigin.Begin);
-                        byte[] dates_b = new byte[16];
-                        fs.Read(dates_b, 0, 16);
+                        byte[] datesB = new byte[16];
+                        fs.Read(datesB, 0, 16);
 
                         AppleSingleFileDates dates =
-                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(datesB);
 
-                        creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
-                        lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
+                        _creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
+                        _lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
 
                         break;
                     case AppleSingleEntryID.FileInfo:
@@ -428,50 +424,50 @@ namespace Aaru.Filters
                         byte[] finfo = new byte[entry.length];
                         fs.Read(finfo, 0, finfo.Length);
 
-                        if(MacintoshHome.SequenceEqual(header.homeFilesystem))
+                        if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
-                        else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
-                            lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
+                            _creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
+                            _lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
-                        else if(UNIXHome.SequenceEqual(header.homeFilesystem))
+                        else if(_unixHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleSingleUNIXFileInfo unixinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                            AppleSingleUnixFileInfo unixinfo =
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUnixFileInfo>(finfo);
 
-                            creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
-                            lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
+                            _creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
+                            _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
-                        else if(DOSHome.SequenceEqual(header.homeFilesystem))
+                        else if(_dosHome.SequenceEqual(_header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
                                 Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
 
-                            lastWriteTime =
+                            _lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
 
                         break;
                     case AppleSingleEntryID.ResourceFork:
-                        rsrcFork = entry;
+                        _rsrcFork = entry;
 
                         break;
                 }
 
             fs.Close();
-            opened   = true;
-            isPath   = true;
-            basePath = path;
+            _opened   = true;
+            _isPath   = true;
+            _basePath = path;
         }
 
         enum AppleSingleEntryID : uint
@@ -480,7 +476,7 @@ namespace Aaru.Filters
             RealName    = 3, Comment     = 4, Icon            = 5,
             ColorIcon   = 6, FileInfo    = 7, FileDates       = 8,
             FinderInfo  = 9, MacFileInfo = 10, ProDOSFileInfo = 11,
-            DOSFileInfo = 12, ShortName  = 13, AFPFileInfo    = 14,
+            DOSFileInfo = 12, ShortName  = 13, AfpFileInfo    = 14,
             DirectoryID = 15
         }
 
@@ -521,7 +517,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleSingleUNIXFileInfo
+        struct AppleSingleUnixFileInfo
         {
             public readonly uint creationDate;
             public readonly uint accessDate;

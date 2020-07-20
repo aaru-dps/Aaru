@@ -54,108 +54,108 @@ namespace Aaru.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
             stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
-            pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
+            _pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", pHdr.version);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}", pHdr.heads);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}", pHdr.cylinders);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", pHdr.cluster_size);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}", pHdr.bat_entries);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}", pHdr.sectors);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}", pHdr.in_use);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}", pHdr.data_off);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", pHdr.flags);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", pHdr.ext_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", _pHdr.version);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}", _pHdr.heads);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}", _pHdr.cylinders);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", _pHdr.cluster_size);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}", _pHdr.bat_entries);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}", _pHdr.sectors);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}", _pHdr.in_use);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}", _pHdr.data_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", _pHdr.flags);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", _pHdr.ext_off);
 
-            extended = parallelsExtMagic.SequenceEqual(pHdr.magic);
-            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
+            _extended = _parallelsExtMagic.SequenceEqual(_pHdr.magic);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", _extended);
 
             AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
-            bat = new uint[pHdr.bat_entries];
-            byte[] batB = new byte[pHdr.bat_entries * 4];
+            _bat = new uint[_pHdr.bat_entries];
+            byte[] batB = new byte[_pHdr.bat_entries * 4];
             stream.Read(batB, 0, batB.Length);
 
-            for(int i = 0; i < bat.Length; i++)
-                bat[i] = BitConverter.ToUInt32(batB, i * 4);
+            for(int i = 0; i < _bat.Length; i++)
+                _bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
-            clusterBytes = pHdr.cluster_size * 512;
+            _clusterBytes = _pHdr.cluster_size * 512;
 
-            if(pHdr.data_off > 0)
-                dataOffset = pHdr.data_off * 512;
+            if(_pHdr.data_off > 0)
+                _dataOffset = _pHdr.data_off * 512;
             else
-                dataOffset = ((stream.Position / clusterBytes) + (stream.Position % clusterBytes)) * clusterBytes;
+                _dataOffset = ((stream.Position / _clusterBytes) + (stream.Position % _clusterBytes)) * _clusterBytes;
 
-            sectorCache = new Dictionary<ulong, byte[]>();
+            _sectorCache = new Dictionary<ulong, byte[]>();
 
-            empty = (pHdr.flags & PARALLELS_EMPTY) == PARALLELS_EMPTY;
+            _empty = (_pHdr.flags & PARALLELS_EMPTY) == PARALLELS_EMPTY;
 
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.Sectors              = pHdr.sectors;
-            imageInfo.SectorSize           = 512;
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.ImageSize            = pHdr.sectors * 512;
-            imageInfo.Cylinders            = pHdr.cylinders;
-            imageInfo.Heads                = pHdr.heads;
-            imageInfo.SectorsPerTrack      = (uint)(imageInfo.Sectors / imageInfo.Cylinders / imageInfo.Heads);
-            imageStream                    = stream;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.Sectors              = _pHdr.sectors;
+            _imageInfo.SectorSize           = 512;
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.ImageSize            = _pHdr.sectors * 512;
+            _imageInfo.Cylinders            = _pHdr.cylinders;
+            _imageInfo.Heads                = _pHdr.heads;
+            _imageInfo.SectorsPerTrack      = (uint)(_imageInfo.Sectors / _imageInfo.Cylinders / _imageInfo.Heads);
+            _imageStream                    = stream;
 
             return true;
         }
 
         public byte[] ReadSector(ulong sectorAddress)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(empty)
+            if(_empty)
                 return new byte[512];
 
-            if(sectorCache.TryGetValue(sectorAddress, out byte[] sector))
+            if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
-            ulong index  = sectorAddress / pHdr.cluster_size;
-            ulong secOff = sectorAddress % pHdr.cluster_size;
+            ulong index  = sectorAddress / _pHdr.cluster_size;
+            ulong secOff = sectorAddress % _pHdr.cluster_size;
 
-            uint  batOff = bat[index];
+            uint  batOff = _bat[index];
             ulong imageOff;
 
             if(batOff == 0)
                 return new byte[512];
 
-            if(extended)
-                imageOff = batOff * clusterBytes;
+            if(_extended)
+                imageOff = batOff * _clusterBytes;
             else
                 imageOff = batOff * 512;
 
-            byte[] cluster = new byte[clusterBytes];
-            imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-            imageStream.Read(cluster, 0, (int)clusterBytes);
+            byte[] cluster = new byte[_clusterBytes];
+            _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
+            _imageStream.Read(cluster, 0, (int)_clusterBytes);
             sector = new byte[512];
             Array.Copy(cluster, (int)(secOff * 512), sector, 0, 512);
 
-            if(sectorCache.Count > MAX_CACHED_SECTORS)
-                sectorCache.Clear();
+            if(_sectorCache.Count > MAX_CACHED_SECTORS)
+                _sectorCache.Clear();
 
-            sectorCache.Add(sectorAddress, sector);
+            _sectorCache.Add(sectorAddress, sector);
 
             return sector;
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            if(empty)
+            if(_empty)
                 return new byte[512 * length];
 
             var ms = new MemoryStream();

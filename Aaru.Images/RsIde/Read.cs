@@ -54,51 +54,51 @@ namespace Aaru.DiscImages
 
             RsIdeHeader hdr = Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
 
-            if(!hdr.magic.SequenceEqual(signature))
+            if(!hdr.magic.SequenceEqual(_signature))
                 return false;
 
-            dataOff = hdr.dataOff;
+            _dataOff = hdr.dataOff;
 
-            imageInfo.MediaType            = MediaType.GENERIC_HDD;
-            imageInfo.SectorSize           = (uint)(hdr.flags.HasFlag(RsIdeFlags.HalfSectors) ? 256 : 512);
-            imageInfo.ImageSize            = (ulong)(stream.Length - dataOff);
-            imageInfo.Sectors              = imageInfo.ImageSize / imageInfo.SectorSize;
-            imageInfo.CreationTime         = imageFilter.GetCreationTime();
-            imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
-            imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
+            _imageInfo.MediaType            = MediaType.GENERIC_HDD;
+            _imageInfo.SectorSize           = (uint)(hdr.flags.HasFlag(RsIdeFlags.HalfSectors) ? 256 : 512);
+            _imageInfo.ImageSize            = (ulong)(stream.Length - _dataOff);
+            _imageInfo.Sectors              = _imageInfo.ImageSize / _imageInfo.SectorSize;
+            _imageInfo.CreationTime         = imageFilter.GetCreationTime();
+            _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
+            _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+            _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            _imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
 
             if(!ArrayHelpers.ArrayIsNullOrEmpty(hdr.identify))
             {
-                identify = new byte[512];
-                Array.Copy(hdr.identify, 0, identify, 0, hdr.identify.Length);
-                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
+                _identify = new byte[512];
+                Array.Copy(hdr.identify, 0, _identify, 0, hdr.identify.Length);
+                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(_identify);
 
                 if(ataId.HasValue)
                 {
-                    imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
-                    imageInfo.Cylinders             = ataId.Value.Cylinders;
-                    imageInfo.Heads                 = ataId.Value.Heads;
-                    imageInfo.SectorsPerTrack       = ataId.Value.SectorsPerCard;
-                    imageInfo.DriveFirmwareRevision = ataId.Value.FirmwareRevision;
-                    imageInfo.DriveModel            = ataId.Value.Model;
-                    imageInfo.DriveSerialNumber     = ataId.Value.SerialNumber;
-                    imageInfo.MediaSerialNumber     = ataId.Value.MediaSerial;
-                    imageInfo.MediaManufacturer     = ataId.Value.MediaManufacturer;
+                    _imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
+                    _imageInfo.Cylinders             = ataId.Value.Cylinders;
+                    _imageInfo.Heads                 = ataId.Value.Heads;
+                    _imageInfo.SectorsPerTrack       = ataId.Value.SectorsPerCard;
+                    _imageInfo.DriveFirmwareRevision = ataId.Value.FirmwareRevision;
+                    _imageInfo.DriveModel            = ataId.Value.Model;
+                    _imageInfo.DriveSerialNumber     = ataId.Value.SerialNumber;
+                    _imageInfo.MediaSerialNumber     = ataId.Value.MediaSerial;
+                    _imageInfo.MediaManufacturer     = ataId.Value.MediaManufacturer;
                 }
             }
 
-            if(imageInfo.Cylinders       == 0 ||
-               imageInfo.Heads           == 0 ||
-               imageInfo.SectorsPerTrack == 0)
+            if(_imageInfo.Cylinders       == 0 ||
+               _imageInfo.Heads           == 0 ||
+               _imageInfo.SectorsPerTrack == 0)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
             }
 
-            rsIdeImageFilter = imageFilter;
+            _rsIdeImageFilter = imageFilter;
 
             return true;
         }
@@ -107,31 +107,31 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            if(sectorAddress > imageInfo.Sectors - 1)
+            if(sectorAddress > _imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress), "Sector address not found");
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length), "Requested more sectors than available");
 
-            byte[] buffer = new byte[length * imageInfo.SectorSize];
+            byte[] buffer = new byte[length * _imageInfo.SectorSize];
 
-            Stream stream = rsIdeImageFilter.GetDataForkStream();
+            Stream stream = _rsIdeImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(dataOff + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)(_dataOff + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
+            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
             return buffer;
         }
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(!imageInfo.ReadableMediaTags.Contains(tag) ||
+            if(!_imageInfo.ReadableMediaTags.Contains(tag) ||
                tag != MediaTagType.ATA_IDENTIFY)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             byte[] buffer = new byte[512];
-            Array.Copy(identify, 0, buffer, 0, 512);
+            Array.Copy(_identify, 0, buffer, 0, 512);
 
             return buffer;
         }

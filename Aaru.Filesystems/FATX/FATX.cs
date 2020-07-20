@@ -42,21 +42,21 @@ namespace Aaru.Filesystems
 {
     public partial class XboxFatPlugin : IReadOnlyFilesystem
     {
-        uint                                                   bytesPerCluster;
-        CultureInfo                                            cultureInfo;
-        bool                                                   debug;
-        Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;
-        ushort[]                                               fat16;
-        uint[]                                                 fat32;
-        ulong                                                  fatStartSector;
-        ulong                                                  firstClusterSector;
-        IMediaImage                                            imagePlugin;
-        bool                                                   littleEndian;
-        bool                                                   mounted;
-        Dictionary<string, DirectoryEntry>                     rootDirectory;
-        uint                                                   sectorsPerCluster;
-        FileSystemInfo                                         statfs;
-        Superblock                                             superblock;
+        uint                                                   _bytesPerCluster;
+        CultureInfo                                            _cultureInfo;
+        bool                                                   _debug;
+        Dictionary<string, Dictionary<string, DirectoryEntry>> _directoryCache;
+        ushort[]                                               _fat16;
+        uint[]                                                 _fat32;
+        ulong                                                  _fatStartSector;
+        ulong                                                  _firstClusterSector;
+        IMediaImage                                            _imagePlugin;
+        bool                                                   _littleEndian;
+        bool                                                   _mounted;
+        Dictionary<string, DirectoryEntry>                     _rootDirectory;
+        uint                                                   _sectorsPerCluster;
+        FileSystemInfo                                         _statfs;
+        Superblock                                             _superblock;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

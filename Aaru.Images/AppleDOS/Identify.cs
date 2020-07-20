@@ -39,9 +39,9 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
+            _extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
-            return imageFilter.GetDataForkLength() == 143360 && (extension == ".po" || extension == ".do");
+            return imageFilter.GetDataForkLength() == 143360 && (_extension == ".po" || _extension == ".do");
         }
     }
 }

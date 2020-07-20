@@ -39,10 +39,10 @@ namespace Aaru.DiscImages
 {
     public partial class Imd : IMediaImage
     {
-        ImageInfo    imageInfo;
-        List<byte[]> sectorsData;
+        ImageInfo    _imageInfo;
+        List<byte[]> _sectorsData;
 
-        public Imd() => imageInfo = new ImageInfo
+        public Imd() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

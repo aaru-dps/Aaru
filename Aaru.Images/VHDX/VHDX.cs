@@ -43,36 +43,36 @@ namespace Aaru.DiscImages
 {
     public partial class Vhdx : IMediaImage
     {
-        long                      batOffset;
-        ulong[]                   blockAllocationTable;
-        Dictionary<ulong, byte[]> blockCache;
-        long                      chunkRatio;
-        ulong                     dataBlocks;
-        bool                      hasParent;
-        ImageInfo                 imageInfo;
-        Stream                    imageStream;
-        uint                      logicalSectorSize;
-        int                       maxBlockCache;
-        int                       maxSectorCache;
-        long                      metadataOffset;
-        Guid                      page83Data;
-        IMediaImage               parentImage;
-        uint                      physicalSectorSize;
-        byte[]                    sectorBitmap;
-        ulong[]                   sectorBitmapPointers;
-        Dictionary<ulong, byte[]> sectorCache;
-        VhdxFileParameters        vFileParms;
-        VhdxHeader                vHdr;
-        VhdxIdentifier            vhdxId;
-        ulong                     virtualDiskSize;
-        VhdxMetadataTableHeader   vMetHdr;
-        VhdxMetadataTableEntry[]  vMets;
-        VhdxParentLocatorHeader   vParHdr;
-        VhdxParentLocatorEntry[]  vPars;
-        VhdxRegionTableHeader     vRegHdr;
-        VhdxRegionTableEntry[]    vRegs;
+        long                      _batOffset;
+        ulong[]                   _blockAllocationTable;
+        Dictionary<ulong, byte[]> _blockCache;
+        long                      _chunkRatio;
+        ulong                     _dataBlocks;
+        bool                      _hasParent;
+        ImageInfo                 _imageInfo;
+        Stream                    _imageStream;
+        uint                      _logicalSectorSize;
+        int                       _maxBlockCache;
+        int                       _maxSectorCache;
+        long                      _metadataOffset;
+        Guid                      _page83Data;
+        IMediaImage               _parentImage;
+        uint                      _physicalSectorSize;
+        byte[]                    _sectorBitmap;
+        ulong[]                   _sectorBitmapPointers;
+        Dictionary<ulong, byte[]> _sectorCache;
+        VhdxFileParameters        _vFileParms;
+        VhdxHeader                _vHdr;
+        VhdxIdentifier            _vhdxId;
+        ulong                     _virtualDiskSize;
+        VhdxMetadataTableHeader   _vMetHdr;
+        VhdxMetadataTableEntry[]  _vMets;
+        VhdxParentLocatorHeader   _vParHdr;
+        VhdxParentLocatorEntry[]  _vPars;
+        VhdxRegionTableHeader     _vRegHdr;
+        VhdxRegionTableEntry[]    _vRegs;
 
-        public Vhdx() => imageInfo = new ImageInfo
+        public Vhdx() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

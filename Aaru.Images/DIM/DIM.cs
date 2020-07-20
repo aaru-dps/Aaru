@@ -40,13 +40,13 @@ namespace Aaru.DiscImages
     // TODO: What are the real supported floppies for this image format?
     public partial class Dim : IMediaImage
     {
-        byte[]    comment;
-        IFilter   dimImageFilter;
-        DiskType  dskType;
-        byte[]    hdrId;
-        ImageInfo imageInfo;
+        byte[]    _comment;
+        IFilter   _dimImageFilter;
+        DiskType  _dskType;
+        byte[]    _hdrId;
+        ImageInfo _imageInfo;
 
-        public Dim() => imageInfo = new ImageInfo
+        public Dim() => _imageInfo = new ImageInfo
         {
             ReadableSectorTags    = new List<SectorTagType>(),
             ReadableMediaTags     = new List<MediaTagType>(),

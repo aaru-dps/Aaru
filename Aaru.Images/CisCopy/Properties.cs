@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
         public Guid                   Id           => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
         public string                 Format       => "CisCopy";
         public string                 Author       => "Natalia Portillo";
-        public ImageInfo              Info         => imageInfo;
+        public ImageInfo              Info         => _imageInfo;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
         public IEnumerable<MediaTagType> SupportedMediaTags => new MediaTagType[]

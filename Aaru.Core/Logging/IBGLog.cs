@@ -41,19 +41,19 @@ namespace Aaru.Core.Logging
     /// <summary>Implements a log in the format used by IMGBurn</summary>
     internal class IbgLog
     {
-        readonly CultureInfo   ibgCulture;
-        readonly double        ibgDivider;
-        readonly string        ibgMediaType;
-        readonly StringBuilder ibgSb;
-        readonly string        logFile;
-        DateTime               ibgDatePoint;
-        ulong                  ibgIntSector;
-        double                 ibgIntSpeed;
-        double                 ibgMaxSpeed;
-        int                    ibgSampleRate;
-        int                    ibgSnaps;
-        bool                   ibgStartSet;
-        double                 ibgStartSpeed;
+        readonly CultureInfo   _ibgCulture;
+        readonly double        _ibgDivider;
+        readonly string        _ibgMediaType;
+        readonly StringBuilder _ibgSb;
+        readonly string        _logFile;
+        DateTime               _ibgDatePoint;
+        ulong                  _ibgIntSector;
+        double                 _ibgIntSpeed;
+        double                 _ibgMaxSpeed;
+        int                    _ibgSampleRate;
+        int                    _ibgSnaps;
+        bool                   _ibgStartSet;
+        double                 _ibgStartSpeed;
 
         /// <summary>Initializes the IMGBurn log</summary>
         /// <param name="outputFile">Log file</param>
@@ -63,169 +63,169 @@ namespace Aaru.Core.Logging
             if(string.IsNullOrEmpty(outputFile))
                 return;
 
-            logFile      = outputFile;
-            ibgSb        = new StringBuilder();
-            ibgDatePoint = DateTime.Now;
-            ibgCulture   = new CultureInfo("en-US");
-            ibgStartSet  = false;
-            ibgMaxSpeed  = 0;
-            ibgIntSpeed  = 0;
-            ibgSnaps     = 0;
-            ibgIntSector = 0;
+            _logFile      = outputFile;
+            _ibgSb        = new StringBuilder();
+            _ibgDatePoint = DateTime.Now;
+            _ibgCulture   = new CultureInfo("en-US");
+            _ibgStartSet  = false;
+            _ibgMaxSpeed  = 0;
+            _ibgIntSpeed  = 0;
+            _ibgSnaps     = 0;
+            _ibgIntSector = 0;
 
             switch(currentProfile)
             {
                 case 0x0001:
-                    ibgMediaType = "HDD";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "HDD";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0002:
-                    ibgMediaType = "PD-650";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "PD-650";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0005:
-                    ibgMediaType = "CD-MO";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "CD-MO";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0008:
-                    ibgMediaType = "CD-ROM";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "CD-ROM";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0009:
-                    ibgMediaType = "CD-R";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "CD-R";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x000A:
-                    ibgMediaType = "CD-RW";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "CD-RW";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0010:
-                    ibgMediaType = "DVD-ROM";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-ROM";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0011:
-                    ibgMediaType = "DVD-R";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-R";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0012:
-                    ibgMediaType = "DVD-RAM";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-RAM";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0013:
                 case 0x0014:
-                    ibgMediaType = "DVD-RW";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-RW";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0015:
                 case 0x0016:
-                    ibgMediaType = "DVD-R DL";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-R DL";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0017:
-                    ibgMediaType = "DVD-RW DL";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-RW DL";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0018:
-                    ibgMediaType = "DVD-Download";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD-Download";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x001A:
-                    ibgMediaType = "DVD+RW";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD+RW";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x001B:
-                    ibgMediaType = "DVD+R";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD+R";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0020:
-                    ibgMediaType = "DDCD-ROM";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "DDCD-ROM";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0021:
-                    ibgMediaType = "DDCD-R";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "DDCD-R";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x0022:
-                    ibgMediaType = "DDCD-RW";
-                    ibgDivider   = 150;
+                    _ibgMediaType = "DDCD-RW";
+                    _ibgDivider   = 150;
 
                     break;
                 case 0x002A:
-                    ibgMediaType = "DVD+RW DL";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD+RW DL";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x002B:
-                    ibgMediaType = "DVD+R DL";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "DVD+R DL";
+                    _ibgDivider   = 1353;
 
                     break;
                 case 0x0040:
-                    ibgMediaType = "BD-ROM";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "BD-ROM";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0041:
                 case 0x0042:
-                    ibgMediaType = "BD-R";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "BD-R";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0043:
-                    ibgMediaType = "BD-RE";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "BD-RE";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0050:
-                    ibgMediaType = "HD DVD-ROM";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-ROM";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0051:
-                    ibgMediaType = "HD DVD-R";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-R";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0052:
-                    ibgMediaType = "HD DVD-RAM";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-RAM";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0053:
-                    ibgMediaType = "HD DVD-RW";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-RW";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x0058:
-                    ibgMediaType = "HD DVD-R DL";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-R DL";
+                    _ibgDivider   = 4500;
 
                     break;
                 case 0x005A:
-                    ibgMediaType = "HD DVD-RW DL";
-                    ibgDivider   = 4500;
+                    _ibgMediaType = "HD DVD-RW DL";
+                    _ibgDivider   = 4500;
 
                     break;
                 default:
-                    ibgMediaType = "Unknown";
-                    ibgDivider   = 1353;
+                    _ibgMediaType = "Unknown";
+                    _ibgDivider   = 1353;
 
                     break;
             }
@@ -236,34 +236,34 @@ namespace Aaru.Core.Logging
         /// <param name="currentSpeed">Current speed at the snapshot</param>
         internal void Write(ulong sector, double currentSpeed)
         {
-            if(logFile == null)
+            if(_logFile == null)
                 return;
 
-            ibgIntSpeed   += currentSpeed;
-            ibgSampleRate += (int)Math.Floor((DateTime.Now - ibgDatePoint).TotalMilliseconds);
-            ibgSnaps++;
+            _ibgIntSpeed   += currentSpeed;
+            _ibgSampleRate += (int)Math.Floor((DateTime.Now - _ibgDatePoint).TotalMilliseconds);
+            _ibgSnaps++;
 
-            if(ibgSampleRate < 100)
+            if(_ibgSampleRate < 100)
                 return;
 
-            if(ibgIntSpeed > 0 &&
-               !ibgStartSet)
+            if(_ibgIntSpeed > 0 &&
+               !_ibgStartSet)
             {
-                ibgStartSpeed = ibgIntSpeed / ibgSnaps / ibgDivider;
-                ibgStartSet   = true;
+                _ibgStartSpeed = _ibgIntSpeed / _ibgSnaps / _ibgDivider;
+                _ibgStartSet   = true;
             }
 
-            ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", ibgIntSpeed / ibgSnaps / ibgDivider, ibgIntSector,
-                               ibgSampleRate).AppendLine();
+            _ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", _ibgIntSpeed / _ibgSnaps / _ibgDivider, _ibgIntSector,
+                                _ibgSampleRate).AppendLine();
 
-            if(ibgIntSpeed / ibgSnaps / ibgDivider > ibgMaxSpeed)
-                ibgMaxSpeed = ibgIntSpeed / ibgDivider;
+            if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed)
+                _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
 
-            ibgDatePoint  = DateTime.Now;
-            ibgIntSpeed   = 0;
-            ibgSampleRate = 0;
-            ibgSnaps      = 0;
-            ibgIntSector  = sector;
+            _ibgDatePoint  = DateTime.Now;
+            _ibgIntSpeed   = 0;
+            _ibgSampleRate = 0;
+            _ibgSnaps      = 0;
+            _ibgIntSector  = sector;
         }
 
         /// <summary>Closes the IMGBurn log</summary>
@@ -277,10 +277,10 @@ namespace Aaru.Core.Logging
         internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                             double averageSpeed, string devicePath)
         {
-            if(logFile == null)
+            if(_logFile == null)
                 return;
 
-            var    ibgFs     = new FileStream(logFile, FileMode.Create);
+            var    ibgFs     = new FileStream(_logFile, FileMode.Create);
             var    ibgHeader = new StringBuilder();
             string ibgBusType;
 
@@ -312,7 +312,7 @@ namespace Aaru.Core.Logging
             ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}", ibgBusType).AppendLine();
             ibgHeader.AppendLine();
 
-            ibgHeader.AppendFormat("MEDIA_TYPE={0}", ibgMediaType).AppendLine();
+            ibgHeader.AppendFormat("MEDIA_TYPE={0}", _ibgMediaType).AppendLine();
             ibgHeader.AppendLine("MEDIA_BOOKTYPE=Unknown");
             ibgHeader.AppendLine("MEDIA_ID=N/A");
             ibgHeader.AppendLine("MEDIA_TRACKPATH=PTP");
@@ -325,17 +325,20 @@ namespace Aaru.Core.Logging
             ibgHeader.AppendFormat("DATA_TYPE=MODE1/{0}", blockSize).AppendLine();
             ibgHeader.AppendLine("DATA_VOLUMEIDENTIFIER=");
             ibgHeader.AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_START={0:0.00}", ibgStartSpeed).AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / ibgDivider).AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / ibgDivider).AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", ibgMaxSpeed).AppendLine();
-            ibgHeader.AppendFormat(ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
+            ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_START={0:0.00}", _ibgStartSpeed).AppendLine();
+            ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / _ibgDivider).AppendLine();
+
+            ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / _ibgDivider).
+                      AppendLine();
+
+            ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", _ibgMaxSpeed).AppendLine();
+            ibgHeader.AppendFormat(_ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
             ibgHeader.AppendLine("[END_CONFIGURATION]");
             ibgHeader.AppendLine();
             ibgHeader.AppendLine("HRPC=True");
             ibgHeader.AppendLine();
             ibgHeader.AppendLine("[START_VERIFY_GRAPH_VALUES]");
-            ibgHeader.Append(ibgSb);
+            ibgHeader.Append(_ibgSb);
             ibgHeader.AppendLine("[END_VERIFY_GRAPH_VALUES]");
             ibgHeader.AppendLine();
             ibgHeader.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");

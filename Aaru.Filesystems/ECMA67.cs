@@ -43,7 +43,7 @@ namespace Aaru.Filesystems
 {
     public class ECMA67 : IFilesystem
     {
-        readonly byte[] ecma67_magic =
+        readonly byte[] _magic =
         {
             0x56, 0x4F, 0x4C
         };
@@ -69,7 +69,7 @@ namespace Aaru.Filesystems
 
             VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
-            return ecma67_magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
+            return _magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,

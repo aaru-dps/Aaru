@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo = new ImageInfo
+            _imageInfo = new ImageInfo
             {
                 MediaType  = mediaType,
                 SectorSize = sectorSize,
@@ -73,7 +73,7 @@ namespace Aaru.DiscImages
 
             try
             {
-                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
             {
@@ -111,15 +111,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= imageInfo.Sectors)
+            if(sectorAddress >= _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -143,15 +143,15 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            if(sectorAddress + length > imageInfo.Sectors)
+            if(sectorAddress + length > _imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
 
                 return false;
             }
 
-            writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
-            writingStream.Write(data, 0, data.Length);
+            _writingStream.Seek((long)(0 + (sectorAddress * 512)), SeekOrigin.Begin);
+            _writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
 
@@ -183,27 +183,27 @@ namespace Aaru.DiscImages
 
             Version thisVersion = GetType().Assembly.GetName().Version;
 
-            if(imageInfo.Cylinders == 0)
+            if(_imageInfo.Cylinders == 0)
             {
-                imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
-                imageInfo.Heads           = 16;
-                imageInfo.SectorsPerTrack = 63;
+                _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
+                _imageInfo.Heads           = 16;
+                _imageInfo.SectorsPerTrack = 63;
 
-                while(imageInfo.Cylinders == 0)
+                while(_imageInfo.Cylinders == 0)
                 {
-                    imageInfo.Heads--;
+                    _imageInfo.Heads--;
 
-                    if(imageInfo.Heads == 0)
+                    if(_imageInfo.Heads == 0)
                     {
-                        imageInfo.SectorsPerTrack--;
-                        imageInfo.Heads = 16;
+                        _imageInfo.SectorsPerTrack--;
+                        _imageInfo.Heads = 16;
                     }
 
-                    imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
+                    _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders       == 0 &&
-                       imageInfo.Heads           == 0 &&
-                       imageInfo.SectorsPerTrack == 0)
+                    if(_imageInfo.Cylinders       == 0 &&
+                       _imageInfo.Heads           == 0 &&
+                       _imageInfo.SectorsPerTrack == 0)
                         break;
                 }
             }
@@ -220,10 +220,10 @@ namespace Aaru.DiscImages
                 CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
                 DiskType      = TYPE_FIXED,
                 UniqueId      = Guid.NewGuid(),
-                DiskGeometry = ((imageInfo.Cylinders & 0xFFFF) << 16) + ((imageInfo.Heads & 0xFF) << 8) +
-                               (imageInfo.SectorsPerTrack & 0xFF),
-                OriginalSize = imageInfo.Sectors * 512,
-                CurrentSize  = imageInfo.Sectors * 512
+                DiskGeometry = ((_imageInfo.Cylinders & 0xFFFF) << 16) + ((_imageInfo.Heads & 0xFF) << 8) +
+                               (_imageInfo.SectorsPerTrack & 0xFF),
+                OriginalSize = _imageInfo.Sectors * 512,
+                CurrentSize  = _imageInfo.Sectors * 512
             };
 
             footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
@@ -246,11 +246,11 @@ namespace Aaru.DiscImages
             footer.Checksum = VhdChecksum(footerBytes);
             Array.Copy(BigEndianBitConverter.GetBytes(footer.Checksum), 0, footerBytes, 0x40, 4);
 
-            writingStream.Seek((long)(footer.DiskType == TYPE_FIXED ? footer.OriginalSize : 0), SeekOrigin.Begin);
-            writingStream.Write(footerBytes, 0, 512);
+            _writingStream.Seek((long)(footer.DiskType == TYPE_FIXED ? footer.OriginalSize : 0), SeekOrigin.Begin);
+            _writingStream.Write(footerBytes, 0, 512);
 
-            writingStream.Flush();
-            writingStream.Close();
+            _writingStream.Flush();
+            _writingStream.Close();
 
             IsWriting    = false;
             ErrorMessage = "";
@@ -283,9 +283,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            imageInfo.SectorsPerTrack = sectorsPerTrack;
-            imageInfo.Heads           = heads;
-            imageInfo.Cylinders       = cylinders;
+            _imageInfo.SectorsPerTrack = sectorsPerTrack;
+            _imageInfo.Heads           = heads;
+            _imageInfo.Cylinders       = cylinders;
 
             return true;
         }
