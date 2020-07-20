@@ -708,8 +708,11 @@ namespace Aaru.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI READ DISC INFORMATION response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
+        /// <param name="address">Track/session/sector address</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+        /// <param name="open">Report information of non-closed tracks</param>
+        /// <param name="type">Type of information to retrieve</param>
         public bool ReadTrackInformation(out byte[] buffer, out byte[] senseBuffer, bool open,
                                          TrackInformationType type, uint address, uint timeout, out double duration)
         {
