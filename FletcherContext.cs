@@ -51,6 +51,7 @@ namespace Aaru.Checksums
             sum2 = 0xFFFF;
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -63,10 +64,12 @@ namespace Aaru.Checksums
             }
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data) => Update(data, (uint)data.Length);
 
+        /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
@@ -75,6 +78,7 @@ namespace Aaru.Checksums
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
+        /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
@@ -172,6 +176,7 @@ namespace Aaru.Checksums
             sum2 = 0xFF;
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -184,10 +189,12 @@ namespace Aaru.Checksums
             }
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data) => Update(data, (uint)data.Length);
 
+        /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
@@ -196,6 +203,7 @@ namespace Aaru.Checksums
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
+        /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {

@@ -90,6 +90,7 @@ namespace Aaru.Checksums
             roll_init();
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -101,13 +102,16 @@ namespace Aaru.Checksums
                 fuzzy_engine_step(data[i]);
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data) => Update(data, (uint)data.Length);
 
+        /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final() => throw new NotImplementedException("SpamSum does not have a binary representation.");
 
+        /// <inheritdoc />
         /// <summary>Returns a base64 representation of the hash value.</summary>
         public string End()
         {

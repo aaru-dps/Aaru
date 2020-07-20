@@ -55,6 +55,7 @@ namespace Aaru.Checksums
             _table = table ?? GenerateTable(polynomial, inverse);
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
@@ -69,13 +70,16 @@ namespace Aaru.Checksums
             }
         }
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data) => Update(data, (uint)data.Length);
 
+        /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final() => BigEndianBitConverter.GetBytes((ushort)(_hashInt ^ _finalSeed));
 
+        /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {

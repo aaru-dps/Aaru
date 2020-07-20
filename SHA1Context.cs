@@ -45,15 +45,18 @@ namespace Aaru.Checksums
         /// <summary>Initializes the SHA1 hash provider</summary>
         public Sha1Context() => sha1Provider = SHA1.Create();
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len) => sha1Provider.TransformBlock(data, 0, (int)len, data, 0);
 
+        /// <inheritdoc />
         /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         public void Update(byte[] data) => Update(data, (uint)data.Length);
 
+        /// <inheritdoc />
         /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
@@ -62,6 +65,7 @@ namespace Aaru.Checksums
             return sha1Provider.Hash;
         }
 
+        /// <inheritdoc />
         /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {

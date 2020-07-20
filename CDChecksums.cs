@@ -410,86 +410,70 @@ namespace Aaru.Checksums
 
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18)
-                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
 
-                if(j < 18)
-                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
 
-                if(j < 18)
-                    cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
 
-                if(j < 18)
-                    cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
             }
 
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18)
-                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
 
-                if(j < 18)
-                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
 
-                if(j < 18)
-                    cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
 
-                if(j < 18)
-                    cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
             }
 
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18)
-                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
 
-                if(j < 18)
-                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
 
-                if(j < 18)
-                    cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
 
-                if(j < 18)
-                    cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
             }
 
             for(int j = 0; j < 18; j++)
             {
-                if(j < 18)
-                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
 
-                if(j < 18)
-                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
 
-                if(j < 18)
+                if(j < 17)
                     cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
 
-                if(j < 18)
-                    cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
 
-                if(j < 18)
-                    cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
             }
 
             i = 0;
