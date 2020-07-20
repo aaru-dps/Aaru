@@ -40,7 +40,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Partitions;
 
 namespace Aaru.CommonTypes
 {

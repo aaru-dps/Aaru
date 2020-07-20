@@ -39,10 +39,8 @@
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
-using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.Partitions
+namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
     public interface IPartition
