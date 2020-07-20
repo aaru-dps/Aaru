@@ -116,7 +116,6 @@ namespace Aaru.CommonTypes.Interfaces
         /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
         /// <param name="head">Physical head (0-based).</param>
         /// <param name="sector">Logical sector ID.</param>
-        /// <param name="status">Status of request.</param>
         bool? VerifySector(ushort track, byte head, ushort sector);
     }
 }

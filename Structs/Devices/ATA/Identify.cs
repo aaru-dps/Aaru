@@ -1065,9 +1065,6 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
                 buf[i            + 1] = bytes[i];
             }
 
-            string test1 = StringHandlers.CToString(buf);
-            string test2 = DescrambleATAString(buf, 0, length);
-
             return buf;
         }
     }
