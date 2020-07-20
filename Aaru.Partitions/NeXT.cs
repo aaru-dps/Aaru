@@ -39,6 +39,7 @@ using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 // Information learnt from XNU source and testing against real disks

@@ -46,6 +46,7 @@ using Aaru.Decoders.DVD;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.Xbox;
+using Aaru.Helpers;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;

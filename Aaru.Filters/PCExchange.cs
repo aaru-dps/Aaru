@@ -38,6 +38,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
+using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Filters
 {

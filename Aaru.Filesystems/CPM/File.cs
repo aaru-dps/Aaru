@@ -32,8 +32,9 @@
 
 using System;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 
-namespace Aaru.Filesystems.CPM
+namespace Aaru.Filesystems
 {
     internal partial class CPM
     {

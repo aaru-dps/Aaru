@@ -40,7 +40,7 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems.CPM
+namespace Aaru.Filesystems
 {
     internal partial class CPM
     {

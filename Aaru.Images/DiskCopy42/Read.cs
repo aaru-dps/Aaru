@@ -38,6 +38,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;

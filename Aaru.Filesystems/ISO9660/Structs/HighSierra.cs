@@ -34,8 +34,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.Helpers;
 
-namespace Aaru.Filesystems.ISO9660
+namespace Aaru.Filesystems
 {
     public partial class ISO9660
     {

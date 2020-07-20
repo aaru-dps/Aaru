@@ -36,7 +36,7 @@ using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace Aaru.Filesystems.AppleDOS
+namespace Aaru.Filesystems
 {
     public partial class AppleDOS : IReadOnlyFilesystem
     {

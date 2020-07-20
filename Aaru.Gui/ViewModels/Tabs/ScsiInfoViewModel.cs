@@ -40,6 +40,7 @@ using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
+using Aaru.Helpers;
 using Avalonia.Controls;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
@@ -51,13 +52,13 @@ namespace Aaru.Gui.ViewModels.Tabs
         readonly byte[] _configuration;
         readonly byte[] _scsiModeSense10;
         readonly byte[] _scsiModeSense6;
+        readonly Window _view;
         string          _evpdPageText;
         string          _mmcFeatureText;
         string          _scsiModeSensePageText;
         object          _selectedEvpdPage;
         object          _selectedMmcFeature;
         object          _selectedModeSensePage;
-        readonly Window _view;
 
         public ScsiInfoViewModel(byte[] scsiInquiryData, Inquiry? scsiInquiry, Dictionary<byte, byte[]> scsiEvpdPages,
                                  Modes.DecodedMode? scsiMode, PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,

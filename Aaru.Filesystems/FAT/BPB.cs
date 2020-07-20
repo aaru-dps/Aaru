@@ -40,7 +40,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.FAT
+namespace Aaru.Filesystems
 {
     public partial class FAT
     {

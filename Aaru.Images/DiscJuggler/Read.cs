@@ -42,6 +42,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages

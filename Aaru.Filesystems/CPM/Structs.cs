@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.Filesystems.CPM
+namespace Aaru.Filesystems
 {
     internal partial class CPM
     {

@@ -37,7 +37,7 @@ using System.Linq;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.AppleDOS
+namespace Aaru.Filesystems
 {
     public partial class AppleDOS
     {

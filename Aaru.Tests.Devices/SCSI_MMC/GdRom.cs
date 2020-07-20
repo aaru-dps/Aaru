@@ -4,6 +4,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 namespace Aaru.Tests.Devices
 {

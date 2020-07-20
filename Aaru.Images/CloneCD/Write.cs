@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 

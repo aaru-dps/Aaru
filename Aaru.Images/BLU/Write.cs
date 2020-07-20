@@ -39,6 +39,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders;
+using Aaru.Helpers;
 using Schemas;
 using Version = Aaru.CommonTypes.Interop.Version;
 

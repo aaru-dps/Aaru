@@ -36,6 +36,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 namespace Aaru.Core.Media
 {

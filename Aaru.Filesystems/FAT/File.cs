@@ -35,9 +35,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Filesystems.FAT
+namespace Aaru.Filesystems
 {
     public partial class FAT
     {

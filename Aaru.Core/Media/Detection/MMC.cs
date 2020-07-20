@@ -41,6 +41,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.Sega;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 // ReSharper disable JoinDeclarationAndInitializer
 

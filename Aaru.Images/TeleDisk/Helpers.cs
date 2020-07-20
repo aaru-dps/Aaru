@@ -34,6 +34,7 @@ using System;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Exceptions;
 using Aaru.Console;
+using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {

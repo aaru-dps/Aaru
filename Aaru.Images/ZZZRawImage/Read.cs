@@ -46,6 +46,7 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
+using Aaru.Helpers;
 using Schemas;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;

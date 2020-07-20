@@ -41,6 +41,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Helpers;
 using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
 namespace Aaru.Commands.Image

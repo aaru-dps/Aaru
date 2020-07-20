@@ -37,6 +37,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Aaru.Commands;
+using Aaru.Commands.Database;
 using Aaru.Commands.Device;
 using Aaru.Commands.Filesystem;
 using Aaru.Commands.Image;

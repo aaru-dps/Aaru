@@ -34,7 +34,7 @@ using System;
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems.FATX
+namespace Aaru.Filesystems
 {
     public partial class XboxFatPlugin
     {

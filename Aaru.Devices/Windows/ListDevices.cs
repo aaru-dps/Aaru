@@ -35,9 +35,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 using System.Text;
+using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
+using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Devices.Windows
 {

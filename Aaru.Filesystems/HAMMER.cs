@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;

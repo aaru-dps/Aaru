@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Schemas;
 
 // ReSharper disable NotAccessedField.Local

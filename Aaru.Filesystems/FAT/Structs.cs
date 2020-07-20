@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.Filesystems.FAT
+namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class FAT

@@ -33,6 +33,7 @@
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
+using Aaru.Helpers;
 
 namespace Aaru.Core
 {

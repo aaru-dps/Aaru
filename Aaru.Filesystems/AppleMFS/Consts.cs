@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Aaru.Filesystems.AppleMFS
+namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     [SuppressMessage("ReSharper", "UnusedMember.Local")]

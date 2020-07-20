@@ -38,6 +38,7 @@ using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Aaru.Helpers;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Devices.Info

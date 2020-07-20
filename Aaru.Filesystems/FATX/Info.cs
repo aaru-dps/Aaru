@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems.FATX
+namespace Aaru.Filesystems
 {
     public partial class XboxFatPlugin
     {

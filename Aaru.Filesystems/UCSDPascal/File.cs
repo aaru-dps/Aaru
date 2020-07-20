@@ -33,6 +33,7 @@
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 
 namespace Aaru.Filesystems.UCSDPascal
 {

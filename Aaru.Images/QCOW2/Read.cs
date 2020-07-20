@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 using Marshal = Aaru.Helpers.Marshal;

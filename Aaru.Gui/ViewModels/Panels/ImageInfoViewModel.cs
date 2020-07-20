@@ -48,6 +48,7 @@ using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
+using Aaru.Helpers;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;

@@ -40,7 +40,7 @@ using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems.AppleDOS
+namespace Aaru.Filesystems
 {
     public partial class AppleDOS
     {

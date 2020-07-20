@@ -37,9 +37,10 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems.AppleMFS
+namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS

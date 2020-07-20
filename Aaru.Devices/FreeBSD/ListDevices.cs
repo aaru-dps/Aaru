@@ -34,10 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Helpers;
 using static Aaru.Devices.FreeBSD.Extern;
+using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Devices.FreeBSD
 {

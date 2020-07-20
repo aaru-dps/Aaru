@@ -39,10 +39,11 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
-namespace Aaru.Filesystems.FATX
+namespace Aaru.Filesystems
 {
     public partial class XboxFatPlugin
     {

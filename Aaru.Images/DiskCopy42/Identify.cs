@@ -34,6 +34,7 @@ using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Claunia.Encoding;
 
 namespace Aaru.DiscImages

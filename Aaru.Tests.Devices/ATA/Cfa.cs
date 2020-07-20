@@ -29,6 +29,7 @@
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 namespace Aaru.Tests.Devices.ATA
 {

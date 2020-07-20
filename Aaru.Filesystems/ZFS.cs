@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Schemas;
 
 namespace Aaru.Filesystems

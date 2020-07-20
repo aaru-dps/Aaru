@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using Aaru.Console;
+using Aaru.Helpers;
 
 namespace Aaru.Devices
 {

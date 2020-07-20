@@ -36,6 +36,7 @@ using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 

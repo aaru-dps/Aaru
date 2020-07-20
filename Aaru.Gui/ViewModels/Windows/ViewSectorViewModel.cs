@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows

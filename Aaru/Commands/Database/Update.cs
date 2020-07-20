@@ -41,7 +41,7 @@ using Aaru.Core;
 using Aaru.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Aaru.Commands
+namespace Aaru.Commands.Database
 {
     internal class UpdateCommand : Command
     {

@@ -42,7 +42,7 @@ using Aaru.Decoders.Sega;
 using Aaru.Helpers;
 using Schemas;
 
-namespace Aaru.Filesystems.ISO9660
+namespace Aaru.Filesystems
 {
     public partial class ISO9660
     {

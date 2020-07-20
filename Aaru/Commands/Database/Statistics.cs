@@ -38,7 +38,7 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Command = System.CommandLine.Command;
 
-namespace Aaru.Commands
+namespace Aaru.Commands.Database
 {
     internal class StatisticsCommand : Command
     {

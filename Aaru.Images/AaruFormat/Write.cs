@@ -46,6 +46,7 @@ using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
+using Aaru.Helpers;
 using CUETools.Codecs;
 using CUETools.Codecs.Flake;
 using Schemas;

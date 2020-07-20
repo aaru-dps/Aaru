@@ -36,6 +36,7 @@ using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders;
+using Aaru.Helpers;
 
 namespace Aaru.Filesystems.LisaFS
 {

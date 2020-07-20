@@ -39,6 +39,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 // ReSharper disable NotAccessedField.Local
 

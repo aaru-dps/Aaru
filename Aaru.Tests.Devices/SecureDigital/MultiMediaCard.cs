@@ -28,6 +28,7 @@
 
 using Aaru.Console;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 namespace Aaru.Tests.Devices.SecureDigital
 {

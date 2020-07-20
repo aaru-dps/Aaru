@@ -38,7 +38,7 @@ using System.Text;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.FAT
+namespace Aaru.Filesystems
 {
     public partial class FAT
     {

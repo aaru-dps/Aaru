@@ -40,6 +40,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {

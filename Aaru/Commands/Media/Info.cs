@@ -580,7 +580,7 @@ namespace Aaru.Commands.Media
                     var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
                     // Search for device in main database
-                    Database.Models.Device dbDev =
+                    Aaru.Database.Models.Device dbDev =
                         ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                         d.Revision     == dev.FirmwareRevision);
 

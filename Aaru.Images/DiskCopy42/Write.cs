@@ -35,6 +35,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 

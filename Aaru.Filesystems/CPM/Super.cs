@@ -46,7 +46,7 @@ using Schemas;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
-namespace Aaru.Filesystems.CPM
+namespace Aaru.Filesystems
 {
     internal partial class CPM
     {

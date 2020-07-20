@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filters

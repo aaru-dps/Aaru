@@ -34,7 +34,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.DiscImages;
-using Aaru.Filesystems.FATX;
+using Aaru.Filesystems;
 using Aaru.Filters;
 using NUnit.Framework;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;

@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 #pragma warning disable 169

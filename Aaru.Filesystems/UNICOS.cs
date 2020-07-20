@@ -37,6 +37,7 @@ using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Schemas;
 
 // UNICOS is ILP64 so let's think everything is 64-bit

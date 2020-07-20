@@ -35,7 +35,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 
-namespace Aaru.DiscImages.CopyTape
+namespace Aaru.DiscImages
 {
     public partial class CopyTape
     {

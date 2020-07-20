@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems.FATX
+namespace Aaru.Filesystems
 {
     public partial class XboxFatPlugin
     {

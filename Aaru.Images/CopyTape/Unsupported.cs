@@ -33,7 +33,7 @@
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
 
-namespace Aaru.DiscImages.CopyTape
+namespace Aaru.DiscImages
 {
     public partial class CopyTape
     {

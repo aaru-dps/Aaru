@@ -34,11 +34,12 @@ using System;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Claunia.Encoding;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace Aaru.Filesystems.AppleMFS
+namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS

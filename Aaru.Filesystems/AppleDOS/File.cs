@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace Aaru.Filesystems.AppleDOS
+namespace Aaru.Filesystems
 {
     public partial class AppleDOS
     {

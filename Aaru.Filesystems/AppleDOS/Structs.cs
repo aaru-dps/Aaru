@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Aaru.Filesystems.AppleDOS
+namespace Aaru.Filesystems
 {
     public partial class AppleDOS
     {

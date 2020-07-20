@@ -38,6 +38,7 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using Schemas;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = System.Version;

@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions

@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.DiscImages.CopyTape
+namespace Aaru.DiscImages
 {
     public partial class CopyTape
     {

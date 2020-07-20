@@ -33,6 +33,7 @@
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {

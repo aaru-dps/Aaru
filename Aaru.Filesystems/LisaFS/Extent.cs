@@ -35,6 +35,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Decoders;
+using Aaru.Helpers;
 
 namespace Aaru.Filesystems.LisaFS
 {

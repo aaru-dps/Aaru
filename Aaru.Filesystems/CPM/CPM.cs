@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace Aaru.Filesystems.CPM
+namespace Aaru.Filesystems
 {
     internal partial class CPM : IReadOnlyFilesystem
     {

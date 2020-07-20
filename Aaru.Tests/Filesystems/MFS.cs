@@ -30,7 +30,7 @@ using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.DiscImages;
-using Aaru.Filesystems.AppleMFS;
+using Aaru.Filesystems;
 using Aaru.Filters;
 using NUnit.Framework;
 

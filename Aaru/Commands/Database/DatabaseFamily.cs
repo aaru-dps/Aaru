@@ -32,7 +32,7 @@
 
 using System.CommandLine;
 
-namespace Aaru.Commands.Filesystem
+namespace Aaru.Commands.Database
 {
     public class DatabaseFamily : Command
     {

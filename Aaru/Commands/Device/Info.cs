@@ -48,6 +48,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
+using Aaru.Helpers;
 using Command = System.CommandLine.Command;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
@@ -1142,7 +1143,7 @@ namespace Aaru.Commands.Device
             var ctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
             // Search for device in main database
-            Database.Models.Device dbDev =
+            Aaru.Database.Models.Device dbDev =
                 ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                 d.Revision     == dev.FirmwareRevision);
 

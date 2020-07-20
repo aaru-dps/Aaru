@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {

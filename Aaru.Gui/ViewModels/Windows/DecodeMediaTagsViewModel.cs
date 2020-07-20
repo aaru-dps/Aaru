@@ -43,6 +43,7 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
+using Aaru.Helpers;
 using ReactiveUI;
 using BCA = Aaru.Decoders.Bluray.BCA;
 using Cartridge = Aaru.Decoders.DVD.Cartridge;

@@ -34,7 +34,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
 
-namespace Aaru.Filesystems.ISO9660
+namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public partial class ISO9660

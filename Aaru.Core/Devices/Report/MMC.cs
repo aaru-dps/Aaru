@@ -39,6 +39,7 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+using Aaru.Helpers;
 
 namespace Aaru.Core.Devices.Report
 {

@@ -47,6 +47,7 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
+using Aaru.Helpers;
 using Newtonsoft.Json;
 using Command = System.CommandLine.Command;
 using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
