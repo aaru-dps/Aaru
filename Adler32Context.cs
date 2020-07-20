@@ -33,6 +33,7 @@
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {

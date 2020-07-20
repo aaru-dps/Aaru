@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 namespace Aaru.Checksums
 {
