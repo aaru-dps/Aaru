@@ -1435,6 +1435,7 @@
       </e>
       <e p="Aaru.Images" t="IncludeRecursive">
         <e p="Aaru.Images.csproj" t="IncludeRecursive" />
+        <e p="Aaru.Images.csproj.DotSettings" t="Include" />
         <e p="AaruFormat" t="Include">
           <e p="AaruFormat.cs" t="Include" />
           <e p="CdEcc.cs" t="Include" />

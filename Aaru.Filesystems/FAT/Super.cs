@@ -54,7 +54,7 @@ namespace Aaru.Filesystems.FAT
 
         IMediaImage image;
 
-        /// <summary>Mounts an Apple Lisa filesystem</summary>
+        /// <inheritdoc />
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
@@ -861,7 +861,7 @@ namespace Aaru.Filesystems.FAT
             return Errno.NoError;
         }
 
-        /// <summary>Umounts this Lisa filesystem</summary>
+        /// <inheritdoc />
         public Errno Unmount()
         {
             if(!mounted)
@@ -873,8 +873,7 @@ namespace Aaru.Filesystems.FAT
             return Errno.NoError;
         }
 
-        /// <summary>Gets information about the mounted volume.</summary>
-        /// <param name="stat">Information about the mounted volume.</param>
+        /// <inheritdoc />
         public Errno StatFs(out FileSystemInfo stat)
         {
             stat = null;

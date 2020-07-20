@@ -38,6 +38,7 @@ namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
+        /// <inheritdoc />
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
@@ -81,6 +82,7 @@ namespace Aaru.Filesystems.AppleDOS
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>

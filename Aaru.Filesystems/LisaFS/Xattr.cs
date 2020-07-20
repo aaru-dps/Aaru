@@ -41,6 +41,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {
+        /// <inheritdoc />
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>
@@ -56,6 +57,7 @@ namespace Aaru.Filesystems.LisaFS
             return isDir ? Errno.InvalidArgument : ListXAttr(fileId, out xattrs);
         }
 
+        /// <inheritdoc />
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>

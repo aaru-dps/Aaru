@@ -42,6 +42,7 @@ namespace Aaru.Filesystems.FAT
 {
     public partial class FAT
     {
+        /// <inheritdoc />
         /// <summary>Solves a symbolic link.</summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
@@ -52,6 +53,7 @@ namespace Aaru.Filesystems.FAT
             return Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         /// <summary>Lists contents from a directory.</summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>

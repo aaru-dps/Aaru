@@ -38,6 +38,7 @@ namespace Aaru.Filesystems.CPM
 {
     internal partial class CPM
     {
+        /// <inheritdoc />
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
@@ -70,6 +71,7 @@ namespace Aaru.Filesystems.CPM
                        : Errno.NoSuchExtendedAttribute;
         }
 
+        /// <inheritdoc />
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">Path.</param>

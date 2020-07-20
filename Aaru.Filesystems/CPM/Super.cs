@@ -794,6 +794,7 @@ namespace Aaru.Filesystems.CPM
             return Errno.NoError;
         }
 
+        /// <inheritdoc />
         /// <summary>Gets information about the mounted volume.</summary>
         /// <param name="stat">Information about the mounted volume.</param>
         public Errno StatFs(out FileSystemInfo stat)

@@ -41,6 +41,7 @@ namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {
+        /// <inheritdoc />
         /// <summary>Solves a symbolic link.</summary>
         /// <param name="path">Link path.</param>
         /// <param name="dest">Link destination.</param>
@@ -51,6 +52,7 @@ namespace Aaru.Filesystems.AppleDOS
             return !mounted ? Errno.AccessDenied : Errno.NotSupported;
         }
 
+        /// <inheritdoc />
         /// <summary>Lists contents from a directory.</summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
