@@ -74,9 +74,8 @@ namespace Aaru.Partitions
             {
                 var part = new Partition
                 {
-                    Start = (entry.p_boffset / imagePlugin.Info.SectorSize) + sectorOffset,
-                    Offset = entry.p_boffset +
-                               (sectorOffset * imagePlugin.Info.SectorSize),
+                    Start    = (entry.p_boffset / imagePlugin.Info.SectorSize) + sectorOffset,
+                    Offset   = entry.p_boffset + (sectorOffset * imagePlugin.Info.SectorSize),
                     Size     = entry.p_bsize,
                     Length   = entry.p_bsize / imagePlugin.Info.SectorSize,
                     Name     = entry.p_stor_uuid.ToString(),

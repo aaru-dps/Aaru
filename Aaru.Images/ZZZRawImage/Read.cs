@@ -1212,14 +1212,18 @@ namespace Aaru.DiscImages
 
             var trk = new Track
             {
-                TrackBytesPerSector = (int)imageInfo.SectorSize, TrackEndSector = imageInfo.Sectors - 1,
-                TrackFilter         = rawImageFilter, TrackFile                 = rawImageFilter.GetFilename(),
-                TrackFileOffset     = 0,
-                TrackFileType       = "BINARY", TrackRawBytesPerSector = (int)imageInfo.SectorSize,
-                TrackSequence       = 1,
-                TrackStartSector    = 0, TrackSubchannelType = TrackSubchannelType.None,
-                TrackType           = TrackType.Data,
-                TrackSession        = 1
+                TrackBytesPerSector    = (int)imageInfo.SectorSize,
+                TrackEndSector         = imageInfo.Sectors - 1,
+                TrackFilter            = rawImageFilter,
+                TrackFile              = rawImageFilter.GetFilename(),
+                TrackFileOffset        = 0,
+                TrackFileType          = "BINARY",
+                TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                TrackSequence          = 1,
+                TrackStartSector       = 0,
+                TrackSubchannelType    = TrackSubchannelType.None,
+                TrackType              = TrackType.Data,
+                TrackSession           = 1
             };
 
             List<Track> lst = new List<Track>
@@ -1240,14 +1244,18 @@ namespace Aaru.DiscImages
 
             var trk = new Track
             {
-                TrackBytesPerSector = (int)imageInfo.SectorSize, TrackEndSector = imageInfo.Sectors - 1,
-                TrackFilter         = rawImageFilter, TrackFile                 = rawImageFilter.GetFilename(),
-                TrackFileOffset     = 0,
-                TrackFileType       = "BINARY", TrackRawBytesPerSector = (int)imageInfo.SectorSize,
-                TrackSequence       = 1,
-                TrackStartSector    = 0, TrackSubchannelType = TrackSubchannelType.None,
-                TrackType           = TrackType.Data,
-                TrackSession        = 1
+                TrackBytesPerSector    = (int)imageInfo.SectorSize,
+                TrackEndSector         = imageInfo.Sectors - 1,
+                TrackFilter            = rawImageFilter,
+                TrackFile              = rawImageFilter.GetFilename(),
+                TrackFileOffset        = 0,
+                TrackFileType          = "BINARY",
+                TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                TrackSequence          = 1,
+                TrackStartSector       = 0,
+                TrackSubchannelType    = TrackSubchannelType.None,
+                TrackType              = TrackType.Data,
+                TrackSession           = 1
             };
 
             List<Track> lst = new List<Track>

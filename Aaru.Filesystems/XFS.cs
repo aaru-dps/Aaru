@@ -211,12 +211,16 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type           = "XFS filesystem", ClusterSize = xfsSb.blocksize,
-                Clusters       = xfsSb.dblocks,
-                FreeClusters   = xfsSb.fdblocks, FreeClustersSpecified = true,
-                Files          = xfsSb.icount - xfsSb.ifree,
-                FilesSpecified = true, Dirty                                                   = xfsSb.inprogress > 0,
-                VolumeName     = StringHandlers.CToString(xfsSb.fname, Encoding), VolumeSerial = xfsSb.uuid.ToString()
+                Type                  = "XFS filesystem",
+                ClusterSize           = xfsSb.blocksize,
+                Clusters              = xfsSb.dblocks,
+                FreeClusters          = xfsSb.fdblocks,
+                FreeClustersSpecified = true,
+                Files                 = xfsSb.icount - xfsSb.ifree,
+                FilesSpecified        = true,
+                Dirty                 = xfsSb.inprogress > 0,
+                VolumeName            = StringHandlers.CToString(xfsSb.fname, Encoding),
+                VolumeSerial          = xfsSb.uuid.ToString()
             };
         }
 

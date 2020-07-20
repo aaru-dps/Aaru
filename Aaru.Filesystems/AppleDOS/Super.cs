@@ -105,10 +105,13 @@ namespace Aaru.Filesystems.AppleDOS
             // Create XML metadata for mounted filesystem
             XmlFsType = new FileSystemType
             {
-                Bootable    = true, Clusters = device.Info.Sectors,
-                ClusterSize = vtoc.bytesPerSector,
-                Files       = (ulong)catalogCache.Count, FilesSpecified = true, FreeClustersSpecified = true,
-                Type        = "Apple DOS"
+                Bootable              = true,
+                Clusters              = device.Info.Sectors,
+                ClusterSize           = vtoc.bytesPerSector,
+                Files                 = (ulong)catalogCache.Count,
+                FilesSpecified        = true,
+                FreeClustersSpecified = true,
+                Type                  = "Apple DOS"
             };
 
             XmlFsType.FreeClusters = XmlFsType.Clusters - usedSectors;
@@ -142,8 +145,11 @@ namespace Aaru.Filesystems.AppleDOS
         {
             stat = new FileSystemInfo
             {
-                Blocks = device.Info.Sectors, FilenameLength = 30, Files = (ulong)catalogCache.Count, PluginId = Id,
-                Type   = "Apple DOS"
+                Blocks         = device.Info.Sectors,
+                FilenameLength = 30,
+                Files          = (ulong)catalogCache.Count,
+                PluginId       = Id,
+                Type           = "Apple DOS"
             };
 
             stat.FreeFiles  = totalFileEntries - stat.Files;

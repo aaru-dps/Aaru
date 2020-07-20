@@ -71,7 +71,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -87,7 +89,9 @@ namespace Aaru.DiscImages
 
             fdihdr = new Anex86Header
             {
-                hdrSize = 4096, dskSize = (int)(sectors * sectorSize), bps = (int)sectorSize
+                hdrSize = 4096,
+                dskSize = (int)(sectors * sectorSize),
+                bps     = (int)sectorSize
             };
 
             IsWriting    = true;

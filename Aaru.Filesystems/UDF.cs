@@ -114,10 +114,8 @@ namespace Aaru.Filesystems
                 AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
                                            anchor.reserveVolumeDescriptorSequenceExtent.location);
 
-                if(anchor.tag.tagIdentifier !=
-                   TagIdentifier.AnchorVolumeDescriptorPointer ||
-                   anchor.tag.tagLocation !=
-                   position ||
+                if(anchor.tag.tagIdentifier != TagIdentifier.AnchorVolumeDescriptorPointer ||
+                   anchor.tag.tagLocation != position ||
                    anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start >= partition.End)
                     continue;
 
@@ -185,10 +183,8 @@ namespace Aaru.Filesystems
                 sector = imagePlugin.ReadSector(position);
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
-                if(anchor.tag.tagIdentifier ==
-                   TagIdentifier.AnchorVolumeDescriptorPointer &&
-                   anchor.tag.tagLocation ==
-                   position &&
+                if(anchor.tag.tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer &&
+                   anchor.tag.tagLocation == position &&
                    anchor.mainVolumeDescriptorSequenceExtent.location + partition.Start < partition.End)
                     break;
             }
@@ -296,16 +292,15 @@ namespace Aaru.Filesystems
             {
                 Type =
                     $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
-                ApplicationIdentifier =
-                    Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
-                ClusterSize               = lvd.logicalBlockSize,
-                ModificationDate          = EcmaToDateTime(lvid.recordingDateTime),
-                ModificationDateSpecified = true, Files = lvidiu.files,
-                FilesSpecified            = true,
-                VolumeName                = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
-                VolumeSetIdentifier       = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
-                SystemIdentifier =
-                    Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
+                ApplicationIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
+                ClusterSize = lvd.logicalBlockSize,
+                ModificationDate = EcmaToDateTime(lvid.recordingDateTime),
+                ModificationDateSpecified = true,
+                Files = lvidiu.files,
+                FilesSpecified = true,
+                VolumeName = StringHandlers.DecompressUnicode(lvd.logicalVolumeIdentifier),
+                VolumeSetIdentifier = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
+                SystemIdentifier = Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
 
             XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
@@ -362,12 +357,9 @@ namespace Aaru.Filesystems
 
         enum TagIdentifier : ushort
         {
-            PrimaryVolumeDescriptor           = 1, AnchorVolumeDescriptorPointer = 2,
-            VolumeDescriptorPointer           = 3,
-            ImplementationUseVolumeDescriptor = 4, PartitionDescriptor = 5,
-            LogicalVolumeDescriptor           = 6,
-            UnallocatedSpaceDescriptor        = 7, TerminatingDescriptor = 8,
-            LogicalVolumeIntegrityDescriptor  = 9
+            PrimaryVolumeDescriptor           = 1, AnchorVolumeDescriptorPointer = 2, VolumeDescriptorPointer = 3,
+            ImplementationUseVolumeDescriptor = 4, PartitionDescriptor = 5, LogicalVolumeDescriptor = 6,
+            UnallocatedSpaceDescriptor        = 7, TerminatingDescriptor = 8, LogicalVolumeIntegrityDescriptor = 9
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

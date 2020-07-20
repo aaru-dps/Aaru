@@ -122,8 +122,10 @@ namespace Aaru.DiscImages
                 OriginalSize       = BigEndianBitConverter.ToUInt64(usableHeader, 0x28),
                 CurrentSize        = BigEndianBitConverter.ToUInt64(usableHeader, 0x30),
                 DiskGeometry       = BigEndianBitConverter.ToUInt32(usableHeader, 0x38),
-                DiskType           = BigEndianBitConverter.ToUInt32(usableHeader, 0x3C), Checksum = usableChecksum,
-                UniqueId           = BigEndianBitConverter.ToGuid(usableHeader, 0x44), SavedState = usableHeader[0x54],
+                DiskType           = BigEndianBitConverter.ToUInt32(usableHeader, 0x3C),
+                Checksum           = usableChecksum,
+                UniqueId           = BigEndianBitConverter.ToGuid(usableHeader, 0x44),
+                SavedState         = usableHeader[0x54],
                 Reserved           = new byte[usableHeader.Length - 0x55]
             };
 
@@ -161,8 +163,7 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
                                        thisFooter.DiskGeometry, (thisFooter.DiskGeometry & 0xFFFF0000) >> 16,
-                                       (thisFooter.DiskGeometry                          & 0xFF00)     >> 8,
-                                       thisFooter.DiskGeometry & 0xFF);
+                                       (thisFooter.DiskGeometry & 0xFF00) >> 8, thisFooter.DiskGeometry & 0xFF);
 
             AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}", thisFooter.DiskType);
             AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}", thisFooter.Checksum);
@@ -360,7 +361,8 @@ namespace Aaru.DiscImages
 
                 thisDynamic = new DynamicDiskHeader
                 {
-                    LocatorEntries = new ParentLocatorEntry[8], Reserved2 = new byte[256]
+                    LocatorEntries = new ParentLocatorEntry[8],
+                    Reserved2      = new byte[256]
                 };
 
                 for(int i = 0; i < 8; i++)

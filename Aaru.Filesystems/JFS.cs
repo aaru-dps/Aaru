@@ -172,13 +172,13 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type     = "JFS filesystem", Clusters = jfsSb.s_size, ClusterSize = jfsSb.s_bsize,
+                Type = "JFS filesystem",
+                Clusters = jfsSb.s_size,
+                ClusterSize = jfsSb.s_bsize,
                 Bootable = true,
-                VolumeName =
-                    StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
+                VolumeName = StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
                 VolumeSerial = $"{jfsSb.s_uuid}",
-                ModificationDate =
-                    DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
+                ModificationDate = DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
                 ModificationDateSpecified = true
             };
 

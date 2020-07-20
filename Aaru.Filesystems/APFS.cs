@@ -108,8 +108,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Bootable = false, Clusters = nxSb.containerBlocks, ClusterSize = nxSb.blockSize,
-                Type     = "Apple File System"
+                Bootable    = false,
+                Clusters    = nxSb.containerBlocks,
+                ClusterSize = nxSb.blockSize,
+                Type        = "Apple File System"
             };
         }
 

@@ -332,8 +332,9 @@ namespace Aaru.Core
 
                             existing = new Device(device)
                             {
-                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                CanReadGdRomUsingSwapDisc = device.CanReadGdRomUsingSwapDisc
+                                Id                         = device.Id,
+                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
                             };
 
                             mctx.Devices.Add(existing);
@@ -344,8 +345,9 @@ namespace Aaru.Core
 
                             mctx.Devices.Add(new Device(device)
                             {
-                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                CanReadGdRomUsingSwapDisc = device.CanReadGdRomUsingSwapDisc
+                                Id                         = device.Id,
+                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
                             });
                         }
                     }

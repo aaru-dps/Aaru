@@ -9,8 +9,10 @@ namespace Aaru.Database.Migrations
             migrationBuilder.CreateTable("RemoteApplications", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name         = table.Column<string>(nullable: true), Version = table.Column<string>(nullable: true),
-                Synchronized = table.Column<bool>(), Count                   = table.Column<ulong>()
+                Name         = table.Column<string>(nullable: true),
+                Version      = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>(),
+                Count        = table.Column<ulong>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_RemoteApplications", x => x.Id);
@@ -18,9 +20,10 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("RemoteArchitectures", table => new
             {
-                Id    = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name  = table.Column<string>(nullable: true), Synchronized = table.Column<bool>(),
-                Count = table.Column<ulong>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>(),
+                Count        = table.Column<ulong>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_RemoteArchitectures", x => x.Id);
@@ -29,8 +32,10 @@ namespace Aaru.Database.Migrations
             migrationBuilder.CreateTable("RemoteOperatingSystems", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name         = table.Column<string>(nullable: true), Version = table.Column<string>(nullable: true),
-                Synchronized = table.Column<bool>(), Count                   = table.Column<ulong>()
+                Name         = table.Column<string>(nullable: true),
+                Version      = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>(),
+                Count        = table.Column<ulong>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_RemoteOperatingSystems", x => x.Id);

@@ -209,9 +209,10 @@ namespace Aaru.Partitions
                     Size = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize),
                     Offset =
                         (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
-                    Type   = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type), Sequence = (ulong)i,
-                    Name   = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                    Length = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sectorSize),
+                    Type     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
+                    Sequence = (ulong)i,
+                    Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
+                    Length   = (ulong)((label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize) / sectorSize),
                     Start = (ulong)(((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
                                      label.dl_dt.d_secsize) / sectorSize),
                     Scheme = Name

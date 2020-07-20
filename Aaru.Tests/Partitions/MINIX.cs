@@ -51,23 +51,47 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Size      = 268369408, Name  = "MINIX", Type = "MINIX",
-                    Offset      = 2064896, Length = 524159, Sequence = 0, Start      = 4033
+                    Description = null,
+                    Size        = 268369408,
+                    Name        = "MINIX",
+                    Type        = "MINIX",
+                    Offset      = 2064896,
+                    Length      = 524159,
+                    Sequence    = 0,
+                    Start       = 4033
                 },
                 new Partition
                 {
-                    Description = null, Size        = 270434304, Name  = "MINIX", Type = "MINIX",
-                    Offset      = 270434304, Length = 528192, Sequence = 1, Start      = 528192
+                    Description = null,
+                    Size        = 270434304,
+                    Name        = "MINIX",
+                    Type        = "MINIX",
+                    Offset      = 270434304,
+                    Length      = 528192,
+                    Sequence    = 1,
+                    Start       = 528192
                 },
                 new Partition
                 {
-                    Description = null, Size        = 270434304, Name  = "MINIX", Type = "MINIX",
-                    Offset      = 540868608, Length = 528192, Sequence = 2, Start      = 1056384
+                    Description = null,
+                    Size        = 270434304,
+                    Name        = "MINIX",
+                    Type        = "MINIX",
+                    Offset      = 540868608,
+                    Length      = 528192,
+                    Sequence    = 2,
+                    Start       = 1056384
                 },
                 new Partition
                 {
-                    Description = null, Size        = 262176768, Name  = "MINIX", Type = "MINIX",
-                    Offset      = 811302912, Length = 512064, Sequence = 3, Start      = 1584576
+                    Description = null,
+                    Size        = 262176768,
+                    Name        = "MINIX",
+                    Type        = "MINIX",
+                    Offset      = 811302912,
+                    Length      = 512064,
+                    Sequence    = 3,
+                    Start       = 1584576
                 }
             }
         };

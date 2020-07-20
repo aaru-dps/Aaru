@@ -144,7 +144,8 @@ namespace Aaru.Filesystems.CPM
 
             stat = new FileEntryInfo
             {
-                Attributes = FileAttributes.Directory, BlockSize = XmlFsType.ClusterSize
+                Attributes = FileAttributes.Directory,
+                BlockSize  = XmlFsType.ClusterSize
             };
 
             if(labelCreationDate != null)

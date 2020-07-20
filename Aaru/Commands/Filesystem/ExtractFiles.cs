@@ -55,7 +55,8 @@ namespace Aaru.Commands.Filesystem
                     "--encoding", "-e"
                 }, "Name of character encoding to use.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -63,7 +64,8 @@ namespace Aaru.Commands.Filesystem
                     "--options", "-O"
                 }, "Comma separated name=value pairs of options to pass to filesystem plugin.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -71,7 +73,8 @@ namespace Aaru.Commands.Filesystem
                     "--xattrs", "-x"
                 }, "Extract extended attributes if present.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -79,12 +82,15 @@ namespace Aaru.Commands.Filesystem
                     "--namespace", "-n"
                 }, "Namespace to use for filenames.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Disc image path",
+                Name        = "image-path"
             });
 
             AddArgument(new Argument<string>
@@ -236,8 +242,10 @@ namespace Aaru.Commands.Filesystem
                     partitions.Add(new Partition
                     {
                         Description = "Whole device",
-                        Length      = imageFormat.Info.Sectors, Offset                                 = 0,
-                        Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors, Sequence = 1,
+                        Length      = imageFormat.Info.Sectors,
+                        Offset      = 0,
+                        Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors,
+                        Sequence    = 1,
                         Start       = 0
                     });
                 }

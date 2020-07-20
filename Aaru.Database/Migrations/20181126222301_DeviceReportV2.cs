@@ -11,7 +11,8 @@ namespace Aaru.Database.Migrations
             {
                 Id        = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Cylinders = table.Column<ushort>(),
-                Heads     = table.Column<ushort>(), Sectors = table.Column<ushort>()
+                Heads     = table.Column<ushort>(),
+                Sectors   = table.Column<ushort>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Chs", x => x.Id);
@@ -132,18 +133,29 @@ namespace Aaru.Database.Migrations
                 EmbeddedChanger                 = table.Column<bool>(),
                 ErrorRecoveryPage               = table.Column<bool>(),
                 FirmwareDate                    = table.Column<DateTime>(nullable: true),
-                LoadingMechanismType            = table.Column<byte>(nullable: true), Locked    = table.Column<bool>(),
-                LogicalBlockSize                = table.Column<uint>(nullable: true), MultiRead = table.Column<bool>(),
+                LoadingMechanismType            = table.Column<byte>(nullable: true),
+                Locked                          = table.Column<bool>(),
+                LogicalBlockSize                = table.Column<uint>(nullable: true),
+                MultiRead                       = table.Column<bool>(),
                 PhysicalInterfaceStandardNumber = table.Column<uint>(nullable: true),
-                PreventJumper                   = table.Column<bool>(), SupportsAACS            = table.Column<bool>(),
-                SupportsBusEncryption           = table.Column<bool>(), SupportsC2              = table.Column<bool>(),
-                SupportsCPRM                    = table.Column<bool>(), SupportsCSS             = table.Column<bool>(),
-                SupportsDAP                     = table.Column<bool>(), SupportsDeviceBusyEvent = table.Column<bool>(),
-                SupportsHybridDiscs             = table.Column<bool>(), SupportsModePage1Ch     = table.Column<bool>(),
-                SupportsOSSC                    = table.Column<bool>(), SupportsPWP             = table.Column<bool>(),
-                SupportsSWPP                    = table.Column<bool>(), SupportsSecurDisc       = table.Column<bool>(),
-                SupportsSeparateVolume          = table.Column<bool>(), SupportsVCPS            = table.Column<bool>(),
-                SupportsWriteInhibitDCB         = table.Column<bool>(), SupportsWriteProtectPAC = table.Column<bool>(),
+                PreventJumper                   = table.Column<bool>(),
+                SupportsAACS                    = table.Column<bool>(),
+                SupportsBusEncryption           = table.Column<bool>(),
+                SupportsC2                      = table.Column<bool>(),
+                SupportsCPRM                    = table.Column<bool>(),
+                SupportsCSS                     = table.Column<bool>(),
+                SupportsDAP                     = table.Column<bool>(),
+                SupportsDeviceBusyEvent         = table.Column<bool>(),
+                SupportsHybridDiscs             = table.Column<bool>(),
+                SupportsModePage1Ch             = table.Column<bool>(),
+                SupportsOSSC                    = table.Column<bool>(),
+                SupportsPWP                     = table.Column<bool>(),
+                SupportsSWPP                    = table.Column<bool>(),
+                SupportsSecurDisc               = table.Column<bool>(),
+                SupportsSeparateVolume          = table.Column<bool>(),
+                SupportsVCPS                    = table.Column<bool>(),
+                SupportsWriteInhibitDCB         = table.Column<bool>(),
+                SupportsWriteProtectPAC         = table.Column<bool>(),
                 VolumeLevels                    = table.Column<ushort>(nullable: true)
             }, constraints: table =>
             {
@@ -153,8 +165,10 @@ namespace Aaru.Database.Migrations
             migrationBuilder.CreateTable("MmcSd", table => new
             {
                 Id          = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                CID         = table.Column<byte[]>(nullable: true), CSD = table.Column<byte[]>(nullable: true),
-                OCR         = table.Column<byte[]>(nullable: true), SCR = table.Column<byte[]>(nullable: true),
+                CID         = table.Column<byte[]>(nullable: true),
+                CSD         = table.Column<byte[]>(nullable: true),
+                OCR         = table.Column<byte[]>(nullable: true),
+                SCR         = table.Column<byte[]>(nullable: true),
                 ExtendedCSD = table.Column<byte[]>(nullable: true)
             }, constraints: table =>
             {
@@ -163,37 +177,57 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("ModePage_2A", table => new
             {
-                PS                        = table.Column<bool>(), MultiSession = table.Column<bool>(),
+                PS                        = table.Column<bool>(),
+                MultiSession              = table.Column<bool>(),
                 Mode2Form2                = table.Column<bool>(),
-                Mode2Form1                = table.Column<bool>(), AudioPlay = table.Column<bool>(),
+                Mode2Form1                = table.Column<bool>(),
+                AudioPlay                 = table.Column<bool>(),
                 ISRC                      = table.Column<bool>(),
-                UPC                       = table.Column<bool>(), C2Pointer   = table.Column<bool>(),
-                DeinterlaveSubchannel     = table.Column<bool>(), Subchannel  = table.Column<bool>(),
-                AccurateCDDA              = table.Column<bool>(), CDDACommand = table.Column<bool>(),
-                LoadingMechanism          = table.Column<byte>(), Eject       = table.Column<bool>(),
-                PreventJumper             = table.Column<bool>(), LockState   = table.Column<bool>(),
+                UPC                       = table.Column<bool>(),
+                C2Pointer                 = table.Column<bool>(),
+                DeinterlaveSubchannel     = table.Column<bool>(),
+                Subchannel                = table.Column<bool>(),
+                AccurateCDDA              = table.Column<bool>(),
+                CDDACommand               = table.Column<bool>(),
+                LoadingMechanism          = table.Column<byte>(),
+                Eject                     = table.Column<bool>(),
+                PreventJumper             = table.Column<bool>(),
+                LockState                 = table.Column<bool>(),
                 Lock                      = table.Column<bool>(),
-                SeparateChannelMute       = table.Column<bool>(), SeparateChannelVolume   = table.Column<bool>(),
-                MaximumSpeed              = table.Column<ushort>(), SupportedVolumeLevels = table.Column<ushort>(),
-                BufferSize                = table.Column<ushort>(), CurrentSpeed          = table.Column<ushort>(),
-                Method2                   = table.Column<bool>(), ReadCDRW                = table.Column<bool>(),
+                SeparateChannelMute       = table.Column<bool>(),
+                SeparateChannelVolume     = table.Column<bool>(),
+                MaximumSpeed              = table.Column<ushort>(),
+                SupportedVolumeLevels     = table.Column<ushort>(),
+                BufferSize                = table.Column<ushort>(),
+                CurrentSpeed              = table.Column<ushort>(),
+                Method2                   = table.Column<bool>(),
+                ReadCDRW                  = table.Column<bool>(),
                 ReadCDR                   = table.Column<bool>(),
-                WriteCDRW                 = table.Column<bool>(), WriteCDR = table.Column<bool>(),
+                WriteCDRW                 = table.Column<bool>(),
+                WriteCDR                  = table.Column<bool>(),
                 DigitalPort2              = table.Column<bool>(),
-                DigitalPort1              = table.Column<bool>(), Composite = table.Column<bool>(),
+                DigitalPort1              = table.Column<bool>(),
+                Composite                 = table.Column<bool>(),
                 SSS                       = table.Column<bool>(),
-                SDP                       = table.Column<bool>(), Length = table.Column<byte>(),
+                SDP                       = table.Column<bool>(),
+                Length                    = table.Column<byte>(),
                 LSBF                      = table.Column<bool>(),
-                RCK                       = table.Column<bool>(), BCK = table.Column<bool>(),
+                RCK                       = table.Column<bool>(),
+                BCK                       = table.Column<bool>(),
                 TestWrite                 = table.Column<bool>(),
-                MaxWriteSpeed             = table.Column<ushort>(), CurrentWriteSpeed = table.Column<ushort>(),
-                ReadBarcode               = table.Column<bool>(), ReadDVDRAM          = table.Column<bool>(),
+                MaxWriteSpeed             = table.Column<ushort>(),
+                CurrentWriteSpeed         = table.Column<ushort>(),
+                ReadBarcode               = table.Column<bool>(),
+                ReadDVDRAM                = table.Column<bool>(),
                 ReadDVDR                  = table.Column<bool>(),
-                ReadDVDROM                = table.Column<bool>(), WriteDVDRAM = table.Column<bool>(),
+                ReadDVDROM                = table.Column<bool>(),
+                WriteDVDRAM               = table.Column<bool>(),
                 WriteDVDR                 = table.Column<bool>(),
-                LeadInPW                  = table.Column<bool>(), SCC = table.Column<bool>(),
+                LeadInPW                  = table.Column<bool>(),
+                SCC                       = table.Column<bool>(),
                 CMRSupported              = table.Column<ushort>(),
-                BUF                       = table.Column<bool>(), RotationControlSelected = table.Column<byte>(),
+                BUF                       = table.Column<bool>(),
+                RotationControlSelected   = table.Column<byte>(),
                 CurrentWriteSpeedSelected = table.Column<ushort>(),
                 Id                        = table.Column<int>().Annotation("Sqlite:Autoincrement", true)
             }, constraints: table =>
@@ -218,10 +252,12 @@ namespace Aaru.Database.Migrations
             migrationBuilder.CreateTable("ScsiMode", table => new
             {
                 Id                = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                MediumType        = table.Column<byte>(nullable: true), WriteProtected = table.Column<bool>(),
+                MediumType        = table.Column<byte>(nullable: true),
+                WriteProtected    = table.Column<bool>(),
                 Speed             = table.Column<byte>(nullable: true),
                 BufferedMode      = table.Column<byte>(nullable: true),
-                BlankCheckEnabled = table.Column<bool>(), DPOandFUA = table.Column<bool>()
+                BlankCheckEnabled = table.Column<bool>(),
+                DPOandFUA         = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_ScsiMode", x => x.Id);
@@ -284,7 +320,8 @@ namespace Aaru.Database.Migrations
                 Id                 = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 CanReadMediaSerial = table.Column<bool>(nullable: true),
                 Density            = table.Column<byte>(nullable: true),
-                Manufacturer       = table.Column<string>(nullable: true), MediaIsRecognized = table.Column<bool>(),
+                Manufacturer       = table.Column<string>(nullable: true),
+                MediaIsRecognized  = table.Column<bool>(),
                 MediumType         = table.Column<byte>(nullable: true),
                 MediumTypeName     = table.Column<string>(nullable: true),
                 Model              = table.Column<string>(nullable: true),
@@ -368,12 +405,14 @@ namespace Aaru.Database.Migrations
                 Id               = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 USBId            = table.Column<int>(nullable: true),
                 FireWireId       = table.Column<int>(nullable: true),
-                PCMCIAId         = table.Column<int>(nullable: true), CompactFlash = table.Column<bool>(),
+                PCMCIAId         = table.Column<int>(nullable: true),
+                CompactFlash     = table.Column<bool>(),
                 ATAId            = table.Column<int>(nullable: true),
                 ATAPIId          = table.Column<int>(nullable: true),
                 SCSIId           = table.Column<int>(nullable: true),
                 MultiMediaCardId = table.Column<int>(nullable: true),
-                SecureDigitalId  = table.Column<int>(nullable: true), Discriminator = table.Column<string>(),
+                SecureDigitalId  = table.Column<int>(nullable: true),
+                Discriminator    = table.Column<string>(),
                 LastSynchronized = table.Column<DateTime>(nullable: true)
             }, constraints: table =>
             {
@@ -503,8 +542,9 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("Ata", table => new
             {
-                Id       = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Identify = table.Column<byte[]>(nullable: true), ReadCapabilitiesId = table.Column<int>(nullable: true)
+                Id                 = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Identify           = table.Column<byte[]>(nullable: true),
+                ReadCapabilitiesId = table.Column<int>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Ata", x => x.Id);
@@ -515,15 +555,17 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("Scsi", table => new
             {
-                Id                  = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                InquiryData         = table.Column<byte[]>(nullable: true), SupportsModeSense6 = table.Column<bool>(),
-                SupportsModeSense10 = table.Column<bool>(), SupportsModeSubpages               = table.Column<bool>(),
-                ModeSenseId         = table.Column<int>(nullable: true),
-                MultiMediaDeviceId  = table.Column<int>(nullable: true),
-                ReadCapabilitiesId  = table.Column<int>(nullable: true),
-                SequentialDeviceId  = table.Column<int>(nullable: true),
-                ModeSense6Data      = table.Column<byte[]>(nullable: true),
-                ModeSense10Data     = table.Column<byte[]>(nullable: true)
+                Id                   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                InquiryData          = table.Column<byte[]>(nullable: true),
+                SupportsModeSense6   = table.Column<bool>(),
+                SupportsModeSense10  = table.Column<bool>(),
+                SupportsModeSubpages = table.Column<bool>(),
+                ModeSenseId          = table.Column<int>(nullable: true),
+                MultiMediaDeviceId   = table.Column<int>(nullable: true),
+                ReadCapabilitiesId   = table.Column<int>(nullable: true),
+                SequentialDeviceId   = table.Column<int>(nullable: true),
+                ModeSense6Data       = table.Column<byte[]>(nullable: true),
+                ModeSense10Data      = table.Column<byte[]>(nullable: true)
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Scsi", x => x.Id);
@@ -543,7 +585,8 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("ScsiPage", table => new
             {
-                Id         = table.Column<int>().Annotation("Sqlite:Autoincrement", true), page = table.Column<byte>(),
+                Id         = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                page       = table.Column<byte>(),
                 subpage    = table.Column<byte>(nullable: true),
                 value      = table.Column<byte[]>(nullable: true),
                 ScsiId     = table.Column<int>(nullable: true),

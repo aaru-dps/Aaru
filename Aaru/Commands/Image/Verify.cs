@@ -52,7 +52,8 @@ namespace Aaru.Commands.Image
                     "--verify-disc", "-w"
                 }, "Verify disc image if supported.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -60,12 +61,15 @@ namespace Aaru.Commands.Image
                     "--verify-sectors", "-s"
                 }, "Verify all sectors if supported.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Disc image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

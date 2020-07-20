@@ -148,8 +148,10 @@ namespace Aaru.Partitions
                     Offset = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
                     Length = (dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes) /
                              imagePlugin.Info.SectorSize,
-                    Size = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
-                    Type = TypeToString(dvh.partitions[i].type), Sequence = counter, Scheme = Name
+                    Size     = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
+                    Type     = TypeToString(dvh.partitions[i].type),
+                    Sequence = counter,
+                    Scheme   = Name
                 };
 
                 if(part.Size              <= 0              ||

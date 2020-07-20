@@ -124,11 +124,12 @@ namespace Aaru.Partitions
 
                         var part = new Partition
                         {
-                            Size   = (ulong)(ddm.sbMap[i].ddSize         * 512),
-                            Length = (ulong)((ddm.sbMap[i].ddSize * 512) / sectorSize), Sequence = sequence,
-                            Offset = ddm.sbMap[i].ddBlock * sectorSize,
-                            Start  = ddm.sbMap[i].ddBlock + sectorOffset,
-                            Type   = "Apple_Driver"
+                            Size     = (ulong)(ddm.sbMap[i].ddSize         * 512),
+                            Length   = (ulong)((ddm.sbMap[i].ddSize * 512) / sectorSize),
+                            Sequence = sequence,
+                            Offset   = ddm.sbMap[i].ddBlock * sectorSize,
+                            Start    = ddm.sbMap[i].ddBlock + sectorOffset,
+                            Type     = "Apple_Driver"
                         };
 
                         if((ddm.sbMap[i].ddSize * 512) % sectorSize > 0)
@@ -176,11 +177,13 @@ namespace Aaru.Partitions
 
                     var part = new Partition
                     {
-                        Size   = oldEntry.pdStart                     * ddm.sbBlockSize,
-                        Length = (oldEntry.pdStart * ddm.sbBlockSize) / sectorSize, Sequence = sequence,
-                        Offset = oldEntry.pdSize                      * ddm.sbBlockSize,
-                        Start  = (oldEntry.pdSize * ddm.sbBlockSize)  / sectorSize, Scheme = Name,
-                        Type   = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
+                        Size     = oldEntry.pdStart                     * ddm.sbBlockSize,
+                        Length   = (oldEntry.pdStart * ddm.sbBlockSize) / sectorSize,
+                        Sequence = sequence,
+                        Offset   = oldEntry.pdSize                     * ddm.sbBlockSize,
+                        Start    = (oldEntry.pdSize * ddm.sbBlockSize) / sectorSize,
+                        Scheme   = Name,
+                        Type     = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                     };
 
                     partitions.Add(part);
@@ -315,14 +318,14 @@ namespace Aaru.Partitions
 
                 var partition = new Partition
                 {
-                    Sequence = sequence, Type                               = StringHandlers.CToString(entry.type),
-                    Name     = StringHandlers.CToString(entry.name), Offset = entry.start * entrySize,
-                    Size     = entry.sectors                                              * entrySize,
+                    Sequence = sequence,
+                    Type     = StringHandlers.CToString(entry.type),
+                    Name     = StringHandlers.CToString(entry.name),
+                    Offset   = entry.start   * entrySize,
+                    Size     = entry.sectors * entrySize,
                     Start    = ((entry.start * entrySize) / sectorSize) + sectorOffset,
-                    Length =
-                        (entry.sectors *
-                         entrySize) / sectorSize,
-                    Scheme = Name
+                    Length   = (entry.sectors             * entrySize) / sectorSize,
+                    Scheme   = Name
                 };
 
                 sb.AppendLine("Partition flags:");

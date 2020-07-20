@@ -141,27 +141,36 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     pgMmc = new Modes.ModePage_01_MMC
                     {
-                        PS = false, ReadRetryCount = 32, Parameter = 0x00
+                        PS             = false,
+                        ReadRetryCount = 32,
+                        Parameter      = 0x00
                     };
 
                     currentModePage = new Modes.ModePage
                     {
-                        Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                        Page         = 0x01,
+                        Subpage      = 0x00,
+                        PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                     };
                 }
 
                 pgMmc = new Modes.ModePage_01_MMC
                 {
-                    PS = false, ReadRetryCount = 255, Parameter = 0x20
+                    PS             = false,
+                    ReadRetryCount = 255,
+                    Parameter      = 0x20
                 };
 
                 var md = new Modes.DecodedMode
                 {
-                    Header = new Modes.ModeHeader(), Pages = new[]
+                    Header = new Modes.ModeHeader(),
+                    Pages = new[]
                     {
                         new Modes.ModePage
                         {
-                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         }
                     }
                 };
@@ -345,16 +354,21 @@ namespace Aaru.Core.Devices.Dumping
             {
                 var pgMmc = new Modes.ModePage_01_MMC
                 {
-                    PS = false, ReadRetryCount = 255, Parameter = 0x01
+                    PS             = false,
+                    ReadRetryCount = 255,
+                    Parameter      = 0x01
                 };
 
                 var md = new Modes.DecodedMode
                 {
-                    Header = new Modes.ModeHeader(), Pages = new[]
+                    Header = new Modes.ModeHeader(),
+                    Pages = new[]
                     {
                         new Modes.ModePage
                         {
-                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         }
                     }
                 };
@@ -452,7 +466,8 @@ namespace Aaru.Core.Devices.Dumping
             {
                 var md = new Modes.DecodedMode
                 {
-                    Header = new Modes.ModeHeader(), Pages = new[]
+                    Header = new Modes.ModeHeader(),
+                    Pages = new[]
                     {
                         currentModePage.Value
                     }

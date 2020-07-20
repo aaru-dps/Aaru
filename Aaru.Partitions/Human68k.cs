@@ -110,10 +110,11 @@ namespace Aaru.Partitions
 
                 var part = new Partition
                 {
-                    Start  = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
-                    Length = entry.length                  * sectsPerUnit,
-                    Type   = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)), Sequence = counter,
-                    Scheme = Name
+                    Start    = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
+                    Length   = entry.length                  * sectsPerUnit,
+                    Type     = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)),
+                    Sequence = counter,
+                    Scheme   = Name
                 };
 
                 part.Offset = part.Start  * (ulong)sector.Length;

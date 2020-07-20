@@ -117,8 +117,12 @@ namespace Aaru.Filesystems.FAT
 
             statfs = new FileSystemInfo
             {
-                Blocks    = XmlFsType.Clusters, FilenameLength = 11, Files = 0, // Requires traversing all directories
-                FreeFiles = 0, PluginId                        = Id, FreeBlocks = 0 // Requires traversing the FAT
+                Blocks         = XmlFsType.Clusters,
+                FilenameLength = 11,
+                Files          = 0, // Requires traversing all directories
+                FreeFiles      = 0,
+                PluginId       = Id,
+                FreeBlocks     = 0 // Requires traversing the FAT
             };
 
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
@@ -181,7 +185,8 @@ namespace Aaru.Filesystems.FAT
 
                     statfs.Id = new FileSystemId
                     {
-                        IsInt = true, Serial32 = fat32Bpb.serial_no
+                        IsInt    = true,
+                        Serial32 = fat32Bpb.serial_no
                     };
 
                     if((fat32Bpb.flags & 0xF8) == 0x00)
@@ -375,7 +380,8 @@ namespace Aaru.Filesystems.FAT
 
                         statfs.Id = new FileSystemId
                         {
-                            IsInt = true, Serial32 = fakeBpb.serial_no
+                            IsInt    = true,
+                            Serial32 = fakeBpb.serial_no
                         };
                     }
                 }

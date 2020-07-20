@@ -49,7 +49,8 @@ namespace Aaru.Commands.Image
                     "--duplicated-sectors", "-p"
                 }, "Calculates how many sectors are duplicated (have same exact data in user area).")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -57,7 +58,8 @@ namespace Aaru.Commands.Image
                     "--separated-tracks", "-t"
                 }, "Calculates entropy for each track separately.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -65,12 +67,15 @@ namespace Aaru.Commands.Image
                     "--whole-disc", "-w"
                 }, "Calculates entropy for the whole disc.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

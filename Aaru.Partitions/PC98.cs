@@ -105,7 +105,8 @@ namespace Aaru.Partitions
                                       imagePlugin.Info.SectorsPerTrack),
                     Type     = DecodePC98Sid(entry.dp_sid),
                     Name     = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
-                    Sequence = counter, Scheme = Name
+                    Sequence = counter,
+                    Scheme   = Name
                 };
 
                 part.Offset = part.Start * imagePlugin.Info.SectorSize;

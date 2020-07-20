@@ -449,9 +449,11 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     TrackSequence = trkInfo.LogicalTrackNumber,
                                     TrackSession = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
-                                    TrackType = TrackType.Data, TrackStartSector = trkInfo.LogicalTrackStartAddress,
+                                    TrackType = TrackType.Data,
+                                    TrackStartSector = trkInfo.LogicalTrackStartAddress,
                                     TrackEndSector = (trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress) - 1,
-                                    TrackRawBytesPerSector = (int)blockSize, TrackBytesPerSector = (int)blockSize,
+                                    TrackRawBytesPerSector = (int)blockSize,
+                                    TrackBytesPerSector = (int)blockSize,
                                     TrackSubchannelType = TrackSubchannelType.None
                                 };
 
@@ -487,10 +489,13 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     new Track
                                     {
-                                        TrackBytesPerSector = (int)blockSize, TrackEndSector         = blocks - 1,
-                                        TrackSequence       = 1, TrackRawBytesPerSector              = (int)blockSize,
-                                        TrackSubchannelType = TrackSubchannelType.None, TrackSession = 1,
-                                        TrackType           = TrackType.Data
+                                        TrackBytesPerSector    = (int)blockSize,
+                                        TrackEndSector         = blocks - 1,
+                                        TrackSequence          = 1,
+                                        TrackRawBytesPerSector = (int)blockSize,
+                                        TrackSubchannelType    = TrackSubchannelType.None,
+                                        TrackSession           = 1,
+                                        TrackType              = TrackType.Data
                                     }
                                 });
                         }
@@ -807,26 +812,39 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             pgMmc = new Modes.ModePage_01_MMC
                             {
-                                PS = false, ReadRetryCount = 32, Parameter = 0x00
+                                PS             = false,
+                                ReadRetryCount = 32,
+                                Parameter      = 0x00
                             };
 
                             currentModePage = new Modes.ModePage
                             {
-                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                             };
                         }
                         else
                         {
                             pg = new Modes.ModePage_01
                             {
-                                PS  = false, AWRE           = true, ARRE = true, TB   = false,
-                                RC  = false, EER            = true, PER  = false, DTE = true,
-                                DCR = false, ReadRetryCount = 32
+                                PS             = false,
+                                AWRE           = true,
+                                ARRE           = true,
+                                TB             = false,
+                                RC             = false,
+                                EER            = true,
+                                PER            = false,
+                                DTE            = true,
+                                DCR            = false,
+                                ReadRetryCount = 32
                             };
 
                             currentModePage = new Modes.ModePage
                             {
-                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01(pg)
                             };
                         }
                     }
@@ -835,16 +853,21 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         pgMmc = new Modes.ModePage_01_MMC
                         {
-                            PS = false, ReadRetryCount = 255, Parameter = 0x20
+                            PS             = false,
+                            ReadRetryCount = 255,
+                            Parameter      = 0x20
                         };
 
                         var md = new Modes.DecodedMode
                         {
-                            Header = new Modes.ModeHeader(), Pages = new[]
+                            Header = new Modes.ModeHeader(),
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
-                                    Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                                    Page         = 0x01,
+                                    Subpage      = 0x00,
+                                    PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                                 }
                             }
                         };
@@ -856,18 +879,28 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         pg = new Modes.ModePage_01
                         {
-                            PS  = false, AWRE           = false, ARRE = false, TB  = true,
-                            RC  = false, EER            = true, PER   = false, DTE = false,
-                            DCR = false, ReadRetryCount = 255
+                            PS             = false,
+                            AWRE           = false,
+                            ARRE           = false,
+                            TB             = true,
+                            RC             = false,
+                            EER            = true,
+                            PER            = false,
+                            DTE            = false,
+                            DCR            = false,
+                            ReadRetryCount = 255
                         };
 
                         var md = new Modes.DecodedMode
                         {
-                            Header = new Modes.ModeHeader(), Pages = new[]
+                            Header = new Modes.ModeHeader(),
+                            Pages = new[]
                             {
                                 new Modes.ModePage
                                 {
-                                    Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                                    Page         = 0x01,
+                                    Subpage      = 0x00,
+                                    PageResponse = Modes.EncodeModePage_01(pg)
                                 }
                             }
                         };
@@ -954,7 +987,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             currentModePage.Value
                         }
@@ -1152,7 +1186,8 @@ namespace Aaru.Core.Devices.Dumping
             // TODO: Non-removable drive information
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))
@@ -1238,12 +1273,14 @@ namespace Aaru.Core.Devices.Dumping
                             if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    ProductID = _dev.UsbProductId, VendorID = _dev.UsbVendorId, Descriptors =
-                                        new DumpType
-                                        {
-                                            Image     = _outputPath, Size = (ulong)_dev.UsbDescriptors.Length,
-                                            Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
-                                        }
+                                    ProductID = _dev.UsbProductId,
+                                    VendorID  = _dev.UsbVendorId,
+                                    Descriptors = new DumpType
+                                    {
+                                        Image     = _outputPath,
+                                        Size      = (ulong)_dev.UsbDescriptors.Length,
+                                        Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                    }
                                 };
 
                         byte[] cmdBuf;
@@ -1258,7 +1295,8 @@ namespace Aaru.Core.Devices.Dumping
                                     {
                                         Identify = new DumpType
                                         {
-                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath,
+                                            Size      = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         }
                                     };
@@ -1273,7 +1311,8 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     Inquiry = new DumpType
                                     {
-                                        Image     = _outputPath, Size = (ulong)cmdBuf.Length,
+                                        Image     = _outputPath,
+                                        Size      = (ulong)cmdBuf.Length,
                                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                     }
                                 };
@@ -1331,7 +1370,8 @@ namespace Aaru.Core.Devices.Dumping
                                     if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
                                         sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                                         {
-                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath,
+                                            Size      = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         };
 
@@ -1354,7 +1394,8 @@ namespace Aaru.Core.Devices.Dumping
                                     if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
                                         sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                                         {
-                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath,
+                                            Size      = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         };
                         }
@@ -1371,7 +1412,8 @@ namespace Aaru.Core.Devices.Dumping
                     if(filesystems.Count > 0)
                         foreach(var filesystem in filesystems.Select(o => new
                         {
-                            o.start, o.type
+                            o.start,
+                            o.type
                         }).Distinct())
                         {
                             UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");

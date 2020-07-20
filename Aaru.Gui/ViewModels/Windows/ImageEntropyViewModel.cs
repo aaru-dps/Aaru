@@ -342,7 +342,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 foreach(EntropyResults trackEntropy in _tracksEntropy)
                     TrackEntropy.Add(new TrackEntropyModel
                     {
-                        Track   = trackEntropy.Track.ToString(),
+                        Track = trackEntropy.Track.ToString(),
                         Entropy = trackEntropy.Entropy.ToString(CultureInfo.CurrentUICulture),
                         UniqueSectors =
                             $"{trackEntropy.UniqueSectors} ({(double)(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"

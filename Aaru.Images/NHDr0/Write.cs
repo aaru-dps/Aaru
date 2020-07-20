@@ -64,7 +64,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -207,10 +209,13 @@ namespace Aaru.DiscImages
 
             var header = new Nhdr0Header
             {
-                szFileID   = signature, szComment = new byte[0x100],
+                szFileID   = signature,
+                szComment  = new byte[0x100],
                 dwHeadSize = Marshal.SizeOf<Nhdr0Header>(),
-                dwCylinder = (byte)imageInfo.Cylinders, wHead          = (byte)imageInfo.Heads,
-                wSect      = (byte)imageInfo.SectorsPerTrack, wSectLen = (byte)imageInfo.SectorSize,
+                dwCylinder = (byte)imageInfo.Cylinders,
+                wHead      = (byte)imageInfo.Heads,
+                wSect      = (byte)imageInfo.SectorsPerTrack,
+                wSectLen   = (byte)imageInfo.SectorSize,
                 reserved2  = new byte[2],
                 reserved3  = new byte[0xE0]
             };

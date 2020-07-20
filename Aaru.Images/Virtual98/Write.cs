@@ -71,7 +71,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -215,11 +217,14 @@ namespace Aaru.DiscImages
 
             v98Hdr = new Virtual98Header
             {
-                comment   = new byte[128], cylinders = (ushort)imageInfo.Cylinders,
-                padding2  = new byte[0x44],
-                sectors   = (byte)imageInfo.SectorsPerTrack, sectorsize = (ushort)imageInfo.SectorSize,
-                signature = signature, surfaces                         = (byte)imageInfo.Heads,
-                totals    = (uint)imageInfo.Sectors
+                comment    = new byte[128],
+                cylinders  = (ushort)imageInfo.Cylinders,
+                padding2   = new byte[0x44],
+                sectors    = (byte)imageInfo.SectorsPerTrack,
+                sectorsize = (ushort)imageInfo.SectorSize,
+                signature  = signature,
+                surfaces   = (byte)imageInfo.Heads,
+                totals     = (uint)imageInfo.Sectors
             };
 
             if(commentsBytes != null)

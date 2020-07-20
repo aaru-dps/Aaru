@@ -169,12 +169,14 @@ namespace Aaru.Gui.ViewModels.Windows
 
             Encodings.AddRange(Encoding.GetEncodings().Select(info => new EncodingModel
             {
-                Name = info.Name, DisplayName = info.GetEncoding().EncodingName
+                Name        = info.Name,
+                DisplayName = info.GetEncoding().EncodingName
             }));
 
             Encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new EncodingModel
             {
-                Name = info.Name, DisplayName = info.DisplayName
+                Name        = info.Name,
+                DisplayName = info.DisplayName
             }));
 
             switch(mediaType)
@@ -481,7 +483,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
                 dlgMetadata.Filters.Add(new FileDialogFilter
                 {
-                    Name = "CICM XML metadata", Extensions = new List<string>(new[]
+                    Name = "CICM XML metadata",
+                    Extensions = new List<string>(new[]
                     {
                         ".xml"
                     })
@@ -638,7 +641,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
             dlgDestination.Filters.Add(new FileDialogFilter
             {
-                Name = SelectedPlugin.Plugin.Name, Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()
+                Name       = SelectedPlugin.Plugin.Name,
+                Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()
             });
 
             string result = await dlgDestination.ShowAsync(_view);

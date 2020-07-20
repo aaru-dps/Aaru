@@ -56,12 +56,14 @@ namespace Aaru.Gui.ViewModels.Dialogs
             {
                 List<EncodingModel> encodings = Encoding.GetEncodings().Select(info => new EncodingModel
                 {
-                    Name = info.Name, DisplayName = info.GetEncoding().EncodingName
+                    Name        = info.Name,
+                    DisplayName = info.GetEncoding().EncodingName
                 }).ToList();
 
                 encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new EncodingModel
                 {
-                    Name = info.Name, DisplayName = info.DisplayName
+                    Name        = info.Name,
+                    DisplayName = info.DisplayName
                 }));
 
                 foreach(EncodingModel encoding in encodings.OrderBy(t => t.DisplayName))

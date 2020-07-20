@@ -74,18 +74,26 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type         = "Opera", VolumeName     = StringHandlers.CToString(sb.volume_label, Encoding),
-                ClusterSize  = sb.block_size, Clusters = sb.block_count, Bootable = true,
+                Type         = "Opera",
+                VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
+                ClusterSize  = sb.block_size,
+                Clusters     = sb.block_count,
+                Bootable     = true,
                 VolumeSerial = $"{sb.volume_id:X8}"
             };
 
             statfs = new FileSystemInfo
             {
-                Blocks = sb.block_count, FilenameLength = MAX_NAME, FreeBlocks = 0, Id = new FileSystemId
+                Blocks         = sb.block_count,
+                FilenameLength = MAX_NAME,
+                FreeBlocks     = 0,
+                Id = new FileSystemId
                 {
-                    IsInt = true, Serial32 = sb.volume_id
+                    IsInt    = true,
+                    Serial32 = sb.volume_id
                 },
-                PluginId = Id, Type = "Opera"
+                PluginId = Id,
+                Type     = "Opera"
             };
 
             image = imagePlugin;

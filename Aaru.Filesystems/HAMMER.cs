@@ -117,7 +117,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE, ClusterSize = HAMMER_BIGBLOCK_SIZE, Dirty = false,
+                Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
+                ClusterSize  = HAMMER_BIGBLOCK_SIZE,
+                Dirty        = false,
                 Type         = "HAMMER",
                 VolumeName   = StringHandlers.CToString(hammerSb.vol_label, Encoding),
                 VolumeSerial = hammerSb.vol_fsid.ToString()

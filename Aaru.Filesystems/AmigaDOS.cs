@@ -107,8 +107,7 @@ namespace Aaru.Filesystems
             {
                 bRootPtr + partition.Start, ((((partition.End - partition.Start) + 1) / 2) + partition.Start) - 2,
                 ((((partition.End                             - partition.Start) + 1) / 2) + partition.Start) - 1,
-                (((partition.End - partition.Start) + 1) / 2) +
-                partition.Start,
+                (((partition.End - partition.Start) + 1) / 2) + partition.Start,
                 (((partition.End - partition.Start) + 1) / 2) + partition.Start + 4
             };
 
@@ -192,8 +191,7 @@ namespace Aaru.Filesystems
             {
                 bRootPtr + partition.Start, ((((partition.End - partition.Start) + 1) / 2) + partition.Start) - 2,
                 ((((partition.End                             - partition.Start) + 1) / 2) + partition.Start) - 1,
-                (((partition.End - partition.Start) + 1) / 2) +
-                partition.Start,
+                (((partition.End - partition.Start) + 1) / 2) + partition.Start,
                 (((partition.End - partition.Start) + 1) / 2) + partition.Start + 4
             };
 

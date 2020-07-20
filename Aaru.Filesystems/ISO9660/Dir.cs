@@ -189,7 +189,8 @@ namespace Aaru.Filesystems.ISO9660
                     Size                 = record.size,
                     Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = record.xattr_len
                 };
 
                 if(record.size != 0)
@@ -254,10 +255,13 @@ namespace Aaru.Filesystems.ISO9660
 
                 var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size, Flags = record.flags, Interleave = record.interleave,
+                    Size                 = record.size,
+                    Flags                = record.flags,
+                    Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = record.xattr_len
                 };
 
                 if(record.size != 0)
@@ -312,13 +316,16 @@ namespace Aaru.Filesystems.ISO9660
 
                 var entry = new DecodedDirectoryEntry
                 {
-                    Size = record.size, Flags = record.flags,
+                    Size  = record.size,
+                    Flags = record.flags,
                     Filename =
                         joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
                                                                      record.name_len)
                             : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                    FileUnitSize         = record.file_unit_size, Interleave        = record.interleave,
-                    VolumeSequenceNumber = record.volume_sequence_number, Timestamp = DecodeIsoDateTime(record.date),
+                    FileUnitSize         = record.file_unit_size,
+                    Interleave           = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeIsoDateTime(record.date),
                     XattrLength          = record.xattr_len
                 };
 
@@ -382,9 +389,12 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             Size                 = 0,
                             Flags                = record.flags ^ FileFlags.Associated,
-                            FileUnitSize         = 0, Interleave                               = 0,
-                            VolumeSequenceNumber = record.volume_sequence_number, Filename     = entry.Filename,
-                            Timestamp            = DecodeIsoDateTime(record.date), XattrLength = 0
+                            FileUnitSize         = 0,
+                            Interleave           = 0,
+                            VolumeSequenceNumber = record.volume_sequence_number,
+                            Filename             = entry.Filename,
+                            Timestamp            = DecodeIsoDateTime(record.date),
+                            XattrLength          = 0
                         };
 
                         if(hasResourceFork)
@@ -1070,9 +1080,11 @@ namespace Aaru.Filesystems.ISO9660
 
                 var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size, Filename = tEntry.Name,
+                    Size                 = record.size,
+                    Filename             = tEntry.Name,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = tEntry.XattrLength
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = tEntry.XattrLength
                 };
 
                 if(record.size != 0)
@@ -1119,10 +1131,13 @@ namespace Aaru.Filesystems.ISO9660
 
                 var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size, Flags = record.flags,
+                    Size                 = record.size,
+                    Flags                = record.flags,
                     Filename             = tEntry.Name,
-                    FileUnitSize         = record.file_unit_size, Interleave        = record.interleave,
-                    VolumeSequenceNumber = record.volume_sequence_number, Timestamp = DecodeIsoDateTime(record.date),
+                    FileUnitSize         = record.file_unit_size,
+                    Interleave           = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeIsoDateTime(record.date),
                     XattrLength          = tEntry.XattrLength
                 };
 
@@ -1164,10 +1179,13 @@ namespace Aaru.Filesystems.ISO9660
 
                 var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size, Flags = record.flags, Filename = tEntry.Name,
+                    Size                 = record.size,
+                    Flags                = record.flags,
+                    Filename             = tEntry.Name,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = tEntry.XattrLength
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = tEntry.XattrLength
                 };
 
                 if(record.size != 0)

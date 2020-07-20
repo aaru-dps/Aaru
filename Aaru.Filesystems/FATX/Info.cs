@@ -105,7 +105,8 @@ namespace Aaru.Filesystems.FATX
                 Type = "FATX filesystem",
                 ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
                                      imagePlugin.Info.SectorSize),
-                VolumeName = volumeLabel, VolumeSerial = $"{fatxSb.id:X8}"
+                VolumeName   = volumeLabel,
+                VolumeSerial = $"{fatxSb.id:X8}"
             };
 
             XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /

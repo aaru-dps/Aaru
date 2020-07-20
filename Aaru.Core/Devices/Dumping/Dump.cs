@@ -67,6 +67,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly bool                       _fixSubchannelPosition;
         readonly bool                       _force;
         readonly Dictionary<string, string> _formatOptions;
+        readonly bool                       _generateSubchannels;
         readonly bool                       _metadata;
         readonly string                     _outputPath;
         readonly IWritableImage             _outputPlugin;
@@ -84,7 +85,6 @@ namespace Aaru.Core.Devices.Dumping
         Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
-        readonly bool                       _generateSubchannels;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
         Resume                              _resume;
         Sidecar                             _sidecarClass;

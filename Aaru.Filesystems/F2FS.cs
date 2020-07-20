@@ -145,8 +145,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                   = "F2FS filesystem", SystemIdentifier = Encoding.ASCII.GetString(f2fsSb.version),
-                Clusters               = f2fsSb.block_count, ClusterSize     = (uint)(1 << (int)f2fsSb.log_blocksize),
+                Type                   = "F2FS filesystem",
+                SystemIdentifier       = Encoding.ASCII.GetString(f2fsSb.version),
+                Clusters               = f2fsSb.block_count,
+                ClusterSize            = (uint)(1 << (int)f2fsSb.log_blocksize),
                 DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version),
                 VolumeName             = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true),
                 VolumeSerial           = f2fsSb.uuid.ToString()

@@ -1144,7 +1144,9 @@ namespace Aaru.DiscImages
                         Size = ((aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1) *
                                (ulong)aaruTrack.TrackRawBytesPerSector,
                         Length   = (aaruTrack.TrackEndSector - (ulong)aaruTrack.Indexes[1]) + 1,
-                        Sequence = aaruTrack.TrackSequence, Offset = partPos, Start = (ulong)aaruTrack.Indexes[1],
+                        Sequence = aaruTrack.TrackSequence,
+                        Offset   = partPos,
+                        Start    = (ulong)aaruTrack.Indexes[1],
                         Type     = aaruTrack.TrackType.ToString()
                     };
 

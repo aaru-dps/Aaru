@@ -86,7 +86,10 @@ namespace Aaru.Partitions
                     Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
                     Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
                              (imagePlugin.Info.SectorSize * sectorOffset),
-                    Size = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE), Sequence = (ulong)i, Type = "XENIX", Scheme = Name
+                    Size     = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE),
+                    Sequence = (ulong)i,
+                    Type     = "XENIX",
+                    Scheme   = Name
                 };
 
                 if(part.End < imagePlugin.Info.Sectors)

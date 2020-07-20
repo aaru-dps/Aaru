@@ -736,10 +736,14 @@ namespace Aaru.DiscImages
 
                             Tracks.Add(new Track
                             {
-                                TrackSequence    = trackEntry.sequence, TrackType           = trackEntry.type,
-                                TrackStartSector = (ulong)trackEntry.start, TrackEndSector  = (ulong)trackEntry.end,
-                                TrackPregap      = (ulong)trackEntry.pregap, TrackSession   = trackEntry.session,
-                                TrackFile        = imageFilter.GetFilename(), TrackFileType = "BINARY",
+                                TrackSequence    = trackEntry.sequence,
+                                TrackType        = trackEntry.type,
+                                TrackStartSector = (ulong)trackEntry.start,
+                                TrackEndSector   = (ulong)trackEntry.end,
+                                TrackPregap      = (ulong)trackEntry.pregap,
+                                TrackSession     = trackEntry.session,
+                                TrackFile        = imageFilter.GetFilename(),
+                                TrackFileType    = "BINARY",
                                 TrackFilter      = imageFilter
                             });
 
@@ -848,7 +852,8 @@ namespace Aaru.DiscImages
 
                             var dump = new DumpHardwareType
                             {
-                                Software = new SoftwareType(), Extents = new ExtentType[dumpEntry.extents]
+                                Software = new SoftwareType(),
+                                Extents  = new ExtentType[dumpEntry.extents]
                             };
 
                             byte[] tmp;
@@ -925,7 +930,8 @@ namespace Aaru.DiscImages
 
                                 dump.Extents[j] = new ExtentType
                                 {
-                                    Start = BitConverter.ToUInt64(tmp, 0), End = BitConverter.ToUInt64(tmp, 8)
+                                    Start = BitConverter.ToUInt64(tmp, 0),
+                                    End   = BitConverter.ToUInt64(tmp, 8)
                                 };
                             }
 
@@ -968,7 +974,8 @@ namespace Aaru.DiscImages
                         foreach(TapePartitionEntry tapePartition in tapePartitions)
                             TapePartitions.Add(new TapePartition
                             {
-                                FirstBlock = tapePartition.FirstBlock, LastBlock = tapePartition.LastBlock,
+                                FirstBlock = tapePartition.FirstBlock,
+                                LastBlock  = tapePartition.LastBlock,
                                 Number     = tapePartition.Number
                             });
 
@@ -996,7 +1003,9 @@ namespace Aaru.DiscImages
                         foreach(TapeFileEntry file in tapeFiles)
                             Files.Add(new TapeFile
                             {
-                                FirstBlock = file.FirstBlock, LastBlock = file.LastBlock, Partition = file.Partition,
+                                FirstBlock = file.FirstBlock,
+                                LastBlock  = file.LastBlock,
+                                Partition  = file.Partition,
                                 File       = file.File
                             });
 
@@ -1106,10 +1115,15 @@ namespace Aaru.DiscImages
                     {
                         new Track
                         {
-                            TrackBytesPerSector = (int)imageInfo.SectorSize, TrackEndSector = imageInfo.Sectors - 1,
-                            TrackFile = imageFilter.GetFilename(), TrackFileType = "BINARY", TrackFilter = imageFilter,
-                            TrackRawBytesPerSector = (int)imageInfo.SectorSize, TrackSession = 1, TrackSequence = 1,
-                            TrackType = TrackType.Data
+                            TrackBytesPerSector    = (int)imageInfo.SectorSize,
+                            TrackEndSector         = imageInfo.Sectors - 1,
+                            TrackFile              = imageFilter.GetFilename(),
+                            TrackFileType          = "BINARY",
+                            TrackFilter            = imageFilter,
+                            TrackRawBytesPerSector = (int)imageInfo.SectorSize,
+                            TrackSession           = 1,
+                            TrackSequence          = 1,
+                            TrackType              = TrackType.Data
                         }
                     };
 
@@ -1168,12 +1182,15 @@ namespace Aaru.DiscImages
                 {
                     Partitions.Add(new Partition
                     {
-                        Sequence = track.TrackSequence, Type              = track.TrackType.ToString(),
-                        Name     = $"Track {track.TrackSequence}", Offset = currentTrackOffset,
+                        Sequence = track.TrackSequence,
+                        Type     = track.TrackType.ToString(),
+                        Name     = $"Track {track.TrackSequence}",
+                        Offset   = currentTrackOffset,
                         Start    = (ulong)track.Indexes[1],
                         Size = ((track.TrackEndSector - (ulong)track.Indexes[1]) + 1) *
                                (ulong)track.TrackBytesPerSector,
-                        Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1, Scheme = "Optical disc track"
+                        Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1,
+                        Scheme = "Optical disc track"
                     });
 
                     currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *

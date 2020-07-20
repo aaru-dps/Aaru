@@ -99,7 +99,8 @@ namespace Aaru.DiscImages
                 // Initialize disc
                 discimage = new CdrdaoDisc
                 {
-                    Tracks = new List<CdrdaoTrack>(), Comment = ""
+                    Tracks  = new List<CdrdaoTrack>(),
+                    Comment = ""
                 };
 
                 var  currenttrack       = new CdrdaoTrack();
@@ -249,7 +250,8 @@ namespace Aaru.DiscImages
 
                             currenttrack = new CdrdaoTrack
                             {
-                                Indexes = new Dictionary<int, ulong>(), Pregap = 0
+                                Indexes = new Dictionary<int, ulong>(),
+                                Pregap  = 0
                             };
 
                             nextindex = 2;
@@ -400,7 +402,8 @@ namespace Aaru.DiscImages
                                 Datafile = matchAudioFile.Groups["filename"].Value,
                                 Offset = matchAudioFile.Groups["base_offset"].Value != ""
                                              ? ulong.Parse(matchAudioFile.Groups["base_offset"].Value) : 0,
-                                Filetype = "BINARY", Sequence = currentTrackNumber
+                                Filetype = "BINARY",
+                                Sequence = currentTrackNumber
                             };
 
                             ulong startSectors = 0;
@@ -443,7 +446,8 @@ namespace Aaru.DiscImages
                                 Datafile = matchAudioFile.Groups["filename"].Value,
                                 Offset = matchFile.Groups["base_offset"].Value != ""
                                              ? ulong.Parse(matchFile.Groups["base_offset"].Value) : 0,
-                                Filetype = "BINARY", Sequence = currentTrackNumber
+                                Filetype = "BINARY",
+                                Sequence = currentTrackNumber
                             };
 
                             if(matchFile.Groups["length"].Value != "")
@@ -708,11 +712,14 @@ namespace Aaru.DiscImages
                     // Index 01
                     var partition = new Partition
                     {
-                        Description = $"Track {discimage.Tracks[i].Sequence}.", Name = discimage.Tracks[i].Title,
+                        Description = $"Track {discimage.Tracks[i].Sequence}.",
+                        Name        = discimage.Tracks[i].Title,
                         Start       = discimage.Tracks[i].StartSector,
                         Size        = (discimage.Tracks[i].Sectors - index0Len) * discimage.Tracks[i].Bps,
-                        Length      = discimage.Tracks[i].Sectors - index0Len, Sequence = partitionSequence,
-                        Offset      = byteOffset, Type                                  = discimage.Tracks[i].Tracktype
+                        Length      = discimage.Tracks[i].Sectors - index0Len,
+                        Sequence    = partitionSequence,
+                        Offset      = byteOffset,
+                        Type        = discimage.Tracks[i].Tracktype
                     };
 
                     byteOffset += partition.Size;

@@ -75,13 +75,17 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        TrackDescription = cdrTrack.Title, TrackPregap = (ulong)cdrTrack.Pregap,
-                        TrackSession = cdrTrack.Session, TrackSequence = cdrTrack.Sequence,
-                        TrackType = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
-                        TrackFile = cdrTrack.TrackFile.DataFilter.GetFilename(),
-                        TrackFilter = cdrTrack.TrackFile.DataFilter, TrackFileOffset = cdrTrack.TrackFile.Offset,
-                        TrackFileType = cdrTrack.TrackFile.FileType, TrackRawBytesPerSector = cdrTrack.Bps,
-                        TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
+                        TrackDescription       = cdrTrack.Title,
+                        TrackPregap            = (ulong)cdrTrack.Pregap,
+                        TrackSession           = cdrTrack.Session,
+                        TrackSequence          = cdrTrack.Sequence,
+                        TrackType              = CdrWinTrackTypeToTrackType(cdrTrack.TrackType),
+                        TrackFile              = cdrTrack.TrackFile.DataFilter.GetFilename(),
+                        TrackFilter            = cdrTrack.TrackFile.DataFilter,
+                        TrackFileOffset        = cdrTrack.TrackFile.Offset,
+                        TrackFileType          = cdrTrack.TrackFile.FileType,
+                        TrackRawBytesPerSector = cdrTrack.Bps,
+                        TrackBytesPerSector    = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
                     if(aaruTrack.TrackSequence == 1)

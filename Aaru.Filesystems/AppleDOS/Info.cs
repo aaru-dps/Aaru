@@ -94,8 +94,10 @@ namespace Aaru.Filesystems.AppleDOS
 
             XmlFsType = new FileSystemType
             {
-                Bootable = true, Clusters = imagePlugin.Info.Sectors, ClusterSize = imagePlugin.Info.SectorSize,
-                Type     = "Apple DOS"
+                Bootable    = true,
+                Clusters    = imagePlugin.Info.Sectors,
+                ClusterSize = imagePlugin.Info.SectorSize,
+                Type        = "Apple DOS"
             };
         }
     }

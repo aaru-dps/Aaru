@@ -73,7 +73,9 @@ namespace Aaru.Core.Devices.Report
                 {
                     mediaTest.CHS = new Chs
                     {
-                        Cylinders = ataId.Cylinders, Heads = ataId.Heads, Sectors = ataId.SectorsPerTrack
+                        Cylinders = ataId.Cylinders,
+                        Heads     = ataId.Heads,
+                        Sectors   = ataId.SectorsPerTrack
                     };
 
                     mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
@@ -85,7 +87,8 @@ namespace Aaru.Core.Devices.Report
                 {
                     mediaTest.CurrentCHS = new Chs
                     {
-                        Cylinders = ataId.CurrentCylinders, Heads = ataId.CurrentHeads,
+                        Cylinders = ataId.CurrentCylinders,
+                        Heads     = ataId.CurrentHeads,
                         Sectors   = ataId.CurrentSectorsPerTrack
                     };
 
@@ -351,8 +354,7 @@ namespace Aaru.Core.Devices.Report
                                       _dev.Timeout, out _);
 
                 mediaTest.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                                  readBuf.Length                     > 0     &&
-                                                  BitConverter.ToUInt64(readBuf, 0) !=
+                                                  readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
                                                   checkCorrectRead;
 
                 AaruConsole.DebugWriteLine("ATA Report",
@@ -414,7 +416,9 @@ namespace Aaru.Core.Devices.Report
             {
                 capabilities.CHS = new Chs
                 {
-                    Cylinders = ataId.Cylinders, Heads = ataId.Heads, Sectors = ataId.SectorsPerTrack
+                    Cylinders = ataId.Cylinders,
+                    Heads     = ataId.Heads,
+                    Sectors   = ataId.SectorsPerTrack
                 };
 
                 capabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
@@ -426,7 +430,8 @@ namespace Aaru.Core.Devices.Report
             {
                 capabilities.CurrentCHS = new Chs
                 {
-                    Cylinders = ataId.CurrentCylinders, Heads = ataId.CurrentHeads,
+                    Cylinders = ataId.CurrentCylinders,
+                    Heads     = ataId.CurrentHeads,
                     Sectors   = ataId.CurrentSectorsPerTrack
                 };
 
@@ -665,10 +670,8 @@ namespace Aaru.Core.Devices.Report
             sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, capabilities.LongBlockSize ?? 0,
                                   _dev.Timeout, out _);
 
-            capabilities.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 &&
-                                            errorChs.Error                     == 0    &&
-                                            readBuf.Length                     > 0     &&
-                                            BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+            capabilities.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
+                                            readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                        sense, errorChs.Status, errorChs.Error, readBuf.Length);
@@ -681,8 +684,7 @@ namespace Aaru.Core.Devices.Report
                                   _dev.Timeout, out _);
 
             capabilities.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                                 readBuf.Length                     > 0     &&
-                                                 BitConverter.ToUInt64(readBuf, 0) !=
+                                                 readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
                                                  checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
@@ -710,8 +712,7 @@ namespace Aaru.Core.Devices.Report
                                   out _);
 
             capabilities.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                    readBuf.Length                     > 0     &&
-                                                    BitConverter.ToUInt64(readBuf, 0) !=
+                                                    readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
                                                     checkCorrectRead;
 
             AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",

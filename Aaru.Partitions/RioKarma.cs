@@ -66,10 +66,13 @@ namespace Aaru.Partitions
 
             partitions = (from entry in table.entries let part = new Partition
                              {
-                                 Start    = entry.offset, Offset = (ulong)(entry.offset * sector.Length),
-                                 Size     = entry.size, Length   = (ulong)(entry.size   * sector.Length),
+                                 Start    = entry.offset,
+                                 Offset   = (ulong)(entry.offset * sector.Length),
+                                 Size     = entry.size,
+                                 Length   = (ulong)(entry.size * sector.Length),
                                  Type     = "Rio Karma",
-                                 Sequence = counter++, Scheme = Name
+                                 Sequence = counter++,
+                                 Scheme   = Name
                              } where entry.type == ENTRY_MAGIC select part).ToList();
 
             return true;

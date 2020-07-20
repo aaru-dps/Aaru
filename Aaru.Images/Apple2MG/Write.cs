@@ -73,7 +73,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -194,14 +196,16 @@ namespace Aaru.DiscImages
 
             imageHeader = new A2ImgHeader
             {
-                Blocks     = (uint)(imageInfo.Sectors * imageInfo.SectorSize) / 512, Creator = CREATOR_AARU,
+                Blocks     = (uint)(imageInfo.Sectors * imageInfo.SectorSize) / 512,
+                Creator    = CREATOR_AARU,
                 DataOffset = 0x40,
-                DataSize =
-                    (uint)(imageInfo.Sectors * imageInfo.SectorSize),
+                DataSize   = (uint)(imageInfo.Sectors * imageInfo.SectorSize),
                 Flags = (uint)(imageInfo.LastMediaSequence != 0 ? VALID_VOLUME_NUMBER + (imageInfo.MediaSequence & 0xFF)
                                    : 0),
-                HeaderSize = 0x40, ImageFormat = isDos ? SectorOrder.Dos : SectorOrder.ProDos, Magic = MAGIC,
-                Version    = 1
+                HeaderSize  = 0x40,
+                ImageFormat = isDos ? SectorOrder.Dos : SectorOrder.ProDos,
+                Magic       = MAGIC,
+                Version     = 1
             };
 
             if(!string.IsNullOrEmpty(imageInfo.Comments))

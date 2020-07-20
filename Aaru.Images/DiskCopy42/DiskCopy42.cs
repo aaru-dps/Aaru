@@ -61,16 +61,26 @@ namespace Aaru.DiscImages
 
         public DiskCopy42() => imageInfo = new ImageInfo
         {
-            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions      = false, HasSessions                           = false, Version = "4.2",
-            Application        = "Apple DiskCopy",
-            ApplicationVersion = "4.2", Creator = null, Comments = null,
-            MediaManufacturer  = null,
-            MediaModel         = null, MediaSerialNumber = null, MediaBarcode = null,
-            MediaPartNumber    = null,
-            MediaSequence      = 0, LastMediaSequence = 0, DriveManufacturer = null,
-            DriveModel         = null,
-            DriveSerialNumber  = null, DriveFirmwareRevision = null
+            ReadableSectorTags    = new List<SectorTagType>(),
+            ReadableMediaTags     = new List<MediaTagType>(),
+            HasPartitions         = false,
+            HasSessions           = false,
+            Version               = "4.2",
+            Application           = "Apple DiskCopy",
+            ApplicationVersion    = "4.2",
+            Creator               = null,
+            Comments              = null,
+            MediaManufacturer     = null,
+            MediaModel            = null,
+            MediaSerialNumber     = null,
+            MediaBarcode          = null,
+            MediaPartNumber       = null,
+            MediaSequence         = 0,
+            LastMediaSequence     = 0,
+            DriveManufacturer     = null,
+            DriveModel            = null,
+            DriveSerialNumber     = null,
+            DriveFirmwareRevision = null
         };
 
         ~DiskCopy42() => Close();

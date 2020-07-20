@@ -59,7 +59,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -482,13 +484,19 @@ namespace Aaru.DiscImages
 
             var header = new AlcoholHeader
             {
-                signature = alcoholSignature, version = new byte[]
+                signature = alcoholSignature,
+                version = new byte[]
                 {
                     1, 5
                 },
-                type             = MediaTypeToAlcohol(imageInfo.MediaType), sessions = sessions,
-                structuresOffset = (uint)(pfi == null ? 0 : 96), sessionOffset = (uint)(pfi == null ? 96 : 4196),
-                unknown1         = new ushort[2], unknown2 = new uint[2], unknown3 = new uint[6], unknown4 = new uint[3]
+                type             = MediaTypeToAlcohol(imageInfo.MediaType),
+                sessions         = sessions,
+                structuresOffset = (uint)(pfi == null ? 0 : 96),
+                sessionOffset    = (uint)(pfi == null ? 96 : 4196),
+                unknown1         = new ushort[2],
+                unknown2         = new uint[2],
+                unknown3         = new uint[6],
+                unknown4         = new uint[3]
             };
 
             // Alcohol sets this always, Daemon Tool expects this
@@ -555,8 +563,12 @@ namespace Aaru.DiscImages
                 alcSessions.Add(1, new AlcoholSession
                 {
                     sessionEnd      = (int)((writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector) + 1),
-                    sessionSequence = 1, allBlocks   = 1, nonTrackBlocks = 3, firstTrack = 1,
-                    lastTrack       = 1, trackOffset = 4220
+                    sessionSequence = 1,
+                    allBlocks       = 1,
+                    nonTrackBlocks  = 3,
+                    firstTrack      = 1,
+                    lastTrack       = 1,
+                    trackOffset     = 4220
                 });
 
                 footerOffset = 4300;
@@ -566,10 +578,15 @@ namespace Aaru.DiscImages
 
                 alcTracks.Add(1, new AlcoholTrack
                 {
-                    mode        = AlcoholTrackMode.DVD, adrCtl = 20, point = 1,
-                    extraOffset = (uint)((writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector) + 1),
-                    sectorSize  = 2048, files = 1, footerOffset = (uint)footerOffset, unknown = new byte[18],
-                    unknown2    = new byte[24]
+                    mode         = AlcoholTrackMode.DVD,
+                    adrCtl       = 20,
+                    point        = 1,
+                    extraOffset  = (uint)((writingTracks[0].TrackEndSector - writingTracks[0].TrackStartSector) + 1),
+                    sectorSize   = 2048,
+                    files        = 1,
+                    footerOffset = (uint)footerOffset,
+                    unknown      = new byte[18],
+                    unknown2     = new byte[24]
                 });
 
                 alcToc.Add(1, alcTracks);
@@ -582,14 +599,16 @@ namespace Aaru.DiscImages
 
                     alcSessions.Add(i, new AlcoholSession
                     {
-                        sessionStart = (int)firstTrack.TrackStartSector - 150,
-                        sessionEnd   = (int)lastTrack.TrackEndSector    + 1, sessionSequence = (ushort)i,
+                        sessionStart    = (int)firstTrack.TrackStartSector - 150,
+                        sessionEnd      = (int)lastTrack.TrackEndSector    + 1,
+                        sessionSequence = (ushort)i,
                         allBlocks = (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
                                            writingTracks.Count(t => t.TrackSession == i) + 3),
                         nonTrackBlocks =
                             (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
                                                                            t.POINT         <= 0xAF) ?? 3),
-                        firstTrack  = (ushort)firstTrack.TrackSequence, lastTrack = (ushort)lastTrack.TrackSequence,
+                        firstTrack  = (ushort)firstTrack.TrackSequence,
+                        lastTrack   = (ushort)lastTrack.TrackSequence,
                         trackOffset = (uint)currentTrackOffset
                     });
 
@@ -616,10 +635,19 @@ namespace Aaru.DiscImages
                         {
                             thisSessionTracks.Add(tocTrk.POINT, new AlcoholTrack
                             {
-                                adrCtl = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
-                                point = tocTrk.POINT, min = tocTrk.Min, sec = tocTrk.Sec, frame = tocTrk.Frame,
-                                zero = tocTrk.Zero, pmin = tocTrk.PMIN, psec = tocTrk.PSEC, pframe = tocTrk.PFRAME,
-                                mode = AlcoholTrackMode.NoData, unknown = new byte[18], unknown2 = new byte[24],
+                                adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                tno         = tocTrk.TNO,
+                                point       = tocTrk.POINT,
+                                min         = tocTrk.Min,
+                                sec         = tocTrk.Sec,
+                                frame       = tocTrk.Frame,
+                                zero        = tocTrk.Zero,
+                                pmin        = tocTrk.PMIN,
+                                psec        = tocTrk.PSEC,
+                                pframe      = tocTrk.PFRAME,
+                                mode        = AlcoholTrackMode.NoData,
+                                unknown     = new byte[18],
+                                unknown2    = new byte[24],
                                 extraOffset = (uint)currentExtraOffset
                             });
 
@@ -630,36 +658,44 @@ namespace Aaru.DiscImages
                     {
                         thisSessionTracks.Add(0xA0, new AlcoholTrack
                         {
-                            adrCtl   = (byte)((1 << 4) + firstTrackControl), pmin = (byte)firstTrack.TrackSequence,
-                            mode     = AlcoholTrackMode.NoData, point             = 0xA0, unknown = new byte[18],
-                            unknown2 = new byte[24], psec = (byte)(imageInfo.MediaType == MediaType.CDI
-                                                                       ? 0x10
-                                                                       : writingTracks.Any(t => t.TrackType ==
-                                                                                                TrackType.
-                                                                                                    CdMode2Form1 ||
-                                                                                                t.TrackType ==
-                                                                                                TrackType.
-                                                                                                    CdMode2Form2 ||
-                                                                                                t.TrackType ==
-                                                                                                TrackType.
-                                                                                                    CdMode2Formless)
-                                                                           ? 0x20
-                                                                           : 0),
+                            adrCtl   = (byte)((1 << 4) + firstTrackControl),
+                            pmin     = (byte)firstTrack.TrackSequence,
+                            mode     = AlcoholTrackMode.NoData,
+                            point    = 0xA0,
+                            unknown  = new byte[18],
+                            unknown2 = new byte[24],
+                            psec = (byte)(imageInfo.MediaType == MediaType.CDI
+                                              ? 0x10
+                                              : writingTracks.Any(t => t.TrackType == TrackType.CdMode2Form1 ||
+                                                                       t.TrackType == TrackType.CdMode2Form2 ||
+                                                                       t.TrackType == TrackType.CdMode2Formless)
+                                                  ? 0x20
+                                                  : 0),
                             extraOffset = (uint)currentExtraOffset
                         });
 
                         thisSessionTracks.Add(0xA1, new AlcoholTrack
                         {
-                            adrCtl   = (byte)((1 << 4) + lastTrackControl), pmin = (byte)lastTrack.TrackSequence,
-                            mode     = AlcoholTrackMode.NoData, point            = 0xA1, unknown = new byte[18],
-                            unknown2 = new byte[24], extraOffset                 = (uint)currentExtraOffset
+                            adrCtl      = (byte)((1 << 4) + lastTrackControl),
+                            pmin        = (byte)lastTrack.TrackSequence,
+                            mode        = AlcoholTrackMode.NoData,
+                            point       = 0xA1,
+                            unknown     = new byte[18],
+                            unknown2    = new byte[24],
+                            extraOffset = (uint)currentExtraOffset
                         });
 
                         thisSessionTracks.Add(0xA2, new AlcoholTrack
                         {
-                            adrCtl      = (byte)((1 << 4) + firstTrackControl), zero = 0, pmin = leadinPmsf.minute,
-                            psec        = leadinPmsf.second, pframe = leadinPmsf.frame, mode = AlcoholTrackMode.NoData,
-                            point       = 0xA2, unknown = new byte[18], unknown2 = new byte[24],
+                            adrCtl      = (byte)((1 << 4) + firstTrackControl),
+                            zero        = 0,
+                            pmin        = leadinPmsf.minute,
+                            psec        = leadinPmsf.second,
+                            pframe      = leadinPmsf.frame,
+                            mode        = AlcoholTrackMode.NoData,
+                            point       = 0xA2,
+                            unknown     = new byte[18],
+                            unknown2    = new byte[24],
                             extraOffset = (uint)currentExtraOffset
                         });
 
@@ -776,10 +812,19 @@ namespace Aaru.DiscImages
                         {
                             thisSessionTracks.Add(tocTrk.POINT, new AlcoholTrack
                             {
-                                adrCtl = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL), tno = tocTrk.TNO,
-                                point = tocTrk.POINT, min = tocTrk.Min, sec = tocTrk.Sec, frame = tocTrk.Frame,
-                                zero = tocTrk.Zero, pmin = tocTrk.PMIN, psec = tocTrk.PSEC, pframe = tocTrk.PFRAME,
-                                mode = AlcoholTrackMode.NoData, unknown = new byte[18], unknown2 = new byte[24],
+                                adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                tno         = tocTrk.TNO,
+                                point       = tocTrk.POINT,
+                                min         = tocTrk.Min,
+                                sec         = tocTrk.Sec,
+                                frame       = tocTrk.Frame,
+                                zero        = tocTrk.Zero,
+                                pmin        = tocTrk.PMIN,
+                                psec        = tocTrk.PSEC,
+                                pframe      = tocTrk.PFRAME,
+                                mode        = AlcoholTrackMode.NoData,
+                                unknown     = new byte[18],
+                                unknown2    = new byte[24],
                                 extraOffset = (uint)currentExtraOffset
                             });
 
@@ -797,16 +842,28 @@ namespace Aaru.DiscImages
 
                         thisSessionTracks.Add(0xB0, new AlcoholTrack
                         {
-                            point    = 0xB0, adrCtl               = 0x50, zero = 0, min = leadoutAmsf.minute,
-                            sec      = leadoutAmsf.second, frame  = leadoutAmsf.frame, pmin = leadoutPmsf.minute,
-                            psec     = leadoutPmsf.second, pframe = leadoutPmsf.frame, unknown = new byte[18],
+                            point    = 0xB0,
+                            adrCtl   = 0x50,
+                            zero     = 0,
+                            min      = leadoutAmsf.minute,
+                            sec      = leadoutAmsf.second,
+                            frame    = leadoutAmsf.frame,
+                            pmin     = leadoutPmsf.minute,
+                            psec     = leadoutPmsf.second,
+                            pframe   = leadoutPmsf.frame,
+                            unknown  = new byte[18],
                             unknown2 = new byte[24]
                         });
 
                         thisSessionTracks.Add(0xC0, new AlcoholTrack
                         {
-                            point = 0xC0, adrCtl = 0x50, min              = 128, pmin = 97,
-                            psec  = 25, unknown  = new byte[18], unknown2 = new byte[24]
+                            point    = 0xC0,
+                            adrCtl   = 0x50,
+                            min      = 128,
+                            pmin     = 97,
+                            psec     = 25,
+                            unknown  = new byte[18],
+                            unknown2 = new byte[24]
                         });
 
                         currentTrackOffset += Marshal.SizeOf<AlcoholTrack>() * 2;
@@ -817,7 +874,8 @@ namespace Aaru.DiscImages
 
             alcFooter = new AlcoholFooter
             {
-                filenameOffset = (uint)(footerOffset + Marshal.SizeOf<AlcoholFooter>()), widechar = 1
+                filenameOffset = (uint)(footerOffset + Marshal.SizeOf<AlcoholFooter>()),
+                widechar       = 1
             };
 
             byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.

@@ -98,9 +98,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                SectorCount = count, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector,
-                Command     = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
+                SectorCount  = count,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector,
+                Command      = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
@@ -120,9 +123,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command      = (byte)AtaCommands.ReadMultiple, SectorCount      = count,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100), CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
-                DeviceHead   = (byte)(head & 0x0F), Sector                      = sector
+                Command      = (byte)AtaCommands.ReadMultiple,
+                SectorCount  = count,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
@@ -147,9 +153,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command      = retry ? (byte)AtaCommands.ReadRetry : (byte)AtaCommands.Read, SectorCount = count,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100), CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
-                DeviceHead   = (byte)(head & 0x0F), Sector = sector
+                Command      = retry ? (byte)AtaCommands.ReadRetry : (byte)AtaCommands.Read,
+                SectorCount  = count,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
@@ -174,9 +183,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command      = retry ? (byte)AtaCommands.ReadLongRetry : (byte)AtaCommands.ReadLong, SectorCount = 1,
-                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100), CylinderLow = (byte)((cylinder & 0xFF) / 0x1),
-                DeviceHead   = (byte)(head & 0x0F), Sector = sector
+                Command      = retry ? (byte)AtaCommands.ReadLongRetry : (byte)AtaCommands.ReadLong,
+                SectorCount  = 1,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
@@ -197,8 +209,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command     = (byte)AtaCommands.Seek, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector
+                Command      = (byte)AtaCommands.Seek,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -223,9 +238,13 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command     = (byte)AtaCommands.SetFeatures, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder & 0xFF) / 0x1), DeviceHead = (byte)(head & 0x0F), Sector = sector,
-                SectorCount = sectorCount, Feature = (byte)feature
+                Command      = (byte)AtaCommands.SetFeatures,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                DeviceHead   = (byte)(head & 0x0F),
+                Sector       = sector,
+                SectorCount  = sectorCount,
+                Feature      = (byte)feature
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,

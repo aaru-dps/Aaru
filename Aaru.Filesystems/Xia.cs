@@ -119,8 +119,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment), Clusters = supblk.s_nzones,
-                ClusterSize = supblk.s_zone_size, Type                                          = "Xia filesystem"
+                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
+                Clusters    = supblk.s_nzones,
+                ClusterSize = supblk.s_zone_size,
+                Type        = "Xia filesystem"
             };
 
             information = sb.ToString();

@@ -224,11 +224,13 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters     = (ulong)besb.num_blocks, ClusterSize = besb.block_size,
-                Dirty        = besb.flags == BEFS_DIRTY,
-                FreeClusters = (ulong)(besb.num_blocks - besb.used_blocks), FreeClustersSpecified = true,
-                Type         = "BeFS",
-                VolumeName   = StringHandlers.CToString(besb.name, Encoding)
+                Clusters              = (ulong)besb.num_blocks,
+                ClusterSize           = besb.block_size,
+                Dirty                 = besb.flags == BEFS_DIRTY,
+                FreeClusters          = (ulong)(besb.num_blocks - besb.used_blocks),
+                FreeClustersSpecified = true,
+                Type                  = "BeFS",
+                VolumeName            = StringHandlers.CToString(besb.name, Encoding)
             };
         }
 

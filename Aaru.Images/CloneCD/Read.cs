@@ -438,10 +438,12 @@ namespace Aaru.DiscImages
 
                                         currentTrack = new Track
                                         {
-                                            TrackBytesPerSector = 2352, TrackFile = dataFilter.GetFilename(),
-                                            TrackFileType       = scrambled ? "SCRAMBLED" : "BINARY",
-                                            TrackFilter         = dataFilter, TrackRawBytesPerSector = 2352,
-                                            TrackSequence       = descriptor.POINT,
+                                            TrackBytesPerSector    = 2352,
+                                            TrackFile              = dataFilter.GetFilename(),
+                                            TrackFileType          = scrambled ? "SCRAMBLED" : "BINARY",
+                                            TrackFilter            = dataFilter,
+                                            TrackRawBytesPerSector = 2352,
+                                            TrackSequence          = descriptor.POINT,
                                             TrackStartSector =
                                                 GetLba(descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME),
                                             TrackSession = descriptor.SessionNumber
@@ -679,7 +681,9 @@ namespace Aaru.DiscImages
 
                 var currentSession = new Session
                 {
-                    EndTrack = uint.MinValue, StartTrack = uint.MaxValue, SessionSequence = 1
+                    EndTrack        = uint.MinValue,
+                    StartTrack      = uint.MaxValue,
+                    SessionSequence = 1
                 };
 
                 Partitions = new List<Partition>();
@@ -707,7 +711,9 @@ namespace Aaru.DiscImages
 
                         currentSession = new Session
                         {
-                            EndTrack = uint.MinValue, StartTrack = uint.MaxValue, SessionSequence = track.TrackSession
+                            EndTrack        = uint.MinValue,
+                            StartTrack      = uint.MaxValue,
+                            SessionSequence = track.TrackSession
                         };
                     }
 
@@ -716,9 +722,11 @@ namespace Aaru.DiscImages
                         Description = track.TrackDescription,
                         Size = ((track.TrackEndSector - track.TrackStartSector) + 1) *
                                (ulong)track.TrackRawBytesPerSector,
-                        Length = (track.TrackEndSector - track.TrackStartSector) + 1, Sequence = track.TrackSequence,
-                        Offset = track.TrackFileOffset, Start                                  = track.TrackStartSector,
-                        Type   = track.TrackType.ToString()
+                        Length   = (track.TrackEndSector - track.TrackStartSector) + 1,
+                        Sequence = track.TrackSequence,
+                        Offset   = track.TrackFileOffset,
+                        Start    = track.TrackStartSector,
+                        Type     = track.TrackType.ToString()
                     };
 
                     imageInfo.Sectors += partition.Length;

@@ -363,7 +363,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.adler32, Value = adler32Ctx.End()
+                    type  = ChecksumTypeType.adler32,
+                    Value = adler32Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -373,7 +374,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc16, Value = crc16Ctx.End()
+                    type  = ChecksumTypeType.crc16,
+                    Value = crc16Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -383,7 +385,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc32, Value = crc32Ctx.End()
+                    type  = ChecksumTypeType.crc32,
+                    Value = crc32Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -393,7 +396,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc64, Value = crc64Ctx.End()
+                    type  = ChecksumTypeType.crc64,
+                    Value = crc64Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -403,7 +407,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.md5, Value = md5Ctx.End()
+                    type  = ChecksumTypeType.md5,
+                    Value = md5Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -413,7 +418,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha1, Value = sha1Ctx.End()
+                    type  = ChecksumTypeType.sha1,
+                    Value = sha1Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -423,7 +429,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha256, Value = sha256Ctx.End()
+                    type  = ChecksumTypeType.sha256,
+                    Value = sha256Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -433,7 +440,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha384, Value = sha384Ctx.End()
+                    type  = ChecksumTypeType.sha384,
+                    Value = sha384Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -443,7 +451,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha512, Value = sha512Ctx.End()
+                    type  = ChecksumTypeType.sha512,
+                    Value = sha512Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -453,7 +462,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.spamsum, Value = ssctx.End()
+                    type  = ChecksumTypeType.spamsum,
+                    Value = ssctx.End()
                 };
 
                 chks.Add(chk);
@@ -463,7 +473,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.fletcher16, Value = f16Ctx.End()
+                    type  = ChecksumTypeType.fletcher16,
+                    Value = f16Ctx.End()
                 };
 
                 chks.Add(chk);
@@ -474,7 +485,8 @@ namespace Aaru.Core
 
             chk = new ChecksumType
             {
-                type = ChecksumTypeType.fletcher32, Value = f32Ctx.End()
+                type  = ChecksumTypeType.fletcher32,
+                Value = f32Ctx.End()
             };
 
             chks.Add(chk);
@@ -516,7 +528,8 @@ namespace Aaru.Core
 
                 var adlerPktData = new HashPacket
                 {
-                    Context = adler32CtxData, Data = data
+                    Context = adler32CtxData,
+                    Data    = data
                 };
 
                 adlerThreadData.Start(adlerPktData);
@@ -528,7 +541,8 @@ namespace Aaru.Core
 
                 var crc16PktData = new HashPacket
                 {
-                    Context = crc16CtxData, Data = data
+                    Context = crc16CtxData,
+                    Data    = data
                 };
 
                 crc16ThreadData.Start(crc16PktData);
@@ -540,7 +554,8 @@ namespace Aaru.Core
 
                 var crc32PktData = new HashPacket
                 {
-                    Context = crc32CtxData, Data = data
+                    Context = crc32CtxData,
+                    Data    = data
                 };
 
                 crc32ThreadData.Start(crc32PktData);
@@ -552,7 +567,8 @@ namespace Aaru.Core
 
                 var crc64PktData = new HashPacket
                 {
-                    Context = crc64CtxData, Data = data
+                    Context = crc64CtxData,
+                    Data    = data
                 };
 
                 crc64ThreadData.Start(crc64PktData);
@@ -564,7 +580,8 @@ namespace Aaru.Core
 
                 var md5PktData = new HashPacket
                 {
-                    Context = md5CtxData, Data = data
+                    Context = md5CtxData,
+                    Data    = data
                 };
 
                 md5ThreadData.Start(md5PktData);
@@ -576,7 +593,8 @@ namespace Aaru.Core
 
                 var sha1PktData = new HashPacket
                 {
-                    Context = sha1CtxData, Data = data
+                    Context = sha1CtxData,
+                    Data    = data
                 };
 
                 sha1ThreadData.Start(sha1PktData);
@@ -588,7 +606,8 @@ namespace Aaru.Core
 
                 var sha256PktData = new HashPacket
                 {
-                    Context = sha256CtxData, Data = data
+                    Context = sha256CtxData,
+                    Data    = data
                 };
 
                 sha256ThreadData.Start(sha256PktData);
@@ -600,7 +619,8 @@ namespace Aaru.Core
 
                 var sha384PktData = new HashPacket
                 {
-                    Context = sha384CtxData, Data = data
+                    Context = sha384CtxData,
+                    Data    = data
                 };
 
                 sha384ThreadData.Start(sha384PktData);
@@ -612,7 +632,8 @@ namespace Aaru.Core
 
                 var sha512PktData = new HashPacket
                 {
-                    Context = sha512CtxData, Data = data
+                    Context = sha512CtxData,
+                    Data    = data
                 };
 
                 sha512ThreadData.Start(sha512PktData);
@@ -624,7 +645,8 @@ namespace Aaru.Core
 
                 var spamsumPktData = new HashPacket
                 {
-                    Context = ssctxData, Data = data
+                    Context = ssctxData,
+                    Data    = data
                 };
 
                 spamsumThreadData.Start(spamsumPktData);
@@ -636,7 +658,8 @@ namespace Aaru.Core
 
                 var f16PktData = new HashPacket
                 {
-                    Context = f16CtxData, Data = data
+                    Context = f16CtxData,
+                    Data    = data
                 };
 
                 f16ThreadData.Start(f16PktData);
@@ -648,7 +671,8 @@ namespace Aaru.Core
 
                 var f32PktData = new HashPacket
                 {
-                    Context = f32CtxData, Data = data
+                    Context = f32CtxData,
+                    Data    = data
                 };
 
                 f32ThreadData.Start(f32PktData);
@@ -674,7 +698,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.adler32, Value = adler32CtxData.End()
+                    type  = ChecksumTypeType.adler32,
+                    Value = adler32CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -684,7 +709,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc16, Value = crc16CtxData.End()
+                    type  = ChecksumTypeType.crc16,
+                    Value = crc16CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -694,7 +720,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc32, Value = crc32CtxData.End()
+                    type  = ChecksumTypeType.crc32,
+                    Value = crc32CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -704,7 +731,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.crc64, Value = crc64CtxData.End()
+                    type  = ChecksumTypeType.crc64,
+                    Value = crc64CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -714,7 +742,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.md5, Value = md5CtxData.End()
+                    type  = ChecksumTypeType.md5,
+                    Value = md5CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -724,7 +753,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha1, Value = sha1CtxData.End()
+                    type  = ChecksumTypeType.sha1,
+                    Value = sha1CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -734,7 +764,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha256, Value = sha256CtxData.End()
+                    type  = ChecksumTypeType.sha256,
+                    Value = sha256CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -744,7 +775,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha384, Value = sha384CtxData.End()
+                    type  = ChecksumTypeType.sha384,
+                    Value = sha384CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -754,7 +786,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.sha512, Value = sha512CtxData.End()
+                    type  = ChecksumTypeType.sha512,
+                    Value = sha512CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -764,7 +797,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.spamsum, Value = ssctxData.End()
+                    type  = ChecksumTypeType.spamsum,
+                    Value = ssctxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -774,7 +808,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.fletcher16, Value = f16CtxData.End()
+                    type  = ChecksumTypeType.fletcher16,
+                    Value = f16CtxData.End()
                 };
 
                 dataChecksums.Add(chk);
@@ -784,7 +819,8 @@ namespace Aaru.Core
             {
                 chk = new ChecksumType
                 {
-                    type = ChecksumTypeType.fletcher32, Value = f32CtxData.End()
+                    type  = ChecksumTypeType.fletcher32,
+                    Value = f32CtxData.End()
                 };
 
                 dataChecksums.Add(chk);

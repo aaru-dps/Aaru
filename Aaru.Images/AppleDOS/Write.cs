@@ -68,7 +68,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -153,10 +155,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            bool isDos = deinterleaved[0x11001] == 17  && deinterleaved[0x11002] < 16 &&
-                         deinterleaved[0x11027] <= 122 &&
-                         deinterleaved[0x11034] == 35  && deinterleaved[0x11035] == 16 &&
-                         deinterleaved[0x11036] == 0   &&
+            bool isDos = deinterleaved[0x11001] == 17 && deinterleaved[0x11002] < 16 && deinterleaved[0x11027] <= 122 &&
+                         deinterleaved[0x11034] == 35 && deinterleaved[0x11035] == 16 && deinterleaved[0x11036] == 0 &&
                          deinterleaved[0x11037] == 1;
 
             byte[] tmp = new byte[deinterleaved.Length];

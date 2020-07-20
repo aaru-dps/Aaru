@@ -52,38 +52,66 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Linux", Length = 204800,
-                    Sequence    = 0, Start   = 0
+                    Description = null,
+                    Name        = null,
+                    Type        = "Linux",
+                    Length      = 204800,
+                    Sequence    = 0,
+                    Start       = 0
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Sun boot", Length = 102400,
-                    Sequence    = 1, Start   = 208845
+                    Description = null,
+                    Name        = null,
+                    Type        = "Sun boot",
+                    Length      = 102400,
+                    Sequence    = 1,
+                    Start       = 208845
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Sun /", Length = 102400,
-                    Sequence    = 2, Start   = 321300
+                    Description = null,
+                    Name        = null,
+                    Type        = "Sun /",
+                    Length      = 102400,
+                    Sequence    = 2,
+                    Start       = 321300
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Sun /home", Length = 102400,
-                    Sequence    = 3, Start   = 433755
+                    Description = null,
+                    Name        = null,
+                    Type        = "Sun /home",
+                    Length      = 102400,
+                    Sequence    = 3,
+                    Start       = 433755
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Sun swap", Length = 153600,
-                    Sequence    = 4, Start   = 546210
+                    Description = null,
+                    Name        = null,
+                    Type        = "Sun swap",
+                    Length      = 153600,
+                    Sequence    = 4,
+                    Start       = 546210
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Sun /usr", Length = 208845,
-                    Sequence    = 5, Start   = 706860
+                    Description = null,
+                    Name        = null,
+                    Type        = "Sun /usr",
+                    Length      = 208845,
+                    Sequence    = 5,
+                    Start       = 706860
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Linux swap", Length = 96390,
-                    Sequence    = 6, Start   = 915705
+                    Description = null,
+                    Name        = null,
+                    Type        = "Linux swap",
+                    Length      = 96390,
+                    Sequence    = 6,
+                    Start       = 915705
                 }
             },
 
@@ -92,18 +120,30 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Linux", Length = 49152,
-                    Sequence    = 0, Start   = 0
+                    Description = null,
+                    Name        = null,
+                    Type        = "Linux",
+                    Length      = 49152,
+                    Sequence    = 0,
+                    Start       = 0
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Linux", Length = 80325,
-                    Sequence    = 1, Start   = 64260
+                    Description = null,
+                    Name        = null,
+                    Type        = "Linux",
+                    Length      = 80325,
+                    Sequence    = 1,
+                    Start       = 64260
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "Linux", Length = 96390,
-                    Sequence    = 2, Start   = 144585
+                    Description = null,
+                    Name        = null,
+                    Type        = "Linux",
+                    Length      = 96390,
+                    Sequence    = 2,
+                    Start       = 144585
                 }
             }
         };

@@ -52,19 +52,27 @@ namespace Aaru.Core
                     {
                         Image = new ImageType
                         {
-                            format = "Directory", offsetSpecified = false, Value = folderName
+                            format          = "Directory",
+                            offsetSpecified = false,
+                            Value           = folderName
                         },
                         Sequence = new SequenceType
                         {
-                            MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1
+                            MediaTitle    = folderName,
+                            MediaSequence = 1,
+                            TotalMedia    = 1
                         },
-                        PhysicalBlockSize = blockSize, LogicalBlockSize = blockSize, TapeInformation = new[]
+                        PhysicalBlockSize = blockSize,
+                        LogicalBlockSize  = blockSize,
+                        TapeInformation = new[]
                         {
                             new TapePartitionType
                             {
                                 Image = new ImageType
                                 {
-                                    format = "Directory", offsetSpecified = false, Value = folderName
+                                    format          = "Directory",
+                                    offsetSpecified = false,
+                                    Value           = folderName
                                 }
                             }
                         }
@@ -94,10 +102,14 @@ namespace Aaru.Core
                 {
                     Image = new ImageType
                     {
-                        format = "Raw disk image (sector by sector copy)", offset = 0,
+                        format = "Raw disk image (sector by sector copy)",
+                        offset = 0,
                         Value  = Path.GetFileName(files[i])
                     },
-                    Size = (ulong)fs.Length, BlockSize = blockSize, StartBlock = currentBlock, Sequence = (ulong)i
+                    Size       = (ulong)fs.Length,
+                    BlockSize  = blockSize,
+                    StartBlock = currentBlock,
+                    Sequence   = (ulong)i
                 };
 
                 const uint SECTORS_TO_READ = 512;

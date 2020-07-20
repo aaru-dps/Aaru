@@ -65,7 +65,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -144,7 +146,8 @@ namespace Aaru.DiscImages
 
                     currentChunk = new BlockChunk
                     {
-                        type   = isEmpty ? CHUNK_TYPE_NOCOPY : CHUNK_TYPE_COPY, sector = currentSector,
+                        type   = isEmpty ? CHUNK_TYPE_NOCOPY : CHUNK_TYPE_COPY,
+                        sector = currentSector,
                         offset = (ulong)(isEmpty ? 0 : writingStream.Position)
                     };
 
@@ -199,7 +202,8 @@ namespace Aaru.DiscImages
 
                     currentChunk = new BlockChunk
                     {
-                        type = CHUNK_TYPE_NOCOPY, sector = currentSector
+                        type   = CHUNK_TYPE_NOCOPY,
+                        sector = currentSector
                     };
                 }
 
@@ -256,13 +260,17 @@ namespace Aaru.DiscImages
 
             chunks.Add(imageInfo.Sectors, new BlockChunk
             {
-                type = CHUNK_TYPE_END, sector = imageInfo.Sectors
+                type   = CHUNK_TYPE_END,
+                sector = imageInfo.Sectors
             });
 
             var bHdr = new BlockHeader
             {
-                signature    = CHUNK_SIGNATURE, version              = 1, sectorCount = imageInfo.Sectors,
-                checksumType = UDIF_CHECKSUM_TYPE_CRC32, checksumLen = 32,
+                signature    = CHUNK_SIGNATURE,
+                version      = 1,
+                sectorCount  = imageInfo.Sectors,
+                checksumType = UDIF_CHECKSUM_TYPE_CRC32,
+                checksumLen  = 32,
                 checksum     = BitConverter.ToUInt32(dataForkChecksum.Final().Reverse().ToArray(), 0),
                 chunks       = (uint)chunks.Count
             };
@@ -331,19 +339,26 @@ namespace Aaru.DiscImages
 
             footer = new UdifFooter
             {
-                signature      = UDIF_SIGNATURE, version                    = 4,
-                headerSize     = 512, flags                                 = 1,
-                dataForkLen    = (ulong)writingStream.Length, segmentNumber = 1, segmentCount = 1,
-                segmentId      = Guid.NewGuid(), dataForkChkType            = UDIF_CHECKSUM_TYPE_CRC32,
-                dataForkChkLen = 32,
-                dataForkChk    = BitConverter.ToUInt32(dataForkChecksum.Final().Reverse().ToArray(), 0),
-                plistOff       = (ulong)writingStream.Length, plistLen = (ulong)plist.Length,
+                signature       = UDIF_SIGNATURE,
+                version         = 4,
+                headerSize      = 512,
+                flags           = 1,
+                dataForkLen     = (ulong)writingStream.Length,
+                segmentNumber   = 1,
+                segmentCount    = 1,
+                segmentId       = Guid.NewGuid(),
+                dataForkChkType = UDIF_CHECKSUM_TYPE_CRC32,
+                dataForkChkLen  = 32,
+                dataForkChk     = BitConverter.ToUInt32(dataForkChecksum.Final().Reverse().ToArray(), 0),
+                plistOff        = (ulong)writingStream.Length,
+                plistLen        = (ulong)plist.Length,
 
                 // TODO: Find how is this calculated
                 /*masterChkType   = 2,
                 masterChkLen    = 32,
                 masterChk       = BitConverter.ToUInt32(masterChecksum.Final().Reverse().ToArray(), 0),*/
-                imageVariant = 2, sectorCount = imageInfo.Sectors
+                imageVariant = 2,
+                sectorCount  = imageInfo.Sectors
             };
 
             writingStream.Seek(0, SeekOrigin.End);

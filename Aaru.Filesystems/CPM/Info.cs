@@ -206,7 +206,9 @@ namespace Aaru.Filesystems.CPM
                             // Build a DiscParameterBlock
                             dpb = new DiscParameterBlock
                             {
-                                al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0, spt = amsSb.spt, bsh = amsSb.bsh
+                                al0 = sectorCount == 1440 ? (byte)0xF0 : (byte)0xC0,
+                                spt = amsSb.spt,
+                                bsh = amsSb.bsh
                             };
 
                             for(int i = 0; i < dpb.bsh; i++)
@@ -240,16 +242,26 @@ namespace Aaru.Filesystems.CPM
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition
                             {
-                                al0             = dpb.al0, al1 = dpb.al1, bitrate = "LOW",
+                                al0             = dpb.al0,
+                                al1             = dpb.al1,
+                                bitrate         = "LOW",
                                 blm             = dpb.blm,
-                                bsh             = dpb.bsh, bytesPerSector = 512, cylinders = amsSb.tps,
+                                bsh             = dpb.bsh,
+                                bytesPerSector  = 512,
+                                cylinders       = amsSb.tps,
                                 drm             = dpb.drm,
-                                dsm             = dpb.dsm, encoding = "MFM", evenOdd = false,
+                                dsm             = dpb.dsm,
+                                encoding        = "MFM",
+                                evenOdd         = false,
                                 exm             = dpb.exm,
-                                label           = null, comment = "Amstrad PCW superblock", ofs = dpb.off,
-                                sectorsPerTrack = amsSb.spt, side1 = new Side
+                                label           = null,
+                                comment         = "Amstrad PCW superblock",
+                                ofs             = dpb.off,
+                                sectorsPerTrack = amsSb.spt,
+                                side1 = new Side
                                 {
-                                    sideId = 0, sectorIds = new int[amsSb.spt]
+                                    sideId    = 0,
+                                    sectorIds = new int[amsSb.spt]
                                 }
                             };
 
@@ -276,7 +288,8 @@ namespace Aaru.Filesystems.CPM
 
                                 workingDefinition.side2 = new Side
                                 {
-                                    sideId = 1, sectorIds = new int[amsSb.spt]
+                                    sideId    = 1,
+                                    sectorIds = new int[amsSb.spt]
                                 };
 
                                 for(int si = 0; si < amsSb.spt; si++)
@@ -329,15 +342,22 @@ namespace Aaru.Filesystems.CPM
                             // Build a DiscParameterBlock
                             dpb = new DiscParameterBlock
                             {
-                                al0 = (byte)hddSb.al0, al1 = (byte)hddSb.al1, blm = hddSb.blm, bsh = hddSb.bsh,
-                                cks = hddSb.cks, drm       = hddSb.drm, dsm       = hddSb.dsm, exm = hddSb.exm,
+                                al0 = (byte)hddSb.al0,
+                                al1 = (byte)hddSb.al1,
+                                blm = hddSb.blm,
+                                bsh = hddSb.bsh,
+                                cks = hddSb.cks,
+                                drm = hddSb.drm,
+                                dsm = hddSb.dsm,
+                                exm = hddSb.exm,
                                 off = hddSb.off,
 
                                 // Needed?
                                 phm = 0,
 
                                 // Needed?
-                                psh = 0, spt = hddSb.spt
+                                psh = 0,
+                                spt = hddSb.spt
                             };
 
                             uint directoryLength = (uint)((((ulong)dpb.drm + 1) * 32) / sectorSize);
@@ -350,23 +370,35 @@ namespace Aaru.Filesystems.CPM
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition
                             {
-                                al0             = dpb.al0, al1            = dpb.al1,
-                                bitrate         = "HIGH", blm             = dpb.blm,
-                                bsh             = dpb.bsh, bytesPerSector = 512,
-                                cylinders       = hddSb.cylinders, drm    = dpb.drm,
-                                dsm             = dpb.dsm, encoding       = "MFM", evenOdd = false,
+                                al0             = dpb.al0,
+                                al1             = dpb.al1,
+                                bitrate         = "HIGH",
+                                blm             = dpb.blm,
+                                bsh             = dpb.bsh,
+                                bytesPerSector  = 512,
+                                cylinders       = hddSb.cylinders,
+                                drm             = dpb.drm,
+                                dsm             = dpb.dsm,
+                                encoding        = "MFM",
+                                evenOdd         = false,
                                 exm             = dpb.exm,
-                                label           = null, comment = "CP/M-86 hard disk superblock",
+                                label           = null,
+                                comment         = "CP/M-86 hard disk superblock",
                                 ofs             = dpb.off,
-                                sectorsPerTrack = hddSb.sectorsPerTrack, side1 = new Side
+                                sectorsPerTrack = hddSb.sectorsPerTrack,
+                                side1 = new Side
                                 {
-                                    sideId = 0, sectorIds = new int[hddSb.sectorsPerTrack]
+                                    sideId    = 0,
+                                    sectorIds = new int[hddSb.sectorsPerTrack]
                                 },
-                                order = "SIDES", side2 = new Side
+                                order = "SIDES",
+                                side2 = new Side
                                 {
-                                    sideId = 1, sectorIds = new int[hddSb.sectorsPerTrack]
+                                    sideId    = 1,
+                                    sectorIds = new int[hddSb.sectorsPerTrack]
                                 },
-                                skew = 0, sofs = 0
+                                skew = 0,
+                                sofs = 0
                             };
 
                             for(int si = 0; si < hddSb.sectorsPerTrack; si++)
@@ -414,26 +446,45 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0xC0, al1 = 0, blm    = 7, bsh    = 3,
-                                    cks = 0x10, drm = 0x3F, dsm = 0x9B, exm = 0,
-                                    off = 1, phm    = 3, psh    = 2, spt    = 8 * 4
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 7,
+                                    bsh = 3,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9B,
+                                    exm = 0,
+                                    off = 1,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 40,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 40,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 8, side1 = new Side
+                                    sectorsPerTrack = 8,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[8]
+                                        sideId    = 0,
+                                        sectorIds = new int[8]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 8; si++)
@@ -450,30 +501,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0x80, al1 = 0, blm    = 0x0F, bsh = 4,
-                                    cks = 0x10, drm = 0x3F, dsm = 0x9D, exm = 1,
-                                    off = 2, phm    = 3, psh    = 2, spt    = 8 * 4
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0x9D,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 8 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 40,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 40,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 8, side1 = new Side
+                                    sectorsPerTrack = 8,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[8]
+                                        sideId    = 0,
+                                        sectorIds = new int[8]
                                     },
-                                    order = "SIDES", side2 = new Side
+                                    order = "SIDES",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[8]
+                                        sideId    = 1,
+                                        sectorIds = new int[8]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 8; si++)
@@ -495,31 +567,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0x80, al1 = 0, blm    = 0x0F, bsh = 4,
-                                    cks = 0x10, drm = 0x3F, dsm = 0, // Unknown. Needed?
-                                    exm = 1, off    = 4, phm    = 3, psh = 2,
+                                    al0 = 0x80,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x10,
+                                    drm = 0x3F,
+                                    dsm = 0, // Unknown. Needed?
+                                    exm = 1,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
                                     spt = 9 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 40,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 40,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 9, side1 = new Side
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[9]
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
                                     },
-                                    order = "SIDES", side2 = new Side
+                                    order = "SIDES",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[9]
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 9; si++)
@@ -540,30 +632,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0xF0, al1 = 0, blm    = 0x0F, bsh  = 4,
-                                    cks = 0x40, drm = 0xFF, dsm = 0x15E, exm = 0,
-                                    off = 4, phm    = 3, psh    = 2, spt     = 9 * 4
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x15E,
+                                    exm = 0,
+                                    off = 4,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 80,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 9, side1 = new Side
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[9]
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
                                     },
-                                    order = "SIDES", side2 = new Side
+                                    order = "SIDES",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[9]
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 9; si++)
@@ -583,30 +696,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0xF0, al1 = 0, blm    = 0x0F, bsh  = 4,
-                                    cks = 0x40, drm = 0xFF, dsm = 0x162, exm = 0,
-                                    off = 2, phm    = 3, psh    = 2, spt     = 9 * 4
+                                    al0 = 0xF0,
+                                    al1 = 0,
+                                    blm = 0x0F,
+                                    bsh = 4,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 0,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 9 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 80,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 9, side1 = new Side
+                                    sectorsPerTrack = 9,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[9]
+                                        sideId    = 0,
+                                        sectorIds = new int[9]
                                     },
-                                    order = "CYLINDERS", side2 = new Side
+                                    order = "CYLINDERS",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[9]
+                                        sideId    = 1,
+                                        sectorIds = new int[9]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 9; si++)
@@ -626,30 +760,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0xC0, al1 = 0, blm    = 0x1F, bsh  = 5,
-                                    cks = 0x40, drm = 0xFF, dsm = 0x127, exm = 1,
-                                    off = 2, phm    = 3, psh    = 2, spt     = 15 * 4
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x127,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 15 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "HIGH", blm             = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 80,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "HIGH",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 15, side1 = new Side
+                                    sectorsPerTrack = 15,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[15]
+                                        sideId    = 0,
+                                        sectorIds = new int[15]
                                     },
-                                    order = "CYLINDERS", side2 = new Side
+                                    order = "CYLINDERS",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[15]
+                                        sideId    = 1,
+                                        sectorIds = new int[15]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 15; si++)
@@ -669,30 +824,51 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = 0xC0, al1 = 0, blm    = 0x1F, bsh  = 5,
-                                    cks = 0x40, drm = 0xFF, dsm = 0x162, exm = 1,
-                                    off = 2, phm    = 3, psh    = 2, spt     = 18 * 4
+                                    al0 = 0xC0,
+                                    al1 = 0,
+                                    blm = 0x1F,
+                                    bsh = 5,
+                                    cks = 0x40,
+                                    drm = 0xFF,
+                                    dsm = 0x162,
+                                    exm = 1,
+                                    off = 2,
+                                    phm = 3,
+                                    psh = 2,
+                                    spt = 18 * 4
                                 };
 
                                 workingDefinition = new CpmDefinition
                                 {
-                                    al0             = dpb.al0, al1            = dpb.al1,
-                                    bitrate         = "LOW", blm              = dpb.blm,
-                                    bsh             = dpb.bsh, bytesPerSector = 512, cylinders = 80,
+                                    al0             = dpb.al0,
+                                    al1             = dpb.al1,
+                                    bitrate         = "LOW",
+                                    blm             = dpb.blm,
+                                    bsh             = dpb.bsh,
+                                    bytesPerSector  = 512,
+                                    cylinders       = 80,
                                     drm             = dpb.drm,
-                                    dsm             = dpb.dsm, encoding = "MFM",
-                                    evenOdd         = false, exm        = dpb.exm,
-                                    label           = null, comment     = "CP/M-86 floppy identifier",
+                                    dsm             = dpb.dsm,
+                                    encoding        = "MFM",
+                                    evenOdd         = false,
+                                    exm             = dpb.exm,
+                                    label           = null,
+                                    comment         = "CP/M-86 floppy identifier",
                                     ofs             = dpb.off,
-                                    sectorsPerTrack = 18, side1 = new Side
+                                    sectorsPerTrack = 18,
+                                    side1 = new Side
                                     {
-                                        sideId = 0, sectorIds = new int[18]
+                                        sideId    = 0,
+                                        sectorIds = new int[18]
                                     },
-                                    order = "CYLINDERS", side2 = new Side
+                                    order = "CYLINDERS",
+                                    side2 = new Side
                                     {
-                                        sideId = 1, sectorIds = new int[18]
+                                        sideId    = 1,
+                                        sectorIds = new int[18]
                                     },
-                                    skew = 0, sofs = 0
+                                    skew = 0,
+                                    sofs = 0
                                 };
 
                                 for(int si = 0; si < 18; si++)
@@ -789,8 +965,7 @@ namespace Aaru.Filesystems.CPM
                                     for(int m = 0; m < def.side1.sectorIds.Length; m++)
                                         sectorMask[m + def.side1.sectorIds.Length] =
                                             (def.side1.sectorIds[m] - def.side1.sectorIds[0]) +
-                                            def.side1.sectorIds.Length                        +
-                                            def.side2.sectorIds.Length;
+                                            def.side1.sectorIds.Length + def.side2.sectorIds.Length;
                                 }
 
                                 // TODO: Implement COLUMBIA ordering
@@ -828,11 +1003,9 @@ namespace Aaru.Filesystems.CPM
                             for(int p = 0; p < dirLen; p++)
                             {
                                 byte[] dirSector =
-                                    imagePlugin.ReadSector((ulong)
-                                                           ((int)offset                                            +
-                                                            (int)partition.Start                                   +
-                                                            ((p          / sectorMask.Length) * sectorMask.Length) +
-                                                            sectorMask[p % sectorMask.Length]));
+                                    imagePlugin.ReadSector((ulong)((int)offset + (int)partition.Start +
+                                                                   ((p / sectorMask.Length) * sectorMask.Length) +
+                                                                   sectorMask[p % sectorMask.Length]));
 
                                 ms.Write(dirSector, 0, dirSector.Length);
                             }
@@ -859,10 +1032,16 @@ namespace Aaru.Filesystems.CPM
 
                                 dpb = new DiscParameterBlock
                                 {
-                                    al0 = (byte)def.al0, al1 = (byte)def.al1, blm = (byte)def.blm, bsh = (byte)def.bsh,
+                                    al0 = (byte)def.al0,
+                                    al1 = (byte)def.al1,
+                                    blm = (byte)def.blm,
+                                    bsh = (byte)def.bsh,
 
                                     // Needed?
-                                    cks = 0, drm = (ushort)def.drm, dsm = (ushort)def.dsm, exm = (byte)def.exm,
+                                    cks = 0,
+                                    drm = (ushort)def.drm,
+                                    dsm = (ushort)def.dsm,
+                                    exm = (byte)def.exm,
                                     off = (ushort)def.ofs,
                                     spt = (ushort)((def.sectorsPerTrack * def.bytesPerSector) / 128)
                                 };

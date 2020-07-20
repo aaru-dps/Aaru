@@ -112,8 +112,7 @@ namespace Aaru.Core.Logging
             byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
             byte[] verBytes           = Encoding.ASCII.GetBytes(MHDD_VER);
 
-            uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length + fwBytes.Length +
-                                  snBytes.Length      +
+            uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length + snBytes.Length +
                                   sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +
                                   verBytes.Length     + (2 * 9)                + // New lines
                                   4);                                            // Pointer

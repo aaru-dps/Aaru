@@ -93,7 +93,8 @@ namespace Aaru.Filesystems.FATX
                 Type = "FATX filesystem",
                 ClusterSize = (uint)(superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
                                      imagePlugin.Info.SectorSize),
-                VolumeName = volumeLabel, VolumeSerial = $"{superblock.id:X8}"
+                VolumeName   = volumeLabel,
+                VolumeSerial = $"{superblock.id:X8}"
             };
 
             XmlFsType.Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
@@ -101,13 +102,17 @@ namespace Aaru.Filesystems.FATX
 
             statfs = new FileSystemInfo
             {
-                Blocks    = XmlFsType.Clusters, FilenameLength = MAX_FILENAME,
-                Files     = 0, // Requires traversing all directories
-                FreeFiles = 0, Id =
+                Blocks         = XmlFsType.Clusters,
+                FilenameLength = MAX_FILENAME,
+                Files          = 0, // Requires traversing all directories
+                FreeFiles      = 0,
+                Id =
                 {
-                    IsInt = true, Serial32 = superblock.magic
+                    IsInt    = true,
+                    Serial32 = superblock.magic
                 },
-                PluginId   = Id, Type = littleEndian ? "Xbox FAT" : "Xbox 360 FAT",
+                PluginId   = Id,
+                Type       = littleEndian ? "Xbox FAT" : "Xbox 360 FAT",
                 FreeBlocks = 0 // Requires traversing the FAT
             };
 

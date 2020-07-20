@@ -49,7 +49,8 @@ namespace Aaru.Commands.Media
                     "--mhdd-log", "-m"
                 }, "Write a log of the scan in the format used by MHDD.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -57,12 +58,15 @@ namespace Aaru.Commands.Media
                     "--ibg-log", "-b"
                 }, "Write a log of the scan in the format used by ImgBurn.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Device path",
+                Name        = "device-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

@@ -52,9 +52,8 @@ namespace Aaru.DiscImages
             header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
             return (header.magic == SDF_MAGIC || header.magic == SDF_MAGIC_COMPRESSED ||
-                    header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2            && header.padding == 0 &&
-                   header.commentOffset                                < stream.Length &&
-                   header.dataOffset                                   < stream.Length;
+                    header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2 && header.padding == 0 &&
+                   header.commentOffset < stream.Length && header.dataOffset < stream.Length;
         }
     }
 }

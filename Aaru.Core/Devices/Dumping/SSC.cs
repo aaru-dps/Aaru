@@ -764,12 +764,15 @@ namespace Aaru.Core.Devices.Dumping
 
             var currentTapeFile = new TapeFile
             {
-                File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
+                File       = currentFile,
+                FirstBlock = currentBlock,
+                Partition  = currentPartition
             };
 
             var currentTapePartition = new TapePartition
             {
-                Number = currentPartition, FirstBlock = currentBlock
+                Number     = currentPartition,
+                FirstBlock = currentBlock
             };
 
             if((canLocate || canLocateLong) &&
@@ -834,12 +837,15 @@ namespace Aaru.Core.Devices.Dumping
 
                         currentTapeFile = new TapeFile
                         {
-                            File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
+                            File       = currentFile,
+                            FirstBlock = currentBlock,
+                            Partition  = currentPartition
                         };
 
                         currentTapePartition = new TapePartition
                         {
-                            Number = currentPartition, FirstBlock = currentBlock
+                            Number     = currentPartition,
+                            FirstBlock = currentBlock
                         };
 
                         UpdateStatus?.Invoke($"Seeking to partition {currentPartition}");
@@ -958,7 +964,9 @@ namespace Aaru.Core.Devices.Dumping
 
                         currentTapeFile = new TapeFile
                         {
-                            File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
+                            File       = currentFile,
+                            FirstBlock = currentBlock,
+                            Partition  = currentPartition
                         };
 
                         UpdateStatus?.Invoke($"Changed to file {currentFile} at block {currentBlock}");
@@ -1219,7 +1227,8 @@ namespace Aaru.Core.Devices.Dumping
             // TODO: Media Serial Number
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))
@@ -1309,7 +1318,8 @@ namespace Aaru.Core.Devices.Dumping
                 if(filesystems.Count > 0)
                     foreach(var filesystem in filesystems.Select(o => new
                     {
-                        o.start, o.type
+                        o.start,
+                        o.type
                     }).Distinct())
                     {
                         UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");

@@ -129,8 +129,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "Opera", VolumeName     = StringHandlers.CToString(sb.volume_label, Encoding),
-                ClusterSize = sb.block_size, Clusters = sb.block_count
+                Type        = "Opera",
+                VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),
+                ClusterSize = sb.block_size,
+                Clusters    = sb.block_count
             };
         }
     }

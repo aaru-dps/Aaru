@@ -87,7 +87,8 @@ namespace Aaru.Gui.ViewModels.Tabs
             {
                 ModeSensePages.Add(new ScsiPageModel
                 {
-                    Page = "Header", Description = Modes.PrettifyModeHeader(scsiMode.Value.Header, scsiType)
+                    Page        = "Header",
+                    Description = Modes.PrettifyModeHeader(scsiMode.Value.Header, scsiType)
                 });
 
                 if(scsiMode.Value.Pages != null)
@@ -414,7 +415,8 @@ namespace Aaru.Gui.ViewModels.Tabs
 
                         ModeSensePages.Add(new ScsiPageModel
                         {
-                            Page = pageNumberText, Description = decodedText
+                            Page        = pageNumberText,
+                            Description = decodedText
                         });
                     }
             }
@@ -619,7 +621,9 @@ namespace Aaru.Gui.ViewModels.Tabs
 
                     EvpdPages.Add(new ScsiPageModel
                     {
-                        Page = evpdPageTitle, Data = page.Value, Description = evpdDecodedPage
+                        Page        = evpdPageTitle,
+                        Data        = page.Value,
+                        Description = evpdDecodedPage
                     });
                 }
             }
@@ -883,7 +887,8 @@ namespace Aaru.Gui.ViewModels.Tabs
 
                         MmcFeatures.Add(new ScsiPageModel
                         {
-                            Page = featureNumber, Description = featureDescription
+                            Page        = featureNumber,
+                            Description = featureDescription
                         });
                     }
                 else

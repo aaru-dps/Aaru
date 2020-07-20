@@ -115,7 +115,9 @@ namespace Aaru.Filesystems
             XmlFsType = new FileSystemType
             {
                 CreationDate          = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
-                CreationDateSpecified = true, Clusters = rootBlock.totalblocks, ClusterSize = rootBlock.blocksize,
+                CreationDateSpecified = true,
+                Clusters              = rootBlock.totalblocks,
+                ClusterSize           = rootBlock.blocksize,
                 Type                  = "SmartFileSystem"
             };
         }

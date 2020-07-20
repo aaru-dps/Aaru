@@ -89,10 +89,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                SectorCount = count, DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh     = (byte)((lba                     & 0xFF0000)  / 0x10000),
-                LbaMid      = (byte)((lba                     & 0xFF00)    / 0x100),
-                LbaLow      = (byte)((lba                     & 0xFF)      / 0x1),
+                SectorCount = count,
+                DeviceHead  = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh     = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid      = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow      = (byte)((lba & 0xFF)      / 0x1),
                 Command     = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
             };
 
@@ -115,9 +116,12 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command    = (byte)AtaCommands.ReadMultiple, SectorCount    = count,
-                DeviceHead = (byte)((lba & 0xF000000) / 0x1000000), LbaHigh = (byte)((lba & 0xFF0000) / 0x10000),
-                LbaMid     = (byte)((lba & 0xFF00)    / 0x100), LbaLow      = (byte)((lba & 0xFF)     / 0x1)
+                Command     = (byte)AtaCommands.ReadMultiple,
+                SectorCount = count,
+                DeviceHead  = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh     = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid      = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow      = (byte)((lba & 0xFF)      / 0x1)
             };
 
             registers.DeviceHead += 0x40;
@@ -177,10 +181,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                SectorCount = count, DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh     = (byte)((lba                     & 0xFF0000)  / 0x10000),
-                LbaMid      = (byte)((lba                     & 0xFF00)    / 0x100),
-                LbaLow      = (byte)((lba                     & 0xFF)      / 0x1),
+                SectorCount = count,
+                DeviceHead  = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh     = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid      = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow      = (byte)((lba & 0xFF)      / 0x1),
                 Command     = retry ? (byte)AtaCommands.ReadRetry : (byte)AtaCommands.Read
             };
 
@@ -208,10 +213,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                SectorCount = 1, DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh     = (byte)((lba                 & 0xFF0000)  / 0x10000),
-                LbaMid      = (byte)((lba                 & 0xFF00)    / 0x100),
-                LbaLow      = (byte)((lba                 & 0xFF)      / 0x1),
+                SectorCount = 1,
+                DeviceHead  = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh     = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid      = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow      = (byte)((lba & 0xFF)      / 0x1),
                 Command     = retry ? (byte)AtaCommands.ReadLongRetry : (byte)AtaCommands.ReadLong
             };
 
@@ -234,10 +240,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Seek, DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh = (byte)((lba                                      & 0xFF0000)  / 0x10000),
-                LbaMid  = (byte)((lba                                      & 0xFF00)    / 0x100),
-                LbaLow  = (byte)((lba                                      & 0xFF)      / 0x1)
+                Command    = (byte)AtaCommands.Seek,
+                DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh    = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid     = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow     = (byte)((lba & 0xFF)      / 0x1)
             };
 
             registers.DeviceHead += 0x40;

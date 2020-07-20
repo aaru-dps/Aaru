@@ -72,9 +72,12 @@ namespace Aaru.Filesystems
 
             var bfsSb = new BFSSuperBlock
             {
-                s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00), s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
-                s_end   = BitConverter.ToUInt32(bfsSbSector, 0x08), s_from  = BitConverter.ToUInt32(bfsSbSector, 0x0C),
-                s_to    = BitConverter.ToUInt32(bfsSbSector, 0x10), s_bfrom = BitConverter.ToInt32(bfsSbSector, 0x14),
+                s_magic = BitConverter.ToUInt32(bfsSbSector, 0x00),
+                s_start = BitConverter.ToUInt32(bfsSbSector, 0x04),
+                s_end   = BitConverter.ToUInt32(bfsSbSector, 0x08),
+                s_from  = BitConverter.ToUInt32(bfsSbSector, 0x0C),
+                s_to    = BitConverter.ToUInt32(bfsSbSector, 0x10),
+                s_bfrom = BitConverter.ToInt32(bfsSbSector, 0x14),
                 s_bto   = BitConverter.ToInt32(bfsSbSector, 0x18)
             };
 
@@ -103,8 +106,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type     = "BFS", VolumeName = bfsSb.s_volume, ClusterSize = imagePlugin.Info.SectorSize,
-                Clusters = (partition.End - partition.Start) + 1
+                Type        = "BFS",
+                VolumeName  = bfsSb.s_volume,
+                ClusterSize = imagePlugin.Info.SectorSize,
+                Clusters    = (partition.End - partition.Start) + 1
             };
 
             information = sb.ToString();

@@ -229,11 +229,10 @@ namespace Aaru.Filesystems
 
                     break;
                 case EXT2_MAGIC:
-                    ext3 |=
-                        (supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER)   == EXT3_FEATURE_INCOMPAT_RECOVER   ||
-                        (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) ==
-                        EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
+                    ext3 |= (supblk.ftr_compat & EXT3_FEATURE_COMPAT_HAS_JOURNAL) == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
+                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_RECOVER) == EXT3_FEATURE_INCOMPAT_RECOVER ||
+                            (supblk.ftr_incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV) ==
+                            EXT3_FEATURE_INCOMPAT_JOURNAL_DEV;
 
                     if((supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_HUGE_FILE) == EXT4_FEATURE_RO_COMPAT_HUGE_FILE ||
                        (supblk.ftr_ro_compat & EXT4_FEATURE_RO_COMPAT_GDT_CSUM)  == EXT4_FEATURE_RO_COMPAT_GDT_CSUM  ||

@@ -246,11 +246,16 @@ pool with no way of using them to identify you.";
             if(SaveStatsChecked)
                 Settings.Settings.Current.Stats = new StatsSettings
                 {
-                    ShareStats     = ShareStatsChecked, CommandStats       = CommandStatsChecked,
-                    DeviceStats    = DeviceStatsChecked, FilesystemStats   = FilesystemStatsChecked,
-                    FilterStats    = FilterStatsChecked, MediaImageStats   = MediaImageStatsChecked,
-                    MediaScanStats = MediaScanStatsChecked, PartitionStats = PartitionStatsChecked,
-                    MediaStats     = MediaStatsChecked, VerifyStats        = VerifyStatsChecked
+                    ShareStats      = ShareStatsChecked,
+                    CommandStats    = CommandStatsChecked,
+                    DeviceStats     = DeviceStatsChecked,
+                    FilesystemStats = FilesystemStatsChecked,
+                    FilterStats     = FilterStatsChecked,
+                    MediaImageStats = MediaImageStatsChecked,
+                    MediaScanStats  = MediaScanStatsChecked,
+                    PartitionStats  = PartitionStatsChecked,
+                    MediaStats      = MediaStatsChecked,
+                    VerifyStats     = VerifyStatsChecked
                 };
             else
                 Settings.Settings.Current.Stats = null;

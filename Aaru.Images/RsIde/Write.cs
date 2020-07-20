@@ -73,7 +73,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -231,8 +233,11 @@ namespace Aaru.DiscImages
 
             var header = new RsIdeHeader
             {
-                magic    = signature, identify = new byte[106], dataOff = (ushort)Marshal.SizeOf<RsIdeHeader>(),
-                revision = 1, reserved         = new byte[11]
+                magic    = signature,
+                identify = new byte[106],
+                dataOff  = (ushort)Marshal.SizeOf<RsIdeHeader>(),
+                revision = 1,
+                reserved = new byte[11]
             };
 
             if(imageInfo.SectorSize == 256)
@@ -247,18 +252,21 @@ namespace Aaru.DiscImages
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
-                    Cylinders       = (ushort)imageInfo.Cylinders, Heads              = (ushort)imageInfo.Heads,
-                    SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack, VendorWord47 = 0x80,
+                    Cylinders       = (ushort)imageInfo.Cylinders,
+                    Heads           = (ushort)imageInfo.Heads,
+                    SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
+                    VendorWord47    = 0x80,
                     Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
                                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
                                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
-                    ExtendedIdentify =
-                        CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
-                    CurrentCylinders       = (ushort)imageInfo.Cylinders, CurrentHeads = (ushort)imageInfo.Heads,
+                    ExtendedIdentify = CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
+                    CurrentCylinders = (ushort)imageInfo.Cylinders,
+                    CurrentHeads = (ushort)imageInfo.Heads,
                     CurrentSectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
-                    CurrentSectors         = (uint)imageInfo.Sectors, LBASectors = (uint)imageInfo.Sectors,
-                    DMASupported           = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
-                    DMAActive              = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
+                    CurrentSectors = (uint)imageInfo.Sectors,
+                    LBASectors = (uint)imageInfo.Sectors,
+                    DMASupported = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
+                    DMAActive = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
                 };
 
                 if(string.IsNullOrEmpty(imageInfo.DriveManufacturer))

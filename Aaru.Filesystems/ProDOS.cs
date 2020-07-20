@@ -103,10 +103,9 @@ namespace Aaru.Filesystems
                 foreach(int offset in new[]
                 {
                     0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                }.Where(offset => BitConverter.ToUInt16(tmp, offset)                    == 0                   &&
+                }.Where(offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
                                   (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                  tmp[offset + 0x23]                                    == ENTRY_LENGTH        &&
-                                  tmp[offset + 0x24]                                    == ENTRIES_PER_BLOCK))
+                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
                 {
                     Array.Copy(tmp, offset, rootDirectoryKeyBlock, 0, 0x200);
                     apmFromHddOnCd = true;
@@ -177,10 +176,9 @@ namespace Aaru.Filesystems
                 foreach(int offset in new[]
                 {
                     0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                }.Where(offset => BitConverter.ToUInt16(tmp, offset)                    == 0                   &&
+                }.Where(offset => BitConverter.ToUInt16(tmp, offset) == 0 &&
                                   (byte)((tmp[offset + 0x04] & STORAGE_TYPE_MASK) >> 4) == ROOT_DIRECTORY_TYPE &&
-                                  tmp[offset + 0x23]                                    == ENTRY_LENGTH        &&
-                                  tmp[offset + 0x24]                                    == ENTRIES_PER_BLOCK))
+                                  tmp[offset + 0x23] == ENTRY_LENGTH && tmp[offset + 0x24] == ENTRIES_PER_BLOCK))
                 {
                     Array.Copy(tmp, offset, rootDirectoryKeyBlockBytes, 0, 0x200);
                     apmFromHddOnCd = true;
@@ -320,7 +318,8 @@ namespace Aaru.Filesystems
                 VolumeName     = rootDirectoryKeyBlock.header.volume_name,
                 Files          = rootDirectoryKeyBlock.header.file_count,
                 FilesSpecified = true,
-                Clusters       = rootDirectoryKeyBlock.header.total_blocks, Type = "ProDOS"
+                Clusters       = rootDirectoryKeyBlock.header.total_blocks,
+                Type           = "ProDOS"
             };
 
             XmlFsType.ClusterSize = (uint)((((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /

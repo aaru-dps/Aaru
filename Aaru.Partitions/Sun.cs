@@ -259,15 +259,15 @@ namespace Aaru.Partitions
                         var part = new Partition
                         {
                             Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
-                            Size        = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                            Length =
-                                (ulong)((dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.Info.SectorSize),
+                            Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
+                            Length = (ulong)((dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE) / imagePlugin.Info.SectorSize),
                             Sequence = (ulong)i,
                             Offset = (((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
                                      DK_LABEL_SIZE,
                             Start = ((((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder) + sectorOffset) *
                                      DK_LABEL_SIZE) / imagePlugin.Info.SectorSize,
-                            Type = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag), Scheme = Name
+                            Type   = SunIdToString(dkl8.dkl_vtoc.v_part[i].p_tag),
+                            Scheme = Name
                         };
 
                         if(dkl8.dkl_vtoc.v_timestamp[i] != 0)
@@ -350,7 +350,8 @@ namespace Aaru.Partitions
                                      dkl16.dkl_vtoc.v_sectorsz,
                             Start = (((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
                                      dkl16.dkl_vtoc.v_sectorsz) / imagePlugin.Info.SectorSize,
-                            Type = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag), Scheme = Name
+                            Type   = SunIdToString(dkl16.dkl_vtoc.v_part[i].p_tag),
+                            Scheme = Name
                         };
 
                         if(dkl16.dkl_vtoc.v_timestamp[i] != 0)

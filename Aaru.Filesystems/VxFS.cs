@@ -108,9 +108,11 @@ namespace Aaru.Filesystems
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_ctime, vxSb.vs_cutime),
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(vxSb.vs_wtime, vxSb.vs_wutime),
-                ModificationDateSpecified = true, Clusters = (ulong)vxSb.vs_size,
+                ModificationDateSpecified = true,
+                Clusters                  = (ulong)vxSb.vs_size,
                 ClusterSize               = (uint)vxSb.vs_bsize,
-                Dirty                     = vxSb.vs_clean != 0, FreeClusters = (ulong)vxSb.vs_free,
+                Dirty                     = vxSb.vs_clean != 0,
+                FreeClusters              = (ulong)vxSb.vs_free,
                 FreeClustersSpecified     = true
             };
         }

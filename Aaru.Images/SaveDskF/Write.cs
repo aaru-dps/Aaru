@@ -221,7 +221,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -240,9 +242,13 @@ namespace Aaru.DiscImages
 
             header = new SaveDskFHeader
             {
-                cylinders     = geometry.cylinders, dataOffset   = 512, heads = geometry.heads, magic = SDF_MAGIC,
-                sectorsCopied = (ushort)sectors, sectorsPerTrack = geometry.sectorsPerTrack,
-                sectorSize    = (ushort)sectorSize
+                cylinders       = geometry.cylinders,
+                dataOffset      = 512,
+                heads           = geometry.heads,
+                magic           = SDF_MAGIC,
+                sectorsCopied   = (ushort)sectors,
+                sectorsPerTrack = geometry.sectorsPerTrack,
+                sectorSize      = (ushort)sectorSize
             };
 
             IsWriting    = true;

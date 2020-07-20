@@ -101,8 +101,7 @@ namespace Aaru.Filesystems.CPM
                     for(int m = 0; m < workingDefinition.side1.sectorIds.Length; m++)
                         sectorMask[m + workingDefinition.side1.sectorIds.Length] =
                             (workingDefinition.side1.sectorIds[m] - workingDefinition.side1.sectorIds[0]) +
-                            workingDefinition.side1.sectorIds.Length                                      +
-                            workingDefinition.side2.sectorIds.Length;
+                            workingDefinition.side1.sectorIds.Length + workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
                     AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
@@ -766,10 +765,13 @@ namespace Aaru.Filesystems.CPM
             // Generate XML info
             XmlFsType = new FileSystemType
             {
-                Clusters       = cpmStat.Blocks, ClusterSize = (uint)blockSize,
-                Files          = (ulong)fileCache.Count,
-                FilesSpecified = true, FreeClusters = cpmStat.FreeBlocks, FreeClustersSpecified = true,
-                Type           = "CP/M filesystem"
+                Clusters              = cpmStat.Blocks,
+                ClusterSize           = (uint)blockSize,
+                Files                 = (ulong)fileCache.Count,
+                FilesSpecified        = true,
+                FreeClusters          = cpmStat.FreeBlocks,
+                FreeClustersSpecified = true,
+                Type                  = "CP/M filesystem"
             };
 
             if(labelCreationDate != null)

@@ -79,7 +79,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             // TODO: Separate tracks
@@ -97,7 +99,8 @@ namespace Aaru.DiscImages
 
             discimage = new CdrdaoDisc
             {
-                Disktype = mediaType, Tracks = new List<CdrdaoTrack>()
+                Disktype = mediaType,
+                Tracks   = new List<CdrdaoTrack>()
             };
 
             trackFlags = new Dictionary<byte, byte>();

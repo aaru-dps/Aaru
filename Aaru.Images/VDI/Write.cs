@@ -71,7 +71,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -100,13 +102,19 @@ namespace Aaru.DiscImages
 
             vHdr = new VdiHeader
             {
-                creator      = DIC_AARU, magic = VDI_MAGIC, majorVersion = 1,
+                creator      = DIC_AARU,
+                magic        = VDI_MAGIC,
+                majorVersion = 1,
                 minorVersion = 1,
-                headerSize   = Marshal.SizeOf<VdiHeader>() - 72, imageType = VdiImageType.Normal,
-                offsetBlocks = sectorSize, offsetData                      = currentWritingPosition,
+                headerSize   = Marshal.SizeOf<VdiHeader>() - 72,
+                imageType    = VdiImageType.Normal,
+                offsetBlocks = sectorSize,
+                offsetData   = currentWritingPosition,
                 sectorSize   = sectorSize,
-                size         = sectors * sectorSize, blockSize = DEFAULT_BLOCK_SIZE,
-                blocks       = ibmEntries, uuid                = Guid.NewGuid(),
+                size         = sectors * sectorSize,
+                blockSize    = DEFAULT_BLOCK_SIZE,
+                blocks       = ibmEntries,
+                uuid         = Guid.NewGuid(),
                 snapshotUuid = Guid.NewGuid()
             };
 

@@ -156,9 +156,13 @@ namespace Aaru.Core.Devices.Dumping
             {
                 new Track
                 {
-                    TrackBytesPerSector    = (int)BLOCK_SIZE, TrackEndSector      = blocks - 1, TrackSequence = 1,
-                    TrackRawBytesPerSector = (int)BLOCK_SIZE, TrackSubchannelType = TrackSubchannelType.None,
-                    TrackSession           = 1, TrackType                         = TrackType.Data
+                    TrackBytesPerSector    = (int)BLOCK_SIZE,
+                    TrackEndSector         = blocks - 1,
+                    TrackSequence          = 1,
+                    TrackRawBytesPerSector = (int)BLOCK_SIZE,
+                    TrackSubchannelType    = TrackSubchannelType.None,
+                    TrackSession           = 1,
+                    TrackType              = TrackType.Data
                 }
             });
 
@@ -372,31 +376,50 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         pg = new Modes.ModePage_01
                         {
-                            PS  = false, AWRE           = true, ARRE = true, TB   = false,
-                            RC  = false, EER            = true, PER  = false, DTE = true,
-                            DCR = false, ReadRetryCount = 32
+                            PS             = false,
+                            AWRE           = true,
+                            ARRE           = true,
+                            TB             = false,
+                            RC             = false,
+                            EER            = true,
+                            PER            = false,
+                            DTE            = true,
+                            DCR            = false,
+                            ReadRetryCount = 32
                         };
 
                         currentModePage = new Modes.ModePage
                         {
-                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01(pg)
                         };
                     }
 
                     pg = new Modes.ModePage_01
                     {
-                        PS  = false, AWRE           = false, ARRE = false, TB  = true,
-                        RC  = false, EER            = true, PER   = false, DTE = false,
-                        DCR = false, ReadRetryCount = 255
+                        PS             = false,
+                        AWRE           = false,
+                        ARRE           = false,
+                        TB             = true,
+                        RC             = false,
+                        EER            = true,
+                        PER            = false,
+                        DTE            = false,
+                        DCR            = false,
+                        ReadRetryCount = 255
                     };
 
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             new Modes.ModePage
                             {
-                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01(pg)
                             }
                         }
                     };
@@ -480,7 +503,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             currentModePage.Value
                         }
@@ -506,7 +530,9 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion(), MediaPartNumber = mediaPartNumber
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion(),
+                MediaPartNumber    = mediaPartNumber
             };
 
             if(!_outputPlugin.SetMetadata(metadata))

@@ -8,7 +8,8 @@ namespace Aaru.Database.Migrations
             migrationBuilder.CreateTable("OperatingSystems", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name         = table.Column<string>(nullable: true), Version = table.Column<string>(nullable: true),
+                Name         = table.Column<string>(nullable: true),
+                Version      = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
             }, constraints: table =>
             {

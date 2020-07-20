@@ -71,7 +71,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -91,13 +93,18 @@ namespace Aaru.DiscImages
 
             footer = new DriFooter
             {
-                signature = new byte[51], bpb = new DriBpb
+                signature = new byte[51],
+                bpb = new DriBpb
                 {
-                    five      = 5, driveCode = DriDriveCodes.mf2ed,
+                    five      = 5,
+                    driveCode = DriDriveCodes.mf2ed,
                     cylinders = geometry.cylinders,
-                    bps       = (ushort)imageInfo.SectorSize, sectors       = (ushort)imageInfo.Sectors,
-                    sptrack   = (ushort)imageInfo.SectorsPerTrack, heads    = (ushort)imageInfo.Heads,
-                    sptrack2  = (ushort)imageInfo.SectorsPerTrack, unknown5 = new byte[144]
+                    bps       = (ushort)imageInfo.SectorSize,
+                    sectors   = (ushort)imageInfo.Sectors,
+                    sptrack   = (ushort)imageInfo.SectorsPerTrack,
+                    heads     = (ushort)imageInfo.Heads,
+                    sptrack2  = (ushort)imageInfo.SectorsPerTrack,
+                    unknown5  = new byte[144]
                 }
             };
 

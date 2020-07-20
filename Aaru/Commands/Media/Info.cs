@@ -70,12 +70,15 @@ namespace Aaru.Commands.Media
                     "--output-prefix", "-w"
                 }, "Write binary responses from device with that prefix.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Device path",
+                Name        = "device-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

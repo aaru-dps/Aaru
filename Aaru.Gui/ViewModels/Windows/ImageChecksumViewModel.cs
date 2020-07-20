@@ -557,8 +557,9 @@ namespace Aaru.Gui.ViewModels.Windows
                             foreach(ChecksumType chk in trackChecksum.End())
                                 TrackChecksums.Add(new ChecksumModel
                                 {
-                                    Track = currentTrack.TrackSequence.ToString(), Algorithm = chk.type.ToString(),
-                                    Hash  = chk.Value
+                                    Track     = currentTrack.TrackSequence.ToString(),
+                                    Algorithm = chk.type.ToString(),
+                                    Hash      = chk.Value
                                 });
                         });
 
@@ -588,7 +589,8 @@ namespace Aaru.Gui.ViewModels.Windows
                         foreach(ChecksumType chk in mediaChecksum.End())
                             MediaChecksums.Add(new ChecksumModel
                             {
-                                Algorithm = chk.type.ToString(), Hash = chk.Value
+                                Algorithm = chk.type.ToString(),
+                                Hash      = chk.Value
                             });
                     });
                 }
@@ -664,7 +666,8 @@ namespace Aaru.Gui.ViewModels.Windows
                     foreach(ChecksumType chk in mediaChecksum.End())
                         MediaChecksums.Add(new ChecksumModel
                         {
-                            Algorithm = chk.type.ToString(), Hash = chk.Value
+                            Algorithm = chk.type.ToString(),
+                            Hash      = chk.Value
                         });
                 });
             }

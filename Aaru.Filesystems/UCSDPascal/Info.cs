@@ -63,7 +63,8 @@ namespace Aaru.Filesystems.UCSDPascal
             {
                 FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00),
                 LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02),
-                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04), VolumeName = new byte[8],
+                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04),
+                VolumeName = new byte[8],
                 Blocks     = BigEndianBitConverter.ToInt16(volBlock, 0x0E),
                 Files      = BigEndianBitConverter.ToInt16(volBlock, 0x10),
                 Dummy      = BigEndianBitConverter.ToInt16(volBlock, 0x12),
@@ -133,7 +134,8 @@ namespace Aaru.Filesystems.UCSDPascal
             {
                 FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00),
                 LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02),
-                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04), VolumeName = new byte[8],
+                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04),
+                VolumeName = new byte[8],
                 Blocks     = BigEndianBitConverter.ToInt16(volBlock, 0x0E),
                 Files      = BigEndianBitConverter.ToInt16(volBlock, 0x10),
                 Dummy      = BigEndianBitConverter.ToInt16(volBlock, 0x12),
@@ -188,9 +190,12 @@ namespace Aaru.Filesystems.UCSDPascal
 
             XmlFsType = new FileSystemType
             {
-                Bootable   = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, multiplier * 2)),
-                Clusters   = (ulong)volEntry.Blocks, ClusterSize   = imagePlugin.Info.SectorSize,
-                Files      = (ulong)volEntry.Files, FilesSpecified = true, Type = "UCSD Pascal",
+                Bootable = !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, multiplier * 2)),
+                Clusters = (ulong)volEntry.Blocks,
+                ClusterSize = imagePlugin.Info.SectorSize,
+                Files = (ulong)volEntry.Files,
+                FilesSpecified = true,
+                Type = "UCSD Pascal",
                 VolumeName = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)
             };
         }

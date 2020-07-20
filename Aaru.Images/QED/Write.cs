@@ -72,7 +72,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -88,8 +90,12 @@ namespace Aaru.DiscImages
 
             qHdr = new QedHeader
             {
-                magic       = QED_MAGIC, cluster_size = DEFAULT_CLUSTER_SIZE, table_size = DEFAULT_TABLE_SIZE,
-                header_size = 1, l1_table_offset      = DEFAULT_CLUSTER_SIZE, image_size = sectors * sectorSize
+                magic           = QED_MAGIC,
+                cluster_size    = DEFAULT_CLUSTER_SIZE,
+                table_size      = DEFAULT_TABLE_SIZE,
+                header_size     = 1,
+                l1_table_offset = DEFAULT_CLUSTER_SIZE,
+                image_size      = sectors * sectorSize
             };
 
             clusterSectors = qHdr.cluster_size                     / 512;

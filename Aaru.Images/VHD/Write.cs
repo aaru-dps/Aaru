@@ -65,7 +65,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -207,17 +209,20 @@ namespace Aaru.DiscImages
 
             var footer = new HardDiskFooter
             {
-                Cookie = IMAGE_COOKIE, Features = FEATURES_RESERVED, Version = VERSION1,
-                Timestamp =
-                    (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+                Cookie = IMAGE_COOKIE,
+                Features = FEATURES_RESERVED,
+                Version = VERSION1,
+                Timestamp = (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
                 CreatorApplication = CREATOR_AARU,
                 CreatorVersion = (uint)(((thisVersion.Major & 0xFF) << 24) + ((thisVersion.Minor & 0xFF) << 16) +
                                         ((thisVersion.Build & 0xFF) << 8)  + (thisVersion.Revision & 0xFF)),
                 CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
-                DiskType      = TYPE_FIXED, UniqueId = Guid.NewGuid(),
+                DiskType      = TYPE_FIXED,
+                UniqueId      = Guid.NewGuid(),
                 DiskGeometry = ((imageInfo.Cylinders & 0xFFFF) << 16) + ((imageInfo.Heads & 0xFF) << 8) +
                                (imageInfo.SectorsPerTrack & 0xFF),
-                OriginalSize = imageInfo.Sectors * 512, CurrentSize = imageInfo.Sectors * 512
+                OriginalSize = imageInfo.Sectors * 512,
+                CurrentSize  = imageInfo.Sectors * 512
             };
 
             footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;

@@ -51,43 +51,75 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT12", Length = 19536,
-                    Sequence    = 0, Start   = 264
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT12",
+                    Length      = 19536,
+                    Sequence    = 0,
+                    Start       = 264
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT12", Length = 39336,
-                    Sequence    = 1, Start   = 20064
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT12",
+                    Length      = 39336,
+                    Sequence    = 1,
+                    Start       = 20064
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 59136,
-                    Sequence    = 2, Start   = 59664
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 59136,
+                    Sequence    = 2,
+                    Start       = 59664
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 78936,
-                    Sequence    = 3, Start   = 119064
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 78936,
+                    Sequence    = 3,
+                    Start       = 119064
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 118536,
-                    Sequence    = 4, Start   = 198264
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 118536,
+                    Sequence    = 4,
+                    Start       = 198264
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 197736,
-                    Sequence    = 5, Start   = 317064
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 197736,
+                    Sequence    = 5,
+                    Start       = 317064
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 237336,
-                    Sequence    = 6, Start   = 515064
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 237336,
+                    Sequence    = 6,
+                    Start       = 515064
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 245256,
-                    Sequence    = 7, Start   = 752664
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 245256,
+                    Sequence    = 7,
+                    Start       = 752664
                 }
             },
 
@@ -96,18 +128,30 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 59136,
-                    Sequence    = 0, Start   = 264
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 59136,
+                    Sequence    = 0,
+                    Start       = 264
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 158136,
-                    Sequence    = 1, Start   = 59664
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 158136,
+                    Sequence    = 1,
+                    Start       = 59664
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 3.30", Type = "FAT16", Length = 94776,
-                    Sequence    = 2, Start   = 218064
+                    Description = null,
+                    Name        = "MS-DOS 3.30",
+                    Type        = "FAT16",
+                    Length      = 94776,
+                    Sequence    = 2,
+                    Start       = 218064
                 }
             },
 
@@ -116,43 +160,75 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = "NamenameName", Type = "FAT12", Length = 35639,
-                    Sequence    = 0, Start   = 264
+                    Description = null,
+                    Name        = "NamenameName",
+                    Type        = "FAT12",
+                    Length      = 35639,
+                    Sequence    = 0,
+                    Start       = 264
                 },
                 new Partition
                 {
-                    Description = null, Name = "12BitFAT", Type = "FAT12", Length = 59399,
-                    Sequence    = 1, Start   = 35904
+                    Description = null,
+                    Name        = "12BitFAT",
+                    Type        = "FAT12",
+                    Length      = 59399,
+                    Sequence    = 1,
+                    Start       = 35904
                 },
                 new Partition
                 {
-                    Description = null, Name = "16BitFAT", Type = "FAT16", Length = 79199,
-                    Sequence    = 2, Start   = 95304
+                    Description = null,
+                    Name        = "16BitFAT",
+                    Type        = "FAT16",
+                    Length      = 79199,
+                    Sequence    = 2,
+                    Start       = 95304
                 },
                 new Partition
                 {
-                    Description = null, Name = "PartLblMaxNameXX", Type = "FAT16", Length = 118799,
-                    Sequence    = 3, Start   = 174504
+                    Description = null,
+                    Name        = "PartLblMaxNameXX",
+                    Type        = "FAT16",
+                    Length      = 118799,
+                    Sequence    = 3,
+                    Start       = 174504
                 },
                 new Partition
                 {
-                    Description = null, Name = "BigFAT12", Type = "FAT12", Length = 158399,
-                    Sequence    = 4, Start   = 293304
+                    Description = null,
+                    Name        = "BigFAT12",
+                    Type        = "FAT12",
+                    Length      = 158399,
+                    Sequence    = 4,
+                    Start       = 293304
                 },
                 new Partition
                 {
-                    Description = null, Name = "Lalalalalalalala", Type = "FAT16", Length = 197999,
-                    Sequence    = 5, Start   = 451704
+                    Description = null,
+                    Name        = "Lalalalalalalala",
+                    Type        = "FAT16",
+                    Length      = 197999,
+                    Sequence    = 5,
+                    Start       = 451704
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS Ver 5.0", Type = "FAT16", Length = 237599,
-                    Sequence    = 6, Start   = 649704
+                    Description = null,
+                    Name        = "MS-DOS Ver 5.0",
+                    Type        = "FAT16",
+                    Length      = 237599,
+                    Sequence    = 6,
+                    Start       = 649704
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS Ver 5.0", Type = "FAT16", Length = 118799,
-                    Sequence    = 7, Start   = 887304
+                    Description = null,
+                    Name        = "MS-DOS Ver 5.0",
+                    Type        = "FAT16",
+                    Length      = 118799,
+                    Sequence    = 7,
+                    Start       = 887304
                 }
             },
 
@@ -161,43 +237,75 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT12", Length = 28512,
-                    Sequence    = 0, Start   = 264
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT12",
+                    Length      = 28512,
+                    Sequence    = 0,
+                    Start       = 264
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 49104,
-                    Sequence    = 1, Start   = 29040
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 49104,
+                    Sequence    = 1,
+                    Start       = 29040
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 93984,
-                    Sequence    = 2, Start   = 78408
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 93984,
+                    Sequence    = 2,
+                    Start       = 78408
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 122760,
-                    Sequence    = 3, Start   = 172656
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 122760,
+                    Sequence    = 3,
+                    Start       = 172656
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 163680,
-                    Sequence    = 4, Start   = 295680
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 163680,
+                    Sequence    = 4,
+                    Start       = 295680
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 204600,
-                    Sequence    = 5, Start   = 459624
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 204600,
+                    Sequence    = 5,
+                    Start       = 459624
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 204600,
-                    Sequence    = 6, Start   = 664488
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 204600,
+                    Sequence    = 6,
+                    Start       = 664488
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 5.00", Type = "FAT16", Length = 139128,
-                    Sequence    = 7, Start   = 869352
+                    Description = null,
+                    Name        = "MS-DOS 5.00",
+                    Type        = "FAT16",
+                    Length      = 139128,
+                    Sequence    = 7,
+                    Start       = 869352
                 }
             },
 
@@ -206,38 +314,66 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 61248,
-                    Sequence    = 0, Start   = 264
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 61248,
+                    Sequence    = 0,
+                    Start       = 264
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 81840,
-                    Sequence    = 1, Start   = 61776
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 81840,
+                    Sequence    = 1,
+                    Start       = 61776
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 122760,
-                    Sequence    = 2, Start   = 143880
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 122760,
+                    Sequence    = 2,
+                    Start       = 143880
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 163680,
-                    Sequence    = 3, Start   = 266904
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 163680,
+                    Sequence    = 3,
+                    Start       = 266904
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT12", Length = 20328,
-                    Sequence    = 4, Start   = 430848
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT12",
+                    Length      = 20328,
+                    Sequence    = 4,
+                    Start       = 430848
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 245520,
-                    Sequence    = 5, Start   = 451440
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 245520,
+                    Sequence    = 5,
+                    Start       = 451440
                 },
                 new Partition
                 {
-                    Description = null, Name = "MS-DOS 6.20", Type = "FAT16", Length = 315216,
-                    Sequence    = 6, Start   = 697224
+                    Description = null,
+                    Name        = "MS-DOS 6.20",
+                    Type        = "FAT16",
+                    Length      = 315216,
+                    Sequence    = 6,
+                    Start       = 697224
                 }
             }
         };

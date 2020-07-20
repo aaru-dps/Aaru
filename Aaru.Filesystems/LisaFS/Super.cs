@@ -386,10 +386,14 @@ namespace Aaru.Filesystems.LisaFS
 
             stat = new FileSystemInfo
             {
-                Blocks     = mddf.vol_size, FilenameLength = (ushort)E_NAME, Files = mddf.filecount,
-                FreeBlocks = mddf.freecount, Id =
+                Blocks         = mddf.vol_size,
+                FilenameLength = (ushort)E_NAME,
+                Files          = mddf.filecount,
+                FreeBlocks     = mddf.freecount,
+                Id =
                 {
-                    Serial64 = mddf.volid, IsLong = true
+                    Serial64 = mddf.volid,
+                    IsLong   = true
                 },
                 PluginId = Id
             };

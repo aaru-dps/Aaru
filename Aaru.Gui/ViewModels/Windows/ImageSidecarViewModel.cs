@@ -324,7 +324,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
             dlgDestination.Filters.Add(new FileDialogFilter
             {
-                Name = "CICM XML metadata", Extensions = new List<string>(new[]
+                Name = "CICM XML metadata",
+                Extensions = new List<string>(new[]
                 {
                     "*.xml"
                 })

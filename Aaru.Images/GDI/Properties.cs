@@ -60,13 +60,19 @@ namespace Aaru.DiscImages
                 {
                     var track = new Track
                     {
-                        TrackDescription = null, TrackStartSector = gdiTrack.StartSector, TrackPregap = gdiTrack.Pregap,
-                        TrackSession = (ushort)(gdiTrack.HighDensity ? 2 : 1), TrackSequence = gdiTrack.Sequence,
-                        TrackType = gdiTrack.Tracktype, TrackFilter = gdiTrack.Trackfilter,
-                        TrackFile = gdiTrack.Trackfile, TrackFileOffset = (ulong)gdiTrack.Offset,
-                        TrackFileType = "BINARY", TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
-                        TrackSubchannelType = TrackSubchannelType.None
+                        TrackDescription       = null,
+                        TrackStartSector       = gdiTrack.StartSector,
+                        TrackPregap            = gdiTrack.Pregap,
+                        TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                        TrackSequence          = gdiTrack.Sequence,
+                        TrackType              = gdiTrack.Tracktype,
+                        TrackFilter            = gdiTrack.Trackfilter,
+                        TrackFile              = gdiTrack.Trackfile,
+                        TrackFileOffset        = (ulong)gdiTrack.Offset,
+                        TrackFileType          = "BINARY",
+                        TrackRawBytesPerSector = gdiTrack.Bps,
+                        TrackBytesPerSector    = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
+                        TrackSubchannelType    = TrackSubchannelType.None
                     };
 
                     track.TrackEndSector = (track.TrackStartSector + gdiTrack.Sectors) - 1;

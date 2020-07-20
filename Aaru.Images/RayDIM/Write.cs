@@ -74,9 +74,12 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors,
-                Cylinders = geometry.cylinders,
-                Heads     = geometry.heads, SectorsPerTrack = geometry.sectorsPerTrack
+                MediaType       = mediaType,
+                SectorSize      = sectorSize,
+                Sectors         = sectors,
+                Cylinders       = geometry.cylinders,
+                Heads           = geometry.heads,
+                SectorsPerTrack = geometry.sectorsPerTrack
             };
 
             try
@@ -217,8 +220,10 @@ namespace Aaru.DiscImages
 
             var header = new RayHdr
             {
-                signature       = Encoding.ASCII.GetBytes(headerSignature), cylinders = (byte)imageInfo.Cylinders,
-                diskType        = RayDiskTypes.Mf2ed, heads                           = (byte)imageInfo.Heads,
+                signature       = Encoding.ASCII.GetBytes(headerSignature),
+                cylinders       = (byte)imageInfo.Cylinders,
+                diskType        = RayDiskTypes.Mf2ed,
+                heads           = (byte)imageInfo.Heads,
                 sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
             };
 

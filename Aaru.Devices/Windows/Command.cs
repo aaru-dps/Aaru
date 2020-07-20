@@ -68,11 +68,15 @@ namespace Aaru.Devices.Windows
 
             var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
             {
-                SenseBuf = new byte[32], sptd = new ScsiPassThroughDirect
+                SenseBuf = new byte[32],
+                sptd = new ScsiPassThroughDirect
                 {
-                    Cdb                = new byte[16], CdbLength = (byte)cdb.Length, SenseInfoLength = 32,
+                    Cdb                = new byte[16],
+                    CdbLength          = (byte)cdb.Length,
+                    SenseInfoLength    = 32,
                     DataIn             = direction,
-                    DataTransferLength = (uint)buffer.Length, TimeOutValue = timeout,
+                    DataTransferLength = (uint)buffer.Length,
+                    TimeOutValue       = timeout,
                     DataBuffer         = Marshal.AllocHGlobal(buffer.Length)
                 }
             };
@@ -142,11 +146,15 @@ namespace Aaru.Devices.Windows
                     DataBufferOffset   = (IntPtr)offsetForBuffer,
                     Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughEx)),
                     DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile   = new AtaTaskFile(), CurrentTaskFile = new AtaTaskFile
+                    PreviousTaskFile   = new AtaTaskFile(),
+                    CurrentTaskFile = new AtaTaskFile
                     {
-                        Command      = registers.Command, CylinderHigh   = registers.CylinderHigh,
-                        CylinderLow  = registers.CylinderLow, DeviceHead = registers.DeviceHead,
-                        Features     = registers.Feature, SectorCount    = registers.SectorCount,
+                        Command      = registers.Command,
+                        CylinderHigh = registers.CylinderHigh,
+                        CylinderLow  = registers.CylinderLow,
+                        DeviceHead   = registers.DeviceHead,
+                        Features     = registers.Feature,
+                        SectorCount  = registers.SectorCount,
                         SectorNumber = registers.Sector
                     }
                 },
@@ -247,12 +255,16 @@ namespace Aaru.Devices.Windows
                     DataBufferOffset   = (IntPtr)offsetForBuffer,
                     Length             = (ushort)Marshal.SizeOf(typeof(AtaPassThroughEx)),
                     DataTransferLength = (uint)buffer.Length,
-                    PreviousTaskFile   = new AtaTaskFile(), CurrentTaskFile = new AtaTaskFile
+                    PreviousTaskFile   = new AtaTaskFile(),
+                    CurrentTaskFile = new AtaTaskFile
                     {
-                        Command     = registers.Command, CylinderHigh = registers.LbaHigh,
-                        CylinderLow = registers.LbaMid,
-                        DeviceHead  = registers.DeviceHead, Features      = registers.Feature,
-                        SectorCount = registers.SectorCount, SectorNumber = registers.LbaLow
+                        Command      = registers.Command,
+                        CylinderHigh = registers.LbaHigh,
+                        CylinderLow  = registers.LbaMid,
+                        DeviceHead   = registers.DeviceHead,
+                        Features     = registers.Feature,
+                        SectorCount  = registers.SectorCount,
+                        SectorNumber = registers.LbaLow
                     }
                 },
                 dataBuffer = new byte[64 * 512]
@@ -362,8 +374,9 @@ namespace Aaru.Devices.Windows
                     },
                     CurrentTaskFile = new AtaTaskFile
                     {
-                        Command      = registers.Command, CylinderHigh = (byte)(registers.LbaHigh & 0xFF),
-                        CylinderLow  = (byte)(registers.LbaMid                                    & 0xFF),
+                        Command      = registers.Command,
+                        CylinderHigh = (byte)(registers.LbaHigh & 0xFF),
+                        CylinderLow  = (byte)(registers.LbaMid  & 0xFF),
                         DeviceHead   = registers.DeviceHead,
                         Features     = (byte)(registers.Feature     & 0xFF),
                         SectorCount  = (byte)(registers.SectorCount & 0xFF),

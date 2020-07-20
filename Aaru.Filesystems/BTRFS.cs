@@ -188,10 +188,13 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters              = btrfsSb.total_bytes / btrfsSb.sectorsize, ClusterSize = btrfsSb.sectorsize,
-                FreeClustersSpecified = true, VolumeName                                      = btrfsSb.label,
+                Clusters              = btrfsSb.total_bytes / btrfsSb.sectorsize,
+                ClusterSize           = btrfsSb.sectorsize,
+                FreeClustersSpecified = true,
+                VolumeName            = btrfsSb.label,
                 VolumeSerial          = $"{btrfsSb.uuid}",
-                VolumeSetIdentifier   = $"{btrfsSb.dev_item.device_uuid}", Type = Name
+                VolumeSetIdentifier   = $"{btrfsSb.dev_item.device_uuid}",
+                Type                  = Name
             };
 
             XmlFsType.FreeClusters = XmlFsType.Clusters - (btrfsSb.bytes_used / btrfsSb.sectorsize);

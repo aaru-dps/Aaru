@@ -9,8 +9,10 @@ namespace Aaru.Database.Migrations
         {
             migrationBuilder.CreateTable("UsbVendors", table => new
             {
-                Id        = table.Column<ushort>(), Vendor         = table.Column<string>(nullable: true),
-                AddedWhen = table.Column<DateTime>(), ModifiedWhen = table.Column<DateTime>()
+                Id           = table.Column<ushort>(),
+                Vendor       = table.Column<string>(nullable: true),
+                AddedWhen    = table.Column<DateTime>(),
+                ModifiedWhen = table.Column<DateTime>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_UsbVendors", x => x.Id);

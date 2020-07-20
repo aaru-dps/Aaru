@@ -103,10 +103,9 @@ namespace Aaru.Filesystems.UCSDPascal
             {
                 var entry = new PascalFileEntry
                 {
-                    Filename   = new byte[16],
-                    FirstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x00),
-                    LastBlock =
-                        BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x02),
+                    Filename         = new byte[16],
+                    FirstBlock       = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x00),
+                    LastBlock        = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x02),
                     EntryType        = (PascalFileKind)BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x04),
                     LastBytes        = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x16),
                     ModificationTime = BigEndianBitConverter.ToInt16(catalogBlocks, offset + 0x18)
@@ -125,12 +124,13 @@ namespace Aaru.Filesystems.UCSDPascal
 
             XmlFsType = new FileSystemType
             {
-                Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks), Clusters = (ulong)mountedVolEntry.Blocks,
-                ClusterSize    = device.Info.SectorSize, Files                          = (ulong)mountedVolEntry.Files,
+                Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
+                Clusters       = (ulong)mountedVolEntry.Blocks,
+                ClusterSize    = device.Info.SectorSize,
+                Files          = (ulong)mountedVolEntry.Files,
                 FilesSpecified = true,
                 Type           = "UCSD Pascal",
-                VolumeName =
-                    StringHandlers.PascalToString(mountedVolEntry.VolumeName, Encoding)
+                VolumeName     = StringHandlers.PascalToString(mountedVolEntry.VolumeName, Encoding)
             };
 
             mounted = true;
@@ -150,8 +150,12 @@ namespace Aaru.Filesystems.UCSDPascal
         {
             stat = new FileSystemInfo
             {
-                Blocks     = (ulong)mountedVolEntry.Blocks, FilenameLength = 16, Files = (ulong)mountedVolEntry.Files,
-                FreeBlocks = 0, PluginId                                   = Id, Type  = "UCSD Pascal"
+                Blocks         = (ulong)mountedVolEntry.Blocks,
+                FilenameLength = 16,
+                Files          = (ulong)mountedVolEntry.Files,
+                FreeBlocks     = 0,
+                PluginId       = Id,
+                Type           = "UCSD Pascal"
             };
 
             stat.FreeBlocks =

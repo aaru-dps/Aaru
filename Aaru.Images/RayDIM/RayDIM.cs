@@ -46,14 +46,23 @@ namespace Aaru.DiscImages
 
         public RayDim() => imageInfo = new ImageInfo
         {
-            ReadableSectorTags    = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions         = false, HasSessions                           = false,
-            Application           = "Ray Arachelian's Disk IMage", Creator       = null,
-            Comments              = null, MediaManufacturer                      = null, MediaModel = null,
+            ReadableSectorTags    = new List<SectorTagType>(),
+            ReadableMediaTags     = new List<MediaTagType>(),
+            HasPartitions         = false,
+            HasSessions           = false,
+            Application           = "Ray Arachelian's Disk IMage",
+            Creator               = null,
+            Comments              = null,
+            MediaManufacturer     = null,
+            MediaModel            = null,
             MediaSerialNumber     = null,
-            MediaBarcode          = null, MediaPartNumber = null, MediaSequence = 0,
+            MediaBarcode          = null,
+            MediaPartNumber       = null,
+            MediaSequence         = 0,
             LastMediaSequence     = 0,
-            DriveManufacturer     = null, DriveModel = null, DriveSerialNumber = null,
+            DriveManufacturer     = null,
+            DriveModel            = null,
+            DriveSerialNumber     = null,
             DriveFirmwareRevision = null
         };
     }

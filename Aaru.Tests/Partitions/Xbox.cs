@@ -50,13 +50,21 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = "System cache", Name = null, Type = null, Length = 16376,
-                    Sequence    = 0, Start             = 0
+                    Description = "System cache",
+                    Name        = null,
+                    Type        = null,
+                    Length      = 16376,
+                    Sequence    = 0,
+                    Start       = 0
                 },
                 new Partition
                 {
-                    Description = "Data volume", Name = null, Type = null, Length = 475144,
-                    Sequence    = 1, Start            = 16376
+                    Description = "Data volume",
+                    Name        = null,
+                    Type        = null,
+                    Length      = 475144,
+                    Sequence    = 1,
+                    Start       = 16376
                 }
             }
         };

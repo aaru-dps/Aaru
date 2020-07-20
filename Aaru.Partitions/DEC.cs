@@ -71,8 +71,10 @@ namespace Aaru.Partitions
 
             foreach(Partition part in table.pt_part.Select(entry => new Partition
             {
-                Start    = entry.pi_blkoff, Offset         = (ulong)(entry.pi_blkoff  * sector.Length),
-                Size     = (ulong)entry.pi_nblocks, Length = (ulong)(entry.pi_nblocks * sector.Length),
+                Start    = entry.pi_blkoff,
+                Offset   = (ulong)(entry.pi_blkoff * sector.Length),
+                Size     = (ulong)entry.pi_nblocks,
+                Length   = (ulong)(entry.pi_nblocks * sector.Length),
                 Sequence = counter,
                 Scheme   = Name
             }).Where(part => part.Size > 0))

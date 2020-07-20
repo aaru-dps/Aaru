@@ -559,7 +559,8 @@ namespace Aaru.Core.Devices.Dumping
             // TODO: Drive info
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))
@@ -655,7 +656,9 @@ namespace Aaru.Core.Devices.Dumping
 
                     cidDump = new DumpType
                     {
-                        Image = _outputPath, Size = (ulong)cid.Length, Checksums = Checksum.GetChecksums(cid).ToArray()
+                        Image     = _outputPath,
+                        Size      = (ulong)cid.Length,
+                        Checksums = Checksum.GetChecksums(cid).ToArray()
                     };
 
                     ret =
@@ -680,7 +683,9 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     csdDump = new DumpType
                     {
-                        Image = _outputPath, Size = (ulong)csd.Length, Checksums = Checksum.GetChecksums(csd).ToArray()
+                        Image     = _outputPath,
+                        Size      = (ulong)csd.Length,
+                        Checksums = Checksum.GetChecksums(csd).ToArray()
                     };
 
                     ret =
@@ -705,7 +710,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                     {
-                        Image     = _outputPath, Size = (ulong)ecsd.Length,
+                        Image     = _outputPath,
+                        Size      = (ulong)ecsd.Length,
                         Checksums = Checksum.GetChecksums(ecsd).ToArray()
                     };
 
@@ -728,7 +734,9 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     ocrDump = new DumpType
                     {
-                        Image = _outputPath, Size = (ulong)ocr.Length, Checksums = Checksum.GetChecksums(ocr).ToArray()
+                        Image     = _outputPath,
+                        Size      = (ulong)ocr.Length,
+                        Checksums = Checksum.GetChecksums(ocr).ToArray()
                     };
 
                     ret =
@@ -753,7 +761,9 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                     {
-                        Image = _outputPath, Size = (ulong)scr.Length, Checksums = Checksum.GetChecksums(scr).ToArray()
+                        Image     = _outputPath,
+                        Size      = (ulong)scr.Length,
+                        Checksums = Checksum.GetChecksums(scr).ToArray()
                     };
 
                     ret = _outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);

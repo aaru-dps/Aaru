@@ -146,9 +146,11 @@ namespace Aaru.Filesystems.FATX
                 stat = new FileEntryInfo
                 {
                     Attributes = FileAttributes.Directory | FileAttributes.System | FileAttributes.Hidden,
-                    Blocks     = GetClusters(superblock.rootDirectoryCluster).Length, BlockSize = bytesPerCluster,
+                    Blocks     = GetClusters(superblock.rootDirectoryCluster).Length,
+                    BlockSize  = bytesPerCluster,
                     Length     = GetClusters(superblock.rootDirectoryCluster).Length * bytesPerCluster,
-                    Inode      = superblock.rootDirectoryCluster, Links = 1
+                    Inode      = superblock.rootDirectoryCluster,
+                    Links      = 1
                 };
 
                 return Errno.NoError;
@@ -161,8 +163,12 @@ namespace Aaru.Filesystems.FATX
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(), Blocks = entry.length / bytesPerCluster, BlockSize = bytesPerCluster,
-                Length     = entry.length, Inode          = entry.firstCluster, Links                 = 1,
+                Attributes = new FileAttributes(),
+                Blocks     = entry.length / bytesPerCluster,
+                BlockSize  = bytesPerCluster,
+                Length     = entry.length,
+                Inode      = entry.firstCluster,
+                Links      = 1,
                 CreationTime = littleEndian
                                    ? DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20)
                                    : DateHandlers.DosToDateTime(entry.creationTime, entry.creationDate),

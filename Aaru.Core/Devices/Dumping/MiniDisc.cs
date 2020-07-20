@@ -511,31 +511,50 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         pg = new Modes.ModePage_01
                         {
-                            PS  = false, AWRE           = true, ARRE = true, TB   = false,
-                            RC  = false, EER            = true, PER  = false, DTE = true,
-                            DCR = false, ReadRetryCount = 32
+                            PS             = false,
+                            AWRE           = true,
+                            ARRE           = true,
+                            TB             = false,
+                            RC             = false,
+                            EER            = true,
+                            PER            = false,
+                            DTE            = true,
+                            DCR            = false,
+                            ReadRetryCount = 32
                         };
 
                         currentModePage = new Modes.ModePage
                         {
-                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01(pg)
                         };
                     }
 
                     pg = new Modes.ModePage_01
                     {
-                        PS  = false, AWRE           = false, ARRE = false, TB  = true,
-                        RC  = false, EER            = true, PER   = false, DTE = false,
-                        DCR = false, ReadRetryCount = 255
+                        PS             = false,
+                        AWRE           = false,
+                        ARRE           = false,
+                        TB             = true,
+                        RC             = false,
+                        EER            = true,
+                        PER            = false,
+                        DTE            = false,
+                        DCR            = false,
+                        ReadRetryCount = 255
                     };
 
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             new Modes.ModePage
                             {
-                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01(pg)
                             }
                         }
                     };
@@ -615,7 +634,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             currentModePage.Value
                         }
@@ -643,7 +663,8 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))
@@ -725,7 +746,8 @@ namespace Aaru.Core.Devices.Dumping
                 if(filesystems.Count > 0)
                     foreach(var filesystem in filesystems.Select(o => new
                     {
-                        o.start, o.type
+                        o.start,
+                        o.type
                     }).Distinct())
                     {
                         UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");

@@ -83,7 +83,10 @@ namespace Aaru.DiscImages.CopyTape
                 {
                     Files.Add(new TapeFile
                     {
-                        File = currentFile, FirstBlock = currentFileStart, LastBlock = currentBlock - 1, Partition = 0
+                        File       = currentFile,
+                        FirstBlock = currentFileStart,
+                        LastBlock  = currentBlock - 1,
+                        Partition  = 0
                     });
 
                     inFile = false;
@@ -143,7 +146,9 @@ namespace Aaru.DiscImages.CopyTape
             {
                 new TapePartition
                 {
-                    FirstBlock = 0, LastBlock = currentBlock - 1, Number = 0
+                    FirstBlock = 0,
+                    LastBlock  = currentBlock - 1,
+                    Number     = 0
                 }
             };
 

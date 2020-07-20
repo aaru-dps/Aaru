@@ -57,23 +57,39 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 100800,
-                    Sequence    = 0, Start   = 1008
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 100800,
+                    Sequence    = 0,
+                    Start       = 1008
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 99792,
-                    Sequence    = 1, Start   = 102816
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 99792,
+                    Sequence    = 1,
+                    Start       = 102816
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 100800,
-                    Sequence    = 2, Start   = 202608
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 100800,
+                    Sequence    = 2,
+                    Start       = 202608
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 303408,
-                    Sequence    = 3, Start   = 352800
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 303408,
+                    Sequence    = 3,
+                    Start       = 352800
                 }
             },
 
@@ -82,13 +98,21 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x07", Length = 409248,
-                    Sequence    = 0, Start   = 409248
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x07",
+                    Length      = 409248,
+                    Sequence    = 0,
+                    Start       = 409248
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA8", Length = 204624,
-                    Sequence    = 1, Start   = 818496
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA8",
+                    Length      = 204624,
+                    Sequence    = 1,
+                    Start       = 818496
                 }
             },
 
@@ -97,23 +121,39 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA8", Length = 204561,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA8",
+                    Length      = 204561,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAB", Length = 81648,
-                    Sequence    = 1, Start   = 204624
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAB",
+                    Length      = 81648,
+                    Sequence    = 1,
+                    Start       = 204624
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245952,
-                    Sequence    = 2, Start   = 286272
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245952,
+                    Sequence    = 2,
+                    Start       = 286272
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 488880,
-                    Sequence    = 3, Start   = 532224
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 488880,
+                    Sequence    = 3,
+                    Start       = 532224
                 }
             },
 
@@ -122,23 +162,39 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 150000,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 150000,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 176000,
-                    Sequence    = 1, Start   = 150063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 176000,
+                    Sequence    = 1,
+                    Start       = 150063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA8", Length = 350000,
-                    Sequence    = 2, Start   = 326063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA8",
+                    Length      = 350000,
+                    Sequence    = 2,
+                    Start       = 326063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x0C", Length = 347937,
-                    Sequence    = 3, Start   = 676063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x0C",
+                    Length      = 347937,
+                    Sequence    = 3,
+                    Start       = 676063
                 }
             },
 
@@ -147,23 +203,39 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 100800,
-                    Sequence    = 0, Start   = 1008
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 100800,
+                    Sequence    = 0,
+                    Start       = 1008
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 402129,
-                    Sequence    = 1, Start   = 101871
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 402129,
+                    Sequence    = 1,
+                    Start       = 101871
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 152145,
-                    Sequence    = 2, Start   = 504063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 152145,
+                    Sequence    = 2,
+                    Start       = 504063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 365841,
-                    Sequence    = 3, Start   = 656271
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 365841,
+                    Sequence    = 3,
+                    Start       = 656271
                 }
             },
 
@@ -172,23 +244,39 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 126945,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 126945,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 124929,
-                    Sequence    = 1, Start   = 127071
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 124929,
+                    Sequence    = 1,
+                    Start       = 127071
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 101745,
-                    Sequence    = 2, Start   = 252063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 101745,
+                    Sequence    = 2,
+                    Start       = 252063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 668241,
-                    Sequence    = 3, Start   = 353871
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 668241,
+                    Sequence    = 3,
+                    Start       = 353871
                 }
             },
 
@@ -197,28 +285,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 128016,
-                    Sequence    = 0, Start   = 124992
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 128016,
+                    Sequence    = 0,
+                    Start       = 124992
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 99729,
-                    Sequence    = 1, Start   = 253071
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 99729,
+                    Sequence    = 1,
+                    Start       = 253071
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 100737,
-                    Sequence    = 2, Start   = 352863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 100737,
+                    Sequence    = 2,
+                    Start       = 352863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 313425,
-                    Sequence    = 3, Start   = 453663
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 313425,
+                    Sequence    = 3,
+                    Start       = 453663
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 254961,
-                    Sequence    = 4, Start   = 767151
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 254961,
+                    Sequence    = 4,
+                    Start       = 767151
                 }
             },
 
@@ -227,28 +335,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 101745,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 101745,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 18081,
-                    Sequence    = 1, Start   = 102879
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 18081,
+                    Sequence    = 1,
+                    Start       = 102879
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 130977,
-                    Sequence    = 2, Start   = 121023
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 130977,
+                    Sequence    = 2,
+                    Start       = 121023
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 202545,
-                    Sequence    = 3, Start   = 252063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 202545,
+                    Sequence    = 3,
+                    Start       = 252063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 567441,
-                    Sequence    = 4, Start   = 454671
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 567441,
+                    Sequence    = 4,
+                    Start       = 454671
                 }
             },
 
@@ -257,28 +385,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 102753,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 102753,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 307377,
-                    Sequence    = 1, Start   = 102879
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 307377,
+                    Sequence    = 1,
+                    Start       = 102879
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 384993,
-                    Sequence    = 2, Start   = 410319
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 384993,
+                    Sequence    = 2,
+                    Start       = 410319
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 17073,
-                    Sequence    = 3, Start   = 795375
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 17073,
+                    Sequence    = 3,
+                    Start       = 795375
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 209601,
-                    Sequence    = 4, Start   = 812511
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 209601,
+                    Sequence    = 4,
+                    Start       = 812511
                 }
             },
 
@@ -287,28 +435,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 202545,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 202545,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 141057,
-                    Sequence    = 1, Start   = 202671
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 141057,
+                    Sequence    = 1,
+                    Start       = 202671
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 152145,
-                    Sequence    = 2, Start   = 352863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 152145,
+                    Sequence    = 2,
+                    Start       = 352863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 364833,
-                    Sequence    = 3, Start   = 505071
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 364833,
+                    Sequence    = 3,
+                    Start       = 505071
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 152145,
-                    Sequence    = 4, Start   = 869967
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 152145,
+                    Sequence    = 4,
+                    Start       = 869967
                 }
             },
 
@@ -317,28 +485,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 138033,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 138033,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 303345,
-                    Sequence    = 2, Start   = 352863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 303345,
+                    Sequence    = 2,
+                    Start       = 352863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 249921,
-                    Sequence    = 3, Start   = 656271
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 249921,
+                    Sequence    = 3,
+                    Start       = 656271
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 115857,
-                    Sequence    = 4, Start   = 906255
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 115857,
+                    Sequence    = 4,
+                    Start       = 906255
                 }
             },
 
@@ -347,28 +535,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 20480,
-                    Sequence    = 0, Start   = 2048
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 20480,
+                    Sequence    = 0,
+                    Start       = 2048
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x24", Length = 40960,
-                    Sequence    = 1, Start   = 22528
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x24",
+                    Length      = 40960,
+                    Sequence    = 1,
+                    Start       = 22528
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA7", Length = 61440,
-                    Sequence    = 2, Start   = 65536
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA7",
+                    Length      = 61440,
+                    Sequence    = 2,
+                    Start       = 65536
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x42", Length = 81920,
-                    Sequence    = 3, Start   = 129024
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x42",
+                    Length      = 81920,
+                    Sequence    = 3,
+                    Start       = 129024
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x83", Length = 49152,
-                    Sequence    = 4, Start   = 212992
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x83",
+                    Length      = 49152,
+                    Sequence    = 4,
+                    Start       = 212992
                 }
             },
 
@@ -377,33 +585,57 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA8", Length = 204800,
-                    Sequence    = 0, Start   = 8
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA8",
+                    Length      = 204800,
+                    Sequence    = 0,
+                    Start       = 8
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 102400,
-                    Sequence    = 1, Start   = 204816
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 102400,
+                    Sequence    = 1,
+                    Start       = 204816
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x0B", Length = 102400,
-                    Sequence    = 2, Start   = 307224
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x0B",
+                    Length      = 102400,
+                    Sequence    = 2,
+                    Start       = 307224
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 204800,
-                    Sequence    = 3, Start   = 409632
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 204800,
+                    Sequence    = 3,
+                    Start       = 409632
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 204800,
-                    Sequence    = 4, Start   = 614440
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 204800,
+                    Sequence    = 4,
+                    Start       = 614440
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 204752,
-                    Sequence    = 5, Start   = 819248
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 204752,
+                    Sequence    = 5,
+                    Start       = 819248
                 }
             },
 
@@ -412,33 +644,57 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 102400,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 102400,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 204800,
-                    Sequence    = 1, Start   = 102501
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 204800,
+                    Sequence    = 1,
+                    Start       = 102501
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x0B", Length = 204800,
-                    Sequence    = 2, Start   = 307314
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x0B",
+                    Length      = 204800,
+                    Sequence    = 2,
+                    Start       = 307314
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xA8", Length = 204800,
-                    Sequence    = 3, Start   = 512127
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xA8",
+                    Length      = 204800,
+                    Sequence    = 3,
+                    Start       = 512127
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 102400,
-                    Sequence    = 4, Start   = 716940
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 102400,
+                    Sequence    = 4,
+                    Start       = 716940
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0xAF", Length = 204622,
-                    Sequence    = 5, Start   = 819378
+                    Description = null,
+                    Name        = null,
+                    Type        = "0xAF",
+                    Length      = 204622,
+                    Sequence    = 5,
+                    Start       = 819378
                 }
             },
 
@@ -447,83 +703,147 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 1, Start   = 65583
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 1,
+                    Start       = 65583
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 2, Start   = 131103
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 2,
+                    Start       = 131103
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 3, Start   = 196623
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 3,
+                    Start       = 196623
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 4, Start   = 262143
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 4,
+                    Start       = 262143
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 5, Start   = 327663
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 5,
+                    Start       = 327663
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 6, Start   = 393183
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 6,
+                    Start       = 393183
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 7, Start   = 458703
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 7,
+                    Start       = 458703
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 8, Start   = 524223
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 8,
+                    Start       = 524223
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 9, Start   = 589743
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 9,
+                    Start       = 589743
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 10, Start  = 655263
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 10,
+                    Start       = 655263
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 11, Start  = 720783
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 11,
+                    Start       = 720783
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 12, Start  = 786303
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 12,
+                    Start       = 786303
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 13, Start  = 851823
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 13,
+                    Start       = 851823
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 14, Start  = 917343
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 14,
+                    Start       = 917343
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 39249,
-                    Sequence    = 15, Start  = 982863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 39249,
+                    Sequence    = 15,
+                    Start       = 982863
                 }
             },
 
@@ -532,68 +852,120 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 102753,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 102753,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 31185,
-                    Sequence    = 1, Start   = 102879
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 31185,
+                    Sequence    = 1,
+                    Start       = 102879
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 41265,
-                    Sequence    = 2, Start   = 134127
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 41265,
+                    Sequence    = 2,
+                    Start       = 134127
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 51345,
-                    Sequence    = 3, Start   = 175455
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 51345,
+                    Sequence    = 3,
+                    Start       = 175455
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 61425,
-                    Sequence    = 4, Start   = 226863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 61425,
+                    Sequence    = 4,
+                    Start       = 226863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 72513,
-                    Sequence    = 5, Start   = 288351
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 72513,
+                    Sequence    = 5,
+                    Start       = 288351
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 82593,
-                    Sequence    = 6, Start   = 360927
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 82593,
+                    Sequence    = 6,
+                    Start       = 360927
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 92673,
-                    Sequence    = 7, Start   = 443583
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 92673,
+                    Sequence    = 7,
+                    Start       = 443583
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 102753,
-                    Sequence    = 8, Start   = 536319
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 102753,
+                    Sequence    = 8,
+                    Start       = 536319
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 112833,
-                    Sequence    = 9, Start   = 639135
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 112833,
+                    Sequence    = 9,
+                    Start       = 639135
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 122913,
-                    Sequence    = 10, Start  = 752031
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 122913,
+                    Sequence    = 10,
+                    Start       = 752031
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 134001,
-                    Sequence    = 11, Start  = 875007
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 134001,
+                    Sequence    = 11,
+                    Start       = 875007
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 13041,
-                    Sequence    = 12, Start  = 1009071
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 13041,
+                    Sequence    = 12,
+                    Start       = 1009071
                 }
             },
 
@@ -602,48 +974,84 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 51345,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 51345,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 72513,
-                    Sequence    = 1, Start   = 51471
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 72513,
+                    Sequence    = 1,
+                    Start       = 51471
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 92673,
-                    Sequence    = 2, Start   = 124047
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 92673,
+                    Sequence    = 2,
+                    Start       = 124047
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 112833,
-                    Sequence    = 3, Start   = 216783
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 112833,
+                    Sequence    = 3,
+                    Start       = 216783
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 134001,
-                    Sequence    = 4, Start   = 329679
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 134001,
+                    Sequence    = 4,
+                    Start       = 329679
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 154161,
-                    Sequence    = 5, Start   = 463743
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 154161,
+                    Sequence    = 5,
+                    Start       = 463743
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 178353,
-                    Sequence    = 6, Start   = 617967
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 178353,
+                    Sequence    = 6,
+                    Start       = 617967
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 184401,
-                    Sequence    = 7, Start   = 796383
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 184401,
+                    Sequence    = 7,
+                    Start       = 796383
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 41265,
-                    Sequence    = 8, Start   = 980847
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 41265,
+                    Sequence    = 8,
+                    Start       = 980847
                 }
             },
 
@@ -652,33 +1060,57 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 225729,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 225729,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 2, Start   = 431487
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 2,
+                    Start       = 431487
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 267057,
-                    Sequence    = 3, Start   = 677439
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 267057,
+                    Sequence    = 3,
+                    Start       = 677439
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 61425,
-                    Sequence    = 4, Start   = 944559
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 61425,
+                    Sequence    = 4,
+                    Start       = 944559
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 16065,
-                    Sequence    = 5, Start   = 1006047
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 16065,
+                    Sequence    = 5,
+                    Start       = 1006047
                 }
             },
 
@@ -687,38 +1119,66 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 225729,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 225729,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 2, Start   = 431487
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 2,
+                    Start       = 431487
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 267057,
-                    Sequence    = 3, Start   = 677439
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 267057,
+                    Sequence    = 3,
+                    Start       = 677439
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 51345,
-                    Sequence    = 4, Start   = 944559
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 51345,
+                    Sequence    = 4,
+                    Start       = 944559
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 6993,
-                    Sequence    = 5, Start   = 995967
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 6993,
+                    Sequence    = 5,
+                    Start       = 995967
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 19089,
-                    Sequence    = 6, Start   = 1003023
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 19089,
+                    Sequence    = 6,
+                    Start       = 1003023
                 }
             },
 
@@ -727,28 +1187,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 1, Start   = 246015
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 1,
+                    Start       = 246015
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 307377,
-                    Sequence    = 2, Start   = 451647
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 307377,
+                    Sequence    = 2,
+                    Start       = 451647
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 225729,
-                    Sequence    = 3, Start   = 759087
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 225729,
+                    Sequence    = 3,
+                    Start       = 759087
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 37233,
-                    Sequence    = 4, Start   = 984879
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 37233,
+                    Sequence    = 4,
+                    Start       = 984879
                 }
             },
 
@@ -757,28 +1237,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 152145,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 152145,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 99729,
-                    Sequence    = 1, Start   = 152271
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 99729,
+                    Sequence    = 1,
+                    Start       = 152271
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 202545,
-                    Sequence    = 2, Start   = 252063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 202545,
+                    Sequence    = 2,
+                    Start       = 252063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 1953,
-                    Sequence    = 3, Start   = 454671
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 1953,
+                    Sequence    = 3,
+                    Start       = 454671
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 565425,
-                    Sequence    = 4, Start   = 456687
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 565425,
+                    Sequence    = 4,
+                    Start       = 456687
                 }
             },
 
@@ -787,28 +1287,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 252945,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 252945,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 4977,
-                    Sequence    = 1, Start   = 253071
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 4977,
+                    Sequence    = 1,
+                    Start       = 253071
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 202545,
-                    Sequence    = 2, Start   = 352863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 202545,
+                    Sequence    = 2,
+                    Start       = 352863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 348705,
-                    Sequence    = 3, Start   = 555471
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 348705,
+                    Sequence    = 3,
+                    Start       = 555471
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 117873,
-                    Sequence    = 4, Start   = 904239
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 117873,
+                    Sequence    = 4,
+                    Start       = 904239
                 }
             },
 
@@ -817,28 +1337,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 307377,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 307377,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 4977,
-                    Sequence    = 1, Start   = 307503
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 4977,
+                    Sequence    = 1,
+                    Start       = 307503
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 40257,
-                    Sequence    = 2, Start   = 312543
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 40257,
+                    Sequence    = 2,
+                    Start       = 312543
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 202545,
-                    Sequence    = 3, Start   = 352863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 202545,
+                    Sequence    = 3,
+                    Start       = 352863
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 466641,
-                    Sequence    = 4, Start   = 555471
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 466641,
+                    Sequence    = 4,
+                    Start       = 555471
                 }
             },
 
@@ -847,18 +1387,30 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x83", Length = 67584,
-                    Sequence    = 0, Start   = 4096
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x83",
+                    Length      = 67584,
+                    Sequence    = 0,
+                    Start       = 4096
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x07", Length = 59392,
-                    Sequence    = 1, Start   = 73728
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x07",
+                    Length      = 59392,
+                    Sequence    = 1,
+                    Start       = 73728
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 129024,
-                    Sequence    = 2, Start   = 133120
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 129024,
+                    Sequence    = 2,
+                    Start       = 133120
                 }
             },
 
@@ -867,28 +1419,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 225729,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 225729,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 2, Start   = 431487
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 2,
+                    Start       = 431487
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 287217,
-                    Sequence    = 3, Start   = 677439
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 287217,
+                    Sequence    = 3,
+                    Start       = 677439
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 57393,
-                    Sequence    = 4, Start   = 964719
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 57393,
+                    Sequence    = 4,
+                    Start       = 964719
                 }
             },
 
@@ -897,8 +1469,12 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 1022111,
-                    Sequence    = 0, Start   = 1
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 1022111,
+                    Sequence    = 0,
+                    Start       = 1
                 }
             },
 
@@ -907,8 +1483,12 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 1022111,
-                    Sequence    = 0, Start   = 1
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 1022111,
+                    Sequence    = 0,
+                    Start       = 1
                 }
             },
 
@@ -917,8 +1497,12 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 66465,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 66465,
+                    Sequence    = 0,
+                    Start       = 63
                 }
             },
 
@@ -927,8 +1511,12 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 66465,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 66465,
+                    Sequence    = 0,
+                    Start       = 63
                 }
             },
 
@@ -937,83 +1525,147 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 1, Start   = 65583
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 1,
+                    Start       = 65583
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 2, Start   = 131103
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 2,
+                    Start       = 131103
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 3, Start   = 196623
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 3,
+                    Start       = 196623
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 4, Start   = 262143
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 4,
+                    Start       = 262143
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 5, Start   = 327663
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 5,
+                    Start       = 327663
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 6, Start   = 393183
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 6,
+                    Start       = 393183
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 7, Start   = 458703
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 7,
+                    Start       = 458703
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 8, Start   = 524223
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 8,
+                    Start       = 524223
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 9, Start   = 589743
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 9,
+                    Start       = 589743
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 10, Start  = 655263
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 10,
+                    Start       = 655263
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 11, Start  = 720783
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 11,
+                    Start       = 720783
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 12, Start  = 786303
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 12,
+                    Start       = 786303
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 13, Start  = 851823
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 13,
+                    Start       = 851823
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 65457,
-                    Sequence    = 14, Start  = 917343
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 65457,
+                    Sequence    = 14,
+                    Start       = 917343
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x04", Length = 39249,
-                    Sequence    = 15, Start  = 982863
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x04",
+                    Length      = 39249,
+                    Sequence    = 15,
+                    Start       = 982863
                 }
             },
 
@@ -1022,28 +1674,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 25137,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 25137,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 2, Start   = 230895
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 2,
+                    Start       = 230895
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 307377,
-                    Sequence    = 3, Start   = 476847
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 307377,
+                    Sequence    = 3,
+                    Start       = 476847
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 237825,
-                    Sequence    = 4, Start   = 784287
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 237825,
+                    Sequence    = 4,
+                    Start       = 784287
                 }
             },
 
@@ -1052,28 +1724,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 25137,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 25137,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 2, Start   = 230895
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 2,
+                    Start       = 230895
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 287217,
-                    Sequence    = 3, Start   = 476847
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 287217,
+                    Sequence    = 3,
+                    Start       = 476847
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 257985,
-                    Sequence    = 4, Start   = 764127
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 257985,
+                    Sequence    = 4,
+                    Start       = 764127
                 }
             },
 
@@ -1082,28 +1774,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 25137,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 25137,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 225729,
-                    Sequence    = 2, Start   = 230895
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 225729,
+                    Sequence    = 2,
+                    Start       = 230895
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 3, Start   = 456687
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 3,
+                    Start       = 456687
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 319473,
-                    Sequence    = 4, Start   = 702639
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 319473,
+                    Sequence    = 4,
+                    Start       = 702639
                 }
             },
 
@@ -1112,28 +1824,48 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 205569,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 205569,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 1, Start   = 205695
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 1,
+                    Start       = 205695
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 267057,
-                    Sequence    = 2, Start   = 451647
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 267057,
+                    Sequence    = 2,
+                    Start       = 451647
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 287217,
-                    Sequence    = 3, Start   = 718767
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 287217,
+                    Sequence    = 3,
+                    Start       = 718767
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 17073,
-                    Sequence    = 4, Start   = 1006047
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 17073,
+                    Sequence    = 4,
+                    Start       = 1006047
                 }
             },
 
@@ -1142,33 +1874,57 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 307377,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 307377,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 245889,
-                    Sequence    = 1, Start   = 307503
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 245889,
+                    Sequence    = 1,
+                    Start       = 307503
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 328545,
-                    Sequence    = 2, Start   = 553455
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 328545,
+                    Sequence    = 2,
+                    Start       = 553455
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 102753,
-                    Sequence    = 3, Start   = 882063
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 102753,
+                    Sequence    = 3,
+                    Start       = 882063
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 21105,
-                    Sequence    = 4, Start   = 984879
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 21105,
+                    Sequence    = 4,
+                    Start       = 984879
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 17073,
-                    Sequence    = 5, Start   = 1006047
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 17073,
+                    Sequence    = 5,
+                    Start       = 1006047
                 }
             },
 
@@ -1177,33 +1933,57 @@ namespace Aaru.Tests.Partitions
             {
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x07", Length = 204561,
-                    Sequence    = 0, Start   = 63
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x07",
+                    Length      = 204561,
+                    Sequence    = 0,
+                    Start       = 63
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x07", Length = 307377,
-                    Sequence    = 1, Start   = 204687
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x07",
+                    Length      = 307377,
+                    Sequence    = 1,
+                    Start       = 204687
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 224721,
-                    Sequence    = 2, Start   = 512127
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 224721,
+                    Sequence    = 2,
+                    Start       = 512127
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x06", Length = 214641,
-                    Sequence    = 3, Start   = 736911
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x06",
+                    Length      = 214641,
+                    Sequence    = 3,
+                    Start       = 736911
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x01", Length = 10017,
-                    Sequence    = 4, Start   = 951615
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 10017,
+                    Sequence    = 4,
+                    Start       = 951615
                 },
                 new Partition
                 {
-                    Description = null, Name = null, Type = "0x07", Length = 60480,
-                    Sequence    = 5, Start   = 962640
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x07",
+                    Length      = 60480,
+                    Sequence    = 5,
+                    Start       = 962640
                 }
             }
         };

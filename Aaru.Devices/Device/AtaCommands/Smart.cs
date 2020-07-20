@@ -43,7 +43,9 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.Disable, LbaHigh = 0xC2,
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.Disable,
+                LbaHigh = 0xC2,
                 LbaMid  = 0x4F
             };
 
@@ -65,8 +67,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
-                LbaHigh = 0xC2, LbaMid                     = 0x4F, SectorCount = 0xF1
+                Command     = (byte)AtaCommands.Smart,
+                Feature     = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
+                LbaHigh     = 0xC2,
+                LbaMid      = 0x4F,
+                SectorCount = 0xF1
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -87,8 +92,10 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
-                LbaHigh = 0xC2, LbaMid                     = 0x4F
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.EnableDisableAttributeAutosave,
+                LbaHigh = 0xC2,
+                LbaMid  = 0x4F
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -108,7 +115,9 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.Enable, LbaHigh = 0xC2,
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.Enable,
+                LbaHigh = 0xC2,
                 LbaMid  = 0x4F
             };
 
@@ -130,8 +139,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate,
-                LbaHigh = 0xC2, LbaMid                     = 0x4F, LbaLow = subcommand
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.ExecuteOfflineImmediate,
+                LbaHigh = 0xC2,
+                LbaMid  = 0x4F,
+                LbaLow  = subcommand
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,
@@ -152,7 +164,9 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.ReadData, LbaHigh = 0xC2,
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.ReadData,
+                LbaHigh = 0xC2,
                 LbaMid  = 0x4F
             };
 
@@ -174,8 +188,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.ReadLog, LbaHigh = 0xC2,
-                LbaMid  = 0x4F, LbaLow                     = logAddress
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.ReadLog,
+                LbaHigh = 0xC2,
+                LbaMid  = 0x4F,
+                LbaLow  = logAddress
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,
@@ -195,7 +212,9 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.Smart, Feature = (byte)AtaSmartSubCommands.ReturnStatus, LbaHigh = 0xC2,
+                Command = (byte)AtaCommands.Smart,
+                Feature = (byte)AtaSmartSubCommands.ReturnStatus,
+                LbaHigh = 0xC2,
                 LbaMid  = 0x4F
             };
 

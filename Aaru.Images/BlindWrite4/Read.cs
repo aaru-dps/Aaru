@@ -503,7 +503,8 @@ namespace Aaru.DiscImages
                 {
                     var track = new Track
                     {
-                        TrackDescription = bwTrack.title, TrackEndSector = bwTrack.lastSector
+                        TrackDescription = bwTrack.title,
+                        TrackEndSector   = bwTrack.lastSector
                     };
 
                     if(!string.IsNullOrEmpty(bwTrack.filename))
@@ -683,9 +684,10 @@ namespace Aaru.DiscImages
                     var partition = new Partition
                     {
                         Description = track.TrackDescription,
-                        Size = ((track.TrackEndSector - track.TrackStartSector) + 1) * 2352,
-                        Length = (track.TrackEndSector - track.TrackStartSector) + 1, Sequence = track.TrackSequence,
-                        Start = track.TrackStartSector + track.TrackPregap
+                        Size        = ((track.TrackEndSector - track.TrackStartSector) + 1) * 2352,
+                        Length      = (track.TrackEndSector                            - track.TrackStartSector) + 1,
+                        Sequence    = track.TrackSequence,
+                        Start       = track.TrackStartSector + track.TrackPregap
                     };
 
                     partition.Offset = partition.Start * 2352;
@@ -719,7 +721,9 @@ namespace Aaru.DiscImages
             {
                 var session = new Session
                 {
-                    SessionSequence = i, StartTrack = uint.MaxValue, StartSector = uint.MaxValue
+                    SessionSequence = i,
+                    StartTrack      = uint.MaxValue,
+                    StartSector     = uint.MaxValue
                 };
 
                 foreach(Track track in Tracks.Where(track => track.TrackSession == i))

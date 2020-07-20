@@ -107,7 +107,10 @@ namespace Aaru
             // Remove duplicates
             foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
             {
-                a.Manufacturer, a.Model, a.Revision, a.Bus
+                a.Manufacturer,
+                a.Model,
+                a.Revision,
+                a.Bus
             }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
                 ctx.RemoveRange(ctx.SeenDevices.
                                     Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&

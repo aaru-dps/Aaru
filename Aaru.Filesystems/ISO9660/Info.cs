@@ -412,22 +412,17 @@ namespace Aaru.Filesystems.ISO9660
                                             break;
                                     }
 
-                                    rrip |= nextSignature == RRIP_MAGIC            ||
-                                            nextSignature == RRIP_POSIX_ATTRIBUTES ||
-                                            nextSignature == RRIP_POSIX_DEV_NO     ||
-                                            nextSignature == RRIP_SYMLINK          ||
-                                            nextSignature == RRIP_NAME             ||
-                                            nextSignature == RRIP_CHILDLINK        ||
-                                            nextSignature == RRIP_PARENTLINK       ||
-                                            nextSignature == RRIP_RELOCATED_DIR    ||
-                                            nextSignature == RRIP_TIMESTAMPS       || nextSignature == RRIP_SPARSE;
+                                    rrip |= nextSignature == RRIP_MAGIC || nextSignature == RRIP_POSIX_ATTRIBUTES ||
+                                            nextSignature == RRIP_POSIX_DEV_NO || nextSignature == RRIP_SYMLINK ||
+                                            nextSignature == RRIP_NAME || nextSignature == RRIP_CHILDLINK ||
+                                            nextSignature == RRIP_PARENTLINK || nextSignature == RRIP_RELOCATED_DIR ||
+                                            nextSignature == RRIP_TIMESTAMPS || nextSignature == RRIP_SPARSE;
 
                                     ziso  |= nextSignature == ZISO_MAGIC;
                                     amiga |= nextSignature == AMIGA_MAGIC;
 
                                     aaip |= nextSignature == AAIP_MAGIC || (nextSignature == AAIP_MAGIC_OLD &&
-                                                                            sa[saOff + 3] == 1              &&
-                                                                            sa[saOff + 2] >= 9);
+                                                                            sa[saOff + 3] == 1 && sa[saOff + 2] >= 9);
 
                                     saOff += sa[saOff + 2];
 
@@ -700,8 +695,7 @@ namespace Aaru.Filesystems.ISO9660
                                            initialEntry.sector_count);
 
                 byte[] bootImage =
-                    (initialEntry.load_rba + partition.Start + initialEntry.sector_count) - 1 <=
-                    partition.End
+                    (initialEntry.load_rba + partition.Start + initialEntry.sector_count) - 1 <= partition.End
                         ? imagePlugin.ReadSectors(initialEntry.load_rba + partition.Start, initialEntry.sector_count)
                         : null;
 

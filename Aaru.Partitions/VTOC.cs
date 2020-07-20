@@ -362,9 +362,11 @@ namespace Aaru.Partitions
                     {
                         Start    = (ulong)(parts[i].p_start * bps) / imagePlugin.Info.SectorSize,
                         Length   = (ulong)(parts[i].p_size  * bps) / imagePlugin.Info.SectorSize,
-                        Offset   = (ulong)(parts[i].p_start * bps), Size = (ulong)(parts[i].p_size * bps),
+                        Offset   = (ulong)(parts[i].p_start * bps),
+                        Size     = (ulong)(parts[i].p_size  * bps),
                         Sequence = (ulong)i,
-                        Type     = $"UNIX: {decodeUNIXTAG(parts[i].p_tag, !useOld)}", Scheme = Name
+                        Type     = $"UNIX: {decodeUNIXTAG(parts[i].p_tag, !useOld)}",
+                        Scheme   = Name
                     };
 
                     string info = "";
@@ -593,12 +595,9 @@ namespace Aaru.Partitions
         [Flags]
         enum pFlag : ushort
         {
-            /* Partition permission flags */ V_UNMNT = 0x01,  /* Unmountable partition */
-            V_RONLY                                  = 0x10,  /* Read only */
-            V_REMAP                                  = 0x20,  /* do alternate sector mapping */
-            V_OPEN                                   = 0x100, /* Partition open (for driver use) */
-            V_VALID                                  = 0x200, /* Partition is valid to use */
-            V_VOMASK                                 = 0x300  /* mask for open and valid */
+            /* Partition permission flags */ V_UNMNT = 0x01, /* Unmountable partition */ V_RONLY = 0x10, /* Read only */
+            V_REMAP = 0x20, /* do alternate sector mapping */ V_OPEN = 0x100, /* Partition open (for driver use) */
+            V_VALID = 0x200, /* Partition is valid to use */ V_VOMASK = 0x300 /* mask for open and valid */
         }
     }
 }

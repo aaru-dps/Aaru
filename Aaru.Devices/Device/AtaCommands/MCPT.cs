@@ -52,7 +52,8 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command = (byte)AtaCommands.CheckMediaCardType, Feature = feature
+                Command = (byte)AtaCommands.CheckMediaCardType,
+                Feature = feature
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData,

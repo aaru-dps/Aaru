@@ -70,11 +70,16 @@ namespace Aaru.Core
             {
                 new OpticalDiscType
                 {
-                    Checksums = imgChecksums.ToArray(), Image = new ImageType
+                    Checksums = imgChecksums.ToArray(),
+                    Image = new ImageType
                     {
-                        format = image.Format, offset = 0, offsetSpecified = true, Value = Path.GetFileName(imagePath)
+                        format          = image.Format,
+                        offset          = 0,
+                        offsetSpecified = true,
+                        Value           = Path.GetFileName(imagePath)
                     },
-                    Size = (ulong)fi.Length, Sequence = new SequenceType
+                    Size = (ulong)fi.Length,
+                    Sequence = new SequenceType
                     {
                         MediaTitle = image.Info.MediaTitle
                     }
@@ -182,7 +187,8 @@ namespace Aaru.Core
 
                             sidecar.OpticalDisc[0].Dimensions = new DimensionsType
                             {
-                                Diameter = 120, Thickness = 1.2
+                                Diameter  = 120,
+                                Thickness = 1.2
                             };
                         }
                         else if(DMI.IsXbox360(image.ReadDiskTag(MediaTagType.DVD_DMI)))
@@ -191,7 +197,8 @@ namespace Aaru.Core
 
                             sidecar.OpticalDisc[0].Dimensions = new DimensionsType
                             {
-                                Diameter = 120, Thickness = 1.2
+                                Diameter  = 120,
+                                Thickness = 1.2
                             };
                         }
 
@@ -366,7 +373,9 @@ namespace Aaru.Core
                         {
                             new XboxSecuritySectorsType
                             {
-                                RequestNumber = 0, RequestVersion = 1, SecuritySectors = new DumpType
+                                RequestNumber  = 0,
+                                RequestVersion = 1,
+                                SecuritySectors = new DumpType
                                 {
                                     Image = Path.GetFileName(imagePath),
                                     Checksums = Checksum.
@@ -508,7 +517,8 @@ namespace Aaru.Core
 
                 xmlTrk.Sequence = new TrackSequenceType
                 {
-                    Session = trk.TrackSession, TrackNumber = trk.TrackSequence
+                    Session     = trk.TrackSession,
+                    TrackNumber = trk.TrackSequence
                 };
 
                 xmlTrk.StartSector = trk.TrackStartSector;
@@ -537,7 +547,8 @@ namespace Aaru.Core
 
                 xmlTrk.Image = new ImageType
                 {
-                    Value = Path.GetFileName(trk.TrackFile), format = trk.TrackFileType
+                    Value  = Path.GetFileName(trk.TrackFile),
+                    format = trk.TrackFileType
                 };
 
                 if(trk.TrackFileOffset > 0)
@@ -722,9 +733,12 @@ namespace Aaru.Core
                     {
                         xmlTrk.FileSystemInformation[i] = new PartitionType
                         {
-                            Description = trkPartitions[i].Description, EndSector = trkPartitions[i].End,
-                            Name        = trkPartitions[i].Name, Sequence         = (uint)trkPartitions[i].Sequence,
-                            StartSector = trkPartitions[i].Start, Type            = trkPartitions[i].Type
+                            Description = trkPartitions[i].Description,
+                            EndSector   = trkPartitions[i].End,
+                            Name        = trkPartitions[i].Name,
+                            Sequence    = (uint)trkPartitions[i].Sequence,
+                            StartSector = trkPartitions[i].Start,
+                            Type        = trkPartitions[i].Type
                         };
 
                         List<FileSystemType> lstFs = new List<FileSystemType>();
@@ -781,15 +795,19 @@ namespace Aaru.Core
                 {
                     xmlTrk.FileSystemInformation[0] = new PartitionType
                     {
-                        EndSector = xmlTrk.EndSector, StartSector = xmlTrk.StartSector
+                        EndSector   = xmlTrk.EndSector,
+                        StartSector = xmlTrk.StartSector
                     };
 
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
                     var xmlPart = new Partition
                     {
-                        Start = xmlTrk.StartSector, Length         = (xmlTrk.EndSector - xmlTrk.StartSector) + 1,
-                        Type  = xmlTrk.TrackType1.ToString(), Size = xmlTrk.Size, Sequence = xmlTrk.Sequence.TrackNumber
+                        Start    = xmlTrk.StartSector,
+                        Length   = (xmlTrk.EndSector - xmlTrk.StartSector) + 1,
+                        Type     = xmlTrk.TrackType1.ToString(),
+                        Size     = xmlTrk.Size,
+                        Sequence = xmlTrk.Sequence.TrackNumber
                     };
 
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
@@ -878,7 +896,8 @@ namespace Aaru.Core
                 {
                     xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).Select(i => new TrackIndexType
                     {
-                        index = i.Key, Value = i.Value
+                        index = i.Key,
+                        Value = i.Value
                     }).ToArray();
                 }
 
@@ -922,15 +941,19 @@ namespace Aaru.Core
                         {
                             new ExtentType
                             {
-                                Start = 0, End = image.Info.Sectors
+                                Start = 0,
+                                End   = image.Info.Sectors
                             }
                         },
-                        Manufacturer = image.Info.DriveManufacturer, Model = image.Info.DriveModel,
-                        Firmware = image.Info.DriveFirmwareRevision, Serial = image.Info.DriveSerialNumber, Software =
-                            new SoftwareType
-                            {
-                                Name = image.Info.Application, Version = image.Info.ApplicationVersion
-                            }
+                        Manufacturer = image.Info.DriveManufacturer,
+                        Model        = image.Info.DriveModel,
+                        Firmware     = image.Info.DriveFirmwareRevision,
+                        Serial       = image.Info.DriveSerialNumber,
+                        Software = new SoftwareType
+                        {
+                            Name    = image.Info.Application,
+                            Version = image.Info.ApplicationVersion
+                        }
                     }
                 };
         }

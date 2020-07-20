@@ -75,10 +75,14 @@ namespace Aaru.Filesystems
 
             var bpb = new SolarOSParameterBlock
             {
-                bps     = BitConverter.ToUInt16(bpbSector, 0x0B), root_ent  = BitConverter.ToUInt16(bpbSector, 0x10),
-                sectors = BitConverter.ToUInt16(bpbSector, 0x12), media     = bpbSector[0x14],
-                spfat   = BitConverter.ToUInt16(bpbSector, 0x15), sptrk     = BitConverter.ToUInt16(bpbSector, 0x17),
-                heads   = BitConverter.ToUInt16(bpbSector, 0x19), signature = bpbSector[0x25]
+                bps       = BitConverter.ToUInt16(bpbSector, 0x0B),
+                root_ent  = BitConverter.ToUInt16(bpbSector, 0x10),
+                sectors   = BitConverter.ToUInt16(bpbSector, 0x12),
+                media     = bpbSector[0x14],
+                spfat     = BitConverter.ToUInt16(bpbSector, 0x15),
+                sptrk     = BitConverter.ToUInt16(bpbSector, 0x17),
+                heads     = BitConverter.ToUInt16(bpbSector, 0x19),
+                signature = bpbSector[0x25]
             };
 
             byte[] bpbStrings = new byte[8];
@@ -153,7 +157,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "SolarFS", Clusters = bpb.sectors, ClusterSize = bpb.bps, VolumeName = bpb.vol_name
+                Type        = "SolarFS",
+                Clusters    = bpb.sectors,
+                ClusterSize = bpb.bps,
+                VolumeName  = bpb.vol_name
             };
 
             information = sb.ToString();

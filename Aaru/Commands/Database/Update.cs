@@ -53,12 +53,14 @@ namespace Aaru.Commands
 
             Add(new Option("--clear", "Clear existing main database.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option("--clear-all", "Clear existing main and local database.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);

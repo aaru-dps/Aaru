@@ -178,8 +178,10 @@ namespace Aaru.Partitions
 
                 var part = new Partition
                 {
-                    Description = $"ID: {entry.partitionId}", Size = ((entry.endLBA - entry.startLBA) + 1) * sectorSize,
-                    Name        = entry.name, Length               = ((entry.endLBA - entry.startLBA) + 1) / divisor,
+                    Description = $"ID: {entry.partitionId}",
+                    Size        = ((entry.endLBA - entry.startLBA) + 1) * sectorSize,
+                    Name        = entry.name,
+                    Length      = ((entry.endLBA - entry.startLBA) + 1) / divisor,
                     Sequence    = pseq++,
                     Offset      = entry.startLBA * sectorSize,
                     Start       = entry.startLBA / divisor,

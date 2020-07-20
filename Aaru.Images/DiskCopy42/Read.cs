@@ -300,8 +300,7 @@ namespace Aaru.DiscImages
                                    twiggyCache.Length - (copiedSectors * 512) - (sectorsToCopy * 512),
                                    sectorsToCopy * 512);
 
-                        Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag),
-                                   twiggyCacheTags,
+                        Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag), twiggyCacheTags,
                                    twiggyCacheTags.Length - (copiedSectors * bptag) - (sectorsToCopy * bptag),
                                    sectorsToCopy * bptag);
 

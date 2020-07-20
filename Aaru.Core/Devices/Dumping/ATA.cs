@@ -587,7 +587,8 @@ namespace Aaru.Core.Devices.Dumping
                     // TODO: Non-removable
                     var metadata = new CommonTypes.Structs.ImageInfo
                     {
-                        Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                        Application        = "Aaru",
+                        ApplicationVersion = Version.GetVersion()
                     };
 
                     if(!_outputPlugin.SetMetadata(metadata))
@@ -659,12 +660,14 @@ namespace Aaru.Core.Devices.Dumping
                             if(ret)
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    ProductID = _dev.UsbProductId, VendorID = _dev.UsbVendorId, Descriptors =
-                                        new DumpType
-                                        {
-                                            Image     = _outputPath, Size = (ulong)_dev.UsbDescriptors.Length,
-                                            Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
-                                        }
+                                    ProductID = _dev.UsbProductId,
+                                    VendorID  = _dev.UsbVendorId,
+                                    Descriptors = new DumpType
+                                    {
+                                        Image     = _outputPath,
+                                        Size      = (ulong)_dev.UsbDescriptors.Length,
+                                        Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                    }
                                 };
                         }
 
@@ -680,7 +683,8 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     CIS = new DumpType
                                     {
-                                        Image     = _outputPath, Size = (ulong)_dev.Cis.Length,
+                                        Image     = _outputPath,
+                                        Size      = (ulong)_dev.Cis.Length,
                                         Checksums = Checksum.GetChecksums(_dev.Cis).ToArray()
                                     }
                                 };
@@ -736,7 +740,8 @@ namespace Aaru.Core.Devices.Dumping
                             {
                                 Identify = new DumpType
                                 {
-                                    Image     = _outputPath, Size = (ulong)cmdBuf.Length,
+                                    Image     = _outputPath,
+                                    Size      = (ulong)cmdBuf.Length,
                                     Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                 }
                             };
@@ -766,7 +771,8 @@ namespace Aaru.Core.Devices.Dumping
                         if(filesystems.Count > 0)
                             foreach(var filesystem in filesystems.Select(o => new
                             {
-                                o.start, o.type
+                                o.start,
+                                o.type
                             }).Distinct())
                             {
                                 UpdateStatus?.

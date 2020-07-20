@@ -121,8 +121,11 @@ namespace Aaru.Partitions
                     {
                         var part = new Partition
                         {
-                            Start  = (ulong)(mapSector + entry.start), Size        = entry.size,
-                            Length = (ulong)(entry.size * sector.Length), Sequence = counter, Scheme = Name
+                            Start    = (ulong)(mapSector + entry.start),
+                            Size     = entry.size,
+                            Length   = (ulong)(entry.size * sector.Length),
+                            Sequence = counter,
+                            Scheme   = Name
                         };
 
                         part.Offset = part.Start * (ulong)sector.Length;
@@ -147,10 +150,12 @@ namespace Aaru.Partitions
                         {
                             var part = new Partition
                             {
-                                Start    = (ulong)(mapSector + entry.start), Size = entry.length,
+                                Start    = (ulong)(mapSector + entry.start),
+                                Size     = entry.length,
                                 Length   = (ulong)(entry.length * sector.Length),
                                 Name     = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
-                                Sequence = counter, Scheme = Name
+                                Sequence = counter,
+                                Scheme   = Name
                             };
 
                             part.Offset = part.Start * (ulong)sector.Length;

@@ -639,10 +639,8 @@ namespace Aaru.Filesystems.FAT
                 }
 
                 // This assumes a bootable sector will jump somewhere or disable interrupts in x86 code
-                bootable |= bpbSector[0] == 0xFA                           ||
-                            (bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F) ||
-                            (bpbSector[0]                        == 0xE9 &&
-                             BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC);
+                bootable |= bpbSector[0] == 0xFA || (bpbSector[0] == 0xEB && bpbSector[1] <= 0x7F) ||
+                            (bpbSector[0] == 0xE9 && BitConverter.ToUInt16(bpbSector, 1) <= 0x1FC);
 
                 fakeBpb.boot_code = bpbSector;
 

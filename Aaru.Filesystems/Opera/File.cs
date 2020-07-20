@@ -151,8 +151,11 @@ namespace Aaru.Filesystems
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(), Blocks = entry.block_count, BlockSize = entry.block_size,
-                Length     = entry.byte_count, Inode      = entry.id,
+                Attributes = new FileAttributes(),
+                Blocks     = entry.block_count,
+                BlockSize  = entry.block_size,
+                Length     = entry.byte_count,
+                Inode      = entry.id,
                 Links      = (ulong)entryWithPointers.pointers.Length
             };
 

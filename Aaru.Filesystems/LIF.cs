@@ -98,10 +98,12 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type         = "HP Logical Interchange Format", ClusterSize = 256,
-                Clusters     = partition.Size / 256,
-                CreationDate = DateHandlers.LifToDateTime(lifSb.creationDate), CreationDateSpecified = true,
-                VolumeName   = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
+                Type                  = "HP Logical Interchange Format",
+                ClusterSize           = 256,
+                Clusters              = partition.Size / 256,
+                CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),
+                CreationDateSpecified = true,
+                VolumeName            = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
             };
         }
 

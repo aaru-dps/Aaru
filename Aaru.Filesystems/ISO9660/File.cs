@@ -176,8 +176,12 @@ namespace Aaru.Filesystems.ISO9660
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(), Blocks = (long)(entry.Size / 2048), // TODO: XA
-                BlockSize  = 2048, Length = (long)entry.Size, Links = 1, LastWriteTimeUtc = entry.Timestamp
+                Attributes       = new FileAttributes(),
+                Blocks           = (long)(entry.Size / 2048), // TODO: XA
+                BlockSize        = 2048,
+                Length           = (long)entry.Size,
+                Links            = 1,
+                LastWriteTimeUtc = entry.Timestamp
             };
 
             if(entry.Extents?.Count > 0)

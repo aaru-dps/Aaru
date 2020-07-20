@@ -48,7 +48,9 @@ namespace Aaru.Commands.Image
         {
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

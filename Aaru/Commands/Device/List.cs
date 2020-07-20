@@ -46,7 +46,9 @@ namespace Aaru.Commands.Device
         {
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ZeroOrOne, Description = "aaruremote host", Name = "aaru-remote-host"
+                Arity       = ArgumentArity.ZeroOrOne,
+                Description = "aaruremote host",
+                Name        = "aaru-remote-host"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

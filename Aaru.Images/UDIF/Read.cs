@@ -203,8 +203,11 @@ namespace Aaru.DiscImages
                 // So let's falsify a block chunk
                 var bChnk = new BlockChunk
                 {
-                    length = footer.dataForkLen, offset = footer.dataForkOff, sector = 0, sectors = footer.sectorCount,
-                    type   = CHUNK_TYPE_COPY
+                    length  = footer.dataForkLen,
+                    offset  = footer.dataForkOff,
+                    sector  = 0,
+                    sectors = footer.sectorCount,
+                    type    = CHUNK_TYPE_COPY
                 };
 
                 imageInfo.Sectors = footer.sectorCount;

@@ -89,12 +89,15 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type           = "Alexander Osipov DOS file system",
-                Clusters       = imagePlugin.Info.Sectors,
-                ClusterSize    = imagePlugin.Info.SectorSize, Files = bb.files,
-                FilesSpecified = true,
-                FreeClusters   = imagePlugin.Info.Sectors - bb.usedSectors, FreeClustersSpecified       = true,
-                VolumeName     = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding), Bootable = true
+                Type                  = "Alexander Osipov DOS file system",
+                Clusters              = imagePlugin.Info.Sectors,
+                ClusterSize           = imagePlugin.Info.SectorSize,
+                Files                 = bb.files,
+                FilesSpecified        = true,
+                FreeClusters          = imagePlugin.Info.Sectors - bb.usedSectors,
+                FreeClustersSpecified = true,
+                VolumeName            = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
+                Bootable              = true
             };
 
             sbInformation.AppendFormat("{0} files on volume", bb.files).AppendLine();

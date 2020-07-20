@@ -139,7 +139,8 @@ namespace Aaru.Filesystems
 
                     var entryWithPointers = new DirectoryEntryWithPointers
                     {
-                        entry = entry, pointers = new uint[entry.last_copy + 1]
+                        entry    = entry,
+                        pointers = new uint[entry.last_copy + 1]
                     };
 
                     for(int i = 0; i <= entry.last_copy; i++)

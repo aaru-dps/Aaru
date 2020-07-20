@@ -68,7 +68,8 @@ namespace Aaru.DiscImages
                 // Initialize disc
                 discimage = new GdiDisc
                 {
-                    Sessions = new List<Session>(), Tracks = new List<GdiTrack>()
+                    Sessions = new List<Session>(),
+                    Tracks   = new List<GdiTrack>()
                 };
 
                 ulong currentStart = 0;
@@ -260,11 +261,14 @@ namespace Aaru.DiscImages
                     // Index 01
                     var partition = new Partition
                     {
-                        Description = $"Track {discimage.Tracks[i].Sequence}.", Name = null,
+                        Description = $"Track {discimage.Tracks[i].Sequence}.",
+                        Name        = null,
                         Start       = discimage.Tracks[i].StartSector,
                         Size        = discimage.Tracks[i].Sectors * discimage.Tracks[i].Bps,
-                        Length      = discimage.Tracks[i].Sectors, Sequence = discimage.Tracks[i].Sequence,
-                        Offset      = byteOffset, Type                      = discimage.Tracks[i].Tracktype.ToString()
+                        Length      = discimage.Tracks[i].Sectors,
+                        Sequence    = discimage.Tracks[i].Sequence,
+                        Offset      = byteOffset,
+                        Type        = discimage.Tracks[i].Tracktype.ToString()
                     };
 
                     byteOffset += partition.Size;
@@ -853,13 +857,19 @@ namespace Aaru.DiscImages
                 {
                     var track = new Track
                     {
-                        TrackDescription = null, TrackStartSector = gdiTrack.StartSector, TrackPregap = gdiTrack.Pregap,
-                        TrackSession = (ushort)(gdiTrack.HighDensity ? 2 : 1), TrackSequence = gdiTrack.Sequence,
-                        TrackType = gdiTrack.Tracktype, TrackFilter = gdiTrack.Trackfilter,
-                        TrackFile = gdiTrack.Trackfile, TrackFileOffset = (ulong)gdiTrack.Offset,
-                        TrackFileType = "BINARY", TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
-                        TrackSubchannelType = TrackSubchannelType.None
+                        TrackDescription       = null,
+                        TrackStartSector       = gdiTrack.StartSector,
+                        TrackPregap            = gdiTrack.Pregap,
+                        TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                        TrackSequence          = gdiTrack.Sequence,
+                        TrackType              = gdiTrack.Tracktype,
+                        TrackFilter            = gdiTrack.Trackfilter,
+                        TrackFile              = gdiTrack.Trackfile,
+                        TrackFileOffset        = (ulong)gdiTrack.Offset,
+                        TrackFileType          = "BINARY",
+                        TrackRawBytesPerSector = gdiTrack.Bps,
+                        TrackBytesPerSector    = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
+                        TrackSubchannelType    = TrackSubchannelType.None
                     };
 
                     track.TrackEndSector = (track.TrackStartSector + gdiTrack.Sectors) - 1;

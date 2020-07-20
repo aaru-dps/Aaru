@@ -1382,8 +1382,12 @@ namespace Aaru.Core.Media.Info
 
                             XgdInfo = new XgdInfo
                             {
-                                L0Video   = l0Video, L1Video = l1Video, MiddleZone = middleZone, GameSize = gameSize,
-                                TotalSize = totalSize, LayerBreak = layerBreak
+                                L0Video    = l0Video,
+                                L1Video    = l1Video,
+                                MiddleZone = middleZone,
+                                GameSize   = gameSize,
+                                TotalSize  = totalSize,
+                                LayerBreak = layerBreak
                             };
                         }
                     }

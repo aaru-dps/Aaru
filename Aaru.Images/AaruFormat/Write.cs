@@ -214,7 +214,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType    = mediaType, SectorSize = sectorSize, Sectors = sectors,
+                MediaType    = mediaType,
+                SectorSize   = sectorSize,
+                Sectors      = sectors,
                 XmlMediaType = GetXmlMediaType(mediaType)
             };
 
@@ -263,7 +265,9 @@ namespace Aaru.DiscImages
             {
                 header = new AaruHeader
                 {
-                    identifier = AARU_MAGIC, mediaType = mediaType, creationTime = DateTime.UtcNow.ToFileTimeUtc()
+                    identifier   = AARU_MAGIC,
+                    mediaType    = mediaType,
+                    creationTime = DateTime.UtcNow.ToFileTimeUtc()
                 };
 
                 imageStream.Write(new byte[Marshal.SizeOf<AaruHeader>()], 0, Marshal.SizeOf<AaruHeader>());
@@ -659,7 +663,8 @@ namespace Aaru.DiscImages
 
                                 var dump = new DumpHardwareType
                                 {
-                                    Software = new SoftwareType(), Extents = new ExtentType[dumpEntry.extents]
+                                    Software = new SoftwareType(),
+                                    Extents  = new ExtentType[dumpEntry.extents]
                                 };
 
                                 byte[] tmp;
@@ -736,7 +741,8 @@ namespace Aaru.DiscImages
 
                                     dump.Extents[j] = new ExtentType
                                     {
-                                        Start = BitConverter.ToUInt64(tmp, 0), End = BitConverter.ToUInt64(tmp, 8)
+                                        Start = BitConverter.ToUInt64(tmp, 0),
+                                        End   = BitConverter.ToUInt64(tmp, 8)
                                     };
                                 }
 
@@ -776,7 +782,8 @@ namespace Aaru.DiscImages
                             foreach(TapePartitionEntry tapePartition in tapePartitions)
                                 TapePartitions.Add(new TapePartition
                                 {
-                                    FirstBlock = tapePartition.FirstBlock, LastBlock = tapePartition.LastBlock,
+                                    FirstBlock = tapePartition.FirstBlock,
+                                    LastBlock  = tapePartition.LastBlock,
                                     Number     = tapePartition.Number
                                 });
 
@@ -806,8 +813,10 @@ namespace Aaru.DiscImages
                             foreach(TapeFileEntry file in tapeFiles)
                                 Files.Add(new TapeFile
                                 {
-                                    FirstBlock = file.FirstBlock, LastBlock = file.LastBlock,
-                                    Partition  = file.Partition, File       = file.File
+                                    FirstBlock = file.FirstBlock,
+                                    LastBlock  = file.LastBlock,
+                                    Partition  = file.Partition,
+                                    File       = file.File
                                 });
 
                             IsTape = true;
@@ -857,16 +866,21 @@ namespace Aaru.DiscImages
 
                     index.Add(new IndexEntry
                     {
-                        blockType = BlockType.DeDuplicationTable, dataType = DataType.UserData,
+                        blockType = BlockType.DeDuplicationTable,
+                        dataType  = DataType.UserData,
                         offset    = (ulong)outMemoryDdtPosition
                     });
 
                     // CRC64 will be calculated later
                     var ddtHeader = new DdtHeader
                     {
-                        identifier  = BlockType.DeDuplicationTable, type = DataType.UserData,
-                        compression = CompressionType.None, shift        = shift, entries = sectors,
-                        cmpLength   = sectors * sizeof(ulong), length    = sectors * sizeof(ulong)
+                        identifier  = BlockType.DeDuplicationTable,
+                        type        = DataType.UserData,
+                        compression = CompressionType.None,
+                        shift       = shift,
+                        entries     = sectors,
+                        cmpLength   = sectors * sizeof(ulong),
+                        length      = sectors * sizeof(ulong)
                     };
 
                     structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
@@ -906,12 +920,24 @@ namespace Aaru.DiscImages
 
             flakeWriterSettings = new EncoderSettings
             {
-                PCM = AudioPCMConfig.RedBook, DoMD5 = false, BlockSize = (1 << shift) * SAMPLES_PER_SECTOR,
-                MinFixedOrder = 0, MaxFixedOrder = 4, MinLPCOrder = 1, MaxLPCOrder = 32,
-                MaxPartitionOrder = 8, StereoMethod = StereoMethod.Evaluate, PredictionType = PredictionType.Search,
-                WindowMethod = WindowMethod.EvaluateN, EstimationDepth = 5, MinPrecisionSearch = 1,
-                MaxPrecisionSearch = 1, TukeyParts = 0, TukeyOverlap = 1.0, TukeyP = 1.0,
-                AllowNonSubset = true
+                PCM                = AudioPCMConfig.RedBook,
+                DoMD5              = false,
+                BlockSize          = (1 << shift) * SAMPLES_PER_SECTOR,
+                MinFixedOrder      = 0,
+                MaxFixedOrder      = 4,
+                MinLPCOrder        = 1,
+                MaxLPCOrder        = 32,
+                MaxPartitionOrder  = 8,
+                StereoMethod       = StereoMethod.Evaluate,
+                PredictionType     = PredictionType.Search,
+                WindowMethod       = WindowMethod.EvaluateN,
+                EstimationDepth    = 5,
+                MinPrecisionSearch = 1,
+                MaxPrecisionSearch = 1,
+                TukeyParts         = 0,
+                TukeyOverlap       = 1.0,
+                TukeyP             = 1.0,
+                AllowNonSubset     = true
             };
 
             // Check if FLAKE's block size is bigger than what we want
@@ -1091,7 +1117,9 @@ namespace Aaru.DiscImages
 
                 index.Add(new IndexEntry
                 {
-                    blockType = BlockType.DataBlock, dataType = DataType.UserData, offset = (ulong)imageStream.Position
+                    blockType = BlockType.DataBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
                 });
 
                 structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -1114,8 +1142,10 @@ namespace Aaru.DiscImages
             {
                 currentBlockHeader = new BlockHeader
                 {
-                    identifier  = BlockType.DataBlock, type = DataType.UserData,
-                    compression = compress ? CompressionType.Lzma : CompressionType.None, sectorSize = (uint)data.Length
+                    identifier  = BlockType.DataBlock,
+                    type        = DataType.UserData,
+                    compression = compress ? CompressionType.Lzma : CompressionType.None,
+                    sectorSize  = (uint)data.Length
                 };
 
                 if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc &&
@@ -1828,7 +1858,9 @@ namespace Aaru.DiscImages
 
                 index.Add(new IndexEntry
                 {
-                    blockType = BlockType.DataBlock, dataType = DataType.UserData, offset = (ulong)imageStream.Position
+                    blockType = BlockType.DataBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
                 });
 
                 structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
@@ -1865,7 +1897,9 @@ namespace Aaru.DiscImages
 
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.DataBlock, dataType = dataType, offset = (ulong)imageStream.Position
+                    blockType = BlockType.DataBlock,
+                    dataType  = dataType,
+                    offset    = (ulong)imageStream.Position
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing tag type {0} to position {1}", mediaTag.Key,
@@ -1875,7 +1909,9 @@ namespace Aaru.DiscImages
 
                 var tagBlock = new BlockHeader
                 {
-                    identifier = BlockType.DataBlock, type = dataType, length = (uint)mediaTag.Value.Length,
+                    identifier = BlockType.DataBlock,
+                    type       = dataType,
+                    length     = (uint)mediaTag.Value.Length,
                     crc64      = BitConverter.ToUInt64(tagCrc, 0)
                 };
 
@@ -1928,7 +1964,8 @@ namespace Aaru.DiscImages
             {
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.GeometryBlock, dataType = DataType.NoData,
+                    blockType = BlockType.GeometryBlock,
+                    dataType  = DataType.NoData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -2061,7 +2098,8 @@ namespace Aaru.DiscImages
 
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.DumpHardwareBlock, dataType = DataType.NoData,
+                    blockType = BlockType.DumpHardwareBlock,
+                    dataType  = DataType.NoData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -2072,8 +2110,10 @@ namespace Aaru.DiscImages
 
                 var dumpBlock = new DumpHardwareHeader
                 {
-                    identifier = BlockType.DumpHardwareBlock, entries      = (ushort)DumpHardware.Count,
-                    crc64      = BitConverter.ToUInt64(dumpCrc, 0), length = (uint)dumpMs.Length
+                    identifier = BlockType.DumpHardwareBlock,
+                    entries    = (ushort)DumpHardware.Count,
+                    crc64      = BitConverter.ToUInt64(dumpCrc, 0),
+                    length     = (uint)dumpMs.Length
                 };
 
                 structureBytes = new byte[Marshal.SizeOf<DumpHardwareHeader>()];
@@ -2095,7 +2135,9 @@ namespace Aaru.DiscImages
 
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.CicmBlock, dataType = DataType.NoData, offset = (ulong)imageStream.Position
+                    blockType = BlockType.CicmBlock,
+                    dataType  = DataType.NoData,
+                    offset    = (ulong)imageStream.Position
                 };
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing CICM XML block to position {0}",
@@ -2103,7 +2145,8 @@ namespace Aaru.DiscImages
 
                 var cicmBlock = new CicmMetadataBlock
                 {
-                    identifier = BlockType.CicmBlock, length = (uint)cicmMs.Length
+                    identifier = BlockType.CicmBlock,
+                    length     = (uint)cicmMs.Length
                 };
 
                 structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
@@ -2135,7 +2178,8 @@ namespace Aaru.DiscImages
 
                     var md5Entry = new ChecksumEntry
                     {
-                        type = ChecksumAlgorithm.Md5, length = (uint)md5.Length
+                        type   = ChecksumAlgorithm.Md5,
+                        length = (uint)md5.Length
                     };
 
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
@@ -2151,7 +2195,8 @@ namespace Aaru.DiscImages
 
                     var sha1Entry = new ChecksumEntry
                     {
-                        type = ChecksumAlgorithm.Sha1, length = (uint)sha1.Length
+                        type   = ChecksumAlgorithm.Sha1,
+                        length = (uint)sha1.Length
                     };
 
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
@@ -2167,7 +2212,8 @@ namespace Aaru.DiscImages
 
                     var sha256Entry = new ChecksumEntry
                     {
-                        type = ChecksumAlgorithm.Sha256, length = (uint)sha256.Length
+                        type   = ChecksumAlgorithm.Sha256,
+                        length = (uint)sha256.Length
                     };
 
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
@@ -2183,7 +2229,8 @@ namespace Aaru.DiscImages
 
                     var spamsumEntry = new ChecksumEntry
                     {
-                        type = ChecksumAlgorithm.SpamSum, length = (uint)spamsum.Length
+                        type   = ChecksumAlgorithm.SpamSum,
+                        length = (uint)spamsum.Length
                     };
 
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
@@ -2199,7 +2246,8 @@ namespace Aaru.DiscImages
 
                     idxEntry = new IndexEntry
                     {
-                        blockType = BlockType.ChecksumBlock, dataType = DataType.NoData,
+                        blockType = BlockType.ChecksumBlock,
+                        dataType  = DataType.NoData,
                         offset    = (ulong)imageStream.Position
                     };
 
@@ -2231,7 +2279,8 @@ namespace Aaru.DiscImages
 
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.TapePartitionBlock, dataType = DataType.UserData,
+                    blockType = BlockType.TapePartitionBlock,
+                    dataType  = DataType.UserData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -2271,7 +2320,8 @@ namespace Aaru.DiscImages
 
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.TapeFileBlock, dataType = DataType.UserData,
+                    blockType = BlockType.TapeFileBlock,
+                    dataType  = DataType.UserData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -2282,14 +2332,17 @@ namespace Aaru.DiscImages
                 for(int t = 0; t < Files.Count; t++)
                     tapeFileEntries[t] = new TapeFileEntry
                     {
-                        File = Files[t].File, FirstBlock = Files[t].FirstBlock, LastBlock = Files[t].LastBlock
+                        File       = Files[t].File,
+                        FirstBlock = Files[t].FirstBlock,
+                        LastBlock  = Files[t].LastBlock
                     };
 
                 byte[] tapeFileEntriesData = MemoryMarshal.Cast<TapeFileEntry, byte>(tapeFileEntries).ToArray();
 
                 var tapeFileHeader = new TapeFileHeader
                 {
-                    identifier = BlockType.TapeFileBlock, entries = (uint)tapeFileEntries.Length,
+                    identifier = BlockType.TapeFileBlock,
+                    entries    = (uint)tapeFileEntries.Length,
                     length     = (ulong)tapeFileEntriesData.Length
                 };
 
@@ -2312,7 +2365,8 @@ namespace Aaru.DiscImages
             {
                 idxEntry = new IndexEntry
                 {
-                    blockType = BlockType.DeDuplicationTable, dataType = DataType.UserData,
+                    blockType = BlockType.DeDuplicationTable,
+                    dataType  = DataType.UserData,
                     offset    = (ulong)imageStream.Position
                 };
 
@@ -2321,8 +2375,11 @@ namespace Aaru.DiscImages
 
                 var ddtHeader = new DdtHeader
                 {
-                    identifier  = BlockType.DeDuplicationTable, type = DataType.UserData,
-                    compression = CompressionType.Lzma, shift        = shift, entries = (ulong)userDataDdt.LongLength,
+                    identifier  = BlockType.DeDuplicationTable,
+                    type        = DataType.UserData,
+                    compression = CompressionType.Lzma,
+                    shift       = shift,
+                    entries     = (ulong)userDataDdt.LongLength,
                     length      = (ulong)(userDataDdt.LongLength * sizeof(ulong))
                 };
 
@@ -2371,7 +2428,8 @@ namespace Aaru.DiscImages
                     {
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CdSectorPrefix,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorPrefix,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2382,8 +2440,10 @@ namespace Aaru.DiscImages
 
                         var prefixBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type        = DataType.CdSectorPrefix,
-                            length     = (uint)sectorPrefix.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorPrefix,
+                            length     = (uint)sectorPrefix.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 16
                         };
 
@@ -2436,7 +2496,8 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CdSectorSuffix,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorSuffix,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2447,8 +2508,10 @@ namespace Aaru.DiscImages
 
                         prefixBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type        = DataType.CdSectorSuffix,
-                            length     = (uint)sectorSuffix.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorSuffix,
+                            length     = (uint)sectorSuffix.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 288
                         };
 
@@ -2556,7 +2619,8 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DeDuplicationTable, dataType = DataType.CdSectorPrefixCorrected,
+                            blockType = BlockType.DeDuplicationTable,
+                            dataType  = DataType.CdSectorPrefixCorrected,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2566,8 +2630,10 @@ namespace Aaru.DiscImages
 
                         var ddtHeader = new DdtHeader
                         {
-                            identifier  = BlockType.DeDuplicationTable, type = DataType.CdSectorPrefixCorrected,
-                            compression = CompressionType.Lzma, entries      = (ulong)sectorPrefixDdt.LongLength,
+                            identifier  = BlockType.DeDuplicationTable,
+                            type        = DataType.CdSectorPrefixCorrected,
+                            compression = CompressionType.Lzma,
+                            entries     = (ulong)sectorPrefixDdt.LongLength,
                             length      = (ulong)(sectorPrefixDdt.LongLength * sizeof(uint))
                         };
 
@@ -2605,7 +2671,8 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DeDuplicationTable, dataType = DataType.CdSectorSuffixCorrected,
+                            blockType = BlockType.DeDuplicationTable,
+                            dataType  = DataType.CdSectorSuffixCorrected,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2615,8 +2682,10 @@ namespace Aaru.DiscImages
 
                         ddtHeader = new DdtHeader
                         {
-                            identifier  = BlockType.DeDuplicationTable, type = DataType.CdSectorSuffixCorrected,
-                            compression = CompressionType.Lzma, entries      = (ulong)sectorSuffixDdt.LongLength,
+                            identifier  = BlockType.DeDuplicationTable,
+                            type        = DataType.CdSectorSuffixCorrected,
+                            compression = CompressionType.Lzma,
+                            entries     = (ulong)sectorSuffixDdt.LongLength,
                             length      = (ulong)(sectorSuffixDdt.LongLength * sizeof(uint))
                         };
 
@@ -2653,7 +2722,8 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CdSectorPrefixCorrected,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorPrefixCorrected,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2665,8 +2735,10 @@ namespace Aaru.DiscImages
 
                         var prefixBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type          = DataType.CdSectorPrefixCorrected,
-                            length     = (uint)sectorPrefixMs.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorPrefixCorrected,
+                            length     = (uint)sectorPrefixMs.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 16
                         };
 
@@ -2720,7 +2792,8 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CdSectorSuffixCorrected,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorSuffixCorrected,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2732,8 +2805,10 @@ namespace Aaru.DiscImages
 
                         var suffixBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type          = DataType.CdSectorSuffixCorrected,
-                            length     = (uint)sectorSuffixMs.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorSuffixCorrected,
+                            length     = (uint)sectorSuffixMs.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 288
                         };
 
@@ -2790,7 +2865,8 @@ namespace Aaru.DiscImages
                     {
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CompactDiscMode2Subheader,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CompactDiscMode2Subheader,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2802,8 +2878,10 @@ namespace Aaru.DiscImages
 
                         var subheaderBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type           = DataType.CompactDiscMode2Subheader,
-                            length     = (uint)mode2Subheaders.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CompactDiscMode2Subheader,
+                            length     = (uint)mode2Subheaders.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 8
                         };
 
@@ -2861,7 +2939,8 @@ namespace Aaru.DiscImages
                     {
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = DataType.CdSectorSubchannel,
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.CdSectorSubchannel,
                             offset    = (ulong)imageStream.Position
                         };
 
@@ -2872,8 +2951,10 @@ namespace Aaru.DiscImages
 
                         var subchannelBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type            = DataType.CdSectorSubchannel,
-                            length     = (uint)sectorSubchannel.Length, crc64 = BitConverter.ToUInt64(blockCrc, 0),
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.CdSectorSubchannel,
+                            length     = (uint)sectorSubchannel.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
                             sectorSize = 96
                         };
 
@@ -2942,9 +3023,13 @@ namespace Aaru.DiscImages
 
                         trackEntries.Add(new TrackEntry
                         {
-                            sequence = (byte)track.TrackSequence, type   = track.TrackType,
-                            start    = (long)track.TrackStartSector, end = (long)track.TrackEndSector,
-                            pregap   = (long)track.TrackPregap, session  = (byte)track.TrackSession, isrc = isrc,
+                            sequence = (byte)track.TrackSequence,
+                            type     = track.TrackType,
+                            start    = (long)track.TrackStartSector,
+                            end      = (long)track.TrackEndSector,
+                            pregap   = (long)track.TrackPregap,
+                            session  = (byte)track.TrackSession,
+                            isrc     = isrc,
                             flags    = flags
                         });
 
@@ -2960,7 +3045,9 @@ namespace Aaru.DiscImages
 
                         compactDiscIndexEntries.AddRange(track.Indexes.Select(trackIndex => new CompactDiscIndexEntry
                         {
-                            Index = trackIndex.Key, Lba = trackIndex.Value, Track = (ushort)track.TrackSequence
+                            Index = trackIndex.Key,
+                            Lba   = trackIndex.Value,
+                            Track = (ushort)track.TrackSequence
                         }));
                     }
 
@@ -2988,7 +3075,8 @@ namespace Aaru.DiscImages
 
                         var trkHeader = new TracksHeader
                         {
-                            identifier = BlockType.TracksBlock, entries = (ushort)trackEntries.Count,
+                            identifier = BlockType.TracksBlock,
+                            entries    = (ushort)trackEntries.Count,
                             crc64      = BitConverter.ToUInt64(trksCrc, 0)
                         };
 
@@ -2999,7 +3087,8 @@ namespace Aaru.DiscImages
 
                         index.Add(new IndexEntry
                         {
-                            blockType = BlockType.TracksBlock, dataType = DataType.NoData,
+                            blockType = BlockType.TracksBlock,
+                            dataType  = DataType.NoData,
                             offset    = (ulong)imageStream.Position
                         });
 
@@ -3038,7 +3127,8 @@ namespace Aaru.DiscImages
                         var cdixHeader = new CompactDiscIndexesHeader
                         {
                             identifier = BlockType.CompactDiscIndexesBlock,
-                            entries = (ushort)compactDiscIndexEntries.Count, crc64 = BitConverter.ToUInt64(cdixCrc, 0)
+                            entries    = (ushort)compactDiscIndexEntries.Count,
+                            crc64      = BitConverter.ToUInt64(cdixCrc, 0)
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing compact disc indexes to position {0}",
@@ -3049,7 +3139,8 @@ namespace Aaru.DiscImages
 
                         index.Add(new IndexEntry
                         {
-                            blockType = BlockType.CompactDiscIndexesBlock, dataType = DataType.NoData,
+                            blockType = BlockType.CompactDiscIndexesBlock,
+                            dataType  = DataType.NoData,
                             offset    = (ulong)imageStream.Position
                         });
 
@@ -3092,7 +3183,9 @@ namespace Aaru.DiscImages
 
                         idxEntry = new IndexEntry
                         {
-                            blockType = BlockType.DataBlock, dataType = tagType, offset = (ulong)imageStream.Position
+                            blockType = BlockType.DataBlock,
+                            dataType  = tagType,
+                            offset    = (ulong)imageStream.Position
                         };
 
                         AaruConsole.DebugWriteLine("Aaru Format plugin",
@@ -3102,7 +3195,9 @@ namespace Aaru.DiscImages
 
                         var subchannelBlock = new BlockHeader
                         {
-                            identifier = BlockType.DataBlock, type = tagType, length = (uint)sectorSubchannel.Length,
+                            identifier = BlockType.DataBlock,
+                            type       = tagType,
+                            length     = (uint)sectorSubchannel.Length,
                             crc64      = BitConverter.ToUInt64(blockCrc, 0)
                         };
 
@@ -3368,7 +3463,8 @@ namespace Aaru.DiscImages
 
                 index.Add(new IndexEntry
                 {
-                    blockType = BlockType.MetadataBlock, dataType = DataType.NoData,
+                    blockType = BlockType.MetadataBlock,
+                    dataType  = DataType.NoData,
                     offset    = (ulong)imageStream.Position
                 });
 
@@ -3400,7 +3496,8 @@ namespace Aaru.DiscImages
 
                 var idxHeader = new IndexHeader2
                 {
-                    identifier = BlockType.Index2, entries = (ulong)index.Count,
+                    identifier = BlockType.Index2,
+                    entries    = (ulong)index.Count,
                     crc64      = BitConverter.ToUInt64(idxCrc, 0)
                 };
 
@@ -3413,7 +3510,8 @@ namespace Aaru.DiscImages
             {
                 var idxHeader = new IndexHeader
                 {
-                    identifier = BlockType.Index, entries = (ushort)index.Count,
+                    identifier = BlockType.Index,
+                    entries    = (ushort)index.Count,
                     crc64      = BitConverter.ToUInt64(idxCrc, 0)
                 };
 
@@ -3486,7 +3584,9 @@ namespace Aaru.DiscImages
 
             geometryBlock = new GeometryBlock
             {
-                identifier      = BlockType.GeometryBlock, cylinders = cylinders, heads = heads,
+                identifier      = BlockType.GeometryBlock,
+                cylinders       = cylinders,
+                heads           = heads,
                 sectorsPerTrack = sectorsPerTrack
             };
 

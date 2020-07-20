@@ -275,12 +275,9 @@ namespace Aaru.Gui.ViewModels.Dialogs
                     VerifyText    = $"You have called the Verify command {count} times";
                 }
 
-                CommandsVisible = AnalyzeVisible       || ChecksumVisible || CompareVisible ||
-                                  ConvertImageVisible  ||
-                                  CreateSidecarVisible || DecodeVisible || DeviceInfoVisible ||
-                                  DeviceReportVisible  ||
-                                  DumpMediaVisible     || EntropyVisible || FormatsCommandVisible ||
-                                  ImageInfoVisible     ||
+                CommandsVisible = AnalyzeVisible       || ChecksumVisible || CompareVisible || ConvertImageVisible ||
+                                  CreateSidecarVisible || DecodeVisible || DeviceInfoVisible || DeviceReportVisible ||
+                                  DumpMediaVisible     || EntropyVisible || FormatsCommandVisible || ImageInfoVisible ||
                                   MediaInfoVisible     || MediaScanVisible || PrintHexVisible || VerifyVisible;
             }
 
@@ -297,7 +294,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                     Filters.Add(new NameCountModel
                     {
-                        Name = nvs, Count = count
+                        Name  = nvs,
+                        Count = count
                     });
                 }
             }
@@ -315,7 +313,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                     Formats.Add(new NameCountModel
                     {
-                        Name = nvs, Count = count
+                        Name  = nvs,
+                        Count = count
                     });
                 }
             }
@@ -333,7 +332,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                     Partitions.Add(new NameCountModel
                     {
-                        Name = nvs, Count = count
+                        Name  = nvs,
+                        Count = count
                     });
                 }
             }
@@ -351,7 +351,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                     Filesystems.Add(new NameCountModel
                     {
-                        Name = nvs, Count = count
+                        Name  = nvs,
+                        Count = count
                     });
                 }
             }
@@ -364,7 +365,10 @@ namespace Aaru.Gui.ViewModels.Dialogs
                                              ThenBy(n => n.Revision).ThenBy(n => n.Bus))
                     Devices.Add(new DeviceStatsModel
                     {
-                        Model = ds.Model, Manufacturer = ds.Manufacturer, Revision = ds.Revision, Bus = ds.Bus
+                        Model        = ds.Model,
+                        Manufacturer = ds.Manufacturer,
+                        Revision     = ds.Revision,
+                        Bus          = ds.Bus
                     });
             }
 
@@ -383,7 +387,9 @@ namespace Aaru.Gui.ViewModels.Dialogs
                 if(count > 0)
                     Medias.Add(new MediaStatsModel
                     {
-                        Name = media, Count = count, Type = "real"
+                        Name  = media,
+                        Count = count,
+                        Type  = "real"
                     });
 
                 count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
@@ -396,7 +402,9 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                 Medias.Add(new MediaStatsModel
                 {
-                    Name = media, Count = count, Type = "image"
+                    Name  = media,
+                    Count = count,
+                    Type  = "image"
                 });
             }
         }

@@ -79,13 +79,18 @@ namespace Aaru.DiscImages
 
                     var aaruTrack = new Track
                     {
-                        TrackStartSector    = alcTrack.startLba,
-                        TrackEndSector      = (alcTrack.startLba + alcExtra.sectors) - 1, TrackPregap = alcExtra.pregap,
-                        TrackSession        = sessionNo, TrackSequence = alcTrack.point,
-                        TrackType           = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
-                        TrackFile           = alcImage.GetFilename(), TrackFileOffset = alcTrack.startOffset,
-                        TrackFileType       = "BINARY", TrackRawBytesPerSector = alcTrack.sectorSize,
-                        TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                        TrackStartSector       = alcTrack.startLba,
+                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1,
+                        TrackPregap            = alcExtra.pregap,
+                        TrackSession           = sessionNo,
+                        TrackSequence          = alcTrack.point,
+                        TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                        TrackFilter            = alcImage,
+                        TrackFile              = alcImage.GetFilename(),
+                        TrackFileOffset        = alcTrack.startOffset,
+                        TrackFileType          = "BINARY",
+                        TrackRawBytesPerSector = alcTrack.sectorSize,
+                        TrackBytesPerSector    = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
                     };
 
                     if(alcExtra.pregap > 0)

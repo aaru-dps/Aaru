@@ -138,8 +138,9 @@ namespace Aaru.Tests.Filesystems
 
                 var wholePart = new Partition
                 {
-                    Name = "Whole device", Length = image.Info.Sectors,
-                    Size = image.Info.Sectors * image.Info.SectorSize
+                    Name   = "Whole device",
+                    Length = image.Info.Sectors,
+                    Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
                 Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);

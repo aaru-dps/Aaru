@@ -164,7 +164,7 @@ namespace Aaru.Filesystems.FAT
              "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
             //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
             ("fe477972602ba76658ff7143859045b3c4036ca5",
-             "iomega"),                                           // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+             "iomega"), // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
             ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS"), // OEM ID: "GEOWORKS"
             ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
             ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00"),

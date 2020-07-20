@@ -135,7 +135,8 @@ namespace Aaru.Gui.ViewModels.Tabs
 
                     cisList.Add(new PcmciaCisModel
                     {
-                        Code = tupleCode, Description = tupleDescription
+                        Code        = tupleCode,
+                        Description = tupleDescription
                     });
                 }
             else

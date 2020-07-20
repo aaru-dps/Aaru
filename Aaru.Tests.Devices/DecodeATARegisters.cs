@@ -140,9 +140,8 @@ namespace Aaru.Tests.Devices
             sb.AppendFormat("Device: {0}", (registers.DeviceHead >> 4) & 0x01).AppendLine();
 
             sb.AppendFormat("LBA: {0}",
-                            ((ulong)(registers.DeviceHead & 0xF) * 0x100000000000)      +
-                            (registers.LbaHigh                   * (ulong)0x100000000L) +
-                            (ulong)(registers.LbaMid << 16)                             +
+                            ((ulong)(registers.DeviceHead & 0xF) * 0x100000000000) +
+                            (registers.LbaHigh * (ulong)0x100000000L) + (ulong)(registers.LbaMid << 16) +
                             registers.LbaLow);
 
             sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();

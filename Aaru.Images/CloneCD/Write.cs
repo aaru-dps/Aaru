@@ -58,7 +58,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -353,17 +355,31 @@ namespace Aaru.DiscImages
                         // Lead-out
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                         {
-                            SessionNumber = currentSession, POINT = 0xB0, ADR = 5, CONTROL = 0,
-                            HOUR = 0, Min = leadoutAmsf.minute, Sec = leadoutAmsf.second, Frame = leadoutAmsf.frame,
-                            PHOUR = 2, PMIN = leadoutPmsf.minute, PSEC = leadoutPmsf.second, PFRAME = leadoutPmsf.frame
+                            SessionNumber = currentSession,
+                            POINT         = 0xB0,
+                            ADR           = 5,
+                            CONTROL       = 0,
+                            HOUR          = 0,
+                            Min           = leadoutAmsf.minute,
+                            Sec           = leadoutAmsf.second,
+                            Frame         = leadoutAmsf.frame,
+                            PHOUR         = 2,
+                            PMIN          = leadoutPmsf.minute,
+                            PSEC          = leadoutPmsf.second,
+                            PFRAME        = leadoutPmsf.frame
                         });
 
                         // This seems to be constant? It should not exist on CD-ROM but CloneCD creates them anyway
                         // Format seems like ATIP, but ATIP should not be as 0xC0 in TOC...
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                         {
-                            SessionNumber = currentSession, POINT = 0xC0, ADR = 5, CONTROL = 0,
-                            Min           = 128, PMIN             = 97, PSEC  = 25
+                            SessionNumber = currentSession,
+                            POINT         = 0xC0,
+                            ADR           = 5,
+                            CONTROL       = 0,
+                            Min           = 128,
+                            PMIN          = 97,
+                            PSEC          = 25
                         });
                     }
 
@@ -380,22 +396,34 @@ namespace Aaru.DiscImages
                         // Starting track
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                         {
-                            SessionNumber = currentSession, POINT = 0xA0, ADR = 1, CONTROL = trackControl,
+                            SessionNumber = currentSession,
+                            POINT         = 0xA0,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
                             PMIN          = (byte)track.TrackSequence
                         });
 
                         // Ending track
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                         {
-                            SessionNumber = currentSession, POINT = 0xA1, ADR = 1, CONTROL = trackControl,
+                            SessionNumber = currentSession,
+                            POINT         = 0xA1,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
                             PMIN          = endingTrackNumber
                         });
 
                         // Lead-out start
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                         {
-                            SessionNumber = currentSession, POINT = 0xA2, ADR = 1, CONTROL = trackControl,
-                            PHOUR = 0, PMIN = leadinPmsf.minute, PSEC = leadinPmsf.second, PFRAME = leadinPmsf.frame
+                            SessionNumber = currentSession,
+                            POINT         = 0xA2,
+                            ADR           = 1,
+                            CONTROL       = trackControl,
+                            PHOUR         = 0,
+                            PMIN          = leadinPmsf.minute,
+                            PSEC          = leadinPmsf.second,
+                            PFRAME        = leadinPmsf.frame
                         });
                     }
 
@@ -404,8 +432,13 @@ namespace Aaru.DiscImages
                     // Track
                     trackDescriptors.Add(new FullTOC.TrackDataDescriptor
                     {
-                        SessionNumber = (byte)track.TrackSession, POINT = (byte)track.TrackSequence, ADR = 1,
-                        CONTROL       = trackControl, PHOUR             = 0, PMIN = pmsf.minute, PSEC = pmsf.second,
+                        SessionNumber = (byte)track.TrackSession,
+                        POINT         = (byte)track.TrackSequence,
+                        ADR           = 1,
+                        CONTROL       = trackControl,
+                        PHOUR         = 0,
+                        PMIN          = pmsf.minute,
+                        PSEC          = pmsf.second,
                         PFRAME        = pmsf.frame
                     });
                 }

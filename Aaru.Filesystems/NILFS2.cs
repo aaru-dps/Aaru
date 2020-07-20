@@ -137,11 +137,14 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type             = "NILFS2 filesystem", ClusterSize = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
-                VolumeName       = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
-                VolumeSerial     = nilfsSb.uuid.ToString(),
-                CreationDate     = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime), CreationDateSpecified     = true,
-                ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime), ModificationDateSpecified = true
+                Type                      = "NILFS2 filesystem",
+                ClusterSize               = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
+                VolumeName                = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
+                VolumeSerial              = nilfsSb.uuid.ToString(),
+                CreationDate              = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
+                CreationDateSpecified     = true,
+                ModificationDate          = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime),
+                ModificationDateSpecified = true
             };
 
             if(nilfsSb.creator_os == 0)

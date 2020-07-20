@@ -170,7 +170,8 @@ namespace Aaru.Partitions
                     Length   = (dl.d_partitions[i].p_size * dl.d_secsize)   / imagePlugin.Info.SectorSize,
                     Size     = dl.d_partitions[i].p_size                    * dl.d_secsize,
                     Type     = fsTypeToString(dl.d_partitions[i].p_fstype),
-                    Sequence = counter, Scheme = Name
+                    Sequence = counter,
+                    Scheme   = Name
                 };
 
                 if(dl.d_partitions[i].p_fstype == fsType.Unused)

@@ -108,12 +108,15 @@ namespace Aaru.Filesystems
 
                 XmlFsType = new FileSystemType
                 {
-                    Type           = "QNX6 (Audi) filesystem", Clusters = audiSb.numBlocks,
-                    ClusterSize    = audiSb.blockSize,
-                    Bootable       = true, Files = audiSb.numInodes - audiSb.freeInodes,
-                    FilesSpecified = true,
-                    FreeClusters   = audiSb.freeBlocks, FreeClustersSpecified = true,
-                    VolumeSerial   = $"{audiSb.serial:X16}"
+                    Type                  = "QNX6 (Audi) filesystem",
+                    Clusters              = audiSb.numBlocks,
+                    ClusterSize           = audiSb.blockSize,
+                    Bootable              = true,
+                    Files                 = audiSb.numInodes - audiSb.freeInodes,
+                    FilesSpecified        = true,
+                    FreeClusters          = audiSb.freeBlocks,
+                    FreeClustersSpecified = true,
+                    VolumeSerial          = $"{audiSb.serial:X16}"
                 };
 
                 //xmlFSType.VolumeName = CurrentEncoding.GetString(audiSb.id);
@@ -144,9 +147,11 @@ namespace Aaru.Filesystems
             {
                 Type                      = "QNX6 filesystem",
                 Clusters                  = qnxSb.numBlocks,
-                ClusterSize               = qnxSb.blockSize, Bootable = true,
+                ClusterSize               = qnxSb.blockSize,
+                Bootable                  = true,
                 Files                     = qnxSb.numInodes - qnxSb.freeInodes,
-                FilesSpecified            = true, FreeClusters = qnxSb.freeBlocks,
+                FilesSpecified            = true,
+                FreeClusters              = qnxSb.freeBlocks,
                 FreeClustersSpecified     = true,
                 VolumeSerial              = $"{qnxSb.serial:X16}",
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.ctime),

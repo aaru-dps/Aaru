@@ -226,8 +226,10 @@ namespace Aaru.DiscImages
             {
                 var teleDiskTrack = new TeleDiskTrackHeader
                 {
-                    Sectors = (byte)stream.ReadByte(), Cylinder = (byte)stream.ReadByte(),
-                    Head    = (byte)stream.ReadByte(), Crc      = (byte)stream.ReadByte()
+                    Sectors  = (byte)stream.ReadByte(),
+                    Cylinder = (byte)stream.ReadByte(),
+                    Head     = (byte)stream.ReadByte(),
+                    Crc      = (byte)stream.ReadByte()
                 };
 
                 if(teleDiskTrack.Cylinder > totalCylinders)
@@ -292,8 +294,10 @@ namespace Aaru.DiscImages
             {
                 var teleDiskTrack = new TeleDiskTrackHeader
                 {
-                    Sectors = (byte)stream.ReadByte(), Cylinder = (byte)stream.ReadByte(),
-                    Head    = (byte)stream.ReadByte(), Crc      = (byte)stream.ReadByte()
+                    Sectors  = (byte)stream.ReadByte(),
+                    Cylinder = (byte)stream.ReadByte(),
+                    Head     = (byte)stream.ReadByte(),
+                    Crc      = (byte)stream.ReadByte()
                 };
 
                 if(teleDiskTrack.Sectors == 0xFF) // End of disk image

@@ -322,10 +322,13 @@ namespace Aaru.Partitions
             {
                 var part = new Partition
                 {
-                    Start  = label.partitions[i].startSector,
-                    Size   = (ulong)(label.partitions[i].sectors * label.sectorSize),
-                    Length = label.partitions[i].sectors, Type = "ACT Apricot partition", Sequence = i, Scheme = Name,
-                    Offset = (ulong)(label.partitions[i].startSector * label.sectorSize)
+                    Start    = label.partitions[i].startSector,
+                    Size     = (ulong)(label.partitions[i].sectors * label.sectorSize),
+                    Length   = label.partitions[i].sectors,
+                    Type     = "ACT Apricot partition",
+                    Sequence = i,
+                    Scheme   = Name,
+                    Offset   = (ulong)(label.partitions[i].startSector * label.sectorSize)
                 };
 
                 if(part.Start < deviceSectors &&

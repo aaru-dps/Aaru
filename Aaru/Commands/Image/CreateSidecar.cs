@@ -57,7 +57,8 @@ namespace Aaru.Commands.Image
                            },
                            "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.")
             {
-                Argument = new Argument<int>(() => 512), Required = false
+                Argument = new Argument<int>(() => 512),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -65,7 +66,8 @@ namespace Aaru.Commands.Image
                     "--encoding", "-e"
                 }, "Name of character encoding to use.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -74,12 +76,15 @@ namespace Aaru.Commands.Image
                            },
                            "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

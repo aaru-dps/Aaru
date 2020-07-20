@@ -14,14 +14,17 @@ namespace Aaru.Database.Migrations
                 Id               = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 USBId            = table.Column<int>(nullable: true),
                 FireWireId       = table.Column<int>(nullable: true),
-                PCMCIAId         = table.Column<int>(nullable: true), CompactFlash = table.Column<bool>(),
+                PCMCIAId         = table.Column<int>(nullable: true),
+                CompactFlash     = table.Column<bool>(),
                 ATAId            = table.Column<int>(nullable: true),
                 ATAPIId          = table.Column<int>(nullable: true),
                 SCSIId           = table.Column<int>(nullable: true),
                 MultiMediaCardId = table.Column<int>(nullable: true),
                 SecureDigitalId  = table.Column<int>(nullable: true),
-                Manufacturer     = table.Column<string>(nullable: true), Model = table.Column<string>(nullable: true),
-                Revision         = table.Column<string>(nullable: true), Type  = table.Column<int>()
+                Manufacturer     = table.Column<string>(nullable: true),
+                Model            = table.Column<string>(nullable: true),
+                Revision         = table.Column<string>(nullable: true),
+                Type             = table.Column<int>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Devices", x => x.Id);
@@ -62,14 +65,17 @@ namespace Aaru.Database.Migrations
                 Id               = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 USBId            = table.Column<int>(nullable: true),
                 FireWireId       = table.Column<int>(nullable: true),
-                PCMCIAId         = table.Column<int>(nullable: true), CompactFlash = table.Column<bool>(),
+                PCMCIAId         = table.Column<int>(nullable: true),
+                CompactFlash     = table.Column<bool>(),
                 ATAId            = table.Column<int>(nullable: true),
                 ATAPIId          = table.Column<int>(nullable: true),
                 SCSIId           = table.Column<int>(nullable: true),
                 MultiMediaCardId = table.Column<int>(nullable: true),
                 SecureDigitalId  = table.Column<int>(nullable: true),
-                Manufacturer     = table.Column<string>(nullable: true), Model = table.Column<string>(nullable: true),
-                Revision         = table.Column<string>(nullable: true), Type  = table.Column<int>(),
+                Manufacturer     = table.Column<string>(nullable: true),
+                Model            = table.Column<string>(nullable: true),
+                Revision         = table.Column<string>(nullable: true),
+                Type             = table.Column<int>(),
                 LastSynchronized = table.Column<DateTime>()
             }, constraints: table =>
             {

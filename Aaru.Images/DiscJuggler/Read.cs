@@ -117,7 +117,9 @@ namespace Aaru.DiscImages
 
                 var session = new Session
                 {
-                    SessionSequence = sessionSequence, EndTrack = uint.MinValue, StartTrack = uint.MaxValue
+                    SessionSequence = sessionSequence,
+                    EndTrack        = uint.MinValue,
+                    StartTrack      = uint.MaxValue
                 };
 
                 position += 15;
@@ -564,8 +566,11 @@ namespace Aaru.DiscImages
 
                     var partition = new Partition
                     {
-                        Description = track.TrackDescription, Length = trackLen, Sequence = track.TrackSequence,
-                        Offset      = track.TrackFileOffset, Start   = track.TrackStartSector,
+                        Description = track.TrackDescription,
+                        Length      = trackLen,
+                        Sequence    = track.TrackSequence,
+                        Offset      = track.TrackFileOffset,
+                        Start       = track.TrackStartSector,
                         Type        = track.TrackType.ToString()
                     };
 

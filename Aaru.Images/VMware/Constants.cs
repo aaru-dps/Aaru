@@ -65,12 +65,11 @@ namespace Aaru.DiscImages
             @"^\s*createType\s*=\s*\""(?<type>custom|monolithicSparse|monolithicFlat|twoGbMaxExtentSparse|twoGbMaxExtentFlat|fullDevice|partitionedDevice|vmfs|vmfsPreallocated|vmfsEagerZeroedThick|vmfsThin|vmfsSparse|vmfsRDM|vmfsRawDeviceMap|vmfsRDMP|vmfsPassthroughRawDeviceMap|vmfsRaw|streamOptimized)\""$";
         const string REGEX_EXTENT =
             @"^\s*(?<access>(RW|RDONLY|NOACCESS))\s+(?<sectors>\d+)\s+(?<type>(FLAT|SPARSE|ZERO|VMFS|VMFSSPARSE|VMFSRDM|VMFSRAW))\s+\""(?<filename>.+)\""(\s*(?<offset>\d+))?$";
-        const string REGEX_DDB_TYPE =
-            @"^\s*ddb\.adapterType\s*=\s*\""(?<type>ide|buslogic|lsilogic|legacyESX)\""$";
-        const string REGEX_DDB_SECTORS   = @"^\s*ddb\.geometry\.sectors\s*=\s*\""(?<sectors>\d+)\""$";
-        const string REGEX_DDB_HEADS     = @"^\s*ddb\.geometry\.heads\s*=\s*\""(?<heads>\d+)\""$";
+        const string REGEX_DDB_TYPE = @"^\s*ddb\.adapterType\s*=\s*\""(?<type>ide|buslogic|lsilogic|legacyESX)\""$";
+        const string REGEX_DDB_SECTORS = @"^\s*ddb\.geometry\.sectors\s*=\s*\""(?<sectors>\d+)\""$";
+        const string REGEX_DDB_HEADS = @"^\s*ddb\.geometry\.heads\s*=\s*\""(?<heads>\d+)\""$";
         const string REGEX_DDB_CYLINDERS = @"^\s*ddb\.geometry\.cylinders\s*=\s*\""(?<cylinders>\d+)\""$";
-        const string PARENT_REGEX        = @"^\s*parentFileNameHint\s*=\s*\""(?<filename>.+)\""$";
+        const string PARENT_REGEX = @"^\s*parentFileNameHint\s*=\s*\""(?<filename>.+)\""$";
 
         const uint FLAGS_VALID_NEW_LINE      = 0x01;
         const uint FLAGS_USE_REDUNDANT_TABLE = 0x02;

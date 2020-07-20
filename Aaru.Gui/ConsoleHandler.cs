@@ -92,7 +92,10 @@ namespace Aaru.Gui
 
             Entries.Add(new LogEntry
             {
-                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Info"
+                Message   = string.Format(format, arg),
+                Module    = null,
+                Timestamp = DateTime.Now,
+                Type      = "Info"
             });
         }
 
@@ -104,7 +107,10 @@ namespace Aaru.Gui
 
             Entries.Add(new LogEntry
             {
-                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Error"
+                Message   = string.Format(format, arg),
+                Module    = null,
+                Timestamp = DateTime.Now,
+                Type      = "Error"
             });
         }
 
@@ -116,7 +122,10 @@ namespace Aaru.Gui
 
             Entries.Add(new LogEntry
             {
-                Message = string.Format(format, arg), Module = null, Timestamp = DateTime.Now, Type = "Verbose"
+                Message   = string.Format(format, arg),
+                Module    = null,
+                Timestamp = DateTime.Now,
+                Type      = "Verbose"
             });
         }
 
@@ -128,7 +137,10 @@ namespace Aaru.Gui
 
             Entries.Add(new LogEntry
             {
-                Message = string.Format(format, arg), Module = module, Timestamp = DateTime.Now, Type = "Debug"
+                Message   = string.Format(format, arg),
+                Module    = module,
+                Timestamp = DateTime.Now,
+                Type      = "Debug"
             });
         }
     }

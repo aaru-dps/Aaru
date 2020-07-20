@@ -113,7 +113,8 @@ namespace Aaru.Devices.Windows
 
                 var query = new StoragePropertyQuery
                 {
-                    PropertyId           = StoragePropertyId.Device, QueryType = StorageQueryType.Standard,
+                    PropertyId           = StoragePropertyId.Device,
+                    QueryType            = StorageQueryType.Standard,
                     AdditionalParameters = new byte[1]
                 };
 
@@ -142,7 +143,8 @@ namespace Aaru.Devices.Windows
                 {
                     Version               = BitConverter.ToUInt32(descriptorB, 0),
                     Size                  = BitConverter.ToUInt32(descriptorB, 4),
-                    DeviceType            = descriptorB[8], DeviceTypeModifier = descriptorB[9],
+                    DeviceType            = descriptorB[8],
+                    DeviceTypeModifier    = descriptorB[9],
                     RemovableMedia        = BitConverter.ToBoolean(descriptorB, 10),
                     CommandQueueing       = BitConverter.ToBoolean(descriptorB, 11),
                     VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
@@ -155,7 +157,8 @@ namespace Aaru.Devices.Windows
 
                 var info = new DeviceInfo
                 {
-                    Path = physId, Bus = descriptor.BusType.ToString()
+                    Path = physId,
+                    Bus  = descriptor.BusType.ToString()
                 };
 
                 if(descriptor.VendorIdOffset > 0)

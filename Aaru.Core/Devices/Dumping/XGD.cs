@@ -493,9 +493,13 @@ namespace Aaru.Core.Devices.Dumping
             {
                 new Track
                 {
-                    TrackBytesPerSector    = (int)BLOCK_SIZE, TrackEndSector      = blocks - 1, TrackSequence = 1,
-                    TrackRawBytesPerSector = (int)BLOCK_SIZE, TrackSubchannelType = TrackSubchannelType.None,
-                    TrackSession           = 1, TrackType                         = TrackType.Data
+                    TrackBytesPerSector    = (int)BLOCK_SIZE,
+                    TrackEndSector         = blocks - 1,
+                    TrackSequence          = 1,
+                    TrackRawBytesPerSector = (int)BLOCK_SIZE,
+                    TrackSubchannelType    = TrackSubchannelType.None,
+                    TrackSession           = 1,
+                    TrackType              = TrackType.Data
                 }
             });
 
@@ -1002,27 +1006,36 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         pgMmc = new Modes.ModePage_01_MMC
                         {
-                            PS = false, ReadRetryCount = 0x20, Parameter = 0x00
+                            PS             = false,
+                            ReadRetryCount = 0x20,
+                            Parameter      = 0x00
                         };
 
                         currentModePage = new Modes.ModePage
                         {
-                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            Page         = 0x01,
+                            Subpage      = 0x00,
+                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         };
                     }
 
                     pgMmc = new Modes.ModePage_01_MMC
                     {
-                        PS = false, ReadRetryCount = 255, Parameter = 0x20
+                        PS             = false,
+                        ReadRetryCount = 255,
+                        Parameter      = 0x20
                     };
 
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             new Modes.ModePage
                             {
-                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                                Page         = 0x01,
+                                Subpage      = 0x00,
+                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                             }
                         }
                     };
@@ -1109,7 +1122,8 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     var md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(), Pages = new[]
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
                         {
                             currentModePage.Value
                         }
@@ -1167,7 +1181,8 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))
@@ -1199,7 +1214,9 @@ namespace Aaru.Core.Devices.Dumping
             {
                 var layers = new LayersType
                 {
-                    type = LayersTypeType.OTP, typeSpecified = true, Sectors = new SectorsType[1]
+                    type          = LayersTypeType.OTP,
+                    typeSpecified = true,
+                    Sectors       = new SectorsType[1]
                 };
 
                 layers.Sectors[0] = new SectorsType

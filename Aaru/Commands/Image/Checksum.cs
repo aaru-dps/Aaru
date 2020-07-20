@@ -58,12 +58,14 @@ namespace Aaru.Commands.Image
                     "--adler32", "-a"
                 }, "Calculates Adler32.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option("--crc16", "Calculates CRC16.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -71,22 +73,26 @@ namespace Aaru.Commands.Image
                     "--crc32", "-c"
                 }, "Calculates CRC32.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option("--crc64", "Calculates CRC64.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option("--fletcher16", "Calculates Fletcher-16.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option("--fletcher32", "Calculates Fletcher-32.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -94,7 +100,8 @@ namespace Aaru.Commands.Image
                     "--md5", "-m"
                 }, "Calculates MD5.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -102,7 +109,8 @@ namespace Aaru.Commands.Image
                     "--separated-tracks", "-t"
                 }, "Checksums each track separately.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -110,22 +118,26 @@ namespace Aaru.Commands.Image
                     "--sha1", "-s"
                 }, "Calculates SHA1.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option("--sha256", "Calculates SHA256.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option("--sha384", "Calculates SHA384.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option("--sha512", "Calculates SHA512.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -133,7 +145,8 @@ namespace Aaru.Commands.Image
                     "--spamsum", "-f"
                 }, "Calculates SpamSum fuzzy hash.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -141,12 +154,15 @@ namespace Aaru.Commands.Image
                     "--whole-disc", "-w"
                 }, "Checksums the whole disc.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

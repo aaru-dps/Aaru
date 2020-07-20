@@ -8,8 +8,9 @@ namespace Aaru.Database.Migrations
         {
             migrationBuilder.CreateTable("Commands", table => new
             {
-                Id   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: true), Synchronized = table.Column<bool>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Commands", x => x.Id);
@@ -17,8 +18,9 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("Filesystems", table => new
             {
-                Id   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: true), Synchronized = table.Column<bool>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Filesystems", x => x.Id);
@@ -26,8 +28,9 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("Filters", table => new
             {
-                Id   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: true), Synchronized = table.Column<bool>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Filters", x => x.Id);
@@ -35,8 +38,9 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("MediaFormats", table => new
             {
-                Id   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: true), Synchronized = table.Column<bool>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_MediaFormats", x => x.Id);
@@ -44,8 +48,9 @@ namespace Aaru.Database.Migrations
 
             migrationBuilder.CreateTable("Partitions", table => new
             {
-                Id   = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
-                Name = table.Column<string>(nullable: true), Synchronized = table.Column<bool>()
+                Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
+                Name         = table.Column<string>(nullable: true),
+                Synchronized = table.Column<bool>()
             }, constraints: table =>
             {
                 table.PrimaryKey("PK_Partitions", x => x.Id);

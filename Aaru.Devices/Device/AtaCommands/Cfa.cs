@@ -44,10 +44,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersLba28
             {
-                Command = (byte)AtaCommands.TranslateSector, DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
-                LbaHigh = (byte)((lba                                                 & 0xFF0000)  / 0x10000),
-                LbaMid  = (byte)((lba                                                 & 0xFF00)    / 0x100),
-                LbaLow  = (byte)((lba                                                 & 0xFF)      / 0x1)
+                Command    = (byte)AtaCommands.TranslateSector,
+                DeviceHead = (byte)((lba & 0xF000000) / 0x1000000),
+                LbaHigh    = (byte)((lba & 0xFF0000)  / 0x10000),
+                LbaMid     = (byte)((lba & 0xFF00)    / 0x100),
+                LbaLow     = (byte)((lba & 0xFF)      / 0x1)
             };
 
             registers.DeviceHead += 0x40;
@@ -70,9 +71,11 @@ namespace Aaru.Devices
 
             var registers = new AtaRegistersChs
             {
-                Command     = (byte)AtaCommands.TranslateSector, CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
-                CylinderLow = (byte)((cylinder                                                   & 0xFF)   / 0x1),
-                Sector      = sector, DeviceHead = (byte)(head & 0x0F)
+                Command      = (byte)AtaCommands.TranslateSector,
+                CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
+                CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
+                Sector       = sector,
+                DeviceHead   = (byte)(head & 0x0F)
             };
 
             LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn,

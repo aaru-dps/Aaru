@@ -79,7 +79,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
 
                     Assemblies.Add(new AssemblyModel
                     {
-                        Name = name, Version = version
+                        Name    = name,
+                        Version = version
                     });
                 }
             });
@@ -127,7 +128,9 @@ Logo and art:
             {
                 StartInfo =
                 {
-                    UseShellExecute = false, CreateNoWindow = true, Arguments = "https://aaru.app"
+                    UseShellExecute = false,
+                    CreateNoWindow  = true,
+                    Arguments       = "https://aaru.app"
                 }
             };
 

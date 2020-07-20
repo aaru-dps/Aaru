@@ -223,7 +223,10 @@ namespace Aaru.Filesystems.AppleMFS
                 {
                     stat = new FileEntryInfo
                     {
-                        BlockSize = device.Info.SectorSize, Inode = 0, Links = 1, Attributes = FileAttributes.System
+                        BlockSize  = device.Info.SectorSize,
+                        Inode      = 0,
+                        Links      = 1,
+                        Attributes = FileAttributes.System
                     };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -268,10 +271,14 @@ namespace Aaru.Filesystems.AppleMFS
 
             stat = new FileEntryInfo
             {
-                Attributes    = attr, Blocks = entry.flLgLen / volMDB.drAlBlkSiz,
+                Attributes    = attr,
+                Blocks        = entry.flLgLen / volMDB.drAlBlkSiz,
                 BlockSize     = volMDB.drAlBlkSiz,
-                CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat), Inode  = entry.flFlNum,
-                LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat), Length = entry.flPyLen, Links = 1
+                CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
+                Inode         = entry.flFlNum,
+                LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
+                Length        = entry.flPyLen,
+                Links         = 1
             };
 
             return Errno.NoError;

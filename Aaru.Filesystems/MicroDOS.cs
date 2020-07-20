@@ -91,8 +91,12 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "MicroDOS", ClusterSize = 512, Clusters = block0.blocks, Files = block0.files,
-                FilesSpecified        = true, FreeClusters      = (ulong)(block0.blocks - block0.usedBlocks),
+                Type                  = "MicroDOS",
+                ClusterSize           = 512,
+                Clusters              = block0.blocks,
+                Files                 = block0.files,
+                FilesSpecified        = true,
+                FreeClusters          = (ulong)(block0.blocks - block0.usedBlocks),
                 FreeClustersSpecified = true
             };
 

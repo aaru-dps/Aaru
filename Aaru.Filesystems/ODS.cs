@@ -249,7 +249,8 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type         = "FILES-11", ClusterSize = (uint)(homeblock.cluster * 512),
+                Type         = "FILES-11",
+                ClusterSize  = (uint)(homeblock.cluster * 512),
                 Clusters     = partition.Size / (ulong)(homeblock.cluster * 512),
                 VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 VolumeSerial = $"{homeblock.serialnum:X8}"

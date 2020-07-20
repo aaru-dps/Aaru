@@ -145,8 +145,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type     = "Resilient File System", ClusterSize = refsVhdr.bytesPerSector * refsVhdr.sectorsPerCluster,
-                Clusters = refsVhdr.sectors                                               / refsVhdr.sectorsPerCluster
+                Type        = "Resilient File System",
+                ClusterSize = refsVhdr.bytesPerSector * refsVhdr.sectorsPerCluster,
+                Clusters    = refsVhdr.sectors        / refsVhdr.sectorsPerCluster
             };
         }
 

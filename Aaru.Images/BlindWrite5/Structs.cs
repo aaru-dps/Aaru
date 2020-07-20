@@ -162,7 +162,7 @@ namespace Aaru.DiscImages
             public long                SectorSize;
             public int                 StartLba;
             public int                 Sectors;
-            public uint Offset;
+            public uint                Offset;
         }
     }
 }

@@ -145,7 +145,8 @@ namespace Aaru.Core.Devices.Report
 
                 var evpd = new ScsiPage
                 {
-                    page = page, value = buffer
+                    page  = page,
+                    value = buffer
                 };
 
                 evpds.Add(evpd);
@@ -326,7 +327,8 @@ namespace Aaru.Core.Devices.Report
 
             report.SCSI.ModeSense = new ScsiMode
             {
-                BlankCheckEnabled = decMode.Value.Header.EBC, DPOandFUA = decMode.Value.Header.DPOFUA,
+                BlankCheckEnabled = decMode.Value.Header.EBC,
+                DPOandFUA         = decMode.Value.Header.DPOFUA,
                 WriteProtected    = decMode.Value.Header.WriteProtected
             };
 
@@ -345,7 +347,9 @@ namespace Aaru.Core.Devices.Report
             {
                 var modePage = new ScsiPage
                 {
-                    page = page.Page, subpage = page.Subpage, value = page.PageResponse
+                    page    = page.Page,
+                    subpage = page.Subpage,
+                    value   = page.PageResponse
                 };
 
                 modePages.Add(modePage);

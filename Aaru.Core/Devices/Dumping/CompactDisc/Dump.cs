@@ -515,10 +515,14 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     new Track
                     {
-                        TrackSequence = 0, TrackSession = 1, TrackType = hiddenData ? TrackType.Data : TrackType.Audio,
-                        TrackStartSector = 0, TrackBytesPerSector = (int)sectorSize,
-                        TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType = subType,
-                        TrackEndSector = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
+                        TrackSequence          = 0,
+                        TrackSession           = 1,
+                        TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
+                        TrackStartSector       = 0,
+                        TrackBytesPerSector    = (int)sectorSize,
+                        TrackRawBytesPerSector = (int)sectorSize,
+                        TrackSubchannelType    = subType,
+                        TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
                     }
                 };
 
@@ -1231,7 +1235,8 @@ namespace Aaru.Core.Devices.Dumping
             // TODO: Disc ID
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion()
+                Application        = "Aaru",
+                ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))

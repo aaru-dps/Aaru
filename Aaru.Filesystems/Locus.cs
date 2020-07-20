@@ -253,14 +253,17 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Locus filesystem", ClusterSize = (uint)blockSize, Clusters = (ulong)locusSb.s_fsize,
+                Type        = "Locus filesystem",
+                ClusterSize = (uint)blockSize,
+                Clusters    = (ulong)locusSb.s_fsize,
 
                 // Sometimes it uses one, or the other. Use the bigger
-                VolumeName       = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
-                ModificationDate = DateHandlers.UnixToDateTime(locusSb.s_time), ModificationDateSpecified = true,
-                Dirty = !locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) ||
-                                   locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
-                FreeClusters = (ulong)locusSb.s_tfree, FreeClustersSpecified = true
+                VolumeName = string.IsNullOrEmpty(s_fsmnt) ? s_fpack : s_fsmnt,
+                ModificationDate = DateHandlers.UnixToDateTime(locusSb.s_time),
+                ModificationDateSpecified = true,
+                Dirty = !locusSb.s_flags.HasFlag(LocusFlags.SB_CLEAN) || locusSb.s_flags.HasFlag(LocusFlags.SB_DIRTY),
+                FreeClusters = (ulong)locusSb.s_tfree,
+                FreeClustersSpecified = true
             };
         }
 
@@ -378,31 +381,23 @@ namespace Aaru.Filesystems
          Flags]
         enum LocusFlags : ushort
         {
-            SB_RDONLY = 0x1,                                                      /* no writes on filesystem */
-            SB_CLEAN  = 0x2,                                                      /* fs unmounted cleanly (or checks run) */
-            SB_DIRTY  = 0x4, /* fs mounted without CLEAN bit set */ SB_RMV = 0x8, /* fs is a removable file system */
-            SB_PRIMPACK =
-                0x10, /* This is the primary pack of the filesystem */
-            SB_REPLTYPE =
-                0x20, /* This is a replicated type filesystem. */
-            SB_USER =
-                0x40, /* This is a "user" replicated filesystem. */
-            SB_BACKBONE =
-                0x80,       /* backbone pack ; complete copy of primary pack but not modifiable */
-            SB_NFS = 0x100, /* This is a NFS type filesystem */
-            SB_BYHAND =
-                0x200,                                                            /* Inhibits automatic fscks on a mangled file system */
-            SB_NOSUID = 0x400, /* Set-uid/Set-gid is disabled */ SB_SYNCW = 0x800 /* Synchronous Write */
+            SB_RDONLY   = 0x1, /* no writes on filesystem */ SB_CLEAN = 0x2, /* fs unmounted cleanly (or checks run) */
+            SB_DIRTY    = 0x4, /* fs mounted without CLEAN bit set */ SB_RMV = 0x8, /* fs is a removable file system */
+            SB_PRIMPACK = 0x10, /* This is the primary pack of the filesystem */
+            SB_REPLTYPE = 0x20, /* This is a replicated type filesystem. */
+            SB_USER     = 0x40, /* This is a "user" replicated filesystem. */
+            SB_BACKBONE = 0x80, /* backbone pack ; complete copy of primary pack but not modifiable */
+            SB_NFS      = 0x100, /* This is a NFS type filesystem */
+            SB_BYHAND   = 0x200, /* Inhibits automatic fscks on a mangled file system */
+            SB_NOSUID   = 0x400, /* Set-uid/Set-gid is disabled */ SB_SYNCW = 0x800 /* Synchronous Write */
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          Flags]
         enum LocusVersion : byte
         {
-            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */
-            SB_B1024  = 2, /* 1024 byte block filesystem */
-            NUMSCANDEV =
-                5 /* Used by scangfs(), refed in space.h */
+            SB_SB4096 = 1, /* smallblock filesys with 4096 byte blocks */ SB_B1024 = 2, /* 1024 byte block filesystem */
+            NUMSCANDEV = 5 /* Used by scangfs(), refed in space.h */
         }
     }
 }

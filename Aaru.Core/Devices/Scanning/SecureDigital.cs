@@ -240,8 +240,7 @@ namespace Aaru.Core.Devices.Scanning
             mhddLog.Close();
 
             ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize              * (double)(results.Blocks + 1)) / 1024 /
-                         (results.ProcessingTime / 1000),
+                         (blockSize * (double)(results.Blocks + 1)) / 1024 / (results.ProcessingTime / 1000),
                          _devicePath);
 
             InitProgress?.Invoke();

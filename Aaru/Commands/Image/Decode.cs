@@ -52,7 +52,8 @@ namespace Aaru.Commands.Image
                     "--disk-tags", "-f"
                 }, "Decode disk tags.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -60,7 +61,8 @@ namespace Aaru.Commands.Image
                     "--length", "-l"
                 }, "How many sectors to decode, or \"all\".")
                 {
-                    Argument = new Argument<string>(() => "all"), Required = false
+                    Argument = new Argument<string>(() => "all"),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -68,7 +70,8 @@ namespace Aaru.Commands.Image
                     "--sector-tags", "-p"
                 }, "Decode sector tags.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -76,12 +79,15 @@ namespace Aaru.Commands.Image
                     "--start", "-s"
                 }, "Sector to start decoding from.")
                 {
-                    Argument = new Argument<ulong>(() => 0), Required = false
+                    Argument = new Argument<ulong>(() => 0),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

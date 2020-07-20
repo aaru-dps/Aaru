@@ -64,12 +64,15 @@ namespace Aaru.Commands.Device
                     "--output-prefix", "-w"
                 }, "Prefix for saving binary information from device.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Device path",
+                Name        = "device-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

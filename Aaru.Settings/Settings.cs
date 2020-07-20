@@ -652,11 +652,21 @@ namespace Aaru.Settings
         /// <summary>Sets default settings as all statistics, share everything</summary>
         static void SetDefaultSettings() => Current = new DicSettings
         {
-            SaveReportsGlobally = true, ShareReports = true, GdprCompliance = 0, Stats = new StatsSettings
+            SaveReportsGlobally = true,
+            ShareReports        = true,
+            GdprCompliance      = 0,
+            Stats = new StatsSettings
             {
-                CommandStats   = true, DeviceStats = true, FilesystemStats = true, MediaImageStats = true,
-                MediaScanStats = true, FilterStats = true, MediaStats      = true, PartitionStats  = true,
-                ShareStats     = true, VerifyStats = true
+                CommandStats    = true,
+                DeviceStats     = true,
+                FilesystemStats = true,
+                MediaImageStats = true,
+                MediaScanStats  = true,
+                FilterStats     = true,
+                MediaStats      = true,
+                PartitionStats  = true,
+                ShareStats      = true,
+                VerifyStats     = true
             }
         };
     }

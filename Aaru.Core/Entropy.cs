@@ -81,7 +81,8 @@ namespace Aaru.Core
                 {
                     var trackEntropy = new EntropyResults
                     {
-                        Track = currentTrack.TrackSequence, Entropy = 0
+                        Track   = currentTrack.TrackSequence,
+                        Entropy = 0
                     };
 
                     UpdateProgressEvent?.

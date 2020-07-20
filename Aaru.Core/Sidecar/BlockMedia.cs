@@ -71,11 +71,16 @@ namespace Aaru.Core
             {
                 new BlockMediaType
                 {
-                    Checksums = imgChecksums.ToArray(), Image = new ImageType
+                    Checksums = imgChecksums.ToArray(),
+                    Image = new ImageType
                     {
-                        format = image.Format, offset = 0, offsetSpecified = true, Value = Path.GetFileName(imagePath)
+                        format          = image.Format,
+                        offset          = 0,
+                        offsetSpecified = true,
+                        Value           = Path.GetFileName(imagePath)
                     },
-                    Size = (ulong)fi.Length, Sequence = new SequenceType
+                    Size = (ulong)fi.Length,
+                    Sequence = new SequenceType
                     {
                         MediaTitle = image.Info.MediaTitle
                     }
@@ -134,7 +139,8 @@ namespace Aaru.Core
                         {
                             CIS = new DumpType
                             {
-                                Checksums = Checksum.GetChecksums(cis).ToArray(), Size = (ulong)cis.Length
+                                Checksums = Checksum.GetChecksums(cis).ToArray(),
+                                Size      = (ulong)cis.Length
                             }
                         };
 
@@ -395,8 +401,10 @@ namespace Aaru.Core
                 {
                     var thisPartition = new TapePartitionType
                     {
-                        Image      = sidecar.BlockMedia[0].Image, Sequence = tapePartition.Number,
-                        StartBlock = tapePartition.FirstBlock, EndBlock    = tapePartition.LastBlock
+                        Image      = sidecar.BlockMedia[0].Image,
+                        Sequence   = tapePartition.Number,
+                        StartBlock = tapePartition.FirstBlock,
+                        EndBlock   = tapePartition.LastBlock
                     };
 
                     if(tapeImage.TapePartitions.Count == 1)
@@ -466,9 +474,12 @@ namespace Aaru.Core
                     {
                         var thisFile = new TapeFileType
                         {
-                            Sequence = tapeFile.File, StartBlock = tapeFile.FirstBlock,
-                            EndBlock = tapeFile.LastBlock,
-                            Image    = sidecar.BlockMedia[0].Image, Size = 0, BlockSize = 0
+                            Sequence   = tapeFile.File,
+                            StartBlock = tapeFile.FirstBlock,
+                            EndBlock   = tapeFile.LastBlock,
+                            Image      = sidecar.BlockMedia[0].Image,
+                            Size       = 0,
+                            BlockSize  = 0
                         };
 
                         if(tapeImage.Files.Count(f => f.Partition == tapePartition.Number) == 1)
@@ -569,9 +580,12 @@ namespace Aaru.Core
 
                     sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
                     {
-                        Description = partitions[i].Description, EndSector = partitions[i].End,
-                        Name        = partitions[i].Name, Sequence         = (uint)partitions[i].Sequence,
-                        StartSector = partitions[i].Start, Type            = partitions[i].Type
+                        Description = partitions[i].Description,
+                        EndSector   = partitions[i].End,
+                        Name        = partitions[i].Name,
+                        Sequence    = (uint)partitions[i].Sequence,
+                        StartSector = partitions[i].Start,
+                        Type        = partitions[i].Type
                     };
 
                     List<FileSystemType> lstFs = new List<FileSystemType>();
@@ -618,13 +632,15 @@ namespace Aaru.Core
 
                 sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
                 {
-                    StartSector = 0, EndSector = image.Info.Sectors - 1
+                    StartSector = 0,
+                    EndSector   = image.Info.Sectors - 1
                 };
 
                 var wholePart = new Partition
                 {
-                    Name = "Whole device", Length = image.Info.Sectors,
-                    Size = image.Info.Sectors * image.Info.SectorSize
+                    Name   = "Whole device",
+                    Length = image.Info.Sectors,
+                    Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
                 List<FileSystemType> lstFs = new List<FileSystemType>();
@@ -875,12 +891,14 @@ namespace Aaru.Core
 
                                 var scpBlockTrackType = new BlockTrackType
                                 {
-                                    Cylinder = t / image.Info.Heads, Head = (ushort)(t % image.Info.Heads), Image =
-                                        new ImageType
-                                        {
-                                            format = scpImage.Format, Value = Path.GetFileName(scpFilePath),
-                                            offset = scpImage.Header.offsets[t]
-                                        }
+                                    Cylinder = t / image.Info.Heads,
+                                    Head     = (ushort)(t % image.Info.Heads),
+                                    Image = new ImageType
+                                    {
+                                        format = scpImage.Format,
+                                        Value  = Path.GetFileName(scpFilePath),
+                                        offset = scpImage.Header.offsets[t]
+                                    }
                                 };
 
                                 if(scpBlockTrackType.Cylinder < image.Info.Cylinders)
@@ -981,7 +999,8 @@ namespace Aaru.Core
 
                                 var kfBlockTrackType = new BlockTrackType
                                 {
-                                    Cylinder = kvp.Key / image.Info.Heads, Head = (ushort)(kvp.Key % image.Info.Heads),
+                                    Cylinder = kvp.Key / image.Info.Heads,
+                                    Head     = (ushort)(kvp.Key % image.Info.Heads),
                                     Image = new ImageType
                                     {
                                         format = kfImage.Format,
@@ -1067,11 +1086,13 @@ namespace Aaru.Core
 
                         var dfiBlockTrackType = new BlockTrackType
                         {
-                            Cylinder = (uint)(t / image.Info.Heads), Head = (ushort)(t % image.Info.Heads), Image =
-                                new ImageType
-                                {
-                                    format = dfiImage.Format, Value = Path.GetFileName(dfiFilePath)
-                                }
+                            Cylinder = (uint)(t   / image.Info.Heads),
+                            Head     = (ushort)(t % image.Info.Heads),
+                            Image = new ImageType
+                            {
+                                format = dfiImage.Format,
+                                Value  = Path.GetFileName(dfiFilePath)
+                            }
                         };
 
                         if(dfiBlockTrackType.Cylinder < image.Info.Cylinders)

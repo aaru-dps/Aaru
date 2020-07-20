@@ -265,7 +265,8 @@ namespace Aaru.DiscImages
 
                 var dataFile = new Bw5DataFile
                 {
-                    Unknown1 = new uint[4], Unknown2 = new uint[3]
+                    Unknown1 = new uint[4],
+                    Unknown2 = new uint[3]
                 };
 
                 stream.Read(tmpArray, 0, tmpArray.Length);

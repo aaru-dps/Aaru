@@ -135,9 +135,12 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type             = "UNICOS filesystem", ClusterSize = 4096, Clusters = (ulong)unicosSb.s_fsize,
-                VolumeName       = StringHandlers.CToString(unicosSb.s_fname, Encoding),
-                ModificationDate = DateHandlers.UnixToDateTime(unicosSb.s_time), ModificationDateSpecified = true
+                Type                      = "UNICOS filesystem",
+                ClusterSize               = 4096,
+                Clusters                  = (ulong)unicosSb.s_fsize,
+                VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),
+                ModificationDate          = DateHandlers.UnixToDateTime(unicosSb.s_time),
+                ModificationDateSpecified = true
             };
 
             XmlFsType.Dirty |= unicosSb.s_error > 0;

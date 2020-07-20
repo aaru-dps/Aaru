@@ -64,7 +64,8 @@ namespace Aaru.Commands.Media
                     "--cicm-xml", "-x"
                 }, "Take metadata from existing CICM XML sidecar.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -72,17 +73,20 @@ namespace Aaru.Commands.Media
                     "--encoding", "-e"
                 }, "Name of character encoding to use.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option("--first-pregap", "Try to read first track pregap. Only applicable to CD/DDCD/GD.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option("--fix-offset", "Fix audio tracks offset. Only applicable to CD/GD.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -90,7 +94,8 @@ namespace Aaru.Commands.Media
                     "--force", "-f"
                 }, "Continue dump whatever happens.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -99,17 +104,20 @@ namespace Aaru.Commands.Media
                            },
                            "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--metadata", "Enables creating CICM XML sidecar.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option("--trim", "Enables trimming errored from skipped sectors.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => true),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -117,12 +125,14 @@ namespace Aaru.Commands.Media
                     "--options", "-O"
                 }, "Comma separated name=value pairs of options to pass to output image plugin.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option("--persistent", "Try to recover partial or incorrect data.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => false),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -130,7 +140,8 @@ namespace Aaru.Commands.Media
                     "--resume", "-r"
                 }, "Create/use resume mapfile.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -138,7 +149,8 @@ namespace Aaru.Commands.Media
                     "--retry-passes", "-p"
                 }, "How many retry passes to do.")
                 {
-                    Argument = new Argument<ushort>(() => 5), Required = false
+                    Argument = new Argument<ushort>(() => 5),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -146,7 +158,8 @@ namespace Aaru.Commands.Media
                     "--skip", "-k"
                 }, "When an unreadable sector is found skip this many sectors.")
                 {
-                    Argument = new Argument<uint>(() => 512), Required = false
+                    Argument = new Argument<uint>(() => 512),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -154,23 +167,28 @@ namespace Aaru.Commands.Media
                     "--stop-on-error", "-s"
                 }, "Stop media dump on first error.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option("--subchannel",
                            "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none.")
             {
-                Argument = new Argument<string>(() => "any"), Required = false
+                Argument = new Argument<string>(() => "any"),
+                Required = false
             });
 
             Add(new Option("--speed", "Speed to dump. Only applicable to optical drives, 0 for maximum.")
             {
-                Argument = new Argument<byte>(() => 0), Required = false
+                Argument = new Argument<byte>(() => 0),
+                Required = false
             });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Device path",
+                Name        = "device-path"
             });
 
             AddArgument(new Argument<string>
@@ -186,7 +204,8 @@ namespace Aaru.Commands.Media
                     "--private"
                 }, "Do not store paths and serial numbers in log or metadata.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -194,7 +213,8 @@ namespace Aaru.Commands.Media
                     "--fix-subchannel-position"
                 }, "Store subchannel according to the sector they describe.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -202,7 +222,8 @@ namespace Aaru.Commands.Media
                     "--retry-subchannel"
                 }, "Retry subchannel. Implies fixing subchannel position.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -210,7 +231,8 @@ namespace Aaru.Commands.Media
                     "--fix-subchannel"
                 }, "Try to fix subchannel. Implies fixing subchannel position.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -218,7 +240,8 @@ namespace Aaru.Commands.Media
                     "--fix-subchannel-crc"
                 }, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -226,7 +249,8 @@ namespace Aaru.Commands.Media
                     "--generate-subchannels"
                 }, "Generates missing subchannels (they don't count as dumped in resume file).")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -234,7 +258,8 @@ namespace Aaru.Commands.Media
                     "--skip-cdiready-hole"
                 }, "Skip the hole between data and audio in a CD-i Ready disc.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -242,7 +267,8 @@ namespace Aaru.Commands.Media
                     "--eject"
                 }, "Eject media after dump finishes.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

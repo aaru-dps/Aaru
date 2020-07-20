@@ -53,7 +53,8 @@ namespace Aaru.Commands.Image
                     "--encoding", "-e"
                 }, "Name of character encoding to use.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -61,7 +62,8 @@ namespace Aaru.Commands.Image
                     "--filesystems", "-f"
                 }, "Searches and analyzes filesystems.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -69,12 +71,15 @@ namespace Aaru.Commands.Image
                     "--partitions", "-p"
                 }, "Searches and interprets partitions.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Disc image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(typeof(AnalyzeCommand).GetMethod(nameof(Invoke)));
@@ -267,8 +272,9 @@ namespace Aaru.Commands.Image
                 {
                     var wholePart = new Partition
                     {
-                        Name = "Whole device", Length = imageFormat.Info.Sectors,
-                        Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
+                        Name   = "Whole device",
+                        Length = imageFormat.Info.Sectors,
+                        Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
                     Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);

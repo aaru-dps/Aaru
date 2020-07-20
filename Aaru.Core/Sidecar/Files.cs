@@ -310,7 +310,9 @@ namespace Aaru.Core
 
                 xattrTypes.Add(new ExtendedAttributeType
                 {
-                    Checksums = xattrChkWorker.End().ToArray(), length = (ulong)data.Length, name = xattr
+                    Checksums = xattrChkWorker.End().ToArray(),
+                    length    = (ulong)data.Length,
+                    name      = xattr
                 });
             }
 

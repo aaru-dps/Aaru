@@ -57,7 +57,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -181,9 +183,13 @@ namespace Aaru.DiscImages
 
                         var record = new ApridiskRecord
                         {
-                            type       = RecordType.Sector, compression = CompressType.Uncompresed,
-                            headerSize = (ushort)Marshal.SizeOf<ApridiskRecord>(),
-                            dataSize   = (uint)sectorsData[c][h][s].Length, head = h, sector = s, cylinder = c
+                            type        = RecordType.Sector,
+                            compression = CompressType.Uncompresed,
+                            headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                            dataSize    = (uint)sectorsData[c][h][s].Length,
+                            head        = h,
+                            sector      = s,
+                            cylinder    = c
                         };
 
                         MemoryMarshal.Write(hdr, ref record);
@@ -200,9 +206,13 @@ namespace Aaru.DiscImages
 
                 var creatorRecord = new ApridiskRecord
                 {
-                    type       = RecordType.Creator, compression                    = CompressType.Uncompresed,
-                    headerSize = (ushort)Marshal.SizeOf<ApridiskRecord>(), dataSize = (uint)creatorBytes.Length + 1,
-                    head       = 0, sector                                          = 0, cylinder = 0
+                    type        = RecordType.Creator,
+                    compression = CompressType.Uncompresed,
+                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                    dataSize    = (uint)creatorBytes.Length + 1,
+                    head        = 0,
+                    sector      = 0,
+                    cylinder    = 0
                 };
 
                 MemoryMarshal.Write(hdr, ref creatorRecord);
@@ -218,9 +228,13 @@ namespace Aaru.DiscImages
 
                 var commentRecord = new ApridiskRecord
                 {
-                    type       = RecordType.Comment, compression                    = CompressType.Uncompresed,
-                    headerSize = (ushort)Marshal.SizeOf<ApridiskRecord>(), dataSize = (uint)commentBytes.Length + 1,
-                    head       = 0, sector                                          = 0, cylinder = 0
+                    type        = RecordType.Comment,
+                    compression = CompressType.Uncompresed,
+                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                    dataSize    = (uint)commentBytes.Length + 1,
+                    head        = 0,
+                    sector      = 0,
+                    cylinder    = 0
                 };
 
                 MemoryMarshal.Write(hdr, ref commentRecord);

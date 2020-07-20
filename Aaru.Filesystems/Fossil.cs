@@ -103,7 +103,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Fossil filesystem", ClusterSize = hdr.blockSize, Clusters = hdr.end
+                Type        = "Fossil filesystem",
+                ClusterSize = hdr.blockSize,
+                Clusters    = hdr.end
             };
 
             if(sbLocation <= partition.End)

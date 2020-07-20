@@ -131,9 +131,11 @@ namespace Aaru.Core.Devices.Dumping
 
                 currentTry = new DumpHardwareType
                 {
-                    Software = CommonTypes.Metadata.Version.GetSoftwareType(), Manufacturer = manufacturer,
-                    Model    = model, Serial                                                = serial,
-                    Firmware = firmware
+                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
+                    Manufacturer = manufacturer,
+                    Model        = model,
+                    Serial       = serial,
+                    Firmware     = firmware
                 };
 
                 resume.Tries.Add(currentTry);
@@ -143,16 +145,20 @@ namespace Aaru.Core.Devices.Dumping
             {
                 resume = new Resume
                 {
-                    Tries     = new List<DumpHardwareType>(), CreationDate = DateTime.UtcNow,
-                    BadBlocks = new List<ulong>(),
-                    LastBlock = isTape ? 0 : blocks - 1, Tape = isTape
+                    Tries        = new List<DumpHardwareType>(),
+                    CreationDate = DateTime.UtcNow,
+                    BadBlocks    = new List<ulong>(),
+                    LastBlock    = isTape ? 0 : blocks - 1,
+                    Tape         = isTape
                 };
 
                 currentTry = new DumpHardwareType
                 {
-                    Software = CommonTypes.Metadata.Version.GetSoftwareType(), Manufacturer = manufacturer,
-                    Model    = model, Serial                                                = serial,
-                    Firmware = firmware
+                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
+                    Manufacturer = manufacturer,
+                    Model        = model,
+                    Serial       = serial,
+                    Firmware     = firmware
                 };
 
                 resume.Tries.Add(currentTry);

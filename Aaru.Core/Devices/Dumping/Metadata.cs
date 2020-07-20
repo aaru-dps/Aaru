@@ -113,7 +113,8 @@ namespace Aaru.Core.Devices.Dumping
             if(filesystems.Count > 0)
                 foreach(var filesystem in filesystems.Select(o => new
                 {
-                    o.start, o.type
+                    o.start,
+                    o.type
                 }).Distinct())
                     _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
 

@@ -110,9 +110,11 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type       = "RT-11", ClusterSize = (uint)(homeblock.cluster * 512), Clusters = homeblock.cluster,
-                VolumeName = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
-                Bootable   = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
+                Type        = "RT-11",
+                ClusterSize = (uint)(homeblock.cluster * 512),
+                Clusters    = homeblock.cluster,
+                VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
+                Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
             };
 
             information = sb.ToString();

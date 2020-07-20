@@ -48,7 +48,9 @@ namespace Aaru.Commands
         {
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "aaru host", Name = "host"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "aaru host",
+                Name        = "host"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

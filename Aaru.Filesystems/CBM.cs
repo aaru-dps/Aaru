@@ -103,7 +103,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Commodore file system", Clusters = imagePlugin.Info.Sectors, ClusterSize = 256
+                Type        = "Commodore file system",
+                Clusters    = imagePlugin.Info.Sectors,
+                ClusterSize = 256
             };
 
             if(imagePlugin.Info.Sectors == 3200)

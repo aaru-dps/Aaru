@@ -73,7 +73,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     TagsList.Add(new MediaTagModel
                     {
-                        Tag = tag, Data = data
+                        Tag  = tag,
+                        Data = data
                     });
                 }
                 catch

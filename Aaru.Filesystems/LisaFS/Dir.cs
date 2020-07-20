@@ -125,10 +125,12 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     var entV2 = new CatalogEntryV2
                     {
-                        filenameLen = buf[offset], filename = new byte[E_NAME], unknown1 = buf[offset + 0x21],
-                        fileType    = buf[offset                                                      + 0x22],
-                        unknown2    = buf[offset                                                      + 0x23],
-                        fileID      = BigEndianBitConverter.ToInt16(buf, offset                       + 0x24),
+                        filenameLen = buf[offset],
+                        filename    = new byte[E_NAME],
+                        unknown1    = buf[offset                                + 0x21],
+                        fileType    = buf[offset                                + 0x22],
+                        unknown2    = buf[offset                                + 0x23],
+                        fileID      = BigEndianBitConverter.ToInt16(buf, offset + 0x24),
                         unknown3    = new byte[16]
                     };
 
@@ -155,8 +157,12 @@ namespace Aaru.Filesystems.LisaFS
 
                     var entV3 = new CatalogEntry
                     {
-                        fileID = entV2.fileID, filename                    = new byte[32], fileType = entV2.fileType,
-                        length = (int)srecords[entV2.fileID].filesize, dtc = ext.dtc, dtm           = ext.dtm
+                        fileID   = entV2.fileID,
+                        filename = new byte[32],
+                        fileType = entV2.fileType,
+                        length   = (int)srecords[entV2.fileID].filesize,
+                        dtc      = ext.dtc,
+                        dtm      = ext.dtm
                     };
 
                     Array.Copy(entV2.filename, 0, entV3.filename, 0, entV2.filenameLen);
@@ -256,20 +262,15 @@ namespace Aaru.Filesystems.LisaFS
                             marker     = buf[offset],
                             parentID   = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
                             filename   = new byte[E_NAME],
-                            terminator = buf[offset + 0x23],
-                            fileType   = buf[offset + 0x24],
-                            unknown =
-                                buf[offset + 0x25],
-                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
-                            dtc =
-                                BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
-                            dtm =
-                                BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
-                            length =
-                                BigEndianBitConverter.ToInt32(buf, offset + 0x30),
-                            wasted =
-                                BigEndianBitConverter.ToInt32(buf, offset + 0x34),
-                            tail = new byte[8]
+                            terminator = buf[offset                                 + 0x23],
+                            fileType   = buf[offset                                 + 0x24],
+                            unknown    = buf[offset                                 + 0x25],
+                            fileID     = BigEndianBitConverter.ToInt16(buf, offset  + 0x26),
+                            dtc        = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm        = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length     = BigEndianBitConverter.ToInt32(buf, offset  + 0x30),
+                            wasted     = BigEndianBitConverter.ToInt32(buf, offset  + 0x34),
+                            tail       = new byte[8]
                         };
 
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
@@ -294,17 +295,15 @@ namespace Aaru.Filesystems.LisaFS
                             marker     = buf[offset],
                             parentID   = BigEndianBitConverter.ToUInt16(buf, offset + 0x01),
                             filename   = new byte[E_NAME],
-                            terminator = buf[offset + 0x23],
-                            fileType   = buf[offset + 0x24],
-                            unknown =
-                                buf[offset + 0x25],
-                            fileID = BigEndianBitConverter.ToInt16(buf, offset + 0x26),
-                            dtc =
-                                BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
-                            dtm =
-                                BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
-                            length = 0, wasted = 0,
-                            tail   = null
+                            terminator = buf[offset                                 + 0x23],
+                            fileType   = buf[offset                                 + 0x24],
+                            unknown    = buf[offset                                 + 0x25],
+                            fileID     = BigEndianBitConverter.ToInt16(buf, offset  + 0x26),
+                            dtc        = BigEndianBitConverter.ToUInt32(buf, offset + 0x28),
+                            dtm        = BigEndianBitConverter.ToUInt32(buf, offset + 0x2C),
+                            length     = 0,
+                            wasted     = 0,
+                            tail       = null
                         };
 
                         Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
@@ -332,9 +331,16 @@ namespace Aaru.Filesystems.LisaFS
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(), Inode = FILEID_CATALOG, Mode = 0x16D, Links = 0,
-                UID        = 0, GID                      = 0, DeviceNo          = 0, Length    = 0,
-                BlockSize  = mddf.datasize, Blocks       = 0
+                Attributes = new FileAttributes(),
+                Inode      = FILEID_CATALOG,
+                Mode       = 0x16D,
+                Links      = 0,
+                UID        = 0,
+                GID        = 0,
+                DeviceNo   = 0,
+                Length     = 0,
+                BlockSize  = mddf.datasize,
+                Blocks     = 0
             };
 
             directoryDtcCache.TryGetValue(dirId, out DateTime tmp);

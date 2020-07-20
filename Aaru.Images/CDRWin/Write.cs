@@ -78,7 +78,9 @@ namespace Aaru.DiscImages
 
             _imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             // TODO: Separate tracks
@@ -96,7 +98,9 @@ namespace Aaru.DiscImages
 
             _discImage = new CdrWinDisc
             {
-                MediaType = mediaType, Sessions = new List<Session>(), Tracks = new List<CdrWinTrack>()
+                MediaType = mediaType,
+                Sessions  = new List<Session>(),
+                Tracks    = new List<CdrWinTrack>()
             };
 
             _trackFlags = new Dictionary<byte, byte>();
@@ -452,10 +456,15 @@ namespace Aaru.DiscImages
                 foreach(var dumpData in from dump in DumpHardware from extent in dump.Extents.OrderBy(e => e.Start)
                                         select new
                                         {
-                                            dump.Manufacturer, dump.Model, dump.Firmware, dump.Serial,
+                                            dump.Manufacturer,
+                                            dump.Model,
+                                            dump.Firmware,
+                                            dump.Serial,
                                             Application        = dump.Software.Name,
-                                            ApplicationVersion = dump.Software.Version, dump.Software.OperatingSystem,
-                                            extent.Start, extent.End
+                                            ApplicationVersion = dump.Software.Version,
+                                            dump.Software.OperatingSystem,
+                                            extent.Start,
+                                            extent.End
                                         })
                 {
                     _descriptorStream.

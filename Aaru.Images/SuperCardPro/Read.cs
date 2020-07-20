@@ -87,7 +87,8 @@ namespace Aaru.DiscImages
 
                 var trk = new TrackHeader
                 {
-                    Signature = new byte[3], Entries = new TrackEntry[Header.revolutions]
+                    Signature = new byte[3],
+                    Entries   = new TrackEntry[Header.revolutions]
                 };
 
                 scpStream.Read(trk.Signature, 0, trk.Signature.Length);

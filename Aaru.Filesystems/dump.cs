@@ -193,7 +193,8 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                ClusterSize = 1024, Clusters = partition.Size / 1024
+                ClusterSize = 1024,
+                Clusters    = partition.Size / 1024
             };
 
             if(useOld)

@@ -63,12 +63,14 @@ namespace Aaru.Commands.Image
                     "--cicm-xml", "-x"
                 }, "Take metadata from existing CICM XML sidecar.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option("--comments", "Image comments.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -76,35 +78,41 @@ namespace Aaru.Commands.Image
                     "--count", "-c"
                 }, "How many sectors to convert at once.")
                 {
-                    Argument = new Argument<int>(() => 64), Required = false
+                    Argument = new Argument<int>(() => 64),
+                    Required = false
                 });
 
             Add(new Option("--creator", "Who (person) created the image?.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--drive-manufacturer",
                            "Manufacturer of the drive used to read the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--drive-model", "Model of the drive used to read the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--drive-revision",
                            "Firmware revision of the drive used to read the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--drive-serial",
                            "Serial number of the drive used to read the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -112,7 +120,8 @@ namespace Aaru.Commands.Image
                     "--force", "-f"
                 }, "Continue conversion even if sector or media tags will be lost in the process.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -121,48 +130,57 @@ namespace Aaru.Commands.Image
                            },
                            "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-barcode", "Barcode of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-lastsequence",
                            "Last media of the sequence the media represented by the image corresponds to.")
             {
-                Argument = new Argument<int>(() => 0), Required = false
+                Argument = new Argument<int>(() => 0),
+                Required = false
             });
 
             Add(new Option("--media-manufacturer", "Manufacturer of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-model", "Model of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-partnumber", "Part number of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-sequence", "Number in sequence for the media represented by the image.")
             {
-                Argument = new Argument<int>(() => 0), Required = false
+                Argument = new Argument<int>(() => 0),
+                Required = false
             });
 
             Add(new Option("--media-serial", "Serial number of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option("--media-title", "Title of the media represented by the image.")
             {
-                Argument = new Argument<string>(() => null), Required = false
+                Argument = new Argument<string>(() => null),
+                Required = false
             });
 
             Add(new Option(new[]
@@ -170,7 +188,8 @@ namespace Aaru.Commands.Image
                     "--options", "-O"
                 }, "Comma separated name=value pairs of options to pass to output image plugin.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -178,7 +197,8 @@ namespace Aaru.Commands.Image
                     "--resume-file", "-r"
                 }, "Take list of dump hardware from existing resume file.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -186,7 +206,8 @@ namespace Aaru.Commands.Image
                     "--geometry", "-g"
                 }, "Force geometry, only supported in not tape block media. Specify as C/H/S.")
                 {
-                    Argument = new Argument<string>(() => null), Required = false
+                    Argument = new Argument<string>(() => null),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -194,7 +215,8 @@ namespace Aaru.Commands.Image
                     "--fix-subchannel-position"
                 }, "Store subchannel according to the sector they describe.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -202,7 +224,8 @@ namespace Aaru.Commands.Image
                     "--fix-subchannel"
                 }, "Try to fix subchannel. Implies fixing subchannel position.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -210,7 +233,8 @@ namespace Aaru.Commands.Image
                     "--fix-subchannel-crc"
                 }, "If subchannel looks OK but CRC fails, rewrite it. Implies fixing subchannel.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -218,17 +242,22 @@ namespace Aaru.Commands.Image
                     "--generate-subchannels"
                 }, "Generates missing subchannels.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Input image path", Name = "input-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Input image path",
+                Name        = "input-path"
             });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Output image path", Name = "output-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Output image path",
+                Name        = "output-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -573,20 +602,22 @@ namespace Aaru.Commands.Image
 
             var metadata = new ImageInfo
             {
-                Application = "Aaru", ApplicationVersion = Version.GetVersion(),
-                Comments = comments ?? inputFormat.Info.Comments, Creator = creator ?? inputFormat.Info.Creator,
+                Application           = "Aaru",
+                ApplicationVersion    = Version.GetVersion(),
+                Comments              = comments              ?? inputFormat.Info.Comments,
+                Creator               = creator               ?? inputFormat.Info.Creator,
                 DriveFirmwareRevision = driveFirmwareRevision ?? inputFormat.Info.DriveFirmwareRevision,
-                DriveManufacturer = driveManufacturer ?? inputFormat.Info.DriveManufacturer,
-                DriveModel = driveModel ?? inputFormat.Info.DriveModel,
-                DriveSerialNumber = driveSerialNumber ?? inputFormat.Info.DriveSerialNumber,
-                LastMediaSequence = lastMediaSequence != 0 ? lastMediaSequence : inputFormat.Info.LastMediaSequence,
-                MediaBarcode = mediaBarcode ?? inputFormat.Info.MediaBarcode,
-                MediaManufacturer = mediaManufacturer ?? inputFormat.Info.MediaManufacturer,
-                MediaModel = mediaModel ?? inputFormat.Info.MediaModel,
-                MediaPartNumber = mediaPartNumber ?? inputFormat.Info.MediaPartNumber,
-                MediaSequence = mediaSequence != 0 ? mediaSequence : inputFormat.Info.MediaSequence,
-                MediaSerialNumber = mediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
-                MediaTitle = mediaTitle ?? inputFormat.Info.MediaTitle
+                DriveManufacturer     = driveManufacturer     ?? inputFormat.Info.DriveManufacturer,
+                DriveModel            = driveModel            ?? inputFormat.Info.DriveModel,
+                DriveSerialNumber     = driveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
+                LastMediaSequence     = lastMediaSequence != 0 ? lastMediaSequence : inputFormat.Info.LastMediaSequence,
+                MediaBarcode          = mediaBarcode      ?? inputFormat.Info.MediaBarcode,
+                MediaManufacturer     = mediaManufacturer ?? inputFormat.Info.MediaManufacturer,
+                MediaModel            = mediaModel        ?? inputFormat.Info.MediaModel,
+                MediaPartNumber       = mediaPartNumber   ?? inputFormat.Info.MediaPartNumber,
+                MediaSequence         = mediaSequence != 0 ? mediaSequence : inputFormat.Info.MediaSequence,
+                MediaSerialNumber     = mediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
+                MediaTitle            = mediaTitle        ?? inputFormat.Info.MediaTitle
             };
 
             if(!outputFormat.SetMetadata(metadata))

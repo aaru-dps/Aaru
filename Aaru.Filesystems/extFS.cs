@@ -100,13 +100,15 @@ namespace Aaru.Filesystems
 
             var extSb = new extFSSuperBlock
             {
-                inodes        = BitConverter.ToUInt32(sbSector, 0x000), zones = BitConverter.ToUInt32(sbSector, 0x004),
+                inodes        = BitConverter.ToUInt32(sbSector, 0x000),
+                zones         = BitConverter.ToUInt32(sbSector, 0x004),
                 firstfreeblk  = BitConverter.ToUInt32(sbSector, 0x008),
                 freecountblk  = BitConverter.ToUInt32(sbSector, 0x00C),
                 firstfreeind  = BitConverter.ToUInt32(sbSector, 0x010),
                 freecountind  = BitConverter.ToUInt32(sbSector, 0x014),
                 firstdatazone = BitConverter.ToUInt32(sbSector, 0x018),
-                logzonesize   = BitConverter.ToUInt32(sbSector, 0x01C), maxsize = BitConverter.ToUInt32(sbSector, 0x020)
+                logzonesize   = BitConverter.ToUInt32(sbSector, 0x01C),
+                maxsize       = BitConverter.ToUInt32(sbSector, 0x020)
             };
 
             sb.AppendLine("ext filesystem");
@@ -124,8 +126,11 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type     = "ext", FreeClusters = extSb.freecountblk, FreeClustersSpecified = true, ClusterSize = 1024,
-                Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) / 1024
+                Type                  = "ext",
+                FreeClusters          = extSb.freecountblk,
+                FreeClustersSpecified = true,
+                ClusterSize           = 1024,
+                Clusters              = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) / 1024
             };
 
             information = sb.ToString();

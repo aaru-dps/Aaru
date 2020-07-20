@@ -409,30 +409,32 @@ namespace Aaru.Partitions
 
                 var partEntry = new PartitionEntry
                 {
-                    Magic      = BigEndianBitConverter.ToUInt32(sector, 0x00),
-                    Size       = BigEndianBitConverter.ToUInt32(sector, 0x04),
-                    Checksum   = BigEndianBitConverter.ToInt32(sector, 0x08),
-                    TargetId   = BigEndianBitConverter.ToUInt32(sector, 0x0C),
-                    NextPtr    = BigEndianBitConverter.ToUInt32(sector, 0x10),
-                    Flags      = BigEndianBitConverter.ToUInt32(sector, 0x14),
-                    Reserved1  = BigEndianBitConverter.ToUInt32(sector, 0x18),
-                    Reserved2  = BigEndianBitConverter.ToUInt32(sector, 0x1C),
-                    DevFlags   = BigEndianBitConverter.ToUInt32(sector, 0x20), DriveNameLen = sector[0x24],
-                    Reserved3  = BigEndianBitConverter.ToUInt32(sector, 0x44),
-                    Reserved4  = BigEndianBitConverter.ToUInt32(sector, 0x48),
-                    Reserved5  = BigEndianBitConverter.ToUInt32(sector, 0x4C),
-                    Reserved6  = BigEndianBitConverter.ToUInt32(sector, 0x50),
-                    Reserved7  = BigEndianBitConverter.ToUInt32(sector, 0x54),
-                    Reserved8  = BigEndianBitConverter.ToUInt32(sector, 0x58),
-                    Reserved9  = BigEndianBitConverter.ToUInt32(sector, 0x5C),
-                    Reserved10 = BigEndianBitConverter.ToUInt32(sector, 0x60),
-                    Reserved11 = BigEndianBitConverter.ToUInt32(sector, 0x64),
-                    Reserved12 = BigEndianBitConverter.ToUInt32(sector, 0x68),
-                    Reserved13 = BigEndianBitConverter.ToUInt32(sector, 0x6C),
-                    Reserved14 = BigEndianBitConverter.ToUInt32(sector, 0x70),
-                    Reserved15 = BigEndianBitConverter.ToUInt32(sector, 0x74),
-                    Reserved16 = BigEndianBitConverter.ToUInt32(sector, 0x78),
-                    Reserved17 = BigEndianBitConverter.ToUInt32(sector, 0x7C), DosEnvVec = new DosEnvironmentVector
+                    Magic        = BigEndianBitConverter.ToUInt32(sector, 0x00),
+                    Size         = BigEndianBitConverter.ToUInt32(sector, 0x04),
+                    Checksum     = BigEndianBitConverter.ToInt32(sector, 0x08),
+                    TargetId     = BigEndianBitConverter.ToUInt32(sector, 0x0C),
+                    NextPtr      = BigEndianBitConverter.ToUInt32(sector, 0x10),
+                    Flags        = BigEndianBitConverter.ToUInt32(sector, 0x14),
+                    Reserved1    = BigEndianBitConverter.ToUInt32(sector, 0x18),
+                    Reserved2    = BigEndianBitConverter.ToUInt32(sector, 0x1C),
+                    DevFlags     = BigEndianBitConverter.ToUInt32(sector, 0x20),
+                    DriveNameLen = sector[0x24],
+                    Reserved3    = BigEndianBitConverter.ToUInt32(sector, 0x44),
+                    Reserved4    = BigEndianBitConverter.ToUInt32(sector, 0x48),
+                    Reserved5    = BigEndianBitConverter.ToUInt32(sector, 0x4C),
+                    Reserved6    = BigEndianBitConverter.ToUInt32(sector, 0x50),
+                    Reserved7    = BigEndianBitConverter.ToUInt32(sector, 0x54),
+                    Reserved8    = BigEndianBitConverter.ToUInt32(sector, 0x58),
+                    Reserved9    = BigEndianBitConverter.ToUInt32(sector, 0x5C),
+                    Reserved10   = BigEndianBitConverter.ToUInt32(sector, 0x60),
+                    Reserved11   = BigEndianBitConverter.ToUInt32(sector, 0x64),
+                    Reserved12   = BigEndianBitConverter.ToUInt32(sector, 0x68),
+                    Reserved13   = BigEndianBitConverter.ToUInt32(sector, 0x6C),
+                    Reserved14   = BigEndianBitConverter.ToUInt32(sector, 0x70),
+                    Reserved15   = BigEndianBitConverter.ToUInt32(sector, 0x74),
+                    Reserved16   = BigEndianBitConverter.ToUInt32(sector, 0x78),
+                    Reserved17   = BigEndianBitConverter.ToUInt32(sector, 0x7C),
+                    DosEnvVec = new DosEnvironmentVector
                     {
                         Size           = BigEndianBitConverter.ToUInt32(sector, 0x80),
                         BlockSize      = BigEndianBitConverter.ToUInt32(sector, 0x84),
@@ -585,7 +587,8 @@ namespace Aaru.Partitions
                     Reserved2  = BigEndianBitConverter.ToUInt32(sector, 0x1C),
                     DosType    = BigEndianBitConverter.ToUInt32(sector, 0x20),
                     Version    = BigEndianBitConverter.ToUInt32(sector, 0x24),
-                    PatchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28), Dnode = new DeviceNode
+                    PatchFlags = BigEndianBitConverter.ToUInt32(sector, 0x28),
+                    Dnode = new DeviceNode
                     {
                         Type       = BigEndianBitConverter.ToUInt32(sector, 0x2C),
                         Task       = BigEndianBitConverter.ToUInt32(sector, 0x30),
@@ -691,19 +694,19 @@ namespace Aaru.Partitions
 
             foreach(Partition entry in partitionEntries.Select(rdbEntry => new Partition
             {
-                Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType), Name = rdbEntry.DriveName,
-                Sequence    = sequence,
+                Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
+                Name = rdbEntry.DriveName,
+                Sequence = sequence,
                 Length = ((rdbEntry.DosEnvVec.HighCylinder + 1) - rdbEntry.DosEnvVec.LowCylinder) *
-                         rdbEntry.DosEnvVec.Surfaces                                              *
-                         rdbEntry.DosEnvVec.Bpt,
+                         rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt,
                 Start = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                         sectorOffset,
-                Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType), Scheme = Name,
+                Type = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
+                Scheme = Name,
                 Offset = ((rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt) +
                           sectorOffset) * rdb.BlockSize,
                 Size = ((rdbEntry.DosEnvVec.HighCylinder + 1) - rdbEntry.DosEnvVec.LowCylinder) *
-                       rdbEntry.DosEnvVec.Surfaces                                              *
-                       rdbEntry.DosEnvVec.Bpt                                                   * rdb.BlockSize
+                       rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt * rdb.BlockSize
             }))
             {
                 partitions.Add(entry);

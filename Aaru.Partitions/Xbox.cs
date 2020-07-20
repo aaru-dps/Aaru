@@ -89,19 +89,22 @@ namespace Aaru.Partitions
                 {
                     Description = "Content volume",
                     Size        = (ulong)table.contentLen * imagePlugin.Info.SectorSize,
-                    Length      = table.contentLen, Sequence                                   = 1,
-                    Offset      = (ulong)table.contentOff * imagePlugin.Info.SectorSize, Start = table.contentOff,
+                    Length      = table.contentLen,
+                    Sequence    = 1,
+                    Offset      = (ulong)table.contentOff * imagePlugin.Info.SectorSize,
+                    Start       = table.contentOff,
                     Scheme      = Name
                 };
 
                 var dashboardPart = new Partition
                 {
                     Description = "Dashboard volume",
-                    Size =
-                        (ulong)table.dashboardLen * imagePlugin.Info.SectorSize,
-                    Length = table.dashboardLen, Sequence                                   = 2,
-                    Offset = (ulong)table.dashboardOff * imagePlugin.Info.SectorSize, Start = table.dashboardOff,
-                    Scheme = Name
+                    Size        = (ulong)table.dashboardLen * imagePlugin.Info.SectorSize,
+                    Length      = table.dashboardLen,
+                    Sequence    = 2,
+                    Offset      = (ulong)table.dashboardOff * imagePlugin.Info.SectorSize,
+                    Start       = table.dashboardOff,
+                    Scheme      = Name
                 };
 
                 partitions.Add(contentPart);
@@ -123,9 +126,11 @@ namespace Aaru.Partitions
                     {
                         Description = "System cache",
                         Size        = MemoryUnitDataOff,
-                        Length      = (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize), Sequence = 1,
+                        Length      = (ulong)(MemoryUnitDataOff / imagePlugin.Info.SectorSize),
+                        Sequence    = 1,
                         Offset      = 0,
-                        Start       = 0, Scheme = Name
+                        Start       = 0,
+                        Scheme      = Name
                     };
 
                     var dataPart = new Partition
@@ -160,67 +165,75 @@ namespace Aaru.Partitions
                 {
                     Description = "Security sectors",
                     Size        = Xbox360SecuritySectorLen,
-                    Length      = (ulong)(Xbox360SecuritySectorLen / imagePlugin.Info.SectorSize), Sequence = 1,
+                    Length      = (ulong)(Xbox360SecuritySectorLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 1,
                     Offset      = Xbox360SecuritySectorOff,
-                    Start       = (ulong)(Xbox360SecuritySectorOff / imagePlugin.Info.SectorSize), Scheme = Name
+                    Start       = (ulong)(Xbox360SecuritySectorOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var sysCachePart = new Partition
                 {
                     Description = "System cache",
                     Size        = Xbox360SystemCacheLen,
-                    Length      = (ulong)(Xbox360SystemCacheLen / imagePlugin.Info.SectorSize), Sequence = 2,
+                    Length      = (ulong)(Xbox360SystemCacheLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 2,
                     Offset      = Xbox360SystemCacheOff,
-                    Start       = (ulong)(Xbox360SystemCacheOff / imagePlugin.Info.SectorSize), Scheme = Name
+                    Start       = (ulong)(Xbox360SystemCacheOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var gameCachePart = new Partition
                 {
                     Description = "Game cache",
                     Size        = Xbox360GameCacheLen,
-                    Length      = (ulong)(Xbox360GameCacheLen / imagePlugin.Info.SectorSize), Sequence = 3,
+                    Length      = (ulong)(Xbox360GameCacheLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 3,
                     Offset      = Xbox360GameCacheOff,
-                    Start =
-                        (ulong)(Xbox360GameCacheOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Start       = (ulong)(Xbox360GameCacheOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var sysExtPart = new Partition
                 {
-                    Description = "System volume", Size                                             = Xbox368SysExtLen,
-                    Length      = (ulong)(Xbox368SysExtLen / imagePlugin.Info.SectorSize), Sequence = 4,
+                    Description = "System volume",
+                    Size        = Xbox368SysExtLen,
+                    Length      = (ulong)(Xbox368SysExtLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 4,
                     Offset      = Xbox368SysExtOff,
-                    Start =
-                        (ulong)(Xbox368SysExtOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Start       = (ulong)(Xbox368SysExtOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var sysExt2Part = new Partition
                 {
                     Description = "System volume 2",
                     Size        = Xbox360SysExt2Len,
-                    Length      = (ulong)(Xbox360SysExt2Len / imagePlugin.Info.SectorSize), Sequence = 5,
+                    Length      = (ulong)(Xbox360SysExt2Len / imagePlugin.Info.SectorSize),
+                    Sequence    = 5,
                     Offset      = Xbox360SysExt2Off,
-                    Start =
-                        (ulong)(Xbox360SysExt2Off / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Start       = (ulong)(Xbox360SysExt2Off / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var xbox1Part = new Partition
                 {
-                    Description = "Xbox backwards compatibility", Size                              = Xbox360CompatLen,
-                    Length      = (ulong)(Xbox360CompatLen / imagePlugin.Info.SectorSize), Sequence = 6,
+                    Description = "Xbox backwards compatibility",
+                    Size        = Xbox360CompatLen,
+                    Length      = (ulong)(Xbox360CompatLen / imagePlugin.Info.SectorSize),
+                    Sequence    = 6,
                     Offset      = Xbox360CompatOff,
-                    Start =
-                        (ulong)(Xbox360CompatOff / imagePlugin.Info.SectorSize),
-                    Scheme = Name
+                    Start       = (ulong)(Xbox360CompatOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 var dataPart = new Partition
                 {
-                    Description = "Data volume", Sequence = 7,
+                    Description = "Data volume",
+                    Sequence    = 7,
                     Offset      = Xbox360DataOff,
-                    Start       = (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize), Scheme = Name
+                    Start       = (ulong)(Xbox360DataOff / imagePlugin.Info.SectorSize),
+                    Scheme      = Name
                 };
 
                 dataPart.Length = imagePlugin.Info.Sectors - dataPart.Start;

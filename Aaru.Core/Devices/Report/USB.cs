@@ -42,8 +42,11 @@ namespace Aaru.Core.Devices.Report
         {
             var usbReport = new Usb
             {
-                Manufacturer = _dev.UsbManufacturerString, Product = _dev.UsbProductString,
-                ProductID    = _dev.UsbProductId, VendorID         = _dev.UsbVendorId, Descriptors = _dev.UsbDescriptors
+                Manufacturer = _dev.UsbManufacturerString,
+                Product      = _dev.UsbProductString,
+                ProductID    = _dev.UsbProductId,
+                VendorID     = _dev.UsbVendorId,
+                Descriptors  = _dev.UsbDescriptors
             };
 
             return usbReport;

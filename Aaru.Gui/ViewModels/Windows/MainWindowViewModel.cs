@@ -267,7 +267,8 @@ namespace Aaru.Gui.ViewModels.Windows
                                 if(!dev.IsRemovable)
                                     deviceModel.Media.Add(new MediaModel
                                     {
-                                        NonRemovable = true, Name = "Non-removable device commands not yet implemented"
+                                        NonRemovable = true,
+                                        Name         = "Non-removable device commands not yet implemented"
                                     });
                                 else
                                 {
@@ -277,7 +278,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                     if(!scsiInfo.MediaInserted)
                                         deviceModel.Media.Add(new MediaModel
                                         {
-                                            NoMediaInserted = true, Icon = _ejectIcon, Name = "No media inserted"
+                                            NoMediaInserted = true,
+                                            Icon            = _ejectIcon,
+                                            Name            = "No media inserted"
                                         });
                                     else
                                     {
@@ -510,7 +513,8 @@ namespace Aaru.Gui.ViewModels.Windows
             // TODO: Extensions
             var dlgOpenImage = new OpenFileDialog
             {
-                Title = "Choose image to open", AllowMultiple = false
+                Title         = "Choose image to open",
+                AllowMultiple = false
             };
 
             string[] result = await dlgOpenImage.ShowAsync(_view);
@@ -561,14 +565,16 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     var imageModel = new ImageModel
                     {
-                        Path = result[0], Icon = _assets.Exists(mediaResource)
-                                                     ? new Bitmap(_assets.Open(mediaResource))
-                                                     : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
-                                                         ? _genericHddIcon
-                                                         : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
-                                                             ? _genericOpticalIcon
-                                                             : _genericFolderIcon,
-                        FileName  = Path.GetFileName(result[0]), Image = imageFormat,
+                        Path = result[0],
+                        Icon = _assets.Exists(mediaResource)
+                                   ? new Bitmap(_assets.Open(mediaResource))
+                                   : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+                                       ? _genericHddIcon
+                                       : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                                           ? _genericOpticalIcon
+                                           : _genericFolderIcon,
+                        FileName  = Path.GetFileName(result[0]),
+                        Image     = imageFormat,
                         ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view),
                         Filter    = inputFilter
                     };
@@ -606,7 +612,8 @@ namespace Aaru.Gui.ViewModels.Windows
                                 var partitionModel = new PartitionModel
                                 {
                                     // TODO: Add icons to partition types
-                                    Name      = $"{partition.Name} ({partition.Type})", Partition = partition,
+                                    Name      = $"{partition.Name} ({partition.Type})",
+                                    Partition = partition,
                                     ViewModel = new PartitionViewModel(partition)
                                 };
 
@@ -642,8 +649,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                                 VolumeName =
                                                     plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
                                                         : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                                Filesystem = plugin, ReadOnlyFilesystem = fsPlugin,
-                                                ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
+                                                Filesystem = plugin,
+                                                ReadOnlyFilesystem = fsPlugin,
+                                                ViewModel = new FileSystemViewModel(plugin.XmlFsType, information)
                                             };
 
                                             // TODO: Trap expanding item
@@ -651,7 +659,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                             {
                                                 filesystemModel.Roots.Add(new SubdirectoryModel
                                                 {
-                                                    Name = "/", Path = "", Plugin = fsPlugin
+                                                    Name   = "/",
+                                                    Path   = "",
+                                                    Plugin = fsPlugin
                                                 });
 
                                                 Statistics.AddCommand("ls");
@@ -673,8 +683,9 @@ namespace Aaru.Gui.ViewModels.Windows
                     {
                         var wholePart = new CommonTypes.Partition
                         {
-                            Name = "Whole device", Length = imageFormat.Info.Sectors,
-                            Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
+                            Name   = "Whole device",
+                            Length = imageFormat.Info.Sectors,
+                            Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                         };
 
                         Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
@@ -705,8 +716,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                     {
                                         VolumeName = plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
                                                          : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                        Filesystem = plugin, ReadOnlyFilesystem = fsPlugin,
-                                        ViewModel  = new FileSystemViewModel(plugin.XmlFsType, information)
+                                        Filesystem         = plugin,
+                                        ReadOnlyFilesystem = fsPlugin,
+                                        ViewModel          = new FileSystemViewModel(plugin.XmlFsType, information)
                                     };
 
                                     // TODO: Trap expanding item
@@ -714,7 +726,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                     {
                                         filesystemModel.Roots.Add(new SubdirectoryModel
                                         {
-                                            Name = "/", Path = "", Plugin = fsPlugin
+                                            Name   = "/",
+                                            Path   = "",
+                                            Plugin = fsPlugin
                                         });
 
                                         Statistics.AddCommand("ls");
@@ -778,7 +792,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     var deviceModel = new DeviceModel
                     {
-                        Icon = _genericHddIcon, Name = $"{device.Vendor} {device.Model} ({device.Bus})",
+                        Icon = _genericHddIcon,
+                        Name = $"{device.Vendor} {device.Model} ({device.Bus})",
                         Path = device.Path
                     };
 

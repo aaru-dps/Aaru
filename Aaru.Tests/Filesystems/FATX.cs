@@ -57,7 +57,9 @@ namespace Aaru.Tests.Filesystems
 
             wholePart = new Partition
             {
-                Name = "Whole device", Length = image.Info.Sectors, Size = image.Info.Sectors * image.Info.SectorSize
+                Name   = "Whole device",
+                Length = image.Info.Sectors,
+                Size   = image.Info.Sectors * image.Info.SectorSize
             };
 
             Errno error = fs.Mount(image, wholePart, null, null, null);

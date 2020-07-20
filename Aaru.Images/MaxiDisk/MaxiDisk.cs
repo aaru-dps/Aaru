@@ -47,14 +47,23 @@ namespace Aaru.DiscImages
 
         public MaxiDisk() => imageInfo = new ImageInfo
         {
-            ReadableSectorTags    = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
-            HasPartitions         = false, HasSessions                           = false, Application = "MAXI Disk",
+            ReadableSectorTags    = new List<SectorTagType>(),
+            ReadableMediaTags     = new List<MediaTagType>(),
+            HasPartitions         = false,
+            HasSessions           = false,
+            Application           = "MAXI Disk",
             Creator               = null,
-            Comments              = null, MediaManufacturer = null, MediaModel = null,
+            Comments              = null,
+            MediaManufacturer     = null,
+            MediaModel            = null,
             MediaSerialNumber     = null,
-            MediaBarcode          = null, MediaPartNumber = null, MediaSequence = 0,
+            MediaBarcode          = null,
+            MediaPartNumber       = null,
+            MediaSequence         = 0,
             LastMediaSequence     = 0,
-            DriveManufacturer     = null, DriveModel = null, DriveSerialNumber = null,
+            DriveManufacturer     = null,
+            DriveModel            = null,
+            DriveSerialNumber     = null,
             DriveFirmwareRevision = null
         };
     }

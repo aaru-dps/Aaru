@@ -82,11 +82,13 @@ namespace Aaru.Core.Devices.Report
                             Capacity       = dsh.Value.descriptors[i].capacity,
                             DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
                             Description    = dsh.Value.descriptors[i].description,
-                            Duplicate      = dsh.Value.descriptors[i].duplicate, Name = dsh.Value.descriptors[i].name,
+                            Duplicate      = dsh.Value.descriptors[i].duplicate,
+                            Name           = dsh.Value.descriptors[i].name,
                             Organization   = dsh.Value.descriptors[i].organization,
                             PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
                             SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
-                            Tracks         = dsh.Value.descriptors[i].tracks, Width = dsh.Value.descriptors[i].width,
+                            Tracks         = dsh.Value.descriptors[i].tracks,
+                            Width          = dsh.Value.descriptors[i].width,
                             Writable       = dsh.Value.descriptors[i].writable
                         };
 
@@ -111,9 +113,12 @@ namespace Aaru.Core.Devices.Report
             {
                 array2[i] = new SscSupportedMedia
                 {
-                    Description  = mtsh.Value.descriptors[i].description, Length = mtsh.Value.descriptors[i].length,
-                    MediumType   = mtsh.Value.descriptors[i].mediumType, Name    = mtsh.Value.descriptors[i].name,
-                    Organization = mtsh.Value.descriptors[i].organization, Width = mtsh.Value.descriptors[i].width
+                    Description  = mtsh.Value.descriptors[i].description,
+                    Length       = mtsh.Value.descriptors[i].length,
+                    MediumType   = mtsh.Value.descriptors[i].mediumType,
+                    Name         = mtsh.Value.descriptors[i].name,
+                    Organization = mtsh.Value.descriptors[i].organization,
+                    Width        = mtsh.Value.descriptors[i].width
                 };
 
                 if(mtsh.Value.descriptors[i].densityCodes == null)
@@ -192,11 +197,13 @@ namespace Aaru.Core.Devices.Report
                             Capacity       = dsh.Value.descriptors[i].capacity,
                             DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
                             Description    = dsh.Value.descriptors[i].description,
-                            Duplicate      = dsh.Value.descriptors[i].duplicate, Name = dsh.Value.descriptors[i].name,
+                            Duplicate      = dsh.Value.descriptors[i].duplicate,
+                            Name           = dsh.Value.descriptors[i].name,
                             Organization   = dsh.Value.descriptors[i].organization,
                             PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
                             SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
-                            Tracks         = dsh.Value.descriptors[i].tracks, Width = dsh.Value.descriptors[i].width,
+                            Tracks         = dsh.Value.descriptors[i].tracks,
+                            Width          = dsh.Value.descriptors[i].width,
                             Writable       = dsh.Value.descriptors[i].writable
                         };
 
@@ -221,7 +228,8 @@ namespace Aaru.Core.Devices.Report
                         {
                             Description  = mtsh.Value.descriptors[i].description,
                             Length       = mtsh.Value.descriptors[i].length,
-                            MediumType   = mtsh.Value.descriptors[i].mediumType, Name = mtsh.Value.descriptors[i].name,
+                            MediumType   = mtsh.Value.descriptors[i].mediumType,
+                            Name         = mtsh.Value.descriptors[i].name,
                             Organization = mtsh.Value.descriptors[i].organization,
                             Width        = mtsh.Value.descriptors[i].width
                         };

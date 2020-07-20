@@ -153,11 +153,13 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters     = (ulong)afsSb.num_blocks, ClusterSize = afsSb.block_size,
-                Dirty        = false,
-                FreeClusters = (ulong)(afsSb.num_blocks - afsSb.used_blocks), FreeClustersSpecified = true,
-                Type         = "AtheOS filesystem",
-                VolumeName   = StringHandlers.CToString(afsSb.name, Encoding)
+                Clusters              = (ulong)afsSb.num_blocks,
+                ClusterSize           = afsSb.block_size,
+                Dirty                 = false,
+                FreeClusters          = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
+                FreeClustersSpecified = true,
+                Type                  = "AtheOS filesystem",
+                VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
             };
         }
 

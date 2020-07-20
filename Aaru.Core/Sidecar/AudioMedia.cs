@@ -58,11 +58,16 @@ namespace Aaru.Core
             {
                 new AudioMediaType
                 {
-                    Checksums = imgChecksums.ToArray(), Image = new ImageType
+                    Checksums = imgChecksums.ToArray(),
+                    Image = new ImageType
                     {
-                        format = image.Format, offset = 0, offsetSpecified = true, Value = Path.GetFileName(imagePath)
+                        format          = image.Format,
+                        offset          = 0,
+                        offsetSpecified = true,
+                        Value           = Path.GetFileName(imagePath)
                     },
-                    Size = (ulong)fi.Length, Sequence = new SequenceType
+                    Size = (ulong)fi.Length,
+                    Sequence = new SequenceType
                     {
                         MediaTitle = image.Info.MediaTitle
                     }

@@ -132,7 +132,9 @@ namespace Aaru.DiscImages
 
                             var newCuesheetV1 = new NeroV1Cuesheet
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength, Entries = new List<NeroV1CueEntry>()
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Entries   = new List<NeroV1CueEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[8];
@@ -190,7 +192,9 @@ namespace Aaru.DiscImages
 
                             var newCuesheetV2 = new NeroV2Cuesheet
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength, Entries = new List<NeroV2CueEntry>()
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Entries   = new List<NeroV2CueEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[8];
@@ -240,7 +244,8 @@ namespace Aaru.DiscImages
 
                             neroDaov1 = new NeroV1Dao
                             {
-                                ChunkId = chunkId, ChunkSizeBe = chunkLength
+                                ChunkId     = chunkId,
+                                ChunkSizeBe = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[22];
@@ -325,10 +330,16 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack = entry.EndOfTrack, Isrc = entry.Isrc,
-                                    Length = entry.EndOfTrack - entry.Index0, Mode = entry.Mode, Offset = entry.Index0,
-                                    SectorSize = entry.SectorSize, StartLba = currentSector, Index0 = entry.Index0,
-                                    Index1 = entry.Index1, Sequence = currenttrack
+                                    EndOfTrack = entry.EndOfTrack,
+                                    Isrc       = entry.Isrc,
+                                    Length     = entry.EndOfTrack - entry.Index0,
+                                    Mode       = entry.Mode,
+                                    Offset     = entry.Index0,
+                                    SectorSize = entry.SectorSize,
+                                    StartLba   = currentSector,
+                                    Index0     = entry.Index0,
+                                    Index1     = entry.Index1,
+                                    Sequence   = currenttrack
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
@@ -350,7 +361,8 @@ namespace Aaru.DiscImages
 
                             neroDaov2 = new NeroV2Dao
                             {
-                                ChunkId = chunkId, ChunkSizeBe = chunkLength
+                                ChunkId     = chunkId,
+                                ChunkSizeBe = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[22];
@@ -435,10 +447,16 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack = entry.EndOfTrack, Isrc = entry.Isrc,
-                                    Length = entry.EndOfTrack - entry.Index0, Mode = entry.Mode, Offset = entry.Index0,
-                                    SectorSize = entry.SectorSize, StartLba = currentSector, Index0 = entry.Index0,
-                                    Index1 = entry.Index1, Sequence = currenttrack
+                                    EndOfTrack = entry.EndOfTrack,
+                                    Isrc       = entry.Isrc,
+                                    Length     = entry.EndOfTrack - entry.Index0,
+                                    Mode       = entry.Mode,
+                                    Offset     = entry.Index0,
+                                    SectorSize = entry.SectorSize,
+                                    StartLba   = currentSector,
+                                    Index0     = entry.Index0,
+                                    Index1     = entry.Index1,
+                                    Sequence   = currenttrack
                                 };
 
                                 neroTrack.Sectors = neroTrack.Length / entry.SectorSize;
@@ -460,7 +478,9 @@ namespace Aaru.DiscImages
 
                             neroCdtxt = new NeroCdText
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength, Packs = new List<NeroCdTextPack>()
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Packs     = new List<NeroCdTextPack>()
                             };
 
                             byte[] tmpbuffer = new byte[18];
@@ -511,7 +531,9 @@ namespace Aaru.DiscImages
 
                             neroTaov1 = new NeroV1Tao
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength, Tracks = new List<NeroV1TaoEntry>()
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Tracks    = new List<NeroV1TaoEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[20];
@@ -551,10 +573,15 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack = entry.Offset + entry.Length, Isrc = new byte[12],
-                                    Length     = entry.Length, Mode                = entry.Mode, Offset = entry.Offset,
-                                    SectorSize = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode),
-                                    StartLba   = entry.StartLba, UseLbaForIndex = true, Sequence = currenttrack
+                                    EndOfTrack     = entry.Offset + entry.Length,
+                                    Isrc           = new byte[12],
+                                    Length         = entry.Length,
+                                    Mode           = entry.Mode,
+                                    Offset         = entry.Offset,
+                                    SectorSize     = NeroTrackModeToBytesPerSector((DaoMode)entry.Mode),
+                                    StartLba       = entry.StartLba,
+                                    UseLbaForIndex = true,
+                                    Sequence       = currenttrack
                                 };
 
                                 neroTrack.Sectors =
@@ -577,7 +604,9 @@ namespace Aaru.DiscImages
 
                             neroTaov2 = new NeroV2Tao
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength, Tracks = new List<NeroV2TaoEntry>()
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength,
+                                Tracks    = new List<NeroV2TaoEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[32];
@@ -621,8 +650,11 @@ namespace Aaru.DiscImages
 
                                 var neroTrack = new NeroTrack
                                 {
-                                    EndOfTrack     = entry.Offset + entry.Length, Isrc = new byte[12],
-                                    Length         = entry.Length, Mode = entry.Mode, Offset = entry.Offset,
+                                    EndOfTrack     = entry.Offset + entry.Length,
+                                    Isrc           = new byte[12],
+                                    Length         = entry.Length,
+                                    Mode           = entry.Mode,
+                                    Offset         = entry.Offset,
                                     UseLbaForIndex = true
                                 };
 
@@ -667,7 +699,8 @@ namespace Aaru.DiscImages
 
                             neroMediaTyp = new NeroMediaType
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
@@ -689,7 +722,8 @@ namespace Aaru.DiscImages
 
                             neroDiscInfo = new NeroDiscInformation
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
@@ -709,7 +743,8 @@ namespace Aaru.DiscImages
 
                             neroRelo = new NeroReloChunk
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[4];
@@ -729,7 +764,8 @@ namespace Aaru.DiscImages
 
                             neroToc = new NeroTocChunk
                             {
-                                ChunkId = chunkId, ChunkSize = chunkLength
+                                ChunkId   = chunkId,
+                                ChunkSize = chunkLength
                             };
 
                             byte[] tmpbuffer = new byte[2];
@@ -958,7 +994,8 @@ namespace Aaru.DiscImages
                     if(currentsessioncurrenttrack == 1)
                         currentsessionstruct = new Session
                         {
-                            SessionSequence = currentsession, StartSector = track.TrackStartSector,
+                            SessionSequence = currentsession,
+                            StartSector     = track.TrackStartSector,
                             StartTrack      = track.TrackSequence
                         };
 
@@ -990,9 +1027,12 @@ namespace Aaru.DiscImages
 
                     var partition = new Partition
                     {
-                        Description = $"Track {track.TrackSequence}", Size = neroTrack.EndOfTrack - neroTrack.Index1,
-                        Name        = StringHandlers.CToString(neroTrack.Isrc), Sequence = partitionSequence,
-                        Offset      = partitionStartByte, Start = (ulong)track.Indexes[1],
+                        Description = $"Track {track.TrackSequence}",
+                        Size        = neroTrack.EndOfTrack - neroTrack.Index1,
+                        Name        = StringHandlers.CToString(neroTrack.Isrc),
+                        Sequence    = partitionSequence,
+                        Offset      = partitionStartByte,
+                        Start       = (ulong)track.Indexes[1],
                         Type        = NeroTrackModeToTrackType((DaoMode)neroTrack.Mode).ToString()
                     };
 

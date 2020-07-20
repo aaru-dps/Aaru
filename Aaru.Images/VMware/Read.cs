@@ -150,9 +150,12 @@ namespace Aaru.DiscImages
 
                         var newExtent = new VMwareExtent
                         {
-                            Access  = "RW", Filter = extentFilter, Filename = extentFilter.GetFilename(),
-                            Offset  = 0,
-                            Sectors = extHdrCow.sectors, Type = "SPARSE"
+                            Access   = "RW",
+                            Filter   = extentFilter,
+                            Filename = extentFilter.GetFilename(),
+                            Offset   = 0,
+                            Sectors  = extHdrCow.sectors,
+                            Type     = "SPARSE"
                         };
 
                         AaruConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,

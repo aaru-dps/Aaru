@@ -150,15 +150,20 @@ namespace Aaru.Devices.Remote
 
             var clientHello = new AaruPacketHello
             {
-                application = "Aaru", version = Version.GetVersion(), maxProtocol = Consts.MaxProtocol,
+                application = "Aaru",
+                version     = Version.GetVersion(),
+                maxProtocol = Consts.MaxProtocol,
                 sysname     = DetectOS.GetPlatformName(DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
-                release     = DetectOS.GetVersion(), machine = RuntimeInformation.ProcessArchitecture.ToString(), hdr =
-                    new AaruPacketHeader
-                    {
-                        remote_id  = Consts.RemoteId, packet_id                       = Consts.PacketId,
-                        len        = (uint)Marshal.SizeOf<AaruPacketHello>(), version = Consts.PacketVersion,
-                        packetType = AaruPacketType.Hello
-                    }
+                release     = DetectOS.GetVersion(),
+                machine     = RuntimeInformation.ProcessArchitecture.ToString(),
+                hdr = new AaruPacketHeader
+                {
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketHello>(),
+                    version    = Consts.PacketVersion,
+                    packetType = AaruPacketType.Hello
+                }
             };
 
             buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
@@ -188,8 +193,10 @@ namespace Aaru.Devices.Remote
                 {
                     hdr = new AaruPacketHeader
                     {
-                        remote_id  = Consts.RemoteId, packet_id                            = Consts.PacketId,
-                        len        = (uint)Marshal.SizeOf<AaruPacketCmdAmIRoot>(), version = Consts.PacketVersion,
+                        remote_id  = Consts.RemoteId,
+                        packet_id  = Consts.PacketId,
+                        len        = (uint)Marshal.SizeOf<AaruPacketCmdAmIRoot>(),
+                        version    = Consts.PacketVersion,
                         packetType = AaruPacketType.CommandAmIRoot
                     }
                 };
@@ -264,8 +271,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                    = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCommandListDevices>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCommandListDevices>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandListDevices
                 }
             };
@@ -372,8 +381,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                   = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCommandOpenDevice>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCommandOpenDevice>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandOpen
                 },
                 device_path = devicePath
@@ -460,10 +471,13 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id = Consts.PacketId, version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandScsi
                 },
-                direction = (int)direction, timeout = timeout * 1000
+                direction = (int)direction,
+                timeout   = timeout * 1000
             };
 
             if(cdb != null)
@@ -556,11 +570,16 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id = Consts.PacketId, version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandAtaChs
                 },
-                registers      = registers, protocol     = (byte)protocol, transferRegister = (byte)transferRegister,
-                transferBlocks = transferBlocks, timeout = timeout * 1000
+                registers        = registers,
+                protocol         = (byte)protocol,
+                transferRegister = (byte)transferRegister,
+                transferBlocks   = transferBlocks,
+                timeout          = timeout * 1000
             };
 
             if(buffer != null)
@@ -646,11 +665,16 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id = Consts.PacketId, version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandAtaLba28
                 },
-                registers      = registers, protocol     = (byte)protocol, transferRegister = (byte)transferRegister,
-                transferBlocks = transferBlocks, timeout = timeout * 1000
+                registers        = registers,
+                protocol         = (byte)protocol,
+                transferRegister = (byte)transferRegister,
+                transferBlocks   = transferBlocks,
+                timeout          = timeout * 1000
             };
 
             if(buffer != null)
@@ -737,11 +761,16 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id = Consts.PacketId, version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandAtaLba48
                 },
-                registers      = registers, protocol     = (byte)protocol, transferRegister = (byte)transferRegister,
-                transferBlocks = transferBlocks, timeout = timeout * 1000
+                registers        = registers,
+                protocol         = (byte)protocol,
+                transferRegister = (byte)transferRegister,
+                transferBlocks   = transferBlocks,
+                timeout          = timeout * 1000
             };
 
             if(buffer != null)
@@ -828,11 +857,19 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id = Consts.PacketId, version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandAtaLba48
                 },
-                command  = command, write       = write, application = isApplication, flags = flags,
-                argument = argument, block_size = blockSize, blocks  = blocks, timeout      = timeout * 1000
+                command     = command,
+                write       = write,
+                application = isApplication,
+                flags       = flags,
+                argument    = argument,
+                block_size  = blockSize,
+                blocks      = blocks,
+                timeout     = timeout * 1000
             };
 
             if(buffer != null)
@@ -916,8 +953,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                  = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetDeviceType>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetDeviceType>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandGetType
                 }
             };
@@ -988,8 +1027,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                      = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetSdhciRegisters>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetSdhciRegisters>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandGetSdhciRegisters
                 }
             };
@@ -1104,8 +1145,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                               = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetUsbData>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetUsbData>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandGetUsbData
                 }
             };
@@ -1188,8 +1231,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                    = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetFireWireData>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetFireWireData>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandGetFireWireData
                 }
             };
@@ -1267,8 +1312,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                                  = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetPcmciaData>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdGetPcmciaData>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandGetPcmciaData
                 }
             };
@@ -1358,8 +1405,10 @@ namespace Aaru.Devices.Remote
             {
                 hdr = new AaruPacketHeader
                 {
-                    remote_id  = Consts.RemoteId, packet_id                          = Consts.PacketId,
-                    len        = (uint)Marshal.SizeOf<AaruPacketCmdClose>(), version = Consts.PacketVersion,
+                    remote_id  = Consts.RemoteId,
+                    packet_id  = Consts.PacketId,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdClose>(),
+                    version    = Consts.PacketVersion,
                     packetType = AaruPacketType.CommandCloseDevice
                 }
             };

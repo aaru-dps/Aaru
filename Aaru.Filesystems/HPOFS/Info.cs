@@ -198,10 +198,12 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters               = mib.sectors / bpb.spc, ClusterSize = (uint)(bpb.bps * bpb.spc),
+                Clusters               = mib.sectors / bpb.spc,
+                ClusterSize            = (uint)(bpb.bps * bpb.spc),
                 CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
                 CreationDateSpecified  = true,
-                DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding), Type = "HPOFS",
+                DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
+                Type                   = "HPOFS",
                 VolumeName             = StringHandlers.SpacePaddedToString(mib.volumeLabel, Encoding),
                 VolumeSerial           = $"{mib.serial:X8}",
                 SystemIdentifier       = StringHandlers.SpacePaddedToString(bpb.oem_name)

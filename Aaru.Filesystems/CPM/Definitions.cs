@@ -61,7 +61,8 @@ namespace Aaru.Filesystems.CPM
                     {
                         def.side1 = new Side
                         {
-                            sideId = 0, sectorIds = new int[def.sectorsPerTrack]
+                            sideId    = 0,
+                            sectorIds = new int[def.sectorsPerTrack]
                         };
 
                         for(int i = 0; i < def.sectorsPerTrack; i++)
@@ -75,7 +76,8 @@ namespace Aaru.Filesystems.CPM
                     {
                         def.side2 = new Side
                         {
-                            sideId = 1, sectorIds = new int[def.sectorsPerTrack]
+                            sideId    = 1,
+                            sectorIds = new int[def.sectorsPerTrack]
                         };
 
                         for(int i = 0; i < def.sectorsPerTrack; i++)

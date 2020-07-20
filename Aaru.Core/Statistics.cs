@@ -86,7 +86,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "analyze" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "analyze", Synchronized = true
+                                        Name         = "analyze",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Analyze;
@@ -99,7 +100,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "checksum" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "checksum", Synchronized = true
+                                        Name         = "checksum",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Checksum;
@@ -112,7 +114,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "compare" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "compare", Synchronized = true
+                                        Name         = "compare",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Compare;
@@ -125,7 +128,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "convert-image" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "convert-image", Synchronized = true
+                                        Name         = "convert-image",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.ConvertImage;
@@ -138,7 +142,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "create-sidecar", Synchronized = true
+                                        Name         = "create-sidecar",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.CreateSidecar;
@@ -151,7 +156,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "decode" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "decode", Synchronized = true
+                                        Name         = "decode",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Decode;
@@ -164,7 +170,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "device-info" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "device-info", Synchronized = true
+                                        Name         = "device-info",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.DeviceInfo;
@@ -177,7 +184,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "device-report" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "device-report", Synchronized = true
+                                        Name         = "device-report",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.DeviceReport;
@@ -190,7 +198,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "dump-media" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "dump-media", Synchronized = true
+                                        Name         = "dump-media",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.DumpMedia;
@@ -203,7 +212,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "entropy" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "entropy", Synchronized = true
+                                        Name         = "entropy",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Entropy;
@@ -216,7 +226,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "extract-files" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "extract-files", Synchronized = true
+                                        Name         = "extract-files",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.ExtractFiles;
@@ -229,7 +240,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "formats" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "formats", Synchronized = true
+                                        Name         = "formats",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Formats;
@@ -242,7 +254,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "image-info" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "image-info", Synchronized = true
+                                        Name         = "image-info",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.ImageInfo;
@@ -255,7 +268,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "list-devices" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "list-devices", Synchronized = true
+                                        Name         = "list-devices",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.ListDevices;
@@ -268,7 +282,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "list-encodings", Synchronized = true
+                                        Name         = "list-encodings",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.ListEncodings;
@@ -280,7 +295,8 @@ namespace Aaru.Core
                                 Command command = ctx.Commands.FirstOrDefault(c => c.Name == "ls" && c.Synchronized) ??
                                                   new Command
                                                   {
-                                                      Name = "ls", Synchronized = true
+                                                      Name         = "ls",
+                                                      Synchronized = true
                                                   };
 
                                 command.Count += (ulong)allStats.Commands.Ls;
@@ -293,7 +309,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "media-info" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "media-info", Synchronized = true
+                                        Name         = "media-info",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.MediaInfo;
@@ -306,7 +323,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "media-scan" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "media-scan", Synchronized = true
+                                        Name         = "media-scan",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.MediaScan;
@@ -319,7 +337,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "printhex" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "printhex", Synchronized = true
+                                        Name         = "printhex",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.PrintHex;
@@ -332,7 +351,8 @@ namespace Aaru.Core
                                     ctx.Commands.FirstOrDefault(c => c.Name == "verify" && c.Synchronized) ??
                                     new Command
                                     {
-                                        Name = "verify", Synchronized = true
+                                        Name         = "verify",
+                                        Synchronized = true
                                     };
 
                                 command.Count += (ulong)allStats.Commands.Verify;
@@ -352,7 +372,8 @@ namespace Aaru.Core
                                                                              c.Version == operatingSystem.version &&
                                                                              c.Synchronized) ?? new OperatingSystem
                                     {
-                                        Name         = operatingSystem.name, Version = operatingSystem.version,
+                                        Name         = operatingSystem.name,
+                                        Version      = operatingSystem.version,
                                         Synchronized = true
                                     };
 
@@ -370,7 +391,8 @@ namespace Aaru.Core
                                     ctx.Versions.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
                                     new Version
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -387,7 +409,8 @@ namespace Aaru.Core
                                     ctx.Filesystems.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
                                     new Filesystem
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -404,7 +427,8 @@ namespace Aaru.Core
                                     ctx.Partitions.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
                                     new Partition
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -421,7 +445,8 @@ namespace Aaru.Core
                                     ctx.Filesystems.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
                                     new Filesystem
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -438,7 +463,8 @@ namespace Aaru.Core
                                     ctx.MediaFormats.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
                                     new MediaFormat
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -454,7 +480,8 @@ namespace Aaru.Core
                                 Filter existing =
                                     ctx.Filters.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ?? new Filter
                                     {
-                                        Name = nvs.name, Synchronized = true
+                                        Name         = nvs.name,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)nvs.Value;
@@ -471,8 +498,11 @@ namespace Aaru.Core
 
                                 ctx.SeenDevices.Add(new DeviceStat
                                 {
-                                    Bus      = device.Bus, Manufacturer = device.Manufacturer, Model = device.Model,
-                                    Revision = device.Revision, Synchronized = true
+                                    Bus          = device.Bus,
+                                    Manufacturer = device.Manufacturer,
+                                    Model        = device.Model,
+                                    Revision     = device.Revision,
+                                    Synchronized = true
                                 });
                             }
 
@@ -486,7 +516,9 @@ namespace Aaru.Core
                                     ctx.Medias.FirstOrDefault(c => c.Type == media.type && c.Real == media.real &&
                                                                    c.Synchronized) ?? new Database.Models.Media
                                     {
-                                        Type = media.type, Real = media.real, Synchronized = true
+                                        Type         = media.type,
+                                        Real         = media.real,
+                                        Synchronized = true
                                     };
 
                                 existing.Count += (ulong)media.Value;
@@ -506,13 +538,17 @@ namespace Aaru.Core
 
                 ctx.OperatingSystems.Add(new OperatingSystem
                 {
-                    Name    = DetectOS.GetRealPlatformID().ToString(), Synchronized = false,
-                    Version = DetectOS.GetVersion(), Count                          = 1
+                    Name         = DetectOS.GetRealPlatformID().ToString(),
+                    Synchronized = false,
+                    Version      = DetectOS.GetVersion(),
+                    Count        = 1
                 });
 
                 ctx.Versions.Add(new Version
                 {
-                    Name = CommonTypes.Interop.Version.GetVersion(), Synchronized = false, Count = 1
+                    Name         = CommonTypes.Interop.Version.GetVersion(),
+                    Synchronized = false,
+                    Count        = 1
                 });
 
                 ctx.SaveChanges();
@@ -581,7 +617,8 @@ namespace Aaru.Core
                                                       Distinct())
                                 dto.Commands.Add(new NameValueStats
                                 {
-                                    name = nvs, Value = ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                    name  = nvs,
+                                    Value = ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs)
                                 });
                         }
 
@@ -593,7 +630,8 @@ namespace Aaru.Core
                                                       Distinct())
                                 dto.Filesystems.Add(new NameValueStats
                                 {
-                                    name = nvs, Value = ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                    name  = nvs,
+                                    Value = ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs)
                                 });
                         }
 
@@ -605,7 +643,8 @@ namespace Aaru.Core
                             )
                                 dto.Filters.Add(new NameValueStats
                                 {
-                                    name = nvs, Value = ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                    name  = nvs,
+                                    Value = ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs)
                                 });
                         }
 
@@ -630,7 +669,8 @@ namespace Aaru.Core
                                                       Distinct())
                                 dto.Partitions.Add(new NameValueStats
                                 {
-                                    name = nvs, Value = ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                    name  = nvs,
+                                    Value = ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs)
                                 });
                         }
 
@@ -642,7 +682,8 @@ namespace Aaru.Core
                                                       Distinct())
                                 dto.Versions.Add(new NameValueStats
                                 {
-                                    name = nvs, Value = ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                    name  = nvs,
+                                    Value = ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs)
                                 });
                         }
 
@@ -656,14 +697,16 @@ namespace Aaru.Core
                                 if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
                                     dto.Medias.Add(new MediaStats
                                     {
-                                        real  = true, type = media,
+                                        real  = true,
+                                        type  = media,
                                         Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
                                     });
 
                                 if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
                                     dto.Medias.Add(new MediaStats
                                     {
-                                        real  = false, type = media,
+                                        real  = false,
+                                        type  = media,
                                         Value = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
                                     });
                             }
@@ -676,8 +719,10 @@ namespace Aaru.Core
                             foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
                                 dto.Devices.Add(new DeviceStats
                                 {
-                                    Bus                   = device.Bus, Manufacturer              = device.Manufacturer,
-                                    ManufacturerSpecified = !(device.Manufacturer is null), Model = device.Model,
+                                    Bus                   = device.Bus,
+                                    Manufacturer          = device.Manufacturer,
+                                    ManufacturerSpecified = !(device.Manufacturer is null),
+                                    Model                 = device.Model,
                                     Revision              = device.Revision
                                 });
                         }
@@ -696,7 +741,8 @@ namespace Aaru.Core
                                                             Select(c => c.Version).Distinct())
                                     dto.OperatingSystems.Add(new OsStats
                                     {
-                                        name = osName, version = osVersion,
+                                        name    = osName,
+                                        version = osVersion,
                                         Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
                                                                                     c.Name    == osName &&
                                                                                     c.Version == osVersion)
@@ -719,7 +765,8 @@ namespace Aaru.Core
                                                                    Select(c => c.Version).Distinct())
                                     dto.RemoteApplications.Add(new OsStats
                                     {
-                                        name = remoteAppName, version = remoteAppVersion,
+                                        name    = remoteAppName,
+                                        version = remoteAppVersion,
                                         Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
                                                                                       c.Name    == remoteAppName &&
                                                                                       c.Version == remoteAppVersion)
@@ -754,7 +801,8 @@ namespace Aaru.Core
                                                                   Select(c => c.Version).Distinct())
                                     dto.RemoteOperatingSystems.Add(new OsStats
                                     {
-                                        name = remoteOsName, version = remoteOsVersion,
+                                        name    = remoteOsName,
+                                        version = remoteOsVersion,
                                         Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
                                                                                           c.Name    == remoteOsName &&
                                                                                           c.Version == remoteOsVersion)
@@ -808,7 +856,8 @@ namespace Aaru.Core
                                 Command existing = ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                                    new Command
                                                    {
-                                                       Name = nvs, Synchronized = true
+                                                       Name         = nvs,
+                                                       Synchronized = true
                                                    };
 
                                 existing.Count += (ulong)ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs);
@@ -824,7 +873,8 @@ namespace Aaru.Core
                                     ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                     new Filesystem
                                     {
-                                        Name = nvs, Synchronized = true
+                                        Name         = nvs,
+                                        Synchronized = true
                                     };
 
                                 existing.Count +=
@@ -843,7 +893,8 @@ namespace Aaru.Core
                                 Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                                   new Filter
                                                   {
-                                                      Name = nvs, Synchronized = true
+                                                      Name         = nvs,
+                                                      Synchronized = true
                                                   };
 
                                 existing.Count += (ulong)ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs);
@@ -859,7 +910,8 @@ namespace Aaru.Core
                                     ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                     new MediaFormat
                                     {
-                                        Name = nvs, Synchronized = true
+                                        Name         = nvs,
+                                        Synchronized = true
                                     };
 
                                 existing.Count +=
@@ -878,7 +930,8 @@ namespace Aaru.Core
                                 Partition existing =
                                     ctx.Partitions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ?? new Partition
                                     {
-                                        Name = nvs, Synchronized = true
+                                        Name         = nvs,
+                                        Synchronized = true
                                     };
 
                                 existing.Count +=
@@ -895,7 +948,8 @@ namespace Aaru.Core
                                 Version existing = ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                                    new Version
                                                    {
-                                                       Name = nvs, Synchronized = true
+                                                       Name         = nvs,
+                                                       Synchronized = true
                                                    };
 
                                 existing.Count += (ulong)ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs);
@@ -913,7 +967,9 @@ namespace Aaru.Core
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
                                         new Database.Models.Media
                                         {
-                                            Synchronized = true, Type = media, Real = true
+                                            Synchronized = true,
+                                            Type         = media,
+                                            Real         = true
                                         };
 
                                     existing.Count +=
@@ -933,7 +989,9 @@ namespace Aaru.Core
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
                                         new Database.Models.Media
                                         {
-                                            Synchronized = true, Type = media, Real = false
+                                            Synchronized = true,
+                                            Type         = media,
+                                            Real         = false
                                         };
 
                                     existing.Count +=
@@ -968,7 +1026,9 @@ namespace Aaru.Core
                                                                                  c.Version == osVersion) ??
                                         new OperatingSystem
                                         {
-                                            Synchronized = true, Version = osVersion, Name = osName
+                                            Synchronized = true,
+                                            Version      = osVersion,
+                                            Name         = osName
                                         };
 
                                     existing.Count +=
@@ -1002,7 +1062,9 @@ namespace Aaru.Core
                                                                                    c.Version == remoteAppVersion) ??
                                         new RemoteApplication
                                         {
-                                            Synchronized = true, Version = remoteAppVersion, Name = remoteAppName
+                                            Synchronized = true,
+                                            Version      = remoteAppVersion,
+                                            Name         = remoteAppName
                                         };
 
                                     existing.Count +=
@@ -1030,7 +1092,8 @@ namespace Aaru.Core
                                     ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
                                     new RemoteArchitecture
                                     {
-                                        Name = nvs, Synchronized = true
+                                        Name         = nvs,
+                                        Synchronized = true
                                     };
 
                                 existing.Count +=
@@ -1057,7 +1120,9 @@ namespace Aaru.Core
                                                                                    c.Version == remoteOsVersion) ??
                                     new RemoteOperatingSystem
                                     {
-                                        Synchronized = true, Version = remoteOsVersion, Name = remoteOsName
+                                        Synchronized = true,
+                                        Version      = remoteOsVersion,
+                                        Name         = remoteOsName
                                     };
 
                                 existing.Count +=
@@ -1189,7 +1254,9 @@ namespace Aaru.Core
 
             ctx.Commands.Add(new Command
             {
-                Name = command, Synchronized = false, Count = 1
+                Name         = command,
+                Synchronized = false,
+                Count        = 1
             });
 
             try
@@ -1218,7 +1285,9 @@ namespace Aaru.Core
 
             ctx.Filesystems.Add(new Filesystem
             {
-                Name = filesystem, Synchronized = false, Count = 1
+                Name         = filesystem,
+                Synchronized = false,
+                Count        = 1
             });
 
             try
@@ -1247,7 +1316,9 @@ namespace Aaru.Core
 
             ctx.Partitions.Add(new Partition
             {
-                Name = partition, Synchronized = false, Count = 1
+                Name         = partition,
+                Synchronized = false,
+                Count        = 1
             });
 
             try
@@ -1276,7 +1347,9 @@ namespace Aaru.Core
 
             ctx.Filters.Add(new Filter
             {
-                Name = filter, Synchronized = false, Count = 1
+                Name         = filter,
+                Synchronized = false,
+                Count        = 1
             });
 
             try
@@ -1305,7 +1378,9 @@ namespace Aaru.Core
 
             ctx.MediaFormats.Add(new MediaFormat
             {
-                Name = format, Synchronized = false, Count = 1
+                Name         = format,
+                Synchronized = false,
+                Count        = 1
             });
 
             try
@@ -1344,7 +1419,10 @@ namespace Aaru.Core
 
             ctx.SeenDevices.Add(new DeviceStat
             {
-                Bus = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.FirmwareRevision,
+                Bus          = deviceBus,
+                Manufacturer = dev.Manufacturer,
+                Model        = dev.Model,
+                Revision     = dev.FirmwareRevision,
                 Synchronized = false
             });
 
@@ -1372,7 +1450,10 @@ namespace Aaru.Core
 
             ctx.Medias.Add(new Database.Models.Media
             {
-                Real = real, Synchronized = false, Type = type.ToString(), Count = 1
+                Real         = real,
+                Synchronized = false,
+                Type         = type.ToString(),
+                Count        = 1
             });
 
             try
@@ -1398,17 +1479,25 @@ namespace Aaru.Core
 
             ctx.RemoteApplications.Add(new RemoteApplication
             {
-                Count = 1, Name = serverApplication, Synchronized = false, Version = serverVersion
+                Count        = 1,
+                Name         = serverApplication,
+                Synchronized = false,
+                Version      = serverVersion
             });
 
             ctx.RemoteArchitectures.Add(new RemoteArchitecture
             {
-                Count = 1, Name = serverArchitecture, Synchronized = false
+                Count        = 1,
+                Name         = serverArchitecture,
+                Synchronized = false
             });
 
             ctx.RemoteOperatingSystems.Add(new RemoteOperatingSystem
             {
-                Count = 1, Name = serverOperatingSystem, Synchronized = false, Version = serverOperatingSystemVersion
+                Count        = 1,
+                Name         = serverOperatingSystem,
+                Synchronized = false,
+                Version      = serverOperatingSystemVersion
             });
 
             try

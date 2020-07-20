@@ -137,12 +137,14 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "Squash file system",
-                CreationDate          = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
+                Type = "Squash file system",
+                CreationDate = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
-                Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) /
-                                        sqSb.block_size,
-                ClusterSize           = sqSb.block_size, Files = sqSb.inodes, FilesSpecified = true, FreeClusters = 0,
+                Clusters = (((partition.End - partition.Start) + 1) * imagePlugin.Info.SectorSize) / sqSb.block_size,
+                ClusterSize = sqSb.block_size,
+                Files = sqSb.inodes,
+                FilesSpecified = true,
+                FreeClusters = 0,
                 FreeClustersSpecified = true
             };
         }

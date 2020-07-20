@@ -89,8 +89,10 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type       = "ECMA-67", ClusterSize = 256, Clusters = (partition.End - partition.Start) + 1,
-                VolumeName = Encoding.ASCII.GetString(vol.volumeIdentifier)
+                Type        = "ECMA-67",
+                ClusterSize = 256,
+                Clusters    = (partition.End - partition.Start) + 1,
+                VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
             };
 
             information = sbInformation.ToString();

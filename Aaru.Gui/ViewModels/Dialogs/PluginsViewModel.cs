@@ -63,7 +63,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IFilter filter in GetPluginBase.Instance.Filters.Values)
                 Filters.Add(new PluginModel
                 {
-                    Name    = filter.Name, Uuid = filter.Id,
+                    Name    = filter.Name,
+                    Uuid    = filter.Id,
                     Version = Assembly.GetAssembly(filter.GetType())?.GetName().Version?.ToString(),
                     Author  = filter.Author
                 });
@@ -71,7 +72,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IFloppyImage floppyImage in GetPluginBase.Instance.FloppyImages.Values)
                 FloppyImages.Add(new PluginModel
                 {
-                    Name    = floppyImage.Name, Uuid = floppyImage.Id,
+                    Name    = floppyImage.Name,
+                    Uuid    = floppyImage.Id,
                     Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version?.ToString(),
                     Author  = floppyImage.Author
                 });
@@ -79,7 +81,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IMediaImage mediaImage in GetPluginBase.Instance.ImagePluginsList.Values)
                 Images.Add(new PluginModel
                 {
-                    Name    = mediaImage.Name, Uuid = mediaImage.Id,
+                    Name    = mediaImage.Name,
+                    Uuid    = mediaImage.Id,
                     Version = Assembly.GetAssembly(mediaImage.GetType())?.GetName().Version?.ToString(),
                     Author  = mediaImage.Author
                 });
@@ -87,7 +90,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IPartition partition in GetPluginBase.Instance.PartPluginsList.Values)
                 PartitionSchemes.Add(new PluginModel
                 {
-                    Name    = partition.Name, Uuid = partition.Id,
+                    Name    = partition.Name,
+                    Uuid    = partition.Id,
                     Version = Assembly.GetAssembly(partition.GetType())?.GetName().Version?.ToString(),
                     Author  = partition.Author
                 });
@@ -95,7 +99,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IFilesystem filesystem in GetPluginBase.Instance.PluginsList.Values)
                 Filesystems.Add(new PluginModel
                 {
-                    Name    = filesystem.Name, Uuid = filesystem.Id,
+                    Name    = filesystem.Name,
+                    Uuid    = filesystem.Id,
                     Version = Assembly.GetAssembly(filesystem.GetType())?.GetName().Version?.ToString(),
                     Author  = filesystem.Author
                 });
@@ -103,7 +108,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IReadOnlyFilesystem readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
                 ReadOnlyFilesystems.Add(new PluginModel
                 {
-                    Name    = readOnlyFilesystem.Name, Uuid = readOnlyFilesystem.Id,
+                    Name    = readOnlyFilesystem.Name,
+                    Uuid    = readOnlyFilesystem.Id,
                     Version = Assembly.GetAssembly(readOnlyFilesystem.GetType())?.GetName().Version?.ToString(),
                     Author  = readOnlyFilesystem.Author
                 });
@@ -111,7 +117,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IWritableFloppyImage writableFloppyImage in GetPluginBase.Instance.WritableFloppyImages.Values)
                 WritableFloppyImages.Add(new PluginModel
                 {
-                    Name    = writableFloppyImage.Name, Uuid = writableFloppyImage.Id,
+                    Name    = writableFloppyImage.Name,
+                    Uuid    = writableFloppyImage.Id,
                     Version = Assembly.GetAssembly(writableFloppyImage.GetType())?.GetName().Version?.ToString(),
                     Author  = writableFloppyImage.Author
                 });
@@ -119,7 +126,8 @@ namespace Aaru.Gui.ViewModels.Dialogs
             foreach(IWritableImage writableImage in GetPluginBase.Instance.WritableImages.Values)
                 WritableImages.Add(new PluginModel
                 {
-                    Name    = writableImage.Name, Uuid = writableImage.Id,
+                    Name    = writableImage.Name,
+                    Uuid    = writableImage.Id,
                     Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version?.ToString(),
                     Author  = writableImage.Author
                 });

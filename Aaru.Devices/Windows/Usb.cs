@@ -281,7 +281,8 @@ namespace Aaru.Devices.Windows
 
                 var root = new UsbHub
                 {
-                    HubIsRootHub = true, HubDeviceDesc = "Root Hub"
+                    HubIsRootHub  = true,
+                    HubDeviceDesc = "Root Hub"
                 };
 
                 // Open a handle to the Host Controller
@@ -432,9 +433,10 @@ namespace Aaru.Devices.Windows
                     // load up the USBPort class
                     var port = new UsbPort
                     {
-                        PortPortNumber = i, PortHubDevicePath = HubDevicePath,
-                        PortStatus     = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
-                        PortSpeed      = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
+                        PortPortNumber    = i,
+                        PortHubDevicePath = HubDevicePath,
+                        PortStatus        = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
+                        PortSpeed         = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
                         PortIsDeviceConnected =
                             nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
                         PortIsHub            = Convert.ToBoolean(nodeConnection.DeviceIsHub),
@@ -501,8 +503,9 @@ namespace Aaru.Devices.Windows
                 // Ya know, I've given some thought about making Device a derived class...
                 var device = new UsbDevice
                 {
-                    DevicePortNumber = PortPortNumber, DeviceHubDevicePath = PortHubDevicePath,
-                    DeviceDescriptor = PortDeviceDescriptor
+                    DevicePortNumber    = PortPortNumber,
+                    DeviceHubDevicePath = PortHubDevicePath,
+                    DeviceDescriptor    = PortDeviceDescriptor
                 };
 
                 // Open a handle to the Hub device
@@ -527,7 +530,8 @@ namespace Aaru.Devices.Windows
                     // build a request for string descriptor
                     var request = new UsbDescriptorRequest
                     {
-                        ConnectionIndex = PortPortNumber, SetupPacket =
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
                         {
                             // Language Code
                             wIndex = 0x409,
@@ -565,7 +569,8 @@ namespace Aaru.Devices.Windows
                     // build a request for string descriptor
                     var request = new UsbDescriptorRequest
                     {
-                        ConnectionIndex = PortPortNumber, SetupPacket =
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
                         {
                             // Language Code
                             wIndex = 0x409,
@@ -600,7 +605,8 @@ namespace Aaru.Devices.Windows
                     // build a request for string descriptor
                     var request = new UsbDescriptorRequest
                     {
-                        ConnectionIndex = PortPortNumber, SetupPacket =
+                        ConnectionIndex = PortPortNumber,
+                        SetupPacket =
                         {
                             // Language Code
                             wIndex = 0x409,
@@ -633,9 +639,11 @@ namespace Aaru.Devices.Windows
                 // build a request for configuration descriptor
                 var dcrRequest = new UsbDescriptorRequest
                 {
-                    ConnectionIndex = PortPortNumber, SetupPacket =
+                    ConnectionIndex = PortPortNumber,
+                    SetupPacket =
                     {
-                        wIndex = 0, wValue = USB_CONFIGURATION_DESCRIPTOR_TYPE << 8
+                        wIndex = 0,
+                        wValue = USB_CONFIGURATION_DESCRIPTOR_TYPE << 8
                     }
                 };
 

@@ -136,7 +136,9 @@ namespace Aaru.Filesystems.UCSDPascal
                 {
                     stat = new FileEntryInfo
                     {
-                        Attributes = FileAttributes.System, BlockSize = device.Info.SectorSize * multiplier, Links = 1
+                        Attributes = FileAttributes.System,
+                        BlockSize  = device.Info.SectorSize * multiplier,
+                        Links      = 1
                     };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -160,11 +162,11 @@ namespace Aaru.Filesystems.UCSDPascal
 
             stat = new FileEntryInfo
             {
-                Attributes       = FileAttributes.File, Blocks = entry.LastBlock - entry.FirstBlock,
-                BlockSize        = device.Info.SectorSize * multiplier,
+                Attributes = FileAttributes.File,
+                Blocks = entry.LastBlock - entry.FirstBlock,
+                BlockSize = device.Info.SectorSize * multiplier,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
-                Length = ((entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier) +
-                                   entry.LastBytes,
+                Length = ((entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier) + entry.LastBytes,
                 Links = 1
             };
 

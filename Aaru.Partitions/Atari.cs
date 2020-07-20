@@ -70,7 +70,10 @@ namespace Aaru.Partitions
 
             var table = new AtariTable
             {
-                boot = new byte[342], icdEntries = new AtariEntry[8], unused = new byte[12], entries = new AtariEntry[4]
+                boot       = new byte[342],
+                icdEntries = new AtariEntry[8],
+                unused     = new byte[12],
+                entries    = new AtariEntry[4]
             };
 
             Array.Copy(sector, 0, table.boot, 0, 342);
@@ -178,11 +181,14 @@ namespace Aaru.Partitions
 
                             var part = new Partition
                             {
-                                Size     = table.entries[i].length * sectorSize, Length = table.entries[i].length,
-                                Sequence = partitionSequence, Name                      = "",
+                                Size     = table.entries[i].length * sectorSize,
+                                Length   = table.entries[i].length,
+                                Sequence = partitionSequence,
+                                Name     = "",
                                 Offset   = table.entries[i].start * sectorSize,
                                 Start    = table.entries[i].start,
-                                Type     = Encoding.ASCII.GetString(partType), Scheme = Name
+                                Type     = Encoding.ASCII.GetString(partType),
+                                Scheme   = Name
                             };
 
                             switch(type)
@@ -296,11 +302,14 @@ namespace Aaru.Partitions
 
                             var part = new Partition
                             {
-                                Size   = extendedTable.entries[j].length * sectorSize,
-                                Length = extendedTable.entries[j].length, Sequence = partitionSequence, Name = "",
-                                Offset = extendedTable.entries[j].start * sectorSize,
-                                Start  = extendedTable.entries[j].start, Type = Encoding.ASCII.GetString(partType),
-                                Scheme = Name
+                                Size     = extendedTable.entries[j].length * sectorSize,
+                                Length   = extendedTable.entries[j].length,
+                                Sequence = partitionSequence,
+                                Name     = "",
+                                Offset   = extendedTable.entries[j].start * sectorSize,
+                                Start    = extendedTable.entries[j].start,
+                                Type     = Encoding.ASCII.GetString(partType),
+                                Scheme   = Name
                             };
 
                             switch(extendedType)
@@ -400,10 +409,13 @@ namespace Aaru.Partitions
 
                 var part = new Partition
                 {
-                    Size     = table.icdEntries[i].length * sectorSize, Length = table.icdEntries[i].length,
-                    Sequence = partitionSequence, Name                         = "",
+                    Size     = table.icdEntries[i].length * sectorSize,
+                    Length   = table.icdEntries[i].length,
+                    Sequence = partitionSequence,
+                    Name     = "",
                     Offset   = table.icdEntries[i].start * sectorSize,
-                    Start    = table.icdEntries[i].start, Type = Encoding.ASCII.GetString(partType),
+                    Start    = table.icdEntries[i].start,
+                    Type     = Encoding.ASCII.GetString(partType),
                     Scheme   = Name
                 };
 

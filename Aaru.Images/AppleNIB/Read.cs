@@ -90,8 +90,7 @@ namespace Aaru.DiscImages
                         continue;
 
                     bool isDos = sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
-                                 sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
-                                 sector0[0x37] == 1;
+                                 sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0 && sector0[0x37] == 1;
 
                     if(isDos)
                         skewing = dosSkewing;

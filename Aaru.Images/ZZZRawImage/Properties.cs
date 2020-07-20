@@ -68,14 +68,14 @@ namespace Aaru.DiscImages
                     TrackBytesPerSector = rawCompactDisc ? mode2
                                                                ? 2336
                                                                : 2048 : (int)imageInfo.SectorSize,
-                    TrackEndSector         = imageInfo.Sectors - 1,
-                    TrackFile              = rawImageFilter.GetFilename(),
-                    TrackFileOffset        = 0,
-                    TrackFileType          = "BINARY",
-                    TrackRawBytesPerSector = rawCompactDisc ? 2352 : (int)imageInfo.SectorSize, TrackSequence = 1,
-                    TrackStartSector       = 0,
-                    TrackSubchannelType =
-                        hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
+                    TrackEndSector = imageInfo.Sectors - 1,
+                    TrackFile = rawImageFilter.GetFilename(),
+                    TrackFileOffset = 0,
+                    TrackFileType = "BINARY",
+                    TrackRawBytesPerSector = rawCompactDisc ? 2352 : (int)imageInfo.SectorSize,
+                    TrackSequence = 1,
+                    TrackStartSector = 0,
+                    TrackSubchannelType = hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
                     TrackType = rawCompactDisc ? mode2
                                                      ? TrackType.CdMode2Formless
                                                      : TrackType.CdMode1 : TrackType.Data,
@@ -100,8 +100,11 @@ namespace Aaru.DiscImages
 
                 var sess = new Session
                 {
-                    EndSector  = imageInfo.Sectors - 1, EndTrack = 1, SessionSequence = 1, StartSector = 0,
-                    StartTrack = 1
+                    EndSector       = imageInfo.Sectors - 1,
+                    EndTrack        = 1,
+                    SessionSequence = 1,
+                    StartSector     = 0,
+                    StartTrack      = 1
                 };
 
                 List<Session> lst = new List<Session>
@@ -124,7 +127,10 @@ namespace Aaru.DiscImages
 
                 var part = new Partition
                 {
-                    Start = 0, Length = imageInfo.Sectors, Offset = 0, Sequence = 0,
+                    Start    = 0,
+                    Length   = imageInfo.Sectors,
+                    Offset   = 0,
+                    Sequence = 0,
                     Type = rawCompactDisc
                                ? mode2
                                      ? "MODE2/2352"

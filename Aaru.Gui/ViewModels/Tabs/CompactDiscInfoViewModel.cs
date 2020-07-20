@@ -104,7 +104,8 @@ namespace Aaru.Gui.ViewModels.Tabs
                 foreach(KeyValuePair<byte, string> isrc in isrcs)
                     IsrcList.Add(new IsrcModel
                     {
-                        Track = isrc.Key.ToString(), Isrc = isrc.Value
+                        Track = isrc.Key.ToString(),
+                        Isrc  = isrc.Value
                     });
             }
 

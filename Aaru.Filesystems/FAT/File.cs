@@ -149,7 +149,9 @@ namespace Aaru.Filesystems.FAT
 
             stat = new FileEntryInfo
             {
-                Attributes   = new FileAttributes(), Blocks = entry.size / bytesPerCluster, BlockSize = bytesPerCluster,
+                Attributes   = new FileAttributes(),
+                Blocks       = entry.size / bytesPerCluster,
+                BlockSize    = bytesPerCluster,
                 Length       = entry.size,
                 Inode        = (ulong)(fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
                 Links        = 1,

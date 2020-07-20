@@ -113,11 +113,15 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                = "PC-FX", Clusters = partition.Length, ClusterSize = 2048,
-                Bootable            = true,
-                CreationDate        = dateTime, CreationDateSpecified = date != null,
-                PublisherIdentifier = StringHandlers.CToString(header.makerName, Encoding),
-                VolumeName          = StringHandlers.CToString(header.title, Encoding), SystemIdentifier = "PC-FX"
+                Type                  = "PC-FX",
+                Clusters              = partition.Length,
+                ClusterSize           = 2048,
+                Bootable              = true,
+                CreationDate          = dateTime,
+                CreationDateSpecified = date != null,
+                PublisherIdentifier   = StringHandlers.CToString(header.makerName, Encoding),
+                VolumeName            = StringHandlers.CToString(header.title, Encoding),
+                SystemIdentifier      = "PC-FX"
             };
         }
 

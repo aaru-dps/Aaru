@@ -186,7 +186,9 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                      = "QNX4 filesystem", Clusters = partition.Length, ClusterSize = 512,
+                Type                      = "QNX4 filesystem",
+                Clusters                  = partition.Length,
+                ClusterSize               = 512,
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
                 CreationDateSpecified     = true,
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_mtime),

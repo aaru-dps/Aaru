@@ -70,13 +70,13 @@ namespace Aaru.Commands
             {
                 AaruConsole.
                     WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n" +
-                              "we must give you the following information about Aaru and ask if you want to opt-in\n"       +
+                              "we must give you the following information about Aaru and ask if you want to opt-in\n" +
                               "in some information sharing.");
 
                 AaruConsole.WriteLine();
 
                 AaruConsole.
-                    WriteLine("Disclaimer: Because Aaru is an open source software this information, and therefore,\n"       +
+                    WriteLine("Disclaimer: Because Aaru is an open source software this information, and therefore,\n" +
                               "compliance with GDPR only holds true if you obtained a certificated copy from its original\n" +
                               "authors. In case of doubt, close Aaru now and ask in our IRC support channel.");
 
@@ -84,7 +84,7 @@ namespace Aaru.Commands
 
                 AaruConsole.
                     WriteLine("For any information sharing your IP address may be stored in our server, in a way that is not\n" +
-                              "possible for any person, manual, or automated process, to link with your identity, unless\n"     +
+                              "possible for any person, manual, or automated process, to link with your identity, unless\n" +
                               "specified otherwise.");
             }
 
@@ -94,9 +94,9 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.WriteLine(
-                                  "With the 'device-report' command, Aaru creates a report of a device, that includes its\n"                +
-                                  "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n"    +
-                                  "The serial number of the device is not stored in the report. If used with the debug parameter,\n"        +
+                                  "With the 'device-report' command, Aaru creates a report of a device, that includes its\n" +
+                                  "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n" +
+                                  "The serial number of the device is not stored in the report. If used with the debug parameter,\n" +
                                   "extra information about the device will be stored in the report. This information is known to contain\n" +
                                   "the device serial number in non-standard places that prevent the automatic removal of it on a handful\n" +
                                   "of devices. A human-readable copy of the report in XML format is always created in the same directory\n" +
@@ -118,8 +118,8 @@ namespace Aaru.Commands
             AaruConsole.
                 WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n" +
                           "will be manually analyzed by an european union citizen to remove any trace of personal identification\n" +
-                          "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n"              +
-                          "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n"     +
+                          "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n" +
+                          "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n" +
                           "devices to other open-source projects. In any case, no information linking the report to you will be stored.");
 
             while(pressedKey.Key != ConsoleKey.Y &&
@@ -137,8 +137,8 @@ namespace Aaru.Commands
             AaruConsole.WriteLine();
 
             AaruConsole.
-                WriteLine("Aaru can store some usage statistics. These statistics are limited to the number of times a\n"                 +
-                          "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n"   +
+                WriteLine("Aaru can store some usage statistics. These statistics are limited to the number of times a\n" +
+                          "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n" +
                           "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                           "pool with no way of using them to identify you.");
 

@@ -60,7 +60,9 @@ namespace Aaru.Commands.Device
         {
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Device path",
+                Name        = "device-path"
             });
 
             Add(new Option(new[]
@@ -68,7 +70,8 @@ namespace Aaru.Commands.Device
                     "--trap-disc", "-t"
                 }, "Does a device report using a trap disc.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -138,7 +141,10 @@ namespace Aaru.Commands.Device
 
             var report = new DeviceReportV2
             {
-                Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.FirmwareRevision, Type = dev.Type
+                Manufacturer = dev.Manufacturer,
+                Model        = dev.Model,
+                Revision     = dev.FirmwareRevision,
+                Type         = dev.Type
             };
 
             bool   removable = false;
@@ -507,7 +513,8 @@ namespace Aaru.Commands.Device
 
                                 report.SCSI.MultiMediaDevice = new Mmc
                                 {
-                                    ModeSense2AData = cdromMode, Features = reporter.ReportMmcFeatures()
+                                    ModeSense2AData = cdromMode,
+                                    Features        = reporter.ReportMmcFeatures()
                                 };
 
                                 if(cdromMode != null &&

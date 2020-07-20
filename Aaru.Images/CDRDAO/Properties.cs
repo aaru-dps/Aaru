@@ -70,12 +70,16 @@ namespace Aaru.DiscImages
                 {
                     var aaruTrack = new Track
                     {
-                        TrackDescription       = cdrTrack.Title, TrackStartSector = cdrTrack.StartSector,
-                        TrackPregap            = cdrTrack.Pregap, TrackSession = 1, TrackSequence = cdrTrack.Sequence,
+                        TrackDescription       = cdrTrack.Title,
+                        TrackStartSector       = cdrTrack.StartSector,
+                        TrackPregap            = cdrTrack.Pregap,
+                        TrackSession           = 1,
+                        TrackSequence          = cdrTrack.Sequence,
                         TrackType              = CdrdaoTrackTypeToTrackType(cdrTrack.Tracktype),
                         TrackFilter            = cdrTrack.Trackfile.Datafilter,
                         TrackFile              = cdrTrack.Trackfile.Datafilter.GetFilename(),
-                        TrackFileOffset        = cdrTrack.Trackfile.Offset, TrackFileType = cdrTrack.Trackfile.Filetype,
+                        TrackFileOffset        = cdrTrack.Trackfile.Offset,
+                        TrackFileType          = cdrTrack.Trackfile.Filetype,
                         TrackRawBytesPerSector = cdrTrack.Bps,
                         TrackBytesPerSector    = CdrdaoTrackTypeToCookedBytesPerSector(cdrTrack.Tracktype)
                     };

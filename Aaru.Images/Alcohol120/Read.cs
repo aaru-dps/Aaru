@@ -526,9 +526,13 @@ namespace Aaru.DiscImages
                 {
                     var partition = new Partition
                     {
-                        Description = $"Track {trk.point}.", Start           = trk.startLba,
-                        Size        = extra.sectors * trk.sectorSize, Length = extra.sectors, Sequence = trk.point,
-                        Offset      = byteOffset, Type                       = trk.mode.ToString()
+                        Description = $"Track {trk.point}.",
+                        Start       = trk.startLba,
+                        Size        = extra.sectors * trk.sectorSize,
+                        Length      = extra.sectors,
+                        Sequence    = trk.point,
+                        Offset      = byteOffset,
+                        Type        = trk.mode.ToString()
                     };
 
                     Partitions.Add(partition);
@@ -1401,12 +1405,18 @@ namespace Aaru.DiscImages
 
                 var aaruTrack = new Track
                 {
-                    TrackStartSector    = alcTrack.startLba, TrackEndSector = alcExtra.sectors - 1,
-                    TrackPregap         = alcExtra.pregap, TrackSession = sessionNo, TrackSequence = alcTrack.point,
-                    TrackType           = AlcoholTrackTypeToTrackType(alcTrack.mode), TrackFilter = alcImage,
-                    TrackFile           = alcImage.GetFilename(), TrackFileOffset = alcTrack.startOffset,
-                    TrackFileType       = "BINARY", TrackRawBytesPerSector = alcTrack.sectorSize,
-                    TrackBytesPerSector = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                    TrackStartSector       = alcTrack.startLba,
+                    TrackEndSector         = alcExtra.sectors - 1,
+                    TrackPregap            = alcExtra.pregap,
+                    TrackSession           = sessionNo,
+                    TrackSequence          = alcTrack.point,
+                    TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                    TrackFilter            = alcImage,
+                    TrackFile              = alcImage.GetFilename(),
+                    TrackFileOffset        = alcTrack.startOffset,
+                    TrackFileType          = "BINARY",
+                    TrackRawBytesPerSector = alcTrack.sectorSize,
+                    TrackBytesPerSector    = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
                 };
 
                 if(alcExtra.pregap > 0)

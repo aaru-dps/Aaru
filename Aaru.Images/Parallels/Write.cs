@@ -71,7 +71,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -97,9 +99,13 @@ namespace Aaru.DiscImages
 
             pHdr = new ParallelsHeader
             {
-                magic       = parallelsMagic, version = PARALLELS_VERSION, sectors = sectors,
-                in_use      = PARALLELS_CLOSED,
-                bat_entries = batEntries, data_off = headerSectors, cluster_size = DEFAULT_CLUSTER_SIZE / 512
+                magic        = parallelsMagic,
+                version      = PARALLELS_VERSION,
+                sectors      = sectors,
+                in_use       = PARALLELS_CLOSED,
+                bat_entries  = batEntries,
+                data_off     = headerSectors,
+                cluster_size = DEFAULT_CLUSTER_SIZE / 512
             };
 
             bat                    = new uint[batEntries];

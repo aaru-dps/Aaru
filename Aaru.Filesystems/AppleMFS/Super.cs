@@ -208,9 +208,12 @@ namespace Aaru.Filesystems.AppleMFS
         {
             stat = new FileSystemInfo
             {
-                Blocks     = volMDB.drNmAlBlks, FilenameLength = 255, Files = volMDB.drNmFls,
-                FreeBlocks = volMDB.drFreeBks,
-                PluginId   = Id, Type = "Apple MFS"
+                Blocks         = volMDB.drNmAlBlks,
+                FilenameLength = 255,
+                Files          = volMDB.drNmFls,
+                FreeBlocks     = volMDB.drFreeBks,
+                PluginId       = Id,
+                Type           = "Apple MFS"
             };
 
             stat.FreeFiles = uint.MaxValue - stat.Files;

@@ -49,7 +49,8 @@ namespace Aaru.Commands.Image
                     "--length", "-l"
                 }, "How many sectors to print.")
                 {
-                    Argument = new Argument<ulong>(() => 1), Required = false
+                    Argument = new Argument<ulong>(() => 1),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -57,7 +58,8 @@ namespace Aaru.Commands.Image
                     "--long-sectors", "-r"
                 }, "Print sectors with tags included.")
                 {
-                    Argument = new Argument<bool>(() => false), Required = false
+                    Argument = new Argument<bool>(() => false),
+                    Required = false
                 });
 
             Add(new Option(new[]
@@ -65,7 +67,8 @@ namespace Aaru.Commands.Image
                     "--start", "-s"
                 }, "Starting sector.")
                 {
-                    Argument = new Argument<ulong>(), Required = true
+                    Argument = new Argument<ulong>(),
+                    Required = true
                 });
 
             Add(new Option(new[]
@@ -73,12 +76,15 @@ namespace Aaru.Commands.Image
                     "--width", "-w"
                 }, "How many bytes to print per line.")
                 {
-                    Argument = new Argument<ushort>(() => 32), Required = false
+                    Argument = new Argument<ushort>(() => 32),
+                    Required = false
                 });
 
             AddArgument(new Argument<string>
             {
-                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+                Arity       = ArgumentArity.ExactlyOne,
+                Description = "Media image path",
+                Name        = "image-path"
             });
 
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

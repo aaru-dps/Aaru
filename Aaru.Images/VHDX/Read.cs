@@ -159,7 +159,8 @@ namespace Aaru.DiscImages
 
                 vFileParms = new VhdxFileParameters
                 {
-                    blockSize = BitConverter.ToUInt32(tmp, 0), flags = BitConverter.ToUInt32(tmp, 4)
+                    blockSize = BitConverter.ToUInt32(tmp, 0),
+                    flags     = BitConverter.ToUInt32(tmp, 4)
                 };
             }
             else
@@ -287,8 +288,7 @@ namespace Aaru.DiscImages
                             // ignored
                         }
                     }
-                    else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) ==
-                            0 ||
+                    else if(string.Compare(entryType, VOLUME_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0 ||
                             string.Compare(entryType, ABSOLUTE_WIN32_PATH_KEY, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         stream.Seek(parentEntry.valueOffset + metadataOffset, SeekOrigin.Begin);

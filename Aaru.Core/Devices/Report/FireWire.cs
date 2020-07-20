@@ -40,7 +40,9 @@ namespace Aaru.Core.Devices.Report
         /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
         public FireWire FireWireReport() => new FireWire
         {
-            Manufacturer = _dev.FireWireVendorName, Product = _dev.FireWireModelName, ProductID = _dev.FireWireModel,
+            Manufacturer = _dev.FireWireVendorName,
+            Product      = _dev.FireWireModelName,
+            ProductID    = _dev.FireWireModel,
             VendorID     = _dev.FireWireVendor
         };
     }

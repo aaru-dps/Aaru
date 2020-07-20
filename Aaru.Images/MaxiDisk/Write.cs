@@ -74,9 +74,12 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors,
-                Cylinders = geometry.cylinders,
-                Heads     = geometry.heads, SectorsPerTrack = geometry.sectorsPerTrack
+                MediaType       = mediaType,
+                SectorSize      = sectorSize,
+                Sectors         = sectors,
+                Cylinders       = geometry.cylinders,
+                Heads           = geometry.heads,
+                SectorsPerTrack = geometry.sectorsPerTrack
             };
 
             if(imageInfo.Cylinders > 90)
@@ -208,8 +211,10 @@ namespace Aaru.DiscImages
 
             var header = new HdkHeader
             {
-                diskType = (byte)HdkDiskTypes.Dos2880, cylinders  = (byte)imageInfo.Cylinders,
-                heads    = (byte)imageInfo.Heads, sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
+                diskType        = (byte)HdkDiskTypes.Dos2880,
+                cylinders       = (byte)imageInfo.Cylinders,
+                heads           = (byte)imageInfo.Heads,
+                sectorsPerTrack = (byte)imageInfo.SectorsPerTrack
             };
 
             for(uint i = imageInfo.SectorSize / 128; i > 1;)

@@ -91,7 +91,9 @@ namespace Aaru.Gui.ViewModels.Panels
                 {
                     model.Subdirectories.Add(new SubdirectoryModel
                     {
-                        Name = dirent, Path = model.Path + "/" + dirent, Plugin = model.Plugin
+                        Name   = dirent,
+                        Path   = model.Path + "/" + dirent,
+                        Plugin = model.Plugin
                     });
 
                     continue;
@@ -99,7 +101,8 @@ namespace Aaru.Gui.ViewModels.Panels
 
                 Entries.Add(new FileModel
                 {
-                    Name = dirent, Stat = stat
+                    Name = dirent,
+                    Stat = stat
                 });
             }
         }

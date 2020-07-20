@@ -111,7 +111,8 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         trackList.Add(new Track
                         {
-                            TrackSequence = trk.POINT, TrackSession = trk.SessionNumber,
+                            TrackSequence = trk.POINT,
+                            TrackSession  = trk.SessionNumber,
                             TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                             ? TrackType.Data : TrackType.Audio,
@@ -202,12 +203,15 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         trackList.Add(new Track
                         {
-                            TrackSequence = trk.TrackNumber, TrackSession = 1,
+                            TrackSequence = trk.TrackNumber,
+                            TrackSession  = 1,
                             TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                             ? TrackType.Data : TrackType.Audio,
-                            TrackStartSector       = trk.TrackStartAddress, TrackBytesPerSector = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType       = subType
+                            TrackStartSector       = trk.TrackStartAddress,
+                            TrackBytesPerSector    = (int)sectorSize,
+                            TrackRawBytesPerSector = (int)sectorSize,
+                            TrackSubchannelType    = subType
                         });
 
                         trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
@@ -230,10 +234,13 @@ namespace Aaru.Core.Devices.Dumping
 
                 trackList.Add(new Track
                 {
-                    TrackSequence       = 1, TrackSession = 1, TrackType = leadoutTrackType,
-                    TrackStartSector    = 0,
-                    TrackBytesPerSector = (int)sectorSize, TrackRawBytesPerSector = (int)sectorSize,
-                    TrackSubchannelType = subType
+                    TrackSequence          = 1,
+                    TrackSession           = 1,
+                    TrackType              = leadoutTrackType,
+                    TrackStartSector       = 0,
+                    TrackBytesPerSector    = (int)sectorSize,
+                    TrackRawBytesPerSector = (int)sectorSize,
+                    TrackSubchannelType    = subType
                 });
 
                 trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));

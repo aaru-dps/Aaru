@@ -312,9 +312,10 @@ namespace Aaru.Filesystems
 
                     XmlFsType = new FileSystemType
                     {
-                        Bootable = oldMap1.boot != 0, // Or not?
-                        Clusters = bytes / imagePlugin.Info.SectorSize, ClusterSize = imagePlugin.Info.SectorSize,
-                        Type     = "Acorn Advanced Disc Filing System"
+                        Bootable    = oldMap1.boot != 0, // Or not?
+                        Clusters    = bytes / imagePlugin.Info.SectorSize,
+                        ClusterSize = imagePlugin.Info.SectorSize,
+                        Type        = "Acorn Advanced Disc Filing System"
                     };
 
                     if(ArrayHelpers.ArrayIsNullOrEmpty(namebytes))

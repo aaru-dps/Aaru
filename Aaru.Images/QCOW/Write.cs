@@ -72,7 +72,9 @@ namespace Aaru.DiscImages
 
             imageInfo = new ImageInfo
             {
-                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+                MediaType  = mediaType,
+                SectorSize = sectorSize,
+                Sectors    = sectors
             };
 
             try
@@ -88,8 +90,12 @@ namespace Aaru.DiscImages
 
             qHdr = new QCowHeader
             {
-                magic   = QCOW_MAGIC, version = QCOW_VERSION, size = sectors * sectorSize, cluster_bits = 12,
-                l2_bits = 9, l1_table_offset  = (ulong)Marshal.SizeOf<QCowHeader>()
+                magic           = QCOW_MAGIC,
+                version         = QCOW_VERSION,
+                size            = sectors * sectorSize,
+                cluster_bits    = 12,
+                l2_bits         = 9,
+                l1_table_offset = (ulong)Marshal.SizeOf<QCowHeader>()
             };
 
             int shift = qHdr.cluster_bits + qHdr.l2_bits;

@@ -679,9 +679,14 @@ namespace Aaru.Gui.ViewModels.Panels
                 foreach(ExtentType extent in dump.Extents)
                     DumpHardwareList.Add(new DumpHardwareModel
                     {
-                        Manufacturer    = dump.Manufacturer, Model             = dump.Model, Serial = dump.Serial,
-                        SoftwareName    = dump.Software.Name, SoftwareVersion  = dump.Software.Version,
-                        OperatingSystem = dump.Software.OperatingSystem, Start = extent.Start, End = extent.End
+                        Manufacturer    = dump.Manufacturer,
+                        Model           = dump.Model,
+                        Serial          = dump.Serial,
+                        SoftwareName    = dump.Software.Name,
+                        SoftwareVersion = dump.Software.Version,
+                        OperatingSystem = dump.Software.OperatingSystem,
+                        Start           = extent.Start,
+                        End             = extent.End
                     });
             }
         }

@@ -204,9 +204,11 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type                  = "Extent File System", ClusterSize = 512,
+                Type                  = "Extent File System",
+                ClusterSize           = 512,
                 Clusters              = (ulong)efsSb.sb_size,
-                FreeClusters          = (ulong)efsSb.sb_tfree, FreeClustersSpecified = true,
+                FreeClusters          = (ulong)efsSb.sb_tfree,
+                FreeClustersSpecified = true,
                 Dirty                 = efsSb.sb_dirty > 0,
                 VolumeName            = StringHandlers.CToString(efsSb.sb_fname, Encoding),
                 VolumeSerial          = $"{efsSb.sb_checksum:X8}",

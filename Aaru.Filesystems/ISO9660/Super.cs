@@ -592,7 +592,9 @@ namespace Aaru.Filesystems.ISO9660
                     {
                         (rootLocation, rootSize)
                     },
-                    Filename = "$", Size = rootSize, Timestamp = decodedVd.CreationTime
+                    Filename  = "$",
+                    Size      = rootSize,
+                    Timestamp = decodedVd.CreationTime
                 });
 
                 if(!cdi)
@@ -602,7 +604,8 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             (pathTableLsbLocation, (uint)pathTableData.Length)
                         },
-                        Filename  = "$PATH_TABLE.LSB", Size = (uint)pathTableData.Length,
+                        Filename  = "$PATH_TABLE.LSB",
+                        Size      = (uint)pathTableData.Length,
                         Timestamp = decodedVd.CreationTime
                     });
 
@@ -612,7 +615,9 @@ namespace Aaru.Filesystems.ISO9660
                     {
                         (Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)
                     },
-                    Filename = "$PATH_TABLE.MSB", Size = (uint)pathTableData.Length, Timestamp = decodedVd.CreationTime
+                    Filename  = "$PATH_TABLE.MSB",
+                    Size      = (uint)pathTableData.Length,
+                    Timestamp = decodedVd.CreationTime
                 });
 
                 for(int i = 0; i < bvdSectors.Count; i++)
@@ -622,7 +627,9 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)i, 2048)
                         },
-                        Filename = i == 0 ? "$BOOT" : $"$BOOT_{i}", Size = 2048, Timestamp = decodedVd.CreationTime
+                        Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
+                        Size      = 2048,
+                        Timestamp = decodedVd.CreationTime
                     });
 
                 for(int i = 0; i < pvdSectors.Count; i++)
@@ -632,7 +639,9 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)i, 2048)
                         },
-                        Filename = i == 0 ? "$PVD" : $"PVD_{i}", Size = 2048, Timestamp = decodedVd.CreationTime
+                        Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
+                        Size      = 2048,
+                        Timestamp = decodedVd.CreationTime
                     });
 
                 for(int i = 0; i < svdSectors.Count; i++)
@@ -642,7 +651,9 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)i, 2048)
                         },
-                        Filename = i == 0 ? "$SVD" : $"$SVD_{i}", Size = 2048, Timestamp = decodedVd.CreationTime
+                        Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
+                        Size      = 2048,
+                        Timestamp = decodedVd.CreationTime
                     });
 
                 for(int i = 0; i < evdSectors.Count; i++)
@@ -652,7 +663,9 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)i, 2048)
                         },
-                        Filename = i == 0 ? "$EVD" : $"$EVD_{i}", Size = 2048, Timestamp = decodedVd.CreationTime
+                        Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
+                        Size      = 2048,
+                        Timestamp = decodedVd.CreationTime
                     });
 
                 for(int i = 0; i < vpdSectors.Count; i++)
@@ -662,7 +675,9 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)i, 2048)
                         },
-                        Filename = i == 0 ? "$VPD" : $"$VPD_{i}", Size = 2048, Timestamp = decodedVd.CreationTime
+                        Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
+                        Size      = 2048,
+                        Timestamp = decodedVd.CreationTime
                     });
 
                 if(segaCd != null)
@@ -672,7 +687,8 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())
                         },
-                        Filename  = "$IP.BIN", Size = (uint)Marshal.SizeOf<CD.IPBin>(),
+                        Filename  = "$IP.BIN",
+                        Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
                         Timestamp = decodedVd.CreationTime
                     });
 
@@ -683,7 +699,8 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())
                         },
-                        Filename  = "$IP.BIN", Size = (uint)Marshal.SizeOf<Saturn.IPBin>(),
+                        Filename  = "$IP.BIN",
+                        Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
                         Timestamp = decodedVd.CreationTime
                     });
 
@@ -694,7 +711,8 @@ namespace Aaru.Filesystems.ISO9660
                         {
                             ((uint)partition.Start, (uint)Marshal.SizeOf<Dreamcast.IPBin>())
                         },
-                        Filename  = "$IP.BIN", Size = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
+                        Filename  = "$IP.BIN",
+                        Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
                         Timestamp = decodedVd.CreationTime
                     });
             }
@@ -705,11 +723,12 @@ namespace Aaru.Filesystems.ISO9660
 
             statfs = new FileSystemInfo
             {
-                Blocks = decodedVd.Blocks, FilenameLength =
-                    (ushort)(jolietvd != null ? this.@namespace == Namespace.Joliet
-                                                    ? 110
-                                                    : 255 : 255),
-                PluginId = Id, Type = fsFormat
+                Blocks = decodedVd.Blocks,
+                FilenameLength = (ushort)(jolietvd != null ? this.@namespace == Namespace.Joliet
+                                                                 ? 110
+                                                                 : 255 : 255),
+                PluginId = Id,
+                Type     = fsFormat
             };
 
             directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();

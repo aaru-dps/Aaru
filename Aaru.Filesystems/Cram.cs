@@ -101,9 +101,12 @@ namespace Aaru.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                VolumeName            = StringHandlers.CToString(crSb.name, Encoding), Type = "Cram file system",
-                Clusters              = crSb.blocks, Files                                  = crSb.files,
-                FilesSpecified        = true, FreeClusters                                  = 0,
+                VolumeName            = StringHandlers.CToString(crSb.name, Encoding),
+                Type                  = "Cram file system",
+                Clusters              = crSb.blocks,
+                Files                 = crSb.files,
+                FilesSpecified        = true,
+                FreeClusters          = 0,
                 FreeClustersSpecified = true
             };
         }
