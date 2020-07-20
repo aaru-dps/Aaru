@@ -40,10 +40,9 @@ namespace Aaru.Checksums
     /// <summary>Implements a CRC16 algorithm</summary>
     public class Crc16Context : IChecksum
     {
-        protected ushort _finalSeed;
-        protected ushort _hashInt;
-        protected bool   _inverse;
-
+        protected ushort   _finalSeed;
+        protected ushort   _hashInt;
+        protected bool     _inverse;
         protected ushort[] _table;
 
         /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
@@ -212,8 +211,7 @@ namespace Aaru.Checksums
                 buffer.Aggregate<byte, ushort>(0,
                                                (current, b) =>
                                                    inverse ? (ushort)(localTable[(current >> 8) ^ b] ^ (current << 8))
-                                                       : (ushort)((current >> 8) ^
-                                                                  localTable[b ^ (current & 0xff)]));
+                                                       : (ushort)((current >> 8) ^ localTable[b ^ (current & 0xff)]));
 
             crc16 ^= seed;
 
