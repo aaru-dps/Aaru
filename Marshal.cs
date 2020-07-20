@@ -215,6 +215,8 @@ namespace Aaru.Helpers
         ///     crash.
         /// </summary>
         /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="start">Start on the span where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -404,9 +406,9 @@ namespace Aaru.Helpers
         }
 
         /// <summary>Marshal a structure to little-endian binary data</summary>
-        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="str">The structure you want to marshal to binary</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
-        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        /// <returns>The byte array representing the given structure</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] StructureToByteArrayLittleEndian<T>(T str) where T : struct
         {
@@ -419,9 +421,9 @@ namespace Aaru.Helpers
         }
 
         /// <summary>Marshal a structure to little-endian binary data</summary>
-        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="str">The structure you want to marshal to binary</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
-        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        /// <returns>The byte array representing the given structure</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] StructureToByteArrayBigEndian<T>(T str) where T : struct =>
             StructureToByteArrayLittleEndian((T)SwapStructureMembersEndian(str));
