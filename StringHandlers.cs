@@ -47,7 +47,7 @@ namespace Aaru.Helpers
         /// <param name="cString">A null-terminated (aka C string) byte array in the specified encoding</param>
         /// <param name="encoding">Encoding.</param>
         /// <param name="twoBytes">Set if encoding uses 16-bit characters.</param>
-        /// <param name="start">Start decodint at this position</param>
+        /// <param name="start">Start decoding at this position</param>
         public static string CToString(byte[] cString, Encoding encoding, bool twoBytes = false, int start = 0)
         {
             if(cString == null)
@@ -92,7 +92,7 @@ namespace Aaru.Helpers
         /// <returns>The corresponding C# string</returns>
         /// <param name="pascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
-        /// <param name="start">Start decodint at this position</param>
+        /// <param name="start">Start decoding at this position</param>
         public static string PascalToString(byte[] pascalString, Encoding encoding, int start = 0)
         {
             if(pascalString == null)
@@ -125,7 +125,7 @@ namespace Aaru.Helpers
         /// <returns>The corresponding C# string</returns>
         /// <param name="spacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
         /// <param name="encoding">Encoding.</param>
-        /// <param name="start">Start decodint at this position</param>
+        /// <param name="start">Start decoding at this position</param>
         public static string SpacePaddedToString(byte[] spacePaddedString, Encoding encoding, int start = 0)
         {
             if(spacePaddedString == null)

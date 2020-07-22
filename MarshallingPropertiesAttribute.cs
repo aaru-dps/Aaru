@@ -42,7 +42,7 @@ namespace Aaru.Helpers
 {
     /// <summary>Defines properties to help marshalling structs from binary data</summary>
     [AttributeUsage(AttributeTargets.Struct)]
-    public class MarshallingPropertiesAttribute : Attribute
+    public sealed class MarshallingPropertiesAttribute : Attribute
     {
         /// <summary>Defines properties to help marshalling structs from binary data</summary>
         /// <param name="endian">Defines properties to help marshalling structs from binary data</param>

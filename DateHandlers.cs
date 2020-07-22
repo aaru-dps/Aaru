@@ -313,7 +313,7 @@ namespace Aaru.Helpers
                    AddTicks(ticks).DateTime;
         }
 
-        /// <summary>Convers a Solaris high resolution timestamp to .NET DateTime</summary>
+        /// <summary>Converts a Solaris high resolution timestamp to .NET DateTime</summary>
         /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
         /// <returns>.NET DateTime</returns>
         public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) =>
