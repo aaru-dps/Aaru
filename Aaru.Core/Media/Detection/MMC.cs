@@ -1101,53 +1101,56 @@ namespace Aaru.Core.Media.Detection
                         if(isoSector.Length < 2048)
                             return;
 
-                        int  pcdPos  = 0;
-                        uint infoPos = 0;
-
-                        while(isoSector[pcdPos]          > 0                &&
-                              pcdPos                     < isoSector.Length &&
-                              pcdPos + isoSector[pcdPos] <= isoSector.Length)
+                        for(int pi = 0; pi < pcdLength; pi++)
                         {
-                            int    nameLen = isoSector[pcdPos + 32];
-                            byte[] tmpName = new byte[nameLen];
-                            Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
-                            string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
+                            int  pcdPos  = pi * 2048;
+                            uint infoPos = 0;
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name.Substring(0, name.Length - 2);
-
-                            if(name == "INFO.PCD")
+                            while(isoSector[pcdPos]          > 0                &&
+                                  pcdPos                     < isoSector.Length &&
+                                  pcdPos + isoSector[pcdPos] <= isoSector.Length)
                             {
-                                infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+                                int    nameLen = isoSector[pcdPos + 32];
+                                byte[] tmpName = new byte[nameLen];
+                                Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
+                                string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                                break;
+                                if(name.EndsWith(";1", StringComparison.InvariantCulture))
+                                    name = name.Substring(0, name.Length - 2);
+
+                                if(name == "INFO.PCD")
+                                {
+                                    infoPos = BitConverter.ToUInt32(isoSector, pcdPos + 2);
+
+                                    break;
+                                }
+
+                                pcdPos += isoSector[pcdPos];
                             }
 
-                            pcdPos += isoSector[pcdPos];
-                        }
-
-                        if(infoPos > 0)
-                        {
-                            sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0, 1,
-                                               false, dev.Timeout, out _);
-
-                            if(sense)
-                                break;
-
-                            byte[] systemId = new byte[8];
-                            Array.Copy(isoSector, 0, systemId, 0, 8);
-
-                            string id = StringHandlers.CToString(systemId).TrimEnd();
-
-                            switch(id)
+                            if(infoPos > 0)
                             {
-                                case "PHOTO_CD":
-                                    mediaType = MediaType.PCD;
+                                sense = dev.Read12(out isoSector, out _, 0, false, true, false, false, infoPos, 2048, 0,
+                                                   1, false, dev.Timeout, out _);
 
-                                    AaruConsole.DebugWriteLine("Media detection",
-                                                               "Found Photo CD description file, setting disc type to Photo CD.");
+                                if(sense)
+                                    break;
 
-                                    return;
+                                byte[] systemId = new byte[8];
+                                Array.Copy(isoSector, 0, systemId, 0, 8);
+
+                                string id = StringHandlers.CToString(systemId).TrimEnd();
+
+                                switch(id)
+                                {
+                                    case "PHOTO_CD":
+                                        mediaType = MediaType.PCD;
+
+                                        AaruConsole.DebugWriteLine("Media detection",
+                                                                   "Found Photo CD description file, setting disc type to Photo CD.");
+
+                                        return;
+                                }
                             }
                         }
                     }
@@ -1878,7 +1881,7 @@ namespace Aaru.Core.Media.Detection
 
                         uint infoPos = 0;
 
-                        for(int pi = 0; pi < vcdLength; pi++)
+                        for(int pi = 0; pi < pcdLength; pi++)
                         {
                             int pcdPos = pi * 2048;
 
