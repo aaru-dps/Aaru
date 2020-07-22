@@ -95,12 +95,12 @@ namespace Aaru.CommonTypes.Interfaces
         byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
 
         /// <summary>Gets the disc track extents for a specified session.</summary>
-        /// <returns>The track exents for that session.</returns>
+        /// <returns>The track extents for that session.</returns>
         /// <param name="session">Session.</param>
         List<Track> GetSessionTracks(Session session);
 
         /// <summary>Gets the disc track extents for a specified session.</summary>
-        /// <returns>The track exents for that session.</returns>
+        /// <returns>The track extents for that session.</returns>
         /// <param name="session">Session.</param>
         List<Track> GetSessionTracks(ushort session);
 

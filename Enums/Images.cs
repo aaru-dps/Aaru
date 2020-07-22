@@ -39,6 +39,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.CommonTypes.Enums
 {
     /// <summary>Track (as partitioning element) types.</summary>
@@ -122,7 +124,7 @@ namespace Aaru.CommonTypes.Enums
         CD_FullTOC = 2,
         /// <summary>CD PMA</summary>
         CD_PMA = 3,
-        /// <summary>CD Adress-Time-In-Pregroove</summary>
+        /// <summary>CD Address-Time-In-Pregroove</summary>
         CD_ATIP = 4,
         /// <summary>CD-Text</summary>
         CD_TEXT = 5,
@@ -300,7 +302,7 @@ namespace Aaru.CommonTypes.Enums
         Correct = 0x01,
         /// <summary>Data checksum is incorrect.</summary>
         DataError = 0x02,
-        /// <summary>Addres mark checksum is incorrect.</summary>
+        /// <summary>Address mark checksum is incorrect.</summary>
         AddressMarkError = 0x04,
         /// <summary>There is another sector in the same track/head with same sector id.</summary>
         Duplicated = 0x08,
@@ -330,13 +332,13 @@ namespace Aaru.CommonTypes.Enums
 
     public enum FloppyDensities : byte
     {
-        /// <summary>Standard coercitivity (about 300Oe as found in 8" and 5.25"-double-density disks).</summary>
+        /// <summary>Standard coercivity (about 300Oe as found in 8" and 5.25"-double-density disks).</summary>
         Standard,
-        /// <summary>Double density coercitivity (about 600Oe as found in 5.25" HD and 3.5" DD disks).</summary>
+        /// <summary>Double density coercivity (about 600Oe as found in 5.25" HD and 3.5" DD disks).</summary>
         Double,
-        /// <summary>High density coercitivity (about 700Oe as found in 3.5" HD disks).</summary>
+        /// <summary>High density coercivity (about 700Oe as found in 3.5" HD disks).</summary>
         High,
-        /// <summary>Extended density coercitivity (about 750Oe as found in 3.5" ED disks).</summary>
+        /// <summary>Extended density coercivity (about 750Oe as found in 3.5" ED disks).</summary>
         Extended
     }
 

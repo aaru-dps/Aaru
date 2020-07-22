@@ -54,8 +54,8 @@ namespace Aaru.CommonTypes.Interfaces
         Dictionary<string, string> Namespaces { get; }
 
         /// <summary>
-        ///     Initializates whatever internal structures the filesystem plugin needs to be able to read files and
-        ///     directories from the filesystem.
+        ///     Initializes whatever internal structures the filesystem plugin needs to be able to read files and directories
+        ///     from the filesystem.
         /// </summary>
         /// <param name="imagePlugin"></param>
         /// <param name="partition"></param>

@@ -50,7 +50,7 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>Media has been already dumped completely</summary>
         AlreadyDumped = 3,
         /// <summary>Image and its sectors cannot be verified</summary>
-        NotVerificable = 4,
+        NotVerifiable = 4,
         /// <summary>There are bad sectors and image cannot be verified</summary>
         BadSectorsImageNotVerified = 5,
         /// <summary>All sectors are good and image cannot be verified</summary>

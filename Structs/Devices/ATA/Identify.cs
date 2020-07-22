@@ -45,6 +45,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.CommonTypes.Structs.Devices.ATA
 {
     /// <summary>
@@ -66,7 +68,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             /// <summary>ATAPI: Command queueing supported</summary>
             CommandQueue = 0x4000,
             /// <summary>Standby timer values are standard</summary>
-            StandardStanbyTimer = 0x2000,
+            StandardStandbyTimer = 0x2000,
             /// <summary>ATAPI: Overlap operation supported</summary>
             OverlapOperation = 0x2000,
             /// <summary>ATAPI: ATA software reset required Obsoleted in ATA/ATAPI-4</summary>
@@ -234,7 +236,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             FUAWrite = 0x0040,
             /// <summary>General Purpose Logging feature supported</summary>
             GPL = 0x0020,
-            /// <summary>Sstreaming feature set is supported</summary>
+            /// <summary>Streaming feature set is supported</summary>
             Streaming = 0x0010,
             /// <summary>Media Card Pass Through command set supported</summary>
             MCPT = 0x0008,
@@ -322,7 +324,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             Reserved09 = 0x0200, Reserved08 = 0x0100, Reserved07 = 0x0080,
             Reserved06 = 0x0040, Reserved05 = 0x0020, Reserved04 = 0x0010,
             Reserved03 = 0x0008, Reserved02 = 0x0004, Reserved01 = 0x0002,
-            /// <summary>TRIM is suported</summary>
+            /// <summary>TRIM is supported</summary>
             Trim = 0x0001
         }
 
@@ -443,7 +445,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
             DevSlumbTrans = 0x4000,
             /// <summary>Supports host automatic partial to slumber transitions</summary>
             HostSlumbTrans = 0x2000,
-            /// <summary>Supports NCQ priroty</summary>
+            /// <summary>Supports NCQ priority</summary>
             NCQPriority = 0x1000,
             /// <summary>Supports unload while NCQ commands are outstanding</summary>
             UnloadNCQ = 0x0800,

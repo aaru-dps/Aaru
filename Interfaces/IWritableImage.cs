@@ -59,7 +59,7 @@ namespace Aaru.CommonTypes.Interfaces
         IEnumerable<MediaType> SupportedMediaTypes { get; }
         /// <summary>Retrieves a list of options supported by the filesystem, with name, type and description</summary>
         IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions { get; }
-        /// <summary>Gets a list of known extensions for format auto-chosing</summary>
+        /// <summary>Gets a list of known extensions for format auto-choosing</summary>
         IEnumerable<string> KnownExtensions { get; }
 
         bool   IsWriting    { get; }

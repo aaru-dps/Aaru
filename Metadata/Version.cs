@@ -49,7 +49,7 @@ namespace Aaru.CommonTypes.Metadata
         {
             Name            = "Aaru",
             OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
-            Version         = typeof(Version).Assembly.GetName().Version.ToString()
+            Version         = typeof(Version).Assembly.GetName().Version?.ToString()
         };
     }
 }

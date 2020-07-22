@@ -46,16 +46,19 @@ namespace Aaru.CommonTypes.Interop
     {
         /// <summary>Gets version string</summary>
         /// <returns>Version</returns>
-        public static string GetVersion() => typeof(Version).Assembly.GetName().Version.ToString();
+        public static string GetVersion() => typeof(Version).Assembly.GetName().Version?.ToString();
 
         public static string GetNetCoreVersion()
         {
             Assembly assembly = typeof(GCSettings).Assembly;
 
-            string[] assemblyPath = assembly.CodeBase.Split(new[]
+            string[] assemblyPath = assembly.CodeBase?.Split(new[]
             {
                 '/', '\\'
             }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(assemblyPath is null)
+                return null;
 
             int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 

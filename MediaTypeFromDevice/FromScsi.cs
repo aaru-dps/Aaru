@@ -55,7 +55,7 @@ namespace Aaru.CommonTypes
             {
                 // Direct access device
                 case 0x00:
-                // Simpilified access device
+                // Simplified access device
                 case 0x0E:
                     if(mediumType == 0x03 ||
                        mediumType == 0x05 ||

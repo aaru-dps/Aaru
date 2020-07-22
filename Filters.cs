@@ -46,9 +46,9 @@ using Aaru.Console;
 
 namespace Aaru.CommonTypes
 {
-    public class FiltersList
+    public sealed class FiltersList
     {
-        public SortedDictionary<string, IFilter> Filters;
+        public readonly SortedDictionary<string, IFilter> Filters;
 
         /// <summary>Fills the list of all known filters</summary>
         public FiltersList()
@@ -110,9 +110,5 @@ namespace Aaru.CommonTypes
                 return null;
             }
         }
-
-        /// <summary>Gets all known filters</summary>
-        /// <returns>Known filters</returns>
-        public SortedDictionary<string, IFilter> GetFiltersList() => Filters;
     }
 }

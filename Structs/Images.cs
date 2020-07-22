@@ -177,8 +177,8 @@ namespace Aaru.CommonTypes.Structs
         public FloppyTypes Type;
         /// <summary>Bitrate in bits per second used to write the floppy, 0 if unknown or track-variable.</summary>
         public uint Bitrate;
-        /// <summary>Physical magnetic density (coercitivity) of floppy medium.</summary>
-        public FloppyDensities Coercitivity;
+        /// <summary>Physical magnetic density (coercivity) of floppy medium.</summary>
+        public FloppyDensities Coercivity;
         /// <summary>How many physical tracks are actually written in the floppy image.</summary>
         public ushort Tracks;
         /// <summary>How many physical heads are actually written in the floppy image.</summary>

@@ -41,6 +41,9 @@
 
 using System;
 
+// ReSharper disable UnusedMember.Global
+// ReSharper disable IdentifierTypo
+
 namespace Aaru.CommonTypes
 {
     public enum MediaEncoding

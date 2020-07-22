@@ -35,6 +35,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.CommonTypes.Interfaces
 {
     [Flags]
@@ -163,18 +165,18 @@ namespace Aaru.CommonTypes.Interfaces
         /// <summary>Gets the attributes of a file or directory.</summary>
         /// <seealso cref="Stat(int)" />
         /// <returns>Error number.</returns>
-        /// <param name="entryNumber">The entry in the archive for which to retreive the attributes.</param>
+        /// <param name="entryNumber">The entry in the archive for which to retrieve the attributes.</param>
         /// <returns>File attributes, or zero if the archive does not support attributes.</returns>
         FileAttributes GetAttributes(int entryNumber);
 
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
-        /// <param name="entryNumber">The entry in the archive for which to retreive the list of attributes.</param>
+        /// <param name="entryNumber">The entry in the archive for which to retrieve the list of attributes.</param>
         /// <returns>List of extended attributes, alternate data streams and forks.</returns>
         List<string> GetXAttrs(int entryNumber);
 
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
-        /// <param name="entryNumber">The entry in the archive for which to retreive the XAttr.</param>
+        /// <param name="entryNumber">The entry in the archive for which to retrieve the XAttr.</param>
         /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
         /// <returns>Buffer with the XAttr data.</returns>
         byte[] GetXattr(int entryNumber, string xattr);

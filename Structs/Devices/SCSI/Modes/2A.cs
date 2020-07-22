@@ -37,13 +37,13 @@ using Newtonsoft.Json;
 
 namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     #region Mode Page 0x2A: CD-ROM capabilities page
     /// <summary>
     ///     CD-ROM capabilities page Page code 0x2A 16 bytes in OB-U0077C 20 bytes in SFF-8020i 22 bytes in MMC-1 26 bytes
     ///     in MMC-2 Variable bytes in MMC-3
     /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public class ModePage_2A
     {
         public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
