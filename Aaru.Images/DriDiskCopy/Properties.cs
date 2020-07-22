@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DriDiskCopy
+    public sealed partial class DriDiskCopy
     {
         public ImageInfo Info => _imageInfo;
 

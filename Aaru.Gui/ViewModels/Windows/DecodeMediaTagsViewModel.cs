@@ -44,6 +44,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
 using Aaru.Helpers;
+using JetBrains.Annotations;
 using ReactiveUI;
 using BCA = Aaru.Decoders.Bluray.BCA;
 using Cartridge = Aaru.Decoders.DVD.Cartridge;
@@ -54,7 +55,7 @@ using Spare = Aaru.Decoders.DVD.Spare;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class DecodeMediaTagsViewModel : ViewModelBase
+    public sealed class DecodeMediaTagsViewModel : ViewModelBase
     {
         const int HEX_COLUMNS = 32;
         string    _decodedText;
@@ -63,7 +64,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
         MediaTagModel _selectedTag;
 
-        public DecodeMediaTagsViewModel(IMediaImage inputFormat)
+        public DecodeMediaTagsViewModel([NotNull] IMediaImage inputFormat)
         {
             TagsList = new ObservableCollection<MediaTagModel>();
 

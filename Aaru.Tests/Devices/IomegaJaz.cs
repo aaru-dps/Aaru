@@ -38,12 +38,12 @@ namespace Aaru.Tests.Devices
     [TestFixture]
     public class IomegaJaz
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "jaz1.bin.lz"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.Jaz
         };
@@ -53,7 +53,7 @@ namespace Aaru.Tests.Devices
             2091050
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -61,16 +61,16 @@ namespace Aaru.Tests.Devices
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "JAZ", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "JAZ", _testFiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
             }
         }
     }

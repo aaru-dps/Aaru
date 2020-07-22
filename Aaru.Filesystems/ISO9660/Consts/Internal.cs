@@ -37,7 +37,7 @@ using Aaru.Helpers;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const           byte MODE2_FORM2          = 0x20;
         static readonly int  _directoryRecordSize = Marshal.SizeOf<DirectoryRecord>();

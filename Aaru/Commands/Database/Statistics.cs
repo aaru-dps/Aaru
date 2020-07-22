@@ -40,7 +40,7 @@ using Command = System.CommandLine.Command;
 
 namespace Aaru.Commands.Database
 {
-    internal class StatisticsCommand : Command
+    internal sealed class StatisticsCommand : Command
     {
         public StatisticsCommand() : base("stats", "Shows statistics.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

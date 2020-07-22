@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
         struct Dc42Header

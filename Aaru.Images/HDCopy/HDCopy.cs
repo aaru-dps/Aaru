@@ -72,7 +72,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class HdCopy : IMediaImage
+    public sealed partial class HdCopy : IMediaImage
     {
         /// <summary>Every track that has been read is cached here</summary>
         readonly Dictionary<int, byte[]> _trackCache = new Dictionary<int, byte[]>();

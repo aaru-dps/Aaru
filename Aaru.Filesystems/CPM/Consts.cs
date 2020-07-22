@@ -34,7 +34,7 @@
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         /// <summary>Enumerates the format identification byte used by CP/M-86</summary>
         enum FormatByte : byte

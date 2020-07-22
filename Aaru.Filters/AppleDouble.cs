@@ -43,7 +43,7 @@ namespace Aaru.Filters
 {
     /// <summary>Decodes AppleDouble files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class AppleDouble : IFilter
+    public sealed class AppleDouble : IFilter
     {
         const uint MAGIC    = 0x00051607;
         const uint VERSION  = 0x00010000;
@@ -129,7 +129,7 @@ namespace Aaru.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder  = Path.GetDirectoryName(path);
 
-            parentFolder = parentFolder ?? "";
+            parentFolder ??= "";
 
             if(filename is null ||
                filenameNoExt is null)
@@ -316,7 +316,7 @@ namespace Aaru.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder  = Path.GetDirectoryName(path);
 
-            parentFolder = parentFolder ?? "";
+            parentFolder ??= "";
 
             if(filename is null ||
                filenameNoExt is null)

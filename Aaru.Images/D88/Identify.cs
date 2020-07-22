@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class D88
+    public sealed partial class D88
     {
         public bool Identify(IFilter imageFilter)
         {

@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Metadata;
 namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a report for a USB device</summary>
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         /// <summary>Fills a device report with parameters specific to a USB device</summary>
         public Usb UsbReport()

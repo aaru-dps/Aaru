@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite5
+    public sealed partial class BlindWrite5
     {
         /// <summary>"BWT5 STREAM FOOT"</summary>
         readonly byte[] _bw5Footer =

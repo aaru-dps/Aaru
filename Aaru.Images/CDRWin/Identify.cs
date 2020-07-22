@@ -38,7 +38,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class CdrWin
+    public sealed partial class CdrWin
     {
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public bool Identify(IFilter imageFilter)

@@ -35,7 +35,7 @@ using System.Collections.Generic;
 
 namespace Aaru.DiscImages
 {
-    public partial class KryoFlux
+    public sealed partial class KryoFlux
     {
         public bool? VerifySector(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");

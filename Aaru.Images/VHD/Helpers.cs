@@ -35,7 +35,7 @@ using System.Linq;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhd
+    public sealed partial class Vhd
     {
         static uint VhdChecksum(IEnumerable<byte> data)
         {

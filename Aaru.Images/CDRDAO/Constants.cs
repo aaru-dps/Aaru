@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         /// <summary>Audio track, 2352 bytes/sector</summary>
         const string CDRDAO_TRACK_TYPE_AUDIO = "AUDIO";

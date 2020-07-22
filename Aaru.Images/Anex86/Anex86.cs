@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Anex86 : IWritableImage
+    public sealed partial class Anex86 : IWritableImage
     {
         IFilter      _anexImageFilter;
         Anex86Header _fdihdr;

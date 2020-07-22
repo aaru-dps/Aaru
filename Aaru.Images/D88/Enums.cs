@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class D88
+    public sealed partial class D88
     {
         enum DiskType : byte
         {

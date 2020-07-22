@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Panels
 {
-    public class DeviceInfo : UserControl
+    public sealed class DeviceInfo : UserControl
     {
         public DeviceInfo() => InitializeComponent();
 

@@ -43,7 +43,7 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         public Scsi ReportScsiInquiry()
         {
@@ -65,7 +65,7 @@ namespace Aaru.Core.Devices.Report
             return report;
         }
 
-        public static byte[] ClearInquiry(byte[] inquiry)
+        internal static byte[] ClearInquiry(byte[] inquiry)
         {
             Inquiry? decodedNullable = Inquiry.Decode(inquiry);
 
@@ -74,11 +74,13 @@ namespace Aaru.Core.Devices.Report
 
             Inquiry decoded = decodedNullable.Value;
 
+            if(!decoded.SeagatePresent ||
+               StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() != "seagate")
+                return inquiry;
+
             // Clear Seagate serial number
-            if(decoded.SeagatePresent &&
-               StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() == "seagate")
-                for(int i = 36; i <= 43; i++)
-                    inquiry[i] = 0;
+            for(int i = 36; i <= 43; i++)
+                inquiry[i] = 0;
 
             return inquiry;
         }
@@ -414,8 +416,7 @@ namespace Aaru.Core.Devices.Report
             if(!sense &&
                !_dev.Error)
             {
-                if(!decMode.HasValue)
-                    decMode = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 mediaTest.ModeSense6Data = buffer;
             }
@@ -469,23 +470,22 @@ namespace Aaru.Core.Devices.Report
             {
                 FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
 
-                if(decSense.HasValue)
-                    if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                       decSense.Value.ASC      == 0x24                     &&
-                       decSense.Value.ASCQ     == 0x00)
-                    {
-                        mediaTest.SupportsReadLong = true;
+                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                   decSense.Value.ASC  == 0x24                     &&
+                   decSense.Value.ASCQ == 0x00)
+                {
+                    mediaTest.SupportsReadLong = true;
 
-                        if(decSense.Value.InformationValid &&
-                           decSense.Value.ILI)
-                            mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                    }
+                    if(decSense.Value.InformationValid &&
+                       decSense.Value.ILI)
+                        mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                }
             }
 
             if(mediaTest.SupportsReadLong == true &&
                mediaTest.LongBlockSize    == mediaTest.BlockSize)
                 if(mediaTest.BlockSize == 512)
-                    foreach(int i in new[]
+                    foreach(ushort testSize in new ushort[]
                     {
                         // Long sector sizes for floppies
                         514,
@@ -497,8 +497,6 @@ namespace Aaru.Core.Devices.Report
                         600, 610, 630
                     })
                     {
-                        ushort testSize = (ushort)i;
-
                         sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
                                                 out _);
 
@@ -511,7 +509,7 @@ namespace Aaru.Core.Devices.Report
                         break;
                     }
                 else if(mediaTest.BlockSize == 1024)
-                    foreach(int i in new[]
+                    foreach(ushort testSize in new ushort[]
                     {
                         // Long sector sizes for floppies
                         1026,
@@ -520,9 +518,7 @@ namespace Aaru.Core.Devices.Report
                         1200
                     })
                     {
-                        ushort testSize = (ushort)i;
-
-                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout,
+                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
                                                 out _);
 
                         if(sense || _dev.Error)
@@ -629,8 +625,7 @@ namespace Aaru.Core.Devices.Report
             if(!sense &&
                !_dev.Error)
             {
-                if(!decMode.HasValue)
-                    decMode = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 capabilities.ModeSense6Data = buffer;
             }
@@ -684,17 +679,16 @@ namespace Aaru.Core.Devices.Report
             {
                 FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
 
-                if(decSense.HasValue)
-                    if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                       decSense.Value.ASC      == 0x24                     &&
-                       decSense.Value.ASCQ     == 0x00)
-                    {
-                        capabilities.SupportsReadLong = true;
+                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                   decSense.Value.ASC  == 0x24                     &&
+                   decSense.Value.ASCQ == 0x00)
+                {
+                    capabilities.SupportsReadLong = true;
 
-                        if(decSense.Value.InformationValid &&
-                           decSense.Value.ILI)
-                            capabilities.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                    }
+                    if(decSense.Value.InformationValid &&
+                       decSense.Value.ILI)
+                        capabilities.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                }
             }
 
             if(capabilities.SupportsReadLong != true ||
@@ -702,7 +696,7 @@ namespace Aaru.Core.Devices.Report
                 return capabilities;
 
             if(capabilities.BlockSize == 512)
-                foreach(int i in new[]
+                foreach(ushort testSize in new ushort[]
                 {
                     // Long sector sizes for floppies
                     514,
@@ -714,9 +708,7 @@ namespace Aaru.Core.Devices.Report
                     600, 610, 630
                 })
                 {
-                    ushort testSize = (ushort)i;
-
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout,
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
                                             out _);
 
                     if(sense || _dev.Error)
@@ -728,7 +720,7 @@ namespace Aaru.Core.Devices.Report
                     break;
                 }
             else if(capabilities.BlockSize == 1024)
-                foreach(int i in new[]
+                foreach(ushort testSize in new ushort[]
                 {
                     // Long sector sizes for floppies
                     1026,
@@ -737,9 +729,7 @@ namespace Aaru.Core.Devices.Report
                     1200
                 })
                 {
-                    ushort testSize = (ushort)i;
-
-                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout,
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
                                             out _);
 
                     if(sense || _dev.Error)

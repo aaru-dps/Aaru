@@ -35,7 +35,7 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Sends the ATA IDENTIFY PACKET DEVICE command to the device, using default device timeout</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>

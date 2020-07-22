@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Vhd
+    public sealed partial class Vhd
     {
         /// <summary>File magic number, "conectix"</summary>
         const ulong IMAGE_COOKIE = 0x636F6E6563746978;

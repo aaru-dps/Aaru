@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class RayDim
+    public sealed partial class RayDim
     {
         public string                 Name         => "Ray Arachelian's Disk IMage";
         public Guid                   Id           => new Guid("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");

@@ -34,7 +34,7 @@ using System.Collections.ObjectModel;
 
 namespace Aaru.Gui.Models
 {
-    public class ImagesRootModel : RootModel
+    public sealed class ImagesRootModel : RootModel
     {
         public ImagesRootModel() => Images = new ObservableCollection<ImageModel>();
 

@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Commands.Image
 {
-    internal class PrintHexCommand : Command
+    internal sealed class PrintHexCommand : Command
     {
         public PrintHexCommand() : base("print", "Prints a sector, in hexadecimal values, to the console.")
         {

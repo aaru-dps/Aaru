@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde
+    public sealed partial class RsIde
     {
         readonly byte[] _signature =
         {

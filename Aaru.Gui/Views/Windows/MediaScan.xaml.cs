@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class MediaScan : Window
+    public sealed class MediaScan : Window
     {
         public MediaScan()
         {

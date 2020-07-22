@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class CisCopy
+    public sealed partial class CisCopy
     {
         public bool Open(IFilter imageFilter)
         {

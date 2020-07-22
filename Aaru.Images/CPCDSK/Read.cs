@@ -45,7 +45,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         public bool Open(IFilter imageFilter)
         {
@@ -335,8 +335,8 @@ namespace Aaru.DiscImages
 
             for(uint i = 0; i < length; i++)
             {
-                byte[] adddressMark = ReadSector(sectorAddress + i);
-                ms.Write(adddressMark, 0, adddressMark.Length);
+                byte[] addressMark = ReadSector(sectorAddress + i);
+                ms.Write(addressMark, 0, addressMark.Length);
             }
 
             return ms.ToArray();

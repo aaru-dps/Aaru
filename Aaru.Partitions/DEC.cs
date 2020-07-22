@@ -40,7 +40,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
-    public class DEC : IPartition
+    public sealed class DEC : IPartition
     {
         const int PT_MAGIC = 0x032957;
         const int PT_VALID = 1;

@@ -45,7 +45,7 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
@@ -124,9 +124,7 @@ namespace Aaru.Filesystems
 
             offset += entry.XattrLength;
 
-            if(entry.CdiSystemArea != null                                              &&
-               entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.DigitalAudio) &&
-               entry.Extents.Count == 1)
+            if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true && entry.Extents.Count == 1)
             {
                 try
                 {
@@ -196,37 +194,32 @@ namespace Aaru.Filesystems
             if(entry.Flags.HasFlag(FileFlags.Hidden))
                 stat.Attributes |= FileAttributes.Hidden;
 
-            if(entry.FinderInfo != null)
-            {
-                AppleCommon.FInfo finderInfo = entry.FinderInfo.Value;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias) == true)
+                stat.Attributes |= FileAttributes.Alias;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
-                    stat.Attributes |= FileAttributes.Alias;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible) == true)
+                stat.Attributes |= FileAttributes.Hidden;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
-                    stat.Attributes |= FileAttributes.Hidden;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited) == true)
+                stat.Attributes |= FileAttributes.HasBeenInited;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
-                    stat.Attributes |= FileAttributes.HasBeenInited;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon) == true)
+                stat.Attributes |= FileAttributes.HasCustomIcon;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
-                    stat.Attributes |= FileAttributes.HasCustomIcon;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs) == true)
+                stat.Attributes |= FileAttributes.HasNoINITs;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
-                    stat.Attributes |= FileAttributes.HasNoINITs;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk) == true)
+                stat.Attributes |= FileAttributes.IsOnDesk;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
-                    stat.Attributes |= FileAttributes.IsOnDesk;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared) == true)
+                stat.Attributes |= FileAttributes.Shared;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
-                    stat.Attributes |= FileAttributes.Shared;
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery) == true)
+                stat.Attributes |= FileAttributes.Stationery;
 
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
-                    stat.Attributes |= FileAttributes.Stationery;
-
-                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
-                    stat.Attributes |= FileAttributes.Bundle;
-            }
+            if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle) == true)
+                stat.Attributes |= FileAttributes.Bundle;
 
             if(entry.AppleIcon != null)
                 stat.Attributes |= FileAttributes.HasCustomIcon;

@@ -46,7 +46,7 @@ namespace Aaru.Partitions
     // Information about structures learnt from Inside Macintosh
     // Constants from image testing
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class AppleMap : IPartition
+    public sealed class AppleMap : IPartition
     {
         /// <summary>"ER", driver descriptor magic</summary>
         const ushort DDM_MAGIC = 0x4552;
@@ -388,7 +388,7 @@ namespace Aaru.Partitions
                 }
                 else
                     AaruConsole.DebugWriteLine("AppleMap Plugin",
-                                               "Not adding partition becaus start ({0}) is outside media size ({1})",
+                                               "Not adding partition because start ({0}) is outside media size ({1})",
                                                partition.Start, imagePlugin.Info.Sectors - 1);
             }
 
@@ -400,7 +400,7 @@ namespace Aaru.Partitions
         {
             /// <summary>Signature <see cref="DDM_MAGIC" /></summary>
             public readonly ushort sbSig;
-            /// <summary>Byter per sector</summary>
+            /// <summary>Bytes per sector</summary>
             public readonly ushort sbBlockSize;
             /// <summary>Sectors of the disk</summary>
             public readonly uint sbBlocks;

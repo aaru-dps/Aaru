@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart
+    public sealed partial class Dart
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

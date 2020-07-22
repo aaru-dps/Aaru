@@ -54,7 +54,7 @@ namespace Aaru.Core.Devices.Dumping
     public partial class Dump
     {
         /// <summary>Dumps an ATA device</summary>
-        public void Ata()
+        void Ata()
         {
             if(_dumpRaw)
             {
@@ -96,7 +96,7 @@ namespace Aaru.Core.Devices.Dumping
                     double   maxSpeed      = double.MinValue;
                     double   minSpeed      = double.MaxValue;
 
-                    // Initializate reader
+                    // Initialize reader
                     UpdateStatus?.Invoke("Initializing reader.");
                     _dumpLog.WriteLine("Initializing reader.");
                     var ataReader = new Reader(_dev, timeout, ataIdentify, _errorLog);
@@ -114,7 +114,7 @@ namespace Aaru.Core.Devices.Dumping
                     }
 
                     uint blockSize          = ataReader.LogicalBlockSize;
-                    uint physicalsectorsize = ataReader.PhysicalBlockSize;
+                    uint physicalSectorSize = ataReader.PhysicalBlockSize;
 
                     if(ataReader.FindReadCommand())
                     {
@@ -145,7 +145,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
                     UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
-                    UpdateStatus?.Invoke($"Device reports {physicalsectorsize} bytes per physical block.");
+                    UpdateStatus?.Invoke($"Device reports {physicalSectorSize} bytes per physical block.");
                     _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
 
                     _dumpLog.WriteLine("Device reports {0} cylinders {1} heads {2} sectors per track.", cylinders,
@@ -153,7 +153,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
                     _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-                    _dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalsectorsize);
+                    _dumpLog.WriteLine("Device reports {0} bytes per physical block.", physicalSectorSize);
 
                     bool removable = !_dev.IsCompactFlash &&
                                      ataId.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
@@ -277,15 +277,13 @@ namespace Aaru.Core.Devices.Dumping
                             if(blocks - i < blocksToRead)
                                 blocksToRead = (byte)(blocks - i);
 
-                            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                             if(currentSpeed > maxSpeed &&
-                               currentSpeed != 0)
+                               currentSpeed > 0)
                                 maxSpeed = currentSpeed;
 
                             if(currentSpeed < minSpeed &&
-                               currentSpeed != 0)
+                               currentSpeed > 0)
                                 minSpeed = currentSpeed;
-                            #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                             UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                    (long)i, (long)blocks);
@@ -396,8 +394,8 @@ namespace Aaru.Core.Devices.Dumping
 
                             EndProgress?.Invoke();
                             end = DateTime.UtcNow;
-                            UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
-                            _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                            UpdateStatus?.Invoke($"Trimming finished in {(end - start).TotalSeconds} seconds.");
+                            _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
                         }
                         #endregion Trimming
 
@@ -493,15 +491,13 @@ namespace Aaru.Core.Devices.Dumping
                                         break;
                                     }
 
-                                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                                     if(currentSpeed > maxSpeed &&
-                                       currentSpeed != 0)
+                                       currentSpeed > 0)
                                         maxSpeed = currentSpeed;
 
                                     if(currentSpeed < minSpeed &&
-                                       currentSpeed != 0)
+                                       currentSpeed > 0)
                                         minSpeed = currentSpeed;
-                                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                                     PulseProgress?.
                                         Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
@@ -698,32 +694,33 @@ namespace Aaru.Core.Devices.Dumping
                                     switch(tuple.Code)
                                     {
                                         case TupleCodes.CISTPL_MANFID:
-                                            ManufacturerIdentificationTuple manfid =
+                                            ManufacturerIdentificationTuple manufacturerId =
                                                 CIS.DecodeManufacturerIdentificationTuple(tuple);
 
-                                            if(manfid != null)
+                                            if(manufacturerId != null)
                                             {
-                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                                sidecar.BlockMedia[0].PCMCIA.ManufacturerCode =
+                                                    manufacturerId.ManufacturerID;
 
-                                                sidecar.BlockMedia[0].PCMCIA.CardCode                  = manfid.CardID;
+                                                sidecar.BlockMedia[0].PCMCIA.CardCode = manufacturerId.CardID;
                                                 sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
-                                                sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified         = true;
+                                                sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified = true;
                                             }
 
                                             break;
                                         case TupleCodes.CISTPL_VERS_1:
-                                            Level1VersionTuple vers = CIS.DecodeLevel1VersionTuple(tuple);
+                                            Level1VersionTuple version = CIS.DecodeLevel1VersionTuple(tuple);
 
-                                            if(vers != null)
+                                            if(version != null)
                                             {
-                                                sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
-                                                sidecar.BlockMedia[0].PCMCIA.ProductName  = vers.Product;
+                                                sidecar.BlockMedia[0].PCMCIA.Manufacturer = version.Manufacturer;
+                                                sidecar.BlockMedia[0].PCMCIA.ProductName  = version.Product;
 
                                                 sidecar.BlockMedia[0].PCMCIA.Compliance =
-                                                    $"{vers.MajorVersion}.{vers.MinorVersion}";
+                                                    $"{version.MajorVersion}.{version.MinorVersion}";
 
                                                 sidecar.BlockMedia[0].PCMCIA.AdditionalInformation =
-                                                    vers.AdditionalInformation;
+                                                    version.AdditionalInformation;
                                             }
 
                                             break;
@@ -788,7 +785,7 @@ namespace Aaru.Core.Devices.Dumping
                         sidecar.BlockMedia[0].DiskSubType       = subType;
                         sidecar.BlockMedia[0].Interface         = "ATA";
                         sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-                        sidecar.BlockMedia[0].PhysicalBlockSize = physicalsectorsize;
+                        sidecar.BlockMedia[0].PhysicalBlockSize = physicalSectorSize;
                         sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                         sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
                         sidecar.BlockMedia[0].Model             = _dev.Model;

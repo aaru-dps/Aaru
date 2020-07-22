@@ -39,12 +39,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using JetBrains.Annotations;
 using Microsoft.DotNet.PlatformAbstractions;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Dialogs
 {
-    public class AboutViewModel : ViewModelBase
+    public sealed class AboutViewModel : ViewModelBase
     {
         readonly About _view;
         string         _versionText;
@@ -67,7 +68,7 @@ namespace Aaru.Gui.ViewModels.Dialogs
             {
                 foreach(Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().OrderBy(a => a.FullName))
                 {
-                    string? name = assembly.GetName().Name;
+                    string name = assembly.GetName().Name;
 
                     string version =
                         (Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute)) as
@@ -86,18 +87,31 @@ namespace Aaru.Gui.ViewModels.Dialogs
             });
         }
 
-        public string AboutLabel            => "About";
-        public string LibrariesLabel        => "Libraries";
-        public string AuthorsLabel          => "Authors";
-        public string Title                 => "About Aaru";
-        public string SoftwareName          => "Aaru";
-        public string SuiteName             => "Aaru Data Preservation Suite";
-        public string Copyright             => "© 2011-2020 Natalia Portillo";
-        public string Website               => "https://aaru.app";
-        public string License               => "License: GNU General Public License Version 3";
-        public string CloseLabel            => "Close";
+        [NotNull]
+        public string AboutLabel => "About";
+        [NotNull]
+        public string LibrariesLabel => "Libraries";
+        [NotNull]
+        public string AuthorsLabel => "Authors";
+        [NotNull]
+        public string Title => "About Aaru";
+        [NotNull]
+        public string SoftwareName => "Aaru";
+        [NotNull]
+        public string SuiteName => "Aaru Data Preservation Suite";
+        [NotNull]
+        public string Copyright => "© 2011-2020 Natalia Portillo";
+        [NotNull]
+        public string Website => "https://aaru.app";
+        [NotNull]
+        public string License => "License: GNU General Public License Version 3";
+        [NotNull]
+        public string CloseLabel => "Close";
+        [NotNull]
         public string AssembliesLibraryText => "Library";
+        [NotNull]
         public string AssembliesVersionText => "Version";
+        [NotNull]
         public string Authors => @"Developers:
     Natalia Portillo
     Michael Drüing

@@ -47,7 +47,7 @@ namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "NotAccessedField.Local"),
      SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public partial class Nero : IOpticalMediaImage
+    public sealed partial class Nero : IOpticalMediaImage
     {
         bool                                 _imageNewFormat;
         Stream                               _imageStream;

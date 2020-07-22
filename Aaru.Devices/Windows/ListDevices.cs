@@ -182,12 +182,11 @@ namespace Aaru.Devices.Windows
                         info.Serial = HexStringToString(info.Serial).Trim();
                 }
 
-                if((string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA") &&
-                   info.Model != null)
+                if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
                 {
-                    string[] pieces = info.Model.Split(' ');
+                    string[] pieces = info.Model?.Split(' ');
 
-                    if(pieces.Length > 1)
+                    if(pieces?.Length > 1)
                     {
                         info.Vendor = pieces[0];
                         info.Model  = info.Model.Substring(pieces[0].Length + 1);

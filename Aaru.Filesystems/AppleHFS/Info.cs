@@ -41,7 +41,7 @@ namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    public partial class AppleHFS
+    public sealed partial class AppleHFS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

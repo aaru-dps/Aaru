@@ -45,7 +45,7 @@ using Encoding = System.Text.Encoding;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         /// <inheritdoc />
         /// <summary>Mounts an Apple Lisa filesystem</summary>
@@ -60,8 +60,7 @@ namespace Aaru.Filesystems.LisaFS
                 // Lisa OS is unable to work on disks without tags.
                 // This code is designed like that.
                 // However with some effort the code may be modified to ignore them.
-                if(_device.Info.ReadableSectorTags == null ||
-                   !_device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(_device.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
                 {
                     AaruConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
 
@@ -224,8 +223,7 @@ namespace Aaru.Filesystems.LisaFS
 
                     _mounted = true;
 
-                    if(options == null)
-                        options = GetDefaultOptions();
+                    options ??= GetDefaultOptions();
 
                     if(options.TryGetValue("debug", out string debugString))
                         bool.TryParse(debugString, out _debug);
@@ -360,7 +358,7 @@ namespace Aaru.Filesystems.LisaFS
         }
 
         /// <inheritdoc />
-        /// <summary>Umounts this Lisa filesystem</summary>
+        /// <summary>Unmounts this Lisa filesystem</summary>
         public Errno Unmount()
         {
             _mounted         = false;

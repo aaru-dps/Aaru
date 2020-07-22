@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     // Information from Quasi88's FORMAT.TXT file
     // Japanese comments copied from there
     // TODO: Solve media types
-    public partial class D88 : IMediaImage
+    public sealed partial class D88 : IMediaImage
     {
         ImageInfo    _imageInfo;
         List<byte[]> _sectorsData;

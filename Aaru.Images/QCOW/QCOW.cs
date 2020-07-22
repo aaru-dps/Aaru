@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow : IWritableImage
+    public sealed partial class Qcow : IWritableImage
     {
         Dictionary<ulong, byte[]>  _clusterCache;
         int                        _clusterSectors;

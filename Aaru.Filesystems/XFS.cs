@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class XFS : IFilesystem
+    public sealed class XFS : IFilesystem
     {
         const uint XFS_MAGIC = 0x58465342;
 

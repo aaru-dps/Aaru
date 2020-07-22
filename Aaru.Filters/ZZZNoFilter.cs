@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Filters
 {
     /// <summary>No filter for reading files not recognized by any filter</summary>
-    public class ZZZNoFilter : IFilter
+    public sealed class ZZZNoFilter : IFilter
     {
         string   _basePath;
         DateTime _creationTime;

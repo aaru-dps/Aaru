@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Virtual98
+    public sealed partial class Virtual98
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Virtual98 Disk Image";

@@ -39,7 +39,7 @@ using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         public TestedMedia ReportAtaMedia()
         {
@@ -175,12 +175,11 @@ namespace Aaru.Core.Devices.Report
                 }
 
                 ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
-                bool  sense;
 
                 AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
 
-                sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
-                                  _dev.Timeout, out _);
+                bool sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
+                                       _dev.Timeout, out _);
 
                 mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                 readBuf.Length                     > 0;
@@ -517,12 +516,11 @@ namespace Aaru.Core.Devices.Report
             }
 
             ulong checkCorrectRead = 0;
-            bool  sense;
 
             AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
 
-            sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, _dev.Timeout,
-                              out _);
+            bool sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
+                                   _dev.Timeout, out _);
 
             capabilities.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                readBuf.Length                     > 0;

@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
      */
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedType.Local"),
      SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
-    public class ZFS : IFilesystem
+    public sealed class ZFS : IFilesystem
     {
         const ulong ZEC_MAGIC = 0x0210DA7AB10C7A11;
         const ulong ZEC_CIGAM = 0x117A0CB17ADA1002;

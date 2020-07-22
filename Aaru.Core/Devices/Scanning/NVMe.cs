@@ -32,7 +32,7 @@
 
 namespace Aaru.Core.Devices.Scanning
 {
-    public partial class MediaScan
+    public sealed partial class MediaScan
     {
         ScanResults Nvme()
         {

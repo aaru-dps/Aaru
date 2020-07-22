@@ -40,7 +40,7 @@ using Aaru.Devices;
 namespace Aaru.Core.Logging
 {
     /// <summary>Implements a log in the format used by MHDD</summary>
-    internal class MhddLog
+    internal sealed class MhddLog
     {
         const    string       MHDD_VER = "VER:2 ";
         readonly string       _logFile;
@@ -98,9 +98,9 @@ namespace Aaru.Core.Logging
             string fw         = $"F/W: {dev.FirmwareRevision}";
             string sn         = $"S/N: {(@private ? "" : dev.Serial)}";
             string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
-            string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
+            string sectorSize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
 
-            string scanblocksize =
+            string scanBlockSize =
                 string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
 
             byte[] deviceBytes        = Encoding.ASCII.GetBytes(device);
@@ -108,12 +108,12 @@ namespace Aaru.Core.Logging
             byte[] fwBytes            = Encoding.ASCII.GetBytes(fw);
             byte[] snBytes            = Encoding.ASCII.GetBytes(sn);
             byte[] sectorsBytes       = Encoding.ASCII.GetBytes(sectors);
-            byte[] sectorsizeBytes    = Encoding.ASCII.GetBytes(sectorsize);
-            byte[] scanblocksizeBytes = Encoding.ASCII.GetBytes(scanblocksize);
+            byte[] sectorSizeBytes    = Encoding.ASCII.GetBytes(sectorSize);
+            byte[] scanBlockSizeBytes = Encoding.ASCII.GetBytes(scanBlockSize);
             byte[] verBytes           = Encoding.ASCII.GetBytes(MHDD_VER);
 
             uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length       + fwBytes.Length + snBytes.Length +
-                                  sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +
+                                  sectorsBytes.Length + sectorSizeBytes.Length + scanBlockSizeBytes.Length +
                                   verBytes.Length     + (2 * 9)                + // New lines
                                   4);                                            // Pointer
 
@@ -135,9 +135,9 @@ namespace Aaru.Core.Logging
             _mhddFs.Write(newLine, 0, 2);
             _mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
             _mhddFs.Write(newLine, 0, 2);
-            _mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
+            _mhddFs.Write(sectorSizeBytes, 0, sectorSizeBytes.Length);
             _mhddFs.Write(newLine, 0, 2);
-            _mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
+            _mhddFs.Write(scanBlockSizeBytes, 0, scanBlockSizeBytes.Length);
             _mhddFs.Write(newLine, 0, 2);
         }
 

@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleDos
+    public sealed partial class AppleDos
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
 
             if(mediaType != MediaType.Apple33SS)
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }

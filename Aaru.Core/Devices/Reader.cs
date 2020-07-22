@@ -39,7 +39,7 @@ using Aaru.Devices;
 namespace Aaru.Core.Devices
 {
     /// <summary>Reduces common code used for scanning and dumping</summary>
-    internal partial class Reader
+    internal sealed partial class Reader
     {
         readonly Device   _dev;
         readonly ErrorLog _errorLog;

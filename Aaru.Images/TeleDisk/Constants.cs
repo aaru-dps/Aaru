@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         // "TD" as little endian uint.
         const ushort TD_MAGIC = 0x4454;

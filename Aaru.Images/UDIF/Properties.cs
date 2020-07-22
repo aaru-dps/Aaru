@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Udif
+    public sealed partial class Udif
     {
         public ImageInfo Info => _imageInfo;
 

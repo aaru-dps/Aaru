@@ -71,29 +71,22 @@ namespace Aaru.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ata", b =>
-            {
-                b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
-                  HasForeignKey("ReadCapabilitiesId").OnDelete(DeleteBehavior.SetNull);
-            });
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ata",
+                                b => b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
+                                       HasForeignKey("ReadCapabilitiesId").OnDelete(DeleteBehavior.SetNull));
 
-            modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor", b =>
-            {
-                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).WithMany("BlockDescriptors").
-                  HasForeignKey("ScsiModeId").OnDelete(DeleteBehavior.Cascade);
-            });
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor",
+                                b => b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).WithMany("BlockDescriptors").
+                                       HasForeignKey("ScsiModeId").OnDelete(DeleteBehavior.Cascade));
 
-            modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode", b =>
-            {
-                b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia", null).WithMany("DensityCodes").
-                  HasForeignKey("SscSupportedMediaId").OnDelete(DeleteBehavior.Cascade);
-            });
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode",
+                                b => b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia", null).
+                                       WithMany("DensityCodes").HasForeignKey("SscSupportedMediaId").
+                                       OnDelete(DeleteBehavior.Cascade));
 
-            modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc", b =>
-            {
-                b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().HasForeignKey("FeaturesId").
-                  OnDelete(DeleteBehavior.SetNull);
-            });
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc",
+                                b => b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().
+                                       HasForeignKey("FeaturesId").OnDelete(DeleteBehavior.SetNull));
 
             modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi", b =>
             {
@@ -155,11 +148,9 @@ namespace Aaru.Database
                   OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedSequentialMedia", b =>
-            {
-                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).WithMany("TestedMedia").HasForeignKey("SscId").
-                  OnDelete(DeleteBehavior.SetNull);
-            });
+            modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedSequentialMedia",
+                                b => b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).WithMany("TestedMedia").
+                                       HasForeignKey("SscId").OnDelete(DeleteBehavior.SetNull));
 
             modelBuilder.Entity("Aaru.Database.Models.Device", b =>
             {

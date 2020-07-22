@@ -45,7 +45,7 @@ using ufs_daddr_t = System.Int32;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class dump : IFilesystem
+    public sealed class dump : IFilesystem
     {
         /// <summary>Magic number for old dump</summary>
         const ushort OFS_MAGIC = 60011;

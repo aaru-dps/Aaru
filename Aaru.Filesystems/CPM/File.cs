@@ -36,7 +36,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {

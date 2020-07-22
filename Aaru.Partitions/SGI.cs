@@ -46,7 +46,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class SGI : IPartition
+    public sealed class SGI : IPartition
     {
         const int SGI_MAGIC = 0x0BE5A941;
 

@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         static ushort CdrdaoTrackTypeToBytesPerSector(string trackType)
         {

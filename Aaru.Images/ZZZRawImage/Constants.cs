@@ -34,7 +34,7 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage
+    public sealed partial class ZZZRawImage
     {
         readonly byte[] _cdSync =
         {

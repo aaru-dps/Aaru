@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Dialogs
 {
-    public class Encodings : Window
+    public sealed class Encodings : Window
     {
         public Encodings()
         {

@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class AcornADFS : IFilesystem
+    public sealed class AcornADFS : IFilesystem
     {
         /// <summary>Location for boot block, in bytes</summary>
         const ulong BOOT_BLOCK_LOCATION = 0xC00;

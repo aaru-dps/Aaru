@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: CloneCD stores subchannel deinterleaved
-    public partial class CloneCd : IWritableOpticalImage
+    public sealed partial class CloneCd : IWritableOpticalImage
     {
         string                  _catalog; // TODO: Use it
         IFilter                 _ccdFilter;

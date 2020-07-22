@@ -39,7 +39,7 @@ using Aaru.Devices;
 namespace Aaru.Core.Logging
 {
     /// <summary>Implements a log in the format used by IMGBurn</summary>
-    internal class IbgLog
+    internal sealed class IbgLog
     {
         readonly CultureInfo   _ibgCulture;
         readonly double        _ibgDivider;

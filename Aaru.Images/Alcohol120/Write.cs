@@ -45,14 +45,14 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120
+    public sealed partial class Alcohol120
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -70,7 +70,7 @@ namespace Aaru.DiscImages
 
                 _imageStream =
                     new
-                        FileStream(Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path)) + ".mdf",
+                        FileStream(Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path)) + ".mdf",
                                    FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             }
             catch(IOException e)
@@ -418,6 +418,9 @@ namespace Aaru.DiscImages
                 {
                     Track firstTrackInSession = tracks.FirstOrDefault(t => t.TrackSession == tmpTracks[i].TrackSession);
 
+                    if(firstTrackInSession is null)
+                        continue;
+
                     if(tmpTracks[i].TrackSequence == firstTrackInSession.TrackSequence)
                     {
                         if(tmpTracks[i].TrackSequence > 1)
@@ -478,9 +481,8 @@ namespace Aaru.DiscImages
 
             byte sessions = byte.MinValue;
 
-            foreach(Track t in _writingTracks)
-                if(t.TrackSession > byte.MinValue)
-                    sessions = (byte)t.TrackSession;
+            foreach(Track t in _writingTracks.Where(t => t.TrackSession > byte.MinValue))
+                sessions = (byte)t.TrackSession;
 
             var header = new AlcoholHeader
             {
@@ -626,9 +628,8 @@ namespace Aaru.DiscImages
 
                     (byte minute, byte second, byte frame) leadinPmsf = LbaToMsf(lastTrack.TrackEndSector + 1);
 
-                    if(decodedToc.HasValue &&
-                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
-                                                                  t.POINT         <= 0xAF))
+                    if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
+                                                             t.POINT         <= 0xAF) == true)
                         foreach(FullTOC.TrackDataDescriptor tocTrk in
                             decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
                                                                          t.POINT         <= 0xAF))
@@ -707,9 +708,8 @@ namespace Aaru.DiscImages
                     {
                         var alcTrk = new AlcoholTrack();
 
-                        if(decodedToc.HasValue &&
-                           decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i &&
-                                                                      t.POINT         == track.TrackSequence))
+                        if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i &&
+                                                                 t.POINT         == track.TrackSequence) == true)
                         {
                             FullTOC.TrackDataDescriptor tocTrk =
                                 decodedToc.Value.TrackDescriptors.First(t => t.SessionNumber == i &&
@@ -805,8 +805,7 @@ namespace Aaru.DiscImages
                         _alcTrackExtras.Add((int)track.TrackSequence, trkExtra);
                     }
 
-                    if(decodedToc.HasValue &&
-                       decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xB0))
+                    if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xB0) == true)
                         foreach(FullTOC.TrackDataDescriptor tocTrk in
                             decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xB0))
                         {
@@ -880,34 +879,37 @@ namespace Aaru.DiscImages
 
             byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
 
-            IntPtr blockPtr;
-
             // Write header
             _descriptorStream.Seek(0, SeekOrigin.Begin);
-            byte[] block = new byte[Marshal.SizeOf<AlcoholHeader>()];
-            blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholHeader>());
+            byte[] block    = new byte[Marshal.SizeOf<AlcoholHeader>()];
+            IntPtr blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholHeader>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, blockPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
             _descriptorStream.Write(block, 0, block.Length);
 
-            // Write DVD structures if pressent
+            // Write DVD structures if present
             if(header.structuresOffset != 0)
             {
                 if(_dmi != null)
                 {
                     _descriptorStream.Seek(header.structuresOffset, SeekOrigin.Begin);
 
-                    if(_dmi.Length == 2052)
-                        _descriptorStream.Write(_dmi, 0, 2052);
-                    else if(_dmi.Length == 2048)
+                    switch(_dmi.Length)
                     {
-                        _descriptorStream.Write(new byte[]
-                        {
-                            0x08, 0x02, 0x00, 0x00
-                        }, 0, 4);
+                        case 2052:
+                            _descriptorStream.Write(_dmi, 0, 2052);
 
-                        _descriptorStream.Write(_dmi, 0, 2048);
+                            break;
+                        case 2048:
+                            _descriptorStream.Write(new byte[]
+                            {
+                                0x08, 0x02, 0x00, 0x00
+                            }, 0, 4);
+
+                            _descriptorStream.Write(_dmi, 0, 2048);
+
+                            break;
                     }
                 }
 

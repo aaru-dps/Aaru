@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         /// <inheritdoc />
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>

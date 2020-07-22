@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Partimage
+    public sealed partial class Partimage
     {
         const int    MAX_DESCRIPTION         = 4096;
         const int    MAX_HOSTNAMESIZE        = 128;

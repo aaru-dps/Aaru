@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class Chd
+    public sealed partial class Chd
     {
         // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
         // Sectors are fixed at 512 bytes/sector

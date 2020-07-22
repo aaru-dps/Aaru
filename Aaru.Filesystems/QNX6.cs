@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class QNX6 : IFilesystem
+    public sealed class QNX6 : IFilesystem
     {
         const uint QNX6_SUPER_BLOCK_SIZE = 0x1000;
         const uint QNX6_BOOT_BLOCKS_SIZE = 0x2000;

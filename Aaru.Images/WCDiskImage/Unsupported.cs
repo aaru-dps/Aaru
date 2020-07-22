@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class WCDiskImage
+    public sealed partial class WCDiskImage
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

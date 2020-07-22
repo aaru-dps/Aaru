@@ -35,7 +35,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         public bool? VerifyMediaImage()
         {

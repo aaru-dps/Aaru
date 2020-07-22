@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     // Created following notes from Dave Dunfield
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    public partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
+    public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         readonly List<ulong>       _sectorsWhereCrcHasFailed;
         bool                       _aDiskCrcHasFailed;

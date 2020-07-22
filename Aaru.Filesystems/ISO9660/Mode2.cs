@@ -36,7 +36,7 @@ using Aaru.Decoders.CD;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         byte[] ReadSector(ulong sector, bool interleaved = false, byte fileNumber = 0)
         {

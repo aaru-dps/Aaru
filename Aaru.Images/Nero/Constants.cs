@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Nero
+    public sealed partial class Nero
     {
         const uint NERO_FOOTER_V1  = 0x4E45524F; // "NERO"
         const uint NERO_FOOTER_V2  = 0x4E455235; // "NER5"

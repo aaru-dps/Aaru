@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information from Practical Filesystem Design, ISBN 1-55860-497-9
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class BeFS : IFilesystem
+    public sealed class BeFS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const uint BEFS_MAGIC1 = 0x42465331;
@@ -144,10 +144,8 @@ namespace Aaru.Filesystems
                     return;
             }
 
-            if(littleEndian)
-                besb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
-            else
-                besb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
+            besb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
+                       : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 

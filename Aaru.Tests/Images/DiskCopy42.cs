@@ -38,7 +38,7 @@ namespace Aaru.Tests.Images
     [TestFixture]
     public class DiskCopy42
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             // Made with DiskCopy 4.2
             "Made by DiskCopy 4.2/mf1dd_hfs.img.lz", "Made by DiskCopy 4.2/mf1dd_mfs.img.lz",
@@ -62,12 +62,12 @@ namespace Aaru.Tests.Images
             1600
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.AppleSonySS, MediaType.AppleSonySS, MediaType.AppleSonyDS, MediaType.AppleSonyDS,
             MediaType.DOS_35_HD, MediaType.AppleSonyDS, MediaType.DOS_35_HD, MediaType.DOS_35_DS_DD_9,
@@ -90,18 +90,18 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 4.2",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.DiskCopy42();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
 
                 // How many sectors to read at once
                 const uint sectorsToRead = 256;
@@ -127,7 +127,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
             }
         }
     }

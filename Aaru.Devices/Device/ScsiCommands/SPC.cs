@@ -38,7 +38,7 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Sends the SPC INQUIRY command to the device using default device timeout.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

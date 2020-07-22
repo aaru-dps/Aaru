@@ -38,12 +38,12 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Locus
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "mf2dd.img.lz", "mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
@@ -53,7 +53,7 @@ namespace Aaru.Tests.Filesystems
             1440, 2880
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512
         };
@@ -63,22 +63,22 @@ namespace Aaru.Tests.Filesystems
             180, 360
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096, 4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "Label", "Label"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             null, null
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             null, null
         };
@@ -86,18 +86,18 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IFilesystem fs = new Aaru.Filesystems.Locus();
 
                 var wholePart = new Partition
@@ -107,14 +107,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("Locus filesystem", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }

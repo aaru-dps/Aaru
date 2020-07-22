@@ -40,7 +40,7 @@ namespace Aaru.Filesystems.LisaFS
 {
     // All information by Natalia Portillo
     // Variable names from Lisa API
-    public partial class LisaFS : IReadOnlyFilesystem
+    public sealed partial class LisaFS : IReadOnlyFilesystem
     {
         bool        _debug;
         IMediaImage _device;

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120
+    public sealed partial class Alcohol120
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AlcoholHeader

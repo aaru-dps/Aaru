@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class NtfsGpt
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "haiku_hrev51259.aif"
         };
@@ -50,7 +50,7 @@ namespace Aaru.Tests.Filesystems
             2097152
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -60,22 +60,22 @@ namespace Aaru.Tests.Filesystems
             261887
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             null, null, null, null, null, null, null, null
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "106DA7693F7F6B3F"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             null
         };
@@ -83,17 +83,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                               "New Technology File System (GPT)", _testfiles[i]);
+                                               "New Technology File System (GPT)", _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new NTFS();
                 int             part       = -1;
@@ -106,15 +106,15 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("NTFS", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("NTFS", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }
@@ -122,7 +122,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class NtfsMbr
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "win10.aif", "win2000.aif", "winnt_3.10.aif", "winnt_3.50.aif", "winnt_3.51.aif", "winnt_4.00.aif",
             "winvista.aif", "linux.aif", "haiku_hrev51259.aif", "linux_4.19_ntfs3g_flashdrive.aif"
@@ -133,7 +133,7 @@ namespace Aaru.Tests.Filesystems
             524288, 2097152, 1024000, 524288, 524288, 524288, 524288, 262144, 2097152, 1024000
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
@@ -143,23 +143,23 @@ namespace Aaru.Tests.Filesystems
             65263, 1046511, 1023057, 524256, 524256, 524096, 64767, 32511, 261887, 127743
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096, 1024, 512, 512, 512, 512, 4096, 4096, 4096, 4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             null, null, null, null, null, null, null, null, null, null
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "C46C1B3C6C1B28A6", "8070C8EC70C8E9CC", "10CC6AC6CC6AA5A6", "7A14F50014F4BFE5", "24884447884419A6",
             "822C288D2C287E73", "E20AF54B0AF51D6B", "065BB96B7C1BCFDA", "46EC796749C6FA66", "1FC3802B52F9611C"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             null, null, null, null, null, null, null, null, null, null
         };
@@ -167,17 +167,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                               "New Technology File System (MBR)", _testfiles[i]);
+                                               "New Technology File System (MBR)", _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new NTFS();
                 int             part       = -1;
@@ -193,15 +193,15 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("NTFS", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("NTFS", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }

@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
-    public class Apricot : IPartition
+    public sealed class Apricot : IPartition
     {
         readonly int[] baudRates =
         {

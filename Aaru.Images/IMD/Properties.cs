@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Imd
+    public sealed partial class Imd
     {
         public string                 Name         => "Dunfield's IMD";
         public Guid                   Id           => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");

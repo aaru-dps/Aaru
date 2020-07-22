@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: What are the real supported floppies for this image format?
-    public partial class Dim : IMediaImage
+    public sealed partial class Dim : IMediaImage
     {
         byte[]    _comment;
         IFilter   _dimImageFilter;

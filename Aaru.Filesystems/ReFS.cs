@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class ReFS : IFilesystem
+    public sealed class ReFS : IFilesystem
     {
         const uint FSRS = 0x53525346;
         readonly byte[] _signature =

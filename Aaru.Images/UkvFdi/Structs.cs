@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class UkvFdi
+    public sealed partial class UkvFdi
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FdiHeader

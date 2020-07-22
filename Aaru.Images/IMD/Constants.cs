@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Imd
+    public sealed partial class Imd
     {
         const byte SECTOR_CYLINDER_MAP_MASK = 0x80;
         const byte SECTOR_HEAD_MAP_MASK     = 0x40;

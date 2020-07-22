@@ -39,7 +39,7 @@ using Aaru.Helpers;
 namespace Aaru.Filters
 {
     /// <summary>Decompress gzip files while reading</summary>
-    public class GZip : IFilter
+    public sealed class GZip : IFilter
     {
         string   _basePath;
         DateTime _creationTime;

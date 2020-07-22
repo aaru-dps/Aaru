@@ -43,7 +43,7 @@ using Encoding = System.Text.Encoding;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin
+    public sealed partial class PascalPlugin
     {
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
@@ -51,8 +51,7 @@ namespace Aaru.Filesystems.UCSDPascal
             _device  = imagePlugin;
             Encoding = encoding ?? new Apple2();
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);

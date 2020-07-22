@@ -32,7 +32,7 @@
 
 namespace Aaru.Database.Models
 {
-    public abstract class NameCountModel<T> : BaseModel<T>
+    public abstract class NameCountModel : BaseModel
     {
         public string Name         { get; set; }
         public bool   Synchronized { get; set; }

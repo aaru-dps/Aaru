@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleNib
+    public sealed partial class AppleNib
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -36,7 +36,7 @@ using Aaru.Console;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Sends the MMC GET CONFIGURATION command for all Features</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>

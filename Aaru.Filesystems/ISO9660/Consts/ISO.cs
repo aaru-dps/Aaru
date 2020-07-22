@@ -37,7 +37,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const string ISO_MAGIC = "CD001";
 

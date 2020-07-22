@@ -51,6 +51,8 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping an Xbox Game Disc using a Kreon drive</summary>
@@ -59,7 +61,7 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Dumps an Xbox Game Disc using a Kreon drive</summary>
         /// <param name="mediaTags">Media tags as retrieved in MMC layer</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType)
+        void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType)
         {
             bool       sense;
             const uint blockSize    = 2048;
@@ -194,7 +196,7 @@ namespace Aaru.Core.Devices.Dumping
             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
             ulong l0Video =
-                (PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN) + 1;
+                (PFI.Decode(readBuffer)?.Layer0EndPSN ?? 0 - PFI.Decode(readBuffer)?.DataAreaStartPSN ?? 0) + 1;
 
             ulong l1Video = (totalSize - l0Video) + 1;
             UpdateStatus?.Invoke("Reading Disc Manufacturing Information.");
@@ -230,7 +232,7 @@ namespace Aaru.Core.Devices.Dumping
                 mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
                 AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
-                l0Video = (PFI.Decode(coldPfi).Value.Layer0EndPSN - PFI.Decode(coldPfi).Value.DataAreaStartPSN) + 1;
+                l0Video = (PFI.Decode(coldPfi)?.Layer0EndPSN ?? 0 - PFI.Decode(coldPfi)?.DataAreaStartPSN ?? 0) + 1;
 
                 l1Video = (totalSize - l0Video) + 1;
 
@@ -402,14 +404,11 @@ namespace Aaru.Core.Devices.Dumping
 
             while(true)
             {
-                if(read12)
-                {
-                    sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, blockSize, 0,
-                                        blocksToRead, false, _dev.Timeout, out _);
+                sense = _dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, 0, blockSize, 0,
+                                    blocksToRead, false, _dev.Timeout, out _);
 
-                    if(sense || _dev.Error)
-                        blocksToRead /= 2;
-                }
+                if(sense || _dev.Error)
+                    blocksToRead /= 2;
 
                 if(!_dev.Error ||
                    blocksToRead == 1)
@@ -429,11 +428,8 @@ namespace Aaru.Core.Devices.Dumping
 
             bool ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys)
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
             {
-                if(_outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
                 ErrorMessage?.Invoke($"Output format does not support {tag}.");
@@ -578,15 +574,13 @@ namespace Aaru.Core.Devices.Dumping
                     if(extentStart - i < blocksToRead)
                         blocksToRead = (uint)(extentStart - i);
 
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > maxSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         maxSpeed = currentSpeed;
 
                     if(currentSpeed < minSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         minSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     UpdateProgress?.Invoke($"Reading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                            (long)totalSize);
@@ -774,15 +768,13 @@ namespace Aaru.Core.Devices.Dumping
                 if((l0Video + l1Video) - l1 < blocksToRead)
                     blocksToRead = (uint)((l0Video + l1Video) - l1);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
                                        (long)currentSector, (long)totalSize);
@@ -939,8 +931,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
-                UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
-                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                UpdateStatus?.Invoke($"Trimming finished in {(end - start).TotalSeconds} seconds.");
+                _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 
@@ -984,10 +976,9 @@ namespace Aaru.Core.Devices.Dumping
                                 Modes.DecodeMode10(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                             if(dcMode10.HasValue)
-                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page    == 0x01 &&
-                                       modePage.Subpage == 0x00)
-                                        currentModePage = modePage;
+                                foreach(var modePage in dcMode10.Value.Pages.Where(modePage => modePage.Page    == 0x01 &&
+                                                                                               modePage.Subpage == 0x00))
+                                    currentModePage = modePage;
                         }
                     }
                     else
@@ -996,10 +987,10 @@ namespace Aaru.Core.Devices.Dumping
                             Modes.DecodeMode6(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                         if(dcMode6.HasValue)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                                                                             modePage.Page    == 0x01 &&
+                                                                                             modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
 
                     if(currentModePage == null)

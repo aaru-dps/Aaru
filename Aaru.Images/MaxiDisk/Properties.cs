@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class MaxiDisk
+    public sealed partial class MaxiDisk
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Author       => "Natalia Portillo";

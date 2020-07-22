@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Apple2Mg
+    public sealed partial class Apple2Mg
     {
         [SuppressMessage("ReSharper", "NotAccessedField.Local"), StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct A2ImgHeader

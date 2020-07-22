@@ -52,7 +52,7 @@ using Version = Resources.Version;
 
 namespace Aaru.DiscImages
 {
-    public partial class Udif
+    public sealed partial class Udif
     {
         public bool Open(IFilter imageFilter)
         {

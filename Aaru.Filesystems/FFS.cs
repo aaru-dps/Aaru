@@ -48,7 +48,7 @@ namespace Aaru.Filesystems
 {
     // Using information from Linux kernel headers
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class FFSPlugin : IFilesystem
+    public sealed class FFSPlugin : IFilesystem
     {
         const uint block_size = 8192;
 

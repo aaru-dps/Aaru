@@ -41,7 +41,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Based on FAT's BPB, cannot find a FAT or directory
-    public class SolarFS : IFilesystem
+    public sealed class SolarFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

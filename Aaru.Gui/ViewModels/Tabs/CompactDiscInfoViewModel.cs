@@ -42,7 +42,7 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class CompactDiscInfoViewModel : ViewModelBase
+    public sealed class CompactDiscInfoViewModel : ViewModelBase
     {
         readonly byte[] _atipData;
         readonly byte[] _cdTextLeadInData;
@@ -131,7 +131,7 @@ namespace Aaru.Gui.ViewModels.Tabs
         public ReactiveCommand<Unit, Unit>     SaveCdPmaCommand         { get; }
         public ObservableCollection<IsrcModel> IsrcList                 { get; }
 
-        protected async void ExecuteSaveCdInformationCommand()
+        async void ExecuteSaveCdInformationCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -155,7 +155,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdTocCommand()
+        async void ExecuteSaveCdTocCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -179,7 +179,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdFullTocCommand()
+        async void ExecuteSaveCdFullTocCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -203,7 +203,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdSessionCommand()
+        async void ExecuteSaveCdSessionCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -227,7 +227,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdTextCommand()
+        async void ExecuteSaveCdTextCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -251,7 +251,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdAtipCommand()
+        async void ExecuteSaveCdAtipCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -275,7 +275,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveCdPmaCommand()
+        async void ExecuteSaveCdPmaCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 

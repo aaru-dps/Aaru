@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         FilesystemContentsType Files(IReadOnlyFilesystem filesystem)
         {

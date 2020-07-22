@@ -51,14 +51,11 @@ namespace Aaru.Database.Migrations
                                                                                                                   <DateTime
                                                                                                                   >()
                                                                                                       }, constraints:
-                                                                                                      table =>
-                                                                                                      {
-                                                                                                          table.
-                                                                                                              PrimaryKey("PK_CdOffsets",
-                                                                                                                         x =>
-                                                                                                                             x.
-                                                                                                                                 Id);
-                                                                                                      });
+                                                                                                      table => table.
+                                                                                                          PrimaryKey("PK_CdOffsets",
+                                                                                                                     x =>
+                                                                                                                         x.
+                                                                                                                             Id));
 
         protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable("CdOffsets");
     }

@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class ImageConvert : Window
+    public sealed class ImageConvert : Window
     {
         public ImageConvert()
         {

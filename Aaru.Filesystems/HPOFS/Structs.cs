@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class HPOFS
+    public sealed partial class HPOFS
     {
         /// <summary>BIOS Parameter Block, at sector 0, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

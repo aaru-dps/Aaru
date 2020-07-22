@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS : IReadOnlyFilesystem
+    public sealed partial class AppleDOS : IReadOnlyFilesystem
     {
         bool        _debug;
         IMediaImage _device;

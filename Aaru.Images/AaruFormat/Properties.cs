@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                                OpticalImageCapabilities.CanStoreDataTracks     |

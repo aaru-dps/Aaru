@@ -43,7 +43,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class KryoFlux
+    public sealed partial class KryoFlux
     {
         public bool Open(IFilter imageFilter)
         {

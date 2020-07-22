@@ -106,19 +106,13 @@ namespace Aaru.Core.Devices.Dumping
 
                     double cmdDuration = 0;
 
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-
-                    // ReSharper disable CompareOfFloatsByEqualityOperator
                     if(currentSpeed > maxSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         maxSpeed = currentSpeed;
 
                     if(currentSpeed < minSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         minSpeed = currentSpeed;
-
-                    // ReSharper restore CompareOfFloatsByEqualityOperator
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
 
@@ -287,22 +281,15 @@ namespace Aaru.Core.Devices.Dumping
 
                     double cmdDuration = 0;
 
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-
-                    // ReSharper disable CompareOfFloatsByEqualityOperator
                     if(currentSpeed > maxSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         maxSpeed = currentSpeed;
 
                     if(currentSpeed < minSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         minSpeed = currentSpeed;
 
-                    // ReSharper restore CompareOfFloatsByEqualityOperator
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-
-                    PulseProgress?.Invoke(string.Format("Reading sector {0} at lead-out ({1:F3} MiB/sec.)", i,
-                                                        currentSpeed));
+                    PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
 
                     if(readcd)
                     {

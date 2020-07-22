@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class PartClone
+    public sealed partial class PartClone
     {
         const int  CRC_SIZE           = 4;
         const uint MAX_CACHE_SIZE     = 16777216;

@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Apridisk
+    public sealed partial class Apridisk
     {
         public bool Open(IFilter imageFilter)
         {

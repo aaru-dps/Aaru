@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         public bool Open(IFilter imageFilter)
         {

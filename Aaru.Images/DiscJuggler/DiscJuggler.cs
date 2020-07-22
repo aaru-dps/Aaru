@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     // Support separate data files? Never seen a DiscJuggler image using them anyways...
     // TODO: Too many unknowns to make this writable
-    public partial class DiscJuggler : IOpticalMediaImage
+    public sealed partial class DiscJuggler : IOpticalMediaImage
     {
         byte[]                  _cdtext;
         ImageInfo               _imageInfo;

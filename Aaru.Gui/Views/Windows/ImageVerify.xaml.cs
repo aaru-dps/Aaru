@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class ImageVerify : Window
+    public sealed class ImageVerify : Window
     {
         public ImageVerify()
         {

@@ -110,7 +110,7 @@ namespace Aaru.Core
                     continue;
                 }
 
-                List<Partition> childs = new List<Partition>();
+                List<Partition> children = new List<Partition>();
 
                 foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                 {
@@ -123,18 +123,18 @@ namespace Aaru.Core
                     AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                                foundPartitions[0].Start);
 
-                    childs.AddRange(partitions);
+                    children.AddRange(partitions);
                 }
 
                 checkedLocations.Add(foundPartitions[0].Start);
 
-                AaruConsole.DebugWriteLine("Partitions", "Got {0} childs", childs.Count);
+                AaruConsole.DebugWriteLine("Partitions", "Got {0} children", children.Count);
 
-                if(childs.Count > 0)
+                if(children.Count > 0)
                 {
                     foundPartitions.RemoveAt(0);
 
-                    foreach(Partition child in childs)
+                    foreach(Partition child in children)
                         if(checkedLocations.Contains(child.Start))
                             childPartitions.Add(child);
                         else

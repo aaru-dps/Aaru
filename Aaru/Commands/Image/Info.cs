@@ -41,7 +41,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands.Image
 {
-    internal class ImageInfoCommand : Command
+    internal sealed class ImageInfoCommand : Command
     {
         public ImageInfoCommand() : base("info",
                                          "Opens a media image and shows information about the media it represents and metadata.")

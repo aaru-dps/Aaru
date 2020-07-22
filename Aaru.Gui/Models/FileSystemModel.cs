@@ -36,7 +36,7 @@ using Aaru.Gui.ViewModels.Panels;
 
 namespace Aaru.Gui.Models
 {
-    public class FileSystemModel : RootModel
+    public sealed class FileSystemModel : RootModel
     {
         public FileSystemModel() => Roots = new ObservableCollection<SubdirectoryModel>();
 

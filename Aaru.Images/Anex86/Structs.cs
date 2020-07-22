@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Anex86
+    public sealed partial class Anex86
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Anex86Header

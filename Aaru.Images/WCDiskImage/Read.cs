@@ -43,7 +43,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class WCDiskImage
+    public sealed partial class WCDiskImage
     {
         public bool Open(IFilter imageFilter)
         {
@@ -129,8 +129,7 @@ namespace Aaru.DiscImages
                     Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Comment)
-                    throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
-                                                                 sheader.flag.ToString()));
+                    throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
 
                 byte[] comm = new byte[sheader.crc];
                 stream.Read(comm, 0, sheader.crc);
@@ -147,8 +146,7 @@ namespace Aaru.DiscImages
                     Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Directory)
-                    throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
-                                                                 sheader.flag.ToString()));
+                    throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
 
                 byte[] dir = new byte[sheader.crc];
                 stream.Read(dir, 0, sheader.crc);
@@ -225,10 +223,7 @@ namespace Aaru.DiscImages
                    sheader.head     != head ||
                    sheader.sector   != sect)
                     throw new
-                        InvalidDataException(string.
-                                                 Format("Unexpected sector encountered. Found CHS {0},{1},{2} but expected {3},{4},{5}",
-                                                        sheader.cylinder, sheader.head, sheader.sector, cyl, head,
-                                                        sect));
+                        InvalidDataException($"Unexpected sector encountered. Found CHS {sheader.cylinder},{sheader.head},{sheader.sector} but expected {cyl},{head},{sect}");
 
                 sectorData = new byte[512];
 
@@ -273,8 +268,7 @@ namespace Aaru.DiscImages
 
                         break;
                     default:
-                        throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
-                                                                     sheader.flag.ToString()));
+                        throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
                 }
             }
         }

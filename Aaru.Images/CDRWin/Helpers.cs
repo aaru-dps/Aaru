@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class CdrWin
+    public sealed partial class CdrWin
     {
         static int CdrWinMsfToLba(string msf)
         {

@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

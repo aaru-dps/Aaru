@@ -47,7 +47,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class Nero
+    public sealed partial class Nero
     {
         public bool Open(IFilter imageFilter)
         {

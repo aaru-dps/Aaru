@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class Xbox : IPartition
+    public sealed class Xbox : IPartition
     {
         const uint XboxCigam                = 0x46415458;
         const uint XboxMagic                = 0x58544146;
@@ -53,7 +53,6 @@ namespace Aaru.Partitions
         const long Xbox360SysExt2Off        = 0x118EB0000;
         const long Xbox360CompatOff         = 0x120EB0000;
         const long Xbox360DataOff           = 0x130EB0000;
-
         const long Xbox360SecuritySectorLen = 0x80000;
         const long Xbox360SystemCacheLen    = 0x80000000;
         const long Xbox360GameCacheLen      = 0xA0E30000;

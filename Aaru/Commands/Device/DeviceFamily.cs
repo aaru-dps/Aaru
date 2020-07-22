@@ -34,7 +34,7 @@ using System.CommandLine;
 
 namespace Aaru.Commands.Device
 {
-    public class DeviceFamily : Command
+    internal sealed class DeviceFamily : Command
     {
         public DeviceFamily() : base("device", "Commands that talks to devices")
         {

@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret
+    public sealed partial class DiscFerret
     {
         /// <summary>"DFER"</summary>
         const uint DFI_MAGIC = 0x52454644;

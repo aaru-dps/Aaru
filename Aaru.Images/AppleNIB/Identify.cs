@@ -36,7 +36,7 @@ using Aaru.Decoders.Floppy;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleNib
+    public sealed partial class AppleNib
     {
         public bool Identify(IFilter imageFilter)
         {

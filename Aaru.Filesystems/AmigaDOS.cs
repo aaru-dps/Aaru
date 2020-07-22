@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class AmigaDOSPlugin : IFilesystem
+    public sealed class AmigaDOSPlugin : IFilesystem
     {
         const uint FFS_MASK  = 0x444F5300;
         const uint MUFS_MASK = 0x6D754600;

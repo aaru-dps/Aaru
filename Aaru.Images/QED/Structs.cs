@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qed
+    public sealed partial class Qed
     {
         /// <summary>QED header, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

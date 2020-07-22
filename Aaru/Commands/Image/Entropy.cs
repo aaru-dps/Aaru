@@ -40,7 +40,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands.Image
 {
-    internal class EntropyCommand : Command
+    internal sealed class EntropyCommand : Command
     {
         public EntropyCommand() : base("entropy", "Calculates entropy and/or duplicated sectors of an image.")
         {

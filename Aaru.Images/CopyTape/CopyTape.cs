@@ -6,7 +6,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyTape : IWritableTapeImage
+    public sealed partial class CopyTape : IWritableTapeImage
     {
         long[]    _blockPositionCache;
         ImageInfo _imageInfo;

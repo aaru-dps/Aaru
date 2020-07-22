@@ -39,7 +39,7 @@ namespace Aaru.Tests.Images
     public class CisCopy
     {
         // TODO: Support compression
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "md1dd8_all.dcf.lz", "md1dd8_belelung.dcf.lz", "md1dd8_fat.dcf.lz", "md1dd_all.dcf.lz",
             "md1dd_belelung.dcf.lz", "md1dd_fat.dcf.lz", "md2dd8_all.dcf.lz", "md2dd8_belelung.dcf.lz",
@@ -54,12 +54,12 @@ namespace Aaru.Tests.Images
             2880
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_8, MediaType.DOS_525_SS_DD_9,
             MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_SS_DD_9, MediaType.DOS_525_DS_DD_8, MediaType.DOS_525_DS_DD_8,
@@ -83,16 +83,16 @@ namespace Aaru.Tests.Images
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CisCopy", _testfiles[i]);
+                string location = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CisCopy", _testFiles[i]);
                 IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new DiscImages.CisCopy();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
 
                 // How many sectors to read at once
                 const uint sectorsToRead = 256;
@@ -118,7 +118,7 @@ namespace Aaru.Tests.Images
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(_md5S[i], ctx.End(), _testfiles[i]);
+                Assert.AreEqual(_md5S[i], ctx.End(), _testFiles[i]);
             }
         }
     }

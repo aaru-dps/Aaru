@@ -53,7 +53,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite5
+    public sealed partial class BlindWrite5
     {
         public bool Open(IFilter imageFilter)
         {
@@ -1245,9 +1245,10 @@ namespace Aaru.DiscImages
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
-            var aaruTrack = new Track();
-
-            aaruTrack.TrackSequence = 0;
+            var aaruTrack = new Track
+            {
+                TrackSequence = 0
+            };
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
@@ -1379,9 +1380,10 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             // TODO: Cross data files
-            var aaruTrack = new Track();
-
-            aaruTrack.TrackSequence = 0;
+            var aaruTrack = new Track
+            {
+                TrackSequence = 0
+            };
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
@@ -1818,9 +1820,10 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
-            var aaruTrack = new Track();
-
-            aaruTrack.TrackSequence = 0;
+            var aaruTrack = new Track
+            {
+                TrackSequence = 0
+            };
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {

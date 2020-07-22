@@ -168,30 +168,29 @@ namespace Aaru.Core.Media.Detection
             {
                 Array.Copy(sector, i, testMark, 0, 12);
 
-                if(syncMark.SequenceEqual(testMark) &&
-                   (sector[i + 0xF] == 0x60 || sector[i + 0xF] == 0x61 || sector[i + 0xF] == 0x62))
+                if(!syncMark.SequenceEqual(testMark) ||
+                   (sector[i + 0xF] != 0x60 && sector[i + 0xF] != 0x61 && sector[i + 0xF] != 0x62))
+                    continue;
 
-                {
-                    // De-scramble M and S
-                    int minute = sector[i + 12] ^ 0x01;
-                    int second = sector[i + 13] ^ 0x80;
-                    int frame  = sector[i + 14];
+                // De-scramble M and S
+                int minute = sector[i + 12] ^ 0x01;
+                int second = sector[i + 13] ^ 0x80;
+                int frame  = sector[i + 14];
 
-                    // Convert to binary
-                    minute = ((minute / 16) * 10) + (minute & 0x0F);
-                    second = ((second / 16) * 10) + (second & 0x0F);
-                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                // Convert to binary
+                minute = ((minute / 16) * 10) + (minute & 0x0F);
+                second = ((second / 16) * 10) + (second & 0x0F);
+                frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
 
-                    // Calculate the first found LBA
-                    int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                // Calculate the first found LBA
+                int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
 
-                    // Calculate the difference between the found LBA and the requested one
-                    int diff = wantedLba - lba;
+                // Calculate the difference between the found LBA and the requested one
+                int diff = wantedLba - lba;
 
-                    offset = i + (2352 * diff);
+                offset = i + (2352 * diff);
 
-                    return true;
-                }
+                return true;
             }
 
             return false;
@@ -259,7 +258,7 @@ namespace Aaru.Core.Media.Detection
             return false;
         }
 
-        public static int GetVideoNowColorOffset(byte[] data)
+        internal static int GetVideoNowColorOffset(byte[] data)
         {
             byte[] buffer = new byte[_videoNowColorFrameMarker.Length];
 
@@ -279,9 +278,9 @@ namespace Aaru.Core.Media.Detection
             return 0;
         }
 
-        public static void DetectDiscType(ref MediaType mediaType, int sessions, FullTOC.CDFullTOC? decodedToc,
-                                          Device dev, out bool hiddenTrack, out bool hiddenData,
-                                          int firstTrackLastSession)
+        internal static void DetectDiscType(ref MediaType mediaType, int sessions, FullTOC.CDFullTOC? decodedToc,
+                                            Device dev, out bool hiddenTrack, out bool hiddenData,
+                                            int firstTrackLastSession)
         {
             uint   startOfFirstDataTrack = uint.MaxValue;
             byte[] cmdBuf;
@@ -300,10 +299,9 @@ namespace Aaru.Core.Media.Detection
             hiddenTrack = false;
             hiddenData  = false;
 
-            if(decodedToc.HasValue)
-                if(decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == 2))
-                    secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
-                                                         Min(t => t.POINT);
+            if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == 2) == true)
+                secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
+                                                     Min(t => t.POINT);
 
             if(mediaType == MediaType.CD ||
                mediaType == MediaType.CDROMXA)
@@ -409,53 +407,50 @@ namespace Aaru.Core.Media.Detection
 
                 if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
                 {
-                    foreach(FullTOC.TrackDataDescriptor track in
-                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
-                                                                     ((TocControl)(t.CONTROL & 0x0D) ==
-                                                                      TocControl.DataTrack ||
-                                                                      (TocControl)(t.CONTROL & 0x0D) ==
-                                                                      TocControl.DataTrackIncremental)))
+                    foreach(uint startAddress in decodedToc.
+                                                 Value.TrackDescriptors.
+                                                 Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
+                                                            ((TocControl)(t.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                                             (TocControl)(t.CONTROL & 0x0D) ==
+                                                             TocControl.DataTrackIncremental)).
+                                                 Select(track => (uint)(((track.PHOUR * 3600 * 75) +
+                                                                         (track.PMIN * 60    * 75) + (track.PSEC * 75) +
+                                                                         track.PFRAME) - 150) + 16))
                     {
-                        uint startAddress =
-                            (uint)(((track.PHOUR * 3600 * 75) + (track.PMIN * 60 * 75) + (track.PSEC * 75) +
-                                    track.PFRAME) - 150) + 16;
-
                         sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false,
                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                            MmcSubchannel.None, dev.Timeout, out _);
 
-                        if(!sense &&
-                           !dev.Error)
-                        {
-                            if(cmdBuf[0]  == 0x00 &&
-                               cmdBuf[1]  == 0xFF &&
-                               cmdBuf[2]  == 0xFF &&
-                               cmdBuf[3]  == 0xFF &&
-                               cmdBuf[4]  == 0xFF &&
-                               cmdBuf[5]  == 0xFF &&
-                               cmdBuf[6]  == 0xFF &&
-                               cmdBuf[7]  == 0xFF &&
-                               cmdBuf[8]  == 0xFF &&
-                               cmdBuf[9]  == 0xFF &&
-                               cmdBuf[10] == 0xFF &&
-                               cmdBuf[11] == 0x00 &&
-                               cmdBuf[15] == 0x02)
-                            {
-                                AaruConsole.DebugWriteLine("Media detection",
-                                                           "Disc has a mode 2 data track, setting as CD-ROM XA.");
+                        if(sense || dev.Error)
+                            continue;
 
-                                mediaType = MediaType.CDROMXA;
+                        if(cmdBuf[0]  != 0x00 ||
+                           cmdBuf[1]  != 0xFF ||
+                           cmdBuf[2]  != 0xFF ||
+                           cmdBuf[3]  != 0xFF ||
+                           cmdBuf[4]  != 0xFF ||
+                           cmdBuf[5]  != 0xFF ||
+                           cmdBuf[6]  != 0xFF ||
+                           cmdBuf[7]  != 0xFF ||
+                           cmdBuf[8]  != 0xFF ||
+                           cmdBuf[9]  != 0xFF ||
+                           cmdBuf[10] != 0xFF ||
+                           cmdBuf[11] != 0x00 ||
+                           cmdBuf[15] != 0x02)
+                            continue;
 
-                                break;
-                            }
-                        }
+                        AaruConsole.DebugWriteLine("Media detection",
+                                                   "Disc has a mode 2 data track, setting as CD-ROM XA.");
+
+                        mediaType = MediaType.CDROMXA;
+
+                        break;
                     }
                 }
             }
 
-            if(secondSessionFirstTrack != 0 &&
-               decodedToc.HasValue          &&
-               decodedToc.Value.TrackDescriptors.Any(t => t.POINT == secondSessionFirstTrack))
+            if(secondSessionFirstTrack                                                   != 0 &&
+               decodedToc?.TrackDescriptors.Any(t => t.POINT == secondSessionFirstTrack) == true)
             {
                 FullTOC.TrackDataDescriptor secondSessionFirstTrackTrack =
                     decodedToc.Value.TrackDescriptors.First(t => t.POINT == secondSessionFirstTrack);
@@ -531,38 +526,81 @@ namespace Aaru.Core.Media.Detection
                 Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
             }
 
-            if(decodedToc.HasValue)
+            FullTOC.TrackDataDescriptor? firstTrack = decodedToc?.TrackDescriptors.FirstOrDefault(t => t.POINT == 1);
+
+            if(firstTrack?.POINT == 1)
             {
-                FullTOC.TrackDataDescriptor firstTrack =
-                    decodedToc.Value.TrackDescriptors.FirstOrDefault(t => t.POINT == 1);
+                uint firstTrackSector = (uint)(((firstTrack.Value.PHOUR * 3600 * 75) +
+                                                (firstTrack.Value.PMIN * 60    * 75) + (firstTrack.Value.PSEC * 75) +
+                                                firstTrack.Value.PFRAME) - 150);
 
-                if(firstTrack.POINT == 1)
+                // Check for hidden data before start of track 1
+                if(firstTrackSector > 0)
                 {
-                    uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
-                                                    (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
+                    sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
 
-                    // Check for hidden data before start of track 1
-                    if(firstTrackSector > 0)
+                    if(!dev.Error &&
+                       !sense)
                     {
-                        sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                        hiddenTrack = true;
 
-                        if(!dev.Error &&
-                           !sense)
+                        hiddenData = IsData(sector0);
+
+                        if(hiddenData)
                         {
-                            hiddenTrack = true;
+                            sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                               false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
 
-                            hiddenData = IsData(sector0);
+                            if(!sense &&
+                               IsCdi(sector0, sector16))
+                            {
+                                mediaType = MediaType.CDIREADY;
+
+                                AaruConsole.DebugWriteLine("Media detection",
+                                                           "Disc has a hidden CD-i track in track 1's pregap, setting as CD-i Ready.");
+
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            hiddenData = IsScrambledData(sector0, 0, out int combinedOffset);
 
                             if(hiddenData)
                             {
-                                sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes,
-                                                   false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                int sectorsForOffset = combinedOffset / 2352;
 
-                                if(!sense &&
-                                   IsCdi(sector0, sector16))
+                                if(sectorsForOffset < 0)
+                                    sectorsForOffset *= -1;
+
+                                if(combinedOffset % 2352 != 0)
+                                    sectorsForOffset++;
+
+                                int lba0  = 0;
+                                int lba16 = 16;
+
+                                if(combinedOffset < 0)
+                                {
+                                    lba0  -= sectorsForOffset - 1;
+                                    lba16 -= sectorsForOffset - 1;
+                                }
+
+                                dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
+                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                           true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
+
+                                dev.ReadCd(out byte[] sector16, out _, (uint)lba16, 2352, (uint)sectorsForOffset + 1,
+                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                           true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                sector16 = DescrambleAndFixOffset(sector16, combinedOffset, sectorsForOffset);
+
+                                if(IsCdi(sector0, sector16))
                                 {
                                     mediaType = MediaType.CDIREADY;
 
@@ -570,54 +608,6 @@ namespace Aaru.Core.Media.Detection
                                                                "Disc has a hidden CD-i track in track 1's pregap, setting as CD-i Ready.");
 
                                     return;
-                                }
-                            }
-                            else
-                            {
-                                hiddenData = IsScrambledData(sector0, 0, out int combinedOffset);
-
-                                if(hiddenData)
-                                {
-                                    int sectorsForOffset = combinedOffset / 2352;
-
-                                    if(sectorsForOffset < 0)
-                                        sectorsForOffset *= -1;
-
-                                    if(combinedOffset % 2352 != 0)
-                                        sectorsForOffset++;
-
-                                    int lba0  = 0;
-                                    int lba16 = 16;
-
-                                    if(combinedOffset < 0)
-                                    {
-                                        lba0  -= sectorsForOffset - 1;
-                                        lba16 -= sectorsForOffset - 1;
-                                    }
-
-                                    sense = dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
-                                                       MmcSectorTypes.AllTypes, false, false, true,
-                                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                       MmcSubchannel.None, dev.Timeout, out _);
-
-                                    sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
-
-                                    sense = dev.ReadCd(out byte[] sector16, out _, (uint)lba16, 2352,
-                                                       (uint)sectorsForOffset + 1, MmcSectorTypes.AllTypes, false,
-                                                       false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
-
-                                    sector16 = DescrambleAndFixOffset(sector16, combinedOffset, sectorsForOffset);
-
-                                    if(IsCdi(sector0, sector16))
-                                    {
-                                        mediaType = MediaType.CDIREADY;
-
-                                        AaruConsole.DebugWriteLine("Media detection",
-                                                                   "Disc has a hidden CD-i track in track 1's pregap, setting as CD-i Ready.");
-
-                                        return;
-                                    }
                                 }
                             }
                         }
@@ -1359,22 +1349,21 @@ namespace Aaru.Core.Media.Detection
                         }
                     }
 
-                    if(firstTrackSecondSession != null)
-                        if(firstTrackSecondSession.Length >= 2336)
+                    if(firstTrackSecondSession?.Length >= 2336)
+                    {
+                        byte[] milcd = new byte[2048];
+                        Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
+
+                        if(Dreamcast.DecodeIPBin(milcd).HasValue)
                         {
-                            byte[] milcd = new byte[2048];
-                            Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
+                            mediaType = MediaType.MilCD;
 
-                            if(Dreamcast.DecodeIPBin(milcd).HasValue)
-                            {
-                                mediaType = MediaType.MilCD;
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Found Sega Dreamcast IP.BIN on second session, setting disc type to MilCD.");
 
-                                AaruConsole.DebugWriteLine("Media detection",
-                                                           "Found Sega Dreamcast IP.BIN on second session, setting disc type to MilCD.");
-
-                                return;
-                            }
+                            return;
                         }
+                    }
 
                     // TODO: Detect black and white VideoNow
                     // TODO: Detect VideoNow XP
@@ -1537,7 +1526,6 @@ namespace Aaru.Core.Media.Detection
                         return;
 
                     List<string> rootEntries   = new List<string>();
-                    int          rootPos       = 0;
                     uint         ngcdIplStart  = 0;
                     uint         ngcdIplLength = 0;
                     uint         vcdStart      = 0;
@@ -1549,7 +1537,7 @@ namespace Aaru.Core.Media.Detection
 
                     for(int ri = 0; ri < rootLength; ri++)
                     {
-                        rootPos = ri * 2048;
+                        int rootPos = ri * 2048;
 
                         while(isoSector[rootPos]           > 0                &&
                               rootPos                      < isoSector.Length &&
@@ -1565,30 +1553,31 @@ namespace Aaru.Core.Media.Detection
 
                             rootEntries.Add(name);
 
-                            if(name == "IPL.TXT")
+                            switch(name)
                             {
-                                ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                                ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
-                            }
+                                case "IPL.TXT":
+                                    ngcdIplStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                    ngcdIplLength = BitConverter.ToUInt32(isoSector, rootPos + 10);
 
-                            if((name == "VCD" || name == "SVCD" || name == "HQVCD") &&
-                               (isoSector[rootPos + 25] & 0x02) == 0x02)
-                            {
-                                vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                                vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
-                            }
+                                    break;
 
-                            if(name                             == "PHOTO_CD" &&
-                               (isoSector[rootPos + 25] & 0x02) == 0x02)
-                            {
-                                pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                                pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
-                            }
+                                case "VCD" when (isoSector[rootPos   + 25] & 0x02) == 0x02:
+                                case "SVCD" when (isoSector[rootPos  + 25] & 0x02) == 0x02:
+                                case "HQVCD" when (isoSector[rootPos + 25] & 0x02) == 0x02:
+                                    vcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                    vcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
 
-                            if(name == "SYSTEM.CNF")
-                            {
-                                ps1Start  = BitConverter.ToUInt32(isoSector, rootPos + 2);
-                                ps1Length = BitConverter.ToUInt32(isoSector, rootPos + 10);
+                                    break;
+                                case "PHOTO_CD" when (isoSector[rootPos + 25] & 0x02) == 0x02:
+                                    pcdStart  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                    pcdLength = BitConverter.ToUInt32(isoSector, rootPos + 10) / 2048;
+
+                                    break;
+                                case "SYSTEM.CNF":
+                                    ps1Start  = BitConverter.ToUInt32(isoSector, rootPos + 2);
+                                    ps1Length = BitConverter.ToUInt32(isoSector, rootPos + 10);
+
+                                    break;
                             }
 
                             rootPos += isoSector[rootPos];
@@ -1626,7 +1615,7 @@ namespace Aaru.Core.Media.Detection
                         if(ngcdIplLength % 2048 > 0)
                             ngcdSectors++;
 
-                        string iplTxt = null;
+                        string iplTxt;
 
                         // Read "IPL.TXT"
                         try
@@ -1790,12 +1779,11 @@ namespace Aaru.Core.Media.Detection
                         if(isoSector.Length < 2048)
                             return;
 
-                        int  vcdPos  = 0;
                         uint infoPos = 0;
 
                         for(int vi = 0; vi < vcdLength; vi++)
                         {
-                            vcdPos = vi * 2048;
+                            int vcdPos = vi * 2048;
 
                             while(isoSector[vcdPos]          > 0                &&
                                   vcdPos                     < isoSector.Length &&
@@ -1888,12 +1876,11 @@ namespace Aaru.Core.Media.Detection
                         if(isoSector.Length < 2048)
                             return;
 
-                        int  pcdPos  = 0;
                         uint infoPos = 0;
 
                         for(int pi = 0; pi < vcdLength; pi++)
                         {
-                            pcdPos = pi * 2048;
+                            int pcdPos = pi * 2048;
 
                             while(isoSector[pcdPos]          > 0                &&
                                   pcdPos                     < isoSector.Length &&
@@ -1952,7 +1939,7 @@ namespace Aaru.Core.Media.Detection
                         if(ps1Length % 2048 > 0)
                             ps1Sectors++;
 
-                        string ps1Txt = null;
+                        string ps1Txt;
 
                         // Read "SYSTEM.CNF"
                         try

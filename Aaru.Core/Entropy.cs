@@ -40,7 +40,7 @@ using Aaru.Console;
 
 namespace Aaru.Core
 {
-    public class Entropy
+    public sealed class Entropy
     {
         readonly bool        _debug;
         readonly IMediaImage _inputFormat;
@@ -60,13 +60,13 @@ namespace Aaru.Core
 
         public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
         {
-            List<EntropyResults> entropyResultses = new List<EntropyResults>();
+            List<EntropyResults> entropyResults = new List<EntropyResults>();
 
             if(!(_inputFormat is IOpticalMediaImage opticalMediaImage))
             {
                 AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
 
-                return entropyResultses.ToArray();
+                return entropyResults.ToArray();
             }
 
             try
@@ -127,7 +127,7 @@ namespace Aaru.Core
                     if(duplicatedSectors)
                         trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
 
-                    entropyResultses.Add(trackEntropy);
+                    entropyResults.Add(trackEntropy);
                 }
 
                 EndProgressEvent?.Invoke();
@@ -140,7 +140,7 @@ namespace Aaru.Core
                     AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
             }
 
-            return entropyResultses.ToArray();
+            return entropyResults.ToArray();
         }
 
         public EntropyResults CalculateMediaEntropy(bool duplicatedSectors)

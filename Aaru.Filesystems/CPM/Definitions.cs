@@ -38,7 +38,7 @@ using System.Xml.Serialization;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         /// <summary>Loads all the known CP/M disk definitions from an XML stored as an embedded resource.</summary>
         /// <returns>The definitions.</returns>
@@ -95,7 +95,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>CP/M disk definitions</summary>
-    public class CpmDefinitions
+    public sealed class CpmDefinitions
     {
         /// <summary>Timestamp of creation of the CP/M disk definitions list</summary>
         public DateTime creation;
@@ -104,7 +104,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>CP/M disk definition</summary>
-    public class CpmDefinition
+    public sealed class CpmDefinition
     {
         /// <summary>Maps the first 16 allocation blocks for reservation, high byte</summary>
         public int al0;
@@ -158,7 +158,7 @@ namespace Aaru.Filesystems
     }
 
     /// <summary>Side descriptions</summary>
-    public class Side
+    public sealed class Side
     {
         /// <summary>Software interleaving mask, [1,3,0,2] means CP/M LBA 0 is physical sector 1, LBA 1 = 3, so on</summary>
         public int[] sectorIds;

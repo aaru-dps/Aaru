@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Nhdr0
+    public sealed partial class Nhdr0
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Nhdr0Header

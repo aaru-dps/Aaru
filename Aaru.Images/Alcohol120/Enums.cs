@@ -34,7 +34,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120
+    public sealed partial class Alcohol120
     {
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum AlcoholMediumType : ushort

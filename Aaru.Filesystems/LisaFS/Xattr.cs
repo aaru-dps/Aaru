@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         /// <inheritdoc />
         /// <summary>Lists all extended attributes, alternate data streams and forks of the given file.</summary>
@@ -62,7 +62,7 @@ namespace Aaru.Filesystems.LisaFS
         /// <summary>Reads an extended attribute, alternate data stream or fork from the given file.</summary>
         /// <returns>Error number.</returns>
         /// <param name="path">File path.</param>
-        /// <param name="xattr">Extendad attribute, alternate data stream or fork name.</param>
+        /// <param name="xattr">Extended attribute, alternate data stream or fork name.</param>
         /// <param name="buf">Buffer.</param>
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {

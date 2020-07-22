@@ -37,21 +37,19 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class UkvFdi
+    public sealed partial class UkvFdi
     {
         public bool Identify(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            var hdr = new FdiHeader();
-
             if(stream.Length < Marshal.SizeOf<FdiHeader>())
                 return false;
 
             byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);
-            hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
+            FdiHeader hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
             return hdr.magic.SequenceEqual(_signature);
         }

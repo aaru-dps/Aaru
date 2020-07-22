@@ -44,7 +44,7 @@ using Aaru.Devices;
 namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>Implements scanning the media from an SCSI device</summary>
-    public partial class MediaScan
+    public sealed partial class MediaScan
     {
         ScanResults Scsi()
         {
@@ -347,15 +347,13 @@ namespace Aaru.Core.Devices.Scanning
                     if(results.Blocks - i < blocksToRead)
                         blocksToRead = (uint)(results.Blocks - i);
 
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > results.MaxSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         results.MaxSpeed = currentSpeed;
 
                     if(currentSpeed < results.MinSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         results.MinSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                            (long)i, (long)results.Blocks);
@@ -472,15 +470,13 @@ namespace Aaru.Core.Devices.Scanning
                     if(results.Blocks - i < blocksToRead)
                         blocksToRead = (uint)(results.Blocks - i);
 
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                     if(currentSpeed > results.MaxSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         results.MaxSpeed = currentSpeed;
 
                     if(currentSpeed < results.MinSpeed &&
-                       currentSpeed != 0)
+                       currentSpeed > 0)
                         results.MinSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                            (long)i, (long)results.Blocks);
@@ -547,13 +543,13 @@ namespace Aaru.Core.Devices.Scanning
             results.SeekMax   = double.MinValue;
             results.SeekMin   = double.MaxValue;
             results.SeekTotal = 0;
-            const int SEEK_TIMES = 1000;
+            const int seekTimes = 1000;
 
             var rnd = new Random();
 
             InitProgress?.Invoke();
 
-            for(int i = 0; i < SEEK_TIMES; i++)
+            for(int i = 0; i < seekTimes; i++)
             {
                 if(_aborted || !_seekTest)
                     break;
@@ -569,15 +565,13 @@ namespace Aaru.Core.Devices.Scanning
                 else
                     scsiReader.ReadBlock(out _, seekPos, out seekCur);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax &&
-                   seekCur != 0)
+                   seekCur > 0)
                     results.SeekMax = seekCur;
 
                 if(seekCur < results.SeekMin &&
-                   seekCur != 0)
+                   seekCur > 0)
                     results.SeekMin = seekCur;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 results.SeekTotal += seekCur;
                 GC.Collect();
@@ -588,7 +582,7 @@ namespace Aaru.Core.Devices.Scanning
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;
             results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
-            results.SeekTimes      =  SEEK_TIMES;
+            results.SeekTimes      =  seekTimes;
 
             return results;
         }

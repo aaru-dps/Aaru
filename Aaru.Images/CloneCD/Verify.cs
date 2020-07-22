@@ -36,7 +36,7 @@ using Aaru.Checksums;
 
 namespace Aaru.DiscImages
 {
-    public partial class CloneCd
+    public sealed partial class CloneCd
     {
         public bool? VerifySector(ulong sectorAddress)
         {

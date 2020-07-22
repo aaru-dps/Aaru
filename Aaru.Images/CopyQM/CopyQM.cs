@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyQm : IMediaImage, IVerifiableImage
+    public sealed partial class CopyQm : IMediaImage, IVerifiableImage
     {
         uint         _calculatedDataCrc;
         byte[]       _decodedDisk;

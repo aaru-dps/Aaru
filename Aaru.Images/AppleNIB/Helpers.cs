@@ -34,7 +34,7 @@ using Aaru.CommonTypes;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleNib
+    public sealed partial class AppleNib
     {
         MediaType GetMediaType()
         {

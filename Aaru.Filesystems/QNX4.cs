@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public class QNX4 : IFilesystem
+    public sealed class QNX4 : IFilesystem
     {
         readonly byte[] _rootDirFname =
         {

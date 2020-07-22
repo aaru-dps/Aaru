@@ -41,11 +41,12 @@ using Aaru.Core;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ImageEntropyViewModel : ViewModelBase
+    public sealed class ImageEntropyViewModel : ViewModelBase
     {
         readonly IMediaImage _inputFormat;
         readonly Window      _view;
@@ -276,7 +277,8 @@ namespace Aaru.Gui.ViewModels.Windows
             set => this.RaiseAndSetIfChanged(ref _progress2Value, value);
         }
 
-        public string                                  Title        => "Calculating entropy";
+        [NotNull]
+        public string Title => "Calculating entropy";
         public ObservableCollection<TrackEntropyModel> TrackEntropy { get; }
         public ReactiveCommand<Unit, Unit>             StartCommand { get; }
         public ReactiveCommand<Unit, Unit>             CloseCommand { get; }

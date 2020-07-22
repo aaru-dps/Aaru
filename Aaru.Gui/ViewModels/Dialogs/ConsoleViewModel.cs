@@ -39,6 +39,7 @@ using System.Reflection;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -47,7 +48,7 @@ using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Gui.ViewModels.Dialogs
 {
-    public class ConsoleViewModel : ViewModelBase
+    public sealed class ConsoleViewModel : ViewModelBase
     {
         readonly Views.Dialogs.Console _view;
         bool                           _debugChecked;
@@ -59,13 +60,17 @@ namespace Aaru.Gui.ViewModels.Dialogs
             ClearCommand = ReactiveCommand.Create(ExecuteClearCommand);
         }
 
-        public string                         Title        => "Console";
+        [NotNull]
+        public string Title => "Console";
         public ReactiveCommand<Unit, Unit>    ClearCommand { get; }
         public ReactiveCommand<Unit, Unit>    SaveCommand  { get; }
         public ObservableCollection<LogEntry> Entries      => ConsoleHandler.Entries;
-        public string                         DebugText    => "Enable debug console";
-        public string                         SaveLabel    => "Save";
-        public string                         ClearLabel   => "Clear";
+        [NotNull]
+        public string DebugText => "Enable debug console";
+        [NotNull]
+        public string SaveLabel => "Save";
+        [NotNull]
+        public string ClearLabel => "Clear";
 
         public bool DebugChecked
         {

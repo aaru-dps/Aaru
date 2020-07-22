@@ -39,16 +39,15 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Too many unknowns, plus a completely unknown footer, to make this writable
-    public partial class BlindWrite4 : IOpticalMediaImage
+    public sealed partial class BlindWrite4 : IOpticalMediaImage
     {
         List<Bw4TrackDescriptor> _bwTracks;
         IFilter                  _dataFilter, _subFilter;
-
-        Bw4Header               _header;
-        ImageInfo               _imageInfo;
-        Stream                  _imageStream;
-        Dictionary<uint, ulong> _offsetmap;
-        Dictionary<uint, byte>  _trackFlags;
+        Bw4Header                _header;
+        ImageInfo                _imageInfo;
+        Stream                   _imageStream;
+        Dictionary<uint, ulong>  _offsetmap;
+        Dictionary<uint, byte>   _trackFlags;
 
         public BlindWrite4() => _imageInfo = new ImageInfo
         {

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class RayDim
+    public sealed partial class RayDim
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RayHdr

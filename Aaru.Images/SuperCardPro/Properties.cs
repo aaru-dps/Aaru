@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "SuperCardPro";

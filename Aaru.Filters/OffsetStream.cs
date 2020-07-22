@@ -41,7 +41,7 @@ using Microsoft.Win32.SafeHandles;
 namespace Aaru.Filters
 {
     /// <summary>Creates a stream that is a subset of another stream.</summary>
-    public class OffsetStream : Stream
+    public sealed class OffsetStream : Stream
     {
         readonly Stream _baseStream;
         readonly long   _streamEnd;
@@ -354,7 +354,7 @@ namespace Aaru.Filters
 
         public override void Close() => _baseStream.Close();
 
-        protected new void Dispose()
+        new void Dispose()
         {
             _baseStream.Dispose();
             base.Dispose();

@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         public Errno ReadDir(string path, out List<string> contents)
         {
@@ -58,8 +58,8 @@ namespace Aaru.Filesystems
 
         /// <summary>
         ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
-        ///     directories will fail. FAT firectories will false positive if all files start with 0x05, and do not use full
-        ///     extentions, for example: "σAFILE.GZ" (using code page 437)
+        ///     directories will fail. FAT directories will false positive if all files start with 0x05, and do not use full
+        ///     extensions, for example: "σAFILE.GZ" (using code page 437)
         /// </summary>
         /// <returns>False if the directory does not follow the directory specification</returns>
         /// <param name="directory">Directory blocks.</param>

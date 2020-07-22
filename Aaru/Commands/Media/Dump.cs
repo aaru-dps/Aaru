@@ -55,7 +55,7 @@ using Schemas;
 namespace Aaru.Commands.Media
 {
     // TODO: Add raw dumping
-    internal class DumpMediaCommand : Command
+    internal sealed class DumpMediaCommand : Command
     {
         public DumpMediaCommand() : base("dump", "Dumps the media inserted on a device to a media image.")
         {
@@ -279,7 +279,7 @@ namespace Aaru.Commands.Media
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
-                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdireadyHole, bool eject)
+                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject)
         {
             MainClass.PrintCopyright();
 
@@ -322,7 +322,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel={0}", fixSubchannel);
             AaruConsole.DebugWriteLine("Dump-Media command", "--fix-subchannel-crc={0}", fixSubchannelCrc);
             AaruConsole.DebugWriteLine("Dump-Media command", "--generate-subchannels={0}", generateSubchannels);
-            AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdireadyHole);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdiReadyHole);
             AaruConsole.DebugWriteLine("Dump-Media command", "--eject={0}", eject);
 
             // TODO: Disabled temporarily
@@ -610,7 +610,7 @@ namespace Aaru.Commands.Media
                                       outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
                                       firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
                                       fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdireadyHole, errorLog, generateSubchannels);
+                                      skipCdiReadyHole, errorLog, generateSubchannels);
 
                 dumper.UpdateStatus         += Progress.UpdateStatus;
                 dumper.ErrorMessage         += Progress.ErrorMessage;

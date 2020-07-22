@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
-    public class Human68K : IPartition
+    public sealed class Human68K : IPartition
     {
         const uint X68K_MAGIC = 0x5836384B;
 

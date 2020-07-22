@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Qcow2
+    public sealed partial class Qcow2
     {
         /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
         const uint QCOW_MAGIC = 0x514649FB;

@@ -39,13 +39,14 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM : IReadOnlyFilesystem
+    public sealed partial class CPM : IReadOnlyFilesystem
     {
         /// <summary>True if <see cref="Identify" /> thinks this is a CP/M filesystem</summary>
         bool _cpmFound;
 
         /// <summary>Cached <see cref="FileSystemInfo" /></summary>
         FileSystemInfo _cpmStat;
+        bool _debug;
 
         /// <summary>Cached file passwords, decoded</summary>
         Dictionary<string, byte[]> _decodedPasswordCache;

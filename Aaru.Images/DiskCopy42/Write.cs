@@ -41,7 +41,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -175,7 +175,7 @@ namespace Aaru.DiscImages
 
                     break;
                 default:
-                    ErrorMessage = $"Unsupport media format {mediaType}";
+                    ErrorMessage = $"Unsupported media format {mediaType}";
 
                     return false;
             }

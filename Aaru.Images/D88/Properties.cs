@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class D88
+    public sealed partial class D88
     {
         public string                 Name         => "D88 Disk Image";
         public Guid                   Id           => new Guid("669EDC77-EC41-4720-A88C-49C38CFFBAA0");

@@ -42,7 +42,7 @@ using Encoding = System.Text.Encoding;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         /// <inheritdoc />
         /// <summary>Mounts an Apple DOS filesystem</summary>
@@ -117,8 +117,7 @@ namespace Aaru.Filesystems
 
             XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);
@@ -129,7 +128,7 @@ namespace Aaru.Filesystems
         }
 
         /// <inheritdoc />
-        /// <summary>Umounts this DOS filesystem</summary>
+        /// <summary>Unmounts this DOS filesystem</summary>
         public Errno Unmount()
         {
             _mounted       = false;

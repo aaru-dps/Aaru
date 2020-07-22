@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Nilfs2
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "linux.aif"
         };
@@ -50,7 +50,7 @@ namespace Aaru.Tests.Filesystems
             262144
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -60,17 +60,17 @@ namespace Aaru.Tests.Filesystems
             32512
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "Volume label"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
         };
@@ -78,17 +78,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                               "New Implementation of a Log-structured File System 2", _testfiles[i]);
+                                               "New Implementation of a Log-structured File System 2", _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new NILFS2();
                 int             part       = -1;
@@ -101,14 +101,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("NILFS2 filesystem", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("NILFS2 filesystem", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }
         }
     }

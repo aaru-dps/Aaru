@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscJuggler
+    public sealed partial class DiscJuggler
     {
         public string                 Name         => "DiscJuggler";
         public Guid                   Id           => new Guid("2444DBC6-CD35-424C-A227-39B0C4DB01B2");

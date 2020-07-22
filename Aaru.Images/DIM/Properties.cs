@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dim
+    public sealed partial class Dim
     {
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -39,7 +39,7 @@ using SharpCompress.Compressors.LZMA;
 namespace Aaru.Filters
 {
     /// <summary>Decompress lzip files while reading</summary>
-    public class LZip : IFilter
+    public sealed class LZip : IFilter
     {
         string   _basePath;
         DateTime _creationTime;

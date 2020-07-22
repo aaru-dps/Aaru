@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vdi
+    public sealed partial class Vdi
     {
         /// <summary>VDI disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

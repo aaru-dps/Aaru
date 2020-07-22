@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class VMware : IWritableImage
+    public sealed partial class VMware : IWritableImage
     {
         string                          _adapterType;
         uint                            _cid;

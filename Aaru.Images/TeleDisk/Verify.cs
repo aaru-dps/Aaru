@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace Aaru.DiscImages
 {
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         public bool? VerifyMediaImage() => _aDiskCrcHasFailed;
 

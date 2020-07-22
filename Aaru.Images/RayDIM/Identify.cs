@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class RayDim
+    public sealed partial class RayDim
     {
         public bool Identify(IFilter imageFilter)
         {

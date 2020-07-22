@@ -35,24 +35,8 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120
+    public sealed partial class Alcohol120
     {
-        static ushort AlcoholTrackModeToBytesPerSector(AlcoholTrackMode trackMode)
-        {
-            switch(trackMode)
-            {
-                case AlcoholTrackMode.Audio:
-                case AlcoholTrackMode.Mode1:
-                case AlcoholTrackMode.Mode2:
-                case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F2:
-                case AlcoholTrackMode.Mode2F2Alt:
-                case AlcoholTrackMode.Mode2F1Alt: return 2352;
-                case AlcoholTrackMode.DVD: return 2048;
-                default:                   return 0;
-            }
-        }
-
         static ushort AlcoholTrackModeToCookedBytesPerSector(AlcoholTrackMode trackMode)
         {
             switch(trackMode)

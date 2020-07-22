@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class T98 : IWritableImage
+    public sealed partial class T98 : IWritableImage
     {
         ImageInfo  _imageInfo;
         IFilter    _t98ImageFilter;

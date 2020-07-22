@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS : IReadOnlyFilesystem
+    public sealed partial class OperaFS : IReadOnlyFilesystem
     {
         bool                                                               _debug;
         Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> _directoryCache;

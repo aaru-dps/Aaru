@@ -54,7 +54,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
         public bool Open(IFilter imageFilter)
         {
@@ -383,112 +383,124 @@ namespace Aaru.DiscImages
                         if(ddtHeader.identifier != BlockType.DeDuplicationTable)
                             break;
 
-                        if(entry.dataType == DataType.UserData)
+                        switch(entry.dataType)
                         {
-                            _imageInfo.Sectors = ddtHeader.entries;
-                            _shift             = ddtHeader.shift;
+                            case DataType.UserData:
+                                _imageInfo.Sectors = ddtHeader.entries;
+                                _shift             = ddtHeader.shift;
 
-                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                       GC.GetTotalMemory(false));
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
 
-                            // Check for DDT compression
-                            switch(ddtHeader.compression)
+                                // Check for DDT compression
+                                switch(ddtHeader.compression)
+                                {
+                                    case CompressionType.Lzma:
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
+                                        DateTime ddtStart = DateTime.UtcNow;
+                                        byte[]   compressedDdt = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                        byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                        _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                        _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
+                                        var    compressedDdtMs = new MemoryStream(compressedDdt);
+                                        var    lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                        byte[] decompressedDdt = new byte[ddtHeader.length];
+                                        lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                        lzmaDdt.Close();
+                                        compressedDdtMs.Close();
+                                        _userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
+                                        DateTime ddtEnd = DateTime.UtcNow;
+                                        _inMemoryDdt = true;
+
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                                   "Took {0} seconds to decompress DDT",
+                                                                   (ddtEnd - ddtStart).TotalSeconds);
+
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                                   GC.GetTotalMemory(false));
+
+                                        break;
+                                    case CompressionType.None:
+                                        _inMemoryDdt          = false;
+                                        _outMemoryDdtPosition = (long)entry.offset;
+
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                                   GC.GetTotalMemory(false));
+
+                                        break;
+                                    default:
+                                        throw new
+                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                }
+
+                                foundUserDataDdt = true;
+
+                                break;
+                            case DataType.CdSectorPrefixCorrected:
+                            case DataType.CdSectorSuffixCorrected:
                             {
-                                case CompressionType.Lzma:
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
-                                    DateTime ddtStart       = DateTime.UtcNow;
-                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
-                                    _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
-                                    var    compressedDdtMs = new MemoryStream(compressedDdt);
-                                    var    lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
-                                    byte[] decompressedDdt = new byte[ddtHeader.length];
-                                    lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
-                                    lzmaDdt.Close();
-                                    compressedDdtMs.Close();
-                                    _userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
-                                    DateTime ddtEnd = DateTime.UtcNow;
-                                    _inMemoryDdt = true;
+                                uint[] cdDdt           = new uint[ddtHeader.entries];
+                                byte[] decompressedDdt = new byte[ddtHeader.length];
 
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                               "Took {0} seconds to decompress DDT",
-                                                               (ddtEnd - ddtStart).TotalSeconds);
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
 
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                               GC.GetTotalMemory(false));
+                                // Check for DDT compression
+                                switch(ddtHeader.compression)
+                                {
+                                    case CompressionType.Lzma:
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
+                                        DateTime ddtStart = DateTime.UtcNow;
+                                        byte[]   compressedDdt = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                        byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                        _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
+                                        _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
+                                        var compressedDdtMs = new MemoryStream(compressedDdt);
+                                        var lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
+                                        lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
+                                        lzmaDdt.Close();
+                                        compressedDdtMs.Close();
+                                        DateTime ddtEnd = DateTime.UtcNow;
 
-                                    break;
-                                case CompressionType.None:
-                                    _inMemoryDdt          = false;
-                                    _outMemoryDdtPosition = (long)entry.offset;
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                                   "Took {0} seconds to decompress DDT",
+                                                                   (ddtEnd - ddtStart).TotalSeconds);
 
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                               GC.GetTotalMemory(false));
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                                   GC.GetTotalMemory(false));
 
-                                    break;
-                                default:
-                                    throw new
-                                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                        break;
+                                    case CompressionType.None:
+                                        _imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
+
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                                   GC.GetTotalMemory(false));
+
+                                        break;
+                                    default:
+                                        throw new
+                                            ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                }
+
+                                cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
+
+                                switch(entry.dataType)
+                                {
+                                    case DataType.CdSectorPrefixCorrected:
+                                        _sectorPrefixDdt = cdDdt;
+
+                                        break;
+                                    case DataType.CdSectorSuffixCorrected:
+                                        _sectorSuffixDdt = cdDdt;
+
+                                        break;
+                                }
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
+
+                                break;
                             }
-
-                            foundUserDataDdt = true;
-                        }
-                        else if(entry.dataType == DataType.CdSectorPrefixCorrected ||
-                                entry.dataType == DataType.CdSectorSuffixCorrected)
-                        {
-                            uint[] cdDdt           = new uint[ddtHeader.entries];
-                            byte[] decompressedDdt = new byte[ddtHeader.length];
-
-                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                       GC.GetTotalMemory(false));
-
-                            // Check for DDT compression
-                            switch(ddtHeader.compression)
-                            {
-                                case CompressionType.Lzma:
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
-                                    DateTime ddtStart       = DateTime.UtcNow;
-                                    byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                    byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
-                                    _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
-                                    _imageStream.Read(compressedDdt, 0, compressedDdt.Length);
-                                    var compressedDdtMs = new MemoryStream(compressedDdt);
-                                    var lzmaDdt         = new LzmaStream(lzmaProperties, compressedDdtMs);
-                                    lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
-                                    lzmaDdt.Close();
-                                    compressedDdtMs.Close();
-                                    DateTime ddtEnd = DateTime.UtcNow;
-
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin",
-                                                               "Took {0} seconds to decompress DDT",
-                                                               (ddtEnd - ddtStart).TotalSeconds);
-
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                               GC.GetTotalMemory(false));
-
-                                    break;
-                                case CompressionType.None:
-                                    _imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
-
-                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                               GC.GetTotalMemory(false));
-
-                                    break;
-                                default:
-                                    throw new
-                                        ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
-                            }
-
-                            cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
-
-                            if(entry.dataType == DataType.CdSectorPrefixCorrected)
-                                _sectorPrefixDdt = cdDdt;
-                            else if(entry.dataType == DataType.CdSectorSuffixCorrected)
-                                _sectorSuffixDdt = cdDdt;
-
-                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
-                                                       GC.GetTotalMemory(false));
                         }
 
                         break;
@@ -1206,21 +1218,21 @@ namespace Aaru.DiscImages
 
                 Track[] tracks = Tracks.ToArray();
 
-                for(int i = 0; i < tracks.Length; i++)
+                foreach(Track trk in tracks)
                 {
-                    byte[] sector = ReadSector(tracks[i].TrackStartSector);
-                    tracks[i].TrackBytesPerSector = sector.Length;
+                    byte[] sector = ReadSector(trk.TrackStartSector);
+                    trk.TrackBytesPerSector = sector.Length;
 
-                    tracks[i].TrackRawBytesPerSector =
+                    trk.TrackRawBytesPerSector =
                         (_sectorPrefix    != null && _sectorSuffix    != null) ||
                         (_sectorPrefixDdt != null && _sectorSuffixDdt != null) ? 2352 : sector.Length;
 
                     if(_sectorSubchannel == null)
                         continue;
 
-                    tracks[i].TrackSubchannelFile   = tracks[i].TrackFile;
-                    tracks[i].TrackSubchannelFilter = tracks[i].TrackFilter;
-                    tracks[i].TrackSubchannelType   = TrackSubchannelType.Raw;
+                    trk.TrackSubchannelFile   = trk.TrackFile;
+                    trk.TrackSubchannelFilter = trk.TrackFilter;
+                    trk.TrackSubchannelType   = TrackSubchannelType.Raw;
                 }
 
                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
@@ -1262,51 +1274,55 @@ namespace Aaru.DiscImages
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
                 return true;
 
-            if(_imageInfo.MediaType != MediaType.CD            &&
-               _imageInfo.MediaType != MediaType.CDDA          &&
-               _imageInfo.MediaType != MediaType.CDG           &&
-               _imageInfo.MediaType != MediaType.CDEG          &&
-               _imageInfo.MediaType != MediaType.CDI           &&
-               _imageInfo.MediaType != MediaType.CDROM         &&
-               _imageInfo.MediaType != MediaType.CDROMXA       &&
-               _imageInfo.MediaType != MediaType.CDPLUS        &&
-               _imageInfo.MediaType != MediaType.CDMO          &&
-               _imageInfo.MediaType != MediaType.CDR           &&
-               _imageInfo.MediaType != MediaType.CDRW          &&
-               _imageInfo.MediaType != MediaType.CDMRW         &&
-               _imageInfo.MediaType != MediaType.VCD           &&
-               _imageInfo.MediaType != MediaType.SVCD          &&
-               _imageInfo.MediaType != MediaType.PCD           &&
-               _imageInfo.MediaType != MediaType.DTSCD         &&
-               _imageInfo.MediaType != MediaType.CDMIDI        &&
-               _imageInfo.MediaType != MediaType.CDV           &&
-               _imageInfo.MediaType != MediaType.CDIREADY      &&
-               _imageInfo.MediaType != MediaType.FMTOWNS       &&
-               _imageInfo.MediaType != MediaType.PS1CD         &&
-               _imageInfo.MediaType != MediaType.PS2CD         &&
-               _imageInfo.MediaType != MediaType.MEGACD        &&
-               _imageInfo.MediaType != MediaType.SATURNCD      &&
-               _imageInfo.MediaType != MediaType.GDROM         &&
-               _imageInfo.MediaType != MediaType.GDR           &&
-               _imageInfo.MediaType != MediaType.MilCD         &&
-               _imageInfo.MediaType != MediaType.SuperCDROM2   &&
-               _imageInfo.MediaType != MediaType.JaguarCD      &&
-               _imageInfo.MediaType != MediaType.ThreeDO       &&
-               _imageInfo.MediaType != MediaType.PCFX          &&
-               _imageInfo.MediaType != MediaType.NeoGeoCD      &&
-               _imageInfo.MediaType != MediaType.CDTV          &&
-               _imageInfo.MediaType != MediaType.CD32          &&
-               _imageInfo.MediaType != MediaType.Playdia       &&
-               _imageInfo.MediaType != MediaType.Pippin        &&
-               _imageInfo.MediaType != MediaType.VideoNow      &&
-               _imageInfo.MediaType != MediaType.VideoNowColor &&
-               _imageInfo.MediaType != MediaType.VideoNowXp    &&
-               _imageInfo.MediaType != MediaType.CVD)
+            if(_imageInfo.MediaType == MediaType.CD            ||
+               _imageInfo.MediaType == MediaType.CDDA          ||
+               _imageInfo.MediaType == MediaType.CDG           ||
+               _imageInfo.MediaType == MediaType.CDEG          ||
+               _imageInfo.MediaType == MediaType.CDI           ||
+               _imageInfo.MediaType == MediaType.CDROM         ||
+               _imageInfo.MediaType == MediaType.CDROMXA       ||
+               _imageInfo.MediaType == MediaType.CDPLUS        ||
+               _imageInfo.MediaType == MediaType.CDMO          ||
+               _imageInfo.MediaType == MediaType.CDR           ||
+               _imageInfo.MediaType == MediaType.CDRW          ||
+               _imageInfo.MediaType == MediaType.CDMRW         ||
+               _imageInfo.MediaType == MediaType.VCD           ||
+               _imageInfo.MediaType == MediaType.SVCD          ||
+               _imageInfo.MediaType == MediaType.PCD           ||
+               _imageInfo.MediaType == MediaType.DTSCD         ||
+               _imageInfo.MediaType == MediaType.CDMIDI        ||
+               _imageInfo.MediaType == MediaType.CDV           ||
+               _imageInfo.MediaType == MediaType.CDIREADY      ||
+               _imageInfo.MediaType == MediaType.FMTOWNS       ||
+               _imageInfo.MediaType == MediaType.PS1CD         ||
+               _imageInfo.MediaType == MediaType.PS2CD         ||
+               _imageInfo.MediaType == MediaType.MEGACD        ||
+               _imageInfo.MediaType == MediaType.SATURNCD      ||
+               _imageInfo.MediaType == MediaType.GDROM         ||
+               _imageInfo.MediaType == MediaType.GDR           ||
+               _imageInfo.MediaType == MediaType.MilCD         ||
+               _imageInfo.MediaType == MediaType.SuperCDROM2   ||
+               _imageInfo.MediaType == MediaType.JaguarCD      ||
+               _imageInfo.MediaType == MediaType.ThreeDO       ||
+               _imageInfo.MediaType == MediaType.PCFX          ||
+               _imageInfo.MediaType == MediaType.NeoGeoCD      ||
+               _imageInfo.MediaType == MediaType.CDTV          ||
+               _imageInfo.MediaType == MediaType.CD32          ||
+               _imageInfo.MediaType == MediaType.Playdia       ||
+               _imageInfo.MediaType == MediaType.Pippin        ||
+               _imageInfo.MediaType == MediaType.VideoNow      ||
+               _imageInfo.MediaType == MediaType.VideoNowColor ||
+               _imageInfo.MediaType == MediaType.VideoNowXp    ||
+               _imageInfo.MediaType == MediaType.CVD)
+                return true;
+
+            {
                 foreach(Track track in Tracks)
                 {
                     track.TrackPregap = 0;
                     track.Indexes?.Clear();
                 }
+            }
 
             return true;
         }
@@ -1432,7 +1448,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             return ReadSector(trk.TrackStartSector + sectorAddress);
@@ -1445,7 +1461,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             return ReadSectorTag(trk.TrackStartSector + sectorAddress, tag);
@@ -1482,6 +1498,10 @@ namespace Aaru.DiscImages
             {
                 Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                        sectorAddress <= t.TrackEndSector);
+
+                if(trk is null)
+                    throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                          "Can't found track containing requested sector");
 
                 if(trk.TrackSequence    == 0 &&
                    trk.TrackStartSector == 0 &&
@@ -1705,7 +1725,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
@@ -1722,7 +1742,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)
@@ -1739,6 +1759,10 @@ namespace Aaru.DiscImages
                 case XmlMediaType.OpticalDisc:
                     Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                            sectorAddress <= t.TrackEndSector);
+
+                    if(trk is null)
+                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                              "Can't found track containing requested sector");
 
                     if(trk.TrackSequence    == 0 &&
                        trk.TrackStartSector == 0 &&
@@ -1936,7 +1960,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             return ReadSectorLong(trk.TrackStartSector + sectorAddress);
@@ -1952,6 +1976,10 @@ namespace Aaru.DiscImages
                 case XmlMediaType.OpticalDisc:
                     Track trk = Tracks.FirstOrDefault(t => sectorAddress >= t.TrackStartSector &&
                                                            sectorAddress <= t.TrackEndSector);
+
+                    if(trk is null)
+                        throw new ArgumentOutOfRangeException(nameof(sectorAddress),
+                                                              "Can't found track containing requested sector");
 
                     if(trk.TrackSequence    == 0 &&
                        trk.TrackStartSector == 0 &&
@@ -2106,7 +2134,7 @@ namespace Aaru.DiscImages
 
             Track trk = Tracks.FirstOrDefault(t => t.TrackSequence == track);
 
-            if(trk.TrackSequence != track)
+            if(trk?.TrackSequence != track)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
             if(trk.TrackStartSector + sectorAddress + length > trk.TrackEndSector + 1)

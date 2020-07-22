@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         const ushort SDF_MAGIC_OLD        = 0x58AA;
         const ushort SDF_MAGIC            = 0x59AA;

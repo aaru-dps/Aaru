@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class MaxiDisk
+    public sealed partial class MaxiDisk
     {
         enum HdkDiskTypes : byte
         {

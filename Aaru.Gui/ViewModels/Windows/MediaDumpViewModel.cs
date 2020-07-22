@@ -52,6 +52,7 @@ using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using DynamicData;
+using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -61,7 +62,7 @@ using MediaType = Aaru.CommonTypes.MediaType;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class MediaDumpViewModel : ViewModelBase
+    public sealed class MediaDumpViewModel : ViewModelBase
     {
         readonly string  _devicePath;
         readonly Window  _view;
@@ -106,7 +107,8 @@ namespace Aaru.Gui.ViewModels.Windows
         bool             _useResume;
         bool             _useSidecar;
 
-        public MediaDumpViewModel(string devicePath, DeviceInfo deviceInfo, Window view, ScsiInfo scsiInfo = null)
+        public MediaDumpViewModel(string devicePath, DeviceInfo deviceInfo, Window view,
+                                  [CanBeNull] ScsiInfo scsiInfo = null)
         {
             _view              = view;
             DestinationEnabled = true;
@@ -660,7 +662,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
             Destination = result;
 
-            _outputPrefix = Path.Combine(Path.GetDirectoryName(result), Path.GetFileNameWithoutExtension(result));
+            _outputPrefix = Path.Combine(Path.GetDirectoryName(result) ?? "", Path.GetFileNameWithoutExtension(result));
 
             Resume = true;
         }

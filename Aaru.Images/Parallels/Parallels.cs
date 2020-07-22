@@ -40,7 +40,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Parallels : IWritableImage
+    public sealed partial class Parallels : IWritableImage
     {
         uint[]                    _bat;
         uint                      _clusterBytes;

@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "CPCEMU Disk-File and Extended CPC Disk-File";

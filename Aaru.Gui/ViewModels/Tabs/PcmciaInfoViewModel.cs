@@ -38,29 +38,30 @@ using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
     public class PcmciaInfoViewModel : ViewModelBase
     {
+        readonly byte[] _cis;
         readonly Window _view;
-        readonly byte[] cis;
         string          _pcmciaCisText;
         PcmciaCisModel  _selectedCis;
 
-        internal PcmciaInfoViewModel(byte[] pcmciaCis, Window view)
+        internal PcmciaInfoViewModel([CanBeNull] byte[] pcmciaCis, Window view)
         {
             if(pcmciaCis == null)
                 return;
 
-            cis                  = pcmciaCis;
-            cisList              = new ObservableCollection<PcmciaCisModel>();
+            _cis                 = pcmciaCis;
+            CisList              = new ObservableCollection<PcmciaCisModel>();
             SavePcmciaCisCommand = ReactiveCommand.Create(ExecuteSavePcmciaCisCommand);
 
             _view = view;
 
-            Tuple[] tuples = CIS.GetTuples(cis);
+            Tuple[] tuples = CIS.GetTuples(_cis);
 
             if(tuples != null)
                 foreach(Tuple tuple in tuples)
@@ -133,7 +134,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                             break;
                     }
 
-                    cisList.Add(new PcmciaCisModel
+                    CisList.Add(new PcmciaCisModel
                     {
                         Code        = tupleCode,
                         Description = tupleDescription
@@ -143,7 +144,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                 AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
         }
 
-        public ObservableCollection<PcmciaCisModel> cisList { get; }
+        public ObservableCollection<PcmciaCisModel> CisList { get; }
 
         public string PcmciaCisText
         {
@@ -185,7 +186,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                 return;
 
             var saveFs = new FileStream(result, FileMode.Create);
-            saveFs.Write(cis, 0, cis.Length);
+            saveFs.Write(_cis, 0, _cis.Length);
 
             saveFs.Close();
         }

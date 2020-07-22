@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret
+    public sealed partial class DiscFerret
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DfiBlockHeader

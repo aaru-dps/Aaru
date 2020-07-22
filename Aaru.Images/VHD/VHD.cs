@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     ///     the hard disk image was merely a sector by sector (RAW) image with a resource fork giving information to Virtual PC
     ///     itself.
     /// </summary>
-    public partial class Vhd : IWritableImage
+    public sealed partial class Vhd : IWritableImage
     {
         uint              _bitmapSize;
         uint[]            _blockAllocationTable;

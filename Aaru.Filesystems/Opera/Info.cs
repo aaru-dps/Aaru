@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

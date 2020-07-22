@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class DecodeMediaTags : Window
+    public sealed class DecodeMediaTags : Window
     {
         public DecodeMediaTags()
         {

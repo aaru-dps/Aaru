@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Udif
+    public sealed partial class Udif
     {
         const uint UDIF_SIGNATURE  = 0x6B6F6C79;
         const uint CHUNK_SIGNATURE = 0x6D697368;

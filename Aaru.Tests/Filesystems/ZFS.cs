@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Zfs
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "netbsd_7.1.aif"
         };
@@ -49,7 +49,7 @@ namespace Aaru.Tests.Filesystems
             33554432
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -59,17 +59,17 @@ namespace Aaru.Tests.Filesystems
             0
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             0
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "NetBSD 7.1"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "2639895335654686206"
         };
@@ -77,17 +77,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Zettabyte File System",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IFilesystem fs = new ZFS();
 
                 var wholePart = new Partition
@@ -97,13 +97,13 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("ZFS filesystem", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("ZFS filesystem", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }
         }
     }

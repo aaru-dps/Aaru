@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class Imd
+    public sealed partial class Imd
     {
         public bool Identify(IFilter imageFilter)
         {

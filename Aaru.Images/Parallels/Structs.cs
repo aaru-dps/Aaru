@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Parallels
+    public sealed partial class Parallels
     {
         /// <summary>Parallels disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             public uint heads;
             /// <summary>Disk geometry parameter</summary>
             public uint cylinders;
-            /// <summary>Cluser size in sectors</summary>
+            /// <summary>Cluster size in sectors</summary>
             public uint cluster_size;
             /// <summary>Entries in BAT (clusters in image)</summary>
             public uint bat_entries;

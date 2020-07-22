@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
 {
     // Information from test floppy images created with OS/2 HPOFS 2.0
     // Need to get IBM document GA32-0224 -> IBM 3995 Optical Library Dataserver Products: Optical Disk Format
-    public partial class HPOFS : IFilesystem
+    public sealed partial class HPOFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

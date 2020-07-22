@@ -67,7 +67,7 @@ using time_t = System.Int32;
 
 namespace Aaru.Filesystems
 {
-    public class Locus : IFilesystem
+    public sealed class Locus : IFilesystem
     {
         const int NICINOD    = 325;
         const int NICFREE    = 600;
@@ -279,7 +279,7 @@ namespace Aaru.Filesystems
             /* defined as a constant below */
             public readonly gfs_t   s_gfs;   /* global filesystem number */
             public readonly daddr_t s_fsize; /* size in blocks of entire volume */
-            /* several ints for replicated filsystems */
+            /* several ints for replicated filesystems */
             public readonly commitcnt_t s_lwm; /* all prior commits propagated */
             public readonly commitcnt_t s_hwm; /* highest commit propagated */
             /* oldest committed version in the list.

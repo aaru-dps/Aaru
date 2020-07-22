@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         readonly ushort _usbVendor;
         readonly ushort _usbProduct;
@@ -169,8 +169,7 @@ namespace Aaru.Devices
         {
             get
             {
-                if(_isRemoteAdmin is null)
-                    _isRemoteAdmin = _remote.IsRoot;
+                _isRemoteAdmin ??= _remote.IsRoot;
 
                 return _isRemoteAdmin == true;
             }

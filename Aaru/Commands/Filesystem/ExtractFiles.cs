@@ -42,11 +42,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using JetBrains.Annotations;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Commands.Filesystem
 {
-    internal class ExtractFilesCommand : Command
+    internal sealed class ExtractFilesCommand : Command
     {
         public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
         {
@@ -231,10 +232,6 @@ namespace Aaru.Commands.Filesystem
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                 Core.Partitions.AddSchemesToStats(partitions);
 
-                List<string>        idPlugins;
-                IReadOnlyFilesystem plugin;
-                Errno               error;
-
                 if(partitions.Count == 0)
                 {
                     AaruConsole.DebugWriteLine("Ls command", "No partitions found");
@@ -259,65 +256,73 @@ namespace Aaru.Commands.Filesystem
 
                     AaruConsole.WriteLine("Identifying filesystem on partition");
 
-                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                    Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
                     if(idPlugins.Count == 0)
                         AaruConsole.WriteLine("Filesystem not identified");
-                    else if(idPlugins.Count > 1)
-                    {
-                        AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
-
-                        foreach(string pluginName in idPlugins)
-                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
-                            {
-                                AaruConsole.WriteLine($"As identified by {plugin.Name}.");
-
-                                var fs = (IReadOnlyFilesystem)plugin.
-                                                              GetType().GetConstructor(Type.EmptyTypes)?.
-                                                              Invoke(new object[]
-                                                                         {});
-
-                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
-
-                                if(error == Errno.NoError)
-                                {
-                                    string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                            : fs.XmlFsType.VolumeName;
-
-                                    ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
-
-                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
-                                }
-                                else
-                                    AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
-                            }
-                    }
                     else
                     {
-                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+                        IReadOnlyFilesystem plugin;
+                        Errno               error;
 
-                        if(plugin == null)
-                            continue;
-
-                        AaruConsole.WriteLine($"Identified by {plugin.Name}.");
-
-                        var fs = (IReadOnlyFilesystem)plugin.
-                                                      GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                            {});
-
-                        error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
-
-                        if(error == Errno.NoError)
+                        if(idPlugins.Count > 1)
                         {
-                            string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
-                                                    : fs.XmlFsType.VolumeName;
+                            AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
-                            ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
+                            foreach(string pluginName in idPlugins)
+                                if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                                {
+                                    AaruConsole.WriteLine($"As identified by {plugin.Name}.");
 
-                            Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                    var fs = (IReadOnlyFilesystem)plugin.
+                                                                  GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                  Invoke(new object[]
+                                                                             {});
+
+                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
+                                                     @namespace);
+
+                                    if(error == Errno.NoError)
+                                    {
+                                        string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                                : fs.XmlFsType.VolumeName;
+
+                                        ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
+
+                                        Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                    }
+                                    else
+                                        AaruConsole.ErrorWriteLine("Unable to mount device, error {0}",
+                                                                   error.ToString());
+                                }
                         }
                         else
-                            AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                        {
+                            plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+
+                            if(plugin == null)
+                                continue;
+
+                            AaruConsole.WriteLine($"Identified by {plugin.Name}.");
+
+                            var fs = (IReadOnlyFilesystem)plugin.
+                                                          GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                                                                                                                {});
+
+                            error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+
+                            if(error == Errno.NoError)
+                            {
+                                string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName) ? "NO NAME"
+                                                        : fs.XmlFsType.VolumeName;
+
+                                ExtractFilesInDir("/", fs, volumeName, outputDir, xattrs);
+
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
+                            }
+                            else
+                                AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                        }
                     }
                 }
             }
@@ -332,10 +337,10 @@ namespace Aaru.Commands.Filesystem
             return (int)ErrorNumber.NoError;
         }
 
-        static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, string volumeName, string outputDir,
-                                      bool doXattrs)
+        static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName,
+                                      string outputDir, bool doXattrs)
         {
-            if(path.StartsWith("/"))
+            if(path.StartsWith('/'))
                 path = path.Substring(1);
 
             Errno error = fs.ReadDir(path, out List<string> directory);

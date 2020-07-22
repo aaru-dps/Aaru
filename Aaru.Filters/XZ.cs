@@ -38,7 +38,7 @@ using SharpCompress.Compressors.Xz;
 namespace Aaru.Filters
 {
     /// <summary>Decompress xz files while reading</summary>
-    public class XZ : IFilter
+    public sealed class XZ : IFilter
     {
         string   _basePath;
         DateTime _creationTime;

@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class JFS : IFilesystem
+    public sealed class JFS : IFilesystem
     {
         const uint JFS_BOOT_BLOCKS_SIZE = 0x8000;
         const uint JFS_MAGIC            = 0x3153464A;

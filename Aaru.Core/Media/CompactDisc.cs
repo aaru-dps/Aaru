@@ -1458,6 +1458,9 @@ namespace Aaru.Core.Media
                 ulong trackStart;
                 ulong pregap;
 
+                if(track == null)
+                    continue;
+
                 // Hidden track
                 if(track.TrackSequence == 0)
                 {

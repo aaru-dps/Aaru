@@ -43,7 +43,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         const int BYTES_BEFORE_BLOCK_MAP = 64;
 
@@ -54,8 +54,7 @@ namespace Aaru.Filesystems
             _partitionStart = partition.Start;
             Encoding        = encoding ?? Encoding.GetEncoding("macintosh");
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);

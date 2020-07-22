@@ -40,7 +40,7 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
@@ -156,7 +156,7 @@ namespace Aaru.Filesystems
 
             stat = new FileEntryInfo();
 
-            _fileSizeCache.TryGetValue(filename, out int filesize);
+            _fileSizeCache.TryGetValue(filename, out int fileSize);
             GetAttributes(path, out FileAttributes attrs);
 
             if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
@@ -174,7 +174,7 @@ namespace Aaru.Filesystems
             }
             else
             {
-                stat.Length = filesize;
+                stat.Length = fileSize;
                 stat.Blocks = stat.Length / _vtoc.bytesPerSector;
             }
 

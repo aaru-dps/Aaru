@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class Fossil : IFilesystem
+    public sealed class Fossil : IFilesystem
     {
         const uint FOSSIL_HDR_MAGIC = 0x3776AE89;
         const uint FOSSIL_SB_MAGIC  = 0x2340A3B1;
@@ -124,7 +124,7 @@ namespace Aaru.Filesystems
                     sb.AppendFormat("Next QID {0}", fsb.qid).AppendLine();
                     sb.AppendFormat("Active root block {0}", fsb.active).AppendLine();
                     sb.AppendFormat("Next root block {0}", fsb.next).AppendLine();
-                    sb.AppendFormat("Curren root block {0}", fsb.current).AppendLine();
+                    sb.AppendFormat("Current root block {0}", fsb.current).AppendLine();
                     sb.AppendFormat("Volume label: \"{0}\"", StringHandlers.CToString(fsb.name, Encoding)).AppendLine();
                     XmlFsType.VolumeName = StringHandlers.CToString(fsb.name, Encoding);
                 }

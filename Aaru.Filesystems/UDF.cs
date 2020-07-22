@@ -46,7 +46,7 @@ namespace Aaru.Filesystems
 {
     // TODO: Detect bootable
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class UDF : IFilesystem
+    public sealed class UDF : IFilesystem
     {
         readonly byte[] _magic =
         {

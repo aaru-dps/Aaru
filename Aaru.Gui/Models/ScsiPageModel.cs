@@ -32,7 +32,7 @@
 
 namespace Aaru.Gui.Models
 {
-    public class ScsiPageModel
+    public sealed class ScsiPageModel
     {
         public byte[] Data;
         public string Page        { get; set; }

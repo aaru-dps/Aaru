@@ -32,7 +32,7 @@
 
 namespace Aaru.Database.Models
 {
-    public abstract class BaseOperatingSystem : BaseModel<int>
+    public abstract class BaseOperatingSystem : BaseModel
     {
         public string Name         { get; set; }
         public string Version      { get; set; }

@@ -36,7 +36,7 @@ using Aaru.Checksums;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite4
+    public sealed partial class BlindWrite4
     {
         public bool? VerifySector(ulong sectorAddress)
         {

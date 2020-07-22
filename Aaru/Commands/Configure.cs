@@ -39,7 +39,7 @@ using Aaru.Settings;
 
 namespace Aaru.Commands
 {
-    internal class ConfigureCommand : Command
+    internal sealed class ConfigureCommand : Command
     {
         readonly bool _autoCall;
         readonly bool _gdprChange;
@@ -53,7 +53,7 @@ namespace Aaru.Commands
             Handler = CommandHandler.Create((Func<bool, bool, int>)Invoke);
         }
 
-        public int Invoke(bool debug, bool verbose)
+        int Invoke(bool debug, bool verbose)
         {
             if(!_autoCall)
             {
@@ -93,14 +93,14 @@ namespace Aaru.Commands
             #region Device reports
             AaruConsole.WriteLine();
 
-            AaruConsole.WriteLine(
-                                  "With the 'device-report' command, Aaru creates a report of a device, that includes its\n" +
-                                  "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n" +
-                                  "The serial number of the device is not stored in the report. If used with the debug parameter,\n" +
-                                  "extra information about the device will be stored in the report. This information is known to contain\n" +
-                                  "the device serial number in non-standard places that prevent the automatic removal of it on a handful\n" +
-                                  "of devices. A human-readable copy of the report in XML format is always created in the same directory\n" +
-                                  "where Aaru is being run from.");
+            AaruConsole.
+                WriteLine("With the 'device-report' command, Aaru creates a report of a device, that includes its\n" +
+                          "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n" +
+                          "The serial number of the device is not stored in the report. If used with the debug parameter,\n" +
+                          "extra information about the device will be stored in the report. This information is known to contain\n" +
+                          "the device serial number in non-standard places that prevent the automatic removal of it on a handful\n" +
+                          "of devices. A human-readable copy of the report in XML format is always created in the same directory\n" +
+                          "where Aaru is being run from.");
 
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)

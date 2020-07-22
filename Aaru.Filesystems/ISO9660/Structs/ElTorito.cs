@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoBootRecord

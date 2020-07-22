@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Imd : IMediaImage
+    public sealed partial class Imd : IMediaImage
     {
         ImageInfo    _imageInfo;
         List<byte[]> _sectorsData;

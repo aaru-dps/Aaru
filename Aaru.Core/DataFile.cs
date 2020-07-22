@@ -37,8 +37,9 @@ using Aaru.Console;
 namespace Aaru.Core
 {
     /// <summary>Abstracts a datafile with a block based interface</summary>
-    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
-    public class DataFile
+    [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global"),
+     SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public sealed class DataFile
     {
         readonly FileStream _dataFs;
 

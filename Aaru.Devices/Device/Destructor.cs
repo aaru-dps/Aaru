@@ -37,7 +37,7 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>
         ///     Releases unmanaged resources and performs other cleanup operations before the <see cref="Device" /> is

@@ -46,7 +46,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class Gdi
+    public sealed partial class Gdi
     {
         public bool Open(IFilter imageFilter)
         {

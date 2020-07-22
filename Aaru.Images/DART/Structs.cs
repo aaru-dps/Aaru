@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart
+    public sealed partial class Dart
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DartHeader

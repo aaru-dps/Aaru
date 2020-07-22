@@ -41,7 +41,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Udif : IWritableImage
+    public sealed partial class Udif : IWritableImage
     {
         uint                          _buffersize;
         Dictionary<ulong, byte[]>     _chunkCache;

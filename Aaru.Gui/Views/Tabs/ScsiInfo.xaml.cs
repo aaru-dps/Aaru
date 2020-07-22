@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Tabs
 {
-    public class ScsiInfo : UserControl
+    public sealed class ScsiInfo : UserControl
     {
         public ScsiInfo() => InitializeComponent();
 

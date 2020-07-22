@@ -44,7 +44,7 @@ namespace Aaru.Partitions
     // "part type start end\n"
     // One line per partition, start and end relative to offset
     // e.g.: "part nvram 10110 10112\npart fossil 10112 3661056\n"
-    public class Plan9 : IPartition
+    public sealed class Plan9 : IPartition
     {
         public string Name   => "Plan9 partition table";
         public Guid   Id     => new Guid("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");

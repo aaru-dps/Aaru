@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow
+    public sealed partial class Qcow
     {
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
+    public sealed partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
     {
         ImageInfo _imageInfo;
 

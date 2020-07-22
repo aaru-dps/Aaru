@@ -63,7 +63,7 @@ namespace Aaru.Devices
         public readonly byte[] Padding;
     }
 
-    public partial class Device
+    public sealed partial class Device
     {
         public static DeviceInfo[] ListDevices() => ListDevices(out _, out _, out _, out _, out _, out _);
 
@@ -92,20 +92,19 @@ namespace Aaru.Devices
 
             try
             {
-                if(aaruRemote.ToLowerInvariant().StartsWith("aaru://"))
+                if(aaruRemote.ToLowerInvariant().StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
                     aaruRemote = aaruRemote.Substring(7);
 
-                using(var remote = new Remote.Remote(aaruRemote))
-                {
-                    isRemote                     = true;
-                    serverApplication            = remote.ServerApplication;
-                    serverVersion                = remote.ServerVersion;
-                    serverOperatingSystem        = remote.ServerOperatingSystem;
-                    serverOperatingSystemVersion = remote.ServerOperatingSystemVersion;
-                    serverArchitecture           = remote.ServerArchitecture;
+                using var remote = new Remote.Remote(aaruRemote);
 
-                    return remote.ListDevices();
-                }
+                isRemote                     = true;
+                serverApplication            = remote.ServerApplication;
+                serverVersion                = remote.ServerVersion;
+                serverOperatingSystem        = remote.ServerOperatingSystem;
+                serverOperatingSystemVersion = remote.ServerOperatingSystemVersion;
+                serverArchitecture           = remote.ServerArchitecture;
+
+                return remote.ListDevices();
             }
             catch(Exception)
             {

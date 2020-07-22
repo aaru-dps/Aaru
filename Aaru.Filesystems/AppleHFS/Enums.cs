@@ -32,11 +32,12 @@
 
 // ReSharper disable InconsistentNaming
 
+// ReSharper disable UnusedMember.Local
 namespace Aaru.Filesystems
 {
-    public partial class AppleHFS
+    public sealed partial class AppleHFS
     {
-        internal enum NodeType : sbyte
+        enum NodeType : sbyte
         {
             /// <summary>Index node</summary>
             ndIndxNode = 0,
@@ -48,7 +49,7 @@ namespace Aaru.Filesystems
             ndLeafNode = -1
         }
 
-        internal enum CatDataType : sbyte
+        enum CatDataType : sbyte
         {
             /// <summary>Directory record</summary>
             cdrDirRec = 1,
@@ -60,7 +61,7 @@ namespace Aaru.Filesystems
             cdrFThdRec = 4
         }
 
-        internal enum ForkType : sbyte
+        enum ForkType : sbyte
         {
             Data = 0, Resource = -1
         }

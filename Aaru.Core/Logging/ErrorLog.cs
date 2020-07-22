@@ -35,7 +35,7 @@ using Aaru.Decoders.SCSI;
 
 namespace Aaru.Core.Logging
 {
-    public class ErrorLog
+    public sealed class ErrorLog
     {
         readonly StreamWriter _logSw;
 
@@ -378,10 +378,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");
@@ -401,10 +401,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");
@@ -424,10 +424,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");
@@ -467,10 +467,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");
@@ -490,10 +490,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");
@@ -513,10 +513,10 @@ namespace Aaru.Core.Logging
             {
                 if(prettySense != null)
                 {
-                    if(prettySense.StartsWith("SCSI SENSE: "))
+                    if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
                         prettySense = prettySense.Substring(12);
 
-                    if(prettySense.EndsWith("\n"))
+                    if(prettySense.EndsWith('\n'))
                         prettySense = prettySense.Substring(0, prettySense.Length - 1);
 
                     prettySense = prettySense.Replace("\n", " - ");

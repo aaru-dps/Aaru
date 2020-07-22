@@ -32,7 +32,7 @@
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         public event InitProgressHandler    InitProgressEvent;
         public event UpdateProgressHandler  UpdateProgressEvent;

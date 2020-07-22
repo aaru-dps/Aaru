@@ -51,7 +51,7 @@ namespace Aaru.Core
     }
 
     /// <summary>Checksums and hashes data, with different algorithms multithreaded</summary>
-    public class Checksum
+    public sealed class Checksum
     {
         readonly IChecksum      _adler32Ctx;
         readonly IChecksum      _crc16Ctx;

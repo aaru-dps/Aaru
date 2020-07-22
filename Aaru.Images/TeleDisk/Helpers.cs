@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {

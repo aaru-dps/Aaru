@@ -120,10 +120,7 @@ namespace Aaru.Database.Migrations
                 MaximumReadableSectorInHdArea = table.Column<uint>(nullable: false),
                 MaximumReadablePqInHdArea = table.Column<byte[]>(nullable: true),
                 MaximumReadableRwInHdArea = table.Column<byte[]>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_GdRomSwapDiscCapabilities", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_GdRomSwapDiscCapabilities", x => x.Id));
 
             migrationBuilder.CreateIndex("IX_Reports_GdRomSwapDiscCapabilitiesId", "Reports",
                                          "GdRomSwapDiscCapabilitiesId");

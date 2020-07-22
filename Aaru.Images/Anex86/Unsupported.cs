@@ -32,11 +32,10 @@
 
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Exceptions;
-using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class Anex86 : IWritableImage
+    public sealed partial class Anex86
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

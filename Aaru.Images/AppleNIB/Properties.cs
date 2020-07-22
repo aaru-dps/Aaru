@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleNib
+    public sealed partial class AppleNib
     {
         public ImageInfo Info => _imageInfo;
 

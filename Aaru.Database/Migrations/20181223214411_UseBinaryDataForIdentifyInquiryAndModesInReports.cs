@@ -70,10 +70,7 @@ namespace Aaru.Database.Migrations
                 WriteCDRW                 = table.Column<bool>(),
                 WriteDVDR                 = table.Column<bool>(),
                 WriteDVDRAM               = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_ModePage_2A", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_ModePage_2A", x => x.Id));
         }
     }
 }

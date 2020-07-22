@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {

@@ -36,7 +36,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qed
+    public sealed partial class Qed
     {
         public bool Identify(IFilter imageFilter)
         {

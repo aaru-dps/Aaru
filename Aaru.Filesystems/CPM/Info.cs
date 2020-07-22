@@ -42,7 +42,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

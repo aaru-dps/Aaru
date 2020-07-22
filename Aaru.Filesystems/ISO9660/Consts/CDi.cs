@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const           string CDI_MAGIC               = "CD-I ";
         static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();

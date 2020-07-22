@@ -41,7 +41,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class HPOFS
+    public sealed partial class HPOFS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

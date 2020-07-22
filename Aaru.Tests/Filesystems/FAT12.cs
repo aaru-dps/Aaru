@@ -40,7 +40,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Fat12
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             // Concurrent DOS 6.00
             "concurrentdos_6.00_dshd.img.lz", "concurrentdos_6.00_mf2dd.img.lz", "concurrentdos_6.00_mf2hd.img.lz",
@@ -375,7 +375,7 @@ namespace Aaru.Tests.Filesystems
             "geos41_mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             // Concurrent DOS 6.00
             MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD,
@@ -963,7 +963,7 @@ namespace Aaru.Tests.Filesystems
             2880
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             // Concurrent DOS 6.00
             512, 512, 512,
@@ -1503,7 +1503,7 @@ namespace Aaru.Tests.Filesystems
             2880
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             // Concurrent DOS 6.00
             512, 1024, 512,
@@ -1773,7 +1773,7 @@ namespace Aaru.Tests.Filesystems
             512
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             // Concurrent DOS 6.00
             null, null, null,
@@ -2049,7 +2049,7 @@ namespace Aaru.Tests.Filesystems
             "GEOS41"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             // Concurrent DOS 6.00
             null, null, null,
@@ -2319,7 +2319,7 @@ namespace Aaru.Tests.Filesystems
             "8D684C67"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             // Concurrent DOS 6.00
             "DIGITAL ", "DIGITAL ", "DIGITAL ",
@@ -2592,16 +2592,16 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12", _testFiles[i]);
                 IFilter filter   = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IFilesystem fs = new FAT();
 
                 var wholePart = new Partition
@@ -2611,14 +2611,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }
@@ -2626,7 +2626,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Fat12Apm
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "macosx_10.11.aif"
         };
@@ -2636,7 +2636,7 @@ namespace Aaru.Tests.Filesystems
             16384
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -2646,22 +2646,22 @@ namespace Aaru.Tests.Filesystems
             4076
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             2048
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "VOLUMELABEL"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "32181F09"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             "BSD  4.4"
         };
@@ -2669,15 +2669,15 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (APM)", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (APM)", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
@@ -2690,15 +2690,15 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }
@@ -2706,7 +2706,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Fat12Gpt
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "macosx_10.11.aif"
         };
@@ -2716,7 +2716,7 @@ namespace Aaru.Tests.Filesystems
             16384
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -2726,22 +2726,22 @@ namespace Aaru.Tests.Filesystems
             4076
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             2048
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "VOLUMELABEL"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "66901F1B"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             "BSD  4.4"
         };
@@ -2749,15 +2749,15 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (GPT)", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (GPT)", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
                 int             part       = -1;
@@ -2770,15 +2770,15 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }
@@ -2786,7 +2786,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Fat12Mbr
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "compaqmsdos331.aif", "drdos_3.40.aif", "drdos_3.41.aif", "drdos_5.00.aif", "drdos_6.00.aif",
             "drdos_7.02.aif", "drdos_7.03.aif", "drdos_8.00.aif", "msdos331.aif", "msdos401.aif", "msdos500.aif",
@@ -2810,7 +2810,7 @@ namespace Aaru.Tests.Filesystems
             16384, 16384
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
             512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
@@ -2825,7 +2825,7 @@ namespace Aaru.Tests.Filesystems
             2044, 2044, 4016, 3072, 2040, 3584, 2044, 2044, 2044
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
             4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
@@ -2833,7 +2833,7 @@ namespace Aaru.Tests.Filesystems
             4096, 4096, 2048, 2048, 4096, 2048, 4096, 4096, 4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             null, "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
@@ -2846,7 +2846,7 @@ namespace Aaru.Tests.Filesystems
             "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             null, null, null, null, null, null, null, "1BFB1273", null, "407D1907", "345D18FB", "332518F4", "395718E9",
             "076718EF", "1371181B", "23281816", "2F781809", null, null, "294F100F", null, null, null, null, null,
@@ -2857,7 +2857,7 @@ namespace Aaru.Tests.Filesystems
             "02140E0B"
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             "IBM  3.3", "IBM  3.2", "IBM  3.2", "IBM  3.3", "IBM  3.3", "IBM  3.3", "DRDOS  7", "IBM  5.0", "IBM  3.3",
             "MSDOS4.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "IBM  3.3",
@@ -2871,25 +2871,25 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (MBR)", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (MBR)", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new FAT();
-                Assert.AreEqual(true, fs.Identify(image, partitions[0]), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, partitions[0]), _testFiles[i]);
                 fs.GetInformation(image, partitions[0], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }
@@ -2897,12 +2897,12 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Fat12Human
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "diska.aif", "diskb.aif"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.SHARP_525, MediaType.SHARP_525
         };
@@ -2912,7 +2912,7 @@ namespace Aaru.Tests.Filesystems
             1232, 1232
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             1024, 1024
         };
@@ -2922,22 +2922,22 @@ namespace Aaru.Tests.Filesystems
             1232, 1232
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             1024, 1024
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             null, null
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             null, null
         };
 
-        readonly string[] _oemid =
+        readonly string[] _oemId =
         {
             "Hudson soft 2.00", "Hudson soft 2.00"
         };
@@ -2945,18 +2945,18 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (Human68K)",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IFilesystem fs = new FAT();
 
                 var wholePart = new Partition
@@ -2966,14 +2966,14 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
-                Assert.AreEqual(_oemid[i], fs.XmlFsType.SystemIdentifier, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("FAT12", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
+                Assert.AreEqual(_oemId[i], fs.XmlFsType.SystemIdentifier, _testFiles[i]);
             }
         }
     }

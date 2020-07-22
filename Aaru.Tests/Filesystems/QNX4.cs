@@ -40,12 +40,12 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Qnx4
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "qnx_4.24_dsdd.img.lz", "qnx_4.24_dshd.img.lz", "qnx_4.24_mf2dd.img.lz", "qnx_4.24_mf2hd.img.lz"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
         };
@@ -55,7 +55,7 @@ namespace Aaru.Tests.Filesystems
             720, 2400, 1440, 2880
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512
         };
@@ -65,7 +65,7 @@ namespace Aaru.Tests.Filesystems
             720, 2400, 1440, 2880
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             512, 512, 512, 512
         };
@@ -73,18 +73,18 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new LZip();
                 filter.Open(location);
                 IMediaImage image = new ZZZRawImage();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IFilesystem fs = new QNX4();
 
                 var wholePart = new Partition
@@ -94,11 +94,11 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), _testfiles[i]);
+                Assert.AreEqual(true, fs.Identify(image, wholePart), _testFiles[i]);
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, _testFiles[i]);
             }
         }
     }
@@ -106,7 +106,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Qnx4Mbr
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "qnx_4.24.aif"
         };
@@ -116,7 +116,7 @@ namespace Aaru.Tests.Filesystems
             1024000
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -126,7 +126,7 @@ namespace Aaru.Tests.Filesystems
             1023104
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             512
         };
@@ -134,17 +134,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
                 string location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)",
-                                               _testfiles[i]);
+                                               _testFiles[i]);
 
                 IFilter filter = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
                 IFilesystem     fs         = new QNX4();
                 int             part       = -1;
@@ -157,12 +157,12 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("QNX4 filesystem", fs.XmlFsType.Type, _testFiles[i]);
             }
         }
     }

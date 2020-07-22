@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Apple2Mg : IWritableImage
+    public sealed partial class Apple2Mg : IWritableImage
     {
         IFilter     _a2MgImageFilter;
         byte[]      _decodedImage;

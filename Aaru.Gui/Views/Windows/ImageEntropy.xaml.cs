@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class ImageEntropy : Window
+    public sealed class ImageEntropy : Window
     {
         public ImageEntropy()
         {

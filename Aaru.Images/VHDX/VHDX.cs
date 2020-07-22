@@ -41,7 +41,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhdx : IMediaImage
+    public sealed partial class Vhdx : IMediaImage
     {
         long                      _batOffset;
         ulong[]                   _blockAllocationTable;

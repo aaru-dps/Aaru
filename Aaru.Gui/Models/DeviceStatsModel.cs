@@ -32,7 +32,7 @@
 
 namespace Aaru.Gui.Models
 {
-    public class DeviceStatsModel
+    public sealed class DeviceStatsModel
     {
         public string Model        { get; set; }
         public string Manufacturer { get; set; }

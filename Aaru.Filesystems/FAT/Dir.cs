@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         /// <inheritdoc />
         /// <summary>Solves a symbolic link.</summary>

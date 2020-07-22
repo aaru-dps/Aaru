@@ -36,7 +36,7 @@ using Aaru.Console;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.</summary>
         /// <param name="buffer">Buffer.</param>

@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
-    public class MinixFS : IFilesystem
+    public sealed class MinixFS : IFilesystem
     {
         /// <summary>Minix v1, 14 char filenames</summary>
         const ushort MINIX_MAGIC = 0x137F;
@@ -252,12 +252,8 @@ namespace Aaru.Filesystems
 
             if(minix3)
             {
-                SuperBlock3 mnxSb;
-
-                if(littleEndian)
-                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector);
-                else
-                    mnxSb = Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
+                SuperBlock3 mnxSb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector)
+                                        : Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
 
                 if(magic != MINIX3_MAGIC &&
                    magic != MINIX3_CIGAM)
@@ -293,12 +289,8 @@ namespace Aaru.Filesystems
             }
             else
             {
-                SuperBlock mnxSb;
-
-                if(littleEndian)
-                    mnxSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(minixSbSector);
-                else
-                    mnxSb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(minixSbSector);
+                SuperBlock mnxSb = littleEndian ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(minixSbSector)
+                                       : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();

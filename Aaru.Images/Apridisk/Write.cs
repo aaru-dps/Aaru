@@ -43,14 +43,14 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages
 {
-    public partial class Apridisk
+    public sealed partial class Apridisk
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }

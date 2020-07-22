@@ -38,7 +38,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         public bool Identify(IFilter imageFilter)
         {

@@ -39,7 +39,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Xbox
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "microsoft256mb.aif"
         };
@@ -72,25 +72,25 @@ namespace Aaru.Tests.Partitions
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Xbox", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Assert.AreEqual(_wanted[i].Length, partitions.Count, _testfiles[i]);
+                Assert.AreEqual(_wanted[i].Length, partitions.Count, _testFiles[i]);
 
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     // Too chatty
-                    Assert.AreEqual(_wanted[i][j].Description, partitions[j].Description, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Length * 512, partitions[j].Size, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Start  * 512, partitions[j].Offset, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Length, partitions[j].Length, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Sequence, partitions[j].Sequence, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Start, partitions[j].Start, _testfiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Description, partitions[j].Description, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Length * 512, partitions[j].Size, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Start  * 512, partitions[j].Offset, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Length, partitions[j].Length, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Sequence, partitions[j].Sequence, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Start, partitions[j].Start, _testFiles[i]);
                 }
             }
         }

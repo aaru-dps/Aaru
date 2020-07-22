@@ -37,7 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
                                    string secondHalf, uint timeout, out double duration)

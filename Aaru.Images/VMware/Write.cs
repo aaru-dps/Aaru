@@ -42,7 +42,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class VMware
+    public sealed partial class VMware
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -131,7 +131,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -145,7 +145,9 @@ namespace Aaru.DiscImages
 
             try
             {
-                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _writingBaseName =
+                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
                 _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
                 // TODO: Support split

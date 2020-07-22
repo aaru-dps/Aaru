@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Panels
 {
-    public class FileSystem : UserControl
+    public sealed class FileSystem : UserControl
     {
         public FileSystem() => InitializeComponent();
 

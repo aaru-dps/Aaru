@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from http://www.hp9845.net/9845/projects/hpdir/#lif_filesystem
-    public class LIF : IFilesystem
+    public sealed class LIF : IFilesystem
     {
         const uint LIF_MAGIC = 0x8000;
 

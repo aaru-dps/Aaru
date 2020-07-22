@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin : IReadOnlyFilesystem
+    public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     {
         uint                                                   _bytesPerCluster;
         CultureInfo                                            _cultureInfo;

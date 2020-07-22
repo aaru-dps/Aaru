@@ -32,7 +32,7 @@
 
 namespace Aaru.Database.Models
 {
-    public class Media : BaseModel<int>
+    public class Media : BaseModel
     {
         public string Type         { get; set; }
         public bool   Real         { get; set; }

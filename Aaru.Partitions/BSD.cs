@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class BSD : IPartition
+    public sealed class BSD : IPartition
     {
         const uint DISKMAGIC = 0x82564557;
         const uint DISKCIGAM = 0x57455682;

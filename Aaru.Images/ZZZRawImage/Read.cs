@@ -55,7 +55,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage
+    public sealed partial class ZZZRawImage
     {
         public bool Open(IFilter imageFilter)
         {
@@ -318,8 +318,7 @@ namespace Aaru.DiscImages
                     var     filters = new FiltersList();
                     IFilter filter  = filters.GetFilter(basename + sidecar.name);
 
-                    if(filter == null ||
-                       !filter.IsOpened())
+                    if(filter?.IsOpened() != true)
                         continue;
 
                     AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);

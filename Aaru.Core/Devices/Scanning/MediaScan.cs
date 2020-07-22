@@ -36,7 +36,7 @@ using Aaru.Devices;
 
 namespace Aaru.Core.Devices.Scanning
 {
-    public partial class MediaScan
+    public sealed partial class MediaScan
     {
         readonly Device _dev;
         readonly string _devicePath;
@@ -86,7 +86,7 @@ namespace Aaru.Core.Devices.Scanning
         public event ErrorMessageHandler StoppingErrorMessage;
         /// <summary>Event raised to update the values of a determinate progress bar</summary>
         public event UpdateProgressHandler UpdateProgress;
-        /// <summary>Event raised to update the status of an undeterminate progress bar</summary>
+        /// <summary>Event raised to update the status of an indeterminate progress bar</summary>
         public event PulseProgressHandler PulseProgress;
         public event ScanTimeHandler       ScanTime;
         public event ScanUnreadableHandler ScanUnreadable;

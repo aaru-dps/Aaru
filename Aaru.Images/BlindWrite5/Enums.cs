@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class BlindWrite5
+    public sealed partial class BlindWrite5
     {
         enum Bw5TrackType : byte
         {

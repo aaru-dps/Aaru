@@ -32,7 +32,7 @@
 
 namespace Aaru.Core
 {
-    /// <summary>Initializates a progress indicator (e.g. makes a progress bar visible)</summary>
+    /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
     public delegate void InitProgressHandler();
 
     /// <summary>Updates a progress indicator with text</summary>
@@ -41,10 +41,10 @@ namespace Aaru.Core
     /// <summary>Pulses a progress indicator with indeterminate boundaries</summary>
     public delegate void PulseProgressHandler(string text);
 
-    /// <summary>Uninitializates a progress indicator (e.g. adds a newline to the console)</summary>
+    /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndProgressHandler();
 
-    /// <summary>Initializates a secondary progress indicator (e.g. makes a progress bar visible)</summary>
+    /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
     public delegate void InitProgressHandler2();
 
     /// <summary>Updates a secondary progress indicator with text</summary>
@@ -53,10 +53,10 @@ namespace Aaru.Core
     /// <summary>Pulses a secondary progress indicator with indeterminate boundaries</summary>
     public delegate void PulseProgressHandler2(string text);
 
-    /// <summary>Uninitializates a secondary progress indicator (e.g. adds a newline to the console)</summary>
+    /// <summary>Uninitializes a secondary progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndProgressHandler2();
 
-    /// <summary>Initializates two progress indicators (e.g. makes a progress bar visible)</summary>
+    /// <summary>Initializes two progress indicators (e.g. makes a progress bar visible)</summary>
     public delegate void InitTwoProgressHandler();
 
     /// <summary>Updates two progress indicators with text</summary>
@@ -66,7 +66,7 @@ namespace Aaru.Core
     /// <summary>Pulses a progress indicator with indeterminate boundaries</summary>
     public delegate void PulseTwoProgressHandler(string text, string text2);
 
-    /// <summary>Uninitializates a progress indicator (e.g. adds a newline to the console)</summary>
+    /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
     public delegate void EndTwoProgressHandler();
 
     /// <summary>Updates a status indicator</summary>

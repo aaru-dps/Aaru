@@ -36,7 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Vhdx
+    public sealed partial class Vhdx
     {
         const ulong VHDX_SIGNATURE    = 0x656C696678646876;
         const uint  VHDX_HEADER_SIG   = 0x64616568;

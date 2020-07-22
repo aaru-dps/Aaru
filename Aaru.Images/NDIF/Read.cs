@@ -48,7 +48,7 @@ using Version = Resources.Version;
 
 namespace Aaru.DiscImages
 {
-    public partial class Ndif
+    public sealed partial class Ndif
     {
         public bool Open(IFilter imageFilter)
         {

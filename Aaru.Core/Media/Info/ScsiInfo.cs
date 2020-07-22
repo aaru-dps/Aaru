@@ -52,7 +52,7 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Core.Media.Info
 {
-    public class ScsiInfo
+    public sealed class ScsiInfo
     {
         public ScsiInfo(Device dev)
         {
@@ -1258,8 +1258,7 @@ namespace Aaru.Core.Media.Info
                     {
                         Inquiry? inq = Inquiry.Decode(inqBuffer);
 
-                        if(inq.HasValue &&
-                           inq.Value.KreonPresent)
+                        if(inq?.KreonPresent == true)
                         {
                             sense = dev.KreonExtractSs(out cmdBuf, out senseBuf, dev.Timeout, out _);
 

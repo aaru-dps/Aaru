@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Gdi
+    public sealed partial class Gdi
     {
         struct GdiTrack
         {

@@ -32,7 +32,7 @@
 
 namespace Aaru.Core.Media.Info
 {
-    public class XgdInfo
+    public sealed class XgdInfo
     {
         public ulong GameSize;
         public ulong L0Video;

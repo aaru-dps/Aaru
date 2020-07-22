@@ -172,7 +172,7 @@ namespace Aaru.Core.Devices.Dumping
             _generateSubchannels   = generateSubchannels;
         }
 
-        /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
+        /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
         public void Start()
         {
             // Open main database

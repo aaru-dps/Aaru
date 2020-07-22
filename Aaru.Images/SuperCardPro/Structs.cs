@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct ScpHeader

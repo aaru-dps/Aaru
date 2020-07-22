@@ -50,7 +50,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class Chd
+    public sealed partial class Chd
     {
         [SuppressMessage("ReSharper", "UnusedVariable")]
         public bool Open(IFilter imageFilter)

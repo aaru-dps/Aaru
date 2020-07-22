@@ -38,7 +38,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class Nero
+    public sealed partial class Nero
     {
         struct NeroV1Footer
         {

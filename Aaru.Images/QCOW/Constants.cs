@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow
+    public sealed partial class Qcow
     {
         /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
         const uint QCOW_MAGIC = 0x514649FB;

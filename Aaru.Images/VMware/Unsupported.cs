@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class VMware
+    public sealed partial class VMware
     {
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
@@ -48,8 +48,7 @@ namespace Aaru.Filesystems
             // TODO: Find correct default encoding
             Encoding = Encoding.ASCII;
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);

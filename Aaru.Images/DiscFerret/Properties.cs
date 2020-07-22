@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret
+    public sealed partial class DiscFerret
     {
         public string                 Name         => "DiscFerret";
         public Guid                   Id           => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");

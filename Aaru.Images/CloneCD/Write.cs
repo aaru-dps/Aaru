@@ -45,14 +45,14 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class CloneCd
+    public sealed partial class CloneCd
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -66,7 +66,9 @@ namespace Aaru.DiscImages
 
             try
             {
-                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _writingBaseName =
+                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
                 _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
                 _dataStream = new FileStream(_writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
@@ -239,8 +241,8 @@ namespace Aaru.DiscImages
                 {
                     Track firstSessionTrack = tracks.FirstOrDefault(t => t.TrackSession == newTrack.TrackSession);
 
-                    if(firstSessionTrack.TrackSequence == newTrack.TrackSequence &&
-                       newTrack.TrackPregap            >= 150)
+                    if(firstSessionTrack?.TrackSequence == newTrack.TrackSequence &&
+                       newTrack.TrackPregap             >= 150)
                     {
                         newTrack.TrackPregap      -= 150;
                         newTrack.TrackStartSector += 150;
@@ -393,8 +395,8 @@ namespace Aaru.DiscImages
                         sessionEndingTrack.TryGetValue(currentSession, out byte endingTrackNumber);
 
                         (byte minute, byte second, byte frame) leadinPmsf =
-                            LbaToMsf(Tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber).TrackEndSector +
-                                     1);
+                            LbaToMsf(Tracks.FirstOrDefault(t => t.TrackSequence == endingTrackNumber)?.TrackEndSector ??
+                                     0 + 1);
 
                         // Starting track
                         trackDescriptors.Add(new FullTOC.TrackDataDescriptor
@@ -468,7 +470,7 @@ namespace Aaru.DiscImages
 
                 Track firstSessionTrack = Tracks.FirstOrDefault(t => t.TrackSession == i);
 
-                switch(firstSessionTrack.TrackType)
+                switch(firstSessionTrack?.TrackType)
                 {
                     case TrackType.Audio:
                         // CloneCD always writes this value for first track in disc, however the Rainbow Books

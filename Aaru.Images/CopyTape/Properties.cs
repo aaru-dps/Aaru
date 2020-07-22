@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyTape
+    public sealed partial class CopyTape
     {
         public ImageInfo              Info           => _imageInfo;
         public string                 Name           => "CopyTape";

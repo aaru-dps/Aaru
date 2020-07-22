@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class VxFS : IFilesystem
+    public sealed class VxFS : IFilesystem
     {
         /// <summary>Identifier for VxFS</summary>
         const uint VXFS_MAGIC = 0xA501FCF5;

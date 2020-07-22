@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class PartClone : IMediaImage, IVerifiableImage
+    public sealed partial class PartClone : IMediaImage, IVerifiableImage
     {
         // The used block "bitmap" uses one byte per block
         // TODO: Convert on-image bytemap to on-memory bitmap

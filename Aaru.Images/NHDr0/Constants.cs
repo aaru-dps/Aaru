@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Nhdr0
+    public sealed partial class Nhdr0
     {
         readonly byte[] _signature =
         {

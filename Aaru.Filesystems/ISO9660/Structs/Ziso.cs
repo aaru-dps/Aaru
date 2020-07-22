@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZisofsHeader

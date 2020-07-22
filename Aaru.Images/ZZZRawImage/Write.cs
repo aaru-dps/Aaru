@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage
+    public sealed partial class ZZZRawImage
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -77,7 +77,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _basepath  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+            _basepath  = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
             _mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             IsWriting    = true;

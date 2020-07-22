@@ -36,7 +36,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Ocfs2
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "linux.aif"
         };
@@ -46,7 +46,7 @@ namespace Aaru.Tests.Filesystems
             104857600
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -56,17 +56,17 @@ namespace Aaru.Tests.Filesystems
             104856192
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             512
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "Volume label"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "UNKNOWN"
         };

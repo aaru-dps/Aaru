@@ -32,6 +32,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -50,6 +52,7 @@ namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {
+        [SuppressMessage("ReSharper", "JoinDeclarationAndInitializer")]
         void DumpUmd()
         {
             const uint      blockSize     = 2048;
@@ -152,7 +155,7 @@ namespace Aaru.Core.Devices.Dumping
             start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
-            (_outputPlugin as IWritableOpticalImage).SetTracks(new List<Track>
+            (_outputPlugin as IWritableOpticalImage)?.SetTracks(new List<Track>
             {
                 new Track
                 {
@@ -204,15 +207,13 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocks - i < blocksToRead)
                     blocksToRead = (uint)(blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
@@ -338,7 +339,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
-                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 
@@ -366,10 +367,10 @@ namespace Aaru.Core.Devices.Dumping
                         Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
                         if(dcMode6.HasValue)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                                                                             modePage.Page    == 0x01 &&
+                                                                                             modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
 
                     if(currentModePage == null)
@@ -476,8 +477,7 @@ namespace Aaru.Core.Devices.Dumping
                         extents.Add(badSector);
                         _outputPlugin.WriteSector(readBuffer, badSector);
 
-                        UpdateStatus?.Invoke(string.Format("Correctly retried block {0} in pass {1}.", badSector,
-                                                           pass));
+                        UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
 
                         _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
@@ -513,7 +513,7 @@ namespace Aaru.Core.Devices.Dumping
                     md6 = Modes.EncodeMode6(md, _dev.ScsiType);
 
                     _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
-                    sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
+                    _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
                 }
 
                 EndProgress?.Invoke();

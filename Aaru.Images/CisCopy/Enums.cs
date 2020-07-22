@@ -34,7 +34,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.DiscImages
 {
-    public partial class CisCopy
+    public sealed partial class CisCopy
     {
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         enum DiskType : byte

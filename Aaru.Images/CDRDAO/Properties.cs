@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                                OpticalImageCapabilities.CanStoreDataTracks     |

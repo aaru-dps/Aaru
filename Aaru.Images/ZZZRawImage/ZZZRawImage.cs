@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage : IWritableOpticalImage
+    public sealed partial class ZZZRawImage : IWritableOpticalImage
     {
         string                           _basepath;
         bool                             _differentTrackZeroSize;

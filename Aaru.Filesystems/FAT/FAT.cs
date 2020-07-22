@@ -42,7 +42,7 @@ namespace Aaru.Filesystems
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
     // X68K uses cdate/adate from direntry for extending filename
-    public partial class FAT : IReadOnlyFilesystem
+    public sealed partial class FAT : IReadOnlyFilesystem
     {
         uint                                                           _bytesPerCluster;
         byte[]                                                         _cachedEaData;

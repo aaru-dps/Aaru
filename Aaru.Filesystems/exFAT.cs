@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information from https://www.sans.org/reading-room/whitepapers/forensics/reverse-engineering-microsoft-exfat-file-system-33274
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class exFAT : IFilesystem
+    public sealed class exFAT : IFilesystem
     {
         readonly Guid _oemFlashParameterGuid = new Guid("0A0C7E46-3399-4021-90C8-FA6D389C4BA2");
 

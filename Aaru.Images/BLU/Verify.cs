@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu
+    public sealed partial class Blu
     {
         // TODO: Check tag checkums
         public bool? VerifySector(ulong sectorAddress) => null;

@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart
+    public sealed partial class Dart
     {
         public string                 Name         => "Apple Disk Archival/Retrieval Tool";
         public Guid                   Id           => new Guid("B3E06BF8-F98D-4F9B-BBE2-342C373BAF3E");

@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF : IWritableImage, IVerifiableImage
+    public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
     {
         uint           _calculatedChk;
         byte[]         _decodedDisk;

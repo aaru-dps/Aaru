@@ -39,7 +39,7 @@ using Claunia.Encoding;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         public bool Identify(IFilter imageFilter)
         {

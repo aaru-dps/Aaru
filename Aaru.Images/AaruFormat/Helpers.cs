@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
         /// <summary>Checks for media tags that may contain metadata and sets it up if not already set</summary>
         void SetMetadataFromTags()

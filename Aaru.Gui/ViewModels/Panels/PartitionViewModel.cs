@@ -34,7 +34,7 @@ using Aaru.CommonTypes;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
-    public class PartitionViewModel
+    public sealed class PartitionViewModel
     {
         public PartitionViewModel(Partition partition)
         {

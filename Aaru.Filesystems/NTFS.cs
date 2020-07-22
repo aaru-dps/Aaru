@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from Inside Windows NT
-    public class NTFS : IFilesystem
+    public sealed class NTFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

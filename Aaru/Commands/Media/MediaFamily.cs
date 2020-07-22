@@ -34,7 +34,7 @@ using System.CommandLine;
 
 namespace Aaru.Commands.Media
 {
-    public class MediaFamily : Command
+    internal sealed class MediaFamily : Command
     {
         public MediaFamily() : base("media", "Commands to manage media inserted in devices")
         {

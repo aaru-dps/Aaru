@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyQm
+    public sealed partial class CopyQm
     {
         public bool Identify(IFilter imageFilter)
         {

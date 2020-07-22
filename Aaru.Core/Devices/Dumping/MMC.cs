@@ -44,6 +44,8 @@ using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Spare = Aaru.Decoders.DVD.Spare;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implement dumping optical discs from MultiMedia devices</summary>
@@ -244,17 +246,16 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         PFI.PhysicalFormatInformation? nintendoPfi = PFI.Decode(cmdBuf);
 
-                        if(nintendoPfi != null)
-                            if(nintendoPfi.Value.DiskCategory == DiskCategory.Nintendo &&
-                               nintendoPfi.Value.PartVersion  == 15)
-                            {
-                                _dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                        if(nintendoPfi?.DiskCategory     == DiskCategory.Nintendo &&
+                           nintendoPfi.Value.PartVersion == 15)
+                        {
+                            _dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
 
-                                StoppingErrorMessage?.
-                                    Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                            StoppingErrorMessage?.
+                                Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
 
-                                return;
-                            }
+                            return;
+                        }
                     }
 
                     break;
@@ -822,8 +823,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case MediaTagType.Xbox_SecuritySector:
-                    if(sidecar.OpticalDisc[0].Xbox == null)
-                        sidecar.OpticalDisc[0].Xbox = new XboxType();
+                    sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                     sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
                     {
@@ -842,8 +842,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case MediaTagType.Xbox_PFI:
-                    if(sidecar.OpticalDisc[0].Xbox == null)
-                        sidecar.OpticalDisc[0].Xbox = new XboxType();
+                    sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                     sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
                     {
@@ -854,8 +853,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case MediaTagType.Xbox_DMI:
-                    if(sidecar.OpticalDisc[0].Xbox == null)
-                        sidecar.OpticalDisc[0].Xbox = new XboxType();
+                    sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                     sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
                     {

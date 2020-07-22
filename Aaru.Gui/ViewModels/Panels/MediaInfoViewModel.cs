@@ -50,7 +50,7 @@ using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
-    public class MediaInfoViewModel : ViewModelBase
+    public sealed class MediaInfoViewModel : ViewModelBase
     {
         readonly string   _devicePath;
         readonly ScsiInfo _scsiInfo;

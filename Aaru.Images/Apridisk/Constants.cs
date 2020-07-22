@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Apridisk
+    public sealed partial class Apridisk
     {
         readonly byte[] _signature =
         {

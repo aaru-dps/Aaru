@@ -46,7 +46,7 @@ using Version = Resources.Version;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart
+    public sealed partial class Dart
     {
         public bool Open(IFilter imageFilter)
         {

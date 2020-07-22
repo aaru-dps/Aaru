@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         [SuppressMessage("ReSharper", "NotAccessedField.Local")]
         struct CdrdaoTrackFile

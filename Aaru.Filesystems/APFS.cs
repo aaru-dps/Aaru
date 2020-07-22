@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class APFS : IFilesystem
+    public sealed class APFS : IFilesystem
     {
         const uint APFS_CONTAINER_MAGIC = 0x4253584E; // "NXSB"
         const uint APFS_VOLUME_MAGIC    = 0x42535041; // "APSB"

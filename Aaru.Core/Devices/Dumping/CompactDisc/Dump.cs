@@ -59,7 +59,7 @@ namespace Aaru.Core.Devices.Dumping
     /// <summary>Implement dumping Compact Discs</summary>
 
     // TODO: Barcode
-    partial class Dump
+    sealed partial class Dump
     {
         /// <summary>Dumps a compact disc</summary>
         void CompactDisc()
@@ -386,8 +386,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            tracks = GetCdTracks(ref blockSize, _dev, dskType, _dumpLog, _force, out lastSector, leadOutStarts,
-                                 mediaTags, StoppingErrorMessage, subType, out toc, trackFlags, UpdateStatus);
+            tracks = GetCdTracks(ref blockSize, _dev, _dumpLog, _force, out lastSector, leadOutStarts, mediaTags,
+                                 StoppingErrorMessage, subType, out toc, trackFlags, UpdateStatus);
 
             if(tracks is null)
                 return;
@@ -456,11 +456,8 @@ namespace Aaru.Core.Devices.Dumping
             ReadCdTags(ref dskType, mediaTags, out sessions, out firstTrackLastSession);
 
             // Check if output format supports all disc tags we have retrieved so far
-            foreach(MediaTagType tag in mediaTags.Keys)
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
             {
-                if(_outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
                 if(_force)
                 {
                     _dumpLog.WriteLine("Output format does not support {0}, continuing...", tag);
@@ -480,14 +477,9 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke("Solving lead-outs...");
 
                 foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
-                    for(int i = 0; i < tracks.Length; i++)
-                    {
-                        if(tracks[i].TrackSession != leadOuts.Key)
-                            continue;
-
-                        if(tracks[i].TrackEndSector >= (ulong)leadOuts.Value)
-                            tracks[i].TrackEndSector = (ulong)leadOuts.Value - 1;
-                    }
+                    foreach(Track trk in tracks.Where(trk => trk.TrackSession   == leadOuts.Key).
+                                                Where(trk => trk.TrackEndSector >= (ulong)leadOuts.Value))
+                        trk.TrackEndSector = (ulong)leadOuts.Value - 1;
 
                 var dataExtents = new ExtentsULong();
 
@@ -540,31 +532,27 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Check mode for tracks
-            for(int t = 0; t < tracks.Length; t++)
+            foreach(Track trk in tracks.Where(t => t.TrackType != TrackType.Audio))
             {
                 if(!readcd)
                 {
-                    tracks[t].TrackType = TrackType.CdMode1;
+                    trk.TrackType = TrackType.CdMode1;
 
                     continue;
                 }
 
-                if(tracks[t].TrackType == TrackType.Audio)
-                    continue;
+                _dumpLog.WriteLine("Checking mode for track {0}...", trk.TrackSequence);
+                UpdateStatus?.Invoke($"Checking mode for track {trk.TrackSequence}...");
 
-                _dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
-                UpdateStatus?.Invoke($"Checking mode for track {tracks[t].TrackSequence}...");
-
-                sense = _dev.ReadCd(out cmdBuf, out _, (uint)(tracks[t].TrackStartSector + tracks[t].TrackPregap),
-                                    blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
-                                    _dev.Timeout, out _);
+                sense = _dev.ReadCd(out cmdBuf, out _, (uint)(trk.TrackStartSector + trk.TrackPregap), blockSize, 1,
+                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                    MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
                 if(sense)
                 {
-                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", tracks[t].TrackSequence);
+                    _dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", trk.TrackSequence);
 
-                    UpdateStatus?.Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
+                    UpdateStatus?.Invoke($"Unable to guess mode for track {trk.TrackSequence}, continuing...");
 
                     continue;
                 }
@@ -572,34 +560,34 @@ namespace Aaru.Core.Devices.Dumping
                 switch(cmdBuf[15])
                 {
                     case 1:
-                        UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is MODE1");
-                        _dumpLog.WriteLine("Track {0} is MODE1", tracks[t].TrackSequence);
-                        tracks[t].TrackType = TrackType.CdMode1;
+                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE1");
+                        _dumpLog.WriteLine("Track {0} is MODE1", trk.TrackSequence);
+                        trk.TrackType = TrackType.CdMode1;
 
                         break;
                     case 2:
                         if(dskType == MediaType.CDI ||
                            dskType == MediaType.CDIREADY)
                         {
-                            UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is MODE2");
-                            _dumpLog.WriteLine("Track {0} is MODE2", tracks[t].TrackSequence);
-                            tracks[t].TrackType = TrackType.CdMode2Formless;
+                            UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2");
+                            _dumpLog.WriteLine("Track {0} is MODE2", trk.TrackSequence);
+                            trk.TrackType = TrackType.CdMode2Formless;
 
                             break;
                         }
 
                         if((cmdBuf[0x012] & 0x20) == 0x20) // mode 2 form 2
                         {
-                            UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is MODE2 FORM 2");
-                            _dumpLog.WriteLine("Track {0} is MODE2 FORM 2", tracks[t].TrackSequence);
-                            tracks[t].TrackType = TrackType.CdMode2Form2;
+                            UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2 FORM 2");
+                            _dumpLog.WriteLine("Track {0} is MODE2 FORM 2", trk.TrackSequence);
+                            trk.TrackType = TrackType.CdMode2Form2;
 
                             break;
                         }
 
-                        UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is MODE2 FORM 1");
-                        _dumpLog.WriteLine("Track {0} is MODE2 FORM 1", tracks[t].TrackSequence);
-                        tracks[t].TrackType = TrackType.CdMode2Form1;
+                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE2 FORM 1");
+                        _dumpLog.WriteLine("Track {0} is MODE2 FORM 1", trk.TrackSequence);
+                        trk.TrackType = TrackType.CdMode2Form1;
 
                         // These media type specifications do not legally allow mode 2 tracks to be present
                         if(dskType == MediaType.CDROM  ||
@@ -609,8 +597,8 @@ namespace Aaru.Core.Devices.Dumping
 
                         break;
                     default:
-                        UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is unknown mode {cmdBuf[15]}");
-                        _dumpLog.WriteLine("Track {0} is unknown mode {1}", tracks[t].TrackSequence, cmdBuf[15]);
+                        UpdateStatus?.Invoke($"Track {trk.TrackSequence} is unknown mode {cmdBuf[15]}");
+                        _dumpLog.WriteLine("Track {0} is unknown mode {1}", trk.TrackSequence, cmdBuf[15]);
 
                         break;
                 }
@@ -1066,9 +1054,9 @@ namespace Aaru.Core.Devices.Dumping
                     return;
                 }
 
-                sense = _dev.ReadCd(out cmdBuf, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                    _dev.Timeout, out _);
+                _dev.ReadCd(out cmdBuf, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                            MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                            out _);
 
                 hiddenData = IsData(cmdBuf);
 

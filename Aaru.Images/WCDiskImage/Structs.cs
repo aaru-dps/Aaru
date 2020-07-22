@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class WCDiskImage
+    public sealed partial class WCDiskImage
     {
         /// <summary>The expected signature of a proper image file.</summary>
         const string _fileSignature = "WC DISK IMAGE\x1a\x1a";

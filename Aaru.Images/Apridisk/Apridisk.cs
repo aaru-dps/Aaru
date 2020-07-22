@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Check writing
-    public partial class Apridisk : IWritableImage
+    public sealed partial class Apridisk : IWritableImage
     {
         ImageInfo _imageInfo;
 

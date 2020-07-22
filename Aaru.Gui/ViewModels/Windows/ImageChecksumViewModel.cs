@@ -46,7 +46,7 @@ using Schemas;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ImageChecksumViewModel : ViewModelBase
+    public sealed class ImageChecksumViewModel : ViewModelBase
     {
         // How many sectors to read at once
         const    uint        SECTORS_TO_READ = 256;

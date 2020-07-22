@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CisCopy
+    public sealed partial class CisCopy
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -110,7 +110,7 @@ namespace Aaru.DiscImages
 
                     break;
                 default:
-                    ErrorMessage = $"Unsupport media format {mediaType}";
+                    ErrorMessage = $"Unsupported media format {mediaType}";
 
                     return false;
             }

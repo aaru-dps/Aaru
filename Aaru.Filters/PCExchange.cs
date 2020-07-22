@@ -45,7 +45,7 @@ namespace Aaru.Filters
 {
     /// <summary>Decodes PCExchange files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class PcExchange : IFilter
+    public sealed class PcExchange : IFilter
     {
         const string FILE_ID     = "FILEID.DAT";
         const string FINDER_INFO = "FINDER.DAT";
@@ -97,7 +97,7 @@ namespace Aaru.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            parentFolder = parentFolder ?? "";
+            parentFolder ??= "";
 
             if(!File.Exists(Path.Combine(parentFolder, FINDER_INFO)))
                 return false;
@@ -165,7 +165,7 @@ namespace Aaru.Filters
             string parentFolder = Path.GetDirectoryName(path);
             string baseFilename = Path.GetFileName(path);
 
-            parentFolder = parentFolder ?? "";
+            parentFolder ??= "";
 
             var finderDatStream =
                 new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);

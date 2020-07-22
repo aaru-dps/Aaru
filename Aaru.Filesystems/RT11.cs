@@ -45,7 +45,7 @@ namespace Aaru.Filesystems
 {
     // Information from http://www.trailing-edge.com/~shoppa/rt11fs/
     // TODO: Implement Radix-50
-    public class RT11 : IFilesystem
+    public sealed class RT11 : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

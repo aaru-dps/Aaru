@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class PartClone
+    public sealed partial class PartClone
     {
         /// <summary>PartClone disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

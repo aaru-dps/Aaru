@@ -40,7 +40,7 @@ using Aaru.Helpers;
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         public Errno ListXAttr(string path, out List<string> xattrs)
         {

@@ -32,7 +32,7 @@
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         /// <summary>Converts a LBA to MM:SS:FF string for CDs</summary>
         /// <param name="lba">LBA</param>

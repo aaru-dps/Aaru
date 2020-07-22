@@ -38,7 +38,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ushort SUSP_CONTINUATION = 0x4345; // "CE"
         const ushort SUSP_PADDING      = 0x5044; // "PD"

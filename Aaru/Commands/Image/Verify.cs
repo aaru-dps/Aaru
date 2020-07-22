@@ -43,7 +43,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands.Image
 {
-    internal class VerifyCommand : Command
+    internal sealed class VerifyCommand : Command
     {
         public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
         {
@@ -131,7 +131,7 @@ namespace Aaru.Commands.Image
             {
                 AaruConsole.ErrorWriteLine("The specified image does not support any kind of verification");
 
-                return (int)ErrorNumber.NotVerificable;
+                return (int)ErrorNumber.NotVerifiable;
             }
 
             if(verifyDisc && verifiableImage != null)
@@ -307,7 +307,7 @@ namespace Aaru.Commands.Image
 
             switch(correctImage)
             {
-                case null when correctSectors is null:   return (int)ErrorNumber.NotVerificable;
+                case null when correctSectors is null:   return (int)ErrorNumber.NotVerifiable;
                 case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
                 case null when correctSectors == true:   return (int)ErrorNumber.CorrectSectorsImageNotVerified;
                 case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;

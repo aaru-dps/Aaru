@@ -42,6 +42,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -49,12 +50,12 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
-    public class SubdirectoryViewModel
+    public sealed class SubdirectoryViewModel
     {
         readonly SubdirectoryModel _model;
         readonly Window            _view;
 
-        public SubdirectoryViewModel(SubdirectoryModel model, Window view)
+        public SubdirectoryViewModel([NotNull] SubdirectoryModel model, Window view)
         {
             Entries             = new ObservableCollection<FileModel>();
             SelectedEntries     = new List<FileModel>();

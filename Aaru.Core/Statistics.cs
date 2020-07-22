@@ -58,7 +58,7 @@ namespace Aaru.Core
     public static class Statistics
     {
         /// <summary>Statistics file semaphore</summary>
-        static bool submitStatsLock;
+        static bool _submitStatsLock;
 
         /// <summary>Loads saved statistics from disk</summary>
         public static void LoadStats()
@@ -78,286 +78,275 @@ namespace Aaru.Core
                         allStats = (Stats)xs.Deserialize(sr);
                         sr.Close();
 
-                        if(allStats.Commands != null)
+                        if(allStats.Commands?.Analyze > 0)
                         {
-                            if(allStats.Commands.Analyze > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "analyze" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "analyze",
-                                        Synchronized = true
-                                    };
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "analyze" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "analyze",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Analyze;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Analyze;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Checksum > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "checksum" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "checksum",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Checksum > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "checksum" && c.Synchronized) ?? new Command
+                                {
+                                    Name         = "checksum",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.Checksum;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Checksum;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Compare > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "compare" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "compare",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Compare > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "compare" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "compare",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Compare;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Compare;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.ConvertImage > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "convert-image" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "convert-image",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.ConvertImage > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "convert-image" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "convert-image",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.ConvertImage;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.ConvertImage;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.CreateSidecar > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "create-sidecar",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.CreateSidecar > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "create-sidecar",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.CreateSidecar;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.CreateSidecar;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Decode > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "decode" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "decode",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Decode > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "decode" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "decode",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Decode;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Decode;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.DeviceInfo > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "device-info" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "device-info",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.DeviceInfo > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "device-info" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "device-info",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.DeviceInfo;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.DeviceInfo;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.DeviceReport > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "device-report" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "device-report",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.DeviceReport > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "device-report" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "device-report",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.DeviceReport;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.DeviceReport;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.DumpMedia > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "dump-media" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "dump-media",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.DumpMedia > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "dump-media" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "dump-media",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.DumpMedia;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.DumpMedia;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Entropy > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "entropy" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "entropy",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Entropy > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "entropy" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "entropy",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Entropy;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Entropy;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.ExtractFiles > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "extract-files" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "extract-files",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.ExtractFiles > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "extract-files" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "extract-files",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.ExtractFiles;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.ExtractFiles;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Formats > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "formats" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "formats",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Formats > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "formats" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "formats",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Formats;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Formats;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.ImageInfo > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "image-info" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "image-info",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.ImageInfo > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "image-info" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "image-info",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.ImageInfo;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.ImageInfo;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.ListDevices > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "list-devices" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "list-devices",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.ListDevices > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "list-devices" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "list-devices",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.ListDevices;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.ListDevices;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.ListEncodings > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "list-encodings",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.ListEncodings > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "list-encodings",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.ListEncodings;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.ListEncodings;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Ls > 0)
-                            {
-                                Command command = ctx.Commands.FirstOrDefault(c => c.Name == "ls" && c.Synchronized) ??
-                                                  new Command
-                                                  {
-                                                      Name         = "ls",
-                                                      Synchronized = true
-                                                  };
+                        if(allStats.Commands?.Ls > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "ls" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "ls",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Ls;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Ls;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.MediaInfo > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "media-info" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "media-info",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.MediaInfo > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "media-info" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "media-info",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.MediaInfo;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.MediaInfo;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.MediaScan > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "media-scan" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "media-scan",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.MediaScan > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "media-scan" && c.Synchronized) ??
+                                new Command
+                                {
+                                    Name         = "media-scan",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.MediaScan;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.MediaScan;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.PrintHex > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "printhex" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "printhex",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.PrintHex > 0)
+                        {
+                            Command command =
+                                ctx.Commands.FirstOrDefault(c => c.Name == "printhex" && c.Synchronized) ?? new Command
+                                {
+                                    Name         = "printhex",
+                                    Synchronized = true
+                                };
 
-                                command.Count += (ulong)allStats.Commands.PrintHex;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.PrintHex;
+                            ctx.Commands.Update(command);
+                        }
 
-                            if(allStats.Commands.Verify > 0)
-                            {
-                                Command command =
-                                    ctx.Commands.FirstOrDefault(c => c.Name == "verify" && c.Synchronized) ??
-                                    new Command
-                                    {
-                                        Name         = "verify",
-                                        Synchronized = true
-                                    };
+                        if(allStats.Commands?.Verify > 0)
+                        {
+                            Command command = ctx.Commands.FirstOrDefault(c => c.Name == "verify" && c.Synchronized) ??
+                                              new Command
+                                              {
+                                                  Name         = "verify",
+                                                  Synchronized = true
+                                              };
 
-                                command.Count += (ulong)allStats.Commands.Verify;
-                                ctx.Commands.Update(command);
-                            }
+                            command.Count += (ulong)allStats.Commands.Verify;
+                            ctx.Commands.Update(command);
                         }
 
                         if(allStats.OperatingSystems != null)
@@ -581,7 +570,7 @@ namespace Aaru.Core
         }
 
         /// <summary>Submits statistics to Aaru.Server</summary>
-        public static void SubmitStats()
+        static void SubmitStats()
         {
             var submitThread = new Thread(() =>
             {
@@ -589,10 +578,10 @@ namespace Aaru.Core
 
                 try
                 {
-                    if(submitStatsLock)
+                    if(_submitStatsLock)
                         return;
 
-                    submitStatsLock = true;
+                    _submitStatsLock = true;
 
                     if(ctx.Commands.Any(c => !c.Synchronized)            ||
                        ctx.Filesystems.Any(c => !c.Synchronized)         ||
@@ -1158,7 +1147,7 @@ namespace Aaru.Core
                 catch
                 {
                 #if DEBUG
-                    submitStatsLock = false;
+                    _submitStatsLock = false;
 
                     if(Debugger.IsAttached)
                         throw;
@@ -1227,13 +1216,13 @@ namespace Aaru.Core
                         if(!Debugger.IsAttached)
                             continue;
 
-                        submitStatsLock = false;
+                        _submitStatsLock = false;
 
                         throw;
                     #endif
                     }
 
-                submitStatsLock = false;
+                _submitStatsLock = false;
             });
 
             submitThread.Start();

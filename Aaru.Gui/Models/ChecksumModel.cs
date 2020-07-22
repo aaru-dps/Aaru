@@ -32,7 +32,7 @@
 
 namespace Aaru.Gui.Models
 {
-    public class ChecksumModel
+    public sealed class ChecksumModel
     {
         public string Track     { get; set; }
         public string Algorithm { get; set; }

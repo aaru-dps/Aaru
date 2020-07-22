@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Virtual98
+    public sealed partial class Virtual98
     {
         public bool Open(IFilter imageFilter)
         {

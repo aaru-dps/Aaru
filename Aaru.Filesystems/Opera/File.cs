@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {

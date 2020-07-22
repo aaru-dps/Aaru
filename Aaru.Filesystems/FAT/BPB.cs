@@ -42,7 +42,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         static BpbKind DetectBpbKind(byte[] bpbSector, IMediaImage imagePlugin, Partition partition,
                                      out BiosParameterBlockEbpb fakeBpb, out HumanParameterBlock humanBpb,
@@ -101,16 +101,14 @@ namespace Aaru.Filesystems
                 return BpbKind.Human;
             }
 
-            var msxBpb        = new MsxParameterBlock();
-            var dos2Bpb       = new BiosParameterBlock2();
-            var dos30Bpb      = new BiosParameterBlock30();
-            var dos32Bpb      = new BiosParameterBlock32();
-            var dos33Bpb      = new BiosParameterBlock33();
-            var shortEbpb     = new BiosParameterBlockShortEbpb();
-            var ebpb          = new BiosParameterBlockEbpb();
-            var shortFat32Bpb = new Fat32ParameterBlockShort();
-            var fat32Bpb      = new Fat32ParameterBlock();
-            var apricotBpb    = new ApricotLabel();
+            var msxBpb     = new MsxParameterBlock();
+            var dos2Bpb    = new BiosParameterBlock2();
+            var dos30Bpb   = new BiosParameterBlock30();
+            var dos32Bpb   = new BiosParameterBlock32();
+            var dos33Bpb   = new BiosParameterBlock33();
+            var shortEbpb  = new BiosParameterBlockShortEbpb();
+            var ebpb       = new BiosParameterBlockEbpb();
+            var apricotBpb = new ApricotLabel();
 
             bool useAtariBpb          = false;
             bool useMsxBpb            = false;
@@ -125,19 +123,21 @@ namespace Aaru.Filesystems
             bool useApricotBpb        = false;
             bool useDecRainbowBpb     = false;
 
-            if(imagePlugin.Info.SectorSize >= 256 &&
-               !useHumanBpb)
+            if(imagePlugin.Info.SectorSize >= 256)
             {
-                msxBpb        = Marshal.ByteArrayToStructureLittleEndian<MsxParameterBlock>(bpbSector);
-                dos2Bpb       = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock2>(bpbSector);
-                dos30Bpb      = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock30>(bpbSector);
-                dos32Bpb      = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock32>(bpbSector);
-                dos33Bpb      = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock33>(bpbSector);
-                shortEbpb     = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockShortEbpb>(bpbSector);
-                ebpb          = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockEbpb>(bpbSector);
-                shortFat32Bpb = Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
-                fat32Bpb      = Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlock>(bpbSector);
-                apricotBpb    = Marshal.ByteArrayToStructureLittleEndian<ApricotLabel>(bpbSector);
+                msxBpb    = Marshal.ByteArrayToStructureLittleEndian<MsxParameterBlock>(bpbSector);
+                dos2Bpb   = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock2>(bpbSector);
+                dos30Bpb  = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock30>(bpbSector);
+                dos32Bpb  = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock32>(bpbSector);
+                dos33Bpb  = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock33>(bpbSector);
+                shortEbpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockShortEbpb>(bpbSector);
+                ebpb      = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockEbpb>(bpbSector);
+
+                Fat32ParameterBlockShort shortFat32Bpb =
+                    Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
+
+                Fat32ParameterBlock fat32Bpb = Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlock>(bpbSector);
+                apricotBpb = Marshal.ByteArrayToStructureLittleEndian<ApricotLabel>(bpbSector);
 
                 int bitsInBpsMsx        = CountBits.Count(msxBpb.bps);
                 int bitsInBpsDos33      = CountBits.Count(dos33Bpb.bps);
@@ -206,7 +206,6 @@ namespace Aaru.Filesystems
                    Encoding.ASCII.GetString(fat32Bpb.fs_type) == "FAT32   ")
                 {
                     AaruConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
-                    useLongFat32    = true;
                     minBootNearJump = 0x58;
 
                     return BpbKind.LongFat32;
@@ -220,10 +219,6 @@ namespace Aaru.Filesystems
                    shortFat32Bpb.signature == 0x28)
                 {
                     AaruConsole.DebugWriteLine("FAT plugin", "Using short FAT32 BPB");
-
-                    useShortFat32 = shortFat32Bpb.big_sectors        == 0
-                                        ? shortFat32Bpb.huge_sectors <= (partition.End - partition.Start) + 1
-                                        : shortFat32Bpb.big_sectors  <= (partition.End - partition.Start) + 1;
 
                     minBootNearJump = 0x57;
 
@@ -377,7 +372,6 @@ namespace Aaru.Filesystems
                !useDos33Bpb                       &&
                !userShortExtendedBpb              &&
                !useExtendedBpb                    &&
-               !useHumanBpb                       &&
                !useShortFat32                     &&
                !useLongFat32                      &&
                !useApricotBpb)

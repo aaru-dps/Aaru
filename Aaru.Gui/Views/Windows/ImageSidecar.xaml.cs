@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class ImageSidecar : Window
+    public sealed class ImageSidecar : Window
     {
         public ImageSidecar()
         {

@@ -36,7 +36,7 @@ using Claunia.RsrcFork;
 
 namespace Aaru.DiscImages
 {
-    public partial class Ndif
+    public sealed partial class Ndif
     {
         public bool Identify(IFilter imageFilter)
         {

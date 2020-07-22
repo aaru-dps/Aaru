@@ -40,7 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
-    public class extFS : IFilesystem
+    public sealed class extFS : IFilesystem
     {
         const int SB_POS = 0x400;
 

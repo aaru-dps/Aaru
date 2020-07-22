@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
-    public partial class Nhdr0 : IWritableImage
+    public sealed partial class Nhdr0 : IWritableImage
     {
         ImageInfo   _imageInfo;
         Nhdr0Header _nhdhdr;

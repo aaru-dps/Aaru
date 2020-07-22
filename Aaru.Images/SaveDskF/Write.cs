@@ -43,7 +43,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         public bool WriteMediaTag(byte[] data, MediaTagType tag)
         {
@@ -214,7 +214,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }

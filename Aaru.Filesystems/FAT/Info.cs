@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -44,8 +45,9 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
+        [SuppressMessage("ReSharper", "JoinDeclarationAndInitializer")]
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             if(2 + partition.Start >= partition.End)

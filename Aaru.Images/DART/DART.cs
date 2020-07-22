@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart : IMediaImage
+    public sealed partial class Dart : IMediaImage
     {
         // DART images are at most 1474560 bytes, so let's cache the whole
         byte[]    _dataCache;

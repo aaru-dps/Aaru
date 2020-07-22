@@ -51,6 +51,7 @@ using Aaru.Devices;
 using Aaru.Gui.Models;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -60,10 +61,12 @@ using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ImageConvertViewModel : ViewModelBase
+    public sealed class ImageConvertViewModel : ViewModelBase
     {
+        readonly IMediaImage   _inputFormat;
         readonly Window        _view;
-        readonly IMediaImage   inputFormat;
+        bool                   _cancel;
+        CICMMetadataType       _cicmMetadata;
         bool                   _cicmXmlFromImageVisible;
         string                 _cicmXmlText;
         bool                   _closeVisible;
@@ -82,6 +85,7 @@ namespace Aaru.Gui.ViewModels.Windows
         bool                   _driveModelVisible;
         string                 _driveSerialNumberText;
         bool                   _driveSerialNumberVisible;
+        List<DumpHardwareType> _dumpHardware;
         bool                   _forceChecked;
         bool                   _formatReadOnly;
         double                 _lastMediaSequenceValue;
@@ -121,15 +125,12 @@ namespace Aaru.Gui.ViewModels.Windows
         bool                   _stopEnabled;
         bool                   _stopVisible;
         string                 _title;
-        bool                   cancel;
-        CICMMetadataType       cicmMetadata;
-        List<DumpHardwareType> dumpHardware;
 
-        public ImageConvertViewModel(IMediaImage inputFormat, string imageSource, Window view)
+        public ImageConvertViewModel([NotNull] IMediaImage inputFormat, string imageSource, Window view)
         {
             _view = view;
-            this.inputFormat = inputFormat;
-            cancel = false;
+            _inputFormat = inputFormat;
+            _cancel = false;
             DestinationCommand = ReactiveCommand.Create(ExecuteDestinationCommand);
             CreatorCommand = ReactiveCommand.Create(ExecuteCreatorCommand);
             MediaTitleCommand = ReactiveCommand.Create(ExecuteMediaTitleCommand);
@@ -177,15 +178,14 @@ namespace Aaru.Gui.ViewModels.Windows
                     Plugin = plugin
                 });
 
-            CicmXmlFromImageVisible    = inputFormat.CicmMetadata != null;
-            ResumeFileFromImageVisible = inputFormat.DumpHardware != null && inputFormat.DumpHardware.Any();
-            cicmMetadata               = inputFormat.CicmMetadata;
+            CicmXmlFromImageVisible    = inputFormat.CicmMetadata        != null;
+            ResumeFileFromImageVisible = inputFormat.DumpHardware?.Any() == true;
+            _cicmMetadata              = inputFormat.CicmMetadata;
 
-            dumpHardware = inputFormat.DumpHardware != null && inputFormat.DumpHardware.Any() ? inputFormat.DumpHardware
-                               : null;
+            _dumpHardware = inputFormat.DumpHardware?.Any() == true ? inputFormat.DumpHardware : null;
 
-            CicmXmlText    = cicmMetadata == null ? "" : "<From image>";
-            ResumeFileText = dumpHardware == null ? "" : "<From image>";
+            CicmXmlText    = _cicmMetadata == null ? "" : "<From image>";
+            ResumeFileText = _dumpHardware == null ? "" : "<From image>";
         }
 
         public string Title
@@ -580,7 +580,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 return;
             }
 
-            var inputOptical  = inputFormat as IOpticalMediaImage;
+            var inputOptical  = _inputFormat as IOpticalMediaImage;
             var outputOptical = outputFormat as IWritableOpticalImage;
 
             List<Track> tracks;
@@ -607,7 +607,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 DestinationVisible = false;
 
                 ProgressMaxValue =  1d;
-                ProgressMaxValue += inputFormat.Info.ReadableMediaTags.Count;
+                ProgressMaxValue += _inputFormat.Info.ReadableMediaTags.Count;
                 ProgressMaxValue++;
 
                 if(tracks != null)
@@ -617,7 +617,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 {
                     ProgressMaxValue += 2;
 
-                    foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                    foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags)
                     {
                         switch(tag)
                         {
@@ -643,7 +643,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 {
                     ProgressMaxValue += tracks.Count;
 
-                    foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
+                    foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
                     {
                         switch(tag)
                         {
@@ -666,38 +666,38 @@ namespace Aaru.Gui.ViewModels.Windows
                     }
                 }
 
-                if(dumpHardware != null)
+                if(_dumpHardware != null)
                     ProgressMaxValue++;
 
-                if(cicmMetadata != null)
+                if(_cicmMetadata != null)
                     ProgressMaxValue++;
 
                 ProgressMaxValue++;
             });
 
-            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
+            foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
+                                                                                           !outputFormat.
+                                                                                            SupportedMediaTags.
+                                                                                            Contains(mediaTag) &&
+                                                                                           !ForceChecked))
             {
-                if(outputFormat.SupportedMediaTags.Contains(mediaTag) || ForceChecked)
-                    continue;
-
-                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                {
-                    await MessageBoxManager.
-                          GetMessageBoxStandardWindow("Error",
-                                                      $"Converting image will lose media tag {mediaTag}, not continuing...",
-                                                      icon: Icon.Error).ShowDialog(_view);
-                });
+                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                            $"Converting image will lose media tag {mediaTag}, not continuing...",
+                                                                                                            icon: Icon.
+                                                                                                                Error).
+                                                                                ShowDialog(_view));
 
                 return;
             }
 
-            bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
+            bool useLong = _inputFormat.Info.ReadableSectorTags.Count != 0;
 
-            foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags)
+            foreach(SectorTagType sectorTag in _inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
+                                                                                              !outputFormat.
+                                                                                               SupportedSectorTags.
+                                                                                               Contains(sectorTag)))
             {
-                if(outputFormat.SupportedSectorTags.Contains(sectorTag))
-                    continue;
-
                 if(ForceChecked)
                 {
                     if(sectorTag != SectorTagType.CdTrackFlags &&
@@ -708,13 +708,12 @@ namespace Aaru.Gui.ViewModels.Windows
                     continue;
                 }
 
-                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                {
-                    await MessageBoxManager.
-                          GetMessageBoxStandardWindow("Error",
-                                                      $"Converting image will lose sector tag {sectorTag}, not continuing...",
-                                                      icon: Icon.Error).ShowDialog(_view);
-                });
+                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                            $"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                                                                                            icon: Icon.
+                                                                                                                Error).
+                                                                                ShowDialog(_view));
 
                 return;
             }
@@ -760,16 +759,15 @@ namespace Aaru.Gui.ViewModels.Windows
                 Progress2Indeterminate = true;
             });
 
-            if(!outputFormat.Create(DestinationText, inputFormat.Info.MediaType, parsedOptions,
-                                    inputFormat.Info.Sectors, inputFormat.Info.SectorSize))
+            if(!outputFormat.Create(DestinationText, _inputFormat.Info.MediaType, parsedOptions,
+                                    _inputFormat.Info.Sectors, _inputFormat.Info.SectorSize))
             {
-                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                {
-                    await MessageBoxManager.
-                          GetMessageBoxStandardWindow("Error",
-                                                      $"Error {outputFormat.ErrorMessage} creating output image.",
-                                                      icon: Icon.Error).ShowDialog(_view);
-                });
+                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                            $"Error {outputFormat.ErrorMessage} creating output image.",
+                                                                                                            icon: Icon.
+                                                                                                                Error).
+                                                                                ShowDialog(_view));
 
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
@@ -804,20 +802,20 @@ namespace Aaru.Gui.ViewModels.Windows
                 MediaTitle            = MediaTitleText
             };
 
-            if(!cancel)
+            if(!_cancel)
                 if(!outputFormat.SetMetadata(metadata))
                 {
                     AaruConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
 
                     if(ForceChecked != true)
                     {
-                        await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                        {
-                            await MessageBoxManager.
-                                  GetMessageBoxStandardWindow("Error",
-                                                              $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                                              icon: Icon.Error).ShowDialog(_view);
-                        });
+                        await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                        GetMessageBoxStandardWindow("Error",
+                                                                                                                    $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                                                                                                    icon
+                                                                                                                    : Icon.
+                                                                                                                        Error).
+                                                                                        ShowDialog(_view));
 
                         AaruConsole.ErrorWriteLine("not continuing...");
 
@@ -829,7 +827,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
 
             if(tracks != null &&
-               !cancel        &&
+               !_cancel       &&
                outputOptical != null)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
@@ -842,13 +840,13 @@ namespace Aaru.Gui.ViewModels.Windows
 
                 if(!outputOptical.SetTracks(tracks))
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                    {
-                        await MessageBoxManager.
-                              GetMessageBoxStandardWindow("Error",
-                                                          $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
-                                                          icon: Icon.Error).ShowDialog(_view);
-                    });
+                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                    GetMessageBoxStandardWindow("Error",
+                                                                                                                $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                                                                                                icon:
+                                                                                                                Icon.
+                                                                                                                    Error).
+                                                                                    ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                                outputFormat.ErrorMessage);
@@ -857,11 +855,8 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
             }
 
-            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
+            foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.TakeWhile(mediaTag => !_cancel))
             {
-                if(cancel)
-                    break;
-
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     ProgressText = $"Converting media tag {mediaTag}";
@@ -873,7 +868,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 if(ForceChecked && !outputFormat.SupportedMediaTags.Contains(mediaTag))
                     continue;
 
-                byte[] tag = inputFormat.ReadDiskTag(mediaTag);
+                byte[] tag = _inputFormat.ReadDiskTag(mediaTag);
 
                 if(outputFormat.WriteMediaTag(tag, mediaTag))
                     continue;
@@ -885,13 +880,13 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
                 else
                 {
-                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                    {
-                        await MessageBoxManager.
-                              GetMessageBoxStandardWindow("Error",
-                                                          $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
-                                                          icon: Icon.Error).ShowDialog(_view);
-                    });
+                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                    GetMessageBoxStandardWindow("Error",
+                                                                                                                $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                                                                                                icon:
+                                                                                                                Icon.
+                                                                                                                    Error).
+                                                                                    ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                                outputFormat.ErrorMessage);
@@ -903,20 +898,20 @@ namespace Aaru.Gui.ViewModels.Windows
             ulong doneSectors = 0;
 
             if(tracks == null &&
-               !cancel)
+               !_cancel)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     ProgressText =
-                        $"Setting geometry to {inputFormat.Info.Cylinders} cylinders, {inputFormat.Info.Heads} heads and {inputFormat.Info.SectorsPerTrack} sectors per track";
+                        $"Setting geometry to {_inputFormat.Info.Cylinders} cylinders, {_inputFormat.Info.Heads} heads and {_inputFormat.Info.SectorsPerTrack} sectors per track";
 
                     ProgressValue++;
                     Progress2Text          = "";
                     Progress2Indeterminate = true;
                 });
 
-                if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
-                                             inputFormat.Info.SectorsPerTrack))
+                if(!outputFormat.SetGeometry(_inputFormat.Info.Cylinders, _inputFormat.Info.Heads,
+                                             _inputFormat.Info.SectorsPerTrack))
                 {
                     warning = true;
 
@@ -930,29 +925,29 @@ namespace Aaru.Gui.ViewModels.Windows
                     ProgressValue++;
                     Progress2Text          = "";
                     Progress2Indeterminate = false;
-                    Progress2MaxValue      = (int)(inputFormat.Info.Sectors / SectorsValue);
+                    Progress2MaxValue      = (int)(_inputFormat.Info.Sectors / SectorsValue);
                 });
 
-                while(doneSectors < inputFormat.Info.Sectors)
+                while(doneSectors < _inputFormat.Info.Sectors)
                 {
-                    if(cancel)
+                    if(_cancel)
                         break;
 
                     byte[] sector;
 
                     uint sectorsToDo;
 
-                    if(inputFormat.Info.Sectors - doneSectors >= (ulong)SectorsValue)
+                    if(_inputFormat.Info.Sectors - doneSectors >= (ulong)SectorsValue)
                         sectorsToDo = (uint)SectorsValue;
                     else
-                        sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                        sectorsToDo = (uint)(_inputFormat.Info.Sectors - doneSectors);
 
                     ulong sectors = doneSectors;
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Progress2Text =
-                            $"Converting sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)inputFormat.Info.Sectors:P2} done)";
+                            $"Converting sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors:P2} done)";
 
                         Progress2Value = (int)(sectors / SectorsValue);
                     });
@@ -962,24 +957,24 @@ namespace Aaru.Gui.ViewModels.Windows
                     if(useLong)
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSectorLong(doneSectors);
+                            sector = _inputFormat.ReadSectorLong(doneSectors);
                             result = outputFormat.WriteSectorLong(sector, doneSectors);
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
+                            sector = _inputFormat.ReadSectorsLong(doneSectors, sectorsToDo);
                             result = outputFormat.WriteSectorsLong(sector, doneSectors, sectorsToDo);
                         }
                     else
                     {
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSector(doneSectors);
+                            sector = _inputFormat.ReadSector(doneSectors);
                             result = outputFormat.WriteSector(sector, doneSectors);
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectors(doneSectors, sectorsToDo);
+                            sector = _inputFormat.ReadSectors(doneSectors, sectorsToDo);
                             result = outputFormat.WriteSectors(sector, doneSectors, sectorsToDo);
                         }
                     }
@@ -994,13 +989,13 @@ namespace Aaru.Gui.ViewModels.Windows
                         }
                         else
                         {
-                            await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                            {
-                                await MessageBoxManager.
-                                      GetMessageBoxStandardWindow("Error",
-                                                                  $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                  icon: Icon.Error).ShowDialog(_view);
-                            });
+                            await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                            GetMessageBoxStandardWindow("Error",
+                                                                                                                        $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                                                                        icon
+                                                                                                                        : Icon.
+                                                                                                                            Error).
+                                                                                            ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                        outputFormat.ErrorMessage, doneSectors);
@@ -1014,7 +1009,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Progress2Text =
-                        $"Converting sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} ({1.0:P2} done)";
+                        $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0:P2} done)";
 
                     Progress2Value = Progress2MaxValue;
                 });
@@ -1025,12 +1020,12 @@ namespace Aaru.Gui.ViewModels.Windows
                 HashSet<int>             subchannelExtents         = new HashSet<int>();
                 Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
-                                                         Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
+                foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.
+                                                          Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                        byte[] isrc = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
 
                         if(isrc is null)
                             continue;
@@ -1039,12 +1034,12 @@ namespace Aaru.Gui.ViewModels.Windows
                     }
                 }
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
-                                                         Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
+                foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.
+                                                          Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
                 {
                     foreach(Track track in inputOptical.Tracks)
                     {
-                        byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                        byte[] flags = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
 
                         if(flags is null)
                             continue;
@@ -1053,7 +1048,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     }
                 }
 
-                for(ulong s = 0; s < inputFormat.Info.Sectors; s++)
+                for(ulong s = 0; s < _inputFormat.Info.Sectors; s++)
                 {
                     if(s > int.MaxValue)
                         break;
@@ -1061,11 +1056,8 @@ namespace Aaru.Gui.ViewModels.Windows
                     subchannelExtents.Add((int)s);
                 }
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong && !_cancel))
                 {
-                    if(!useLong || cancel)
-                        break;
-
                     switch(tag)
                     {
                         case SectorTagType.AppleSectorTag:
@@ -1089,31 +1081,31 @@ namespace Aaru.Gui.ViewModels.Windows
                         ProgressValue++;
                         Progress2Text          = "";
                         Progress2Indeterminate = false;
-                        Progress2MaxValue      = (int)(inputFormat.Info.Sectors / SectorsValue);
+                        Progress2MaxValue      = (int)(_inputFormat.Info.Sectors / SectorsValue);
                     });
 
                     doneSectors = 0;
 
-                    while(doneSectors < inputFormat.Info.Sectors)
+                    while(doneSectors < _inputFormat.Info.Sectors)
                     {
-                        if(cancel)
+                        if(_cancel)
                             break;
 
                         byte[] sector;
 
                         uint sectorsToDo;
 
-                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)SectorsValue)
+                        if(_inputFormat.Info.Sectors - doneSectors >= (ulong)SectorsValue)
                             sectorsToDo = (uint)SectorsValue;
                         else
-                            sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                            sectorsToDo = (uint)(_inputFormat.Info.Sectors - doneSectors);
 
                         ulong sectors = doneSectors;
 
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             Progress2Text =
-                                $"Converting tag {sectors / (double)inputFormat.Info.Sectors} for sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)inputFormat.Info.Sectors:P2} done)";
+                                $"Converting tag {sectors / (double)_inputFormat.Info.Sectors} for sectors {sectors} to {sectors + sectorsToDo} ({sectors / (double)_inputFormat.Info.Sectors:P2} done)";
 
                             Progress2Value = (int)(sectors / SectorsValue);
                         });
@@ -1122,7 +1114,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         if(sectorsToDo == 1)
                         {
-                            sector = inputFormat.ReadSectorTag(doneSectors, tag);
+                            sector = _inputFormat.ReadSectorTag(doneSectors, tag);
                             Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
 
                             if(tag   == SectorTagType.CdSectorSubchannel &&
@@ -1148,7 +1140,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         }
                         else
                         {
-                            sector = inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
+                            sector = _inputFormat.ReadSectorsTag(doneSectors, sectorsToDo, tag);
                             Track track = tracks.LastOrDefault(t => t.TrackStartSector >= doneSectors);
 
                             if(tag   == SectorTagType.CdSectorSubchannel &&
@@ -1185,13 +1177,13 @@ namespace Aaru.Gui.ViewModels.Windows
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                                {
-                                    await MessageBoxManager.
-                                          GetMessageBoxStandardWindow("Error",
-                                                                      $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                      icon: Icon.Error).ShowDialog(_view);
-                                });
+                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                                            $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                                                                            icon
+                                                                                                                            : Icon.
+                                                                                                                                Error).
+                                                                                                ShowDialog(_view));
 
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                            outputFormat.ErrorMessage, doneSectors);
@@ -1205,7 +1197,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Progress2Text =
-                            $"Converting tag {tag} for sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} ({1.0:P2} done)";
+                            $"Converting tag {tag} for sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} ({1.0:P2} done)";
 
                         Progress2Value = Progress2MaxValue;
                     });
@@ -1228,11 +1220,8 @@ namespace Aaru.Gui.ViewModels.Windows
             }
             else
             {
-                foreach(Track track in tracks)
+                foreach(Track track in tracks.TakeWhile(track => !_cancel))
                 {
-                    if(cancel)
-                        break;
-
                     doneSectors = 0;
                     ulong trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
 
@@ -1247,7 +1236,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                     while(doneSectors < trackSectors)
                     {
-                        if(cancel)
+                        if(_cancel)
                             break;
 
                         byte[] sector;
@@ -1264,7 +1253,7 @@ namespace Aaru.Gui.ViewModels.Windows
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             Progress2Text =
-                                $"Converting sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors:P2} done)";
+                                $"Converting sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                             Progress2Value = (int)(sectors / SectorsValue);
                         });
@@ -1274,12 +1263,13 @@ namespace Aaru.Gui.ViewModels.Windows
                         if(useLong)
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSectorLong(doneSectors           + track.TrackStartSector);
+                                sector = _inputFormat.ReadSectorLong(doneSectors          + track.TrackStartSector);
                                 result = outputFormat.WriteSectorLong(sector, doneSectors + track.TrackStartSector);
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector, sectorsToDo);
+                                sector = _inputFormat.ReadSectorsLong(doneSectors + track.TrackStartSector,
+                                                                      sectorsToDo);
 
                                 result = outputFormat.WriteSectorsLong(sector, doneSectors + track.TrackStartSector,
                                                                        sectorsToDo);
@@ -1288,12 +1278,12 @@ namespace Aaru.Gui.ViewModels.Windows
                         {
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSector(doneSectors           + track.TrackStartSector);
+                                sector = _inputFormat.ReadSector(doneSectors          + track.TrackStartSector);
                                 result = outputFormat.WriteSector(sector, doneSectors + track.TrackStartSector);
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
+                                sector = _inputFormat.ReadSectors(doneSectors + track.TrackStartSector, sectorsToDo);
 
                                 result = outputFormat.WriteSectors(sector, doneSectors + track.TrackStartSector,
                                                                    sectorsToDo);
@@ -1310,13 +1300,13 @@ namespace Aaru.Gui.ViewModels.Windows
                             }
                             else
                             {
-                                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                                {
-                                    await MessageBoxManager.
-                                          GetMessageBoxStandardWindow("Error",
-                                                                      $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                      icon: Icon.Error).ShowDialog(_view);
-                                });
+                                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                                            $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                                                                            icon
+                                                                                                                            : Icon.
+                                                                                                                                Error).
+                                                                                                ShowDialog(_view));
 
                                 return;
                             }
@@ -1328,16 +1318,15 @@ namespace Aaru.Gui.ViewModels.Windows
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     Progress2Text =
-                        $"Converting sectors {inputFormat.Info.Sectors} to {inputFormat.Info.Sectors} in track {tracks.Count} ({1.0:P2} done)";
+                        $"Converting sectors {_inputFormat.Info.Sectors} to {_inputFormat.Info.Sectors} in track {tracks.Count} ({1.0:P2} done)";
 
                     Progress2Value = Progress2MaxValue;
                 });
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
+                foreach(SectorTagType tag in _inputFormat.
+                                             Info.ReadableSectorTags.OrderBy(t => t).
+                                             TakeWhile(tag => useLong && !_cancel))
                 {
-                    if(!useLong || cancel)
-                        break;
-
                     switch(tag)
                     {
                         case SectorTagType.AppleSectorTag:
@@ -1355,11 +1344,8 @@ namespace Aaru.Gui.ViewModels.Windows
                     if(ForceChecked && !outputFormat.SupportedSectorTags.Contains(tag))
                         continue;
 
-                    foreach(Track track in tracks)
+                    foreach(Track track in tracks.TakeWhile(track => !_cancel))
                     {
-                        if(cancel)
-                            break;
-
                         doneSectors = 0;
                         ulong  trackSectors = (track.TrackEndSector - track.TrackStartSector) + 1;
                         byte[] sector;
@@ -1379,7 +1365,7 @@ namespace Aaru.Gui.ViewModels.Windows
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
 
-                                sector = inputFormat.ReadSectorTag(track.TrackSequence, tag);
+                                sector = _inputFormat.ReadSectorTag(track.TrackSequence, tag);
                                 result = outputFormat.WriteSectorTag(sector, track.TrackSequence, tag);
 
                                 if(!result)
@@ -1393,12 +1379,13 @@ namespace Aaru.Gui.ViewModels.Windows
                                     else
                                     {
                                         await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                                        {
-                                            await MessageBoxManager.
-                                                  GetMessageBoxStandardWindow("Error",
-                                                                              $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
-                                                                              icon: Icon.Error).ShowDialog(_view);
-                                        });
+                                                                                  await MessageBoxManager.
+                                                                                        GetMessageBoxStandardWindow("Error",
+                                                                                                                    $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
+                                                                                                                    icon
+                                                                                                                    : Icon.
+                                                                                                                        Error).
+                                                                                        ShowDialog(_view));
 
                                         return;
                                     }
@@ -1408,7 +1395,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                         while(doneSectors < trackSectors)
                         {
-                            if(cancel)
+                            if(_cancel)
                                 break;
 
                             uint sectorsToDo;
@@ -1423,20 +1410,20 @@ namespace Aaru.Gui.ViewModels.Windows
                             await Dispatcher.UIThread.InvokeAsync(() =>
                             {
                                 Progress2Text =
-                                    $"Converting tag {tag} for sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors:P2} done)";
+                                    $"Converting tag {tag} for sectors {sectors + track.TrackStartSector} to {sectors + sectorsToDo + track.TrackStartSector} in track {track.TrackSequence} ({(sectors + track.TrackStartSector) / (double)_inputFormat.Info.Sectors:P2} done)";
 
                                 Progress2Value = (int)(sectors / SectorsValue);
                             });
 
                             if(sectorsToDo == 1)
                             {
-                                sector = inputFormat.ReadSectorTag(doneSectors           + track.TrackStartSector, tag);
+                                sector = _inputFormat.ReadSectorTag(doneSectors          + track.TrackStartSector, tag);
                                 result = outputFormat.WriteSectorTag(sector, doneSectors + track.TrackStartSector, tag);
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
-                                                                    tag);
+                                sector = _inputFormat.ReadSectorsTag(doneSectors + track.TrackStartSector, sectorsToDo,
+                                                                     tag);
 
                                 result = outputFormat.WriteSectorsTag(sector, doneSectors + track.TrackStartSector,
                                                                       sectorsToDo, tag);
@@ -1452,13 +1439,13 @@ namespace Aaru.Gui.ViewModels.Windows
                                 }
                                 else
                                 {
-                                    await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                                    {
-                                        await MessageBoxManager.
-                                              GetMessageBoxStandardWindow("Error",
-                                                                          $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
-                                                                          icon: Icon.Error).ShowDialog(_view);
-                                    });
+                                    await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                                    GetMessageBoxStandardWindow("Error",
+                                                                                                                                $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
+                                                                                                                                icon
+                                                                                                                                : Icon.
+                                                                                                                                    Error).
+                                                                                                    ShowDialog(_view));
 
                                     return;
                                 }
@@ -1477,8 +1464,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
             bool ret;
 
-            if(dumpHardware != null &&
-               !cancel)
+            if(_dumpHardware != null &&
+               !_cancel)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -1486,7 +1473,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     ProgressValue++;
                 });
 
-                ret = outputFormat.SetDumpHardware(dumpHardware);
+                ret = outputFormat.SetDumpHardware(_dumpHardware);
 
                 if(!ret)
                     AaruConsole.WriteLine("Error {0} writing dump hardware list to output image.",
@@ -1495,8 +1482,8 @@ namespace Aaru.Gui.ViewModels.Windows
 
             ret = false;
 
-            if(cicmMetadata != null &&
-               !cancel)
+            if(_cicmMetadata != null &&
+               !_cancel)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -1504,7 +1491,7 @@ namespace Aaru.Gui.ViewModels.Windows
                     ProgressValue++;
                 });
 
-                outputFormat.SetCicmMetadata(cicmMetadata);
+                outputFormat.SetCicmMetadata(_cicmMetadata);
 
                 if(!ret)
                     AaruConsole.WriteLine("Error {0} writing CICM XML metadata to output image.",
@@ -1517,7 +1504,7 @@ namespace Aaru.Gui.ViewModels.Windows
                 ProgressIndeterminate = true;
             });
 
-            if(cancel)
+            if(_cancel)
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () =>
                 {
@@ -1535,20 +1522,19 @@ namespace Aaru.Gui.ViewModels.Windows
 
             if(!outputFormat.Close())
             {
-                await Dispatcher.UIThread.InvokeAsync(action: async () =>
-                {
-                    await MessageBoxManager.
-                          GetMessageBoxStandardWindow("Error",
-                                                      $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
-                                                      icon: Icon.Error).ShowDialog(_view);
-                });
+                await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
+                                                                                GetMessageBoxStandardWindow("Error",
+                                                                                                            $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
+                                                                                                            icon: Icon.
+                                                                                                                Error).
+                                                                                ShowDialog(_view));
 
                 return;
             }
 
             await Dispatcher.UIThread.InvokeAsync(action: async () =>
             {
-                await MessageBoxManager.GetMessageBoxStandardWindow(warning ? "Warning" : "Convertion success",
+                await MessageBoxManager.GetMessageBoxStandardWindow(warning ? "Warning" : "Conversion success",
                                                                     warning
                                                                         ? "Some warnings happened. Check console for more information. Image should be correct."
                                                                         : "Image converted successfully.",
@@ -1563,11 +1549,11 @@ namespace Aaru.Gui.ViewModels.Windows
             Statistics.AddCommand("convert-image");
         }
 
-        protected void ExecuteCloseCommand() => _view.Close();
+        void ExecuteCloseCommand() => _view.Close();
 
-        protected internal void ExecuteStopCommand()
+        internal void ExecuteStopCommand()
         {
-            cancel      = true;
+            _cancel     = true;
             StopEnabled = false;
         }
 
@@ -1737,45 +1723,45 @@ namespace Aaru.Gui.ViewModels.Windows
             DestinationText = result;
         }
 
-        void ExecuteCreatorCommand() => CreatorText = inputFormat.Info.Creator;
+        void ExecuteCreatorCommand() => CreatorText = _inputFormat.Info.Creator;
 
-        void ExecuteMediaTitleCommand() => MediaTitleText = inputFormat.Info.MediaTitle;
+        void ExecuteMediaTitleCommand() => MediaTitleText = _inputFormat.Info.MediaTitle;
 
-        void ExecuteCommentsCommand() => CommentsText = inputFormat.Info.Comments;
+        void ExecuteCommentsCommand() => CommentsText = _inputFormat.Info.Comments;
 
-        void ExecuteMediaManufacturerCommand() => MediaManufacturerText = inputFormat.Info.MediaManufacturer;
+        void ExecuteMediaManufacturerCommand() => MediaManufacturerText = _inputFormat.Info.MediaManufacturer;
 
-        void ExecuteMediaModelCommand() => MediaModelText = inputFormat.Info.MediaModel;
+        void ExecuteMediaModelCommand() => MediaModelText = _inputFormat.Info.MediaModel;
 
-        void ExecuteMediaSerialNumberCommand() => MediaSerialNumberText = inputFormat.Info.MediaSerialNumber;
+        void ExecuteMediaSerialNumberCommand() => MediaSerialNumberText = _inputFormat.Info.MediaSerialNumber;
 
-        void ExecuteMediaBarcodeCommand() => MediaBarcodeText = inputFormat.Info.MediaBarcode;
+        void ExecuteMediaBarcodeCommand() => MediaBarcodeText = _inputFormat.Info.MediaBarcode;
 
-        void ExecuteMediaPartNumberCommand() => MediaPartNumberText = inputFormat.Info.MediaPartNumber;
+        void ExecuteMediaPartNumberCommand() => MediaPartNumberText = _inputFormat.Info.MediaPartNumber;
 
-        void ExecuteMediaSequenceCommand() => MediaSequenceValue = inputFormat.Info.MediaSequence;
+        void ExecuteMediaSequenceCommand() => MediaSequenceValue = _inputFormat.Info.MediaSequence;
 
-        void ExecuteLastMediaSequenceCommand() => LastMediaSequenceValue = inputFormat.Info.LastMediaSequence;
+        void ExecuteLastMediaSequenceCommand() => LastMediaSequenceValue = _inputFormat.Info.LastMediaSequence;
 
-        void ExecuteDriveManufacturerCommand() => DriveManufacturerText = inputFormat.Info.DriveManufacturer;
+        void ExecuteDriveManufacturerCommand() => DriveManufacturerText = _inputFormat.Info.DriveManufacturer;
 
-        void ExecuteDriveModelCommand() => DriveModelText = inputFormat.Info.DriveModel;
+        void ExecuteDriveModelCommand() => DriveModelText = _inputFormat.Info.DriveModel;
 
-        void ExecuteDriveSerialNumberCommand() => DriveSerialNumberText = inputFormat.Info.DriveSerialNumber;
+        void ExecuteDriveSerialNumberCommand() => DriveSerialNumberText = _inputFormat.Info.DriveSerialNumber;
 
         void ExecuteDriveFirmwareRevisionCommand() =>
-            DriveFirmwareRevisionText = inputFormat.Info.DriveFirmwareRevision;
+            DriveFirmwareRevisionText = _inputFormat.Info.DriveFirmwareRevision;
 
         void ExecuteCicmXmlFromImageCommand()
         {
-            CicmXmlText  = "<From image>";
-            cicmMetadata = inputFormat.CicmMetadata;
+            CicmXmlText   = "<From image>";
+            _cicmMetadata = _inputFormat.CicmMetadata;
         }
 
         async void ExecuteCicmXmlCommand()
         {
-            cicmMetadata = null;
-            CicmXmlText  = "";
+            _cicmMetadata = null;
+            CicmXmlText   = "";
 
             var dlgMetadata = new OpenFileDialog
             {
@@ -1802,7 +1788,7 @@ namespace Aaru.Gui.ViewModels.Windows
             try
             {
                 var sr = new StreamReader(result[0]);
-                cicmMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                _cicmMetadata = (CICMMetadataType)sidecarXs.Deserialize(sr);
                 sr.Close();
                 CicmXmlText = result[0];
             }
@@ -1816,12 +1802,12 @@ namespace Aaru.Gui.ViewModels.Windows
         void ExecuteResumeFileFromImageCommand()
         {
             ResumeFileText = "<From image>";
-            dumpHardware   = inputFormat.DumpHardware;
+            _dumpHardware  = _inputFormat.DumpHardware;
         }
 
         async void ExecuteResumeFileCommand()
         {
-            dumpHardware   = null;
+            _dumpHardware  = null;
             ResumeFileText = "";
 
             var dlgMetadata = new OpenFileDialog
@@ -1851,10 +1837,9 @@ namespace Aaru.Gui.ViewModels.Windows
                 var sr     = new StreamReader(result[0]);
                 var resume = (Resume)sidecarXs.Deserialize(sr);
 
-                if(resume.Tries != null &&
-                   !resume.Tries.Any())
+                if(resume.Tries?.Any() == false)
                 {
-                    dumpHardware   = resume.Tries;
+                    _dumpHardware  = resume.Tries;
                     ResumeFileText = result[0];
                 }
                 else

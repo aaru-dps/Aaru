@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // Info from Neko Project II emulator
-    public partial class Virtual98 : IWritableImage
+    public sealed partial class Virtual98 : IWritableImage
     {
         ImageInfo       _imageInfo;
         IFilter         _nhdImageFilter;

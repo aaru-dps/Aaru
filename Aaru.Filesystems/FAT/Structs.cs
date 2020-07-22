@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class FAT
+    public sealed partial class FAT
     {
         const int UMSDOS_MAXNAME = 220;
 

@@ -44,7 +44,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class PartClone
+    public sealed partial class PartClone
     {
         public bool Open(IFilter imageFilter)
         {

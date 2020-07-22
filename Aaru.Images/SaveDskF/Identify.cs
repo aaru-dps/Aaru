@@ -36,7 +36,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         public bool Identify(IFilter imageFilter)
         {

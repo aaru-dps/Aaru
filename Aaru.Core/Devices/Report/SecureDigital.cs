@@ -37,7 +37,7 @@ using Aaru.Console;
 namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a device report for a SecureDigital or MultiMediaCard flash card</summary>
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         /// <summary>Creates a device report for a SecureDigital or MultiMediaCard flash card</summary>
         public MmcSd MmcSdReport()

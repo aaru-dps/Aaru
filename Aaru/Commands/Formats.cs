@@ -39,11 +39,10 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
-using Aaru.Partitions;
 
 namespace Aaru.Commands
 {
-    internal class FormatsCommand : Command
+    internal sealed class FormatsCommand : Command
     {
         public FormatsCommand() : base("formats",
                                        "Lists all supported disc images, partition schemes and file systems.") =>

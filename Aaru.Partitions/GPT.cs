@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class GuidPartitionTable : IPartition
+    public sealed class GuidPartitionTable : IPartition
     {
         const ulong GPT_MAGIC     = 0x5452415020494645;
         const uint  GPT_REVISION1 = 0x00010000;

@@ -36,21 +36,22 @@ using System.Reactive;
 using Aaru.Core.Media.Info;
 using Aaru.Decoders.Xbox;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class XboxInfoViewModel
+    public sealed class XboxInfoViewModel
     {
-        readonly byte[] xboxSecuritySector;
         readonly Window _view;
+        readonly byte[] _xboxSecuritySector;
 
-        public XboxInfoViewModel(XgdInfo xgdInfo, byte[] dmi, byte[] securitySector,
+        public XboxInfoViewModel([CanBeNull] XgdInfo xgdInfo, [CanBeNull] byte[] dmi, [CanBeNull] byte[] securitySector,
                                  SS.SecuritySector? decodedSecuritySector, Window view)
         {
-            xboxSecuritySector = securitySector;
-            _view              = view;
-            SaveXboxSsCommand  = ReactiveCommand.Create(ExecuteSaveXboxSsCommand);
+            _xboxSecuritySector = securitySector;
+            _view               = view;
+            SaveXboxSsCommand   = ReactiveCommand.Create(ExecuteSaveXboxSsCommand);
 
             if(xgdInfo != null)
             {
@@ -113,6 +114,6 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        public void ExecuteSaveXboxSsCommand() => SaveElement(xboxSecuritySector);
+        public void ExecuteSaveXboxSsCommand() => SaveElement(_xboxSecuritySector);
     }
 }

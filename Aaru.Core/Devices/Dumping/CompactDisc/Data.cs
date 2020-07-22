@@ -98,12 +98,12 @@ namespace Aaru.Core.Devices.Dumping
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
-            uint       blocksToRead     = 0;               // How many sectors to read at once
-            bool       sense            = true;            // Sense indicator
-            byte[]     cmdBuf           = null;            // Data buffer
-            byte[]     senseBuf         = null;            // Sense buffer
-            double     cmdDuration      = 0;               // Command execution time
-            const uint sectorSize       = 2352;            // Full sector size
+            uint       blocksToRead;                       // How many sectors to read at once
+            bool       sense       = true;                 // Sense indicator
+            byte[]     cmdBuf      = null;                 // Data buffer
+            byte[]     senseBuf    = null;                 // Sense buffer
+            double     cmdDuration = 0;                    // Command execution time
+            const uint sectorSize  = 2352;                 // Full sector size
             newTrim = false;
             PlextorSubchannel supportedPlextorSubchannel;
 
@@ -259,20 +259,13 @@ namespace Aaru.Core.Devices.Dumping
                     crossingLeadOut   = false;
                 }
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-
-                // ReSharper disable CompareOfFloatsByEqualityOperator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);

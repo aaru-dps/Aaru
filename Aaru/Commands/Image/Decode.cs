@@ -43,7 +43,7 @@ using Aaru.Decoders.SCSI;
 
 namespace Aaru.Commands.Image
 {
-    internal class DecodeCommand : Command
+    internal sealed class DecodeCommand : Command
     {
         public DecodeCommand() : base("decode", "Decodes and pretty prints disk and/or sector tags.")
         {

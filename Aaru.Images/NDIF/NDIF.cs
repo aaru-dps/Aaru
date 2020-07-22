@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
     // TODO: Check checksum
     // TODO: Implement segments
     // TODO: Implement compression
-    public partial class Ndif : IMediaImage
+    public sealed partial class Ndif : IMediaImage
     {
         uint                          _buffersize;
         Dictionary<ulong, byte[]>     _chunkCache;

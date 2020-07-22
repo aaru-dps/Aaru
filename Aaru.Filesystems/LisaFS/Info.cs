@@ -44,16 +44,13 @@ using Encoding = System.Text.Encoding;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
             try
             {
-                if(imagePlugin.Info.ReadableSectorTags == null)
-                    return false;
-
-                if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
                     return false;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
@@ -142,10 +139,7 @@ namespace Aaru.Filesystems.LisaFS
 
             try
             {
-                if(imagePlugin.Info.ReadableSectorTags == null)
-                    return;
-
-                if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
                     return;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
@@ -331,7 +325,7 @@ namespace Aaru.Filesystems.LisaFS
 
                             break;
                         default:
-                            sb.AppendFormat("Uknown LisaFS version {0}", infoMddf.fsversion).AppendLine();
+                            sb.AppendFormat("Unknown LisaFS version {0}", infoMddf.fsversion).AppendLine();
 
                             break;
                     }
@@ -371,7 +365,7 @@ namespace Aaru.Filesystems.LisaFS
                     sb.AppendFormat("{0} blocks free", infoMddf.freecount).AppendLine();
                     sb.AppendFormat("{0} bytes in LisaInfo", infoMddf.label_size).AppendLine();
                     sb.AppendFormat("Filesystem overhead: {0}", infoMddf.fs_overhead).AppendLine();
-                    sb.AppendFormat("Scanvenger result code: 0x{0:X8}", infoMddf.result_scavenge).AppendLine();
+                    sb.AppendFormat("Scavenger result code: 0x{0:X8}", infoMddf.result_scavenge).AppendLine();
                     sb.AppendFormat("Boot code: 0x{0:X8}", infoMddf.boot_code).AppendLine();
                     sb.AppendFormat("Boot environment:  0x{0:X8}", infoMddf.boot_environ).AppendLine();
                     sb.AppendFormat("Overmount stamp: 0x{0:X16}", infoMddf.overmount_stamp).AppendLine();

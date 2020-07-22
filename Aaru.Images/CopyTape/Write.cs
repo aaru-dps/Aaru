@@ -41,7 +41,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyTape
+    public sealed partial class CopyTape
     {
         FileStream               _dataStream;
         ulong                    _lastWrittenBlock;
@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
         {
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }

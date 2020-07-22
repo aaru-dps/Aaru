@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class CloneCd
+    public sealed partial class CloneCd
     {
         static ulong GetLba(int minute, int second, int frame) =>
             (ulong)(((minute * 60 * 75) + (second * 75) + frame) - 150);

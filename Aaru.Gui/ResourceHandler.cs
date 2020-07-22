@@ -32,12 +32,14 @@
 
 using System.IO;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui
 {
     internal static class ResourceHandler
     {
-        internal static Stream GetResourceStream(string resourcePath) =>
+        [CanBeNull]
+        internal static Stream GetResourceStream([NotNull] string resourcePath) =>
             Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcePath);
     }
 }

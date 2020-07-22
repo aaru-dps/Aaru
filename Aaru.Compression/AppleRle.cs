@@ -42,9 +42,8 @@ namespace Aaru.Compression
         readonly Stream _inStream;
         int             _count;
         bool            _nextA; // true if A, false if B
-
-        byte _repeatedByteA, _repeatedByteB;
-        bool _repeatMode; // true if we're repeating, false if we're just copying
+        byte            _repeatedByteA, _repeatedByteB;
+        bool            _repeatMode; // true if we're repeating, false if we're just copying
 
         public AppleRle(Stream stream)
         {

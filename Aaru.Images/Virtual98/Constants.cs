@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Virtual98
+    public sealed partial class Virtual98
     {
         readonly byte[] _signature =
         {

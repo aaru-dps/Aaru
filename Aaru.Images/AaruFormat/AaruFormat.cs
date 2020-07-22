@@ -65,7 +65,7 @@
  the pointer in the corresponding deduplication table.
 
  P.S.: Data Position Measurement is doable, as soon as I know how to do it.
- P.S.2: Support for floppy image containg bitslices and/or fluxes will be added soon.
+ P.S.2: Support for floppy image contaning bitslices and/or fluxes will be added soon.
 */
 
 using System;
@@ -81,7 +81,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
+    public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {
         bool _alreadyWrittenZero;
         /// <summary>Cache of uncompressed blocks.</summary>

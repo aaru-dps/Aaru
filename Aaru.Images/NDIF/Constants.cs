@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Ndif
+    public sealed partial class Ndif
     {
         /// <summary>Resource OSType for NDIF is "bcem"</summary>
         const uint NDIF_RESOURCE = 0x6263656D;

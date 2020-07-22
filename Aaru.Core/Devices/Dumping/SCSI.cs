@@ -30,6 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Threading;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
@@ -43,7 +44,7 @@ namespace Aaru.Core.Devices.Dumping
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
         /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
-        public void Scsi()
+        void Scsi()
         {
             int resets = 0;
 
@@ -241,7 +242,8 @@ namespace Aaru.Core.Devices.Dumping
 
                     return;
                 case PeripheralDeviceTypes.BridgingExpander
-                    when _dev.Model.StartsWith("MDM") || _dev.Model.StartsWith("MDH"):
+                    when _dev.Model.StartsWith("MDM", StringComparison.InvariantCulture) ||
+                         _dev.Model.StartsWith("MDH", StringComparison.InvariantCulture):
                     MiniDisc();
 
                     break;

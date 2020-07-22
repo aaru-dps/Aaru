@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow
+    public sealed partial class Qcow
     {
         public ImageInfo Info => _imageInfo;
 

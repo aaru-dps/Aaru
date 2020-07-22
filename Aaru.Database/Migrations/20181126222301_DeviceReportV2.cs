@@ -13,10 +13,7 @@ namespace Aaru.Database.Migrations
                 Cylinders = table.Column<ushort>(),
                 Heads     = table.Column<ushort>(),
                 Sectors   = table.Column<ushort>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Chs", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Chs", x => x.Id));
 
             migrationBuilder.CreateTable("FireWire", table => new
             {
@@ -26,10 +23,7 @@ namespace Aaru.Database.Migrations
                 Manufacturer   = table.Column<string>(nullable: true),
                 Product        = table.Column<string>(nullable: true),
                 RemovableMedia = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_FireWire", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_FireWire", x => x.Id));
 
             migrationBuilder.CreateTable("MmcFeatures", table => new
             {
@@ -157,10 +151,7 @@ namespace Aaru.Database.Migrations
                 SupportsWriteInhibitDCB         = table.Column<bool>(),
                 SupportsWriteProtectPAC         = table.Column<bool>(),
                 VolumeLevels                    = table.Column<ushort>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_MmcFeatures", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_MmcFeatures", x => x.Id));
 
             migrationBuilder.CreateTable("MmcSd", table => new
             {
@@ -170,10 +161,7 @@ namespace Aaru.Database.Migrations
                 OCR         = table.Column<byte[]>(nullable: true),
                 SCR         = table.Column<byte[]>(nullable: true),
                 ExtendedCSD = table.Column<byte[]>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_MmcSd", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_MmcSd", x => x.Id));
 
             migrationBuilder.CreateTable("ModePage_2A", table => new
             {
@@ -230,10 +218,7 @@ namespace Aaru.Database.Migrations
                 RotationControlSelected   = table.Column<byte>(),
                 CurrentWriteSpeedSelected = table.Column<ushort>(),
                 Id                        = table.Column<int>().Annotation("Sqlite:Autoincrement", true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_ModePage_2A", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_ModePage_2A", x => x.Id));
 
             migrationBuilder.CreateTable("Pcmcia", table => new
             {
@@ -244,10 +229,7 @@ namespace Aaru.Database.Migrations
                 CardCode         = table.Column<ushort>(nullable: true),
                 Manufacturer     = table.Column<string>(nullable: true),
                 ProductName      = table.Column<string>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Pcmcia", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Pcmcia", x => x.Id));
 
             migrationBuilder.CreateTable("ScsiMode", table => new
             {
@@ -258,10 +240,7 @@ namespace Aaru.Database.Migrations
                 BufferedMode      = table.Column<byte>(nullable: true),
                 BlankCheckEnabled = table.Column<bool>(),
                 DPOandFUA         = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_ScsiMode", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_ScsiMode", x => x.Id));
 
             migrationBuilder.CreateTable("Ssc", table => new
             {
@@ -269,10 +248,7 @@ namespace Aaru.Database.Migrations
                 BlockSizeGranularity = table.Column<byte>(nullable: true),
                 MaxBlockLength       = table.Column<uint>(nullable: true),
                 MinBlockLength       = table.Column<uint>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Ssc", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Ssc", x => x.Id));
 
             migrationBuilder.CreateTable("Usb", table => new
             {
@@ -283,10 +259,7 @@ namespace Aaru.Database.Migrations
                 Product        = table.Column<string>(nullable: true),
                 RemovableMedia = table.Column<bool>(),
                 Descriptors    = table.Column<byte[]>(nullable: true)
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Usb", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Usb", x => x.Id));
 
             migrationBuilder.CreateTable("Mmc", table => new
             {

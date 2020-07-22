@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class SunDisklabel : IPartition
+    public sealed class SunDisklabel : IPartition
     {
         /// <summary>Sun disklabel magic number</summary>
         const ushort DKL_MAGIC = 0xDABE;

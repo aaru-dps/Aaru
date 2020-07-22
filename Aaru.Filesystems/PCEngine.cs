@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public class PCEnginePlugin : IFilesystem
+    public sealed class PCEnginePlugin : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

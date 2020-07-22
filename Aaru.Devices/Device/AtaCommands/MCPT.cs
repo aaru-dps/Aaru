@@ -35,7 +35,7 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
                                                out double duration) =>

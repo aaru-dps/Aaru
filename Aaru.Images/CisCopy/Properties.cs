@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CisCopy
+    public sealed partial class CisCopy
     {
         public string                 Name         => "CisCopy Disk Image (DC-File)";
         public Guid                   Id           => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");

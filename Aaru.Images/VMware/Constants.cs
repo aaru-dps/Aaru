@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class VMware
+    public sealed partial class VMware
     {
         const uint VMWARE_EXTENT_MAGIC = 0x564D444B;
         const uint VMWARE_COW_MAGIC    = 0x44574F43;

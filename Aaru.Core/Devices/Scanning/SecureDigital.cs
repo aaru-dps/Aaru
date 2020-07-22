@@ -36,10 +36,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>Implements scanning a SecureDigital or MultiMediaCard flash card</summary>
-    public partial class MediaScan
+    public sealed partial class MediaScan
     {
         ScanResults SecureDigital()
         {
@@ -174,15 +176,13 @@ namespace Aaru.Core.Devices.Scanning
                 if(results.Blocks - i < blocksToRead)
                     blocksToRead = (byte)(results.Blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > results.MaxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     results.MaxSpeed = currentSpeed;
 
                 if(currentSpeed < results.MinSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     results.MinSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)results.Blocks);
@@ -257,15 +257,13 @@ namespace Aaru.Core.Devices.Scanning
                 _dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, timeout,
                           out double seekCur);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(seekCur > results.SeekMax &&
-                   seekCur != 0)
+                   seekCur > 0)
                     results.SeekMax = seekCur;
 
                 if(seekCur < results.SeekMin &&
-                   seekCur != 0)
+                   seekCur > 0)
                     results.SeekMin = seekCur;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 results.SeekTotal += seekCur;
                 GC.Collect();

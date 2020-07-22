@@ -31,14 +31,13 @@
 // ****************************************************************************/
 
 using System;
-using System.Linq;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 
 namespace Aaru.Core.Devices
 {
-    internal partial class Reader
+    internal sealed partial class Reader
     {
         // TODO: Raw reading
         bool _hldtstReadRaw;
@@ -181,27 +180,26 @@ namespace Aaru.Core.Devices
                     {
                         decSense = Sense.DecodeFixed(senseBuf);
 
-                        if(decSense.HasValue)
-                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                               decSense.Value.ASC      == 0x24                     &&
-                               decSense.Value.ASCQ     == 0x00)
+                        if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                           decSense.Value.ASC  == 0x24                     &&
+                           decSense.Value.ASCQ == 0x00)
+                        {
+                            CanReadRaw = true;
+
+                            if(decSense.Value.InformationValid &&
+                               decSense.Value.ILI)
                             {
-                                CanReadRaw = true;
+                                LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
 
-                                if(decSense.Value.InformationValid &&
-                                   decSense.Value.ILI)
-                                {
-                                    LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-
-                                    _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0,
-                                                                   (ushort)LongBlockSize, _timeout, out _);
-                                }
+                                _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0,
+                                                               (ushort)LongBlockSize, _timeout, out _);
                             }
+                        }
                     }
 
                     if(CanReadRaw && LongBlockSize == LogicalBlockSize)
                         if(LogicalBlockSize == 512)
-                            foreach(int i in new[]
+                            foreach(ushort testSize in new ushort[]
                             {
                                 // Long sector sizes for floppies
                                 514,
@@ -213,7 +211,6 @@ namespace Aaru.Core.Devices
                                 600, 610, 630
                             })
                             {
-                                ushort testSize = (ushort)i;
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
                                 if(!testSense &&
@@ -239,14 +236,14 @@ namespace Aaru.Core.Devices
                                 break;
                             }
                         else if(LogicalBlockSize == 1024)
-                            foreach(ushort testSize in new[]
+                            foreach(ushort testSize in new ushort[]
                             {
                                 // Long sector sizes for floppies
                                 1026,
 
                                 // Long sector sizes for 1024-byte magneto-opticals
                                 1200
-                            }.Select(i => (ushort)i))
+                            })
                             {
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
@@ -382,23 +379,22 @@ namespace Aaru.Core.Devices
                                     {
                                         decSense = Sense.DecodeFixed(senseBuf);
 
-                                        if(decSense.HasValue)
-                                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                                               decSense.Value.ASC      == 0x24                     &&
-                                               decSense.Value.ASCQ     == 0x00)
+                                        if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                                           decSense.Value.ASC  == 0x24                     &&
+                                           decSense.Value.ASCQ == 0x00)
+                                        {
+                                            CanReadRaw = true;
+
+                                            if(decSense.Value.InformationValid &&
+                                               decSense.Value.ILI)
                                             {
-                                                CanReadRaw = true;
+                                                LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
 
-                                                if(decSense.Value.InformationValid &&
-                                                   decSense.Value.ILI)
-                                                {
-                                                    LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-
-                                                    _syqReadLong6 =
-                                                        !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
-                                                                               _timeout, out _);
-                                                }
+                                                _syqReadLong6 =
+                                                    !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize,
+                                                                           _timeout, out _);
                                             }
+                                        }
                                     }
                                 }
                         }
@@ -484,10 +480,9 @@ namespace Aaru.Core.Devices
 
         bool ScsiGetBlockSize()
         {
-            bool sense;
             Blocks = 0;
 
-            sense = _dev.ReadCapacity(out byte[] cmdBuf, out byte[] senseBuf, _timeout, out _);
+            bool sense = _dev.ReadCapacity(out byte[] cmdBuf, out byte[] senseBuf, _timeout, out _);
 
             if(!sense)
             {

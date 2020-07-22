@@ -36,7 +36,7 @@ using Aaru.Console;
 namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Parks the load arm in preparation for transport</summary>
         /// <param name="senseBuffer">Sense buffer.</param>

@@ -36,7 +36,7 @@ using Aaru.Checksums;
 
 namespace Aaru.DiscImages
 {
-    public partial class Nero
+    public sealed partial class Nero
     {
         public bool? VerifySector(ulong sectorAddress)
         {

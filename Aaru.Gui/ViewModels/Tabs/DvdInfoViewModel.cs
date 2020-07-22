@@ -36,11 +36,12 @@ using System.Reactive;
 using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class DvdInfoViewModel
+    public sealed class DvdInfoViewModel
     {
         readonly byte[] _dvdAacs;
         readonly byte[] _dvdBca;
@@ -50,8 +51,10 @@ namespace Aaru.Gui.ViewModels.Tabs
         readonly byte[] _hddvdCopyrightInformation;
         readonly Window _view;
 
-        public DvdInfoViewModel(MediaType mediaType, byte[] pfi, byte[] dmi, byte[] cmi, byte[] hdCopyrightInformation,
-                                byte[] bca, byte[] aacs, PFI.PhysicalFormatInformation? decodedPfi, Window view)
+        public DvdInfoViewModel(MediaType mediaType, [CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi,
+                                [CanBeNull] byte[] cmi, [CanBeNull] byte[] hdCopyrightInformation,
+                                [CanBeNull] byte[] bca, [CanBeNull] byte[] aacs,
+                                PFI.PhysicalFormatInformation? decodedPfi, Window view)
         {
             _dvdPfi                    = pfi;
             _dvdDmi                    = dmi;
@@ -139,16 +142,16 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected void ExecuteSaveDvdPfiCommand() => SaveElement(_dvdPfi);
+        void ExecuteSaveDvdPfiCommand() => SaveElement(_dvdPfi);
 
-        protected void ExecuteSaveDvdDmiCommand() => SaveElement(_dvdDmi);
+        void ExecuteSaveDvdDmiCommand() => SaveElement(_dvdDmi);
 
-        protected void ExecuteSaveDvdCmiCommand() => SaveElement(_dvdCmi);
+        void ExecuteSaveDvdCmiCommand() => SaveElement(_dvdCmi);
 
-        protected void ExecuteSaveHdDvdCmiCommand() => SaveElement(_hddvdCopyrightInformation);
+        void ExecuteSaveHdDvdCmiCommand() => SaveElement(_hddvdCopyrightInformation);
 
-        protected void ExecuteSaveDvdBcaCommand() => SaveElement(_dvdBca);
+        void ExecuteSaveDvdBcaCommand() => SaveElement(_dvdBca);
 
-        protected void ExecuteSaveDvdAacsCommand() => SaveElement(_dvdAacs);
+        void ExecuteSaveDvdAacsCommand() => SaveElement(_dvdAacs);
     }
 }

@@ -34,7 +34,7 @@ using System;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhd
+    public sealed partial class Vhd
     {
         struct HardDiskFooter
         {

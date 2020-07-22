@@ -37,7 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Parallels
+    public sealed partial class Parallels
     {
         public bool Identify(IFilter imageFilter)
         {

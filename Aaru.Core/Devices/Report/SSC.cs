@@ -39,7 +39,7 @@ using Aaru.Devices;
 
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         public Ssc ReportScsiSsc()
         {
@@ -51,17 +51,14 @@ namespace Aaru.Core.Devices.Report
             {
                 BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
 
-                if(decBl.HasValue)
-                {
-                    if(decBl.Value.granularity > 0)
-                        report.BlockSizeGranularity = decBl.Value.granularity;
+                if(decBl?.granularity > 0)
+                    report.BlockSizeGranularity = decBl.Value.granularity;
 
-                    if(decBl.Value.maxBlockLen > 0)
-                        report.MaxBlockLength = decBl.Value.maxBlockLen;
+                if(decBl?.maxBlockLen > 0)
+                    report.MaxBlockLength = decBl.Value.maxBlockLen;
 
-                    if(decBl.Value.minBlockLen > 0)
-                        report.MinBlockLength = decBl.Value.minBlockLen;
-                }
+                if(decBl?.minBlockLen > 0)
+                    report.MinBlockLength = decBl.Value.minBlockLen;
             }
 
             AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
@@ -164,8 +161,7 @@ namespace Aaru.Core.Devices.Report
             if(!sense &&
                !_dev.Error)
             {
-                if(!decMode.HasValue)
-                    decMode = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 seqTest.ModeSense6Data = buffer;
             }

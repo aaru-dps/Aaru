@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Dim
+    public sealed partial class Dim
     {
         /// <summary>Start of data sectors in disk image, should be 0x100</summary>
         const uint DATA_OFFSET = 0x100;

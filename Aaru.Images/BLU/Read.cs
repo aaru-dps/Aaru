@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu
+    public sealed partial class Blu
     {
         public bool Open(IFilter imageFilter)
         {

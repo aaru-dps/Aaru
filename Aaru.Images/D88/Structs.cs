@@ -35,7 +35,7 @@ using Aaru.Decoders.Floppy;
 
 namespace Aaru.DiscImages
 {
-    public partial class D88
+    public sealed partial class D88
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct D88Header

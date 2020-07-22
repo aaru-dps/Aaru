@@ -34,7 +34,7 @@ using System.CommandLine;
 
 namespace Aaru.Commands.Image
 {
-    public class ImageFamily : Command
+    internal sealed class ImageFamily : Command
     {
         public ImageFamily() : base("image", "Commands to manage images")
         {

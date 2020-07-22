@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class Nero
+    public sealed partial class Nero
     {
         static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {

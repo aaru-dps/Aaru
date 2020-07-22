@@ -32,7 +32,7 @@
 
 namespace Aaru.Filesystems
 {
-    public partial class HPOFS
+    public sealed partial class HPOFS
     {
         readonly byte[] _type =
         {

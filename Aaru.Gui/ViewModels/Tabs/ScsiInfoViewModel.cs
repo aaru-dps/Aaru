@@ -47,7 +47,7 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class ScsiInfoViewModel : ViewModelBase
+    public sealed class ScsiInfoViewModel : ViewModelBase
     {
         readonly byte[] _configuration;
         readonly byte[] _scsiModeSense10;
@@ -311,7 +311,8 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x21:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "CERTANCE")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() ==
+                                   "CERTANCE")
                                     decodedText = Modes.PrettifyCertanceModePage_21(page.PageResponse);
                                 else
                                     goto default;
@@ -320,7 +321,8 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x22:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "CERTANCE")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() ==
+                                   "CERTANCE")
                                     decodedText = Modes.PrettifyCertanceModePage_22(page.PageResponse);
                                 else
                                     goto default;
@@ -329,7 +331,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x24:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_24(page.PageResponse);
                                 else
                                     goto default;
@@ -347,7 +349,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x2F:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_2F(page.PageResponse);
                                 else
                                     goto default;
@@ -365,7 +367,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x3B:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3B(page.PageResponse);
                                 else
                                     goto default;
@@ -374,7 +376,7 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x3C:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3C(page.PageResponse);
                                 else
                                     goto default;
@@ -383,9 +385,9 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x3D:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "IBM")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "IBM")
                                     decodedText = Modes.PrettifyIBMModePage_3D(page.PageResponse);
-                                else if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
+                                else if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3D(page.PageResponse);
                                 else
                                     goto default;
@@ -394,9 +396,9 @@ namespace Aaru.Gui.ViewModels.Tabs
                             }
                             case 0x3E:
                             {
-                                if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "FUJITSU")
+                                if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "FUJITSU")
                                     decodedText = Modes.PrettifyFujitsuModePage_3E(page.PageResponse);
-                                else if(StringHandlers.CToString(scsiInquiry?.VendorIdentification).Trim() == "HP")
+                                else if(StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).Trim() == "HP")
                                     decodedText = Modes.PrettifyHPModePage_3E(page.PageResponse);
                                 else
                                     goto default;
@@ -974,7 +976,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
         }
 
-        protected async void ExecuteSaveInquiryBinaryCommand()
+        async void ExecuteSaveInquiryBinaryCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -998,7 +1000,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveInquiryTextCommand()
+        async void ExecuteSaveInquiryTextCommand()
         {
             var dlgSaveText = new SaveFileDialog();
 
@@ -1022,7 +1024,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveModeSense6Command()
+        async void ExecuteSaveModeSense6Command()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -1046,7 +1048,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveModeSense10Command()
+        async void ExecuteSaveModeSense10Command()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -1070,7 +1072,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveEvpdPageCommand()
+        async void ExecuteSaveEvpdPageCommand()
         {
             if(!(SelectedEvpdPage is ScsiPageModel pageModel))
                 return;
@@ -1097,7 +1099,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveMmcFeaturesCommand()
+        async void ExecuteSaveMmcFeaturesCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 

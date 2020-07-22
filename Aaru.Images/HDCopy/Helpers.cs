@@ -36,7 +36,7 @@ using System.IO;
 
 namespace Aaru.DiscImages
 {
-    public partial class HdCopy
+    public sealed partial class HdCopy
     {
         void ReadTrackIntoCache(Stream stream, int tracknum)
         {

@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret
+    public sealed partial class DiscFerret
     {
         public bool Identify(IFilter imageFilter)
         {

@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120
+    public sealed partial class Alcohol120
     {
         const byte _maximumSupportedVersion = 1;
         readonly byte[] _alcoholSignature =

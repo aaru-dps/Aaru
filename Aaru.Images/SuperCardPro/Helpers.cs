@@ -36,7 +36,7 @@ using System.Text;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         static string ReadPStringUtf8(Stream stream, uint position)
         {

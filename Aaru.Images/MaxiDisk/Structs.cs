@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class MaxiDisk
+    public sealed partial class MaxiDisk
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HdkHeader

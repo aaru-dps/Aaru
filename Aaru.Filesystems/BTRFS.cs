@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class BTRFS : IFilesystem
+    public sealed class BTRFS : IFilesystem
     {
         /// <summary>BTRFS magic "_BHRfS_M"</summary>
         const ulong BTRFS_MAGIC = 0x4D5F53665248425F;

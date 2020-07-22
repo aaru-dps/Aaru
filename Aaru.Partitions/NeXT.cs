@@ -46,7 +46,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
-    public class NeXTDisklabel : IPartition
+    public sealed class NeXTDisklabel : IPartition
     {
         /// <summary>"NeXT"</summary>
         const uint NEXT_MAGIC1 = 0x4E655854;

@@ -37,7 +37,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ushort XA_MAGIC = 0x5841; // "XA"
 

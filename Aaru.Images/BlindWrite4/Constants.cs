@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite4
+    public sealed partial class BlindWrite4
     {
         /// <summary>"BLINDWRITE TOC FILE"</summary>
         readonly byte[] _bw4Signature =

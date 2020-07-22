@@ -37,7 +37,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class HdCopy
+    public sealed partial class HdCopy
     {
         public bool Identify(IFilter imageFilter)
         {

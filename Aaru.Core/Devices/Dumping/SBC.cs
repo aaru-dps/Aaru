@@ -54,6 +54,8 @@ using MediaType = Aaru.CommonTypes.MediaType;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping SCSI Block Commands and Reduced Block Commands devices</summary>
@@ -63,7 +65,7 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="opticalDisc">If device contains an optical disc (e.g. DVD or BD)</param>
         /// <param name="mediaTags">Media tags as retrieved in MMC layer</param>
         /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
-        internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc)
+        void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc)
         {
             bool               sense;
             byte               scsiMediumType     = 0;
@@ -168,10 +170,10 @@ namespace Aaru.Core.Devices.Dumping
                            decMode.Value.Header.BlockDescriptors.Length >= 1)
                             scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
-                        containsFloppyPage = decMode.Value.Pages != null &&
-                                             decMode.Value.Pages.Aggregate(containsFloppyPage,
-                                                                           (current, modePage) =>
-                                                                               current | (modePage.Page == 0x05));
+                        containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,
+                                                                            (current, modePage) =>
+                                                                                current | (modePage.Page == 0x05)) ==
+                                             true;
                     }
                 }
             }
@@ -308,11 +310,8 @@ namespace Aaru.Core.Devices.Dumping
 
             ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys)
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
             {
-                if(_outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
                 ErrorMessage?.Invoke($"Output format does not support {tag}.");
@@ -611,15 +610,13 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocks - i < blocksToRead)
                     blocksToRead = (uint)(blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
@@ -649,7 +646,7 @@ namespace Aaru.Core.Devices.Dumping
                             WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
 
                         UpdateStatus?.
-                            Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropraitely");
+                            Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately");
 
                         continue;
                     }
@@ -751,8 +748,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
-                UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
-                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                UpdateStatus?.Invoke($"Trimming finished in {(end - start).TotalSeconds} seconds.");
+                _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 
@@ -786,24 +783,22 @@ namespace Aaru.Core.Devices.Dumping
                         {
                             Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, _dev.ScsiType);
 
-                            if(dcMode10.HasValue &&
-                               dcMode10.Value.Pages != null)
-                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page    == 0x01 &&
-                                       modePage.Subpage == 0x00)
-                                        currentModePage = modePage;
+                            if(dcMode10?.Pages != null)
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
+                                                                                                  modePage.Page ==
+                                                                                                  0x01 && modePage.
+                                                                                                      Subpage == 0x00))
+                                    currentModePage = modePage;
                         }
                     }
                     else
                     {
                         Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
-                        if(dcMode6.HasValue &&
-                           dcMode6.Value.Pages != null)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                        if(dcMode6?.Pages != null)
+                            foreach(var modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page    == 0x01 &&
+                                                                                          modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
 
                     if(currentModePage == null)
@@ -1117,14 +1112,11 @@ namespace Aaru.Core.Devices.Dumping
                                 sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
                                                          ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
-                            decMode = null;
-
                             if(!sense &&
                                !_dev.Error)
                                 if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                                 {
-                                    decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
-                                    ret     = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
+                                    ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
 
                                     if(!ret &&
                                        !_force)
@@ -1155,8 +1147,7 @@ namespace Aaru.Core.Devices.Dumping
                                !_dev.Error)
                                 if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                                 {
-                                    decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
-                                    ret     = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
+                                    ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
 
                                     if(!ret &&
                                        !_force)

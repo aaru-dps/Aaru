@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class PartClone
+    public sealed partial class PartClone
     {
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");

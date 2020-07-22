@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -52,6 +53,7 @@ namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {
+        [SuppressMessage("ReSharper", "JoinDeclarationAndInitializer")]
         void DumpMs()
         {
             const ushort sbcProfile    = 0x0001;
@@ -184,15 +186,13 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocks - i < blocksToRead)
                     blocksToRead = (uint)(blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i, blocks);
 
@@ -317,7 +317,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
-                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 
@@ -350,10 +350,11 @@ namespace Aaru.Core.Devices.Dumping
                             Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, _dev.ScsiType);
 
                             if(dcMode10.HasValue)
-                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                    if(modePage.Page    == 0x01 &&
-                                       modePage.Subpage == 0x00)
-                                        currentModePage = modePage;
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
+                                                                                                  modePage.Page ==
+                                                                                                  0x01 && modePage.
+                                                                                                      Subpage == 0x00))
+                                    currentModePage = modePage;
                         }
                     }
                     else
@@ -361,10 +362,10 @@ namespace Aaru.Core.Devices.Dumping
                         Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
                         if(dcMode6.HasValue)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                                                                             modePage.Page    == 0x01 &&
+                                                                                             modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
 
                     if(currentModePage == null)
@@ -507,7 +508,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
                     _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
-                    sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
+                    _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
                 }
 
                 EndProgress?.Invoke();

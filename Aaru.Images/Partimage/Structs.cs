@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class Partimage
+    public sealed partial class Partimage
     {
         /// <summary>Partimage disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -42,7 +42,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CdrWin
+    public sealed partial class CdrWin
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -86,7 +86,9 @@ namespace Aaru.DiscImages
             // TODO: Separate tracks
             try
             {
-                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _writingBaseName =
+                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
                 _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
             }
             catch(IOException e)

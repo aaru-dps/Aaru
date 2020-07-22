@@ -39,7 +39,7 @@ namespace Aaru.Filters
     ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams) by doing the
     ///     slow and known trick of rewinding and forward reading until arriving the desired position.
     /// </summary>
-    public class ForcedSeekStream<T> : Stream where T : Stream
+    public sealed class ForcedSeekStream<T> : Stream where T : Stream
     {
         const    int        BUFFER_LEN = 1048576;
         readonly string     _backFile;

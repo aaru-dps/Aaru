@@ -40,7 +40,7 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class DvdWritableInfoViewModel
+    public sealed class DvdWritableInfoViewModel
     {
         readonly byte[] _dvdLastBorderOutRmd;
         readonly byte[] _dvdPlusAdip;

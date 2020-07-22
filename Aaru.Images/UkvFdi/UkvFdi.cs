@@ -37,7 +37,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class UkvFdi : IMediaImage
+    public sealed partial class UkvFdi : IMediaImage
     {
         ImageInfo _imageInfo;
 

@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Partitions
 {
-    public class Acorn : IPartition
+    public sealed class Acorn : IPartition
     {
         const ulong ADFS_SB_POS      = 0xC00;
         const uint  LINUX_MAGIC      = 0xDEAFA1DE;

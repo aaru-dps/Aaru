@@ -41,7 +41,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Btrfs
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "linux.aif", "linux_4.19_btrfs_flashdrive.aif"
         };
@@ -51,7 +51,7 @@ namespace Aaru.Tests.Filesystems
             262144, 1024000
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512
         };
@@ -61,17 +61,17 @@ namespace Aaru.Tests.Filesystems
             32512, 127744
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             4096, 4096
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "VolumeLabel", "btrfs"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "a4fc5201-85cc-6840-8a68-998cab9ae897", "5af44541-0605-f541-af6d-c229576707ab"
         };
@@ -79,17 +79,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IPartition parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), _testfiles[i]);
+                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), _testFiles[i]);
                 IFilesystem fs   = new BTRFS();
                 int         part = -1;
 
@@ -101,14 +101,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual("B-tree file system", fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual("B-tree file system", fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }
         }
     }

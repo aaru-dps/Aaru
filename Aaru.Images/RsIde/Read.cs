@@ -42,7 +42,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde
+    public sealed partial class RsIde
     {
         public bool Open(IFilter imageFilter)
         {

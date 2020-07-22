@@ -36,7 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class UkvFdi
+    public sealed partial class UkvFdi
     {
         [Flags]
         enum DiskFlags : byte

@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Gui.Models
 {
-    public class SubdirectoryModel
+    public sealed class SubdirectoryModel
     {
         public SubdirectoryModel() => Subdirectories = new ObservableCollection<SubdirectoryModel>();
 

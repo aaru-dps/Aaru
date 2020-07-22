@@ -44,7 +44,7 @@ using Schemas;
 
 namespace Aaru.Commands.Image
 {
-    internal class ChecksumCommand : Command
+    internal sealed class ChecksumCommand : Command
     {
         // How many sectors to read at once
         const uint SECTORS_TO_READ = 256;

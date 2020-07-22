@@ -32,7 +32,7 @@
 
 namespace Aaru.Gui.Models
 {
-    public class DumpHardwareModel
+    public sealed class DumpHardwareModel
     {
         public string Manufacturer { get; set; }
 

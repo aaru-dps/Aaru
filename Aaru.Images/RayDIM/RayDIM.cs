@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class RayDim : IWritableImage
+    public sealed partial class RayDim : IWritableImage
     {
         MemoryStream _disk;
         ImageInfo    _imageInfo;

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow2
+    public sealed partial class Qcow2
     {
         /// <summary>QCOW header, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

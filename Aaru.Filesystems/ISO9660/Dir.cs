@@ -42,7 +42,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
 

@@ -13,10 +13,7 @@ namespace Aaru.Database.Migrations
                 Version      = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>(),
                 Count        = table.Column<ulong>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_RemoteApplications", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_RemoteApplications", x => x.Id));
 
             migrationBuilder.CreateTable("RemoteArchitectures", table => new
             {
@@ -24,10 +21,7 @@ namespace Aaru.Database.Migrations
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>(),
                 Count        = table.Column<ulong>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_RemoteArchitectures", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_RemoteArchitectures", x => x.Id));
 
             migrationBuilder.CreateTable("RemoteOperatingSystems", table => new
             {
@@ -36,10 +30,7 @@ namespace Aaru.Database.Migrations
                 Version      = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>(),
                 Count        = table.Column<ulong>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_RemoteOperatingSystems", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_RemoteOperatingSystems", x => x.Id));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

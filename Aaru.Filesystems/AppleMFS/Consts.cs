@@ -36,7 +36,7 @@ namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         const ushort MFS_MAGIC = 0xD2D7;
 

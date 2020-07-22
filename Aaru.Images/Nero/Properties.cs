@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Nero
+    public sealed partial class Nero
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Nero Burning ROM image";

@@ -48,13 +48,15 @@ using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping MiniDisc Data devices</summary>
     partial class Dump
     {
         /// <summary>Dumps a MiniDisc Data device</summary>
-        internal void MiniDisc()
+        void MiniDisc()
         {
             bool                             sense;
             byte                             scsiMediumType = 0;
@@ -206,11 +208,8 @@ namespace Aaru.Core.Devices.Dumping
 
             ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys)
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
             {
-                if(_outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
                 ErrorMessage?.Invoke($"Output format does not support {tag}.");
@@ -341,15 +340,13 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocks - i < blocksToRead)
                     blocksToRead = (uint)(blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
@@ -497,12 +494,11 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
-                        if(dcMode6.HasValue &&
-                           dcMode6.Value.Pages != null)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                        if(dcMode6?.Pages != null)
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                                                                             modePage.Page    == 0x01 &&
+                                                                                             modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
 
                     if(currentModePage == null)

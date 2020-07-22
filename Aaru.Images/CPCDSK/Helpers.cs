@@ -34,7 +34,7 @@ using Aaru.Decoders.Floppy;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         static int SizeCodeToBytes(IBMSectorSizeCode code)
         {

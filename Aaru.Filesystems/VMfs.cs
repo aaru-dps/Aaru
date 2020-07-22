@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedType.Local"), SuppressMessage("ReSharper", "IdentifierTypo"),
      SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class VMfs : IFilesystem
+    public sealed class VMfs : IFilesystem
     {
         /// <summary>Identifier for VMfs</summary>
         const uint VMFS_MAGIC = 0xC001D00D;

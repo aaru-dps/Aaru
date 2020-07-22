@@ -39,9 +39,11 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 
+// ReSharper disable InlineOutVariableDeclaration
+
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         public void ReportGdRomSwapTrick(ref DeviceReportV2 report)
         {
@@ -92,10 +94,10 @@ namespace Aaru.Core.Devices.Report
 
                 FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
 
-                if(decodedSense.Value.ASC != 0x04)
+                if(decodedSense?.ASC != 0x04)
                     break;
 
-                if(decodedSense.Value.ASCQ != 0x01)
+                if(decodedSense?.ASCQ != 0x01)
                     break;
 
                 Thread.Sleep(2000);
@@ -214,7 +216,7 @@ namespace Aaru.Core.Devices.Report
                 if(decodedSense?.ASC != 0x04)
                     break;
 
-                if(decodedSense.Value.ASCQ != 0x01)
+                if(decodedSense?.ASCQ != 0x01)
                     break;
             } while(retries < 25);
 

@@ -45,7 +45,7 @@ using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu
+    public sealed partial class Blu
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -66,7 +66,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -246,8 +246,7 @@ namespace Aaru.DiscImages
                     return false;
             }
 
-            if(newTag == null)
-                newTag = new byte[longSectorSize - 512];
+            newTag ??= new byte[longSectorSize - 512];
 
             _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
             _writingStream.Write(data, 0, 512);
@@ -351,8 +350,7 @@ namespace Aaru.DiscImages
                         return false;
                 }
 
-                if(newTag == null)
-                    newTag = new byte[longSectorSize - 512];
+                newTag ??= new byte[longSectorSize - 512];
 
                 _writingStream.Seek(longSectorSize + ((long)sectorAddress * longSectorSize), SeekOrigin.Begin);
                 _writingStream.Write(data, (int)(givenSectorSize          * i), 512);

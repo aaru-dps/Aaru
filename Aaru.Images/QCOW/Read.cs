@@ -45,7 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages
 {
-    public partial class Qcow
+    public sealed partial class Qcow
     {
         public bool Open(IFilter imageFilter)
         {

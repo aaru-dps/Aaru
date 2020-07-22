@@ -35,7 +35,7 @@ using System.Collections.Generic;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscFerret
+    public sealed partial class DiscFerret
     {
         public bool? VerifySector(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");

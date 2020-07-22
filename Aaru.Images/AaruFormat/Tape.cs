@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
         public List<TapeFile>      Files          { get; private set; }
         public List<TapePartition> TapePartitions { get; private set; }

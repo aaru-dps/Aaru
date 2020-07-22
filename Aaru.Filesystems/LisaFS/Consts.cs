@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Filesystems.LisaFS
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         /// <summary>Lisa FS v1, from Lisa OS 1.0 (Workshop or Office) Never seen on Sony floppies.</summary>
         const byte LISA_V1 = 0x0E;

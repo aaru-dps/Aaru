@@ -89,7 +89,7 @@ namespace Aaru.Core.Media.Info
                 {
                     dataTrack = tracks.FirstOrDefault(t => t.TrackType != TrackType.Audio);
 
-                    if(dataTrack.TrackSequence != 0)
+                    if(dataTrack != null)
                     {
                         // Build sync
                         sectorSync = new byte[]
@@ -171,9 +171,9 @@ namespace Aaru.Core.Media.Info
                                         break;
                                 }
 
-                                sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda,
-                                                   false, false, false, MmcHeaderCodes.None, true, false,
-                                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
+                                           false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
 
                                 for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                                 {

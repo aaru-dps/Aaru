@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Information from an old unnamed document
-    public class HPFS : IFilesystem
+    public sealed class HPFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

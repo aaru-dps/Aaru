@@ -34,7 +34,7 @@ using Aaru.Console;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         public bool ReadCsd(out byte[] buffer, out uint[] response, uint timeout, out double duration)
         {

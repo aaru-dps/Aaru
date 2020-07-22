@@ -36,7 +36,7 @@ using Aaru.Decoders.SCSI.MMC;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite5
+    public sealed partial class BlindWrite5
     {
         static TrackType BlindWriteTrackTypeToTrackType(Bw5TrackType trackType)
         {

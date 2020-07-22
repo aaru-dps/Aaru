@@ -37,7 +37,7 @@ using Avalonia.Media.Imaging;
 
 namespace Aaru.Gui.Models
 {
-    public class PartitionModel
+    public sealed class PartitionModel
     {
         public PartitionModel() => FileSystems = new ObservableCollection<FileSystemModel>();
 

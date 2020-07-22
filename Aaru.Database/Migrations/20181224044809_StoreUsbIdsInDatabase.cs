@@ -13,10 +13,7 @@ namespace Aaru.Database.Migrations
                 Vendor       = table.Column<string>(nullable: true),
                 AddedWhen    = table.Column<DateTime>(),
                 ModifiedWhen = table.Column<DateTime>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_UsbVendors", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_UsbVendors", x => x.Id));
 
             migrationBuilder.CreateTable("UsbProducts", table => new
             {

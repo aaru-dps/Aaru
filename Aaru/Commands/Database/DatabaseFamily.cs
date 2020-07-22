@@ -34,10 +34,10 @@ using System.CommandLine;
 
 namespace Aaru.Commands.Database
 {
-    public class DatabaseFamily : Command
+    internal sealed class DatabaseFamily : Command
     {
-        public DatabaseFamily(bool mainDbUpdate) : base("database",
-                                                        "Commands to manage the device and statistics database")
+        internal DatabaseFamily(bool mainDbUpdate) : base("database",
+                                                          "Commands to manage the device and statistics database")
         {
             AddAlias("db");
 

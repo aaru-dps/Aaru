@@ -45,7 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin
+    public sealed partial class XboxFatPlugin
     {
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
@@ -53,8 +53,7 @@ namespace Aaru.Filesystems
             Encoding      = Encoding.GetEncoding("iso-8859-15");
             _littleEndian = true;
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);

@@ -34,7 +34,7 @@ using Aaru.Console;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Reads an attribute from the medium auxiliary memory, or reports which elements in the changer contain one</summary>
         /// <param name="buffer">Buffer.</param>

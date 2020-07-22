@@ -36,7 +36,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         const uint FSINFO_SIGNATURE1 = 0x41615252;
         const uint FSINFO_SIGNATURE2 = 0x61417272;

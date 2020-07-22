@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite4
+    public sealed partial class BlindWrite4
     {
         public bool Identify(IFilter imageFilter)
         {

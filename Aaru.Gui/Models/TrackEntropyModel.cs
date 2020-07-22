@@ -32,7 +32,7 @@
 
 namespace Aaru.Gui.Models
 {
-    public class TrackEntropyModel
+    public sealed class TrackEntropyModel
     {
         public string Track         { get; set; }
         public string Entropy       { get; set; }

@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class SFS : IFilesystem
+    public sealed class SFS : IFilesystem
     {
         /// <summary>Identifier for SFS v1</summary>
         const uint SFS_MAGIC = 0x53465300;
@@ -108,7 +108,7 @@ namespace Aaru.Filesystems
             if(rootBlock.bits.HasFlag(Flags.CaseSensitive))
                 sbInformation.AppendLine("Volume is case sensitive");
 
-            if(rootBlock.bits.HasFlag(Flags.RecyledFolder))
+            if(rootBlock.bits.HasFlag(Flags.RecycledFolder))
                 sbInformation.AppendLine("Volume moves deleted files to a recycled folder");
 
             information = sbInformation.ToString();
@@ -126,7 +126,7 @@ namespace Aaru.Filesystems
         [Flags]
         enum Flags : byte
         {
-            RecyledFolder = 64, CaseSensitive = 128
+            RecycledFolder = 64, CaseSensitive = 128
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

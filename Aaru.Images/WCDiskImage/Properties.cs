@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class WCDiskImage
+    public sealed partial class WCDiskImage
     {
         public ImageInfo Info => _imageInfo;
 

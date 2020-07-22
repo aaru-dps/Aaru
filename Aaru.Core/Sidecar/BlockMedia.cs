@@ -51,7 +51,7 @@ using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         /// <summary>Creates a metadata sidecar for a block media (e.g. floppy, hard disk, flash card, usb stick)</summary>
         /// <param name="image">Image</param>

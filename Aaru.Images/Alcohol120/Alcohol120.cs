@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Alcohol120 : IWritableOpticalImage
+    public sealed partial class Alcohol120 : IWritableOpticalImage
     {
         AlcoholFooter                                  _alcFooter;
         IFilter                                        _alcImage;

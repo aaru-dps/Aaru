@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
         byte[] _eccBTable;
         byte[] _eccFTable;
@@ -111,14 +111,14 @@ namespace Aaru.DiscImages
             if(!_initedEdc)
                 EccInit();
 
-            byte[] zeroaddress = new byte[4];
+            byte[] zeroAddress = new byte[4];
 
-            bool correctEccP = CheckEcc(zeroaddress, sector, 86, 24, 2, 86, sector, 0, 0x10, 0x81C);
+            bool correctEccP = CheckEcc(zeroAddress, sector, 86, 24, 2, 86, sector, 0, 0x10, 0x81C);
 
             if(!correctEccP)
                 return false;
 
-            bool correctEccQ = CheckEcc(zeroaddress, sector, 52, 43, 86, 88, sector, 0, 0x10, 0x81C + 0xAC);
+            bool correctEccQ = CheckEcc(zeroAddress, sector, 52, 43, 86, 88, sector, 0, 0x10, 0x81C + 0xAC);
 
             if(!correctEccQ)
                 return false;
@@ -309,7 +309,7 @@ namespace Aaru.DiscImages
                 default: return;
             }
 
-            byte[] zeroaddress = new byte[4];
+            byte[] zeroAddress = new byte[4];
 
             switch(type)
             {
@@ -332,7 +332,7 @@ namespace Aaru.DiscImages
 
                     break;
                 case TrackType.CdMode2Form1:
-                    EccWriteSector(zeroaddress, sector, ref sector, 0, 0x10, 0x81C);
+                    EccWriteSector(zeroAddress, sector, ref sector, 0, 0x10, 0x81C);
 
                     break;
                 default: return;

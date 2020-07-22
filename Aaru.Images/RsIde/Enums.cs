@@ -34,7 +34,7 @@ using System;
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde
+    public sealed partial class RsIde
     {
         [Flags]
         enum RsIdeFlags : byte

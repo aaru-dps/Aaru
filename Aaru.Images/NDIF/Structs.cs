@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class Ndif
+    public sealed partial class Ndif
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ChunkHeader

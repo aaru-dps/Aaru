@@ -34,6 +34,7 @@
 using System;
 using System.Collections.ObjectModel;
 using Aaru.Console;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui
 {
@@ -84,7 +85,7 @@ namespace Aaru.Gui
             AaruConsole.ErrorWriteLineEvent += OnErrorWriteHandler;
         }
 
-        static void OnWriteHandler(string format, params object[] arg)
+        static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
         {
             if(format == null ||
                arg    == null)
@@ -99,7 +100,7 @@ namespace Aaru.Gui
             });
         }
 
-        static void OnErrorWriteHandler(string format, params object[] arg)
+        static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
         {
             if(format == null ||
                arg    == null)
@@ -114,7 +115,7 @@ namespace Aaru.Gui
             });
         }
 
-        static void OnVerboseWriteHandler(string format, params object[] arg)
+        static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
         {
             if(format == null ||
                arg    == null)
@@ -129,7 +130,7 @@ namespace Aaru.Gui
             });
         }
 
-        static void OnDebugWriteHandler(string module, string format, params object[] arg)
+        static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
         {
             if(format == null ||
                arg    == null)
@@ -145,7 +146,7 @@ namespace Aaru.Gui
         }
     }
 
-    public class LogEntry
+    public sealed class LogEntry
     {
         public string   Message   { get; set; }
         public string   Module    { get; set; }

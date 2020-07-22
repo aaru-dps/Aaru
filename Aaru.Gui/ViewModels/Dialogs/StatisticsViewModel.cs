@@ -37,11 +37,13 @@ using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using JetBrains.Annotations;
 using ReactiveUI;
+using NameCountModel = Aaru.Gui.Models.NameCountModel;
 
 namespace Aaru.Gui.ViewModels.Dialogs
 {
-    public class StatisticsViewModel : ViewModelBase
+    public sealed class StatisticsViewModel : ViewModelBase
     {
         readonly StatisticsDialog _view;
 
@@ -643,33 +645,53 @@ namespace Aaru.Gui.ViewModels.Dialogs
             set => this.RaiseAndSetIfChanged(ref _mediasVisible, value);
         }
 
-        public string                                 CommandsLabel     => "Commands";
-        public string                                 FilterLabel       => "Filter";
-        public string                                 PartitionLabel    => "Partition";
-        public string                                 PartitionsLabel   => "Partitions";
-        public string                                 FiltersLabel      => "Filters";
-        public string                                 FormatsLabel      => "Formats";
-        public string                                 FormatLabel       => "Format";
-        public string                                 FilesystemsLabel  => "Filesystems";
-        public string                                 FilesystemLabel   => "Filesystem";
-        public string                                 TimesFoundLabel   => "Times found";
-        public string                                 DevicesLabel      => "Devices";
-        public string                                 DeviceLabel       => "Device";
-        public string                                 ManufacturerLabel => "Manufacturer";
-        public string                                 RevisionLabel     => "Revision";
-        public string                                 BusLabel          => "Bus";
-        public string                                 MediasLabel       => "Medias";
-        public string                                 MediaLabel        => "Media";
-        public string                                 TypeLabel         => "Type";
-        public string                                 Title             => "Encodings";
-        public string                                 CloseLabel        => "Close";
-        public ReactiveCommand<Unit, Unit>            CloseCommand      { get; }
-        public ObservableCollection<NameCountModel>   Filters           { get; }
-        public ObservableCollection<NameCountModel>   Formats           { get; }
-        public ObservableCollection<NameCountModel>   Partitions        { get; }
-        public ObservableCollection<NameCountModel>   Filesystems       { get; }
-        public ObservableCollection<DeviceStatsModel> Devices           { get; }
-        public ObservableCollection<MediaStatsModel>  Medias            { get; }
+        [NotNull]
+        public string CommandsLabel => "Commands";
+        [NotNull]
+        public string FilterLabel => "Filter";
+        [NotNull]
+        public string PartitionLabel => "Partition";
+        [NotNull]
+        public string PartitionsLabel => "Partitions";
+        [NotNull]
+        public string FiltersLabel => "Filters";
+        [NotNull]
+        public string FormatsLabel => "Formats";
+        [NotNull]
+        public string FormatLabel => "Format";
+        [NotNull]
+        public string FilesystemsLabel => "Filesystems";
+        [NotNull]
+        public string FilesystemLabel => "Filesystem";
+        [NotNull]
+        public string TimesFoundLabel => "Times found";
+        [NotNull]
+        public string DevicesLabel => "Devices";
+        [NotNull]
+        public string DeviceLabel => "Device";
+        [NotNull]
+        public string ManufacturerLabel => "Manufacturer";
+        [NotNull]
+        public string RevisionLabel => "Revision";
+        [NotNull]
+        public string BusLabel => "Bus";
+        [NotNull]
+        public string MediasLabel => "Medias";
+        [NotNull]
+        public string MediaLabel => "Media";
+        [NotNull]
+        public string TypeLabel => "Type";
+        [NotNull]
+        public string Title => "Encodings";
+        [NotNull]
+        public string CloseLabel => "Close";
+        public ReactiveCommand<Unit, Unit>            CloseCommand { get; }
+        public ObservableCollection<NameCountModel>   Filters      { get; }
+        public ObservableCollection<NameCountModel>   Formats      { get; }
+        public ObservableCollection<NameCountModel>   Partitions   { get; }
+        public ObservableCollection<NameCountModel>   Filesystems  { get; }
+        public ObservableCollection<DeviceStatsModel> Devices      { get; }
+        public ObservableCollection<MediaStatsModel>  Medias       { get; }
 
         void ExecuteCloseCommand() => _view.Close();
     }

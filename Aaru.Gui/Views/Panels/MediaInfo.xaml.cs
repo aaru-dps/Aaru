@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Panels
 {
-    public class MediaInfo : UserControl
+    public sealed class MediaInfo : UserControl
     {
         public MediaInfo() => InitializeComponent();
 

@@ -37,7 +37,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         public bool Identify(IFilter imageFilter)
         {

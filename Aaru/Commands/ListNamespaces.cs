@@ -42,7 +42,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands
 {
-    internal class ListNamespacesCommand : Command
+    internal sealed class ListNamespacesCommand : Command
     {
         public ListNamespacesCommand() : base("list-namespaces",
                                               "Lists all namespaces supported by read-only filesystems.") =>
@@ -64,11 +64,9 @@ namespace Aaru.Commands
 
             PluginBase plugins = GetPluginBase.Instance;
 
-            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
+                plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
             {
-                if(kvp.Value.Namespaces is null)
-                    continue;
-
                 AaruConsole.WriteLine("\tNamespaces for {0}:", kvp.Value.Name);
                 AaruConsole.WriteLine("\t\t{0,-16} {1,-16}", "Namespace", "Description");
 

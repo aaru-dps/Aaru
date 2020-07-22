@@ -45,7 +45,7 @@ namespace Aaru.Filesystems
 {
     // Information from http://www.owg.ru/mkt/BK/MKDOS.TXT
     // Thanks to tarlabnor for translating it
-    public class MicroDOS : IFilesystem
+    public sealed class MicroDOS : IFilesystem
     {
         const ushort MAGIC  = 0xA72E;
         const ushort MAGIC2 = 0x530C;

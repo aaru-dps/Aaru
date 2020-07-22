@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class TeleDisk
+    public sealed partial class TeleDisk
     {
         struct TeleDiskHeader
         {

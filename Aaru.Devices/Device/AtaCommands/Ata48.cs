@@ -35,7 +35,7 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         public bool GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLba48 statusRegisters, uint timeout,
                                            out double duration)

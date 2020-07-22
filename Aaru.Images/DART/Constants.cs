@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Dart
+    public sealed partial class Dart
     {
         // Disk types
         const byte DISK_MAC    = 1;

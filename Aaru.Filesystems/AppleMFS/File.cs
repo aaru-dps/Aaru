@@ -41,7 +41,7 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {

@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyQm
+    public sealed partial class CopyQm
     {
         public bool Open(IFilter imageFilter)
         {

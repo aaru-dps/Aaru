@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         /// <summary>SuperCardPro footer signature: "FPCS"</summary>
         const uint FOOTER_SIGNATURE = 0x53435046;

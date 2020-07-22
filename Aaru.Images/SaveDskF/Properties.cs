@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         public string                 Name         => "IBM SaveDskF";
         public Guid                   Id           => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");

@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class DragonFlyBSD : IPartition
+    public sealed class DragonFlyBSD : IPartition
     {
         const uint DISK_MAGIC64 = 0xC4464C59;
 

@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyQm
+    public sealed partial class CopyQm
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Sydex CopyQM";

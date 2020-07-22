@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         public Errno ReadDir(string path, out List<string> contents)
         {

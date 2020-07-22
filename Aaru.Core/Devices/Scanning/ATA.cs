@@ -38,24 +38,26 @@ using Aaru.Core.Logging;
 namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>Implements scanning the media from an ATA device</summary>
-    public partial class MediaScan
+    public sealed partial class MediaScan
     {
         /// <summary>Scans the media from an ATA device</summary>
         /// <returns>Scanning results</returns>
         ScanResults Ata()
         {
-            var  results = new ScanResults();
-            bool sense;
-            results.Blocks = 0;
+            var results = new ScanResults
+            {
+                Blocks = 0
+            };
+
             const ushort ataProfile = 0x0001;
             const uint   timeout    = 5;
 
-            sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
+            bool sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
 
             if(!sense &&
                Identify.Decode(cmdBuf).HasValue)
             {
-                // Initializate reader
+                // Initialize reader
                 var ataReader = new Reader(_dev, timeout, cmdBuf, null);
 
                 // Fill reader blocks
@@ -108,7 +110,7 @@ namespace Aaru.Core.Devices.Scanning
                 results.SeekMax           = double.MinValue;
                 results.SeekMin           = double.MaxValue;
                 results.SeekTotal         = 0;
-                const int SEEK_TIMES = 1000;
+                const int seekTimes = 1000;
 
                 double seekCur;
 
@@ -139,15 +141,13 @@ namespace Aaru.Core.Devices.Scanning
                         if(results.Blocks - i < blocksToRead)
                             blocksToRead = (byte)(results.Blocks - i);
 
-                        #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                         if(currentSpeed > results.MaxSpeed &&
-                           currentSpeed != 0)
+                           currentSpeed > 0)
                             results.MaxSpeed = currentSpeed;
 
                         if(currentSpeed < results.MinSpeed &&
-                           currentSpeed != 0)
+                           currentSpeed > 0)
                             results.MinSpeed = currentSpeed;
-                        #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                         UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i, (long)results.Blocks);
@@ -210,7 +210,7 @@ namespace Aaru.Core.Devices.Scanning
                     InitProgress?.Invoke();
 
                     if(ataReader.CanSeekLba && _seekTest)
-                        for(int i = 0; i < SEEK_TIMES; i++)
+                        for(int i = 0; i < seekTimes; i++)
                         {
                             if(_aborted)
                                 break;
@@ -221,15 +221,13 @@ namespace Aaru.Core.Devices.Scanning
 
                             ataReader.Seek(seekPos, out seekCur);
 
-                            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                             if(seekCur > results.SeekMax &&
-                               seekCur != 0)
+                               seekCur > 0)
                                 results.SeekMax = seekCur;
 
                             if(seekCur < results.SeekMin &&
-                               seekCur != 0)
+                               seekCur > 0)
                                 results.SeekMin = seekCur;
-                            #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                             results.SeekTotal += seekCur;
                             GC.Collect();
@@ -259,15 +257,13 @@ namespace Aaru.Core.Devices.Scanning
                                 if(_aborted)
                                     break;
 
-                                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                                 if(currentSpeed > results.MaxSpeed &&
-                                   currentSpeed != 0)
+                                   currentSpeed > 0)
                                     results.MaxSpeed = currentSpeed;
 
                                 if(currentSpeed < results.MinSpeed &&
-                                   currentSpeed != 0)
+                                   currentSpeed > 0)
                                     results.MinSpeed = currentSpeed;
-                                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                                 PulseProgress?.
                                     Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
@@ -330,7 +326,7 @@ namespace Aaru.Core.Devices.Scanning
                     InitProgress?.Invoke();
 
                     if(ataReader.CanSeek)
-                        for(int i = 0; i < SEEK_TIMES; i++)
+                        for(int i = 0; i < seekTimes; i++)
                         {
                             if(_aborted)
                                 break;
@@ -344,15 +340,13 @@ namespace Aaru.Core.Devices.Scanning
 
                             ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
-                            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                             if(seekCur > results.SeekMax &&
-                               seekCur != 0)
+                               seekCur > 0)
                                 results.SeekMax = seekCur;
 
                             if(seekCur < results.SeekMin &&
-                               seekCur != 0)
+                               seekCur > 0)
                                 results.SeekMin = seekCur;
-                            #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                             results.SeekTotal += seekCur;
                             GC.Collect();
@@ -364,7 +358,7 @@ namespace Aaru.Core.Devices.Scanning
                 results.ProcessingTime /= 1000;
                 results.TotalTime      =  (end - start).TotalSeconds;
                 results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
-                results.SeekTimes      =  SEEK_TIMES;
+                results.SeekTimes      =  seekTimes;
 
                 return results;
             }

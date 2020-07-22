@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class AppleHFS
+    public sealed partial class AppleHFS
     {
         /// <summary>Parent ID of the root directory.</summary>
         const uint kRootParentCnid = 1;

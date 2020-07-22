@@ -34,7 +34,7 @@ using Aaru.CommonTypes;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscJuggler
+    public sealed partial class DiscJuggler
     {
         static MediaType DecodeCdiMediumType(ushort type)
         {

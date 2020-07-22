@@ -46,7 +46,7 @@ using Aaru.Helpers;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class AmigaRigidDiskBlock : IPartition
+    public sealed class AmigaRigidDiskBlock : IPartition
     {
         /// <summary>RDB magic number "RDSK"</summary>
         const uint RIGID_DISK_BLOCK_MAGIC = 0x5244534B;

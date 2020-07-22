@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Tabs
 {
-    public class XboxInfo : UserControl
+    public sealed class XboxInfo : UserControl
     {
         public XboxInfo() => InitializeComponent();
 

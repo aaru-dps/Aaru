@@ -40,7 +40,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class Gdi
+    public sealed partial class Gdi
     {
         public string    Name   => "Dreamcast GDI image";
         public Guid      Id     => new Guid("281ECBF2-D2A7-414C-8497-1A33F6DCB2DD");

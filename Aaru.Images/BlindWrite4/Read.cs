@@ -48,7 +48,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite4
+    public sealed partial class BlindWrite4
     {
         public bool Open(IFilter imageFilter)
         {

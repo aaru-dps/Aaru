@@ -35,7 +35,7 @@ using Aaru.Decoders.Floppy;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CpcDiskInfo
@@ -89,7 +89,7 @@ namespace Aaru.DiscImages
             public readonly byte gap3;
             /// <summary>Filler</summary>
             public readonly byte filler;
-            /// <summary>Informatino for up to 32 sectors</summary>
+            /// <summary>Information for up to 32 sectors</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly CpcSectorInfo[] sectorsInfo;
         }

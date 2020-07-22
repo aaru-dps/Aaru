@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class Squash : IFilesystem
+    public sealed class Squash : IFilesystem
     {
         /// <summary>Identifier for Squash</summary>
         const uint SQUASH_MAGIC = 0x73717368;

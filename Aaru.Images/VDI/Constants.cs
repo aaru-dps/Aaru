@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Vdi
+    public sealed partial class Vdi
     {
         const uint VDI_MAGIC = 0xBEDA107F;
         const uint VDI_EMPTY = 0xFFFFFFFF;

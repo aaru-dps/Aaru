@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class PFS : IFilesystem
+    public sealed class PFS : IFilesystem
     {
         /// <summary>Identifier for AFS (PFS v1)</summary>
         const uint AFS_DISK = 0x41465301;

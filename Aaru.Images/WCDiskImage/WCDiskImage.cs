@@ -40,7 +40,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
-    public partial class WCDiskImage : IMediaImage
+    public sealed partial class WCDiskImage : IMediaImage
     {
         public Dictionary<(int cylinder, int head, int sector), bool> badSectors =
             new Dictionary<(int cylinder, int head, int sector), bool>();

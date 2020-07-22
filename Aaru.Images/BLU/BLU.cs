@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu : IWritableImage, IVerifiableSectorsImage
+    public sealed partial class Blu : IWritableImage, IVerifiableSectorsImage
     {
         IFilter    _bluImageFilter;
         int        _bptag;

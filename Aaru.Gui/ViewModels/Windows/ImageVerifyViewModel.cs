@@ -46,7 +46,7 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ImageVerifyViewModel : ViewModelBase
+    public sealed class ImageVerifyViewModel : ViewModelBase
     {
         readonly IMediaImage _inputFormat;
         readonly Window      _view;
@@ -658,7 +658,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
         void ExecuteCloseCommand() => _view.Close();
 
-        protected internal void ExecuteStopCommand()
+        internal void ExecuteStopCommand()
         {
             _cancel     = true;
             StopEnabled = false;

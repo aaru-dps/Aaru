@@ -35,7 +35,7 @@ using Aaru.Decoders.SCSI;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Scan the medium for a contiguous set of written or blank logical blocks</summary>
         /// <param name="senseBuffer">Sense buffer.</param>

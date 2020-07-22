@@ -43,11 +43,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using JetBrains.Annotations;
 using Schemas;
 
 namespace Aaru.Commands.Image
 {
-    internal class CreateSidecarCommand : Command
+    internal sealed class CreateSidecarCommand : Command
     {
         public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
         {
@@ -90,8 +91,8 @@ namespace Aaru.Commands.Image
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, uint blockSize, string encodingName, string imagePath,
-                                 bool tape)
+        public static int Invoke(bool debug, bool verbose, uint blockSize, [CanBeNull] string encodingName,
+                                 string imagePath, bool tape)
         {
             MainClass.PrintCopyright();
 

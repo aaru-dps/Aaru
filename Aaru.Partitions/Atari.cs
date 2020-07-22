@@ -41,7 +41,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Partitions
 {
-    public class AtariPartitions : IPartition
+    public sealed class AtariPartitions : IPartition
     {
         const uint TypeGEMDOS     = 0x0047454D;
         const uint TypeBigGEMDOS  = 0x0042474D;

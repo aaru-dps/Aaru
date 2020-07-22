@@ -43,7 +43,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aaru.Commands.Database
 {
-    internal class UpdateCommand : Command
+    internal sealed class UpdateCommand : Command
     {
         readonly bool _mainDbUpdate;
 
@@ -66,7 +66,7 @@ namespace Aaru.Commands.Database
             Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
         }
 
-        public int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
+        int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
         {
             if(_mainDbUpdate)
                 return (int)ErrorNumber.NoError;

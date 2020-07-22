@@ -38,7 +38,7 @@ using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
 namespace Aaru.Core.Devices
 {
-    internal partial class Reader
+    internal sealed partial class Reader
     {
         Identify.IdentifyDevice _ataId;
         bool                    _ataRead;

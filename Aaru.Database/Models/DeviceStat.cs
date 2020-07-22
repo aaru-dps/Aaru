@@ -32,7 +32,7 @@
 
 namespace Aaru.Database.Models
 {
-    public class DeviceStat : BaseModel<int>
+    public class DeviceStat : BaseModel
     {
         public string Manufacturer { get; set; }
         public string Model        { get; set; }

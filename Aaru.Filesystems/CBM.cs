@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class CBM : IFilesystem
+    public sealed class CBM : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public string         Name      => "Commodore file system";

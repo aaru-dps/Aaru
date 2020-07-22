@@ -120,10 +120,10 @@ namespace Aaru.Core.Devices.Dumping
                             Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                         if(dcMode10?.Pages != null)
-                            foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
-                                if(modePage.Page    == 0x01 &&
-                                   modePage.Subpage == 0x00)
-                                    currentModePage = modePage;
+                            foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
+                                                                                              modePage.Page == 0x01 &&
+                                                                                              modePage.Subpage == 0x00))
+                                currentModePage = modePage;
                     }
                 }
                 else
@@ -131,10 +131,10 @@ namespace Aaru.Core.Devices.Dumping
                     Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
                     if(dcMode6?.Pages != null)
-                        foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
-                            if(modePage.Page    == 0x01 &&
-                               modePage.Subpage == 0x00)
-                                currentModePage = modePage;
+                        foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                                                                         modePage.Page    == 0x01 &&
+                                                                                         modePage.Subpage == 0x00))
+                            currentModePage = modePage;
                 }
 
                 if(currentModePage == null)
@@ -544,9 +544,9 @@ namespace Aaru.Core.Devices.Dumping
 
             int[] tmpArray = _resume.BadSubchannels.ToArray();
 
-            for(int i = 0; i < tmpArray.Length; i++)
+            foreach(int bs in tmpArray)
             {
-                uint badSector = (uint)tmpArray[i];
+                uint badSector = (uint)bs;
 
                 Track track = tracks.OrderBy(t => t.TrackStartSector).
                                      LastOrDefault(t => badSector >= t.TrackStartSector);
@@ -592,7 +592,7 @@ namespace Aaru.Core.Devices.Dumping
                                                          _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
                                                          smallestPregapLbaPerTrack);
 
-                if(subchannelExtents.Contains(tmpArray[i]))
+                if(subchannelExtents.Contains(bs))
                     continue;
 
                 UpdateStatus?.Invoke($"Correctly retried sector {badSector} subchannel in pass {pass}.");

@@ -58,6 +58,15 @@ namespace Aaru.Core
 {
     public static class ImageInfo
     {
+        const string MANUFACTURER_STRING = "Manufacturer";
+        const string MODEL_STRING        = "Model";
+        const string SERIAL_STRING       = "Serial";
+        const string SOFTWARE_STRING     = "Software";
+        const string VERSION_STRING      = "Version";
+        const string OS_STRING           = "Operating system";
+        const string START_STRING        = "Start";
+        const string END_STRING          = "End";
+
         public static void PrintImageInfo(IMediaImage imageFormat)
         {
             AaruConsole.WriteLine("Image information:");
@@ -169,8 +178,7 @@ namespace Aaru.Core
             PeripheralDeviceTypes scsiDeviceType = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiVendorId   = null;
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_INQUIRY) == true)
             {
                 byte[] inquiry = imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
 
@@ -187,8 +195,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATA_IDENTIFY) == true)
             {
                 byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
 
@@ -197,8 +204,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.ATAPI_IDENTIFY) == true)
             {
                 byte[] identify = imageFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
@@ -207,8 +213,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_10) == true)
             {
                 byte[]             modeSense10 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10);
                 Modes.DecodedMode? decMode     = Modes.DecodeMode10(modeSense10, scsiDeviceType);
@@ -220,8 +225,7 @@ namespace Aaru.Core
                     AaruConsole.WriteLine();
                 }
             }
-            else if(imageFormat.Info.ReadableMediaTags != null &&
-                    imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+            else if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_6) == true)
             {
                 byte[]             modeSense6 = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6);
                 Modes.DecodedMode? decMode    = Modes.DecodeMode6(modeSense6, scsiDeviceType);
@@ -233,8 +237,7 @@ namespace Aaru.Core
                     AaruConsole.WriteLine();
                 }
             }
-            else if(imageFormat.Info.ReadableMediaTags != null &&
-                    imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SCSI_MODEPAGE_2A))
+            else if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODEPAGE_2A) == true)
             {
                 byte[] mode2A = imageFormat.ReadDiskTag(MediaTagType.SCSI_MODEPAGE_2A);
 
@@ -242,8 +245,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_FullTOC))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_FullTOC) == true)
             {
                 byte[] toc = imageFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
 
@@ -266,8 +268,7 @@ namespace Aaru.Core
                 }
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_PMA))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_PMA) == true)
             {
                 byte[] pma = imageFormat.ReadDiskTag(MediaTagType.CD_PMA);
 
@@ -290,8 +291,7 @@ namespace Aaru.Core
                 }
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_ATIP))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_ATIP) == true)
             {
                 byte[] atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
 
@@ -313,8 +313,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_TEXT))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_TEXT) == true)
             {
                 byte[] cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
 
@@ -336,8 +335,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.CD_MCN))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.CD_MCN) == true)
             {
                 byte[] mcn = imageFormat.ReadDiskTag(MediaTagType.CD_MCN);
 
@@ -347,8 +345,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVD_PFI))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_PFI) == true)
             {
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVD_PFI);
 
@@ -357,8 +354,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDRAM_DDS))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDRAM_DDS) == true)
             {
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.DVDRAM_DDS);
 
@@ -367,8 +363,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.DVDR_PFI))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVDR_PFI) == true)
             {
                 byte[] pfi = imageFormat.ReadDiskTag(MediaTagType.DVDR_PFI);
 
@@ -377,8 +372,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_DI))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DI) == true)
             {
                 byte[] di = imageFormat.ReadDiskTag(MediaTagType.BD_DI);
 
@@ -387,8 +381,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.BD_DDS))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.BD_DDS) == true)
             {
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
 
@@ -397,8 +390,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.PCMCIA_CIS) == true)
             {
                 byte[] cis = imageFormat.ReadDiskTag(MediaTagType.PCMCIA_CIS);
 
@@ -472,8 +464,7 @@ namespace Aaru.Core
                     AaruConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CID))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CID) == true)
             {
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
 
@@ -482,8 +473,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_CSD))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_CSD) == true)
             {
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
 
@@ -492,8 +482,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_SCR))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_SCR) == true)
             {
                 byte[] scr = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
 
@@ -502,8 +491,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.SD_OCR))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SD_OCR) == true)
             {
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
 
@@ -512,8 +500,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CID))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CID) == true)
             {
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
 
@@ -522,8 +509,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_CSD))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_CSD) == true)
             {
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
 
@@ -532,8 +518,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_ExtendedCSD))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_ExtendedCSD) == true)
             {
                 byte[] ecsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
 
@@ -542,8 +527,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.MMC_OCR))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.MMC_OCR) == true)
             {
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
 
@@ -552,8 +536,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.Xbox_PFI))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_PFI) == true)
             {
                 byte[] xpfi = imageFormat.ReadDiskTag(MediaTagType.Xbox_PFI);
 
@@ -562,8 +545,7 @@ namespace Aaru.Core
                 AaruConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.Xbox_DMI))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_DMI) == true)
             {
                 byte[] xdmi = imageFormat.ReadDiskTag(MediaTagType.Xbox_DMI);
 
@@ -592,8 +574,7 @@ namespace Aaru.Core
                 }
             }
 
-            if(imageFormat.Info.ReadableMediaTags != null &&
-               imageFormat.Info.ReadableMediaTags.Contains(MediaTagType.Xbox_SecuritySector))
+            if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.Xbox_SecuritySector) == true)
             {
                 byte[] toc = imageFormat.ReadDiskTag(MediaTagType.Xbox_SecuritySector);
 
@@ -675,21 +656,13 @@ namespace Aaru.Core
             if(imageFormat.DumpHardware == null)
                 return;
 
-            const string MANUFACTURER_STRING = "Manufacturer";
-            const string MODEL_STRING        = "Model";
-            const string SERIAL_STRING       = "Serial";
-            const string SOFTWARE_STRING     = "Software";
-            const string VERSION_STRING      = "Version";
-            const string OS_STRING           = "Operating system";
-            const string START_STRING        = "Start";
-            const string END_STRING          = "End";
-            int          manufacturerLen     = MANUFACTURER_STRING.Length;
-            int          modelLen            = MODEL_STRING.Length;
-            int          serialLen           = SERIAL_STRING.Length;
-            int          softwareLen         = SOFTWARE_STRING.Length;
-            int          versionLen          = VERSION_STRING.Length;
-            int          osLen               = OS_STRING.Length;
-            int          sectorLen           = START_STRING.Length;
+            int manufacturerLen = MANUFACTURER_STRING.Length;
+            int modelLen        = MODEL_STRING.Length;
+            int serialLen       = SERIAL_STRING.Length;
+            int softwareLen     = SOFTWARE_STRING.Length;
+            int versionLen      = VERSION_STRING.Length;
+            int osLen           = OS_STRING.Length;
+            int sectorLen       = START_STRING.Length;
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {

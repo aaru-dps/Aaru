@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Checksum sectors
-    public partial class AppleNib : IMediaImage
+    public sealed partial class AppleNib : IMediaImage
     {
         Dictionary<ulong, byte[]> _addressFields;
         Dictionary<ulong, byte[]> _cookedSectors;

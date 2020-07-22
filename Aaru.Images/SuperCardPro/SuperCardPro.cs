@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
+    public sealed partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         ImageInfo _imageInfo;
         Stream    _scpStream;

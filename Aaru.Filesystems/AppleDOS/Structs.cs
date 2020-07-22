@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Vtoc

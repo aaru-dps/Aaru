@@ -48,7 +48,7 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class SplashWindowViewModel : ViewModelBase
+    public sealed class SplashWindowViewModel : ViewModelBase
     {
         readonly SplashWindow _view;
         double                _currentProgress;
@@ -147,21 +147,20 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
 
                 // Remove duplicates
-                foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
+                foreach(var duplicate in ctx.SeenDevices.AsEnumerable()!.GroupBy(a => new
                 {
                     a.Manufacturer,
                     a.Model,
                     a.Revision,
                     a.Bus
                 }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
-                    ctx.RemoveRange(ctx.SeenDevices.
-                                        Where(d => d.Manufacturer == duplicate.Manufacturer &&
-                                                   d.Model == duplicate.Model && d.Revision == duplicate.Revision &&
-                                                   d.Bus == duplicate.Bus).Skip(1));
+                    ctx.RemoveRange(ctx.SeenDevices!.
+                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
+                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
 
                 // Remove nulls
-                ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&
-                                                           d.Revision     == null));
+                ctx.RemoveRange(ctx.SeenDevices!.Where(d => d.Manufacturer == null && d.Model == null &&
+                                                            d.Revision     == null));
 
                 ctx.SaveChanges();
 

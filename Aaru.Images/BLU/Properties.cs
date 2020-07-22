@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu
+    public sealed partial class Blu
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Basic Lisa Utility";

@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class VTOC : IPartition
+    public sealed class VTOC : IPartition
     {
         const uint PD_MAGIC  = 0xCA5E600D;
         const uint VTOC_SANE = 0x600DDEEE;

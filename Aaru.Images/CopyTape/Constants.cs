@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyTape
+    public sealed partial class CopyTape
     {
         const string _blockRegex        = @"^CPTP:BLK (?<blockSize>\d{6})\n$";
         const string _partialBlockRegex = @"^CPTP:BLK $";

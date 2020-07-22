@@ -36,7 +36,7 @@ using Aaru.Checksums;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscJuggler
+    public sealed partial class DiscJuggler
     {
         public bool? VerifySector(ulong sectorAddress)
         {

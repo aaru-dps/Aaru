@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleDos : IWritableImage
+    public sealed partial class AppleDos : IWritableImage
     {
         byte[]     _deinterleaved;
         string     _extension;

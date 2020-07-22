@@ -42,7 +42,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage
+    public sealed partial class ZZZRawImage
     {
         public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks |
                                                                OpticalImageCapabilities.CanStoreDataTracks  |

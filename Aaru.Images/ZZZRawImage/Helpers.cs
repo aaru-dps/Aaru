@@ -34,7 +34,7 @@ using Aaru.CommonTypes;
 
 namespace Aaru.DiscImages
 {
-    public partial class ZZZRawImage
+    public sealed partial class ZZZRawImage
     {
         MediaType CalculateDiskType()
         {

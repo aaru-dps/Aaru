@@ -36,7 +36,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin
+    public sealed partial class XboxFatPlugin
     {
         const uint   FATX_MAGIC          = 0x58544146;
         const uint   FATX_CIGAM          = 0x46415458;

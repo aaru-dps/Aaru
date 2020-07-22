@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin
+    public sealed partial class XboxFatPlugin
     {
         public Errno ReadDir(string path, out List<string> contents)
         {
@@ -55,7 +55,7 @@ namespace Aaru.Filesystems
                 return Errno.NoError;
             }
 
-            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(_cultureInfo)
+            string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo)
                                  : path.ToLower(_cultureInfo);
 
             if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))

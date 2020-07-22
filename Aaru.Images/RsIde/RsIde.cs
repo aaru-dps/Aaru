@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde : IWritableImage
+    public sealed partial class RsIde : IWritableImage
     {
         ushort     _dataOff;
         byte[]     _identify;

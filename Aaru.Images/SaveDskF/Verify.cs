@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         public bool? VerifyMediaImage() => _calculatedChk == _header.checksum;
     }

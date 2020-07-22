@@ -40,7 +40,7 @@ using Schemas;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin : IReadOnlyFilesystem
+    public sealed partial class PascalPlugin : IReadOnlyFilesystem
     {
         byte[]                _bootBlocks;
         byte[]                _catalogBlocks;

@@ -11,50 +11,35 @@ namespace Aaru.Database.Migrations
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Commands", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Commands", x => x.Id));
 
             migrationBuilder.CreateTable("Filesystems", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Filesystems", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Filesystems", x => x.Id));
 
             migrationBuilder.CreateTable("Filters", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Filters", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Filters", x => x.Id));
 
             migrationBuilder.CreateTable("MediaFormats", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_MediaFormats", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_MediaFormats", x => x.Id));
 
             migrationBuilder.CreateTable("Partitions", table => new
             {
                 Id           = table.Column<int>().Annotation("Sqlite:Autoincrement", true),
                 Name         = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_Partitions", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_Partitions", x => x.Id));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

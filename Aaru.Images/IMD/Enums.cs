@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Imd
+    public sealed partial class Imd
     {
         enum TransferRate : byte
         {

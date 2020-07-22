@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class ViewSector : Window
+    public sealed class ViewSector : Window
     {
         public ViewSector()
         {

@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class MaxiDisk
+    public sealed partial class MaxiDisk
     {
         public bool Open(IFilter imageFilter)
         {

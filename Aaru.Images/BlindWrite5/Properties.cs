@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class BlindWrite5
+    public sealed partial class BlindWrite5
     {
         public ImageInfo Info => _imageInfo;
 

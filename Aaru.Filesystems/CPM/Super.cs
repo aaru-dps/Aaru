@@ -48,13 +48,18 @@ using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
 namespace Aaru.Filesystems
 {
-    internal partial class CPM
+    public sealed partial class CPM
     {
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
         {
             _device  = imagePlugin;
             Encoding = encoding ?? Encoding.GetEncoding("IBM437");
+
+            options ??= GetDefaultOptions();
+
+            if(options.TryGetValue("debug", out string debugString))
+                bool.TryParse(debugString, out _debug);
 
             // As the identification is so complex, just call Identify() and relay on its findings
             if(!Identify(_device, partition) ||

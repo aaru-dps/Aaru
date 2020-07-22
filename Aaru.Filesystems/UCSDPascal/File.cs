@@ -38,7 +38,7 @@ using Aaru.Helpers;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin
+    public sealed partial class PascalPlugin
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {

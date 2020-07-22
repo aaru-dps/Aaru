@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Panels
 {
-    public class ImageInfo : UserControl
+    public sealed class ImageInfo : UserControl
     {
         public ImageInfo() => InitializeComponent();
 

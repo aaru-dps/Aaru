@@ -35,7 +35,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Tabs
 {
-    public class DvdInfo : UserControl
+    public sealed class DvdInfo : UserControl
     {
         public DvdInfo() => InitializeComponent();
 

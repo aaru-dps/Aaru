@@ -37,7 +37,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ushort RRIP_MAGIC            = 0x5252; // "RR"
         const ushort RRIP_POSIX_ATTRIBUTES = 0x5058; // "PX"

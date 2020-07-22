@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Anex86
+    public sealed partial class Anex86
     {
         public ImageInfo Info => _imageInfo;
 

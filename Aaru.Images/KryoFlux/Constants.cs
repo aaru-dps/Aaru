@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class KryoFlux
+    public sealed partial class KryoFlux
     {
         const string _hostDate  = "host_date";
         const string _hostTime  = "host_time";

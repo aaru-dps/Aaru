@@ -42,7 +42,7 @@ using Version = Aaru.CommonTypes.Interop.Version;
 namespace Aaru.Core.Logging
 {
     /// <summary>Creates a dump log</summary>
-    public class DumpLog
+    public sealed class DumpLog
     {
         readonly StreamWriter _logSw;
 
@@ -92,8 +92,8 @@ namespace Aaru.Core.Logging
 
                 for(int i = 0; i < args.Length; i++)
                 {
-                    if(args[i].StartsWith("/dev") ||
-                       args[i].StartsWith("aaru://"))
+                    if(args[i].StartsWith("/dev", StringComparison.OrdinalIgnoreCase) ||
+                       args[i].StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
                         continue;
 
                     try

@@ -61,7 +61,7 @@ using Spare = Aaru.Decoders.DVD.Spare;
 
 namespace Aaru.Commands.Media
 {
-    internal class MediaInfoCommand : Command
+    internal sealed class MediaInfoCommand : Command
     {
         public MediaInfoCommand() : base("info", "Gets information about the media inserted on a device.")
         {
@@ -567,9 +567,8 @@ namespace Aaru.Commands.Media
             {
                 uint blockSize = 2352;
 
-                Track[] tracks = Dump.GetCdTracks(ref blockSize, dev, scsiInfo.MediaType, null, false,
-                                                  out long lastSector, null, null, null, TrackSubchannelType.None,
-                                                  out _, null, null);
+                Track[] tracks = Dump.GetCdTracks(ref blockSize, dev, null, false, out long lastSector, null, null,
+                                                  null, TrackSubchannelType.None, out _, null, null);
 
                 if(tracks != null)
                 {
@@ -608,11 +607,9 @@ namespace Aaru.Commands.Media
                     AaruConsole.WriteLine();
                     AaruConsole.WriteLine("Offsets:");
 
-                    CdOffset cdOffset = null;
-
                     // Search for read offset in main database
-                    cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
-                                                                 d.Model        == dev.Model);
+                    CdOffset cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
+                                                                          d.Model        == dev.Model);
 
                     CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
                                           out int? driveOffset, out int? combinedOffset, out _);

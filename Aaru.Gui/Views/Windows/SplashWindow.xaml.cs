@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class SplashWindow : Window
+    public sealed class SplashWindow : Window
     {
         public SplashWindow()
         {

@@ -43,7 +43,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands.Image
 {
-    internal class AnalyzeCommand : Command
+    internal sealed class AnalyzeCommand : Command
     {
         public AnalyzeCommand() : base("analyze",
                                        "Analyzes a disc image and searches for partitions and/or filesystems.")

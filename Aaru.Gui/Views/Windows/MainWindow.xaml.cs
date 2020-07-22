@@ -38,7 +38,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Windows
 {
-    public class MainWindow : Window
+    public sealed class MainWindow : Window
     {
         public MainWindow()
         {

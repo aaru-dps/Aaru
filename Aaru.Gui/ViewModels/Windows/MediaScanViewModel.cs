@@ -46,7 +46,7 @@ using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class MediaScanViewModel : ViewModelBase
+    public sealed class MediaScanViewModel : ViewModelBase
     {
         readonly Window _view;
         string          _a;
@@ -390,9 +390,9 @@ namespace Aaru.Gui.ViewModels.Windows
 
             // TODO: Show results
             /*
-            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+            
             if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+                
                 string.Format("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
                                      */

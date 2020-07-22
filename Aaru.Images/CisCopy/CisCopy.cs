@@ -53,7 +53,7 @@ namespace Aaru.DiscImages
      * 2) High compression, algorithm unknown
      * Then the data for whole tracks follow.
      */
-    public partial class CisCopy : IWritableImage
+    public sealed partial class CisCopy : IWritableImage
     {
         byte[]     _decodedDisk;
         ImageInfo  _imageInfo;

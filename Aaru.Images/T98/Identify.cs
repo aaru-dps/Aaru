@@ -37,7 +37,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class T98
+    public sealed partial class T98
     {
         public bool Identify(IFilter imageFilter)
         {

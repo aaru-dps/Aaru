@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Dialogs
 {
-    public class About : Window
+    public sealed class About : Window
     {
         public About()
         {

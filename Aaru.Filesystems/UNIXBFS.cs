@@ -41,7 +41,7 @@ using Schemas;
 namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
-    public class BFS : IFilesystem
+    public sealed class BFS : IFilesystem
     {
         const uint BFS_MAGIC = 0x1BADFACE;
 

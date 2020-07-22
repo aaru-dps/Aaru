@@ -30,13 +30,14 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using JetBrains.Annotations;
 using Schemas;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
-    public class FileSystemViewModel
+    public sealed class FileSystemViewModel
     {
-        public FileSystemViewModel(FileSystemType xmlFsType, string information)
+        public FileSystemViewModel([NotNull] FileSystemType xmlFsType, string information)
         {
             TypeText                   = $"Filesystem type: {xmlFsType.Type}";
             VolumeNameText             = $"Volume name: {xmlFsType.VolumeName}";

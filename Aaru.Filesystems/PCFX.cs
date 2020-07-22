@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     // Not a filesystem, more like an executable header
-    public class PCFX : IFilesystem
+    public sealed class PCFX : IFilesystem
     {
         const  string         IDENTIFIER = "PC-FX:Hu_CD-ROM ";
         public FileSystemType XmlFsType { get; private set; }

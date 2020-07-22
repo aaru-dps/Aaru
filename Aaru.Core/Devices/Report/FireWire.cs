@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Metadata;
 namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a report for a FireWire device</summary>
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
         public FireWire FireWireReport() => new FireWire

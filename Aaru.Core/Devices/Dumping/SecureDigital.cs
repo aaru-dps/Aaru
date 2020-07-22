@@ -46,13 +46,15 @@ using Schemas;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+// ReSharper disable JoinDeclarationAndInitializer
+
 namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping a MultiMediaCard or SecureDigital flash card</summary>
     public partial class Dump
     {
         /// <summary>Dumps a MultiMediaCard or SecureDigital flash card</summary>
-        public void SecureDigital()
+        void SecureDigital()
         {
             if(_dumpRaw)
             {
@@ -72,17 +74,16 @@ namespace Aaru.Core.Devices.Dumping
             const ushort sdProfile = 0x0001;
             const uint   timeout   = 5;
             double       duration;
-
-            uint   blocksToRead      = 1;
-            uint   blockSize         = 512;
-            ulong  blocks            = 0;
-            byte[] csd               = null;
-            byte[] ocr               = null;
-            byte[] ecsd              = null;
-            byte[] scr               = null;
-            uint   physicalBlockSize = 0;
-            bool   byteAddressed     = true;
-            uint[] response;
+            uint         blocksToRead      = 1;
+            uint         blockSize         = 512;
+            ulong        blocks            = 0;
+            byte[]       csd               = null;
+            byte[]       ocr               = null;
+            byte[]       ecsd              = null;
+            byte[]       scr               = null;
+            uint         physicalBlockSize = 0;
+            bool         byteAddressed     = true;
+            uint[]       response;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
@@ -281,11 +282,8 @@ namespace Aaru.Core.Devices.Dumping
 
             bool ret = true;
 
-            foreach(MediaTagType tag in mediaTags.Keys)
+            foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
             {
-                if(_outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
                 ret = false;
                 _dumpLog.WriteLine($"Output format does not support {tag}.");
                 ErrorMessage?.Invoke($"Output format does not support {tag}.");
@@ -354,15 +352,13 @@ namespace Aaru.Core.Devices.Dumping
                 if(blocks - i < blocksToRead)
                     blocksToRead = (byte)(blocks - i);
 
-                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 if(currentSpeed > maxSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     maxSpeed = currentSpeed;
 
                 if(currentSpeed < minSpeed &&
-                   currentSpeed != 0)
+                   currentSpeed > 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
@@ -481,8 +477,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
-                UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
-                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                UpdateStatus?.Invoke($"Trimming finished in {(end - start).TotalSeconds} seconds.");
+                _dumpLog.WriteLine("Trimming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 

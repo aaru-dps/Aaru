@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Qed
+    public sealed partial class Qed
     {
         static bool IsPowerOfTwo(uint x)
         {

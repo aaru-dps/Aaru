@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -58,7 +59,9 @@ using VendorString = Aaru.Decoders.SecureDigital.VendorString;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnusedMember.Global"),
+     SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+    public sealed partial class Device
     {
         /// <summary>Opens the device for sending direct commands</summary>
         /// <param name="devicePath">Device path</param>
@@ -69,13 +72,11 @@ namespace Aaru.Devices
             Error       = false;
             IsRemovable = false;
 
-            if(devicePath.StartsWith("dic://") ||
-               devicePath.StartsWith("aaru://"))
+            if(devicePath.StartsWith("dic://", StringComparison.OrdinalIgnoreCase) ||
+               devicePath.StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
             {
-                if(devicePath.StartsWith("dic://"))
-                    devicePath = devicePath.Substring(6);
-                else
-                    devicePath = devicePath.Substring(7);
+                devicePath =
+                    devicePath.Substring(devicePath.StartsWith("dic://", StringComparison.OrdinalIgnoreCase) ? 6 : 7);
 
                 string[] pieces = devicePath.Split('/');
                 string   host   = pieces[0];

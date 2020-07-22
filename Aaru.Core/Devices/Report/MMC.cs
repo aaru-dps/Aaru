@@ -43,7 +43,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         static byte[] ClearMmcFeatures(byte[] response)
         {
@@ -452,9 +452,8 @@ namespace Aaru.Core.Devices.Report
                         report.SupportsCSS = true;
                         Feature_0106? ftr0106 = Features.Decode_0106(desc.Data);
 
-                        if(ftr0106.HasValue)
-                            if(ftr0106.Value.CSSVersion > 0)
-                                report.CSSVersion = ftr0106.Value.CSSVersion;
+                        if(ftr0106?.CSSVersion > 0)
+                            report.CSSVersion = ftr0106.Value.CSSVersion;
                     }
 
                         break;
@@ -471,9 +470,8 @@ namespace Aaru.Core.Devices.Report
                         report.SupportsCPRM = true;
                         Feature_010B? ftr010B = Features.Decode_010B(desc.Data);
 
-                        if(ftr010B.HasValue)
-                            if(ftr010B.Value.CPRMVersion > 0)
-                                report.CPRMVersion = ftr010B.Value.CPRMVersion;
+                        if(ftr010B?.CPRMVersion > 0)
+                            report.CPRMVersion = ftr010B.Value.CPRMVersion;
                     }
 
                         break;
@@ -625,18 +623,16 @@ namespace Aaru.Core.Devices.Report
             if(!sense &&
                !_dev.Error)
             {
-                if(!decMode.HasValue)
-                    decMode = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
                 mediaTest.ModeSense6Data = buffer;
             }
 
-            if(decMode.HasValue)
+            if(decMode != null)
             {
                 mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
 
-                if(decMode.Value.Header.BlockDescriptors        != null &&
-                   decMode.Value.Header.BlockDescriptors.Length > 0)
+                if(decMode?.Header.BlockDescriptors.Length > 0)
                     mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
@@ -1112,6 +1108,7 @@ namespace Aaru.Core.Devices.Report
 
                     for(int i = -10; i < 0; i++)
                     {
+                        // ReSharper disable IntVariableOverflowInUncheckedContext
                         if(mediaType == "Audio CD")
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.Cdda,
                                                 false, false, false, MmcHeaderCodes.None, true, false,
@@ -1120,6 +1117,8 @@ namespace Aaru.Core.Devices.Report
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes,
                                                 false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+
+                        // ReSharper restore IntVariableOverflowInUncheckedContext
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
@@ -1567,17 +1566,16 @@ namespace Aaru.Core.Devices.Report
             {
                 FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
 
-                if(decSense.HasValue)
-                    if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                       decSense.Value.ASC      == 0x24                     &&
-                       decSense.Value.ASCQ     == 0x00)
-                    {
-                        mediaTest.SupportsReadLong = true;
+                if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
+                   decSense.Value.ASC  == 0x24                     &&
+                   decSense.Value.ASCQ == 0x00)
+                {
+                    mediaTest.SupportsReadLong = true;
 
-                        if(decSense.Value.InformationValid &&
-                           decSense.Value.ILI)
-                            mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
-                    }
+                    if(decSense.Value.InformationValid &&
+                       decSense.Value.ILI)
+                        mediaTest.LongBlockSize = 0xFFFF - (decSense.Value.Information & 0xFFFF);
+                }
             }
 
             if(mediaTest.SupportsReadLong == true &&

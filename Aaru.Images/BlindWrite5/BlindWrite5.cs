@@ -39,7 +39,7 @@ using Aaru.CommonTypes.Structs;
 namespace Aaru.DiscImages
 {
     // TODO: Too many unknowns to make this writable
-    public partial class BlindWrite5 : IOpticalMediaImage
+    public sealed partial class BlindWrite5 : IOpticalMediaImage
     {
         byte[]                        _atip;
         byte[]                        _bca;
@@ -52,16 +52,15 @@ namespace Aaru.DiscImages
         byte[]                        _dpm;
         List<DataFileCharacteristics> _filePaths;
         byte[]                        _fullToc;
-
-        Bw5Header               _header;
-        ImageInfo               _imageInfo;
-        Stream                  _imageStream;
-        byte[]                  _mode2A;
-        Dictionary<uint, ulong> _offsetmap;
-        byte[]                  _pfi;
-        byte[]                  _pma;
-        Dictionary<uint, byte>  _trackFlags;
-        byte[]                  _unkBlock;
+        Bw5Header                     _header;
+        ImageInfo                     _imageInfo;
+        Stream                        _imageStream;
+        byte[]                        _mode2A;
+        Dictionary<uint, ulong>       _offsetmap;
+        byte[]                        _pfi;
+        byte[]                        _pma;
+        Dictionary<uint, byte>        _trackFlags;
+        byte[]                        _unkBlock;
 
         public BlindWrite5() => _imageInfo = new ImageInfo
         {

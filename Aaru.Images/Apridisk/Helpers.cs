@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Apridisk
+    public sealed partial class Apridisk
     {
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {

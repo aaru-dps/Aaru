@@ -35,7 +35,7 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices
 {
-    public partial class Device
+    public sealed partial class Device
     {
         public bool TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba,
                                     uint timeout, out double duration)

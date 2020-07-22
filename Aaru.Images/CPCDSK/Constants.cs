@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         /// <summary>Identifier for CPCEMU disk images, "MV - CPC" + usually : "EMU Disk-File\r\nDisk-Info\r\n" but not required</summary>
         readonly byte[] _cpcdskId =

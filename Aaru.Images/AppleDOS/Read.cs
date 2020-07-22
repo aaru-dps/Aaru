@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleDos
+    public sealed partial class AppleDos
     {
         public bool Open(IFilter imageFilter)
         {

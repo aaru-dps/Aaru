@@ -34,7 +34,7 @@ using Aaru.Devices;
 
 namespace Aaru.Core.Devices.Report
 {
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         readonly Device _dev;
 

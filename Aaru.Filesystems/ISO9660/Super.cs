@@ -44,7 +44,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         public Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options, string @namespace)
@@ -53,8 +53,7 @@ namespace Aaru.Filesystems
             byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
             byte[] hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);
@@ -69,8 +68,7 @@ namespace Aaru.Filesystems
                 bool.TryParse(useEvdString, out _useEvd);
 
             // Default namespace
-            if(@namespace is null)
-                @namespace = "joliet";
+            @namespace ??= "joliet";
 
             switch(@namespace.ToLowerInvariant())
             {
@@ -222,7 +220,7 @@ namespace Aaru.Filesystems
                             if(_useEvd)
                             {
                                 // Basically until escape sequences are implemented, let the user chose the encoding.
-                                // This is the same as user chosing Romeo namespace, but using the EVD instead of the PVD
+                                // This is the same as user choosing Romeo namespace, but using the EVD instead of the PVD
                                 _namespace = Namespace.Romeo;
                                 pvd        = svd;
                             }
@@ -334,10 +332,7 @@ namespace Aaru.Filesystems
                 rootXattrLength = _highSierra ? hsvd.Value.root_directory_record.xattr_len
                                       : pvd.Value.root_directory_record.xattr_len;
 
-                if(_highSierra)
-                    rootSize = hsvd.Value.root_directory_record.size;
-                else
-                    rootSize = pvd.Value.root_directory_record.size;
+                rootSize = _highSierra ? hsvd.Value.root_directory_record.size : pvd.Value.root_directory_record.size;
 
                 if(pathTableData.Length > 1 &&
                    rootLocation         != _pathTable[0].Extent)

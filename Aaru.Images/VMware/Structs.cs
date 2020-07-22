@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.DiscImages
 {
-    public partial class VMware
+    public sealed partial class VMware
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VMwareExtentHeader

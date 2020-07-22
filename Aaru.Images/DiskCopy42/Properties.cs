@@ -39,7 +39,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Apple DiskCopy 4.2";

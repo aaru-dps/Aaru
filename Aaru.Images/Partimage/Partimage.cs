@@ -41,7 +41,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class Partimage : IMediaImage, IVerifiableImage
+    public sealed partial class Partimage : IMediaImage, IVerifiableImage
     {
         byte[]                    _bitmap;
         PartimageMainHeader       _cMainHeader;

@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         // TODO: Complete it
         /// <summary>Creates a metadata sidecar for an audio media (e.g. cassette)</summary>

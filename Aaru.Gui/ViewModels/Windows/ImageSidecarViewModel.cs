@@ -47,7 +47,7 @@ using Schemas;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ImageSidecarViewModel : ViewModelBase
+    public sealed class ImageSidecarViewModel : ViewModelBase
     {
         readonly Encoding    _encoding;
         readonly Guid        _filterId;

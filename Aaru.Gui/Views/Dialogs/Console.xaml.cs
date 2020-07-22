@@ -34,10 +34,11 @@ using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui.Views.Dialogs
 {
-    public class Console : Window
+    public sealed class Console : Window
     {
         public Console()
         {
@@ -49,7 +50,7 @@ namespace Aaru.Gui.Views.Dialogs
 
         void InitializeComponent() => AvaloniaXamlLoader.Load(this);
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override void OnClosing([NotNull] CancelEventArgs e)
         {
             e.Cancel = true;
             Hide();

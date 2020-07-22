@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class F2FS : IFilesystem
+    public sealed class F2FS : IFilesystem
     {
         const uint F2FS_MAGIC        = 0xF2F52010;
         const uint F2FS_SUPER_OFFSET = 1024;

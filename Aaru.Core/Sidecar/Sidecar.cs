@@ -42,7 +42,7 @@ using Schemas;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         readonly ChecksumType[] _emptyChecksums;
         readonly Encoding       _encoding;

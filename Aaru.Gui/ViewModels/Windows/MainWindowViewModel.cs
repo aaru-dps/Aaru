@@ -59,6 +59,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using JetBrains.Annotations;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using ReactiveUI;
@@ -69,7 +70,7 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class MainWindowViewModel : ViewModelBase
+    public sealed class MainWindowViewModel : ViewModelBase
     {
         readonly IAssetLoader     _assets;
         readonly DevicesRootModel _devicesRoot;
@@ -81,13 +82,12 @@ namespace Aaru.Gui.ViewModels.Windows
         readonly ImagesRootModel  _imagesRoot;
         readonly Bitmap           _removableIcon;
         readonly Bitmap           _sdIcon;
-
-        readonly Bitmap       _usbIcon;
-        readonly MainWindow   _view;
-        Views.Dialogs.Console _console;
-        object                _contentPanel;
-        bool                  _devicesSupported;
-        object                _treeViewSelectedItem;
+        readonly Bitmap           _usbIcon;
+        readonly MainWindow       _view;
+        Views.Dialogs.Console     _console;
+        object                    _contentPanel;
+        bool                      _devicesSupported;
+        object                    _treeViewSelectedItem;
 
         public MainWindowViewModel(MainWindow view)
         {
@@ -173,7 +173,8 @@ namespace Aaru.Gui.ViewModels.Windows
             NativeMenu.GetIsNativeMenuExported((Application.Current.ApplicationLifetime as
                                                     IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
-        public string                          Greeting                    => "Welcome to Aaru!";
+        [NotNull]
+        public string Greeting => "Welcome to Aaru!";
         public ObservableCollection<RootModel> TreeRoot                    { get; }
         public ReactiveCommand<Unit, Unit>     AboutCommand                { get; }
         public ReactiveCommand<Unit, Unit>     ConsoleCommand              { get; }
@@ -349,10 +350,7 @@ namespace Aaru.Gui.ViewModels.Windows
             var imageEntropyWindow = new ImageEntropy();
             imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
 
-            imageEntropyWindow.Closed += (sender, args) =>
-            {
-                imageEntropyWindow = null;
-            };
+            imageEntropyWindow.Closed += (sender, args) => imageEntropyWindow = null;
 
             imageEntropyWindow.Show();
         }
@@ -365,10 +363,7 @@ namespace Aaru.Gui.ViewModels.Windows
             var imageVerifyWindow = new ImageVerify();
             imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
 
-            imageVerifyWindow.Closed += (sender, args) =>
-            {
-                imageVerifyWindow = null;
-            };
+            imageVerifyWindow.Closed += (sender, args) => imageVerifyWindow = null;
 
             imageVerifyWindow.Show();
         }
@@ -381,10 +376,7 @@ namespace Aaru.Gui.ViewModels.Windows
             var imageChecksumWindow = new ImageChecksum();
             imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
 
-            imageChecksumWindow.Closed += (sender, args) =>
-            {
-                imageChecksumWindow = null;
-            };
+            imageChecksumWindow.Closed += (sender, args) => imageChecksumWindow = null;
 
             imageChecksumWindow.Show();
         }
@@ -399,10 +391,7 @@ namespace Aaru.Gui.ViewModels.Windows
             imageConvertWindow.DataContext =
                 new ImageConvertViewModel(imageModel.Image, imageModel.Path, imageConvertWindow);
 
-            imageConvertWindow.Closed += (sender, args) =>
-            {
-                imageConvertWindow = null;
-            };
+            imageConvertWindow.Closed += (sender, args) => imageConvertWindow = null;
 
             imageConvertWindow.Show();
         }

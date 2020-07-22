@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class UkvFdi
+    public sealed partial class UkvFdi
     {
         (ushort cylinder, byte head, byte sector) LbaToChs(ulong lba)
         {

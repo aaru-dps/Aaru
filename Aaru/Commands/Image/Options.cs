@@ -40,10 +40,11 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using JetBrains.Annotations;
 
 namespace Aaru.Commands.Image
 {
-    internal class ListOptionsCommand : Command
+    internal sealed class ListOptionsCommand : Command
     {
         public ListOptionsCommand() : base("options", "Lists all options supported by writable media images.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
@@ -88,7 +89,8 @@ namespace Aaru.Commands.Image
             return (int)ErrorNumber.NoError;
         }
 
-        static string TypeToString(Type type)
+        [NotNull]
+        static string TypeToString([NotNull] Type type)
         {
             if(type == typeof(bool))
                 return "boolean";

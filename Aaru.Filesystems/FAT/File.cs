@@ -40,7 +40,7 @@ using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
@@ -258,7 +258,7 @@ namespace Aaru.Filesystems
         {
             entry = null;
 
-            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(_cultureInfo)
+            string cutPath = path.StartsWith('/') ? path.Substring(1).ToLower(_cultureInfo)
                                  : path.ToLower(_cultureInfo);
 
             string[] pieces = cutPath.Split(new[]

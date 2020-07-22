@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class UkvFdi
+    public sealed partial class UkvFdi
     {
         public string                 Name         => "Spectrum Floppy Disk Image";
         public Guid                   Id           => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");

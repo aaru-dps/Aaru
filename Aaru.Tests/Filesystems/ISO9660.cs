@@ -39,7 +39,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Iso9660
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             // Toast 3.5.7
             "toast_3.5.7_iso9660_apple.aif", "toast_3.5.7_iso9660_dos_apple.aif", "toast_3.5.7_iso9660_dos.aif",
@@ -89,7 +89,7 @@ namespace Aaru.Tests.Filesystems
             "xorriso_rockridge.aif", "xorriso_violating.aif", "xorriso_zisofs.aif", "xorriso_zisofs_rockridge.aif"
         };
 
-        readonly MediaType[] _mediatypes =
+        readonly MediaType[] _mediaTypes =
         {
             // Toast 3.5.7
             MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD, MediaType.CD,
@@ -151,7 +151,7 @@ namespace Aaru.Tests.Filesystems
             3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             // Toast 3.5.7
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
@@ -205,7 +205,7 @@ namespace Aaru.Tests.Filesystems
             3688, 3686, 3686, 3686, 3673, 3673, 3673, 3686, 3675, 3673, 3673, 3675
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             // Toast 3.5.7
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048,
@@ -232,7 +232,7 @@ namespace Aaru.Tests.Filesystems
             2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048, 2048
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             // Toast 3.5.7
             "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "DISK_UTILS", "Disk utils", "Disk utils",
@@ -264,7 +264,7 @@ namespace Aaru.Tests.Filesystems
             "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test", "test"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             // Toast 3.5.7
             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
@@ -419,16 +419,16 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), $"{_testfiles[i]}: Open()");
-                Assert.AreEqual(_mediatypes[i], image.Info.MediaType, $"{_testfiles[i]}: MediaType");
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, $"{_testfiles[i]}: Sectors");
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, $"{_testfiles[i]}: SectorSize");
+                Assert.AreEqual(true, image.Open(filter), $"{_testFiles[i]}: Open()");
+                Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"{_testFiles[i]}: MediaType");
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, $"{_testFiles[i]}: Sectors");
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"{_testFiles[i]}: SectorSize");
                 IFilesystem fs = new ISO9660();
 
                 var wholePart = new Partition
@@ -438,17 +438,17 @@ namespace Aaru.Tests.Filesystems
                     Size   = image.Info.Sectors * image.Info.SectorSize
                 };
 
-                Assert.AreEqual(true, fs.Identify(image, wholePart), $"{_testfiles[i]}: Identify()");
+                Assert.AreEqual(true, fs.Identify(image, wholePart), $"{_testFiles[i]}: Identify()");
                 fs.GetInformation(image, wholePart, out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, $"{_testfiles[i]}: Clusters");
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, $"{_testfiles[i]}: ClusterSize");
-                Assert.AreEqual("ISO9660", fs.XmlFsType.Type, $"{_testfiles[i]}: Type");
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, $"{_testfiles[i]}: VolumeName");
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, $"{_testfiles[i]}: VolumeSerial");
-                Assert.AreEqual(_sysid[i], fs.XmlFsType.SystemIdentifier, $"{_testfiles[i]}: SystemIdentifier");
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, $"{_testFiles[i]}: Clusters");
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, $"{_testFiles[i]}: ClusterSize");
+                Assert.AreEqual("ISO9660", fs.XmlFsType.Type, $"{_testFiles[i]}: Type");
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, $"{_testFiles[i]}: VolumeName");
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, $"{_testFiles[i]}: VolumeSerial");
+                Assert.AreEqual(_sysid[i], fs.XmlFsType.SystemIdentifier, $"{_testFiles[i]}: SystemIdentifier");
 
                 Assert.AreEqual(_appid[i], fs.XmlFsType.ApplicationIdentifier,
-                                $"{_testfiles[i]}: ApplicationIdentifier");
+                                $"{_testFiles[i]}: ApplicationIdentifier");
             }
         }
     }

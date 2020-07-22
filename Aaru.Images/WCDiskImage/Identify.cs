@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class WCDiskImage
+    public sealed partial class WCDiskImage
     {
         public bool Identify(IFilter imageFilter)
         {
@@ -79,12 +79,9 @@ namespace Aaru.DiscImages
                fheader.extraTracks[3] > 1)
                 return false;
 
-            if(((byte)fheader.extraFlags & ~0x03) != 0)
-                return false;
-
             // TODO: validate all sectors
             // For now, having a valid header will suffice.
-            return true;
+            return ((byte)fheader.extraFlags & ~0x03) == 0;
         }
     }
 }

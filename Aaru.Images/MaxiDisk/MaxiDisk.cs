@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class MaxiDisk : IWritableImage
+    public sealed partial class MaxiDisk : IWritableImage
     {
         /// <summary>Disk image file</summary>
         IFilter _hdkImageFilter;

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class DriDiskCopy
+    public sealed partial class DriDiskCopy
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DriFooter

@@ -47,7 +47,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscJuggler
+    public sealed partial class DiscJuggler
     {
         public bool Open(IFilter imageFilter)
         {

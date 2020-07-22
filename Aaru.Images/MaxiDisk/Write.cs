@@ -42,7 +42,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class MaxiDisk
+    public sealed partial class MaxiDisk
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }

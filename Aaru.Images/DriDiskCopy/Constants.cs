@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DriDiskCopy
+    public sealed partial class DriDiskCopy
     {
         const string REGEX_DRI = @"DiskImage\s(?<version>\d+.\d+)\s\(C\)\s\d+\,*\d*\s+Digital Research Inc";
     }

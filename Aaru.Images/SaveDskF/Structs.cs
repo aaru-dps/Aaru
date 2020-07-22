@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class SaveDskF
+    public sealed partial class SaveDskF
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SaveDskFHeader

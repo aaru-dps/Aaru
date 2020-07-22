@@ -49,7 +49,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class CdrWin
+    public sealed partial class CdrWin
     {
         public bool Open(IFilter imageFilter)
         {

@@ -51,7 +51,7 @@ using time_t = System.Int64;
 
 namespace Aaru.Filesystems
 {
-    public class UNICOS : IFilesystem
+    public sealed class UNICOS : IFilesystem
     {
         const int NC1_MAXPART = 64;
         const int NC1_MAXIREG = 4;

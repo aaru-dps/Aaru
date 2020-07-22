@@ -36,7 +36,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Udif
+    public sealed partial class Udif
     {
         public bool Identify(IFilter imageFilter)
         {

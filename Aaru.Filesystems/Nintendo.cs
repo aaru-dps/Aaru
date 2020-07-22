@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public class NintendoPlugin : IFilesystem
+    public sealed class NintendoPlugin : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

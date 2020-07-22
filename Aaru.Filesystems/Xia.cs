@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
-    public class Xia : IFilesystem
+    public sealed class Xia : IFilesystem
     {
         const uint XIAFS_SUPER_MAGIC        = 0x012FD16D;
         const uint XIAFS_ROOT_INO           = 1;

@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     // TODO: Support AAP extensions
-    public class MBR : IPartition
+    public sealed class MBR : IPartition
     {
         const ulong GPT_MAGIC = 0x5452415020494645;
 

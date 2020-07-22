@@ -35,7 +35,7 @@ using System.IO;
 
 namespace Aaru.DiscImages
 {
-    public partial class Apridisk
+    public sealed partial class Apridisk
     {
         static uint Decompress(byte[] compressed, out byte[] decompressed)
         {

@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class RayDim
+    public sealed partial class RayDim
     {
         const string REGEX_SIGNATURE =
             @"Disk IMage VER (?<major>\d).(?<minor>\d) Copyright \(C\) (?<year>\d{4}) Ray Arachelian, All Rights Reserved\.";

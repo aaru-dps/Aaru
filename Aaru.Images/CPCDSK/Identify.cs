@@ -38,7 +38,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cpcdsk
+    public sealed partial class Cpcdsk
     {
         public bool Identify(IFilter imageFilter)
         {

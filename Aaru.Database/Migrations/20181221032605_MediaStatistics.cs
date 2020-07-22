@@ -31,14 +31,11 @@ namespace Aaru.Database.Migrations
                                                                                                                       <bool
                                                                                                                       >()
                                                                                                           }, constraints
-                                                                                                      : table =>
-                                                                                                      {
-                                                                                                          table.
-                                                                                                              PrimaryKey("PK_Medias",
-                                                                                                                         x =>
-                                                                                                                             x.
-                                                                                                                                 Id);
-                                                                                                      });
+                                                                                                      : table => table.
+                                                                                                          PrimaryKey("PK_Medias",
+                                                                                                                     x =>
+                                                                                                                         x.
+                                                                                                                             Id));
 
         protected override void Down(MigrationBuilder migrationBuilder) => migrationBuilder.DropTable("Medias");
     }

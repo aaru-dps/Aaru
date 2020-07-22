@@ -34,7 +34,7 @@ using System;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         public enum ScpDiskType : byte
         {

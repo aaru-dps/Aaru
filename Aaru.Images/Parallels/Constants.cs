@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Parallels
+    public sealed partial class Parallels
     {
         const uint PARALLELS_VERSION    = 2;
         const uint PARALLELS_INUSE      = 0x746F6E59;

@@ -42,7 +42,7 @@ namespace Aaru.Filters
 {
     // TODO: Interpret fdScript
     /// <summary>Decodes MacBinary files</summary>
-    public class MacBinary : IFilter
+    public sealed class MacBinary : IFilter
     {
         const uint      MAGIC = 0x6D42494E;
         string          _basePath;

@@ -35,25 +35,26 @@ using System.IO;
 using System.Reactive;
 using Aaru.Decoders.ATA;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class AtaInfoViewModel : ViewModelBase
+    public sealed class AtaInfoViewModel : ViewModelBase
     {
-        readonly byte[] ata;
-        readonly byte[] atapi;
+        readonly byte[] _ata;
+        readonly byte[] _atapi;
         readonly Window _view;
 
-        public AtaInfoViewModel(byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
-                                Window view)
+        public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify,
+                                AtaErrorRegistersChs? ataMcptError, Window view)
         {
             SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
             SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
 
-            ata   = ataIdentify;
-            atapi = atapiIdentify;
-            _view = view;
+            _ata   = ataIdentify;
+            _atapi = atapiIdentify;
+            _view  = view;
 
             if(ataIdentify   == null &&
                atapiIdentify == null)
@@ -104,12 +105,12 @@ namespace Aaru.Gui.ViewModels.Tabs
                     AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
                 }
 
-                AtaIdentifyText = Identify.Prettify(ata);
+                AtaIdentifyText = Identify.Prettify(_ata);
             }
             else
             {
                 AtaOrAtapiText  = "ATA PACKET IDENTIFY DEVICE";
-                AtaIdentifyText = Identify.Prettify(atapi);
+                AtaIdentifyText = Identify.Prettify(_atapi);
             }
         }
 
@@ -124,7 +125,7 @@ namespace Aaru.Gui.ViewModels.Tabs
 
         public string AtaOrAtapiText { get; }
 
-        protected async void ExecuteSaveAtaBinaryCommand()
+        async void ExecuteSaveAtaBinaryCommand()
         {
             var dlgSaveBinary = new SaveFileDialog();
 
@@ -144,15 +145,15 @@ namespace Aaru.Gui.ViewModels.Tabs
 
             var saveFs = new FileStream(result, FileMode.Create);
 
-            if(ata != null)
-                saveFs.Write(ata, 0, ata.Length);
-            else if(atapi != null)
-                saveFs.Write(atapi, 0, atapi.Length);
+            if(_ata != null)
+                saveFs.Write(_ata, 0, _ata.Length);
+            else if(_atapi != null)
+                saveFs.Write(_atapi, 0, _atapi.Length);
 
             saveFs.Close();
         }
 
-        protected async void ExecuteSaveAtaTextCommand()
+        async void ExecuteSaveAtaTextCommand()
         {
             var dlgSaveText = new SaveFileDialog();
 

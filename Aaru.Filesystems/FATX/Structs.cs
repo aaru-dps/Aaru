@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin
+    public sealed partial class XboxFatPlugin
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Superblock

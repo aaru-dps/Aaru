@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class KryoFlux
+    public sealed partial class KryoFlux
     {
         public ImageInfo              imageInfo;
         public ImageInfo              Info         => imageInfo;

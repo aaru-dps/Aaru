@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class HdCopy
+    public sealed partial class HdCopy
     {
         /// <summary>The global header of a HDCP image file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

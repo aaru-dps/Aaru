@@ -36,7 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ulong  ZISO_HEADER_MAGIC = 0x37E45396C9DBD607;
         const ulong  ZISO_HEADER_CIGAM = 0x07D6DBC99653E437;

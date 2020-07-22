@@ -37,7 +37,7 @@ using Aaru.Decoders.ATA;
 namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public partial class Device
+    public sealed partial class Device
     {
         /// <summary>Sends a SCSI command to this device</summary>
         /// <returns>0 if no error occurred, otherwise, errno</returns>

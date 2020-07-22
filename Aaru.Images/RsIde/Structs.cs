@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde
+    public sealed partial class RsIde
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RsIdeHeader

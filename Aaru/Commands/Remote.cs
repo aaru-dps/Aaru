@@ -42,7 +42,7 @@ using Remote = Aaru.Devices.Remote.Remote;
 
 namespace Aaru.Commands
 {
-    internal class RemoteCommand : Command
+    internal sealed class RemoteCommand : Command
     {
         public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
         {
@@ -74,7 +74,7 @@ namespace Aaru.Commands
 
             try
             {
-                if(host.ToLowerInvariant().StartsWith("aaru://"))
+                if(host.StartsWith("aaru://", StringComparison.CurrentCultureIgnoreCase))
                     host = host.Substring(7);
 
                 var remote = new Remote(host);

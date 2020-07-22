@@ -36,11 +36,12 @@ using System.Reactive;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.SCSI.MMC;
 using Avalonia.Controls;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class BlurayInfoViewModel
+    public sealed class BlurayInfoViewModel
     {
         readonly byte[] _burstCuttingArea;
         readonly byte[] _cartridgeStatus;
@@ -53,10 +54,11 @@ namespace Aaru.Gui.ViewModels.Tabs
         readonly byte[] _trackResources;
         readonly Window _view;
 
-        public BlurayInfoViewModel(byte[] blurayDiscInformation, byte[] blurayBurstCuttingArea, byte[] blurayDds,
-                                   byte[] blurayCartridgeStatus, byte[] bluraySpareAreaInformation,
-                                   byte[] blurayPowResources, byte[] blurayTrackResources, byte[] blurayRawDfl,
-                                   byte[] blurayPac, Window view)
+        public BlurayInfoViewModel([CanBeNull] byte[] blurayDiscInformation, [CanBeNull] byte[] blurayBurstCuttingArea,
+                                   [CanBeNull] byte[] blurayDds, [CanBeNull] byte[] blurayCartridgeStatus,
+                                   [CanBeNull] byte[] bluraySpareAreaInformation, [CanBeNull] byte[] blurayPowResources,
+                                   [CanBeNull] byte[] blurayTrackResources, [CanBeNull] byte[] blurayRawDfl,
+                                   [CanBeNull] byte[] blurayPac, Window view)
         {
             _view                             = view;
             _discInformation                  = blurayDiscInformation;

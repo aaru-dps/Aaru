@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class Reiser4 : IFilesystem
+    public sealed class Reiser4 : IFilesystem
     {
         const uint REISER4_SUPER_OFFSET = 0x10000;
 

@@ -40,7 +40,7 @@ using Encoding = System.Text.Encoding;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
@@ -68,8 +68,7 @@ namespace Aaru.Filesystems
             information = "";
             var sb = new StringBuilder();
 
-            int spt;
-            spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
+            int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
             _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);

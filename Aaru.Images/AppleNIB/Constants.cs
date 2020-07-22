@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class AppleNib
+    public sealed partial class AppleNib
     {
         readonly byte[] _apple3Sign =
         {

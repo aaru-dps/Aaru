@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class CloneCd
+    public sealed partial class CloneCd
     {
         const string CCD_IDENTIFIER     = @"^\s*\[CloneCD\]";
         const string DISC_IDENTIFIER    = @"^\s*\[Disc\]";

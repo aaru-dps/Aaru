@@ -45,7 +45,7 @@ using Version = Resources.Version;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         public bool Open(IFilter imageFilter)
         {

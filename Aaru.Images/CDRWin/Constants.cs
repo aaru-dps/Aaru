@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class CdrWin
+    public sealed partial class CdrWin
     {
         // Type for FILE entity
         /// <summary>Data as-is in little-endian</summary>

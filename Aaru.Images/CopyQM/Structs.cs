@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyQm
+    public sealed partial class CopyQm
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CopyQmHeader

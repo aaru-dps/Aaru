@@ -42,7 +42,7 @@ using Encoding = System.Text.Encoding;
 namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

@@ -46,7 +46,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages
 {
-    public partial class VMware
+    public sealed partial class VMware
     {
         public bool Open(IFilter imageFilter)
         {

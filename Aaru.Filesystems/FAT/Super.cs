@@ -49,7 +49,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         uint        _fatEntriesPerSector;
         IMediaImage _image;
@@ -60,15 +60,13 @@ namespace Aaru.Filesystems
         {
             XmlFsType = new FileSystemType();
 
-            if(options == null)
-                options = GetDefaultOptions();
+            options ??= GetDefaultOptions();
 
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out _debug);
 
             // Default namespace
-            if(@namespace is null)
-                @namespace = "ecs";
+            @namespace ??= "ecs";
 
             switch(@namespace.ToLowerInvariant())
             {
@@ -451,7 +449,7 @@ namespace Aaru.Filesystems
             _fatFirstSector = partition.Start + (_reservedSectors * sectorsPerRealSector);
 
             _rootDirectoryCache = new Dictionary<string, CompleteDirectoryEntry>();
-            byte[] rootDirectory = null;
+            byte[] rootDirectory;
 
             if(!_fat32)
             {
@@ -479,12 +477,9 @@ namespace Aaru.Filesystems
                 var    rootMs                = new MemoryStream();
                 uint[] rootDirectoryClusters = GetClusters(rootDirectoryCluster);
 
-                foreach(uint cluster in rootDirectoryClusters)
+                foreach(var buffer in rootDirectoryClusters.Select(cluster => imagePlugin.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                                                                      _sectorsPerCluster)))
                 {
-                    byte[] buffer =
-                        imagePlugin.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
-                                                _sectorsPerCluster);
-
                     rootMs.Write(buffer, 0, buffer.Length);
                 }
 

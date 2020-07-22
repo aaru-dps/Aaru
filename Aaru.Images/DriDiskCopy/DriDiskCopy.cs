@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class DriDiskCopy : IWritableImage
+    public sealed partial class DriDiskCopy : IWritableImage
     {
         /// <summary>Disk image file</summary>
         IFilter _driImageFilter;

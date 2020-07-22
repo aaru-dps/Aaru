@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     // TODO: Doesn't support compositing from several files
     // TODO: Doesn't support silences that are not in files
-    public partial class Cdrdao : IWritableOpticalImage
+    public sealed partial class Cdrdao : IWritableOpticalImage
     {
         IFilter      _cdrdaoFilter;
         StreamWriter _descriptorStream;

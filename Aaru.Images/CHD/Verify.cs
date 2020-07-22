@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class Chd
+    public sealed partial class Chd
     {
         public bool? VerifySector(ulong sectorAddress)
         {

@@ -43,7 +43,7 @@ namespace Aaru.Filesystems
 {
     // This is coded following ECMA-119.
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public partial class ISO9660 : IReadOnlyFilesystem
+    public sealed partial class ISO9660 : IReadOnlyFilesystem
     {
         bool                                      _cdi;
         bool                                      _debug;

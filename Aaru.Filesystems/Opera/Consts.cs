@@ -36,7 +36,7 @@ using Aaru.Helpers;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         const string SYNC       = "ZZZZZ";
         const uint   FLAGS_MASK = 0xFF;

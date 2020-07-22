@@ -246,7 +246,7 @@ namespace Aaru.Devices.Windows
         }
 
         /// <summary>Represents a USB Host Controller</summary>
-        class UsbController
+        sealed class UsbController
         {
             internal string ControllerDriverKeyName, ControllerDevicePath, ControllerDeviceDesc;
             internal int    ControllerIndex;

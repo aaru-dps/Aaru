@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Blu
+    public sealed partial class Blu
     {
         const string PROFILE_NAME   = "PROFILE      ";
         const string PROFILE10_NAME = "PROFILE 10   ";

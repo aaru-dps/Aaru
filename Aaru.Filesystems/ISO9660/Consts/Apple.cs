@@ -33,7 +33,7 @@
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ushort APPLE_MAGIC     = 0x4141; // "AA"
         const ushort APPLE_MAGIC_OLD = 0x4241; // "BA"

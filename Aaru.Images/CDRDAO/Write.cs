@@ -43,7 +43,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
 
                     if(_separateTracksWriting)
                     {
-                        ErrorMessage = "Separate tracksnot yet implemented";
+                        ErrorMessage = "Separate tracks not yet implemented";
 
                         return false;
                     }
@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
-                ErrorMessage = $"Unsupport media format {mediaType}";
+                ErrorMessage = $"Unsupported media format {mediaType}";
 
                 return false;
             }
@@ -87,7 +87,9 @@ namespace Aaru.DiscImages
             // TODO: Separate tracks
             try
             {
-                _writingBaseName  = Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path));
+                _writingBaseName =
+                    Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+
                 _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
             }
             catch(IOException e)

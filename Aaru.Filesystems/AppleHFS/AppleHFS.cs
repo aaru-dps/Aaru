@@ -40,7 +40,7 @@ namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    public partial class AppleHFS : IFilesystem
+    public sealed partial class AppleHFS : IFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

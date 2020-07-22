@@ -37,12 +37,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
-using Aaru.Partitions;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Dialogs
 {
-    public class PluginsViewModel : ViewModelBase
+    public sealed class PluginsViewModel : ViewModelBase
     {
         readonly PluginsDialog _view;
 
@@ -133,16 +133,26 @@ namespace Aaru.Gui.ViewModels.Dialogs
                 });
         }
 
-        public string                            Title                => "Plugins";
-        public string                            FiltersLabel         => "Filters";
-        public string                            PartitionsLabel      => "Partitions";
-        public string                            FilesystemsLabel     => "Filesystems";
-        public string                            IdentifyLabel        => "Identify only:";
-        public string                            ImagesLabel          => "Media images";
-        public string                            FloppyImagesLabel    => "Floppy images";
-        public string                            ReadableLabel        => "Readable:";
-        public string                            WritableLabel        => "Writable:";
-        public string                            CloseLabel           => "Close";
+        [NotNull]
+        public string Title => "Plugins";
+        [NotNull]
+        public string FiltersLabel => "Filters";
+        [NotNull]
+        public string PartitionsLabel => "Partitions";
+        [NotNull]
+        public string FilesystemsLabel => "Filesystems";
+        [NotNull]
+        public string IdentifyLabel => "Identify only:";
+        [NotNull]
+        public string ImagesLabel => "Media images";
+        [NotNull]
+        public string FloppyImagesLabel => "Floppy images";
+        [NotNull]
+        public string ReadableLabel => "Readable:";
+        [NotNull]
+        public string WritableLabel => "Writable:";
+        [NotNull]
+        public string CloseLabel => "Close";
         public ReactiveCommand<Unit, Unit>       CloseCommand         { get; }
         public ObservableCollection<PluginModel> Filters              { get; }
         public ObservableCollection<PluginModel> PartitionSchemes     { get; }

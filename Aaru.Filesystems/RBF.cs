@@ -42,7 +42,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class RBF : IFilesystem
+    public sealed class RBF : IFilesystem
     {
         /// <summary>Magic number for OS-9. Same for OS-9000?</summary>
         const uint RBF_SYNC = 0x4372757A;

@@ -47,7 +47,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class HAMMER : IFilesystem
+    public sealed class HAMMER : IFilesystem
     {
         const ulong HAMMER_FSBUF_VOLUME     = 0xC8414D4DC5523031;
         const ulong HAMMER_FSBUF_VOLUME_REV = 0x313052C54D4D41C8;
@@ -96,10 +96,8 @@ namespace Aaru.Filesystems
 
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
-            if(magic == HAMMER_FSBUF_VOLUME)
-                superBlock = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector);
-            else
-                superBlock = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
+            superBlock = magic == HAMMER_FSBUF_VOLUME ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sbSector)
+                             : Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 
@@ -195,7 +193,7 @@ namespace Aaru.Filesystems
 
             /*
              * These fields are initialized and space is reserved in every
-             * volume making up a HAMMER filesytem, but only the root volume
+             * volume making up a HAMMER filesystem, but only the root volume
              * contains valid data.  Note that vol0_stat_bigblocks does not
              * include big-blocks for freemap and undomap initially allocated
              * by newfs_hammer(8).

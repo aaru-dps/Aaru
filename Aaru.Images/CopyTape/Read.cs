@@ -42,7 +42,7 @@ using Aaru.CommonTypes.Structs;
 
 namespace Aaru.DiscImages
 {
-    public partial class CopyTape
+    public sealed partial class CopyTape
     {
         public bool Open(IFilter imageFilter)
         {

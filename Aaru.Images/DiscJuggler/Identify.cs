@@ -37,7 +37,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscJuggler
+    public sealed partial class DiscJuggler
     {
         public bool Identify(IFilter imageFilter)
         {

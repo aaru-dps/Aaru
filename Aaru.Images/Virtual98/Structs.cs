@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Virtual98
+    public sealed partial class Virtual98
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Virtual98Header

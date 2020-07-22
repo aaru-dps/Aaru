@@ -32,11 +32,11 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class AaruFormat
+    public sealed partial class AaruFormat
     {
-        /// <summary>Old magic identidier = "DICMFRMT".</summary>
+        /// <summary>Old magic identifier = "DICMFRMT".</summary>
         const ulong DIC_MAGIC = 0x544D52464D434944;
-        /// <summary>Magic identidier = "AARUFRMT".</summary>
+        /// <summary>Magic identifier = "AARUFRMT".</summary>
         const ulong AARU_MAGIC = 0x544D524655524141;
         /// <summary>
         ///     Image format version. A change in this number indicates an incompatible change to the format that prevents

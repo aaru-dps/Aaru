@@ -56,7 +56,7 @@ using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
 namespace Aaru.Commands.Device
 {
-    internal class DeviceInfoCommand : Command
+    internal sealed class DeviceInfoCommand : Command
     {
         public DeviceInfoCommand() : base("info", "Gets information about a device.")
         {
@@ -828,147 +828,143 @@ namespace Aaru.Commands.Device
                     }
                 }
 
-                if(devInfo.PlextorFeatures != null)
+                if(devInfo.PlextorFeatures?.Eeprom != null)
                 {
-                    if(devInfo.PlextorFeatures.Eeprom != null)
-                    {
-                        DataFile.WriteTo("Device-Info command", outputPrefix, "_plextor_eeprom.bin",
-                                         "PLEXTOR READ EEPROM", devInfo.PlextorFeatures.Eeprom);
+                    DataFile.WriteTo("Device-Info command", outputPrefix, "_plextor_eeprom.bin", "PLEXTOR READ EEPROM",
+                                     devInfo.PlextorFeatures.Eeprom);
 
-                        AaruConsole.WriteLine("Drive has loaded a total of {0} discs", devInfo.PlextorFeatures.Discs);
+                    AaruConsole.WriteLine("Drive has loaded a total of {0} discs", devInfo.PlextorFeatures.Discs);
 
-                        AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
-                                              devInfo.PlextorFeatures.CdReadTime        / 3600,
-                                              (devInfo.PlextorFeatures.CdReadTime / 60) % 60,
-                                              devInfo.PlextorFeatures.CdReadTime        % 60);
+                    AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
+                                          devInfo.PlextorFeatures.CdReadTime        / 3600,
+                                          (devInfo.PlextorFeatures.CdReadTime / 60) % 60,
+                                          devInfo.PlextorFeatures.CdReadTime        % 60);
 
-                        AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
-                                              devInfo.PlextorFeatures.CdWriteTime        / 3600,
-                                              (devInfo.PlextorFeatures.CdWriteTime / 60) % 60,
-                                              devInfo.PlextorFeatures.CdWriteTime        % 60);
-
-                        if(devInfo.PlextorFeatures.IsDvd)
-                        {
-                            AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                                  devInfo.PlextorFeatures.DvdReadTime        / 3600,
-                                                  (devInfo.PlextorFeatures.DvdReadTime / 60) % 60,
-                                                  devInfo.PlextorFeatures.DvdReadTime        % 60);
-
-                            AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                                  devInfo.PlextorFeatures.DvdWriteTime        / 3600,
-                                                  (devInfo.PlextorFeatures.DvdWriteTime / 60) % 60,
-                                                  devInfo.PlextorFeatures.DvdWriteTime        % 60);
-                        }
-                    }
-
-                    if(devInfo.PlextorFeatures.PoweRec)
-                    {
-                        AaruConsole.Write("Drive supports PoweRec");
-
-                        if(devInfo.PlextorFeatures.PoweRecEnabled)
-                        {
-                            AaruConsole.Write(", has it enabled");
-
-                            if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
-                                AaruConsole.WriteLine(" and recommends {0} Kb/sec.",
-                                                      devInfo.PlextorFeatures.PoweRecRecommendedSpeed);
-                            else
-                                AaruConsole.WriteLine(".");
-
-                            if(devInfo.PlextorFeatures.PoweRecSelected > 0)
-                                AaruConsole.
-                                    WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                              devInfo.PlextorFeatures.PoweRecSelected,
-                                              devInfo.PlextorFeatures.PoweRecSelected / 177);
-
-                            if(devInfo.PlextorFeatures.PoweRecMax > 0)
-                                AaruConsole.
-                                    WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
-                                              devInfo.PlextorFeatures.PoweRecMax,
-                                              devInfo.PlextorFeatures.PoweRecMax / 177);
-
-                            if(devInfo.PlextorFeatures.PoweRecLast > 0)
-                                AaruConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)",
-                                                      devInfo.PlextorFeatures.PoweRecLast,
-                                                      devInfo.PlextorFeatures.PoweRecLast / 177);
-                        }
-                        else
-                        {
-                            AaruConsole.WriteLine(".");
-                            AaruConsole.WriteLine("PoweRec is disabled");
-                        }
-                    }
-
-                    if(devInfo.PlextorFeatures.SilentMode)
-                    {
-                        AaruConsole.WriteLine("Drive supports Plextor SilentMode");
-
-                        if(devInfo.PlextorFeatures.SilentModeEnabled)
-                        {
-                            AaruConsole.WriteLine("Plextor SilentMode is enabled:");
-
-                            AaruConsole.WriteLine(devInfo.PlextorFeatures.AccessTimeLimit == 2 ? "\tAccess time is slow"
-                                                      : "\tAccess time is fast");
-
-                            if(devInfo.PlextorFeatures.CdReadSpeedLimit > 0)
-                                AaruConsole.WriteLine("\tCD read speed limited to {0}x",
-                                                      devInfo.PlextorFeatures.CdReadSpeedLimit);
-
-                            if(devInfo.PlextorFeatures.DvdReadSpeedLimit > 0 &&
-                               devInfo.PlextorFeatures.IsDvd)
-                                AaruConsole.WriteLine("\tDVD read speed limited to {0}x",
-                                                      devInfo.PlextorFeatures.DvdReadSpeedLimit);
-
-                            if(devInfo.PlextorFeatures.CdWriteSpeedLimit > 0)
-                                AaruConsole.WriteLine("\tCD write speed limited to {0}x",
-                                                      devInfo.PlextorFeatures.CdWriteSpeedLimit);
-                        }
-                    }
-
-                    if(devInfo.PlextorFeatures.GigaRec)
-                        AaruConsole.WriteLine("Drive supports Plextor GigaRec");
-
-                    if(devInfo.PlextorFeatures.SecuRec)
-                        AaruConsole.WriteLine("Drive supports Plextor SecuRec");
-
-                    if(devInfo.PlextorFeatures.SpeedRead)
-                    {
-                        AaruConsole.Write("Drive supports Plextor SpeedRead");
-
-                        if(devInfo.PlextorFeatures.SpeedReadEnabled)
-                            AaruConsole.WriteLine("and has it enabled");
-                        else
-                            AaruConsole.WriteLine();
-                    }
-
-                    if(devInfo.PlextorFeatures.Hiding)
-                    {
-                        AaruConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
-
-                        if(devInfo.PlextorFeatures.HidesRecordables)
-                            AaruConsole.WriteLine("Drive currently hides CD-Rs");
-
-                        if(devInfo.PlextorFeatures.HidesSessions)
-                            AaruConsole.WriteLine("Drive currently forces single session");
-                    }
-
-                    if(devInfo.PlextorFeatures.VariRec)
-                        AaruConsole.WriteLine("Drive supports Plextor VariRec");
+                    AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
+                                          devInfo.PlextorFeatures.CdWriteTime        / 3600,
+                                          (devInfo.PlextorFeatures.CdWriteTime / 60) % 60,
+                                          devInfo.PlextorFeatures.CdWriteTime        % 60);
 
                     if(devInfo.PlextorFeatures.IsDvd)
                     {
-                        if(devInfo.PlextorFeatures.VariRecDvd)
-                            AaruConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
+                        AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
+                                              devInfo.PlextorFeatures.DvdReadTime        / 3600,
+                                              (devInfo.PlextorFeatures.DvdReadTime / 60) % 60,
+                                              devInfo.PlextorFeatures.DvdReadTime        % 60);
 
-                        if(devInfo.PlextorFeatures.BitSetting)
-                            AaruConsole.WriteLine("Drive supports bitsetting DVD+R book type");
-
-                        if(devInfo.PlextorFeatures.BitSettingDl)
-                            AaruConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
-
-                        if(devInfo.PlextorFeatures.DvdPlusWriteTest)
-                            AaruConsole.WriteLine("Drive supports test writing DVD+");
+                        AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
+                                              devInfo.PlextorFeatures.DvdWriteTime        / 3600,
+                                              (devInfo.PlextorFeatures.DvdWriteTime / 60) % 60,
+                                              devInfo.PlextorFeatures.DvdWriteTime        % 60);
                     }
+                }
+
+                if(devInfo.PlextorFeatures?.PoweRec == true)
+                {
+                    AaruConsole.Write("Drive supports PoweRec");
+
+                    if(devInfo.PlextorFeatures.PoweRecEnabled)
+                    {
+                        AaruConsole.Write(", has it enabled");
+
+                        if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
+                            AaruConsole.WriteLine(" and recommends {0} Kb/sec.",
+                                                  devInfo.PlextorFeatures.PoweRecRecommendedSpeed);
+                        else
+                            AaruConsole.WriteLine(".");
+
+                        if(devInfo.PlextorFeatures.PoweRecSelected > 0)
+                            AaruConsole.
+                                WriteLine("Selected PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                                          devInfo.PlextorFeatures.PoweRecSelected,
+                                          devInfo.PlextorFeatures.PoweRecSelected / 177);
+
+                        if(devInfo.PlextorFeatures.PoweRecMax > 0)
+                            AaruConsole.
+                                WriteLine("Maximum PoweRec speed for currently inserted media is {0} Kb/sec ({1}x)",
+                                          devInfo.PlextorFeatures.PoweRecMax, devInfo.PlextorFeatures.PoweRecMax / 177);
+
+                        if(devInfo.PlextorFeatures.PoweRecLast > 0)
+                            AaruConsole.WriteLine("Last used PoweRec was {0} Kb/sec ({1}x)",
+                                                  devInfo.PlextorFeatures.PoweRecLast,
+                                                  devInfo.PlextorFeatures.PoweRecLast / 177);
+                    }
+                    else
+                    {
+                        AaruConsole.WriteLine(".");
+                        AaruConsole.WriteLine("PoweRec is disabled");
+                    }
+                }
+
+                if(devInfo.PlextorFeatures?.SilentMode == true)
+                {
+                    AaruConsole.WriteLine("Drive supports Plextor SilentMode");
+
+                    if(devInfo.PlextorFeatures.SilentModeEnabled)
+                    {
+                        AaruConsole.WriteLine("Plextor SilentMode is enabled:");
+
+                        AaruConsole.WriteLine(devInfo.PlextorFeatures.AccessTimeLimit == 2 ? "\tAccess time is slow"
+                                                  : "\tAccess time is fast");
+
+                        if(devInfo.PlextorFeatures.CdReadSpeedLimit > 0)
+                            AaruConsole.WriteLine("\tCD read speed limited to {0}x",
+                                                  devInfo.PlextorFeatures.CdReadSpeedLimit);
+
+                        if(devInfo.PlextorFeatures.DvdReadSpeedLimit > 0 &&
+                           devInfo.PlextorFeatures.IsDvd)
+                            AaruConsole.WriteLine("\tDVD read speed limited to {0}x",
+                                                  devInfo.PlextorFeatures.DvdReadSpeedLimit);
+
+                        if(devInfo.PlextorFeatures.CdWriteSpeedLimit > 0)
+                            AaruConsole.WriteLine("\tCD write speed limited to {0}x",
+                                                  devInfo.PlextorFeatures.CdWriteSpeedLimit);
+                    }
+                }
+
+                if(devInfo.PlextorFeatures?.GigaRec == true)
+                    AaruConsole.WriteLine("Drive supports Plextor GigaRec");
+
+                if(devInfo.PlextorFeatures?.SecuRec == true)
+                    AaruConsole.WriteLine("Drive supports Plextor SecuRec");
+
+                if(devInfo.PlextorFeatures?.SpeedRead == true)
+                {
+                    AaruConsole.Write("Drive supports Plextor SpeedRead");
+
+                    if(devInfo.PlextorFeatures.SpeedReadEnabled)
+                        AaruConsole.WriteLine("and has it enabled");
+                    else
+                        AaruConsole.WriteLine();
+                }
+
+                if(devInfo.PlextorFeatures?.Hiding == true)
+                {
+                    AaruConsole.WriteLine("Drive supports hiding CD-Rs and forcing single session");
+
+                    if(devInfo.PlextorFeatures.HidesRecordables)
+                        AaruConsole.WriteLine("Drive currently hides CD-Rs");
+
+                    if(devInfo.PlextorFeatures.HidesSessions)
+                        AaruConsole.WriteLine("Drive currently forces single session");
+                }
+
+                if(devInfo.PlextorFeatures?.VariRec == true)
+                    AaruConsole.WriteLine("Drive supports Plextor VariRec");
+
+                if(devInfo.PlextorFeatures?.IsDvd == true)
+                {
+                    if(devInfo.PlextorFeatures.VariRecDvd)
+                        AaruConsole.WriteLine("Drive supports Plextor VariRec for DVDs");
+
+                    if(devInfo.PlextorFeatures.BitSetting)
+                        AaruConsole.WriteLine("Drive supports bitsetting DVD+R book type");
+
+                    if(devInfo.PlextorFeatures.BitSettingDl)
+                        AaruConsole.WriteLine("Drive supports bitsetting DVD+R DL book type");
+
+                    if(devInfo.PlextorFeatures.DvdPlusWriteTest)
+                        AaruConsole.WriteLine("Drive supports test writing DVD+");
                 }
 
                 if(devInfo.ScsiInquiry.Value.KreonPresent)

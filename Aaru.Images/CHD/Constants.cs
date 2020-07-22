@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Chd
+    public sealed partial class Chd
     {
         /// <summary>"GDDD"</summary>
         const uint HARD_DISK_METADATA = 0x47444444;

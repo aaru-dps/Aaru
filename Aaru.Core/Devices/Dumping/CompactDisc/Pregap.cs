@@ -81,9 +81,12 @@ namespace Aaru.Core.Devices.Dumping
                 PulseProgress?.
                     Invoke($"Trying to read first track pregap sector {firstTrackPregapBlock} ({currentSpeed:F3} MiB/sec.)");
 
+                // ReSharper disable IntVariableOverflowInUncheckedContext
                 sense = _dev.ReadCd(out cmdBuf, out _, (uint)firstTrackPregapBlock, blockSize, 1,
                                     MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                     MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+
+                // ReSharper restore IntVariableOverflowInUncheckedContext
 
                 if(!sense &&
                    !_dev.Error)
@@ -170,8 +173,8 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Initialize the dictionary
-            for(int i = 0; i < tracks.Length; i++)
-                pregaps[tracks[i].TrackSequence] = 0;
+            foreach(Track t in tracks)
+                pregaps[t.TrackSequence] = 0;
 
             for(int t = 0; t < tracks.Length; t++)
             {
@@ -560,28 +563,28 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            for(int i = 0; i < tracks.Length; i++)
+            foreach(Track trk in tracks)
             {
-                tracks[i].TrackPregap = (ulong)pregaps[tracks[i].TrackSequence];
+                trk.TrackPregap = (ulong)pregaps[trk.TrackSequence];
 
                 if(dumping)
                 {
                     // Minus five, to ensure dumping will fix if there is a pregap LBA 0
                     int red = 5;
 
-                    while(tracks[i].TrackPregap > 0 &&
-                          red                   > 0)
+                    while(trk.TrackPregap > 0 &&
+                          red             > 0)
                     {
-                        tracks[i].TrackPregap--;
+                        trk.TrackPregap--;
                         red--;
                     }
                 }
 
-                tracks[i].TrackStartSector -= tracks[i].TrackPregap;
+                trk.TrackStartSector -= trk.TrackPregap;
 
             #if DEBUG
-                dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {tracks[i].TrackPregap} sectors");
-                updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {tracks[i].TrackPregap} sectors");
+                dumpLog?.WriteLine($"Track {trk.TrackSequence} pregap is {trk.TrackPregap} sectors");
+                updateStatus?.Invoke($"Track {trk.TrackSequence} pregap is {trk.TrackPregap} sectors");
             #endif
             }
         }

@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class FAT
+    public sealed partial class FAT
     {
         Dictionary<string, Dictionary<string, byte[]>> _eaCache;
 
@@ -133,11 +133,8 @@ namespace Aaru.Filesystems
             var    eaMs                  = new MemoryStream();
             uint[] rootDirectoryClusters = GetClusters(entryFat32Ea.start_cluster);
 
-            foreach(uint cluster in rootDirectoryClusters)
+            foreach(var buffer in rootDirectoryClusters.Select(cluster => _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster), _sectorsPerCluster)))
             {
-                byte[] buffer =
-                    _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster), _sectorsPerCluster);
-
                 eaMs.Write(buffer, 0, buffer.Length);
             }
 

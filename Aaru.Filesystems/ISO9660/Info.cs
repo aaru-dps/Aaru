@@ -44,7 +44,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

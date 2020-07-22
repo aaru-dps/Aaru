@@ -54,7 +54,7 @@ using Version = Aaru.CommonTypes.Interop.Version;
 
 namespace Aaru.Commands.Image
 {
-    internal class ConvertImageCommand : Command
+    internal sealed class ConvertImageCommand : Command
     {
         public ConvertImageCommand() : base("convert", "Converts one image to another format.")
         {
@@ -556,11 +556,12 @@ namespace Aaru.Commands.Image
                 return (int)ErrorNumber.UnsupportedMedia;
             }
 
-            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
+            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
+                                                                                          !outputFormat.
+                                                                                           SupportedMediaTags.
+                                                                                           Contains(mediaTag) &&
+                                                                                          !force))
             {
-                if(outputFormat.SupportedMediaTags.Contains(mediaTag) || force)
-                    continue;
-
                 AaruConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
                 AaruConsole.ErrorWriteLine("If you don't care, use force option.");
 
@@ -569,11 +570,11 @@ namespace Aaru.Commands.Image
 
             bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
 
-            foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags)
+            foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
+                                                                                             !outputFormat.
+                                                                                              SupportedSectorTags.
+                                                                                              Contains(sectorTag)))
             {
-                if(outputFormat.SupportedSectorTags.Contains(sectorTag))
-                    continue;
-
                 if(force)
                 {
                     if(sectorTag != SectorTagType.CdTrackFlags &&
@@ -637,11 +638,11 @@ namespace Aaru.Commands.Image
             CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
             List<DumpHardwareType> dumpHardware = inputFormat.DumpHardware;
 
-            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
+            foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
+                                                                                          !force || outputFormat.
+                                                                                                    SupportedMediaTags.
+                                                                                                    Contains(mediaTag)))
             {
-                if(force && !outputFormat.SupportedMediaTags.Contains(mediaTag))
-                    continue;
-
                 AaruConsole.WriteLine("Converting media tag {0}", mediaTag);
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
 
@@ -811,11 +812,9 @@ namespace Aaru.Commands.Image
                     subchannelExtents.Add((int)s);
                 }
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
+                foreach(SectorTagType tag in inputFormat.
+                                             Info.ReadableSectorTags.OrderBy(t => t).TakeWhile(tag => useLong))
                 {
-                    if(!useLong)
-                        break;
-
                     switch(tag)
                     {
                         case SectorTagType.AppleSectorTag:
@@ -986,11 +985,11 @@ namespace Aaru.Commands.Image
                                                      SectorTagType.CdTrackIsrc);
 
                 if(trackFlags.Count > 0)
-                    foreach(KeyValuePair<byte, byte> flags in trackFlags)
+                    foreach((byte track, byte flags) in trackFlags)
                         outputOptical.WriteSectorTag(new[]
                         {
-                            flags.Value
-                        }, flags.Key, SectorTagType.CdTrackFlags);
+                            flags
+                        }, track, SectorTagType.CdTrackFlags);
 
                 if(mcn != null)
                     outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
@@ -1098,11 +1097,8 @@ namespace Aaru.Commands.Image
 
                 AaruConsole.WriteLine();
 
-                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
+                foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.TakeWhile(tag => useLong))
                 {
-                    if(!useLong)
-                        break;
-
                     switch(tag)
                     {
                         case SectorTagType.AppleSectorTag:

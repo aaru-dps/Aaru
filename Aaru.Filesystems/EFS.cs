@@ -44,7 +44,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class EFS : IFilesystem
+    public sealed class EFS : IFilesystem
     {
         const uint EFS_MAGIC     = 0x00072959;
         const uint EFS_MAGIC_NEW = 0x0007295A;

@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class AppleDos
+    public sealed partial class AppleDos
     {
         readonly int[] _deinterleave =
         {

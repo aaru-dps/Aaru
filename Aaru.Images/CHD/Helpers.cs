@@ -42,7 +42,7 @@ using SharpCompress.Compressors.Deflate;
 
 namespace Aaru.DiscImages
 {
-    public partial class Chd
+    public sealed partial class Chd
     {
         Track GetTrack(ulong sector)
         {
@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
         {
             _tracks.TryGetValue(track, out Track aaruTrack);
 
-            return aaruTrack.TrackStartSector + relativeSector;
+            return aaruTrack!.TrackStartSector + relativeSector;
         }
 
         byte[] GetHunk(ulong hunkNo)

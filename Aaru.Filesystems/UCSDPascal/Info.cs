@@ -43,7 +43,7 @@ using Encoding = System.Text.Encoding;
 namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
-    public partial class PascalPlugin
+    public sealed partial class PascalPlugin
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

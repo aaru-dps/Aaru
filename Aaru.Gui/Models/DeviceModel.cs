@@ -36,7 +36,7 @@ using Avalonia.Media.Imaging;
 
 namespace Aaru.Gui.Models
 {
-    public class DeviceModel
+    public sealed class DeviceModel
     {
         public DeviceModel() => Media = new ObservableCollection<MediaModel>();
 

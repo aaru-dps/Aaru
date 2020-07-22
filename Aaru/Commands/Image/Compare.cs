@@ -46,7 +46,7 @@ using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
 namespace Aaru.Commands.Image
 {
-    internal class CompareCommand : Command
+    internal sealed class CompareCommand : Command
     {
         public CompareCommand() : base("compare", "Compares two disc images.")
         {
@@ -171,12 +171,12 @@ namespace Aaru.Commands.Image
             Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
             Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 
-            foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
+            foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try
                 {
-                    byte[] temparray = input1Format.ReadDiskTag(disktag);
-                    image1DiskTags.Add(disktag, temparray);
+                    byte[] tempArray = input1Format.ReadDiskTag(diskTag);
+                    image1DiskTags.Add(diskTag, tempArray);
                 }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
@@ -186,12 +186,12 @@ namespace Aaru.Commands.Image
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
-            foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
+            foreach(MediaTagType diskTag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try
                 {
-                    byte[] temparray = input2Format.ReadDiskTag(disktag);
-                    image2DiskTags.Add(disktag, temparray);
+                    byte[] tempArray = input2Format.ReadDiskTag(diskTag);
+                    image2DiskTags.Add(diskTag, tempArray);
                 }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
@@ -280,10 +280,10 @@ namespace Aaru.Commands.Image
                 sb.AppendFormat("{0,-38}{1,-20}{2}", "Drive serial number", image1Info.DriveSerialNumber,
                                 image2Info.DriveSerialNumber).AppendLine();
 
-                foreach(MediaTagType disktag in
+                foreach(MediaTagType diskTag in
                     (Enum.GetValues(typeof(MediaTagType)) as MediaTagType[]).OrderBy(e => e.ToString()))
-                    sb.AppendFormat("{0,-38}{1,-20}{2}", $"Has {disktag}?", image1DiskTags.ContainsKey(disktag),
-                                    image2DiskTags.ContainsKey(disktag)).AppendLine();
+                    sb.AppendFormat("{0,-38}{1,-20}{2}", $"Has {diskTag}?", image1DiskTags.ContainsKey(diskTag),
+                                    image2DiskTags.ContainsKey(diskTag)).AppendLine();
             }
 
             AaruConsole.WriteLine("Comparing disk image characteristics");

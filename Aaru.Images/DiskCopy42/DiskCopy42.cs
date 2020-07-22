@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public partial class DiskCopy42 : IWritableImage, IVerifiableImage
+    public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
     {
         /// <summary>Bytes per tag, should be 12</summary>
         uint bptag;

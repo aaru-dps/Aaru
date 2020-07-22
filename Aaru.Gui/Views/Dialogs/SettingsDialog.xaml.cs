@@ -36,7 +36,7 @@ using Avalonia.Markup.Xaml;
 
 namespace Aaru.Gui.Views.Dialogs
 {
-    public class SettingsDialog : Window
+    public sealed class SettingsDialog : Window
     {
         public SettingsDialog()
         {

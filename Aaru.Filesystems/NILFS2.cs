@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class NILFS2 : IFilesystem
+    public sealed class NILFS2 : IFilesystem
     {
         const ushort NILFS2_MAGIC        = 0x3434;
         const uint   NILFS2_SUPER_OFFSET = 1024;

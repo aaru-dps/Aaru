@@ -36,7 +36,7 @@ using System;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         /// <summary>
         ///     The MDDF is the most import block on a Lisa FS volume. It describes the volume and its contents. On

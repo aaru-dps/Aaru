@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Chd
+    public sealed partial class Chd
     {
         public ImageInfo Info   => _imageInfo;
         public string    Name   => "MAME Compressed Hunks of Data";

@@ -54,7 +54,7 @@ using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 
 namespace Aaru.Commands.Device
 {
-    internal class DeviceReportCommand : Command
+    internal sealed class DeviceReportCommand : Command
     {
         public DeviceReportCommand() : base("report",
                                             "Tests the device capabilities and creates an JSON report of them.")
@@ -119,16 +119,14 @@ namespace Aaru.Commands.Device
             }
             catch(DeviceException e)
             {
-                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message);
 
                 return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
 
-            bool isAdmin;
-
-            isAdmin = dev.IsRemote ? dev.IsRemoteAdmin : DetectOS.IsAdmin;
+            bool isAdmin = dev.IsRemote ? dev.IsRemoteAdmin : DetectOS.IsAdmin;
 
             if(!isAdmin)
             {
@@ -444,7 +442,8 @@ namespace Aaru.Commands.Device
                         case PeripheralDeviceTypes.MultiMediaDevice:
                         {
                             bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
-                                             dev.Model.ToLowerInvariant().StartsWith("rrd");
+                                             dev.Model.ToLowerInvariant().
+                                                 StartsWith("rrd", StringComparison.OrdinalIgnoreCase);
 
                             if(trapDisc)
                             {
@@ -1171,13 +1170,14 @@ namespace Aaru.Commands.Device
                             when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
                                  dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                         {
-                            List<string> mediaTypes = new List<string>();
-
-                            mediaTypes.Add("MD DATA (140Mb data MiniDisc)");
-                            mediaTypes.Add("60 minutes rewritable MiniDisc");
-                            mediaTypes.Add("74 minutes rewritable MiniDisc");
-                            mediaTypes.Add("80 minutes rewritable MiniDisc");
-                            mediaTypes.Add("Embossed Audio MiniDisc");
+                            List<string> mediaTypes = new List<string>
+                            {
+                                "MD DATA (140Mb data MiniDisc)",
+                                "60 minutes rewritable MiniDisc",
+                                "74 minutes rewritable MiniDisc",
+                                "80 minutes rewritable MiniDisc",
+                                "Embossed Audio MiniDisc"
+                            };
 
                             mediaTypes.Sort();
 

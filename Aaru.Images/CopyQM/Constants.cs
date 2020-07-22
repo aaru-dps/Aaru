@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class CopyQm
+    public sealed partial class CopyQm
     {
         const ushort COPYQM_MAGIC  = 0x5143;
         const byte   COPYQM_MARK   = 0x14;

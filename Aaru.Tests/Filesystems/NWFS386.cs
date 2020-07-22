@@ -35,7 +35,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture, SuppressMessage("ReSharper", "UnusedMember.Local")]
     public class Nwfs386
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "netware_3.12.aif"
         };
@@ -45,7 +45,7 @@ namespace Aaru.Tests.Filesystems
             104857600
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512
         };
@@ -55,17 +55,17 @@ namespace Aaru.Tests.Filesystems
             104856192
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             512
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "Volume label"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "UNKNOWN"
         };

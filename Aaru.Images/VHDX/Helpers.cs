@@ -35,7 +35,7 @@ using System.Linq;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhdx
+    public sealed partial class Vhdx
     {
         bool CheckBitmap(ulong sectorAddress)
         {

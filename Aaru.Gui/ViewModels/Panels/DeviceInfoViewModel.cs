@@ -44,10 +44,10 @@ using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
 namespace Aaru.Gui.ViewModels.Panels
 {
-    public class DeviceInfoViewModel : ViewModelBase
+    public sealed class DeviceInfoViewModel : ViewModelBase
     {
+        readonly DeviceInfo _devInfo;
         readonly Window     _view;
-        readonly DeviceInfo devInfo;
         AtaInfo             _ataInfo;
         string              _blockLimits;
         string              _blockSizeGranularity;
@@ -142,8 +142,7 @@ namespace Aaru.Gui.ViewModels.Panels
         {
             SaveUsbDescriptorsCommand = ReactiveCommand.Create(ExecuteSaveUsbDescriptorsCommand);
             _view                     = view;
-
-            this.devInfo = devInfo;
+            _devInfo                  = devInfo;
 
             DeviceType   = devInfo.Type.ToString();
             Manufacturer = devInfo.Manufacturer;
@@ -948,7 +947,7 @@ namespace Aaru.Gui.ViewModels.Panels
                 return;
 
             var saveFs = new FileStream(result, FileMode.Create);
-            saveFs.Write(devInfo.UsbDescriptors, 0, devInfo.UsbDescriptors.Length);
+            saveFs.Write(_devInfo.UsbDescriptors, 0, _devInfo.UsbDescriptors.Length);
 
             saveFs.Close();
         }

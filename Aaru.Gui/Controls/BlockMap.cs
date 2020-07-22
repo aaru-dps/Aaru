@@ -40,6 +40,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui.Controls
 {
@@ -47,7 +48,7 @@ namespace Aaru.Gui.Controls
     // TODO: React to size changes
     // TODO: Optimize block size to viewport
     // TODO: Writing one more than it should
-    public class BlockMap : ItemsControl
+    public sealed class BlockMap : ItemsControl
     {
         const int _blockSize = 15;
         public static readonly StyledProperty<ulong> BlocksProperty =
@@ -161,7 +162,7 @@ namespace Aaru.Gui.Controls
             set => SetValue(BlocksProperty, value);
         }
 
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged([NotNull] AvaloniaPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
@@ -219,7 +220,7 @@ namespace Aaru.Gui.Controls
             }
         }
 
-        public override void Render(DrawingContext context)
+        public override void Render([NotNull] DrawingContext context)
         {
             if((int?)_bitmap?.Size.Height != (int)Height ||
                (int?)_bitmap?.Size.Width  != (int)Width)
@@ -233,7 +234,7 @@ namespace Aaru.Gui.Controls
             base.Render(context);
         }
 
-        protected override void ItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected override void ItemsCollectionChanged(object sender, [NotNull] NotifyCollectionChangedEventArgs e)
         {
             base.ItemsCollectionChanged(sender, e);
 
@@ -377,7 +378,7 @@ namespace Aaru.Gui.Controls
                 Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
         }
 
-        protected override void ItemsChanged(AvaloniaPropertyChangedEventArgs e)
+        protected override void ItemsChanged([NotNull] AvaloniaPropertyChangedEventArgs e)
         {
             if(e.NewValue != null &&
                !(e.NewValue is IList<(ulong, double)>))

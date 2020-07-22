@@ -50,7 +50,7 @@ using TrackType = Schemas.TrackType;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         /// <summary>Creates a metadata sidecar for an optical disc (e.g. CD, DVD, GD, BD, XGD, GOD)</summary>
         /// <param name="image">Image</param>

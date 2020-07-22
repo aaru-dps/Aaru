@@ -40,7 +40,7 @@ using Aaru.Devices;
 
 namespace Aaru.Commands.Media
 {
-    internal class MediaScanCommand : Command
+    internal sealed class MediaScanCommand : Command
     {
         public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
         {
@@ -115,7 +115,7 @@ namespace Aaru.Commands.Media
             }
             catch(DeviceException e)
             {
-                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message);
 
                 return (int)ErrorNumber.CannotOpenDevice;
             }
@@ -159,15 +159,10 @@ namespace Aaru.Commands.Media
 
             AaruConsole.WriteLine();
 
-            #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+            if(results.SeekTotal > 0               ||
+               results.SeekMin   < double.MaxValue ||
+               results.SeekMax   > double.MinValue)
 
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if(results.SeekTotal != 0               ||
-               results.SeekMin   != double.MaxValue ||
-               results.SeekMax   != double.MinValue)
-
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 AaruConsole.
                     WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                               results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);

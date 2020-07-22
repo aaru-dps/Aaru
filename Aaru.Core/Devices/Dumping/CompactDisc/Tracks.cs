@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
@@ -51,7 +50,6 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Reads the TOC, processes it, returns the track list and last sector</summary>
         /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="dev">Device</param>
-        /// <param name="dskType">Disc type</param>
         /// <param name="dumpLog">Dump log</param>
         /// <param name="force">Force dump enabled</param>
         /// <param name="lastSector">Last sector number</param>
@@ -63,18 +61,18 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="trackFlags">Track flags</param>
         /// <param name="updateStatus">Update status handler</param>
         /// <returns>List of tracks</returns>
-        public static Track[] GetCdTracks(ref uint blockSize, Device dev, MediaType dskType, DumpLog dumpLog,
-                                          bool force, out long lastSector, Dictionary<int, long> leadOutStarts,
+        public static Track[] GetCdTracks(ref uint blockSize, Device dev, DumpLog dumpLog, bool force,
+                                          out long lastSector, Dictionary<int, long> leadOutStarts,
                                           Dictionary<MediaTagType, byte[]> mediaTags,
                                           ErrorMessageHandler stoppingErrorMessage, TrackSubchannelType subType,
                                           out FullTOC.CDFullTOC? toc, Dictionary<byte, byte> trackFlags,
                                           UpdateStatusHandler updateStatus)
         {
-            byte[]      cmdBuf     = null;              // Data buffer
-            const uint  sectorSize = 2352;              // Full sector size
-            bool        sense      = true;              // Sense indicator
-            List<Track> trackList  = new List<Track>(); // Tracks in disc
-            byte[]      tmpBuf;                         // Temporary buffer
+            byte[]      cmdBuf;                        // Data buffer
+            const uint  sectorSize = 2352;             // Full sector size
+            bool        sense;                         // Sense indicator
+            List<Track> trackList = new List<Track>(); // Tracks in disc
+            byte[]      tmpBuf;                        // Temporary buffer
             toc        = null;
             lastSector = 0;
             TrackType leadoutTrackType = TrackType.Audio;
@@ -195,36 +193,37 @@ namespace Aaru.Core.Devices.Dumping
                     return null;
                 }
 
-                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.
-                                                            Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
-                                                            Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                    if(trk.TrackNumber >= 0x01 &&
-                       trk.TrackNumber <= 0x63)
-                    {
-                        trackList.Add(new Track
+                if(oldToc.HasValue)
+                    foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.
+                                                                Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
+                                                                Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                        if(trk.TrackNumber >= 0x01 &&
+                           trk.TrackNumber <= 0x63)
                         {
-                            TrackSequence = trk.TrackNumber,
-                            TrackSession  = 1,
-                            TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                            ? TrackType.Data : TrackType.Audio,
-                            TrackStartSector       = trk.TrackStartAddress,
-                            TrackBytesPerSector    = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize,
-                            TrackSubchannelType    = subType
-                        });
+                            trackList.Add(new Track
+                            {
+                                TrackSequence = trk.TrackNumber,
+                                TrackSession  = 1,
+                                TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
+                                                ? TrackType.Data : TrackType.Audio,
+                                TrackStartSector       = trk.TrackStartAddress,
+                                TrackBytesPerSector    = (int)sectorSize,
+                                TrackRawBytesPerSector = (int)sectorSize,
+                                TrackSubchannelType    = subType
+                            });
 
-                        trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
-                    }
-                    else if(trk.TrackNumber == 0xAA)
-                    {
-                        leadoutTrackType =
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                : TrackType.Audio;
+                            trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
+                        }
+                        else if(trk.TrackNumber == 0xAA)
+                        {
+                            leadoutTrackType =
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
+                                (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
+                                    : TrackType.Audio;
 
-                        lastSector = trk.TrackStartAddress - 1;
-                    }
+                            lastSector = trk.TrackStartAddress - 1;
+                        }
             }
 
             if(trackList.Count == 0)

@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh Volume II
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
-    public partial class AppleMFS
+    public sealed partial class AppleMFS
     {
         /// <summary>Master Directory Block, should be at offset 0x0400 bytes in volume</summary>
         struct MasterDirectoryBlock

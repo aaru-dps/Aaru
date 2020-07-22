@@ -43,7 +43,7 @@ namespace Aaru.Filters
 {
     /// <summary>Decodes AppleSingle files</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class AppleSingle : IFilter
+    public sealed class AppleSingle : IFilter
     {
         const uint MAGIC    = 0x00051600;
         const uint VERSION  = 0x00010000;

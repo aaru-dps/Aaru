@@ -31,13 +31,14 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui.ViewModels.Tabs
 {
-    public class SdMmcInfoViewModel
+    public sealed class SdMmcInfoViewModel
     {
-        public SdMmcInfoViewModel(DeviceType deviceType, byte[] cid, byte[] csd, byte[] ocr, byte[] extendedCsd,
-                                  byte[] scr)
+        public SdMmcInfoViewModel(DeviceType deviceType, [CanBeNull] byte[] cid, [CanBeNull] byte[] csd,
+                                  [CanBeNull] byte[] ocr, [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
         {
             switch(deviceType)
             {

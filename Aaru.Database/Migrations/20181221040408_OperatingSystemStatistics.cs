@@ -11,10 +11,7 @@ namespace Aaru.Database.Migrations
                 Name         = table.Column<string>(nullable: true),
                 Version      = table.Column<string>(nullable: true),
                 Synchronized = table.Column<bool>()
-            }, constraints: table =>
-            {
-                table.PrimaryKey("PK_OperatingSystems", x => x.Id);
-            });
+            }, constraints: table => table.PrimaryKey("PK_OperatingSystems", x => x.Id));
 
         protected override void Down(MigrationBuilder migrationBuilder) =>
             migrationBuilder.DropTable("OperatingSystems");

@@ -41,7 +41,7 @@ namespace Aaru.Tests.Filesystems
     [TestFixture]
     public class Ext2
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "linux_ext2.aif", "linux_ext3.aif", "linux_ext4.aif", "netbsd_7.1.aif", "netbsd_7.1_r0.aif",
             "linux_4.19_ext2_flashdrive.aif", "linux_4.19_ext3_flashdrive.aif", "linux_4.19_ext4_flashdrive.aif"
@@ -52,7 +52,7 @@ namespace Aaru.Tests.Filesystems
             262144, 262144, 262144, 8388608, 2097152, 1024000, 1024000, 1024000
         };
 
-        readonly uint[] _sectorsize =
+        readonly uint[] _sectorSize =
         {
             512, 512, 512, 512, 512, 512, 512, 512
         };
@@ -62,18 +62,18 @@ namespace Aaru.Tests.Filesystems
             130048, 130048, 130048, 1046567, 260135, 510976, 510976, 510976
         };
 
-        readonly int[] _clustersize =
+        readonly int[] _clusterSize =
         {
             1024, 1024, 1024, 4096, 4096, 1024, 1024, 1024
         };
 
-        readonly string[] _volumename =
+        readonly string[] _volumeName =
         {
             "VolumeLabel", "VolumeLabel", "VolumeLabel", "Volume label", "Volume label", "DicSetter", "DicSetter",
             "DicSetter"
         };
 
-        readonly string[] _volumeserial =
+        readonly string[] _volumeSerial =
         {
             "8e3992cf-7d98-e44a-b753-0591a35913eb", "1b411516-5415-4b42-95e6-1a247056a960",
             "b2f8f305-770f-ad47-abe4-f0484aa319e9", "e72aee05-627b-11e7-a573-0800272a08ec",
@@ -89,17 +89,17 @@ namespace Aaru.Tests.Filesystems
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
-                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testfiles[i]);
-                Assert.AreEqual(_sectorsize[i], image.Info.SectorSize, _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
+                Assert.AreEqual(_sectors[i], image.Info.Sectors, _testFiles[i]);
+                Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, _testFiles[i]);
                 IPartition parts = new MBR();
-                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), _testfiles[i]);
+                Assert.AreEqual(true, parts.GetInformation(image, out List<Partition> partitions, 0), _testFiles[i]);
                 IFilesystem fs   = new ext2FS();
                 int         part = -1;
 
@@ -111,14 +111,14 @@ namespace Aaru.Tests.Filesystems
                         break;
                     }
 
-                Assert.AreNotEqual(-1, part, $"Partition not found on {_testfiles[i]}");
-                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testfiles[i]);
+                Assert.AreNotEqual(-1, part, $"Partition not found on {_testFiles[i]}");
+                Assert.AreEqual(true, fs.Identify(image, partitions[part]), _testFiles[i]);
                 fs.GetInformation(image, partitions[part], out _, null);
-                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testfiles[i]);
-                Assert.AreEqual(_clustersize[i], fs.XmlFsType.ClusterSize, _testfiles[i]);
-                Assert.AreEqual(_extversion[i], fs.XmlFsType.Type, _testfiles[i]);
-                Assert.AreEqual(_volumename[i], fs.XmlFsType.VolumeName, _testfiles[i]);
-                Assert.AreEqual(_volumeserial[i], fs.XmlFsType.VolumeSerial, _testfiles[i]);
+                Assert.AreEqual(_clusters[i], fs.XmlFsType.Clusters, _testFiles[i]);
+                Assert.AreEqual(_clusterSize[i], fs.XmlFsType.ClusterSize, _testFiles[i]);
+                Assert.AreEqual(_extversion[i], fs.XmlFsType.Type, _testFiles[i]);
+                Assert.AreEqual(_volumeName[i], fs.XmlFsType.VolumeName, _testFiles[i]);
+                Assert.AreEqual(_volumeSerial[i], fs.XmlFsType.VolumeSerial, _testFiles[i]);
             }
         }
     }

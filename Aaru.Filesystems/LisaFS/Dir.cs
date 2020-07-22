@@ -40,7 +40,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems.LisaFS
 {
-    public partial class LisaFS
+    public sealed partial class LisaFS
     {
         /// <inheritdoc />
         /// <summary>Solves a symbolic link.</summary>
@@ -198,8 +198,7 @@ namespace Aaru.Filesystems.LisaFS
             if(firstCatalogBlock == null)
                 return Errno.NoSuchFile;
 
-            ulong prevCatalogPointer;
-            prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
+            ulong prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
 
             // Traverse double-linked list until first catalog block
             while(prevCatalogPointer != 0xFFFFFFFF)
@@ -214,8 +213,7 @@ namespace Aaru.Filesystems.LisaFS
                 prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
             }
 
-            ulong nextCatalogPointer;
-            nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
+            ulong nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
             List<byte[]> catalogBlocks = new List<byte[]>
             {

@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Dim
+    public sealed partial class Dim
     {
         enum DiskType : byte
         {

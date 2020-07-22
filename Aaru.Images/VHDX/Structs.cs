@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhdx
+    public sealed partial class Vhdx
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VhdxIdentifier

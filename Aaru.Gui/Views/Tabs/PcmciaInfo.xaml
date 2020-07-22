@@ -41,7 +41,7 @@
     </Design.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <DataGrid Items="{Binding cisList}" SelectedItem="{Binding SelectedCis}">
+            <DataGrid Items="{Binding CisList}" SelectedItem="{Binding SelectedCis}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="CIS" Binding="{Binding Code}" />
                 </DataGrid.Columns>

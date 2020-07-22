@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vdi
+    public sealed partial class Vdi
     {
         public bool Open(IFilter imageFilter)
         {

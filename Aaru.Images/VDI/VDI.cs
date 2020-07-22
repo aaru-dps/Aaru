@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     // TODO: Support version 0
     // TODO: Support fixed images
     // TODO: Support version 1.2 geometry
-    public partial class Vdi : IWritableImage
+    public sealed partial class Vdi : IWritableImage
     {
         uint                      _currentWritingPosition;
         uint[]                    _ibm;

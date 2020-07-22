@@ -36,7 +36,7 @@ using Schemas;
 
 namespace Aaru.Core
 {
-    public partial class Sidecar
+    public sealed partial class Sidecar
     {
         /// <summary>Creates a metadata sidecar for a block tape (e.g. scsi streaming)</summary>
         /// <param name="files">List of files</param>

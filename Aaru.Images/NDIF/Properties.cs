@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Ndif
+    public sealed partial class Ndif
     {
         public ImageInfo              Info         => _imageInfo;
         public string                 Name         => "Apple New Disk Image Format";

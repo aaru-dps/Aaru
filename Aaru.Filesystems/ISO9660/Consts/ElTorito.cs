@@ -37,7 +37,7 @@ using System;
 
 namespace Aaru.Filesystems
 {
-    public partial class ISO9660
+    public sealed partial class ISO9660
     {
         const ushort EL_TORITO_MAGIC      = 0xAA55;
         const int    EL_TORITO_ENTRY_SIZE = 32;

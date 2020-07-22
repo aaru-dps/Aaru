@@ -36,7 +36,7 @@ using Aaru.Decoders.PCMCIA;
 namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a report for a PCMCIA device</summary>
-    public partial class DeviceReport
+    public sealed partial class DeviceReport
     {
         /// <summary>Fills a device report with parameters specific to a PCMCIA device</summary>
         public Pcmcia PcmciaReport()

@@ -38,7 +38,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class Gdi
+    public sealed partial class Gdi
     {
         // Due to .gdi format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public bool Identify(IFilter imageFilter)

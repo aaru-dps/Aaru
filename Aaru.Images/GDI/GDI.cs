@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
 {
     // TODO: There seems no be no clear definition on how to treat pregaps that are not included in the file, so this is just appending it to start of track
     // TODO: This format doesn't support to specify pregaps that are included in the file (like Redump ones)
-    public partial class Gdi : IOpticalMediaImage
+    public sealed partial class Gdi : IOpticalMediaImage
     {
         ulong        _densitySeparationSectors;
         GdiDisc      _discimage;

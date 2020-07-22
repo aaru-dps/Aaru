@@ -41,7 +41,7 @@ using Aaru.Core;
 
 namespace Aaru.Commands
 {
-    internal class ListEncodingsCommand : Command
+    internal sealed class ListEncodingsCommand : Command
     {
         public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));

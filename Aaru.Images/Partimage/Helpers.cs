@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class Partimage
+    public sealed partial class Partimage
     {
         ulong BlockOffset(ulong sectorAddress)
         {

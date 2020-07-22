@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class KryoFlux
+    public sealed partial class KryoFlux
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OobBlock

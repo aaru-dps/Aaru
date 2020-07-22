@@ -44,7 +44,7 @@ namespace Aaru.Filesystems
 {
     // Information has been extracted looking at available disk images
     // This may be missing fields, or not, I don't know russian so any help is appreciated
-    public class AODOS : IFilesystem
+    public sealed class AODOS : IFilesystem
     {
         readonly byte[] _identifier =
         {

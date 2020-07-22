@@ -39,7 +39,7 @@ namespace Aaru.Tests.Partitions
     [TestFixture]
     public class Minix
     {
-        readonly string[] _testfiles =
+        readonly string[] _testFiles =
         {
             "minix_3.1.2a.aif"
         };
@@ -99,28 +99,28 @@ namespace Aaru.Tests.Partitions
         [Test]
         public void Test()
         {
-            for(int i = 0; i < _testfiles.Length; i++)
+            for(int i = 0; i < _testFiles.Length; i++)
             {
-                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX", _testfiles[i]);
+                string  location = Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX", _testFiles[i]);
                 IFilter filter   = new ZZZNoFilter();
                 filter.Open(location);
                 IMediaImage image = new AaruFormat();
-                Assert.AreEqual(true, image.Open(filter), _testfiles[i]);
+                Assert.AreEqual(true, image.Open(filter), _testFiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                Assert.AreEqual(_wanted[i].Length, partitions.Count, _testfiles[i]);
+                Assert.AreEqual(_wanted[i].Length, partitions.Count, _testFiles[i]);
 
                 for(int j = 0; j < partitions.Count; j++)
                 {
                     // Too chatty
                     //Assert.AreEqual(wanted[i][j].PartitionDescription, partitions[j].PartitionDescription, testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Size, partitions[j].Size, _testfiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Size, partitions[j].Size, _testFiles[i]);
 
                     //                    Assert.AreEqual(wanted[i][j].Name, partitions[j].Name, testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Type, partitions[j].Type, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Offset, partitions[j].Offset, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Length, partitions[j].Length, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Sequence, partitions[j].Sequence, _testfiles[i]);
-                    Assert.AreEqual(_wanted[i][j].Start, partitions[j].Start, _testfiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Type, partitions[j].Type, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Offset, partitions[j].Offset, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Length, partitions[j].Length, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Sequence, partitions[j].Sequence, _testFiles[i]);
+                    Assert.AreEqual(_wanted[i][j].Start, partitions[j].Start, _testFiles[i]);
                 }
             }
         }

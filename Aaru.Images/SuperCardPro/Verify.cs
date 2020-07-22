@@ -35,7 +35,7 @@ using System.Collections.Generic;
 
 namespace Aaru.DiscImages
 {
-    public partial class SuperCardPro
+    public sealed partial class SuperCardPro
     {
         public bool? VerifyMediaImage()
         {

@@ -38,7 +38,7 @@ using Schemas;
 
 namespace Aaru.Filesystems
 {
-    public partial class XboxFatPlugin
+    public sealed partial class XboxFatPlugin
     {
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {

@@ -34,7 +34,7 @@ using System.CommandLine;
 
 namespace Aaru.Commands.Filesystem
 {
-    public class FilesystemFamily : Command
+    internal sealed class FilesystemFamily : Command
     {
         public FilesystemFamily() : base("filesystem", "Commands to manage filesystems")
         {

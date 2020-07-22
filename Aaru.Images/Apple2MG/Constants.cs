@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public partial class Apple2Mg
+    public sealed partial class Apple2Mg
     {
         /// <summary>Magic number, "2IMG"</summary>
         const uint MAGIC = 0x474D4932;

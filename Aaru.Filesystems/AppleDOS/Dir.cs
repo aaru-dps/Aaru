@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.Filesystems
 {
-    public partial class AppleDOS
+    public sealed partial class AppleDOS
     {
         /// <inheritdoc />
         /// <summary>Solves a symbolic link.</summary>

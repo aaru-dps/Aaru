@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DiskCopy42
+    public sealed partial class DiskCopy42
     {
         // format byte
         /// <summary>3.5", single side, double density, GCR</summary>

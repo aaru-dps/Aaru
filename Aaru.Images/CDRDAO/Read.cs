@@ -47,7 +47,7 @@ using Session = Aaru.CommonTypes.Structs.Session;
 
 namespace Aaru.DiscImages
 {
-    public partial class Cdrdao
+    public sealed partial class Cdrdao
     {
         public bool Open(IFilter imageFilter)
         {
@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
             {
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
                 _tocStream = new StreamReader(imageFilter.GetDataForkStream());
-                bool intrack = false;
+                bool inTrack = false;
 
                 // Initialize all RegExs
                 var regexComment         = new Regex(REGEX_COMMENT);
@@ -103,12 +103,12 @@ namespace Aaru.DiscImages
                     Comment = ""
                 };
 
-                var  currenttrack       = new CdrdaoTrack();
+                var  currentTrack       = new CdrdaoTrack();
                 uint currentTrackNumber = 0;
-                currenttrack.Indexes = new Dictionary<int, ulong>();
-                currenttrack.Pregap  = 0;
+                currentTrack.Indexes = new Dictionary<int, ulong>();
+                currentTrack.Pregap  = 0;
                 ulong currentSector  = 0;
-                int   nextindex      = 2;
+                int   nextIndex      = 2;
                 var   commentBuilder = new StringBuilder();
 
                 _tocStream = new StreamReader(_cdrdaoFilter.GetDataForkStream());
@@ -238,48 +238,48 @@ namespace Aaru.DiscImages
                                                        lineNumber, matchTrack.Groups["type"].Value,
                                                        matchTrack.Groups["subchan"].Value);
 
-                        if(intrack)
+                        if(inTrack)
                         {
-                            currentSector += currenttrack.Sectors;
+                            currentSector += currentTrack.Sectors;
 
-                            if(currenttrack.Pregap != currenttrack.Sectors &&
-                               !currenttrack.Indexes.ContainsKey(1))
-                                currenttrack.Indexes.Add(1, currenttrack.StartSector + currenttrack.Pregap);
+                            if(currentTrack.Pregap != currentTrack.Sectors &&
+                               !currentTrack.Indexes.ContainsKey(1))
+                                currentTrack.Indexes.Add(1, currentTrack.StartSector + currentTrack.Pregap);
 
-                            _discimage.Tracks.Add(currenttrack);
+                            _discimage.Tracks.Add(currentTrack);
 
-                            currenttrack = new CdrdaoTrack
+                            currentTrack = new CdrdaoTrack
                             {
                                 Indexes = new Dictionary<int, ulong>(),
                                 Pregap  = 0
                             };
 
-                            nextindex = 2;
+                            nextIndex = 2;
                         }
 
                         currentTrackNumber++;
-                        intrack = true;
+                        inTrack = true;
 
                         switch(matchTrack.Groups["type"].Value)
                         {
                             case "AUDIO":
                             case "MODE1_RAW":
                             case "MODE2_RAW":
-                                currenttrack.Bps = 2352;
+                                currentTrack.Bps = 2352;
 
                                 break;
                             case "MODE1":
                             case "MODE2_FORM1":
-                                currenttrack.Bps = 2048;
+                                currentTrack.Bps = 2048;
 
                                 break;
                             case "MODE2_FORM2":
-                                currenttrack.Bps = 2324;
+                                currentTrack.Bps = 2324;
 
                                 break;
                             case "MODE2":
                             case "MODE2_FORM_MIX":
-                                currenttrack.Bps = 2336;
+                                currentTrack.Bps = 2336;
 
                                 break;
                             default:
@@ -291,10 +291,10 @@ namespace Aaru.DiscImages
                         {
                             case "": break;
                             case "RW":
-                                currenttrack.Packedsubchannel = true;
+                                currentTrack.Packedsubchannel = true;
                                 goto case "RW_RAW";
                             case "RW_RAW":
-                                currenttrack.Subchannel = true;
+                                currentTrack.Subchannel = true;
 
                                 break;
                             default:
@@ -302,39 +302,39 @@ namespace Aaru.DiscImages
                                     NotSupportedException($"Track subchannel mode {matchTrack.Groups["subchan"].Value} is unsupported");
                         }
 
-                        currenttrack.Tracktype = matchTrack.Groups["type"].Value;
+                        currentTrack.Tracktype = matchTrack.Groups["type"].Value;
 
-                        currenttrack.Sequence    = currentTrackNumber;
-                        currenttrack.StartSector = currentSector;
+                        currentTrack.Sequence    = currentTrackNumber;
+                        currentTrack.StartSector = currentSector;
                     }
                     else if(matchCopy.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} COPY at line {0}", lineNumber,
                                                    matchCopy.Groups["no"].Value);
 
-                        currenttrack.FlagDcp |= intrack && matchCopy.Groups["no"].Value == "";
+                        currentTrack.FlagDcp |= inTrack && matchCopy.Groups["no"].Value == "";
                     }
                     else if(matchEmphasis.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} PRE_EMPHASIS at line {0}", lineNumber,
                                                    matchEmphasis.Groups["no"].Value);
 
-                        currenttrack.FlagPre |= intrack && matchEmphasis.Groups["no"].Value == "";
+                        currentTrack.FlagPre |= inTrack && matchEmphasis.Groups["no"].Value == "";
                     }
                     else if(matchStereo.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
                                                    matchStereo.Groups["num"].Value);
 
-                        currenttrack.Flag_4Ch |= intrack && matchStereo.Groups["num"].Value == "FOUR";
+                        currentTrack.Flag_4Ch |= inTrack && matchStereo.Groups["num"].Value == "FOUR";
                     }
                     else if(matchIsrc.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ISRC \"{1}\" at line {0}", lineNumber,
                                                    matchIsrc.Groups["isrc"].Value);
 
-                        if(intrack)
-                            currenttrack.Isrc = matchIsrc.Groups["isrc"].Value;
+                        if(inTrack)
+                            currentTrack.Isrc = matchIsrc.Groups["isrc"].Value;
                     }
                     else if(matchIndex.Success)
                     {
@@ -346,35 +346,35 @@ namespace Aaru.DiscImages
                         ulong nextIndexPos = (ulong.Parse(lengthString[0]) * 60 * 75) +
                                              (ulong.Parse(lengthString[1])      * 75) + ulong.Parse(lengthString[2]);
 
-                        currenttrack.Indexes.Add(nextindex,
-                                                 nextIndexPos + currenttrack.Pregap + currenttrack.StartSector);
+                        currentTrack.Indexes.Add(nextIndex,
+                                                 nextIndexPos + currentTrack.Pregap + currentTrack.StartSector);
                     }
                     else if(matchPregap.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found START \"{1}\" at line {0}", lineNumber,
                                                    matchPregap.Groups["address"].Value);
 
-                        currenttrack.Indexes.Add(0, currenttrack.StartSector);
+                        currentTrack.Indexes.Add(0, currentTrack.StartSector);
 
                         if(matchPregap.Groups["address"].Value != "")
                         {
                             string[] lengthString = matchPregap.Groups["address"].Value.Split(':');
 
-                            currenttrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
+                            currentTrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
                                                   (ulong.Parse(lengthString[1]) * 75) + ulong.Parse(lengthString[2]);
                         }
                         else
-                            currenttrack.Pregap = currenttrack.Sectors;
+                            currentTrack.Pregap = currentTrack.Sectors;
                     }
                     else if(matchZeroPregap.Success)
                     {
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PREGAP \"{1}\" at line {0}", lineNumber,
                                                    matchZeroPregap.Groups["length"].Value);
 
-                        currenttrack.Indexes.Add(0, currenttrack.StartSector);
+                        currentTrack.Indexes.Add(0, currentTrack.StartSector);
                         string[] lengthString = matchZeroPregap.Groups["length"].Value.Split(':');
 
-                        currenttrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
+                        currentTrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
                                               (ulong.Parse(lengthString[1])      * 75) + ulong.Parse(lengthString[2]);
                     }
                     else if(matchZeroData.Success)
@@ -394,7 +394,7 @@ namespace Aaru.DiscImages
 
                             filtersList = new FiltersList();
 
-                            currenttrack.Trackfile = new CdrdaoTrackFile
+                            currentTrack.Trackfile = new CdrdaoTrackFile
                             {
                                 Datafilter =
                                     filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
@@ -416,20 +416,20 @@ namespace Aaru.DiscImages
                                                (ulong.Parse(startString[1])      * 75) + ulong.Parse(startString[2]);
                             }
 
-                            currenttrack.Trackfile.Offset += startSectors * currenttrack.Bps;
+                            currentTrack.Trackfile.Offset += startSectors * currentTrack.Bps;
 
                             if(matchAudioFile.Groups["length"].Value != "")
                             {
                                 string[] lengthString = matchAudioFile.Groups["length"].Value.Split(':');
 
-                                currenttrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
+                                currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
                                                        (ulong.Parse(lengthString[1])      * 75) +
                                                        ulong.Parse(lengthString[2]);
                             }
                             else
-                                currenttrack.Sectors =
-                                    ((ulong)currenttrack.Trackfile.Datafilter.GetDataForkLength() -
-                                     currenttrack.Trackfile.Offset) / currenttrack.Bps;
+                                currentTrack.Sectors =
+                                    ((ulong)currentTrack.Trackfile.Datafilter.GetDataForkLength() -
+                                     currentTrack.Trackfile.Offset) / currentTrack.Bps;
                         }
                         else if(matchFile.Success)
                         {
@@ -438,7 +438,7 @@ namespace Aaru.DiscImages
 
                             filtersList = new FiltersList();
 
-                            currenttrack.Trackfile = new CdrdaoTrackFile
+                            currentTrack.Trackfile = new CdrdaoTrackFile
                             {
                                 Datafilter =
                                     filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
@@ -454,22 +454,22 @@ namespace Aaru.DiscImages
                             {
                                 string[] lengthString = matchFile.Groups["length"].Value.Split(':');
 
-                                currenttrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
+                                currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
                                                        (ulong.Parse(lengthString[1])      * 75) +
                                                        ulong.Parse(lengthString[2]);
                             }
                             else
-                                currenttrack.Sectors =
-                                    ((ulong)currenttrack.Trackfile.Datafilter.GetDataForkLength() -
-                                     currenttrack.Trackfile.Offset) / currenttrack.Bps;
+                                currentTrack.Sectors =
+                                    ((ulong)currentTrack.Trackfile.Datafilter.GetDataForkLength() -
+                                     currentTrack.Trackfile.Offset) / currentTrack.Bps;
                         }
                         else if(matchTitle.Success)
                         {
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found TITLE \"{1}\" at line {0}", lineNumber,
                                                        matchTitle.Groups["title"].Value);
 
-                            if(intrack)
-                                currenttrack.Title = matchTitle.Groups["title"].Value;
+                            if(inTrack)
+                                currentTrack.Title = matchTitle.Groups["title"].Value;
                             else
                                 _discimage.Title = matchTitle.Groups["title"].Value;
                         }
@@ -478,8 +478,8 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}",
                                                        lineNumber, matchPerformer.Groups["performer"].Value);
 
-                            if(intrack)
-                                currenttrack.Performer = matchPerformer.Groups["performer"].Value;
+                            if(inTrack)
+                                currentTrack.Performer = matchPerformer.Groups["performer"].Value;
                             else
                                 _discimage.Performer = matchPerformer.Groups["performer"].Value;
                         }
@@ -488,8 +488,8 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}",
                                                        lineNumber, matchSongwriter.Groups["songwriter"].Value);
 
-                            if(intrack)
-                                currenttrack.Songwriter = matchSongwriter.Groups["songwriter"].Value;
+                            if(inTrack)
+                                currentTrack.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                             else
                                 _discimage.Songwriter = matchSongwriter.Groups["songwriter"].Value;
                         }
@@ -498,8 +498,8 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found COMPOSER \"{1}\" at line {0}",
                                                        lineNumber, matchComposer.Groups["composer"].Value);
 
-                            if(intrack)
-                                currenttrack.Composer = matchComposer.Groups["composer"].Value;
+                            if(inTrack)
+                                currentTrack.Composer = matchComposer.Groups["composer"].Value;
                             else
                                 _discimage.Composer = matchComposer.Groups["composer"].Value;
                         }
@@ -508,8 +508,8 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ARRANGER \"{1}\" at line {0}",
                                                        lineNumber, matchArranger.Groups["arranger"].Value);
 
-                            if(intrack)
-                                currenttrack.Arranger = matchArranger.Groups["arranger"].Value;
+                            if(inTrack)
+                                currentTrack.Arranger = matchArranger.Groups["arranger"].Value;
                             else
                                 _discimage.Arranger = matchArranger.Groups["arranger"].Value;
                         }
@@ -518,8 +518,8 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found MESSAGE \"{1}\" at line {0}", lineNumber,
                                                        matchMessage.Groups["message"].Value);
 
-                            if(intrack)
-                                currenttrack.Message = matchMessage.Groups["message"].Value;
+                            if(inTrack)
+                                currentTrack.Message = matchMessage.Groups["message"].Value;
                             else
                                 _discimage.Message = matchMessage.Groups["message"].Value;
                         }
@@ -528,7 +528,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found DISC_ID \"{1}\" at line {0}", lineNumber,
                                                        matchDiscId.Groups["discid"].Value);
 
-                            if(!intrack)
+                            if(!inTrack)
                                 _discimage.DiskId = matchDiscId.Groups["discid"].Value;
                         }
                         else if(matchUpc.Success)
@@ -536,7 +536,7 @@ namespace Aaru.DiscImages
                             AaruConsole.DebugWriteLine("CDRDAO plugin", "Found UPC_EAN \"{1}\" at line {0}", lineNumber,
                                                        matchUpc.Groups["catalog"].Value);
 
-                            if(!intrack)
+                            if(!inTrack)
                                 _discimage.Barcode = matchUpc.Groups["catalog"].Value;
                         }
 
@@ -559,13 +559,13 @@ namespace Aaru.DiscImages
                     */
                 }
 
-                if(currenttrack.Sequence != 0)
+                if(currentTrack.Sequence != 0)
                 {
-                    if(currenttrack.Pregap != currenttrack.Sectors &&
-                       !currenttrack.Indexes.ContainsKey(1))
-                        currenttrack.Indexes.Add(1, currenttrack.StartSector + currenttrack.Pregap);
+                    if(currentTrack.Pregap != currentTrack.Sectors &&
+                       !currentTrack.Indexes.ContainsKey(1))
+                        currentTrack.Indexes.Add(1, currentTrack.StartSector + currentTrack.Pregap);
 
-                    _discimage.Tracks.Add(currenttrack);
+                    _discimage.Tracks.Add(currentTrack);
                 }
 
                 _discimage.Comment = commentBuilder.ToString();

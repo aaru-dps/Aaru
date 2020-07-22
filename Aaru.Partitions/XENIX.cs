@@ -40,7 +40,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
-    public class XENIX : IPartition
+    public sealed class XENIX : IPartition
     {
         const ushort PAMAGIC     = 0x1234;
         const int    MAXPARTS    = 16;

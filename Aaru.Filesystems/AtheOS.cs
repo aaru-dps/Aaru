@@ -43,7 +43,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    public class AtheOS : IFilesystem
+    public sealed class AtheOS : IFilesystem
     {
         // Little endian constants (that is, as read by .NET :p)
         const uint AFS_MAGIC1 = 0x41465331;

@@ -33,11 +33,12 @@
 using System.Reactive;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Settings;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Dialogs
 {
-    public class SettingsViewModel : ViewModelBase
+    public sealed class SettingsViewModel : ViewModelBase
     {
         readonly SettingsDialog _view;
         bool                    _commandStatsChecked;
@@ -88,26 +89,36 @@ namespace Aaru.Gui.ViewModels.Dialogs
         }
 
         // TODO: Show Preferences in macOS
-        public string Title           => "Settings";
-        public string GdprLabel       => "GDPR";
-        public string ReportsLabel    => "Reports";
+        [NotNull]
+        public string Title => "Settings";
+        [NotNull]
+        public string GdprLabel => "GDPR";
+        [NotNull]
+        public string ReportsLabel => "Reports";
+        [NotNull]
         public string StatisticsLabel => "Statistics";
-        public string SaveLabel       => "Save";
-        public string CancelLabel     => "Cancel";
+        [NotNull]
+        public string SaveLabel => "Save";
+        [NotNull]
+        public string CancelLabel => "Cancel";
+        [NotNull]
         public string GdprText1 =>
             @"In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),
 we must give you the following information about Aaru and ask if you want to opt-in
 in some information sharing.";
 
+        [NotNull]
         public string GdprText2 =>
             @"Disclaimer: Because Aaru is an open source software this information, and therefore,
 compliance with GDPR only holds true if you obtained a certificated copy from its original
 authors. In case of doubt, close Aaru now and ask in our IRC support channel.";
 
+        [NotNull]
         public string GdprText3 =>
             @"For any information sharing your IP address may be stored in our server, in a way that is not
 possible for any person, manual, or automated process, to link with your identity, unless
 specified otherwise.";
+        [NotNull]
         public string ReportsGloballyText =>
             @"With the 'device-report' command, Aaru creates a report of a device, that includes its
 manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.
@@ -117,33 +128,48 @@ the device serial number in non-standard places that prevent the automatic remov
 of devices. A human-readable copy of the report in XML format is always created in the same directory
 where Aaru is being run from.";
 
+        [NotNull]
         public string SaveReportsGloballyText => "Save device reports in shared folder of your computer?";
 
+        [NotNull]
         public string ReportsText =>
             @"Sharing a report with us will send it to our server, that's in the european union territory, where it
-will be manually analized by an european union citizen to remove any trace of personal identification
+will be manually analyzed by an european union citizen to remove any trace of personal identification
 from it. Once that is done, it will be shared in our stats website, https://www.aaru.app
 These report will be used to improve Aaru support, and in some cases, to provide emulation of the
 devices to other open-source projects. In any case, no information linking the report to you will be stored.";
 
+        [NotNull]
         public string ShareReportsText => "Share your device reports with us?";
+        [NotNull]
         public string StatisticsText =>
             @"Aaru can store some usage statistics. These statistics are limited to the number of times a
 command is executed, a filesystem, partition, or device is used, the operating system version, and other.
 In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the
 pool with no way of using them to identify you.";
 
-        public string SaveStatsText       => "Save stats about your Aaru usage?";
-        public string ShareStatsText      => "Share your stats anonymously?";
-        public string CommandStatsText    => "Gather statistics about command usage?";
-        public string DeviceStatsText     => "Gather statistics about found devices?";
+        [NotNull]
+        public string SaveStatsText => "Save stats about your Aaru usage?";
+        [NotNull]
+        public string ShareStatsText => "Share your stats anonymously?";
+        [NotNull]
+        public string CommandStatsText => "Gather statistics about command usage?";
+        [NotNull]
+        public string DeviceStatsText => "Gather statistics about found devices?";
+        [NotNull]
         public string FilesystemStatsText => "Gather statistics about found filesystems?";
-        public string FilterStatsText     => "Gather statistics about found file filters?";
+        [NotNull]
+        public string FilterStatsText => "Gather statistics about found file filters?";
+        [NotNull]
         public string MediaImageStatsText => "Gather statistics about found media image formats?";
-        public string MediaScanStatsText  => "Gather statistics about scanned media?";
-        public string PartitionStatsText  => "Gather statistics about found partitioning schemes?";
-        public string MediaStatsText      => "Gather statistics about media types?";
-        public string VerifyStatsText     => "Gather statistics about media image verifications?";
+        [NotNull]
+        public string MediaScanStatsText => "Gather statistics about scanned media?";
+        [NotNull]
+        public string PartitionStatsText => "Gather statistics about found partitioning schemes?";
+        [NotNull]
+        public string MediaStatsText => "Gather statistics about media types?";
+        [NotNull]
+        public string VerifyStatsText => "Gather statistics about media image verifications?";
 
         public ReactiveCommand<Unit, Unit> CancelCommand { get; }
         public ReactiveCommand<Unit, Unit> SaveCommand   { get; }

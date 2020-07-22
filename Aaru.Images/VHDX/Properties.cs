@@ -37,7 +37,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class Vhdx
+    public sealed partial class Vhdx
     {
         public ImageInfo Info => _imageInfo;
 

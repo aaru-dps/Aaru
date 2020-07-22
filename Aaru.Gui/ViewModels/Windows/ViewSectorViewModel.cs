@@ -32,14 +32,15 @@
 
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using JetBrains.Annotations;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Windows
 {
-    public class ViewSectorViewModel : ViewModelBase
+    public sealed class ViewSectorViewModel : ViewModelBase
     {
         const    int         HEX_COLUMNS = 32;
-        readonly IMediaImage inputFormat;
+        readonly IMediaImage _inputFormat;
         bool                 _longSectorChecked;
         bool                 _longSectorVisible;
         string               _printHexText;
@@ -47,9 +48,9 @@ namespace Aaru.Gui.ViewModels.Windows
         string               _title;
         string               _totalSectorsText;
 
-        public ViewSectorViewModel(IMediaImage inputFormat)
+        public ViewSectorViewModel([NotNull] IMediaImage inputFormat)
         {
-            this.inputFormat = inputFormat;
+            _inputFormat = inputFormat;
 
             try
             {
@@ -80,7 +81,7 @@ namespace Aaru.Gui.ViewModels.Windows
 
                 PrintHexText =
                     PrintHex.
-                        ByteArrayToHexArrayString(LongSectorChecked ? inputFormat.ReadSectorLong((ulong)SectorNumber) : inputFormat.ReadSector((ulong)SectorNumber),
+                        ByteArrayToHexArrayString(LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber) : _inputFormat.ReadSector((ulong)SectorNumber),
                                                   HEX_COLUMNS);
             }
         }

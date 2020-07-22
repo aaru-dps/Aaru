@@ -45,7 +45,7 @@ using Marshal = Aaru.Helpers.Marshal;
 namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "UnusedType.Local")]
-    public class Cram : IFilesystem
+    public sealed class Cram : IFilesystem
     {
         /// <summary>Identifier for Cram</summary>
         const uint CRAM_MAGIC = 0x28CD3D45;

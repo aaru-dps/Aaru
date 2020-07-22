@@ -41,7 +41,7 @@ using Marshal = Aaru.Helpers.Marshal;
 
 namespace Aaru.Filesystems
 {
-    public class ECMA67 : IFilesystem
+    public sealed class ECMA67 : IFilesystem
     {
         readonly byte[] _magic =
         {

@@ -38,7 +38,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class CloneCd
+    public sealed partial class CloneCd
     {
         public bool Identify(IFilter imageFilter)
         {

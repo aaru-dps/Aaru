@@ -35,7 +35,7 @@ using System.Text;
 
 namespace Aaru.DiscImages
 {
-    public partial class RsIde
+    public sealed partial class RsIde
     {
         static byte[] ScrambleAtaString(string text, int length)
         {

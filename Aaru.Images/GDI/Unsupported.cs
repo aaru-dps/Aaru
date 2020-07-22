@@ -35,7 +35,7 @@ using Aaru.CommonTypes.Exceptions;
 
 namespace Aaru.DiscImages
 {
-    public partial class Gdi
+    public sealed partial class Gdi
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");

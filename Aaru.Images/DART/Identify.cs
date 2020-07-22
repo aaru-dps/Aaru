@@ -36,7 +36,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class Dart
+    public sealed partial class Dart
     {
         public bool Identify(IFilter imageFilter)
         {

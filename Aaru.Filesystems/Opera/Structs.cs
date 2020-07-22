@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Filesystems
 {
-    public partial class OperaFS
+    public sealed partial class OperaFS
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SuperBlock

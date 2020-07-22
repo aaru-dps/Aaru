@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.DiscImages
 {
-    public partial class Udif
+    public sealed partial class Udif
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct UdifFooter
