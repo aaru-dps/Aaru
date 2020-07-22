@@ -177,9 +177,7 @@ namespace Aaru.Decoders.ATA
             {
                 sb.Append("ATA-1 ");
                 maxatalevel = 1;
-
-                if(minatalevel > 1)
-                    minatalevel = 1;
+                minatalevel = 1;
             }
 
             if(ata2)
@@ -751,11 +749,11 @@ namespace Aaru.Decoders.ATA
                 else
                     sb.AppendFormat("Device rotate at {0} rpm", ATAID.NominalRotationRate).AppendLine();
 
-            uint logicalsectorsize = 0;
+            uint logicalSectorSize = 0;
 
             if(!atapi)
             {
-                uint physicalsectorsize;
+                uint physicalSectorSize;
 
                 if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 &&
                    (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
@@ -763,27 +761,27 @@ namespace Aaru.Decoders.ATA
                     if((ATAID.PhysLogSectorSize & 0x1000) == 0x1000)
                         if(ATAID.LogicalSectorWords <= 255 ||
                            ATAID.LogicalAlignment   == 0xFFFF)
-                            logicalsectorsize = 512;
+                            logicalSectorSize = 512;
                         else
-                            logicalsectorsize = ATAID.LogicalSectorWords * 2;
+                            logicalSectorSize = ATAID.LogicalSectorWords * 2;
                     else
-                        logicalsectorsize = 512;
+                        logicalSectorSize = 512;
 
                     if((ATAID.PhysLogSectorSize & 0x2000) == 0x2000)
-                        physicalsectorsize = logicalsectorsize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
+                        physicalSectorSize = logicalSectorSize * (uint)Math.Pow(2, ATAID.PhysLogSectorSize & 0xF);
                     else
-                        physicalsectorsize = logicalsectorsize;
+                        physicalSectorSize = logicalSectorSize;
                 }
                 else
                 {
-                    logicalsectorsize  = 512;
-                    physicalsectorsize = 512;
+                    logicalSectorSize  = 512;
+                    physicalSectorSize = 512;
                 }
 
-                sb.AppendFormat("Physical sector size: {0} bytes", physicalsectorsize).AppendLine();
-                sb.AppendFormat("Logical sector size: {0} bytes", logicalsectorsize).AppendLine();
+                sb.AppendFormat("Physical sector size: {0} bytes", physicalSectorSize).AppendLine();
+                sb.AppendFormat("Logical sector size: {0} bytes", logicalSectorSize).AppendLine();
 
-                if(logicalsectorsize                 != physicalsectorsize &&
+                if(logicalSectorSize                 != physicalSectorSize &&
                    (ATAID.LogicalAlignment & 0x8000) == 0x0000             &&
                    (ATAID.LogicalAlignment & 0x4000) == 0x4000)
                     sb.AppendFormat("Logical sector starts at offset {0} from physical sector",
@@ -825,73 +823,73 @@ namespace Aaru.Decoders.ATA
                 if(minatalevel <= 5)
                     if(ATAID.CurrentSectors > 0)
                         sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
-                                        (ulong)ATAID.CurrentSectors                              * logicalsectorsize,
-                                        ((ulong)ATAID.CurrentSectors * logicalsectorsize) / 1000 / 1000,
+                                        (ulong)ATAID.CurrentSectors                              * logicalSectorSize,
+                                        ((ulong)ATAID.CurrentSectors * logicalSectorSize) / 1000 / 1000,
                                         ((ulong)ATAID.CurrentSectors * 512) / 1024               / 1024).AppendLine();
                     else
                     {
                         ulong currentSectors = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
 
                         sb.AppendFormat("Device size in CHS mode: {0} bytes, {1} Mb, {2} MiB",
-                                        currentSectors                              * logicalsectorsize,
-                                        (currentSectors * logicalsectorsize) / 1000 / 1000,
+                                        currentSectors                              * logicalSectorSize,
+                                        (currentSectors * logicalSectorSize) / 1000 / 1000,
                                         (currentSectors * 512) / 1024               / 1024).AppendLine();
                     }
 
                 if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport))
-                    if(((ulong)ATAID.LBASectors * logicalsectorsize) / 1024 / 1024 > 1000000)
+                    if(((ulong)ATAID.LBASectors * logicalSectorSize) / 1024 / 1024 > 1000000)
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
-                                        (ulong)ATAID.LBASectors * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors * logicalSectorSize,
+                                        ((ulong)ATAID.LBASectors * logicalSectorSize) / 1000 / 1000 / 1000 / 1000,
                                         ((ulong)ATAID.LBASectors * 512) / 1024 / 1024 / 1024 / 1024).AppendLine();
-                    else if(((ulong)ATAID.LBASectors * logicalsectorsize) / 1024 / 1024 > 1000)
+                    else if(((ulong)ATAID.LBASectors * logicalSectorSize) / 1024 / 1024 > 1000)
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
-                                        (ulong)ATAID.LBASectors * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors * logicalSectorSize,
+                                        ((ulong)ATAID.LBASectors * logicalSectorSize) / 1000 / 1000 / 1000,
                                         ((ulong)ATAID.LBASectors * 512) / 1024 / 1024 / 1024).AppendLine();
                     else
                         sb.AppendFormat("Device size in 28-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
-                                        (ulong)ATAID.LBASectors                              * logicalsectorsize,
-                                        ((ulong)ATAID.LBASectors * logicalsectorsize) / 1000 / 1000,
+                                        (ulong)ATAID.LBASectors                              * logicalSectorSize,
+                                        ((ulong)ATAID.LBASectors * logicalSectorSize) / 1000 / 1000,
                                         ((ulong)ATAID.LBASectors * 512) / 1024               / 1024).AppendLine();
 
                 if(ATAID.CommandSet2.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit2.LBA48))
                     if(ATAID.CommandSet5.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CommandSetBit5.ExtSectors))
-                        if((ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 > 1000000)
+                        if((ATAID.ExtendedUserSectors * logicalSectorSize) / 1024 / 1024 > 1000000)
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
-                                            ATAID.ExtendedUserSectors * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 / 1024 /
+                                            ATAID.ExtendedUserSectors * logicalSectorSize,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1000 / 1000 / 1000 / 1000,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1024 / 1024 / 1024 /
                                             1024).AppendLine();
-                        else if((ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 > 1000)
+                        else if((ATAID.ExtendedUserSectors * logicalSectorSize) / 1024 / 1024 > 1000)
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
-                                            ATAID.ExtendedUserSectors * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024 / 1024).
+                                            ATAID.ExtendedUserSectors * logicalSectorSize,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1000 / 1000 / 1000,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1024 / 1024 / 1024).
                                AppendLine();
                         else
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
-                                            ATAID.ExtendedUserSectors                              * logicalsectorsize,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1000 / 1000,
-                                            (ATAID.ExtendedUserSectors * logicalsectorsize) / 1024 / 1024).AppendLine();
+                                            ATAID.ExtendedUserSectors                              * logicalSectorSize,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1000 / 1000,
+                                            (ATAID.ExtendedUserSectors * logicalSectorSize) / 1024 / 1024).AppendLine();
                     else
                     {
-                        if((ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 > 1000000)
+                        if((ATAID.LBA48Sectors * logicalSectorSize) / 1024 / 1024 > 1000000)
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Tb, {2} TiB",
-                                            ATAID.LBA48Sectors * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000 / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024 / 1024).
+                                            ATAID.LBA48Sectors * logicalSectorSize,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1000 / 1000 / 1000 / 1000,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1024 / 1024 / 1024 / 1024).
                                AppendLine();
-                        else if((ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 > 1000)
+                        else if((ATAID.LBA48Sectors * logicalSectorSize) / 1024 / 1024 > 1000)
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Gb, {2} GiB",
-                                            ATAID.LBA48Sectors                                     * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors                                     * logicalSectorSize,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1000 / 1000 / 1000,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1024 / 1024 / 1024).AppendLine();
                         else
                             sb.AppendFormat("Device size in 48-bit LBA mode: {0} bytes, {1} Mb, {2} MiB",
-                                            ATAID.LBA48Sectors                              * logicalsectorsize,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1000 / 1000,
-                                            (ATAID.LBA48Sectors * logicalsectorsize) / 1024 / 1024).AppendLine();
+                                            ATAID.LBA48Sectors                              * logicalSectorSize,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1000 / 1000,
+                                            (ATAID.LBA48Sectors * logicalSectorSize) / 1024 / 1024).AppendLine();
                     }
 
                 if(ata1 || cfa)
@@ -974,7 +972,8 @@ namespace Aaru.Decoders.ATA
 
             sb.Append("Device capabilities:");
 
-            if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.StandardStanbyTimer))
+            if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.StandardStandbyTimer)
+            )
                 sb.AppendLine().Append("Standby time values are standard");
 
             if(ATAID.Capabilities.HasFlag(CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY))
@@ -1378,7 +1377,7 @@ namespace Aaru.Decoders.ATA
 
             if(ATAID.InterseekDelay != 0x0000 &&
                ATAID.InterseekDelay != 0xFFFF)
-                sb.AppendLine().AppendFormat("{0} microseconds of interseek delay for ISO-7779 accoustic testing",
+                sb.AppendLine().AppendFormat("{0} microseconds of interseek delay for ISO-7779 acoustic testing",
                                              ATAID.InterseekDelay);
 
             if((ushort)ATAID.DeviceFormFactor != 0x0000 &&
@@ -2080,7 +2079,7 @@ namespace Aaru.Decoders.ATA
 
                     sb.AppendLine(ATAID.SecurityStatus.HasFlag(CommonTypes.
                                                                Structs.Devices.ATA.Identify.SecurityStatusBit.Expired)
-                                      ? "Security count has expired" : "Security count has notexpired");
+                                      ? "Security count has expired" : "Security count has not expired");
 
                     sb.AppendLine(ATAID.SecurityStatus.HasFlag(CommonTypes.
                                                                Structs.Devices.ATA.Identify.SecurityStatusBit.Maximum)
@@ -2156,7 +2155,7 @@ namespace Aaru.Decoders.ATA
                     sb.AppendLine().AppendFormat("Version {0}", (ATAID.NVCacheCaps & 0x0F00) >> 8).AppendLine();
                 }
 
-                sb.AppendLine().AppendFormat("Non-Volatile Cache is {0} bytes", ATAID.NVCacheSize * logicalsectorsize).
+                sb.AppendLine().AppendFormat("Non-Volatile Cache is {0} bytes", ATAID.NVCacheSize * logicalSectorSize).
                    AppendLine();
             }
 

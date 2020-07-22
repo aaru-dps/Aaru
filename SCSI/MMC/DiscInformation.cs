@@ -122,17 +122,12 @@ namespace Aaru.Decoders.SCSI.MMC
 
         public static string Prettify000b(StandardDiscInformation? information)
         {
-            if(!information.HasValue)
-                return null;
-
-            StandardDiscInformation decoded = information.Value;
-
-            if(decoded.DataType != 0)
+            if(information?.DataType != 0)
                 return null;
 
             var sb = new StringBuilder();
 
-            switch(decoded.DiscType)
+            switch(information.Value.DiscType)
             {
                 case 0x00:
                     sb.AppendLine("Disc type declared as CD-DA or CD-ROM");
@@ -151,12 +146,12 @@ namespace Aaru.Decoders.SCSI.MMC
 
                     break;
                 default:
-                    sb.AppendFormat("Unknown disc type {0:X2}h", decoded.DiscType).AppendLine();
+                    sb.AppendFormat("Unknown disc type {0:X2}h", information.Value.DiscType).AppendLine();
 
                     break;
             }
 
-            switch(decoded.DiscStatus)
+            switch(information.Value.DiscStatus)
             {
                 case 0:
                     sb.AppendLine("Disc is empty");
@@ -172,10 +167,10 @@ namespace Aaru.Decoders.SCSI.MMC
                     break;
             }
 
-            if(decoded.Erasable)
+            if(information.Value.Erasable)
                 sb.AppendLine("Disc is erasable");
 
-            switch(decoded.LastSessionStatus)
+            switch(information.Value.LastSessionStatus)
             {
                 case 0:
                     sb.AppendLine("Last session is empty");
@@ -195,7 +190,7 @@ namespace Aaru.Decoders.SCSI.MMC
                     break;
             }
 
-            switch(decoded.BGFormatStatus)
+            switch(information.Value.BGFormatStatus)
             {
                 case 1:
                     sb.AppendLine("Media was being formatted in the background but it is stopped and incomplete");
@@ -211,39 +206,39 @@ namespace Aaru.Decoders.SCSI.MMC
                     break;
             }
 
-            if(decoded.Dbit)
+            if(information.Value.Dbit)
                 sb.AppendLine("MRW is dirty");
 
-            sb.AppendFormat("First track on disc is track {0}", decoded.FirstTrackNumber).AppendLine();
-            sb.AppendFormat("Disc has {0} sessions", decoded.Sessions).AppendLine();
-            sb.AppendFormat("First track in last session is track {0}", decoded.FirstTrackLastSession).AppendLine();
-            sb.AppendFormat("Last track in last session is track {0}", decoded.LastTrackLastSession).AppendLine();
+            sb.AppendFormat("First track on disc is track {0}", information.Value.FirstTrackNumber).AppendLine();
+            sb.AppendFormat("Disc has {0} sessions", information.Value.Sessions).AppendLine();
+            sb.AppendFormat("First track in last session is track {0}", information.Value.FirstTrackLastSession).AppendLine();
+            sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).AppendLine();
 
             sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
-                            decoded.LastSessionLeadInStartLBA, (decoded.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
-                            (decoded.LastSessionLeadInStartLBA                                    & 0xFF00)   >> 8,
-                            decoded.LastSessionLeadInStartLBA & 0xFF).AppendLine();
+                            information.Value.LastSessionLeadInStartLBA, (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
+                            (information.Value.LastSessionLeadInStartLBA                                    & 0xFF00)   >> 8,
+                            information.Value.LastSessionLeadInStartLBA & 0xFF).AppendLine();
 
             sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
-                            decoded.LastPossibleLeadOutStartLBA, (decoded.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
-                            (decoded.LastPossibleLeadOutStartLBA                                      & 0xFF00)   >> 8,
-                            decoded.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
+                            information.Value.LastPossibleLeadOutStartLBA, (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
+                            (information.Value.LastPossibleLeadOutStartLBA                                      & 0xFF00)   >> 8,
+                            information.Value.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
-            sb.AppendLine(decoded.URU ? "Disc is defined for unrestricted use" : "Disc is defined for restricted use");
+            sb.AppendLine(information.Value.URU ? "Disc is defined for unrestricted use" : "Disc is defined for restricted use");
 
-            if(decoded.DID_V)
-                sb.AppendFormat("Disc ID: {0:X6}", decoded.DiscIdentification & 0x00FFFFFF).AppendLine();
+            if(information.Value.DID_V)
+                sb.AppendFormat("Disc ID: {0:X6}", information.Value.DiscIdentification & 0x00FFFFFF).AppendLine();
 
-            if(decoded.DBC_V)
-                sb.AppendFormat("Disc barcode: {0:X16}", decoded.DiscBarcode).AppendLine();
+            if(information.Value.DBC_V)
+                sb.AppendFormat("Disc barcode: {0:X16}", information.Value.DiscBarcode).AppendLine();
 
-            if(decoded.DAC_V)
-                sb.AppendFormat("Disc application code: {0}", decoded.DiscApplicationCode).AppendLine();
+            if(information.Value.DAC_V)
+                sb.AppendFormat("Disc application code: {0}", information.Value.DiscApplicationCode).AppendLine();
 
-            if(decoded.OPCTables == null)
+            if(information.Value.OPCTables == null)
                 return sb.ToString();
 
-            foreach(OPCTable table in decoded.OPCTables)
+            foreach(OPCTable table in information.Value.OPCTables)
                 sb.AppendFormat("OPC values for {0}Kbit/sec.: {1}, {2}, {3}, {4}, {5}, {6}", table.Speed,
                                 table.OPCValues[0], table.OPCValues[1], table.OPCValues[2], table.OPCValues[3],
                                 table.OPCValues[4], table.OPCValues[5]).AppendLine();
@@ -278,23 +273,18 @@ namespace Aaru.Decoders.SCSI.MMC
 
         public static string Prettify001b(TrackResourcesInformation? information)
         {
-            if(!information.HasValue)
-                return null;
-
-            TrackResourcesInformation decoded = information.Value;
-
-            if(decoded.DataType != 1)
+            if(information?.DataType != 1)
                 return null;
 
             var sb = new StringBuilder();
 
-            sb.AppendFormat("{0} maximum possible tracks on the disc", decoded.MaxTracks).AppendLine();
-            sb.AppendFormat("{0} assigned tracks on the disc", decoded.AssignedTracks).AppendLine();
+            sb.AppendFormat("{0} maximum possible tracks on the disc", information.Value.MaxTracks).AppendLine();
+            sb.AppendFormat("{0} assigned tracks on the disc", information.Value.AssignedTracks).AppendLine();
 
-            sb.AppendFormat("{0} maximum possible appendable tracks on the disc", decoded.AppendableTracks).
+            sb.AppendFormat("{0} maximum possible appendable tracks on the disc", information.Value.AppendableTracks).
                AppendLine();
 
-            sb.AppendFormat("{0} current appendable tracks on the disc", decoded.MaxAppendableTracks).AppendLine();
+            sb.AppendFormat("{0} current appendable tracks on the disc", information.Value.MaxAppendableTracks).AppendLine();
 
             return sb.ToString();
         }
@@ -331,22 +321,17 @@ namespace Aaru.Decoders.SCSI.MMC
 
         public static string Prettify010b(POWResourcesInformation? information)
         {
-            if(!information.HasValue)
-                return null;
-
-            POWResourcesInformation decoded = information.Value;
-
-            if(decoded.DataType != 1)
+            if(information?.DataType != 1)
                 return null;
 
             var sb = new StringBuilder();
 
-            sb.AppendFormat("{0} remaining POW replacements", decoded.RemainingPOWReplacements).AppendLine();
+            sb.AppendFormat("{0} remaining POW replacements", information.Value.RemainingPOWReplacements).AppendLine();
 
-            sb.AppendFormat("{0} remaining POW reallocation map entries", decoded.RemainingPOWReallocation).
+            sb.AppendFormat("{0} remaining POW reallocation map entries", information.Value.RemainingPOWReallocation).
                AppendLine();
 
-            sb.AppendFormat("{0} remaining POW updates", decoded.RemainingPOWUpdates).AppendLine();
+            sb.AppendFormat("{0} remaining POW updates", information.Value.RemainingPOWUpdates).AppendLine();
 
             return sb.ToString();
         }

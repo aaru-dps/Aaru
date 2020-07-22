@@ -215,10 +215,7 @@ namespace Aaru.Decoders.MMC
     {
         public static ExtendedCSD DecodeExtendedCSD(byte[] response)
         {
-            if(response == null)
-                return null;
-
-            if(response.Length != 512)
+            if(response?.Length != 512)
                 return null;
 
             var handle = GCHandle.Alloc(response, GCHandleType.Pinned);
