@@ -38,7 +38,7 @@ using Aaru.Helpers;
 namespace Aaru.Checksums
 {
     /// <summary>Implements a CRC32 algorithm</summary>
-    public class Crc32Context : IChecksum
+    public sealed class Crc32Context : IChecksum
     {
         const uint CRC32_ISO_POLY = 0xEDB88320;
         const uint CRC32_ISO_SEED = 0xFFFFFFFF;

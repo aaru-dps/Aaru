@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.</summary>
-    public class Sha512Context : IChecksum
+    public sealed class Sha512Context : IChecksum
     {
         readonly SHA512 _provider;
 

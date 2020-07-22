@@ -44,7 +44,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
-    public class Register : IPluginRegister
+    public sealed class Register : IPluginRegister
     {
         public List<Type> GetAllChecksumPlugins() => Assembly.
                                                      GetExecutingAssembly().GetTypes().

@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Wraps up .NET SHA1 implementation to a Init(), Update(), Final() context.</summary>
-    public class Sha1Context : IChecksum
+    public sealed class Sha1Context : IChecksum
     {
         readonly SHA1 _provider;
 

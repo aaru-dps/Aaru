@@ -32,7 +32,7 @@
 
 namespace Aaru.Checksums
 {
-    public class CRC16CCITTContext : Crc16Context
+    public sealed class CRC16CCITTContext : Crc16Context
     {
         public const ushort CRC16_CCITT_POLY = 0x8408;
         public const ushort CRC16_CCITT_SEED = 0x0000;

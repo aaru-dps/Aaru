@@ -32,7 +32,7 @@
 
 namespace Aaru.Checksums
 {
-    public class CRC16IBMContext : Crc16Context
+    public sealed class CRC16IBMContext : Crc16Context
     {
         const ushort CRC16_IBM_POLY = 0xA001;
         const ushort CRC16_IBM_SEED = 0x0000;

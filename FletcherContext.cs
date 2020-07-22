@@ -40,7 +40,7 @@ using Aaru.Helpers;
 namespace Aaru.Checksums
 {
     /// <summary>Implements the Fletcher-32 algorithm</summary>
-    public class Fletcher32Context : IChecksum
+    public sealed class Fletcher32Context : IChecksum
     {
         const ushort FLETCHER_MODULE = 0xFFFF;
         ushort       _sum1, _sum2;
@@ -165,7 +165,7 @@ namespace Aaru.Checksums
     }
 
     /// <summary>Implements the Fletcher-16 algorithm</summary>
-    public class Fletcher16Context : IChecksum
+    public sealed class Fletcher16Context : IChecksum
     {
         const byte FLETCHER_MODULE = 0xFF;
         byte       _sum1, _sum2;

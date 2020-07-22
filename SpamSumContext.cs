@@ -47,7 +47,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
-    public class SpamSumContext : IChecksum
+    public sealed class SpamSumContext : IChecksum
     {
         const uint ROLLING_WINDOW   = 7;
         const uint MIN_BLOCKSIZE    = 3;

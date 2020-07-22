@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.</summary>
-    public class Md5Context : IChecksum
+    public sealed class Md5Context : IChecksum
     {
         readonly MD5 _provider;
 

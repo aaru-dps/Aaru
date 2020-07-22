@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Wraps up .NET SHA256 implementation to a Init(), Update(), Final() context.</summary>
-    public class Sha256Context : IChecksum
+    public sealed class Sha256Context : IChecksum
     {
         readonly SHA256 _provider;
 

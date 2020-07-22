@@ -38,7 +38,7 @@ using Aaru.CommonTypes.Interfaces;
 namespace Aaru.Checksums
 {
     /// <summary>Wraps up .NET SHA384 implementation to a Init(), Update(), Final() context.</summary>
-    public class Sha384Context : IChecksum
+    public sealed class Sha384Context : IChecksum
     {
         readonly SHA384 _provider;
 

@@ -38,7 +38,7 @@ using Aaru.Helpers;
 namespace Aaru.Checksums
 {
     /// <summary>Implements the Adler-32 algorithm</summary>
-    public class Adler32Context : IChecksum
+    public sealed class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
         ushort       _sum1, _sum2;
