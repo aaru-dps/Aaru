@@ -1985,9 +1985,11 @@ namespace Aaru.Core.Media.Detection
                                    line.Length == 0)
                                     break;
 
-                                if(line.StartsWith("BOOT = cdrom:", StringComparison.InvariantCultureIgnoreCase))
+                                line = line.Replace(" ", "");
+
+                                if(line.StartsWith("BOOT=cdrom:", StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    ps1BootFile = line.Substring(13);
+                                    ps1BootFile = line.Substring(11);
 
                                     if(ps1BootFile.StartsWith('\\'))
                                         ps1BootFile = ps1BootFile.Substring(1);
@@ -1998,7 +2000,7 @@ namespace Aaru.Core.Media.Detection
                                     break;
                                 }
 
-                                if(line.StartsWith("BOOT2 = cdrom0:", StringComparison.InvariantCultureIgnoreCase))
+                                if(line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     ps2BootFile = line.Substring(13);
 
