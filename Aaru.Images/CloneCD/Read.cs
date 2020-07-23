@@ -829,9 +829,11 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress <= track.TrackEndSector select kvp)
+                                                     where sectorAddress                                   - kvp.Value <
+                                                           (track.TrackEndSector - track.TrackStartSector) + 1
+                                                     select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
@@ -839,9 +841,16 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                     from track in Tracks where track.TrackSequence == kvp.Key
-                                                     where sectorAddress <= track.TrackEndSector select kvp)
+            foreach(KeyValuePair<uint, ulong> kvp in _offsetmap.Where(kvp => sectorAddress >= kvp.Value).
+                                                                SelectMany(kvp => Tracks, (kvp, track) => new
+                                                                {
+                                                                    kvp,
+                                                                    track
+                                                                }).Where(t => t.track.TrackSequence == t.kvp.Key).
+                                                                Where(t => sectorAddress - t.kvp.Value <
+                                                                           (t.track.TrackEndSector -
+                                                                            t.track.TrackStartSector) + 1).
+                                                                Select(t => t.kvp))
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
             throw new ArgumentOutOfRangeException(nameof(sectorAddress), $"Sector address {sectorAddress} not found");
