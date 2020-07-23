@@ -279,6 +279,7 @@ namespace Aaru.Commands.Image
 
                         foreach(Track currentTrack in inputTracks)
                         {
+                            /*
                             if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
                                 for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                                 {
@@ -288,6 +289,7 @@ namespace Aaru.Commands.Image
 
                                     mediaChecksum?.Update(hiddenSector);
                                 }
+                            */
 
                             AaruConsole.DebugWriteLine("Checksum command",
                                                        "Track {0} starts at sector {1} and ends at sector {2}",
@@ -345,6 +347,7 @@ namespace Aaru.Commands.Image
                             previousTrackEnd = currentTrack.TrackEndSector;
                         }
 
+                        /*
                         if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
                             for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
                             {
@@ -353,6 +356,7 @@ namespace Aaru.Commands.Image
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
                                 mediaChecksum?.Update(hiddenSector);
                             }
+                        */
 
                         if(wholeDisc)
                             if(mediaChecksum != null)
