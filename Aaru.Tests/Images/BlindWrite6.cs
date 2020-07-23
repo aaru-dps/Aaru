@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BlindWrite5.cs
+// Filename       : BlindWrite6.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef unit testing.
@@ -39,26 +39,26 @@ using NUnit.Framework;
 namespace Aaru.Tests.Images
 {
     [TestFixture]
-    public class BlindWrite5
+    public class BlindWrite6
     {
         readonly string[] _testFiles =
         {
-            "audiocd_cdtext.B5T", "cdg.B5T", "cdplus.B5T", "cdr.B5T", "cdrom80mm.B5T", "cdrom.B5T", "cdrw.B5T",
-            "dvdrom.B5T", "cdi.B5T", "gdrom.B5T", "jaguarcd.B5T", "mixed.B5T", "multitrack.B5T", "pcengine.B5T",
-            "pcfx.B5T", "videocd.B5T"
+            "audiocd_cdtext.B6T", "cdg.B6T", "cdplus.B6T", "cdr.B6T", "cdrom80mm.B6T", "cdrom.B6T", "cdrw.B6T",
+            "dvdrom.B6T", "fakecdtext6.B6T", "gdrom.B6T", "jaguarcd.B6T", "mixed.B6T", "multitrack.B6T",
+            "pcengine.B6T", "pcfx.B6T", "videocd.B6T", "cdi.B6T",
         };
 
         readonly ulong[] _sectors =
         {
             222187, 309546, 303316, 97765, 19042, 502, 1219, 2287072, 1385, 6400, 243587, 283397, 328360, 160956,
-            246680, 205072
+            246680, 205072, 0
         };
 
         readonly MediaType[] _mediaTypes =
         {
             MediaType.CDDA, MediaType.CDDA, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROM,
             MediaType.CDRW, MediaType.DVDROM, MediaType.CDR, MediaType.CDROMXA, MediaType.CDDA, MediaType.CDROMXA,
-            MediaType.CDROM, MediaType.CD, MediaType.CD, MediaType.CDROMXA
+            MediaType.CDROM, MediaType.CD, MediaType.CD, MediaType.CDROMXA, MediaType.CDI
         };
 
         readonly string[] _md5S =
@@ -68,7 +68,7 @@ namespace Aaru.Tests.Images
             "a280948374cacd96d11417be74b504e1", "b9b0b4318e6264c405c3f96128901815", "d68b727b1ea31011ad36f06c1e79d0b1",
             "919202f8dc03fefd2d8a3cb92f5a1a0a", "8086a3654d6dede562621d24ae18729e", "c68e679f86b62b02b9cb66b5e217d15b",
             "41458c6ff3e35aa635cc2f2fdb5582ae", "0dac1b20a9dc65c4ed1b11f6160ed983", "bc514cb4f3c7e2ee6857b2a3d470278b",
-            "c28398b4b49c45dce49aa04c71893baa"
+            "c28398b4b49c45dce49aa04c71893baa", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         };
 
         readonly string[] _longMd5S =
@@ -78,7 +78,7 @@ namespace Aaru.Tests.Images
             "5657eb302e16577ddade84c87219f5e6", "b9b0b4318e6264c405c3f96128901815", "d68b727b1ea31011ad36f06c1e79d0b1",
             "9e624b9d02cb876640015e7f7027766c", "8086a3654d6dede562621d24ae18729e", "e431e3438d45af3156c0c2348d29217a",
             "2d349b97860ab08666416fdc424097b1", "f1c1dbe1cd9df11fe2c1f0a97130c25f", "dac5dc0961fa435da3c7d433477cda1a",
-            "ab9f7cd1c27eec3292ab438df99381ce"
+            "ab9f7cd1c27eec3292ab438df99381ce", "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
         };
 
         readonly string[] _subchannelMd5S =
@@ -88,12 +88,12 @@ namespace Aaru.Tests.Images
             "9f6910ce13a752a0fae0b5ab17f4fdcd", "db0b4318e6264c405c3f96128901815", "2af826aec596b10393eaabb994471236",
             "a8599b043483431b4b9380b9f71ec228", "83ec1010fc44694d69dc48bacec5481a", "614fdc36219120b833fdfa62eee5b0f7",
             "a9158c3b13aee6fdde14031be61d9a5c", "9e9a6b51bc2e5ec67400cb33ad0ca33f", "e3a0d78b6c32f5795b1b513bd13a6bda",
-            "85b051cae460fe505644e734dde032a0"
+            "85b051cae460fe505644e734dde032a0", "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
         };
 
         readonly int[] _tracks =
         {
-            13, 16, 14, 2, 1, 1, 1, 1, 3, 2, 11, 11, 3, 16, 8, 18
+            13, 16, 14, 2, 1, 1, 1, 1, 3, 2, 11, 11, 3, 16, 8, 18, 255
         };
 
         readonly int[][] _trackSessions =
@@ -108,11 +108,11 @@ namespace Aaru.Tests.Images
             },
             new[]
             {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 // TODO: 2 goes here
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2
             },
             new[]
             {
-                1, 1 // TODO: 2 goes here
+                1, 2
             },
             new[]
             {
@@ -140,10 +140,7 @@ namespace Aaru.Tests.Images
             },
             new[]
             {
-                // TODO
-                // 2 goes here
-                // 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
             },
             new[]
             {
@@ -164,6 +161,10 @@ namespace Aaru.Tests.Images
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+            new[]
+            {
+            255
             }
         };
 
@@ -235,6 +236,10 @@ namespace Aaru.Tests.Images
             {
                 0, 2100, 12985, 20451, 39498, 47368, 56600, 67387, 71546, 77030, 80535, 95180, 110808, 115449, 118723,
                 123266, 128328, 131637
+            },
+            new ulong[]
+            {
+                0
             }
         };
 
@@ -307,6 +312,10 @@ namespace Aaru.Tests.Images
             {
                 1949, 12984, 20450, 39497, 47367, 56599, 67386, 71545, 77029, 80534, 95179, 110807, 115448, 118722,
                 123265, 128327, 131636, 205071
+            },
+            new ulong[]
+            {
+                255255
             }
         };
 
@@ -375,6 +384,10 @@ namespace Aaru.Tests.Images
             new ulong[]
             {
                 150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+            new ulong[]
+            {
+                150
             }
         };
 
@@ -439,13 +452,17 @@ namespace Aaru.Tests.Images
             new byte[]
             {
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+            },
+            new byte[]
+            {
+                4
             }
         };
 
         [Test]
         public void Test()
         {
-            Environment.CurrentDirectory = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 5");
+            Environment.CurrentDirectory = Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "BlindWrite 6");
 
             for(int i = 0; i < _testFiles.Length; i++)
             {
