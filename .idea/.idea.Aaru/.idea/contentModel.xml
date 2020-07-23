@@ -2146,6 +2146,7 @@
         </e>
         <e p="Images" t="Include">
           <e p="2MG.cs" t="Include" />
+          <e p="Alcohol120.cs" t="Include" />
           <e p="Anex86.cs" t="Include" />
           <e p="CisCopy.cs" t="Include" />
           <e p="CopyQM.cs" t="Include" />
