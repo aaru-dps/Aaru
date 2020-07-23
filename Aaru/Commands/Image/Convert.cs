@@ -773,13 +773,34 @@ namespace Aaru.Commands.Image
                 Dictionary<byte, byte>   trackFlags                = new Dictionary<byte, byte>();
                 string                   mcn                       = null;
                 HashSet<int>             subchannelExtents         = new HashSet<int>();
-                Track[]                  tracks                    = inputOptical.Tracks.ToArray();
                 Dictionary<byte, int>    smallestPregapLbaPerTrack = new Dictionary<byte, int>();
+                Track[]                  tracks                    = new Track[inputOptical.Tracks.Count];
+
+                for(int i = 0; i < tracks.Length; i++)
+                {
+                    tracks[i] = new Track
+                    {
+                        Indexes                = new Dictionary<ushort, int>(),
+                        TrackDescription       = inputOptical.Tracks[i].TrackDescription,
+                        TrackEndSector         = inputOptical.Tracks[i].TrackEndSector,
+                        TrackStartSector       = inputOptical.Tracks[i].TrackStartSector,
+                        TrackPregap            = inputOptical.Tracks[i].TrackPregap,
+                        TrackSequence          = inputOptical.Tracks[i].TrackSequence,
+                        TrackSession           = inputOptical.Tracks[i].TrackSession,
+                        TrackBytesPerSector    = inputOptical.Tracks[i].TrackBytesPerSector,
+                        TrackRawBytesPerSector = inputOptical.Tracks[i].TrackRawBytesPerSector,
+                        TrackType              = inputOptical.Tracks[i].TrackType,
+                        TrackSubchannelType    = inputOptical.Tracks[i].TrackSubchannelType
+                    };
+
+                    foreach(KeyValuePair<ushort, int> idx in inputOptical.Tracks[i].Indexes)
+                        tracks[i].Indexes[idx.Key] = idx.Value;
+                }
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
                                                          Where(t => t == SectorTagType.CdTrackIsrc).OrderBy(t => t))
                 {
-                    foreach(Track track in inputOptical.Tracks)
+                    foreach(Track track in tracks)
                     {
                         byte[] isrc = inputFormat.ReadSectorTag(track.TrackSequence, tag);
 
@@ -793,7 +814,7 @@ namespace Aaru.Commands.Image
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.
                                                          Where(t => t == SectorTagType.CdTrackFlags).OrderBy(t => t))
                 {
-                    foreach(Track track in inputOptical.Tracks)
+                    foreach(Track track in tracks)
                     {
                         byte[] flags = inputFormat.ReadSectorTag(track.TrackSequence, tag);
 
