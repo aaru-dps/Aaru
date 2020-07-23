@@ -2150,6 +2150,7 @@
           <e p="Anex86.cs" t="Include" />
           <e p="BlindWrite5.cs" t="Include" />
           <e p="BlindWrite6.cs" t="Include" />
+          <e p="CDRWin.cs" t="Include" />
           <e p="CisCopy.cs" t="Include" />
           <e p="CopyQM.cs" t="Include" />
           <e p="D88.cs" t="Include" />
