@@ -1,3 +1,219 @@
+# [5.1.0.xxxx] - 2020-07-xx
+## Added
+### - Aaru Image Format
+- Save Compact Disc track indexes in.
+- Support reading mode2 subheaders.
+- Support writing multi-session DVD/Blu-ray in Aaru Image Format and CDRWin.
+
+### - BlindWrite 4 disc image
+- Add reading subchannels.
+
+### - CDRWin cuesheet disc image
+- Support Redump GD-ROM variant.
+- Support writing multi-session DVD/Blu-ray in Aaru Image Format and CDRWin.
+- Write proper Lead-Out entry on CDRWin images.
+
+### - Device report
+- Add MediaTek command F1h subcommand 06h to device report.
+- Add test for reading Lead-Out using a trap disc.
+- Support creating device reports of MiniDisc Data drives.
+
+### - Devices
+- Add ATA commands for lock, unlock and eject.
+- Add READ TRACK INFORMATION command from SCSI MMC.
+
+### - Dumping
+- Add dumping MD DATA discs.
+- Add floptical detection.
+- Add list of files for media dump command.
+- Add option to eject media after a dump completes.
+- Add option to fix subchannel position.
+- Add option to fix subchannels.
+- Add option to retry bad subchannel sectors.
+- Add option to use list of output files when dumping media.
+- Detect disc type when dumping non-CD MMC devices.
+- Dump sessions and tracks on non-CD optical discs.
+- Enable accessing generic SCSI node in Linux.
+- Read SD/MMC devices one block at a time, as READ MULTIPLE is timing out, pending investigation.
+- Report and stop dump if pregaps cannot be preserved, unless forced.
+- Save error log on dump.
+- Save indexes on dump.
+- Support dumping CD-i Ready when drive returns data sectors as audio.
+- Use subchannel, if available, to set ISRC.
+- Use subchannel, if available, to set MCN.
+- Write subchannel log when dumping Compact Disc media.
+
+### - Image analysis
+- Print track indexes in image info.
+
+### - Image conversion
+- Add option to fix subchannels on image conversion.
+- Add option to generate subchannels.
+
+### - ISO9660 filesystem
+- Add interpretation of timezone offsets.
+- Check if PVD points to the real root directory, if not check path table, if neither do not mount.
+- Expose MODE2 subheaders as extended attributes.
+
+### - Media image formats
+- Add generation of RAW CD sectors from images that do only contains them cooked.
+
+### - Media information
+- Add detection of CD32 and CDTV discs.
+- Add detection of China Video Disc.
+- Add detection of HiFD floppies.
+- Add detection of Neo Geo CD discs.
+- Add detection of PhotoCD.
+- Add detection of Sony PlayStation Compact Disc.
+- Add detection of VideoCD and Super Video CD.
+- Add support for MD DATA drives.
+- Calculate all pregaps in media info.
+- Detect CD-i Ready when the drive returns data scrambled.
+- Implement detection of CD+G, CD+EG and CD+MIDI.
+- Show the reasons while a media type has been chosen on detection.
+
+### - Media types
+- Add China Video Disc media type.
+
+### - Metadata sidecar
+- Add media catalogue number, track isrc, flag and indexes.
+
+
+## Fixed
+### - Aaru Image Format
+- Clarify error message in case of corrupted prefix/suffix data.
+- Ensure FLAC buffer is finished correctly.
+- Fix marking CD track flags and ISRCs as present.
+- Fix setting indexes from track start and pregap.
+- Sectors with no entry in the DDTs to be considered not dumped.
+
+### - Acorn Advanced Disc Filing System
+- Fix identification of some variants.
+
+### - Alcohol 120% disc image
+- Fix message about incorrect images showing with correct images.
+- Fix saving proper pregap, length and offset.
+- Fix writing multi-session images.
+- Write extra field in Alcohol for tracks that don't have it (POINT>=A0h).
+
+### - BlindWrite 4 disc image
+- Fixed track offsets and pregaps in BlindWrite 4 images.
+
+### - BlindWrite 5/6 disc image
+- Fix identifying BlindWrite 5 vs 6.
+- Fix images that contain a non existent data file.
+- Fix multi-session images.
+- Fix reading ATIP.
+- Fix reading subchannels.
+
+### - cdrdao disc image
+- Fix writing indexes.
+
+### - CDRWin cuesheet disc image
+- Fix reading images that do not have track mode in all caps.
+- Fix reading multi-session images.
+- Fix writing indexes.
+
+### - CloneCD disc image
+- Fix reading multi-session images.
+- Fix subchannels.
+- Fix track solving.
+- Fix writing multi-session images.
+- Fix writing pregap mode.
+
+### - Database
+- Ensure not adding duplicate seen devices to database.
+
+### - Device report
+- Correctly handle report of pregap and Lead-in readability.
+- On device report try only a few sectors from track 1 pregap.
+
+### - Devices
+- Add SCSI MEDIUM SCAN command.
+- Do not show information about CD offsets in device info when device is not an MMC class device. Fixes #357
+- Fix getting serial from USB or FireWire.
+
+### - DiscJuggler disc image
+- Fix incorrect mode2 handling.
+- Fix indexes and track starts.
+- Fix partition calculations.
+- Fix session sequence in tracks.
+
+### - Dumping
+- Do not cross Lead-out in data tracks.
+- Do not show speed burst if they have not been set.
+- Fix calculating offset using scrambled read as audio when device is in database.
+- Fix detecting indexes in track 1.
+- Fix dumping when read subchannel is PQ only.
+- Fix infinite loop failing to cross Lead-Out dumping CDs.
+- Fix infinite loop on some CD track mode changes while dumping.
+- Fix not exiting when an image cannot be appended.
+- Fix opening SecureDigital / MultiMediaCard devices.
+- Fix pregap calculation in track mode changes when pregap ends in 0.
+- Fix reading OCR from newer versions of Linux sysfs.
+- Fix re-setting track pregap when a read subchannel indicates a different value.
+- Fix reversing list of bad blocks only if we're retrying backwards.
+- Fix setting track pregaps from subchannel.
+- Fix setting track subchannel type to the desired type.
+- Handle discs that have pregap ending in LBA 1 instead of ending in LBA 0.
+- If block 0 can not be read, try another random block before deciding media cannot be read, for SBC and ATA.
+- If track mode can not be guessed, try again after pregap.
+- Make pregap calculation faster in some drive/disc combinations.
+- On errors when dumping with INSITE floptical drives, always stop, as these drives have a SCSI bus quirk that makes them need a reset on modern software stacks after an error has been found.
+- Trim as audio when we know it is an audio sector, fixes some firmware bugs in audio pregap after a data track.
+- Update the pregap while dumping if found to be bigger than known one.
+- Use SCSI MEDIUM SCAN to find the first readable block.
+
+### - FAT filesystem
+- Do not try to read EAs from FAT16 directory entry field when it is a FAT32 volume.
+- Fix false positive in FAT identification.
+
+### - Image analysis
+- Do not calculate pregaps on non-CD optical disc images.
+
+### - Image conversion
+- Fix overwriting flags and isrc in all CD writable image formats.
+
+### - ISO9660 filesystem
+- Fix files of size 0.
+- Fix listing extended attributes for empty files.
+- Fix reading directories that span more than a sector when detecting media type.
+- Fix swapping location of big-endian path table in debug mode.
+- If use path table option is indicated, use it also for the root directory.
+
+### - MAME Compressed Hunks of Data
+- Disable support for CHD v5 until it can be fixed properly.
+- Fix indexes and pregap.
+
+### - Media information
+- Discard PMA without descriptors.
+- Display media sizes in international system units.
+
+### - Metadata sidecar
+- Disable trying to checksum between sessions, as all images throw an exception here.
+- Fix creating sidecar when a track's index 0 is negative.
+
+### - Nero Burning ROM disc image
+- Fix off by one error reading.
+- Fix reading multi-session images.
+
+### - Statistics
+- Fix sending media formats statistics.
+
+
+## Changes
+- Change database name to be more inclusive.
+- Move common subchannel code to decoders.
+- Optimize speed when reading subchannels.
+- Read with subchannel even if not supported by image or not asked by user.
+- Send statistics at program end, not start.
+
+
+# [5.0.1.2884] - 2020-04-23
+## Fixed
+### - Aaru Image Format
+- Fixes data loss on certain Compact Disc audio tracks when dumping in Aaru Format with compression enabled.
+
 # [5.0.0.2879] - 2020-03-15
 - First and most importantly, we got a rename. We're now Aaru, part of the Aaru Data Preservation Suite, that encompasses Aaru (previously DiscImageChef), 
 Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat) and aaruremote.
@@ -1139,6 +1355,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[5.0.1.2884]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.1.2884
 [5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
 [4.5.1.1692]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.1.1692
 [4.5.0.1663]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.0.1663
