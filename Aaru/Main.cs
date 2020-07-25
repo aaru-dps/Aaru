@@ -70,9 +70,9 @@ namespace Aaru
 /*
             if(args.Length                == 1 &&
                args[0].ToLowerInvariant() == "gui")
-            {
+            {*/
                 return Gui.Main.Start(args);
-            }
+/*            }
 */
             AaruConsole.WriteLineEvent      += System.Console.WriteLine;
             AaruConsole.WriteEvent          += System.Console.Write;

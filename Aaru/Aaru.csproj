@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.1.0.3214</Version>
+    <Version>5.99.3.3215</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -203,9 +203,7 @@
       <Name>Aaru.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
-<!--
     <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
--->
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>Aaru.Helpers</Name>
@@ -306,7 +304,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>5.1.0.3214-1</PackageVersion>
+    <PackageVersion>5.99.3.3215-1</PackageVersion>
     <PackagePrefix>aaru</PackagePrefix>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <Section>net</Section>
