@@ -42,7 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
-using JetBrains.Annotations;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Commands.Filesystem
@@ -337,8 +336,8 @@ namespace Aaru.Commands.Filesystem
             return (int)ErrorNumber.NoError;
         }
 
-        static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName,
-                                      string outputDir, bool doXattrs)
+        static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, string volumeName, string outputDir,
+                                      bool doXattrs)
         {
             if(path.StartsWith('/'))
                 path = path.Substring(1);

@@ -1,4 +1,4 @@
-# [5.1.0.xxxx] - 2020-07-xx
+# [5.1.0.3214] - 2020-07-25
 ## Added
 ### - Aaru Image Format
 - Save Compact Disc track indexes in.
@@ -1355,6 +1355,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[5.1.0.3214]: https://github.com/aaru-dps/Aaru/releases/tag/v5.1.0.3214
 [5.0.1.2884]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.1.2884
 [5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
 [4.5.1.1692]: https://github.com/aaru-dps/Aaru/releases/tag/v4.5.1.1692

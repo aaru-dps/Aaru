@@ -43,7 +43,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
-using JetBrains.Annotations;
 using Schemas;
 
 namespace Aaru.Commands.Image
@@ -91,8 +90,8 @@ namespace Aaru.Commands.Image
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, uint blockSize, [CanBeNull] string encodingName,
-                                 string imagePath, bool tape)
+        public static int Invoke(bool debug, bool verbose, uint blockSize, string encodingName, string imagePath,
+                                 bool tape)
         {
             MainClass.PrintCopyright();
 

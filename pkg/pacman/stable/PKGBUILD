@@ -1,16 +1,17 @@
 # Maintainer: Natalia Portillo <claunia@claunia.com>
 packager='Natalia Portillo <claunia@claunia.com>'
-_netcoretarget='netcoreapp2.1'
+_netcoretarget='netcoreapp3.1'
+_aarubase='Aaru'
 pkgname='aaru'
-pkgver=5.0.0.2879
+pkgver=5.1.0.3214
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.aaru.app'
 license=('GPL')
-source=('aaru-src-5.0.0.2879.tar.xz::local://aaru-src-5.0.0.2879.tar.xz'
-        'aaru-src-5.0.0.2879.tar.xz.asc::local://aaru-src-5.0.0.2879.tar.xz.asc')
-makedepends=('dotnet-sdk>=2.1.0')
+source=('aaru-src-5.1.0.3214.tar.xz::local://aaru-src-5.1.0.3214.tar.xz'
+        'aaru-src-5.1.0.3214.tar.xz.asc::local://aaru-src-5.1.0.3214.tar.xz.asc')
+makedepends=('dotnet-sdk>=3.1.0')
 options=('staticlibs')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
 provides=('aaru')
@@ -26,19 +27,17 @@ else
 fi
 
 build() {
-    cd "${srcdir}"
-    dotnet restore Aaru.sln
-    dotnet build -f ${_netcoretarget} -c Release Aaru.sln
-    dotnet publish -f ${_netcoretarget} -c Release --self-contained -r ${dotnet_rid} Aaru.sln
+    cd "${srcdir}"/"${_aarubase}"
+    dotnet publish -f ${_netcoretarget} -c Release --self-contained -r ${dotnet_rid}
 }
 
 package() {
     # Install MIME database file
-    cd "${srcdir}"/Aaru
+    cd "${srcdir}"/"${_aarubase}"
     install -d -m0755 -g 0 "${pkgdir}"/usr/share/mime/packages
     install -m0755 -g 0 -t "${pkgdir}"/usr/share/mime/packages aaruformat.xml
 
-    cd "${srcdir}"/Aaru/bin/Release/${_netcoretarget}/${dotnet_rid}/publish
+    cd "${srcdir}"/"${_aarubase}"/bin/Release/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
     install -d -m0755 -g 0 "${pkgdir}"/opt/Aaru
@@ -50,7 +49,6 @@ package() {
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.so
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.a
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru createdump
-    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru sosdocsunix.txt
 
     # Copy .NET dependencies
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.dll

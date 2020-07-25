@@ -5,7 +5,7 @@ _aarubase='Aaru'
 packager='Natalia Portillo <claunia@claunia.com>'
 pkgbase='aaru-git'
 pkgname=('aaru-git')
-pkgver=v5.1.99.2967.r1190.g4decb6d4
+pkgver=v5.1.99.3214.r1190.g4decb6d4
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
@@ -39,18 +39,16 @@ prepare() {
 
 build() {
     cd "${srcdir}"/"${_aarubase}"
-    dotnet restore Aaru.sln
-    dotnet build -f ${_netcoretarget} -c Debug Aaru.sln
-    dotnet publish -f ${_netcoretarget} -c Debug --self-contained -r ${dotnet_rid} Aaru.sln
+    dotnet publish -f ${_netcoretarget} -c Debug --self-contained -r ${dotnet_rid}
 }
 
 package() {
     # Install MIME database file
-    cd "${srcdir}"/Aaru
+    cd "${srcdir}"/"${_aarubase}"
     install -d -m0755 -g 0 "${pkgdir}"/usr/share/mime/packages
     install -m0755 -g 0 -t "${pkgdir}"/usr/share/mime/packages aaruformat.xml
 
-    cd "${srcdir}"/"${_aarubase}"/Aaru/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
+    cd "${srcdir}"/"${_aarubase}"/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
     install -d -m0755 -g 0 "${pkgdir}"/opt/Aaru
@@ -62,7 +60,6 @@ package() {
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.so
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.a
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru createdump
-    install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru sosdocsunix.txt
 
     # Copy .NET dependencies
     install -m0755 -g 0 -t "${pkgdir}"/opt/Aaru *.dll

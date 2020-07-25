@@ -42,7 +42,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
-using JetBrains.Annotations;
 
 namespace Aaru.Commands.Filesystem
 {
@@ -310,7 +309,7 @@ namespace Aaru.Commands.Filesystem
             return (int)ErrorNumber.NoError;
         }
 
-        static void ListFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, bool longFormat)
+        static void ListFilesInDir(string path, IReadOnlyFilesystem fs, bool longFormat)
         {
             if(path.StartsWith('/'))
                 path = path.Substring(1);

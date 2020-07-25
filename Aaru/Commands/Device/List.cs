@@ -37,7 +37,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Devices;
-using JetBrains.Annotations;
 
 namespace Aaru.Commands.Device
 {
@@ -55,7 +54,7 @@ namespace Aaru.Commands.Device
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, [CanBeNull] string aaruRemoteHost)
+        public static int Invoke(bool debug, bool verbose, string aaruRemoteHost)
         {
             MainClass.PrintCopyright();
 

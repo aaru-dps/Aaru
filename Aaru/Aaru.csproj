@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.0.99.2991</Version>
+    <Version>5.1.0.3214</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -22,11 +22,13 @@
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
+  <!--
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
     <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
+  -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
@@ -201,7 +203,9 @@
       <Name>Aaru.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+<!--
     <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
+-->
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>Aaru.Helpers</Name>
@@ -274,7 +278,9 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20104.2" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+<!--
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
+-->
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
@@ -300,7 +306,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>5.0.99.2991-1</PackageVersion>
+    <PackageVersion>5.1.0.3214-1</PackageVersion>
     <PackagePrefix>aaru</PackagePrefix>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <Section>net</Section>
