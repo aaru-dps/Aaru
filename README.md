@@ -29,7 +29,7 @@ CI beta builds [here](https://goo.gl/6dZPMq).
 
 System requirements
 ===================
-Aaru is created using .NET Core 2.1 and can be compiled with all the major IDEs.
+Aaru is created using .NET Core 3.1 and can be compiled with all the major IDEs.
 To run it you require to use one of the stable releases, or build it yourself.
 
 Usage
@@ -53,11 +53,11 @@ Features
 * Can verify sectors or disk images if supported by the underlying format
 * Can dump media from ATA, ATAPI, SCSI, USB, FireWire and SDHCI drives (magnetic disks, optical discs, magnetoptical disks, flash devices, memory cards and tapes) to several supported image formats.
 * Can convert between image formats.
-* Includes an opensource archival image format with compression and deduplication.
+* Includes an open-source archival image format with compression and deduplication.
 * Can create standard open XML metadata from existing images.
 * Can measure readability and speed of media (same that can be dumped, MHDD style)
 * Has an online database with drive capabilities, and can report the capabilities of any drive.
-* Works on any operating system and architecture where Mono or .NET Framework is supported (drive access requires Windows, Linux or FreeBSD).
+* Works on any operating system and architecture where .NET Core is supported (drive access requires Windows, Linux or FreeBSD).
 * Has a graphical interface (work in progress)
 
 Feature requests
