@@ -1,11 +1,11 @@
 ﻿// /***************************************************************************
-// The Disc Image Chef
+// Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
 // Filename       : Locus.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef unit testing.
+// Component      : Aaru unit testing.
 //
 // --[ License ] --------------------------------------------------------------
 //

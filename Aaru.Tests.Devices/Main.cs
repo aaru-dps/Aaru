@@ -1,11 +1,11 @@
 ﻿// /***************************************************************************
-// The Disc Image Chef
+// Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
 // Filename       : Main.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef device testing.
+// Component      : Aaru device testing.
 //
 // --[ License ] --------------------------------------------------------------
 //

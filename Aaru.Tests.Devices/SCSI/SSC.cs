@@ -1,11 +1,11 @@
 ﻿// /***************************************************************************
-// The Disc Image Chef
+// Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
 // Filename       : SSC.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef device testing.
+// Component      : Aaru device testing.
 //
 // --[ License ] --------------------------------------------------------------
 //
