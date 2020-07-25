@@ -67,13 +67,13 @@ namespace Aaru
                     as AssemblyInformationalVersionAttribute;
 
             _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-/*
+
             if(args.Length                == 1 &&
                args[0].ToLowerInvariant() == "gui")
-            {*/
+            {
                 return Gui.Main.Start(args);
-/*            }
-*/
+            }
+
             AaruConsole.WriteLineEvent      += System.Console.WriteLine;
             AaruConsole.WriteEvent          += System.Console.Write;
             AaruConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
