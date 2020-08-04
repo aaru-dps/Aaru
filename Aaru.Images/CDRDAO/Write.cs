@@ -593,7 +593,7 @@ namespace Aaru.DiscImages
                                                 flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
                 }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc))
+                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc)) && !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("ISRC {0}", isrc);
 
                 (byte minute, byte second, byte frame) msf =
