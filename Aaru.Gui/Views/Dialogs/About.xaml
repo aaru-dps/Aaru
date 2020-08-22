@@ -94,10 +94,16 @@
                     </TabItem.Header>
                     <DataGrid Items="{Binding Assemblies}" HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Library" Binding="{Binding Name}" Width="Auto"
-                                                IsReadOnly="True" />
-                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto"
-                                                IsReadOnly="True" />
+                            <DataGridTextColumn Binding="{Binding Name}" Width="Auto" IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{Binding AssembliesLibraryText}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Binding="{Binding Version}" Width="Auto" IsReadOnly="True">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="{Binding AssembliesVersionText}" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.1/resharper-host/local/Transient/ReSharperHost/v201/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.2/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.cache/JetBrains/Rider2020.2/resharper-host/local/Transient/Rider/v202/SolutionCaches/_Aaru.232757112.00" t="ExcludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/microsoft.net.test.sdk/16.4.0/build/netcoreapp2.1" t="Include">
       <e p="Microsoft.NET.Test.Sdk.Program.cs" t="Include" />
@@ -14,6 +16,16 @@
     <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.api.dll" t="Include" />
     <e p="$USER_HOME$/.nuget/packages/nunit3testadapter/3.15.1/build/netcoreapp2.0/nunit.engine.dll" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Checksums/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.CommonTypes/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Console/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Decoders/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Dto/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/Aaru.Helpers/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetools.net/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
