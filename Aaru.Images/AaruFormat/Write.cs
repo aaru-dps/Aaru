@@ -117,7 +117,7 @@ namespace Aaru.DiscImages
                     }
                 }
                 else
-                    doMd5 = false;
+                    doMd5 = true;
 
                 if(options.TryGetValue("sha1", out tmpValue))
                 {
@@ -129,7 +129,7 @@ namespace Aaru.DiscImages
                     }
                 }
                 else
-                    doSha1 = false;
+                    doSha1 = true;
 
                 if(options.TryGetValue("sha256", out tmpValue))
                 {
@@ -141,7 +141,7 @@ namespace Aaru.DiscImages
                     }
                 }
                 else
-                    doSha256 = false;
+                    doSha256 = true;
 
                 if(options.TryGetValue("spamsum", out tmpValue))
                 {
@@ -184,9 +184,9 @@ namespace Aaru.DiscImages
                 sectorsPerBlock = 4096;
                 dictionary      = 1 << 25;
                 maxDdtSize      = 256;
-                doMd5           = false;
-                doSha1          = false;
-                doSha256        = false;
+                doMd5           = true;
+                doSha1          = true;
+                doSha256        = true;
                 doSpamsum       = false;
                 _deduplicate    = true;
                 _compress       = true;
