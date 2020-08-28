@@ -5,7 +5,7 @@ _aarubase='Aaru'
 packager='Natalia Portillo <claunia@claunia.com>'
 pkgbase='aaru-git'
 pkgname=('aaru-git')
-pkgver=v5.1.99.3214.r1190.g4decb6d4
+pkgver=v5.1.0.3214.r3.g011ec1e3
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
@@ -28,8 +28,8 @@ else
 fi
 
 pkgver() {
-  cd "$SRCDEST"
-  git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+  cd "$SRCDEST"/"${_aarubase}"
+  git describe --tags --match "v5*" --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
@@ -38,17 +38,17 @@ prepare() {
 }
 
 build() {
-    cd "${srcdir}"/"${_aarubase}"
+    cd "${srcdir}"/"${_aarubase}"/Aaru
     dotnet publish -f ${_netcoretarget} -c Debug --self-contained -r ${dotnet_rid}
 }
 
 package() {
     # Install MIME database file
-    cd "${srcdir}"/"${_aarubase}"
+    cd "${srcdir}"/"${_aarubase}"/Aaru
     install -d -m0755 -g 0 "${pkgdir}"/usr/share/mime/packages
     install -m0755 -g 0 -t "${pkgdir}"/usr/share/mime/packages aaruformat.xml
 
-    cd "${srcdir}"/"${_aarubase}"/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
+    cd "${srcdir}"/"${_aarubase}"/Aaru/bin/Debug/${_netcoretarget}/${dotnet_rid}/publish
 
     # Create destination directory
     install -d -m0755 -g 0 "${pkgdir}"/opt/Aaru
