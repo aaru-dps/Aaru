@@ -164,12 +164,18 @@ namespace Aaru.Core.Logging
                 if(raw)
                     for(uint i = 12 * block; i < (12 * block) + 12; i++)
                     {
-                        if(r[i] == 0 &&
-                           s[i] == 0 &&
-                           t[i] == 0 &&
-                           u[i] == 0 &&
-                           v[i] == 0 &&
-                           w[i] == 0)
+                        if((r[i] == 0 &&
+                            s[i] == 0 &&
+                            t[i] == 0 &&
+                            u[i] == 0 &&
+                            v[i] == 0 &&
+                            w[i] == 0) ||
+                           (r[i] == 0xFF &&
+                            s[i] == 0xFF &&
+                            t[i] == 0xFF &&
+                            u[i] == 0xFF &&
+                            v[i] == 0xFF &&
+                            w[i] == 0xFF))
                             continue;
 
                         rwEmpty = false;
