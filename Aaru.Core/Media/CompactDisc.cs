@@ -100,15 +100,9 @@ namespace Aaru.Core.Media
                             pWeight++;
                 }
 
-                for(int rw = subPos + 24; rw < subPos + 96; rw++)
-                {
-                    if(deSub[rw] == 0)
-                        continue;
-
-                    rwOk = false;
-
-                    break;
-                }
+                if(!deSub.Skip(subPos + 24).Take(96 - 24).All(rw => (rw == 0)) && 
+                   !deSub.Skip(subPos + 24).Take(96 - 24).All(rw => (rw == 0xFF)))
+                        rwOk = false;
 
                 bool rwPacket     = false;
                 bool cdtextPacket = false;
