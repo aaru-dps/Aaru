@@ -271,6 +271,15 @@ namespace Aaru.Commands.Media
                     Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--max-blocks"
+                }, "Maximum number of blocks to read at once.")
+                {
+                    Argument = new Argument<uint>(() => 64),
+                    Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -279,7 +288,8 @@ namespace Aaru.Commands.Media
                                  bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
-                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject)
+                                 bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
+                                 uint maxBlocks)
         {
             MainClass.PrintCopyright();
 
@@ -294,6 +304,9 @@ namespace Aaru.Commands.Media
 
             if(retrySubchannel || fixSubchannel)
                 fixSubchannelPosition = true;
+
+            if(maxBlocks == 0)
+                maxBlocks = 64;
 
             Statistics.AddCommand("dump-media");
 
@@ -324,6 +337,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--generate-subchannels={0}", generateSubchannels);
             AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdiReadyHole);
             AaruConsole.DebugWriteLine("Dump-Media command", "--eject={0}", eject);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--max-blocks={0}", maxBlocks);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -414,8 +428,8 @@ namespace Aaru.Commands.Media
             // Try name
             else
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                                           StringComparison.
-                                                                                               InvariantCultureIgnoreCase)));
+                                                                            StringComparison.
+                                                                                InvariantCultureIgnoreCase)));
 
             if(candidates.Count == 0)
             {
@@ -575,8 +589,8 @@ namespace Aaru.Commands.Media
                 if(string.IsNullOrEmpty(format))
                     candidates.AddRange(plugins.WritableImages.Values.Where(t =>
                                                                                 t.KnownExtensions.
-                                                                                  Contains(Path.
-                                                                                               GetExtension(outputPath))));
+                                                                                    Contains(Path.
+                                                                                        GetExtension(outputPath))));
 
                 // Try Id
                 else if(Guid.TryParse(format, out Guid outId))
@@ -585,8 +599,8 @@ namespace Aaru.Commands.Media
                 // Try name
                 else
                     candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, format,
-                                                                                               StringComparison.
-                                                                                                   InvariantCultureIgnoreCase)));
+                                                                                StringComparison.
+                                                                                    InvariantCultureIgnoreCase)));
 
                 IWritableImage outputFormat = candidates[0];
 
@@ -610,7 +624,7 @@ namespace Aaru.Commands.Media
                                       outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
                                       firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
                                       fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdiReadyHole, errorLog, generateSubchannels);
+                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks);
 
                 dumper.UpdateStatus         += Progress.UpdateStatus;
                 dumper.ErrorMessage         += Progress.ErrorMessage;

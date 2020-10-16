@@ -127,13 +127,14 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="skipCdireadyHole">Skip gap between CD-i Ready hidden track and track 1 audio</param>
         /// <param name="errorLog">Error log</param>
         /// <param name="generateSubchannels">Generate missing subchannels</param>
+        /// <param name="maximumReadable">Number of maximum blocks to be read at once (can be overriden by database)</param>
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
-                    bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels)
+                    bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -158,7 +159,7 @@ namespace Aaru.Core.Devices.Dumping
             _aborted               = false;
             _fixOffset             = fixOffset;
             _debug                 = debug;
-            _maximumReadable       = 64;
+            _maximumReadable       = maximumReadable;
             _subchannel            = subchannel;
             _speedMultiplier       = -1;
             _speed                 = speed;
