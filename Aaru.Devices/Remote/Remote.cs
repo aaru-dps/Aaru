@@ -261,8 +261,15 @@ namespace Aaru.Devices.Remote
 
         public void Disconnect()
         {
-            _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
+            try
+            {
+                _socket.Shutdown(SocketShutdown.Both);
+                _socket.Close();
+            }
+            catch(ObjectDisposedException)
+            {
+                // Ignore if already disposed
+            }
         }
 
         public DeviceInfo[] ListDevices()
@@ -1415,7 +1422,14 @@ namespace Aaru.Devices.Remote
 
             byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
-            _socket.Send(buf, SocketFlags.None);
+            try
+            {
+                _socket.Send(buf, SocketFlags.None);
+            }
+            catch(ObjectDisposedException)
+            {
+                // Ignore if already disposed
+            }
         }
     }
 }
