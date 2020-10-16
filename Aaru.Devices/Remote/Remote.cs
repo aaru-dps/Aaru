@@ -54,10 +54,13 @@ namespace Aaru.Devices.Remote
         public Remote(string host)
         {
             _host = host;
-            IPHostEntry ipHostEntry = Dns.GetHostEntry(host);
 
-            IPAddress ipAddress =
-                ipHostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
+            if(!IPAddress.TryParse(host, out IPAddress ipAddress))
+            {
+                IPHostEntry ipHostEntry = Dns.GetHostEntry(host);
+
+                ipAddress = ipHostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
+            }
 
             if(ipAddress is null)
             {
