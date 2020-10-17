@@ -65,6 +65,10 @@
     <Compile Include="Devices\Dumping\PlayStationPortable\MemoryStick.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable\PlayStationPortable.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable\UMD.cs" />
+    <Compile Include="Devices\Dumping\Sbc\Data.cs" />
+    <Compile Include="Devices\Dumping\Sbc\Error.cs" />
+    <Compile Include="Devices\Dumping\Sbc\Dump.cs" />
+    <Compile Include="Devices\Dumping\Sbc\Trim.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />
     <Compile Include="Devices\Info\Properties.cs" />
@@ -116,7 +120,6 @@
     <Compile Include="Devices\ReaderSCSI.cs" />
     <Compile Include="Devices\Dumping\SSC.cs" />
     <Compile Include="Devices\Dumping\MMC.cs" />
-    <Compile Include="Devices\Dumping\SBC.cs" />
     <Compile Include="Devices\Dumping\XGD.cs" />
     <Compile Include="Devices\Dumping\ResumeSupport.cs" />
     <Compile Include="Partitions.cs" />

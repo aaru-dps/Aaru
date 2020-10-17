@@ -81,7 +81,6 @@ namespace Aaru.Core.Devices.Dumping
             byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
             bool               ret;
-            bool               recoveredError;
 
             if(opticalDisc)
                 switch(dskType)
@@ -592,101 +591,12 @@ namespace Aaru.Core.Devices.Dumping
                 _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
             }
 
-            bool     newTrim          = false;
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    sectorSpeedStart = 0;
+            bool newTrim = false;
             InitProgress?.Invoke();
 
-            for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
-            {
-                if(_aborted)
-                {
-                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
-
-                    break;
-                }
-
-                if(blocks - i < blocksToRead)
-                    blocksToRead = (uint)(blocks - i);
-
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
-                    maxSpeed = currentSpeed;
-
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
-                    minSpeed = currentSpeed;
-
-                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                       (long)blocks);
-
-                sense         =  scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out double cmdDuration, out _);
-                totalDuration += cmdDuration;
-
-                if(!sense &&
-                   !_dev.Error)
-                {
-                    mhddLog.Write(i, cmdDuration);
-                    ibgLog.Write(i, currentSpeed * 1024);
-                    DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-                    extents.Add(i, blocksToRead, true);
-                }
-                else
-                {
-                    if(_dev.Manufacturer.ToLowerInvariant() == "insite")
-                    {
-                        _resume.BadBlocks.Add(i);
-                        _resume.NextBlock++;
-                        _aborted = true;
-
-                        _dumpLog?.
-                            WriteLine("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately.");
-
-                        UpdateStatus?.
-                            Invoke("INSITE floptical drives get crazy on the SCSI bus when an error is found, stopping so you can reboot the computer or reset the scsi bus appropriately");
-
-                        continue;
-                    }
-
-                    // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
-
-                    if(i + _skip > blocks)
-                        _skip = (uint)(blocks - i);
-
-                    // Write empty data
-                    DateTime writeStart = DateTime.Now;
-                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-
-                    for(ulong b = i; b < i + _skip; b++)
-                        _resume.BadBlocks.Add(b);
-
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
-
-                    ibgLog.Write(i, 0);
-                    _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
-                    i       += _skip - blocksToRead;
-                    newTrim =  true;
-                }
-
-                sectorSpeedStart  += blocksToRead;
-                _resume.NextBlock =  i + blocksToRead;
-
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-
-                if(elapsed < 1)
-                    continue;
-
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
-                sectorSpeedStart = 0;
-                timeSpeedStart   = DateTime.UtcNow;
-            }
+            ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+                        ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
+                        ref newTrim);
 
             end = DateTime.UtcNow;
             EndProgress?.Invoke();
@@ -721,32 +631,9 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke("Trimming skipped sectors");
                 _dumpLog.WriteLine("Trimming skipped sectors");
 
-                ulong[] tmpArray = _resume.BadBlocks.ToArray();
                 InitProgress?.Invoke();
 
-                foreach(ulong badSector in tmpArray)
-                {
-                    if(_aborted)
-                    {
-                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                        UpdateStatus?.Invoke("Aborted!");
-                        _dumpLog.WriteLine("Aborted!");
-
-                        break;
-                    }
-
-                    PulseProgress?.Invoke($"Trimming sector {badSector}");
-
-                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double _, out recoveredError);
-
-                    if((sense || _dev.Error) &&
-                       !recoveredError)
-                        continue;
-
-                    _resume.BadBlocks.Remove(badSector);
-                    extents.Add(badSector);
-                    _outputPlugin.WriteSector(readBuffer, badSector);
-                }
+                TrimSbcData(scsiReader, extents, currentTry);
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
@@ -759,248 +646,7 @@ namespace Aaru.Core.Devices.Dumping
             if(_resume.BadBlocks.Count > 0 &&
                !_aborted                   &&
                _retryPasses > 0)
-            {
-                int  pass              = 1;
-                bool forward           = true;
-                bool runningPersistent = false;
-
-                Modes.ModePage? currentModePage = null;
-                byte[]          md6;
-                byte[]          md10;
-
-                if(_persistent)
-                {
-                    Modes.ModePage_01_MMC pgMmc;
-                    Modes.ModePage_01     pg;
-
-                    sense = _dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                            _dev.Timeout, out _);
-
-                    if(sense)
-                    {
-                        sense = _dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                                 _dev.Timeout, out _);
-
-                        if(!sense)
-                        {
-                            Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, _dev.ScsiType);
-
-                            if(dcMode10?.Pages != null)
-                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
-                                    currentModePage = modePage;
-                        }
-                    }
-                    else
-                    {
-                        Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
-
-                        if(dcMode6?.Pages != null)
-                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
-                                currentModePage = modePage;
-                    }
-
-                    if(currentModePage == null)
-                    {
-                        if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                        {
-                            pgMmc = new Modes.ModePage_01_MMC
-                            {
-                                PS             = false,
-                                ReadRetryCount = 32,
-                                Parameter      = 0x00
-                            };
-
-                            currentModePage = new Modes.ModePage
-                            {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                            };
-                        }
-                        else
-                        {
-                            pg = new Modes.ModePage_01
-                            {
-                                PS             = false,
-                                AWRE           = true,
-                                ARRE           = true,
-                                TB             = false,
-                                RC             = false,
-                                EER            = true,
-                                PER            = false,
-                                DTE            = true,
-                                DCR            = false,
-                                ReadRetryCount = 32
-                            };
-
-                            currentModePage = new Modes.ModePage
-                            {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01(pg)
-                            };
-                        }
-                    }
-
-                    if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                    {
-                        pgMmc = new Modes.ModePage_01_MMC
-                        {
-                            PS             = false,
-                            ReadRetryCount = 255,
-                            Parameter      = 0x20
-                        };
-
-                        var md = new Modes.DecodedMode
-                        {
-                            Header = new Modes.ModeHeader(),
-                            Pages = new[]
-                            {
-                                new Modes.ModePage
-                                {
-                                    Page         = 0x01,
-                                    Subpage      = 0x00,
-                                    PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
-                                }
-                            }
-                        };
-
-                        md6  = Modes.EncodeMode6(md, _dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, _dev.ScsiType);
-                    }
-                    else
-                    {
-                        pg = new Modes.ModePage_01
-                        {
-                            PS             = false,
-                            AWRE           = false,
-                            ARRE           = false,
-                            TB             = true,
-                            RC             = false,
-                            EER            = true,
-                            PER            = false,
-                            DTE            = false,
-                            DCR            = false,
-                            ReadRetryCount = 255
-                        };
-
-                        var md = new Modes.DecodedMode
-                        {
-                            Header = new Modes.ModeHeader(),
-                            Pages = new[]
-                            {
-                                new Modes.ModePage
-                                {
-                                    Page         = 0x01,
-                                    Subpage      = 0x00,
-                                    PageResponse = Modes.EncodeModePage_01(pg)
-                                }
-                            }
-                        };
-
-                        md6  = Modes.EncodeMode6(md, _dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, _dev.ScsiType);
-                    }
-
-                    UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-                    _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
-                    sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
-
-                    if(sense)
-                        sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
-
-                    if(sense)
-                    {
-                        UpdateStatus?.
-                            Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
-
-                        AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
-
-                        _dumpLog.
-                            WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
-                    }
-                    else
-                    {
-                        runningPersistent = true;
-                    }
-                }
-
-                InitProgress?.Invoke();
-                repeatRetry:
-                ulong[] tmpArray = _resume.BadBlocks.ToArray();
-
-                foreach(ulong badSector in tmpArray)
-                {
-                    if(_aborted)
-                    {
-                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                        UpdateStatus?.Invoke("Aborted!");
-                        _dumpLog.WriteLine("Aborted!");
-
-                        break;
-                    }
-
-                    PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                        forward ? "forward" : "reverse",
-                                                        runningPersistent ? "recovering partial data, " : ""));
-
-                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration, out recoveredError);
-                    totalDuration += cmdDuration;
-
-                    if((!sense && !_dev.Error) || recoveredError)
-                    {
-                        _resume.BadBlocks.Remove(badSector);
-                        extents.Add(badSector);
-                        _outputPlugin.WriteSector(readBuffer, badSector);
-                        UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                        _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
-                    }
-                    else if(runningPersistent)
-                    {
-                        _outputPlugin.WriteSector(readBuffer, badSector);
-                    }
-                }
-
-                if(pass < _retryPasses &&
-                   !_aborted           &&
-                   _resume.BadBlocks.Count > 0)
-                {
-                    pass++;
-                    forward = !forward;
-                    _resume.BadBlocks.Sort();
-
-                    if(!forward)
-                        _resume.BadBlocks.Reverse();
-
-                    goto repeatRetry;
-                }
-
-                if(runningPersistent && currentModePage.HasValue)
-                {
-                    var md = new Modes.DecodedMode
-                    {
-                        Header = new Modes.ModeHeader(),
-                        Pages = new[]
-                        {
-                            currentModePage.Value
-                        }
-                    };
-
-                    md6  = Modes.EncodeMode6(md, _dev.ScsiType);
-                    md10 = Modes.EncodeMode10(md, _dev.ScsiType);
-
-                    UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
-                    _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
-                    sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
-
-                    if(sense)
-                        _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
-                }
-
-                EndProgress?.Invoke();
-            }
+                RetrySbcData(scsiReader, currentTry, extents, ref totalDuration);
             #endregion Error handling
 
             if(!_aborted)
@@ -1351,8 +997,6 @@ namespace Aaru.Core.Devices.Dumping
                                _dev.Error)
                                 sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
                                                          ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
-
-                            decMode = null;
 
                             if(!sense &&
                                !_dev.Error)
