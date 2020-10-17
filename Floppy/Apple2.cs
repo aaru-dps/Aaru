@@ -170,14 +170,14 @@ namespace Aaru.Decoders.Floppy
             {
                 byte b1 = buffer[(51 * 3) - i];
                 byte b2 = buffer[(51 * 2) - i];
-                byte b3 = buffer[51       - i];
-                byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2)        | ((b3 & 2) >> 1)) & 0xFF);
-                byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1))        & 0xFF);
+                byte b3 = buffer[51 - i];
+                byte b4 = (byte)((((b1 & 2) << 1) | (b2 & 2) | ((b3 & 2) >> 1)) & 0xFF);
+                byte b5 = (byte)((((b1 & 1) << 2) | ((b2 & 1) << 1) | (b3 & 1)) & 0xFF);
                 output[250 - (5 * i)] = (byte)(((buffer[i + (51 * 3) + 1] << 3) | ((b1 >> 2) & 0x7)) & 0xFF);
                 output[251 - (5 * i)] = (byte)(((buffer[i + (51 * 4) + 1] << 3) | ((b2 >> 2) & 0x7)) & 0xFF);
                 output[252 - (5 * i)] = (byte)(((buffer[i + (51 * 5) + 1] << 3) | ((b3 >> 2) & 0x7)) & 0xFF);
-                output[253 - (5 * i)] = (byte)(((buffer[i + (51 * 6) + 1] << 3) | b4)                & 0xFF);
-                output[254 - (5 * i)] = (byte)(((buffer[i + (51 * 7) + 1] << 3) | b5)                & 0xFF);
+                output[253 - (5 * i)] = (byte)(((buffer[i + (51 * 6) + 1] << 3) | b4) & 0xFF);
+                output[254 - (5 * i)] = (byte)(((buffer[i + (51 * 7) + 1] << 3) | b5) & 0xFF);
             }
 
             output[255] = (byte)(((buffer[409] << 3) | (buffer[0] & 0x7)) & 0xFF);

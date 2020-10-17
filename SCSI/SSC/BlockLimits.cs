@@ -48,8 +48,8 @@ namespace Aaru.Decoders.SCSI.SSC
             return new BlockLimitsData
             {
                 granularity = (byte)(response[0] & 0x1F),
-                maxBlockLen = (uint)((response[1] << 16) + (response[2] << 8) + response[3]),
-                minBlockLen = (ushort)((response[4] << 8)                     + response[5])
+                maxBlockLen = (uint)((response[1]   << 16) + (response[2] << 8) + response[3]),
+                minBlockLen = (ushort)((response[4] << 8)  + response[5])
             };
         }
 

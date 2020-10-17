@@ -211,20 +211,27 @@ namespace Aaru.Decoders.SCSI.MMC
 
             sb.AppendFormat("First track on disc is track {0}", information.Value.FirstTrackNumber).AppendLine();
             sb.AppendFormat("Disc has {0} sessions", information.Value.Sessions).AppendLine();
-            sb.AppendFormat("First track in last session is track {0}", information.Value.FirstTrackLastSession).AppendLine();
-            sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).AppendLine();
+
+            sb.AppendFormat("First track in last session is track {0}", information.Value.FirstTrackLastSession).
+               AppendLine();
+
+            sb.AppendFormat("Last track in last session is track {0}", information.Value.LastTrackLastSession).
+               AppendLine();
 
             sb.AppendFormat("Last session Lead-In address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
-                            information.Value.LastSessionLeadInStartLBA, (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
-                            (information.Value.LastSessionLeadInStartLBA                                    & 0xFF00)   >> 8,
+                            information.Value.LastSessionLeadInStartLBA,
+                            (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
+                            (information.Value.LastSessionLeadInStartLBA & 0xFF00)   >> 8,
                             information.Value.LastSessionLeadInStartLBA & 0xFF).AppendLine();
 
             sb.AppendFormat("Last possible Lead-Out address is {0} (as LBA) or {1:X2}:{2:X2}:{3:X2}",
-                            information.Value.LastPossibleLeadOutStartLBA, (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
-                            (information.Value.LastPossibleLeadOutStartLBA                                      & 0xFF00)   >> 8,
+                            information.Value.LastPossibleLeadOutStartLBA,
+                            (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
+                            (information.Value.LastPossibleLeadOutStartLBA & 0xFF00)   >> 8,
                             information.Value.LastPossibleLeadOutStartLBA & 0xFF).AppendLine();
 
-            sb.AppendLine(information.Value.URU ? "Disc is defined for unrestricted use" : "Disc is defined for restricted use");
+            sb.AppendLine(information.Value.URU ? "Disc is defined for unrestricted use"
+                              : "Disc is defined for restricted use");
 
             if(information.Value.DID_V)
                 sb.AppendFormat("Disc ID: {0:X6}", information.Value.DiscIdentification & 0x00FFFFFF).AppendLine();
@@ -284,7 +291,8 @@ namespace Aaru.Decoders.SCSI.MMC
             sb.AppendFormat("{0} maximum possible appendable tracks on the disc", information.Value.AppendableTracks).
                AppendLine();
 
-            sb.AppendFormat("{0} current appendable tracks on the disc", information.Value.MaxAppendableTracks).AppendLine();
+            sb.AppendFormat("{0} current appendable tracks on the disc", information.Value.MaxAppendableTracks).
+               AppendLine();
 
             return sb.ToString();
         }

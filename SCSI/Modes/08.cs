@@ -132,7 +132,7 @@ namespace Aaru.Decoders.SCSI
             decoded.DRA   |= (pageResponse[12] & 0x20) == 0x20;
 
             decoded.CacheSegments       = pageResponse[13];
-            decoded.CacheSegmentSize    = (ushort)((pageResponse[14] << 8)                          + pageResponse[15]);
+            decoded.CacheSegmentSize    = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
             decoded.NonCacheSegmentSize = (uint)((pageResponse[17] << 16) + (pageResponse[18] << 8) + pageResponse[19]);
 
             decoded.NV_DIS |= (pageResponse[12] & 0x01) == 0x01;

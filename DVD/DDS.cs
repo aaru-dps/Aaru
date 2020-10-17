@@ -109,10 +109,10 @@ namespace Aaru.Decoders.DVD
                 dds.Reserved4 = (byte)((response[7] & 0x7C) >> 2);
                 dds.Reserved  = new byte[68];
                 Array.Copy(response, 16, dds.Reserved, 0, 68);
-                dds.Zones             = (ushort)((response[14] << 8)                      + response[15]);
-                dds.SpareAreaFirstPSN = (uint)((response[85] << 16) + (response[86] << 8) + response[87]);
-                dds.SpareAreaLastPSN  = (uint)((response[89] << 16) + (response[90] << 8) + response[91]);
-                dds.LSN0Location      = (uint)((response[93] << 16) + (response[94] << 8) + response[95]);
+                dds.Zones             = (ushort)((response[14] << 8)  + response[15]);
+                dds.SpareAreaFirstPSN = (uint)((response[85]   << 16) + (response[86] << 8) + response[87]);
+                dds.SpareAreaLastPSN  = (uint)((response[89]   << 16) + (response[90] << 8) + response[91]);
+                dds.LSN0Location      = (uint)((response[93]   << 16) + (response[94] << 8) + response[95]);
                 dds.StartLSNForZone   = new uint[dds.Zones];
 
                 for(int i = 0; i < dds.Zones; i++)

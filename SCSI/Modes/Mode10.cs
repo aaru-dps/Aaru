@@ -294,14 +294,14 @@ namespace Aaru.Decoders.SCSI
                 for(int i = 0; i < header.BlockDescriptors.Length; i++)
                 {
                     byte[] temp = BitConverter.GetBytes(header.BlockDescriptors[i].Blocks);
-                    hdr[7 + (i * 16)  + 8] = temp[0];
-                    hdr[6 + (i * 16)  + 8] = temp[1];
-                    hdr[5 + (i * 16)  + 8] = temp[2];
-                    hdr[4 + (i * 16)  + 8] = temp[3];
-                    hdr[3 + (i * 16)  + 8] = temp[4];
-                    hdr[2 + (i * 16)  + 8] = temp[5];
-                    hdr[1 + (i * 16)  + 8] = temp[6];
-                    hdr[0 + (i * 16)  + 8] = temp[7];
+                    hdr[7  + (i * 16) + 8] = temp[0];
+                    hdr[6  + (i * 16) + 8] = temp[1];
+                    hdr[5  + (i * 16) + 8] = temp[2];
+                    hdr[4  + (i * 16) + 8] = temp[3];
+                    hdr[3  + (i * 16) + 8] = temp[4];
+                    hdr[2  + (i * 16) + 8] = temp[5];
+                    hdr[1  + (i * 16) + 8] = temp[6];
+                    hdr[0  + (i * 16) + 8] = temp[7];
                     hdr[12 + (i * 16) + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF000000) >> 24);
                     hdr[13 + (i * 16) + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF0000)   >> 16);
                     hdr[14 + (i * 16) + 8] = (byte)((header.BlockDescriptors[i].BlockLength & 0xFF00)     >> 8);

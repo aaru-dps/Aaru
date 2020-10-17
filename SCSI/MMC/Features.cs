@@ -4844,8 +4844,8 @@ namespace Aaru.Decoders.SCSI.MMC
         {
             var dec = new SeparatedFeatures
             {
-                DataLength     = (uint)((response[0] << 24) + (response[1] << 16) + (response[2] << 8) + response[4]),
-                CurrentProfile = (ushort)((response[6] << 8)                                           + response[7])
+                DataLength     = (uint)((response[0]   << 24) + (response[1] << 16) + (response[2] << 8) + response[4]),
+                CurrentProfile = (ushort)((response[6] << 8)  + response[7])
             };
 
             uint                    offset  = 8;
