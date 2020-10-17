@@ -204,6 +204,10 @@ namespace Aaru.Decoders.SCSI
         {
             senseDescription = null;
 
+            if(sense is null ||
+               sense.Length == 0)
+                return null;
+
             if((sense[0] & 0x7F) != 0x70 &&
                (sense[0] & 0x7F) != 0x71)
                 return null;
