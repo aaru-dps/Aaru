@@ -81,13 +81,13 @@ namespace Aaru.Core.Devices
             {
                 _read6 = !_dev.Read6(out _, out senseBuf, lba, LogicalBlockSize, _timeout, out _);
 
-                _read10 = !_dev.Read10(out _, out senseBuf, 0, false, true, false, false, lba, LogicalBlockSize, 0, 1,
+                _read10 = !_dev.Read10(out _, out senseBuf, 0, false, false, false, false, lba, LogicalBlockSize, 0, 1,
                                        _timeout, out _);
 
-                _read12 = !_dev.Read12(out _, out senseBuf, 0, false, true, false, false, lba, LogicalBlockSize, 0, 1,
+                _read12 = !_dev.Read12(out _, out senseBuf, 0, false, false, false, false, lba, LogicalBlockSize, 0, 1,
                                        false, _timeout, out _);
 
-                _read16 = !_dev.Read16(out _, out senseBuf, 0, false, true, false, lba, LogicalBlockSize, 0, 1, false,
+                _read16 = !_dev.Read16(out _, out senseBuf, 0, false, false, false, lba, LogicalBlockSize, 0, 1, false,
                                        _timeout, out _);
 
                 if(_read6  ||
@@ -487,7 +487,7 @@ namespace Aaru.Core.Devices
             if(!sense)
             {
                 Blocks           = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                LogicalBlockSize = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8)  + cmdBuf[7]);
+                LogicalBlockSize = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
             }
 
             if(sense || Blocks == 0xFFFFFFFF)
@@ -602,13 +602,13 @@ namespace Aaru.Core.Devices
             else
             {
                 if(_read16)
-                    sense = _dev.Read16(out buffer, out senseBuf, 0, false, true, false, block, LogicalBlockSize, 0,
+                    sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0,
                                         count, false, _timeout, out duration);
                 else if(_read12)
                     sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                         LogicalBlockSize, 0, count, false, _timeout, out duration);
                 else if(_read10)
-                    sense = _dev.Read10(out buffer, out senseBuf, 0, false, true, false, false, (uint)block,
+                    sense = _dev.Read10(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                         LogicalBlockSize, 0, (ushort)count, _timeout, out duration);
                 else if(_read6)
                     sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,

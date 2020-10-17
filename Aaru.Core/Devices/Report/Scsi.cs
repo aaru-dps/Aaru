@@ -440,7 +440,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
-            mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+            mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
@@ -448,7 +448,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
-            mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+            mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
@@ -456,7 +456,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
-            mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
+            mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
@@ -649,7 +649,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
-            capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+            capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
@@ -657,7 +657,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
-            capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+            capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
@@ -665,7 +665,7 @@ namespace Aaru.Core.Devices.Report
 
             AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
-            capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
+            capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
             AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
