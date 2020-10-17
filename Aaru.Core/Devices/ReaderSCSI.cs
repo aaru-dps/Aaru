@@ -571,12 +571,13 @@ namespace Aaru.Core.Devices
             return true;
         }
 
-        bool ScsiReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
+        bool ScsiReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError)
         {
             bool   sense;
             byte[] senseBuf;
-            buffer   = null;
-            duration = 0;
+            buffer         = null;
+            duration       = 0;
+            recoveredError = false;
 
             if(CanReadRaw)
                 if(_readLong16)
@@ -623,6 +624,9 @@ namespace Aaru.Core.Devices
             if(!sense &&
                !_dev.Error)
                 return false;
+
+            recoveredError = Sense.DecodeFixed(senseBuf)?.SenseKey      == SenseKeys.RecoveredError ||
+                             Sense.DecodeDescriptor(senseBuf)?.SenseKey == SenseKeys.RecoveredError;
 
             AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
 

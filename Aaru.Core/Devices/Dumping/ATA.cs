@@ -56,6 +56,8 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Dumps an ATA device</summary>
         void Ata()
         {
+            bool recoveredError;
+
             if(_dumpRaw)
             {
                 if(_force)
@@ -288,7 +290,7 @@ namespace Aaru.Core.Devices.Dumping
                             UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                    (long)i, (long)blocks);
 
-                            bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
+                            bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _);
 
                             if(!error)
                             {
@@ -380,11 +382,12 @@ namespace Aaru.Core.Devices.Dumping
 
                                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                                bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
+                                bool error =
+                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError);
 
                                 totalDuration += duration;
 
-                                if(error)
+                                if(error && !recoveredError)
                                     continue;
 
                                 _resume.BadBlocks.Remove(badSector);
@@ -426,11 +429,12 @@ namespace Aaru.Core.Devices.Dumping
                                                                     pass, forward ? "forward" : "reverse",
                                                                     _persistent ? "recovering partial data, " : ""));
 
-                                bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
+                                bool error =
+                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError);
 
                                 totalDuration += duration;
 
-                                if(!error)
+                                if(!error || recoveredError)
                                 {
                                     _resume.BadBlocks.Remove(badSector);
                                     extents.Add(badSector);
@@ -502,11 +506,12 @@ namespace Aaru.Core.Devices.Dumping
                                     PulseProgress?.
                                         Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
-                                    bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
+                                    bool error =
+                                        ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out recoveredError);
 
                                     totalDuration += duration;
 
-                                    if(!error)
+                                    if(!error || recoveredError)
                                     {
                                         mhddLog.Write(currentBlock, duration);
                                         ibgLog.Write(currentBlock, currentSpeed * 1024);

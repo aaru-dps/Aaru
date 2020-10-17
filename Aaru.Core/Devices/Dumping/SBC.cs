@@ -81,6 +81,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
             bool               ret;
+            bool               recoveredError;
 
             if(opticalDisc)
                 switch(dskType)
@@ -621,7 +622,7 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                sense         =  scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out double cmdDuration);
+                sense         =  scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out double cmdDuration, out _);
                 totalDuration += cmdDuration;
 
                 if(!sense &&
@@ -736,9 +737,10 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double _);
+                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double _, out recoveredError);
 
-                    if(sense || _dev.Error)
+                    if((sense || _dev.Error) &&
+                       !recoveredError)
                         continue;
 
                     _resume.BadBlocks.Remove(badSector);
@@ -785,9 +787,7 @@ namespace Aaru.Core.Devices.Dumping
 
                             if(dcMode10?.Pages != null)
                                 foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                                                                                  modePage.Page ==
-                                                                                                  0x01 && modePage.
-                                                                                                      Subpage == 0x00))
+                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                     currentModePage = modePage;
                         }
                     }
@@ -796,8 +796,8 @@ namespace Aaru.Core.Devices.Dumping
                         Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
                         if(dcMode6?.Pages != null)
-                            foreach(var modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page    == 0x01 &&
-                                                                                          modePage.Subpage == 0x00))
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
+                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                 currentModePage = modePage;
                     }
 
@@ -946,11 +946,10 @@ namespace Aaru.Core.Devices.Dumping
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
-                    sense         =  scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
+                    sense = scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration, out recoveredError);
                     totalDuration += cmdDuration;
 
-                    if(!sense &&
-                       !_dev.Error)
+                    if((!sense && !_dev.Error) || recoveredError)
                     {
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);

@@ -152,7 +152,7 @@ namespace Aaru.Core.Devices.Scanning
                         UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i, (long)results.Blocks);
 
-                        bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
+                        bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _);
 
                         if(!error)
                         {
@@ -268,7 +268,7 @@ namespace Aaru.Core.Devices.Scanning
                                 PulseProgress?.
                                     Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
-                                bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
+                                bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
 
                                 if(!error)
                                 {

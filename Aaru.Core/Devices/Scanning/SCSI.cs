@@ -481,7 +481,7 @@ namespace Aaru.Core.Devices.Scanning
                     UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                            (long)i, (long)results.Blocks);
 
-                    sense                  =  scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration);
+                    sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _);
                     results.ProcessingTime += cmdDuration;
 
                     if(!sense &&
@@ -563,7 +563,7 @@ namespace Aaru.Core.Devices.Scanning
                 if(scsiReader.CanSeek)
                     scsiReader.Seek(seekPos, out seekCur);
                 else
-                    scsiReader.ReadBlock(out _, seekPos, out seekCur);
+                    scsiReader.ReadBlock(out _, seekPos, out seekCur, out _);
 
                 if(seekCur > results.SeekMax &&
                    seekCur > 0)

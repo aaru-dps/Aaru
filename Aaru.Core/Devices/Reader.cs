@@ -73,7 +73,7 @@ namespace Aaru.Core.Devices
         internal uint   PhysicalBlockSize { get; private set; }
         internal uint   LongBlockSize     { get; private set; }
         internal bool   CanReadRaw        { get; private set; }
-        internal bool   CanSeek           => _ataSeek || _seek6    || _seek10;
+        internal bool   CanSeek           => _ataSeek    || _seek6 || _seek10;
         internal bool   CanSeekLba        => _ataSeekLba || _seek6 || _seek10;
 
         internal ulong GetDeviceBlocks()
@@ -132,35 +132,40 @@ namespace Aaru.Core.Devices
             }
         }
 
-        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration) =>
-            ReadBlocks(out buffer, block, 1, out duration);
+        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError) =>
+            ReadBlocks(out buffer, block, 1, out duration, out recoveredError);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration) =>
-            ReadBlocks(out buffer, block, BlocksToRead, out duration);
+        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError) =>
+            ReadBlocks(out buffer, block, BlocksToRead, out duration, out recoveredError);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
+        internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration,
+                                 out bool recoveredError)
         {
             switch(_dev.Type)
             {
-                case DeviceType.ATA: return AtaReadBlocks(out buffer, block, count, out duration);
+                case DeviceType.ATA: return AtaReadBlocks(out buffer, block, count, out duration, out recoveredError);
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiReadBlocks(out buffer, block, count, out duration);
+                case DeviceType.SCSI: return ScsiReadBlocks(out buffer, block, count, out duration, out recoveredError);
                 default:
-                    buffer   = null;
-                    duration = 0d;
+                    buffer         = null;
+                    duration       = 0d;
+                    recoveredError = false;
 
                     return true;
             }
         }
 
-        internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
+        internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
+                              out bool recoveredError)
         {
             switch(_dev.Type)
             {
-                case DeviceType.ATA: return AtaReadChs(out buffer, cylinder, head, sector, out duration);
+                case DeviceType.ATA:
+                    return AtaReadChs(out buffer, cylinder, head, sector, out duration, out recoveredError);
                 default:
-                    buffer   = null;
-                    duration = 0d;
+                    buffer         = null;
+                    duration       = 0d;
+                    recoveredError = false;
 
                     return true;
             }

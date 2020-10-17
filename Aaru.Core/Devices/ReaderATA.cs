@@ -343,15 +343,16 @@ namespace Aaru.Core.Devices
             return true;
         }
 
-        bool AtaReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
+        bool AtaReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError)
         {
             bool                   error = true;
             bool                   sense;
             AtaErrorRegistersLba28 errorLba;
             AtaErrorRegistersLba48 errorLba48;
             byte                   status = 0, errorByte = 0;
-            buffer   = null;
-            duration = 0;
+            buffer         = null;
+            duration       = 0;
+            recoveredError = false;
 
             if(_ataReadDmaLba48)
             {
@@ -416,20 +417,27 @@ namespace Aaru.Core.Devices
                     _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
             }
 
-            if(error)
-                AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+            if(!error)
+                return false;
 
-            return error;
+            if((status & 0x04) == 0x04)
+                recoveredError = true;
+
+            AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+
+            return true;
         }
 
-        bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration)
+        bool AtaReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
+                        out bool recoveredError)
         {
             bool                 error = true;
             bool                 sense;
             AtaErrorRegistersChs errorChs;
             byte                 status = 0, errorByte = 0;
-            buffer   = null;
-            duration = 0;
+            buffer         = null;
+            duration       = 0;
+            recoveredError = false;
 
             if(_ataReadDmaRetry)
             {
@@ -475,10 +483,15 @@ namespace Aaru.Core.Devices
                     _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
             }
 
-            if(error)
-                AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+            if(!error)
+                return false;
 
-            return error;
+            if((status & 0x04) == 0x04)
+                recoveredError = true;
+
+            AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+
+            return true;
         }
 
         bool AtaSeek(ulong block, out double duration)
