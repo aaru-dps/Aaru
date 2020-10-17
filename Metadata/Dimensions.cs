@@ -200,6 +200,9 @@ namespace Aaru.CommonTypes.Metadata
                 case CommonTypes.MediaType.UDO:
                 case CommonTypes.MediaType.UDO2:
                 case CommonTypes.MediaType.UDO2_WORM:
+                case CommonTypes.MediaType.ISO_15286:
+                case CommonTypes.MediaType.ISO_15286_1024:
+                case CommonTypes.MediaType.ISO_15286_512:
                     // According to ECMA-183 et al
                     dmns.Height          = 153;
                     dmns.HeightSpecified = true;

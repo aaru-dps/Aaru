@@ -755,6 +755,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_238;
+                        case 2319786 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_15286_1024;
                         case 14476734 when mediumType == 0x01 || mediumType == 0x02:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-260 / ISO 15898 conforming 356mm magneto-optical.",
@@ -826,6 +832,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_280;
+                        case 1263472 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_15286;
                         case 2043664 when mediumType == 0x01 || mediumType == 0x02:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-322 / ISO 22092 conforming 5¼\" magneto-optical.",

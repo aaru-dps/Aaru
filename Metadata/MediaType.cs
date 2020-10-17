@@ -1859,6 +1859,13 @@ namespace Aaru.CommonTypes.Metadata
                     discSubType = "ECMA-322";
 
                     break;
+                case CommonTypes.MediaType.ISO_15286:
+                case CommonTypes.MediaType.ISO_15286_1024:
+                case CommonTypes.MediaType.ISO_15286_512:
+                    discType    = "5.25\" magneto-optical";
+                    discSubType = "ISO-15286";
+
+                    break;
                 case CommonTypes.MediaType.GigaMo:
                     discType    = "3.5\" magneto-optical";
                     discSubType = "GIGAMO";

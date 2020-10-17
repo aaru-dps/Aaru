@@ -781,6 +781,12 @@ namespace Aaru.CommonTypes
         GigaMo = 653,
         /// <summary>3,5", M.O., 1063146 sectors, 2048 bytes/sector, Cherry Book 2, GigaMo 2, ECMA-353, ISO 22533</summary>
         GigaMo2 = 654,
+        /// <summary>5,25", M.O., 1263472 sectors, 2048 bytes/sector, ISO 15286, 5.2Gb/cart</summary>
+        ISO_15286 = 655,
+        /// <summary>5,25", M.O., 2319786 sectors, 1024 bytes/sector, ISO 15286, 4.8Gb/cart</summary>
+        ISO_15286_1024 = 656,
+        /// <summary>5,25", M.O., ??????? sectors, 512 bytes/sector, ISO 15286, 4.1Gb/cart</summary>
+        ISO_15286_512 = 657,
         #endregion Magneto-optical, types 630 to 659
 
         #region Other floppy standards, types 660 to 689
