@@ -773,9 +773,9 @@ namespace Aaru.CommonTypes
         ECMA_280 = 649,
         /// <summary>300mm, M.O., 7355716 sectors, 2048 bytes/sector, ECMA-317, ISO 20162</summary>
         ECMA_317 = 650,
-        /// <summary>5,25", M.O., 1095840 sectors, 4096 bytes/sector, ECMA-322, ISO 22092</summary>
+        /// <summary>5,25", M.O., 1095840 sectors, 4096 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
         ECMA_322 = 651,
-        /// <summary>5,25", M.O., 2043664 sectors, 2048 bytes/sector, ECMA-322, ISO 22092</summary>
+        /// <summary>5,25", M.O., 2043664 sectors, 2048 bytes/sector, ECMA-322, ISO 22092, 8.6Gb/cart</summary>
         ECMA_322_2k = 652,
         /// <summary>3,5", M.O., 605846 sectors, 2048 bytes/sector, Cherry Book, GigaMo, ECMA-351, ISO 17346</summary>
         GigaMo = 653,
@@ -1011,7 +1011,14 @@ namespace Aaru.CommonTypes
         /// <summary>Optical Disc archive, 4th gen., write once, 3300Gb</summary>
         ODC3300R = 785,
         /// <summary>Optical Disc archive, 5th gen., write once, 5500Gb</summary>
-        ODC5500R = 786
+        ODC5500R = 786,
         #endregion Sony and Panasonic Blu-ray derived, types 770 to 799
+
+        #region Magneto-optical, types 800 to 819
+        /// <summary>5,25", M.O., 4383356 sectors, 1024 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
+        ECMA_322_1k = 800,
+        /// <summary>5,25", M.O., ??????? sectors, 512 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
+        ECMA_322_512 = 801,
+        #endregion Magneto-optical, types 800 to 819
     }
 }
