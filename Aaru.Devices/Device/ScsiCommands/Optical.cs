@@ -70,19 +70,19 @@ namespace Aaru.Devices
             cdb[0] = (byte)ScsiCommands.MediumScan;
 
             if(written)
-                cdb[1] &= 0x10;
+                cdb[1] += 0x10;
 
             if(advancedScan)
-                cdb[1] &= 0x08;
+                cdb[1] += 0x08;
 
             if(reverse)
-                cdb[1] &= 0x04;
+                cdb[1] += 0x04;
 
             if(partial)
-                cdb[1] &= 0x02;
+                cdb[1] += 0x02;
 
             if(relAddr)
-                cdb[1] &= 0x01;
+                cdb[1] += 0x01;
 
             cdb[2] = (byte)((lba & 0xFF000000) >> 24);
             cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
@@ -114,6 +114,9 @@ namespace Aaru.Devices
 
             if(Error)
                 return sense;
+
+            if(senseBuffer.Length == 0)
+                RequestSense(out senseBuffer, timeout, out _);
 
             FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
 
