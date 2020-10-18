@@ -115,6 +115,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_195_512;
+                        case 2244958:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_14517_512;
                         default:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to unknown magneto-optical.",
@@ -166,6 +172,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_238;
+                        case 1273011:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_14517;
                         case 2319786:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",

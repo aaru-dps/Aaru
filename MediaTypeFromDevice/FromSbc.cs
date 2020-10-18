@@ -653,6 +653,12 @@ namespace Aaru.CommonTypes
                                                        "Drive manufacturer is IOMEGA, drive model is JAZ, media has 2091050 blocks of 512 bytes, setting media type to 1Gb JAZ.");
 
                             return MediaType.Jaz;
+                        case 2244958 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_14517_512;
                         case 3915600 when model.ToLowerInvariant().StartsWith("jaz", StringComparison.Ordinal):
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Drive manufacturer is IOMEGA, drive model is JAZ, media has 3915600 blocks of 512 bytes, setting media type to 2Gb JAZ.");
@@ -761,6 +767,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ECMA_238;
+                        case 1273011 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 14517 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_14517;
                         case 2319786 when mediumType == 0x01 || mediumType == 0x02:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 15286 conforming 5¼\" magneto-optical.",

@@ -1019,6 +1019,10 @@ namespace Aaru.CommonTypes
         ECMA_322_1k = 800,
         /// <summary>5,25", M.O., ??????? sectors, 512 bytes/sector, ECMA-322, ISO 22092, 9.1Gb/cart</summary>
         ECMA_322_512 = 801,
+        /// <summary>5,25", M.O., 1273011 sectors, 1024 bytes/sector, ISO 14517, 2.6Gb/cart</summary>
+        ISO_14517 = 802,
+        /// <summary>5,25", M.O., 2244958 sectors, 512 bytes/sector, ISO 14517, 2.3Gb/cart</summary>
+        ISO_14517_512 = 803,
         #endregion Magneto-optical, types 800 to 819
     }
 }
