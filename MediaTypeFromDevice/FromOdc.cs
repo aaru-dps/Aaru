@@ -128,6 +128,12 @@ namespace Aaru.CommonTypes
                 {
                     switch(blocks)
                     {
+                        case 314569:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 10089 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_10089;
                         case 371371:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-223 conforming 3½\" magneto-optical.",

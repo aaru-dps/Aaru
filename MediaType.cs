@@ -787,6 +787,10 @@ namespace Aaru.CommonTypes
         ISO_15286_1024 = 656,
         /// <summary>5,25", M.O., ??????? sectors, 512 bytes/sector, ISO 15286, 4.1Gb/cart</summary>
         ISO_15286_512 = 657,
+        /// <summary>5,25", M.O., 314569 sectors, 1024 bytes/sector, ISO 10089, 650Mb/cart</summary>
+        ISO_10089 = 658,
+        /// <summary>5,25", M.O., ?????? sectors, 512 bytes/sector, ISO 10089, 594Mb/cart</summary>
+        ISO_10089_512 = 659,
         #endregion Magneto-optical, types 630 to 659
 
         #region Other floppy standards, types 660 to 689

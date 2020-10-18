@@ -723,6 +723,12 @@ namespace Aaru.CommonTypes
                                                        mediumType, blocks, blockSize);
 
                             return MediaType.ACORN_35_DS_HD;
+                        case 314569 when mediumType == 0x01 || mediumType == 0x02:
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ISO 10089 conforming 5¼\" magneto-optical.",
+                                                       mediumType, blocks, blockSize);
+
+                            return MediaType.ISO_10089;
                         case 371371 when mediumType == 0x01 || mediumType == 0x02:
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "SCSI medium type is {0:X2}h, media has {1} blocks of {2} bytes, setting media type to ECMA-223 conforming 3½\" magneto-optical.",
