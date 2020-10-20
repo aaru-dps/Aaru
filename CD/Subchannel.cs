@@ -466,7 +466,7 @@ namespace Aaru.Decoders.CD
             $"{_isrcTable[q[1] / 4]}{_isrcTable[((q[1] & 3) * 16) + (q[2] / 16)]}{_isrcTable[((q[2] & 0xF) * 4) + (q[3] / 64)]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]:X2}{q[8] / 16:X1}";
 
         public static string DecodeMcn(byte[] q) =>
-            $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] / 8:X}";
+            $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] >> 4:X}";
 
         public static byte GetIsrcCode(char c)
         {
