@@ -81,6 +81,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
             bool               ret;
+            ExtentsULong       blankExtents = null;
 
             if(opticalDisc)
                 switch(dskType)
@@ -591,15 +592,21 @@ namespace Aaru.Core.Devices.Dumping
                 _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
             }
 
-            bool newTrim = false;
-            InitProgress?.Invoke();
+            if(_resume?.BlankExtents != null)
+                blankExtents = ExtentsConverter.FromMetadata(_resume.BlankExtents);
 
-            ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
-                        ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                        ref newTrim);
+            bool newTrim = false;
+
+            if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+                ReadOpticalData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+                                ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
+                                ref newTrim, ref blankExtents);
+            else
+                ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
+                            ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
+                            ref newTrim);
 
             end = DateTime.UtcNow;
-            EndProgress?.Invoke();
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
@@ -633,7 +640,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 InitProgress?.Invoke();
 
-                TrimSbcData(scsiReader, extents, currentTry);
+                TrimSbcData(scsiReader, extents, currentTry, blankExtents);
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
@@ -646,7 +653,7 @@ namespace Aaru.Core.Devices.Dumping
             if(_resume.BadBlocks.Count > 0 &&
                !_aborted                   &&
                _retryPasses > 0)
-                RetrySbcData(scsiReader, currentTry, extents, ref totalDuration);
+                RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents);
             #endregion Error handling
 
             if(!_aborted)

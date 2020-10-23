@@ -52,10 +52,11 @@ namespace Aaru.Core.Devices.Scanning
             MhddLog mhddLog;
             IbgLog  ibgLog;
             byte[]  senseBuf;
-            bool    sense = false;
+            bool    sense          = false;
+            uint    blockSize      = 0;
+            ushort  currentProfile = 0x0001;
+
             results.Blocks = 0;
-            uint   blockSize      = 0;
-            ushort currentProfile = 0x0001;
 
             if(_dev.IsRemovable)
             {
@@ -481,7 +482,7 @@ namespace Aaru.Core.Devices.Scanning
                     UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                            (long)i, (long)results.Blocks);
 
-                    sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _);
+                    sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);
                     results.ProcessingTime += cmdDuration;
 
                     if(!sense &&
@@ -563,7 +564,7 @@ namespace Aaru.Core.Devices.Scanning
                 if(scsiReader.CanSeek)
                     scsiReader.Seek(seekPos, out seekCur);
                 else
-                    scsiReader.ReadBlock(out _, seekPos, out seekCur, out _);
+                    scsiReader.ReadBlock(out _, seekPos, out seekCur, out _, out _);
 
                 if(seekCur > results.SeekMax &&
                    seekCur > 0)

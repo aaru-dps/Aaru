@@ -41,18 +41,19 @@ namespace Aaru.Core.Devices.Dumping
     partial class Dump
     {
         void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents,
-                          ref double totalDuration)
+                          ref double totalDuration, ExtentsULong blankExtents)
         {
-            int    pass              = 1;
-            bool   forward           = true;
-            bool   runningPersistent = false;
-            bool   sense;
-            byte[] buffer;
-            bool   recoveredError;
-
+            int             pass              = 1;
+            bool            forward           = true;
+            bool            runningPersistent = false;
+            bool            sense;
+            byte[]          buffer;
+            bool            recoveredError;
             Modes.ModePage? currentModePage = null;
             byte[]          md6;
             byte[]          md10;
+            bool            blankCheck;
+            bool            newBlank = false;
 
             if(_persistent)
             {
@@ -231,8 +232,22 @@ namespace Aaru.Core.Devices.Dumping
                                                     forward ? "forward" : "reverse",
                                                     runningPersistent ? "recovering partial data, " : ""));
 
-                sense         = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError);
+                sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
+                                             out blankCheck);
+
                 totalDuration += cmdDuration;
+
+                if(blankCheck)
+                {
+                    _resume.BadBlocks.Remove(badSector);
+                    blankExtents.Add(badSector, badSector);
+                    newBlank = true;
+
+                    UpdateStatus?.Invoke($"Found blank block {badSector} in pass {pass}.");
+                    _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector, pass);
+
+                    continue;
+                }
 
                 if((!sense && !_dev.Error) || recoveredError)
                 {
@@ -283,6 +298,9 @@ namespace Aaru.Core.Devices.Dumping
                 if(sense)
                     _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
             }
+
+            if(newBlank)
+                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
 
             EndProgress?.Invoke();
         }

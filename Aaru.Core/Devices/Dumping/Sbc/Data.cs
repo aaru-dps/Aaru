@@ -48,6 +48,8 @@ namespace Aaru.Core.Devices.Dumping
             byte[]   buffer;
             uint     blocksToRead = maxBlocksToRead;
 
+            InitProgress?.Invoke();
+
             for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
             {
                 if(_aborted)
@@ -73,7 +75,7 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _);
+                sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
 
                 if(!sense &&
@@ -138,6 +140,8 @@ namespace Aaru.Core.Devices.Dumping
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
+
+            EndProgress?.Invoke();
         }
     }
 }

@@ -68,6 +68,7 @@
     <Compile Include="Devices\Dumping\Sbc\Data.cs" />
     <Compile Include="Devices\Dumping\Sbc\Error.cs" />
     <Compile Include="Devices\Dumping\Sbc\Dump.cs" />
+    <Compile Include="Devices\Dumping\Sbc\Optical.cs" />
     <Compile Include="Devices\Dumping\Sbc\Trim.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />

@@ -35,12 +35,15 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
-        void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry)
+        void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry,
+                         ExtentsULong blankExtents)
         {
             ulong[] tmpArray = _resume.BadBlocks.ToArray();
             bool    sense;
             bool    recoveredError;
+            bool    blankCheck;
             byte[]  buffer;
+            bool    newBlank = false;
 
             foreach(ulong badSector in tmpArray)
             {
@@ -55,7 +58,19 @@ namespace Aaru.Core.Devices.Dumping
 
                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError);
+                sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
+
+                if(blankCheck)
+                {
+                    blankExtents.Add(badSector, badSector);
+                    newBlank = true;
+                    _resume.BadBlocks.Remove(badSector);
+
+                    UpdateStatus?.Invoke($"Found blank block {badSector}.");
+                    _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector);
+
+                    continue;
+                }
 
                 if((sense || _dev.Error) &&
                    !recoveredError)
@@ -65,6 +80,9 @@ namespace Aaru.Core.Devices.Dumping
                 extents.Add(badSector);
                 _outputPlugin.WriteSector(buffer, badSector);
             }
+
+            if(newBlank)
+                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
         }
     }
 }

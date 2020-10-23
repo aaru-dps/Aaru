@@ -132,24 +132,31 @@ namespace Aaru.Core.Devices
             }
         }
 
-        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError) =>
-            ReadBlocks(out buffer, block, 1, out duration, out recoveredError);
+        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
+                                out bool blankCheck) =>
+            ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError) =>
-            ReadBlocks(out buffer, block, BlocksToRead, out duration, out recoveredError);
+        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
+                                 out bool blankCheck) => ReadBlocks(out buffer, block, BlocksToRead, out duration,
+                                                                    out recoveredError, out blankCheck);
 
         internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration,
-                                 out bool recoveredError)
+                                 out bool recoveredError, out bool blankCheck)
         {
             switch(_dev.Type)
             {
-                case DeviceType.ATA: return AtaReadBlocks(out buffer, block, count, out duration, out recoveredError);
+                case DeviceType.ATA:
+                    blankCheck = false;
+
+                    return AtaReadBlocks(out buffer, block, count, out duration, out recoveredError);
                 case DeviceType.ATAPI:
-                case DeviceType.SCSI: return ScsiReadBlocks(out buffer, block, count, out duration, out recoveredError);
+                case DeviceType.SCSI:
+                    return ScsiReadBlocks(out buffer, block, count, out duration, out recoveredError, out blankCheck);
                 default:
                     buffer         = null;
                     duration       = 0d;
                     recoveredError = false;
+                    blankCheck     = false;
 
                     return true;
             }

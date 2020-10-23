@@ -290,7 +290,7 @@ namespace Aaru.Core.Devices.Dumping
                             UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                    (long)i, (long)blocks);
 
-                            bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _);
+                            bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
                             if(!error)
                             {
@@ -383,7 +383,7 @@ namespace Aaru.Core.Devices.Dumping
                                 PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                                 bool error =
-                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError);
+                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError, out _);
 
                                 totalDuration += duration;
 
@@ -430,7 +430,7 @@ namespace Aaru.Core.Devices.Dumping
                                                                     _persistent ? "recovering partial data, " : ""));
 
                                 bool error =
-                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError);
+                                    ataReader.ReadBlock(out cmdBuf, badSector, out duration, out recoveredError, out _);
 
                                 totalDuration += duration;
 

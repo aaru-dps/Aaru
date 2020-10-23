@@ -152,7 +152,7 @@ namespace Aaru.Core.Devices.Scanning
                         UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
                                                (long)i, (long)results.Blocks);
 
-                        bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _);
+                        bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
                         if(!error)
                         {
