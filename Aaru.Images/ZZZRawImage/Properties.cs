@@ -44,9 +44,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage
     {
-        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks |
-                                                               OpticalImageCapabilities.CanStoreDataTracks  |
-                                                               OpticalImageCapabilities.CanStoreRawData     |
+        public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreDataTracks |
                                                                OpticalImageCapabilities.CanStoreCookedData;
         public string Name => "Raw Disk Image";
 
@@ -150,9 +148,8 @@ namespace Aaru.DiscImages
 
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata { get; private set; }
-        public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.
-                                                               Concat(_writeOnlySidecars).OrderBy(t => t.tag).
-                                                               Select(t => t.tag).ToArray();
+        public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
+            OrderBy(t => t.tag).Select(t => t.tag).ToArray();
 
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[]
             {};
