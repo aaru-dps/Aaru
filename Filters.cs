@@ -60,7 +60,7 @@ namespace Aaru.CommonTypes
                 try
                 {
                     var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                           {});
+                        {});
 
                     if(filter != null &&
                        !Filters.ContainsKey(filter.Name.ToLower()))
@@ -77,18 +77,19 @@ namespace Aaru.CommonTypes
         /// <returns>The filter that allows reading the specified path</returns>
         public IFilter GetFilter(string path)
         {
-            try
-            {
-                IFilter noFilter = null;
+            IFilter noFilter = null;
 
-                foreach(IFilter filter in Filters.Values)
+            foreach(IFilter filter in Filters.Values)
+            {
+                try
+                {
                     if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
                         if(!filter.Identify(path))
                             continue;
 
                         var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                {});
+                            {});
 
                         foundFilter?.Open(path);
 
@@ -97,18 +98,19 @@ namespace Aaru.CommonTypes
                     }
                     else
                         noFilter = filter;
+                }
+                catch(IOException)
+                {
+                    // Ignore and continue
+                }
+            }
 
-                if(!noFilter?.Identify(path) == true)
-                    return noFilter;
-
-                noFilter?.Open(path);
-
+            if(!noFilter?.Identify(path) == true)
                 return noFilter;
-            }
-            catch(IOException)
-            {
-                return null;
-            }
+
+            noFilter?.Open(path);
+
+            return noFilter;
         }
     }
 }
