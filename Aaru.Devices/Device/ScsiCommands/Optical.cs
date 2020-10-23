@@ -115,9 +115,6 @@ namespace Aaru.Devices
             if(Error)
                 return sense;
 
-            if(senseBuffer.Length == 0)
-                RequestSense(out senseBuffer, timeout, out _);
-
             FixedSense? decodedSense = Sense.DecodeFixed(senseBuffer);
 
             switch(decodedSense?.SenseKey)
@@ -128,7 +125,7 @@ namespace Aaru.Devices
                     foundLba    = decodedSense.Value.Information;
 
                     return false;
-                default: return true;
+                default: return sense;
             }
         }
     }
