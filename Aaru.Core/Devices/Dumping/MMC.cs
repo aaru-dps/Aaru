@@ -374,9 +374,9 @@ namespace Aaru.Core.Devices.Dumping
                                 dskType = MediaType.XGD2;
 
                                 // All XGD3 all have the same number of blocks
-                                if(blocks == 25063   || // Locked (or non compatible drive)
-                                   blocks == 4229664 || // Xtreme unlock
-                                   blocks == 4246304)   // Wxripper unlock
+                                if(blocks + 1 == 25063   || // Locked (or non compatible drive)
+                                   blocks + 1 == 4229664 || // Xtreme unlock
+                                   blocks + 1 == 4246304)   // Wxripper unlock
                                     dskType = MediaType.XGD3;
                             }
 
