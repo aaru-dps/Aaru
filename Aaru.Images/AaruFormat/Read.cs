@@ -761,8 +761,13 @@ namespace Aaru.DiscImages
                                 TrackFilter      = imageFilter
                             });
 
+                            if(trackEntry.type == TrackType.Data)
+                                continue;
+
                             _trackFlags.Add(trackEntry.sequence, trackEntry.flags);
-                            _trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
+
+                            if(!string.IsNullOrEmpty(trackEntry.isrc))
+                                _trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
                         }
 
                         if(_trackFlags.Count > 0 &&
@@ -1245,8 +1250,8 @@ namespace Aaru.DiscImages
 
                 if(compactDiscIndexes != null)
                 {
-                    foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.
-                                                                      OrderBy(i => i.Track).ThenBy(i => i.Index))
+                    foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.OrderBy(i => i.Track).
+                        ThenBy(i => i.Index))
                     {
                         Track track = Tracks.FirstOrDefault(t => t.TrackSequence == compactDiscIndex.Track);
 
