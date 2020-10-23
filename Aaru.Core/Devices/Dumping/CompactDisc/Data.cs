@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
@@ -395,7 +396,22 @@ namespace Aaru.Core.Devices.Dumping
 
                                 Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
-                                _outputPlugin.WriteSectorsLong(data, i + r, 1);
+                                if(supportsLongSectors)
+                                    _outputPlugin.WriteSectorsLong(data, i + r, 1);
+                                else
+                                {
+                                    var    cooked = new MemoryStream();
+                                    byte[] sector = new byte[sectorSize];
+
+                                    for(int b = 0; b < blocksToRead; b++)
+                                    {
+                                        Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), sector, 0, sectorSize);
+                                        byte[] cookedSector = Sector.GetUserData(sector);
+                                        cooked.Write(cookedSector, 0, cookedSector.Length);
+                                    }
+
+                                    _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                                }
 
                                 bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                     desiredSubchannel, sub, i + r, 1, subLog, isrcs, (byte)track.TrackSequence,
@@ -415,23 +431,20 @@ namespace Aaru.Core.Devices.Dumping
                             else
                             {
                                 if(supportsLongSectors)
-                                {
                                     _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
-                                }
                                 else
                                 {
-                                    if(cmdBuf.Length % sectorSize == 0)
-                                    {
-                                        byte[] data = new byte[2048];
+                                    var    cooked = new MemoryStream();
+                                    byte[] sector = new byte[sectorSize];
 
-                                        Array.Copy(cmdBuf, 16, data, 2048, 2048);
-
-                                        _outputPlugin.WriteSectors(data, i + r, 1);
-                                    }
-                                    else
+                                    for(int b = 0; b < blocksToRead; b++)
                                     {
-                                        _outputPlugin.WriteSectorsLong(cmdBuf, i + r, 1);
+                                        Array.Copy(cmdBuf, (int)(b * sectorSize), sector, 0, sectorSize);
+                                        byte[] cookedSector = Sector.GetUserData(sector);
+                                        cooked.Write(cookedSector, 0, cookedSector.Length);
                                     }
+
+                                    _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
                                 }
                             }
 
@@ -455,9 +468,7 @@ namespace Aaru.Core.Devices.Dumping
                             else
                             {
                                 if(supportsLongSectors)
-                                {
                                     _outputPlugin.WriteSectorsLong(new byte[blockSize], i + r, 1);
-                                }
                                 else
                                 {
                                     if(cmdBuf.Length % sectorSize == 0)
@@ -529,7 +540,22 @@ namespace Aaru.Core.Devices.Dumping
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
-                        _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                        if(supportsLongSectors)
+                            _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                        else
+                        {
+                            var    cooked = new MemoryStream();
+                            byte[] sector = new byte[sectorSize];
+
+                            for(int b = 0; b < blocksToRead; b++)
+                            {
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), sector, 0, sectorSize);
+                                byte[] cookedSector = Sector.GetUserData(sector);
+                                cooked.Write(cookedSector, 0, cookedSector.Length);
+                            }
+
+                            _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
+                        }
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                             desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, (byte)track.TrackSequence,
@@ -548,24 +574,20 @@ namespace Aaru.Core.Devices.Dumping
                     else
                     {
                         if(supportsLongSectors)
-                        {
                             _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
-                        }
                         else
                         {
-                            if(cmdBuf.Length % sectorSize == 0)
-                            {
-                                byte[] data = new byte[2048 * blocksToRead];
+                            var    cooked = new MemoryStream();
+                            byte[] sector = new byte[sectorSize];
 
-                                for(int b = 0; b < blocksToRead; b++)
-                                    Array.Copy(cmdBuf, (int)(16 + (b * blockSize)), data, 2048 * b, 2048);
-
-                                _outputPlugin.WriteSectors(data, i, blocksToRead);
-                            }
-                            else
+                            for(int b = 0; b < blocksToRead; b++)
                             {
-                                _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
+                                Array.Copy(cmdBuf, (int)(b * sectorSize), sector, 0, sectorSize);
+                                byte[] cookedSector = Sector.GetUserData(sector);
+                                cooked.Write(cookedSector, 0, cookedSector.Length);
                             }
+
+                            _outputPlugin.WriteSectors(cooked.ToArray(), i, blocksToRead);
                         }
                     }
 

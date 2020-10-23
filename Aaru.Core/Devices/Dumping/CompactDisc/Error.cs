@@ -39,6 +39,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Core.Logging;
+using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Schemas;
@@ -56,7 +57,7 @@ namespace Aaru.Core.Devices.Dumping
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
                              MmcSubchannel desiredSubchannel, Track[] tracks, Dictionary<byte, string> isrcs,
                              ref string mcn, HashSet<int> subchannelExtents,
-                             Dictionary<byte, int> smallestPregapLbaPerTrack)
+                             Dictionary<byte, int> smallestPregapLbaPerTrack, bool supportsLongSectors)
         {
             bool              sense  = true;     // Sense indicator
             byte[]            cmdBuf = null;     // Data buffer
@@ -121,8 +122,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(dcMode10?.Pages != null)
                             foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                                                                              modePage.Page == 0x01 &&
-                                                                                              modePage.Subpage == 0x00))
+                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                 currentModePage = modePage;
                     }
                 }
@@ -132,8 +132,7 @@ namespace Aaru.Core.Devices.Dumping
 
                     if(dcMode6?.Pages != null)
                         foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                                                                         modePage.Page    == 0x01 &&
-                                                                                         modePage.Subpage == 0x00))
+                            modePage.Page == 0x01 && modePage.Subpage == 0x00))
                             currentModePage = modePage;
                 }
 
@@ -300,18 +299,16 @@ namespace Aaru.Core.Devices.Dumping
                     byte[] sub  = new byte[subSize];
                     Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                     Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
-                    _outputPlugin.WriteSectorLong(data, badSector);
+
+                    if(supportsLongSectors)
+                        _outputPlugin.WriteSectorLong(data, badSector);
+                    else
+                        _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                                   desiredSubchannel, sub, badSector, 1,
-                                                                                   subLog, isrcs,
-                                                                                   (byte)track.TrackSequence, ref mcn,
-                                                                                   tracks, subchannelExtents,
-                                                                                   _fixSubchannelPosition,
-                                                                                   _outputPlugin, _fixSubchannel,
-                                                                                   _fixSubchannelCrc, _dumpLog,
-                                                                                   UpdateStatus,
-                                                                                   smallestPregapLbaPerTrack);
+                        desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
+                        tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack);
 
                     // Set tracks and go back
                     if(indexesChanged)
@@ -322,7 +319,10 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else
                 {
-                    _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                    if(supportsLongSectors)
+                        _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                    else
+                        _outputPlugin.WriteSector(Sector.GetUserData(cmdBuf), badSector);
                 }
             }
 
@@ -430,20 +430,17 @@ namespace Aaru.Core.Devices.Dumping
                             byte[] sub  = new byte[subSize];
                             Array.Copy(cmdBuf, 0, data, 0, sectorSize);
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
-                            _outputPlugin.WriteSectorLong(data, badSector);
+
+                            if(supportsLongSectors)
+                                _outputPlugin.WriteSectorLong(data, badSector);
+                            else
+                                _outputPlugin.WriteSector(Sector.GetUserData(data), badSector);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                                           desiredSubchannel, sub,
-                                                                                           badSector, 1, subLog, isrcs,
-                                                                                           (byte)track.TrackSequence,
-                                                                                           ref mcn, tracks,
-                                                                                           subchannelExtents,
-                                                                                           _fixSubchannelPosition,
-                                                                                           _outputPlugin,
-                                                                                           _fixSubchannel,
-                                                                                           _fixSubchannelCrc, _dumpLog,
-                                                                                           UpdateStatus,
-                                                                                           smallestPregapLbaPerTrack);
+                                desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence,
+                                ref mcn, tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin,
+                                _fixSubchannel, _fixSubchannelCrc, _dumpLog, UpdateStatus,
+                                smallestPregapLbaPerTrack);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -454,7 +451,10 @@ namespace Aaru.Core.Devices.Dumping
                         }
                         else
                         {
-                            _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                            if(supportsLongSectors)
+                                _outputPlugin.WriteSectorLong(cmdBuf, badSector);
+                            else
+                                _outputPlugin.WriteSector(Sector.GetUserData(cmdBuf), badSector);
                         }
                     }
 

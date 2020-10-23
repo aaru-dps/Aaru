@@ -1168,7 +1168,7 @@ namespace Aaru.Core.Devices.Dumping
 
             RetryCdUserData(audioExtents, blockSize, currentTry, extents, offsetBytes, readcd, sectorsForOffset,
                             subSize, supportedSubchannel, ref totalDuration, subLog, desiredSubchannel, tracks, isrcs,
-                            ref mcn, subchannelExtents, smallestPregapLbaPerTrack);
+                            ref mcn, subchannelExtents, smallestPregapLbaPerTrack, supportsLongSectors);
 
             foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
             {
