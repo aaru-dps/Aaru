@@ -380,6 +380,8 @@ namespace Aaru.Core.Devices.Dumping
                                     dskType = MediaType.XGD3;
                             }
 
+                            isXbox = true;
+
                             sense = _dev.ScsiInquiry(out byte[] inqBuf, out _);
 
                             if(sense                            ||
@@ -391,7 +393,10 @@ namespace Aaru.Core.Devices.Dumping
                                 StoppingErrorMessage?.
                                     Invoke("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
 
-                                return;
+                                if(!_force)
+                                    return;
+
+                                isXbox = false;
                             }
 
                             if(_dumpRaw && !_force)
@@ -402,8 +407,6 @@ namespace Aaru.Core.Devices.Dumping
                                 // TODO: Exit more gracefully
                                 return;
                             }
-
-                            isXbox = true;
                         }
 
                         if(cmdBuf.Length == 2052)
