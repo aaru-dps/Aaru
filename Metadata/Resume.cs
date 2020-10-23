@@ -58,6 +58,8 @@ namespace Aaru.CommonTypes.Metadata
         public bool  Tape;
         [XmlArrayItem("Block")]
         public List<int> BadSubchannels;
+        [XmlArrayItem("Extent")]
+        public ExtentType[] BlankExtents;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
