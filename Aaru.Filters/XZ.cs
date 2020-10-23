@@ -79,6 +79,9 @@ namespace Aaru.Filters
             byte[] buffer = new byte[6];
             byte[] footer = new byte[2];
 
+            if(stream.Length < 8)
+                return false;
+
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 6);
             stream.Seek(-2, SeekOrigin.End);
@@ -98,9 +101,11 @@ namespace Aaru.Filters
             byte[] buffer = new byte[6];
             byte[] footer = new byte[2];
 
+            if(stream.Length < 8)
+                return false;
+
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, 6);
-            stream.Seek(0, SeekOrigin.Begin);
             stream.Seek(-2, SeekOrigin.End);
             stream.Read(footer, 0, 2);
             stream.Seek(0, SeekOrigin.Begin);
