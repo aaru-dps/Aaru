@@ -407,7 +407,37 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                         CanStorePregaps) &&
+                   CanStoreRawData))
+            {
+                if(!_force)
+                {
+                    _dumpLog.WriteLine("Output format does not support storing raw data, this may end in a loss of data, not continuing...");
+
+                    StoppingErrorMessage?.
+                        Invoke("Output format does not support storing raw data, this may end in a loss of data, not continuing...");
+
+                    return;
+                }
+
+                _dumpLog.WriteLine("Output format does not support storing raw data, this may end in a loss of data, continuing...");
+
+                ErrorMessage?.
+                    Invoke("Output format does not support storing raw data, this may end in a loss of data, continuing...");
+            }
+
+            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                   CanStoreAudioTracks) &&
+               tracks.Any(track => track.TrackType == TrackType.Audio))
+            {
+                _dumpLog.WriteLine("Output format does not support audio tracks, cannot continue...");
+
+                StoppingErrorMessage?.Invoke("Output format does not support audio tracks, cannot continue...");
+
+                return;
+            }
+
+            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                   CanStorePregaps) &&
                tracks.Where(track => track.TrackSequence !=
                                      tracks.First(t => t.TrackSession == track.TrackSession).TrackSequence).
                       Any(track => track.TrackPregap > 0))
@@ -454,6 +484,26 @@ namespace Aaru.Core.Devices.Dumping
 
             // Read media tags
             ReadCdTags(ref dskType, mediaTags, out sessions, out firstTrackLastSession);
+
+            if(!(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
+                   CanStoreSessions) &&
+               sessions > 1)
+            {
+                if(!_force)
+                {
+                    _dumpLog.WriteLine("Output format does not support sessions, this will end in a loss of data, not continuing...");
+
+                    StoppingErrorMessage?.
+                        Invoke("Output format does not support sessions, this will end in a loss of data, not continuing...");
+
+                    return;
+                }
+
+                _dumpLog.WriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");
+
+                ErrorMessage?.
+                    Invoke("Output format does not support sessions, this will end in a loss of data, continuing...");
+            }
 
             // Check if output format supports all disc tags we have retrieved so far
             foreach(MediaTagType tag in mediaTags.Keys.Where(tag => !_outputPlugin.SupportedMediaTags.Contains(tag)))
@@ -788,7 +838,7 @@ namespace Aaru.Core.Devices.Dumping
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(desiredSubchannel != MmcSubchannel.None &&
                !(_outputPlugin as IWritableOpticalImage).OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                         CanStoreSubchannelRw))
+                   CanStoreSubchannelRw))
             {
                 _dumpLog.WriteLine("Output image does not support subchannels, {0}continuing...", _force ? "" : "not ");
 
