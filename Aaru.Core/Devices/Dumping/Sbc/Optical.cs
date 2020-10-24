@@ -2,6 +2,8 @@ using System;
 using Aaru.CommonTypes.Extents;
 using Aaru.Console;
 using Aaru.Core.Logging;
+using Aaru.Decoders.SCSI;
+using Aaru.Helpers;
 using Schemas;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -29,6 +31,7 @@ namespace Aaru.Core.Devices.Dumping
             byte[]     buffer;
             ulong      sectorSpeedStart = 0;
             DateTime   timeSpeedStart   = DateTime.UtcNow;
+            bool       canMediumScan    = true;
 
             InitProgress?.Invoke();
 
@@ -39,8 +42,21 @@ namespace Aaru.Core.Devices.Dumping
                 written = _dev.MediumScan(out buffer, true, false, false, false, false, 0, 1, 1, out _, out _,
                                           uint.MaxValue, out _);
 
+                FixedSense? decodedSense = Sense.DecodeFixed(buffer);
+
+                if(_dev.LastError         != 0 ||
+                   decodedSense?.SenseKey == SenseKeys.IllegalRequest)
+                {
+                    UpdateStatus?.
+                        Invoke("The current environment doesn't support the medium scan command, dump will take much longer than normal.");
+
+                    canMediumScan = false;
+                    writtenExtents.Add(0, blocks - 1);
+                }
+
                 // TODO: Find a place where MEDIUM SCAN works properly
-                if(buffer?.Length > 0)
+                else if(buffer?.Length > 0 &&
+                        !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     AaruConsole.
                         WriteLine("Please open a bug report in github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command.");
 
@@ -49,6 +65,9 @@ namespace Aaru.Core.Devices.Dumping
 
                 for(uint b = 0; b < blocks; b += c)
                 {
+                    if(!canMediumScan)
+                        break;
+
                     if(_aborted)
                     {
                         _resume.BlankExtents = null;
@@ -108,7 +127,7 @@ namespace Aaru.Core.Devices.Dumping
                     }
                 }
 
-                if(_resume != null)
+                if(_resume != null && canMediumScan)
                     _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
 
                 EndProgress?.Invoke();
