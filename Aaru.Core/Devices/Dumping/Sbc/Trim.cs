@@ -67,7 +67,7 @@ namespace Aaru.Core.Devices.Dumping
                     _resume.BadBlocks.Remove(badSector);
 
                     UpdateStatus?.Invoke($"Found blank block {badSector}.");
-                    _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector);
+                    _dumpLog.WriteLine("Found blank block {0}.", badSector);
 
                     continue;
                 }
