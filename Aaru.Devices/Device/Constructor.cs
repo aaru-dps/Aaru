@@ -84,6 +84,9 @@ namespace Aaru.Devices
 
                 _remote = new Remote.Remote(host);
 
+                if(devicePath.StartsWith('/'))
+                    devicePath = devicePath.Substring(1);
+
                 Error     = !_remote.Open(devicePath, out int errno);
                 LastError = errno;
             }
@@ -724,8 +727,8 @@ namespace Aaru.Devices
                                         continue;
 
                                     string[] subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
-                                                                                "pcmcia_socket*",
-                                                                                SearchOption.TopDirectoryOnly);
+                                                                                    "pcmcia_socket*",
+                                                                                    SearchOption.TopDirectoryOnly);
 
                                     if(subdirs.Length <= 0)
                                         continue;
