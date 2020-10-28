@@ -134,6 +134,12 @@ namespace Aaru.Core.Devices
                 return true;
             }
 
+            if(Blocks > 0x001FFFFF + 1)
+                _read6 = false;
+
+            if(_read10)
+                _read12 = false;
+
             if(!_read16 &&
                Blocks > 0xFFFFFFFF + (long)1)
             {
@@ -141,6 +147,12 @@ namespace Aaru.Core.Devices
                     $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({Blocks} blocks total)";
 
                 return true;
+            }
+
+            if(Blocks > 0xFFFFFFFF + (long)1)
+            {
+                _read10 = false;
+                _read12 = false;
             }
 
             _seek6 = !_dev.Seek6(out senseBuf, lba, _timeout, out _);
@@ -466,14 +478,14 @@ namespace Aaru.Core.Devices
                 else if(_plextorReadRaw)
                     AaruConsole.WriteLine("Using Plextor raw DVD reading.");
             }
-            else if(_read16)
-                AaruConsole.WriteLine("Using SCSI READ (16) command.");
-            else if(_read12)
-                AaruConsole.WriteLine("Using SCSI READ (12) command.");
-            else if(_read10)
-                AaruConsole.WriteLine("Using SCSI READ (10) command.");
             else if(_read6)
                 AaruConsole.WriteLine("Using SCSI READ (6) command.");
+            else if(_read10)
+                AaruConsole.WriteLine("Using SCSI READ (10) command.");
+            else if(_read12)
+                AaruConsole.WriteLine("Using SCSI READ (12) command.");
+            else if(_read16)
+                AaruConsole.WriteLine("Using SCSI READ (16) command.");
 
             return false;
         }
@@ -525,18 +537,9 @@ namespace Aaru.Core.Devices
 
             while(true)
             {
-                if(_read16)
+                if(_read6)
                 {
-                    _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
-                                _timeout, out _);
-
-                    if(_dev.Error)
-                        BlocksToRead /= 2;
-                }
-                else if(_read12)
-                {
-                    _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead,
-                                false, _timeout, out _);
+                    _dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, _timeout, out _);
 
                     if(_dev.Error)
                         BlocksToRead /= 2;
@@ -549,9 +552,18 @@ namespace Aaru.Core.Devices
                     if(_dev.Error)
                         BlocksToRead /= 2;
                 }
-                else if(_read6)
+                else if(_read12)
                 {
-                    _dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, _timeout, out _);
+                    _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead,
+                                false, _timeout, out _);
+
+                    if(_dev.Error)
+                        BlocksToRead /= 2;
+                }
+                else if(_read16)
+                {
+                    _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
+                                _timeout, out _);
 
                     if(_dev.Error)
                         BlocksToRead /= 2;
@@ -604,18 +616,18 @@ namespace Aaru.Core.Devices
                     return true;
             else
             {
-                if(_read16)
-                    sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0,
-                                        count, false, _timeout, out duration);
-                else if(_read12)
-                    sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
-                                        LogicalBlockSize, 0, count, false, _timeout, out duration);
+                if(_read6)
+                    sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,
+                                       out duration);
                 else if(_read10)
                     sense = _dev.Read10(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
                                         LogicalBlockSize, 0, (ushort)count, _timeout, out duration);
-                else if(_read6)
-                    sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,
-                                       out duration);
+                else if(_read12)
+                    sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
+                                        LogicalBlockSize, 0, count, false, _timeout, out duration);
+                else if(_read16)
+                    sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0,
+                                        count, false, _timeout, out duration);
                 else
                     return true;
             }
