@@ -373,7 +373,7 @@ namespace Aaru.Devices.FreeBSD
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
-               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamAtaStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
@@ -475,7 +475,7 @@ namespace Aaru.Devices.FreeBSD
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
-               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamAtaStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
@@ -587,7 +587,7 @@ namespace Aaru.Devices.FreeBSD
             ataio = (CcbAtaio)Marshal.PtrToStructure(ccbPtr, typeof(CcbAtaio));
 
             if((ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamReqCmp &&
-               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
+               (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamAtaStatusError)
             {
                 error = Marshal.GetLastWin32Error();
                 AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
