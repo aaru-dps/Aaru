@@ -545,7 +545,8 @@ namespace Aaru.Filesystems
 
                     if(fat32Bpb.signature == 0x29)
                     {
-                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
+                        XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
+                        XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
 
                         sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fat32Bpb.fs_type)).
                            AppendLine();
@@ -869,7 +870,8 @@ namespace Aaru.Filesystems
 
                     if(fakeBpb.signature == 0x29 || andosOemCorrect)
                     {
-                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fakeBpb.volume_label);
+                        XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
+                        XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
                         sb.AppendFormat("Filesystem type: {0}", Encoding.ASCII.GetString(fakeBpb.fs_type)).AppendLine();
                     }
                 }

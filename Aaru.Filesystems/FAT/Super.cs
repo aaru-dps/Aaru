@@ -195,7 +195,10 @@ namespace Aaru.Filesystems
                         _useFirstFat = (fat32Bpb.mirror_flags & 0xF) != 1;
 
                     if(fat32Bpb.signature == 0x29)
-                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
+                    {
+                        XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fat32Bpb.volume_label, Encoding);
+                        XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
+                    }
 
                     // Check that jumps to a correct boot code position and has boot signature set.
                     // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
@@ -407,7 +410,10 @@ namespace Aaru.Filesystems
                             XmlFsType.Dirty = true;
 
                     if(fakeBpb.signature == 0x29 || andosOemCorrect)
-                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fakeBpb.volume_label);
+                    {
+                        XmlFsType.VolumeName = StringHandlers.SpacePaddedToString(fakeBpb.volume_label, Encoding);
+                        XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
+                    }
                 }
 
                 // Workaround that PCExchange jumps into "FAT16   "...
@@ -477,8 +483,10 @@ namespace Aaru.Filesystems
                 var    rootMs                = new MemoryStream();
                 uint[] rootDirectoryClusters = GetClusters(rootDirectoryCluster);
 
-                foreach(var buffer in rootDirectoryClusters.Select(cluster => imagePlugin.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
-                                                                                                      _sectorsPerCluster)))
+                foreach(byte[] buffer in rootDirectoryClusters.Select(cluster =>
+                                                                          imagePlugin.
+                                                                              ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                                                  _sectorsPerCluster)))
                 {
                     rootMs.Write(buffer, 0, buffer.Length);
                 }
@@ -572,6 +580,8 @@ namespace Aaru.Filesystems
                             entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) && _namespace == Namespace.Nt
                                 ? volname.ToLower() : volname;
 
+                    XmlFsType.VolumeName = XmlFsType.VolumeName?.Replace("\0", "");
+
                     if(entry.ctime > 0 &&
                        entry.cdate > 0)
                     {
@@ -639,9 +649,7 @@ namespace Aaru.Filesystems
                 {
                     HumanDirectoryEntry humanEntry =
                         Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(rootDirectory, i,
-                                                                                      Marshal.
-                                                                                          SizeOf<HumanDirectoryEntry
-                                                                                          >());
+                            Marshal.SizeOf<HumanDirectoryEntry>());
 
                     completeEntry.HumanDirent = humanEntry;
 
@@ -822,12 +830,7 @@ namespace Aaru.Filesystems
             if(_fat32 || _debug)
             {
                 List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars = _rootDirectoryCache.
-                                                                                     Where(t =>
-                                                                                               t.Key.
-                                                                                                 EndsWith(FAT32_EA_TAIL,
-                                                                                                          true,
-                                                                                                          _cultureInfo)).
-                                                                                     ToList();
+                    Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {
@@ -853,6 +856,9 @@ namespace Aaru.Filesystems
             }
 
             _mounted = true;
+
+            if(string.IsNullOrWhiteSpace(XmlFsType.VolumeName))
+                XmlFsType.VolumeName = null;
 
             return Errno.NoError;
         }
