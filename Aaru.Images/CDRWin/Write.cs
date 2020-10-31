@@ -513,7 +513,7 @@ namespace Aaru.DiscImages
                                                     flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                     }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc))
+                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) && !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("    ISRC {0}", isrc);
 
                 if(track.TrackPregap > 0)
