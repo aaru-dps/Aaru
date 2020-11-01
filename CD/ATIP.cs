@@ -55,7 +55,7 @@ namespace Aaru.Decoders.CD
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class ATIP
     {
-        public static CDATIP? Decode(byte[] CDATIPResponse)
+        public static CDATIP Decode(byte[] CDATIPResponse)
         {
             if(CDATIPResponse        == null ||
                CDATIPResponse.Length <= 4)
@@ -113,21 +113,19 @@ namespace Aaru.Decoders.CD
             decoded.Reserved9 = CDATIPResponse[27];
 
             if(CDATIPResponse.Length < 32)
-                return decoded.AlwaysOne ? decoded : (CDATIP?)null;
+                return decoded.AlwaysOne ? decoded : null;
 
             decoded.S4Values = new byte[3];
             Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
             decoded.Reserved10 = CDATIPResponse[31];
 
-            return decoded.AlwaysOne ? decoded : (CDATIP?)null;
+            return decoded.AlwaysOne ? decoded : null;
         }
 
-        public static string Prettify(CDATIP? CDATIPResponse)
+        public static string Prettify(CDATIP response)
         {
-            if(CDATIPResponse == null)
+            if(response == null)
                 return null;
-
-            CDATIP response = CDATIPResponse.Value;
 
             var sb = new StringBuilder();
 
@@ -320,7 +318,7 @@ namespace Aaru.Decoders.CD
 
         public static string Prettify(byte[] CDATIPResponse)
         {
-            CDATIP? decoded = Decode(CDATIPResponse);
+            CDATIP decoded = Decode(CDATIPResponse);
 
             return Prettify(decoded);
         }
@@ -595,72 +593,72 @@ namespace Aaru.Decoders.CD
             return "";
         }
 
-        public struct CDATIP
+        public class CDATIP
         {
-            /// <summary>Bytes 1 to 0 Total size of returned session information minus this field</summary>
-            public ushort DataLength;
-            /// <summary>Byte 2 Reserved</summary>
-            public byte Reserved1;
-            /// <summary>Byte 3 Reserved</summary>
-            public byte Reserved2;
-            /// <summary>Byte 4, bits 7 to 4 Indicative target writing power</summary>
-            public byte ITWP;
-            /// <summary>Byte 4, bit 3 Set if DDCD</summary>
-            public bool DDCD;
-            /// <summary>Byte 4, bits 2 to 0 Reference speed</summary>
-            public byte ReferenceSpeed;
-            /// <summary>Byte 5, bit 7 Always unset</summary>
-            public bool AlwaysZero;
-            /// <summary>Byte 5, bit 6 Unrestricted media</summary>
-            public bool URU;
-            /// <summary>Byte 5, bits 5 to 0 Reserved</summary>
-            public byte Reserved3;
-            /// <summary>Byte 6, bit 7 Always set</summary>
-            public bool AlwaysOne;
-            /// <summary>Byte 6, bit 6 Set if rewritable (CD-RW or DDCD-RW)</summary>
-            public bool DiscType;
-            /// <summary>Byte 6, bits 5 to 3 Disc subtype</summary>
-            public byte DiscSubType;
             /// <summary>Byte 6, bit 2 A1 values are valid</summary>
             public bool A1Valid;
+            /// <summary>Bytes 16 to 18 A1 values</summary>
+            public byte[] A1Values;
             /// <summary>Byte 6, bit 1 A2 values are valid</summary>
             public bool A2Valid;
+            /// <summary>Bytes 20 to 22 A2 values</summary>
+            public byte[] A2Values;
             /// <summary>Byte 6, bit 0 A3 values are valid</summary>
             public bool A3Valid;
-            /// <summary>Byte 7 Reserved</summary>
-            public byte Reserved4;
+            /// <summary>Bytes 24 to 26 A3 values</summary>
+            public byte[] A3Values;
+            /// <summary>Byte 6, bit 7 Always set</summary>
+            public bool AlwaysOne;
+            /// <summary>Byte 5, bit 7 Always unset</summary>
+            public bool AlwaysZero;
+            /// <summary>Bytes 1 to 0 Total size of returned session information minus this field</summary>
+            public ushort DataLength;
+            /// <summary>Byte 4, bit 3 Set if DDCD</summary>
+            public bool DDCD;
+            /// <summary>Byte 6, bits 5 to 3 Disc subtype</summary>
+            public byte DiscSubType;
+            /// <summary>Byte 6, bit 6 Set if rewritable (CD-RW or DDCD-RW)</summary>
+            public bool DiscType;
+            /// <summary>Byte 4, bits 7 to 4 Indicative target writing power</summary>
+            public byte ITWP;
+            /// <summary>Byte 10 ATIP Start time of Lead-In (Frame)</summary>
+            public byte LeadInStartFrame;
             /// <summary>Byte 8 ATIP Start time of Lead-In (Minute)</summary>
             public byte LeadInStartMin;
             /// <summary>Byte 9 ATIP Start time of Lead-In (Second)</summary>
             public byte LeadInStartSec;
-            /// <summary>Byte 10 ATIP Start time of Lead-In (Frame)</summary>
-            public byte LeadInStartFrame;
-            /// <summary>Byte 11 Reserved</summary>
-            public byte Reserved5;
+            /// <summary>Byte 14 ATIP Last possible start time of Lead-Out (Frame)</summary>
+            public byte LeadOutStartFrame;
             /// <summary>Byte 12 ATIP Last possible start time of Lead-Out (Minute)</summary>
             public byte LeadOutStartMin;
             /// <summary>Byte 13 ATIP Last possible start time of Lead-Out (Second)</summary>
             public byte LeadOutStartSec;
-            /// <summary>Byte 14 ATIP Last possible start time of Lead-Out (Frame)</summary>
-            public byte LeadOutStartFrame;
+            /// <summary>Byte 4, bits 2 to 0 Reference speed</summary>
+            public byte ReferenceSpeed;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 31 Reserved</summary>
+            public byte Reserved10;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+            /// <summary>Byte 5, bits 5 to 0 Reserved</summary>
+            public byte Reserved3;
+            /// <summary>Byte 7 Reserved</summary>
+            public byte Reserved4;
+            /// <summary>Byte 11 Reserved</summary>
+            public byte Reserved5;
             /// <summary>Byte 15 Reserved</summary>
             public byte Reserved6;
-            /// <summary>Bytes 16 to 18 A1 values</summary>
-            public byte[] A1Values;
             /// <summary>Byte 19 Reserved</summary>
             public byte Reserved7;
-            /// <summary>Bytes 20 to 22 A2 values</summary>
-            public byte[] A2Values;
             /// <summary>Byte 23 Reserved</summary>
             public byte Reserved8;
-            /// <summary>Bytes 24 to 26 A3 values</summary>
-            public byte[] A3Values;
             /// <summary>Byte 27 Reserved</summary>
             public byte Reserved9;
             /// <summary>Bytes 28 to 30 S4 values</summary>
             public byte[] S4Values;
-            /// <summary>Byte 31 Reserved</summary>
-            public byte Reserved10;
+            /// <summary>Byte 5, bit 6 Unrestricted media</summary>
+            public bool URU;
         }
     }
 }
