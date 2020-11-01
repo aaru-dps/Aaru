@@ -147,7 +147,7 @@ namespace Aaru.Decoders.DVD
                         pfi.LastPulseEndGroove          = response[68];
                         pfi.BiasPowerDurationGroove     = response[69];
                     }
-                    else if(pfi.PartVersion == 6)
+                    else if(pfi.PartVersion >= 6)
                     {
                         pfi.Velocity                        =  response[504];
                         pfi.ReadPower                       =  response[505];
@@ -352,8 +352,8 @@ namespace Aaru.Decoders.DVD
                     break;
 
                 // DVD-R DL and DVD-RW DL
-                case DiskCategory.DVDR when pfi.PartVersion  == 6:
-                case DiskCategory.DVDRW when pfi.PartVersion == 3:
+                case DiskCategory.DVDR when pfi.PartVersion  >= 6:
+                case DiskCategory.DVDRW when pfi.PartVersion >= 3:
                     pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
                     pfi.MinRecordingSpeed = (DVDRecordingSpeed)response[22];
                     pfi.RecordingSpeed1   = (DVDRecordingSpeed)response[23];
