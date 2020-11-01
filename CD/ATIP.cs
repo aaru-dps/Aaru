@@ -113,13 +113,13 @@ namespace Aaru.Decoders.CD
             decoded.Reserved9 = CDATIPResponse[27];
 
             if(CDATIPResponse.Length < 32)
-                return decoded;
+                return decoded.AlwaysOne ? decoded : (CDATIP?)null;
 
             decoded.S4Values = new byte[3];
             Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
             decoded.Reserved10 = CDATIPResponse[31];
 
-            return decoded;
+            return decoded.AlwaysOne ? decoded : (CDATIP?)null;
         }
 
         public static string Prettify(CDATIP? CDATIPResponse)
