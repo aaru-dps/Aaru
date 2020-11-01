@@ -1046,9 +1046,9 @@ namespace Aaru.DiscImages
                 atipTmp[0] = (byte)((_atip.Length & 0xFF00) >> 8);
                 atipTmp[1] = (byte)(_atip.Length & 0xFF);
 
-                ATIP.CDATIP atip0 = ATIP.Decode(atipTmp).Value;
+                ATIP.CDATIP atip0 = ATIP.Decode(atipTmp);
 
-                _imageInfo.MediaType = atip0.DiscType ? MediaType.CDRW : MediaType.CDR;
+                _imageInfo.MediaType = atip0?.DiscType ?? false ? MediaType.CDRW : MediaType.CDR;
 
                 if(atip0.LeadInStartMin == 97)
                 {

@@ -495,10 +495,10 @@ namespace Aaru.DiscImages
                 // Only CD-R and CD-RW have ATIP
                 if(_mediaTags.TryGetValue(MediaTagType.CD_ATIP, out byte[] atipBuf))
                 {
-                    ATIP.CDATIP? atip = ATIP.Decode(atipBuf);
+                    ATIP.CDATIP atip = ATIP.Decode(atipBuf);
 
-                    if(atip.HasValue)
-                        _imageInfo.MediaType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                    if(atip != null)
+                        _imageInfo.MediaType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
                 }
 
                 if(_mediaTags.TryGetValue(MediaTagType.Floppy_LeadOut, out byte[] leadout))

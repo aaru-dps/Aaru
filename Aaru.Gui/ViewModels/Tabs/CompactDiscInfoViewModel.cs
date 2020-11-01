@@ -55,7 +55,7 @@ namespace Aaru.Gui.ViewModels.Tabs
 
         public CompactDiscInfoViewModel(byte[] toc, byte[] atip, byte[] compactDiscInformation, byte[] session,
                                         byte[] rawToc, byte[] pma, byte[] cdTextLeadIn, TOC.CDTOC? decodedToc,
-                                        ATIP.CDATIP? decodedAtip, Session.CDSessionInfo? decodedSession,
+                                        ATIP.CDATIP decodedAtip, Session.CDSessionInfo? decodedSession,
                                         FullTOC.CDFullTOC? fullToc, CDTextOnLeadIn.CDText? decodedCdTextLeadIn,
                                         DiscInformation.StandardDiscInformation? decodedCompactDiscInformation,
                                         string mcn, Dictionary<byte, string> isrcs, Window view)
@@ -92,7 +92,7 @@ namespace Aaru.Gui.ViewModels.Tabs
             if(decodedCdTextLeadIn.HasValue)
                 CdTextText = CDTextOnLeadIn.Prettify(decodedCdTextLeadIn);
 
-            if(decodedAtip.HasValue)
+            if(decodedAtip != null)
                 CdAtipText = ATIP.Prettify(atip);
 
             if(!string.IsNullOrEmpty(mcn))

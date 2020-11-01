@@ -67,12 +67,12 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!sense)
             {
-                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
+                ATIP.CDATIP atip = ATIP.Decode(cmdBuf);
 
-                if(atip.HasValue)
+                if(atip != null)
                 {
                     // Only CD-R and CD-RW have ATIP
-                    mediaType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                    mediaType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
 
                     tmpBuf = new byte[cmdBuf.Length - 4];
                     Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);

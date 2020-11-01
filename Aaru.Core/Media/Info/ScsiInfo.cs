@@ -1092,10 +1092,12 @@ namespace Aaru.Core.Media.Info
                             Atip        = cmdBuf;
                             DecodedAtip = ATIP.Decode(cmdBuf);
 
-                            if(DecodedAtip.HasValue)
+                            if(DecodedAtip != null)
 
                                 // Only CD-R and CD-RW have ATIP
-                                MediaType = DecodedAtip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                                MediaType = DecodedAtip.DiscType ? MediaType.CDRW : MediaType.CDR;
+                            else
+                                Atip = null;
                         }
 
                         // We got a TOC, get information about a recorded/mastered CD
@@ -1489,7 +1491,7 @@ namespace Aaru.Core.Media.Info
         public byte[]                                   Pma                           { get; }
         public byte[]                                   CdTextLeadIn                  { get; }
         public TOC.CDTOC?                               DecodedToc                    { get; }
-        public ATIP.CDATIP?                             DecodedAtip                   { get; }
+        public ATIP.CDATIP                              DecodedAtip                   { get; }
         public Session.CDSessionInfo?                   DecodedSession                { get; }
         public FullTOC.CDFullTOC?                       FullToc                       { get; }
         public CDTextOnLeadIn.CDText?                   DecodedCdTextLeadIn           { get; }

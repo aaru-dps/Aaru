@@ -117,13 +117,13 @@ namespace Aaru.Core
                             Size      = (ulong)image.ReadDiskTag(MediaTagType.CD_ATIP).Length
                         };
 
-                        ATIP.CDATIP? atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
+                        ATIP.CDATIP atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
 
-                        if(atip.HasValue)
-                            if(atip.Value.DDCD)
-                                dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
+                        if(atip != null)
+                            if(atip.DDCD)
+                                dskType = atip.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
                             else
-                                dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                                dskType = atip.DiscType ? MediaType.CDRW : MediaType.CDR;
 
                         break;
                     case MediaTagType.DVD_BCA:

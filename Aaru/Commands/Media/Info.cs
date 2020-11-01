@@ -469,7 +469,7 @@ namespace Aaru.Commands.Media
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_atip.bin", "SCSI READ TOC/PMA/ATIP",
                                      scsiInfo.Atip);
 
-                    if(scsiInfo.DecodedAtip.HasValue)
+                    if(scsiInfo.DecodedAtip != null)
                         AaruConsole.WriteLine("ATIP:\n{0}", ATIP.Prettify(scsiInfo.DecodedAtip));
                 }
 

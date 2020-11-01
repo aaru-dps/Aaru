@@ -252,7 +252,7 @@ namespace Aaru.Gui.ViewModels.Panels
             FullTOC.CDFullTOC?     decodedFullToc       = null;
             byte[]                 pma                  = null;
             byte[]                 atip                 = null;
-            ATIP.CDATIP?           decodedAtip          = null;
+            ATIP.CDATIP            decodedAtip          = null;
             byte[]                 cdtext               = null;
             CDTextOnLeadIn.CDText? decodedCdText        = null;
             string                 mediaCatalogueNumber = null;
