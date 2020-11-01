@@ -386,7 +386,7 @@ namespace Aaru.DiscImages
 
                         break;
                     case DiskCategory.DVDR:
-                        _imageInfo.MediaType = decPfi.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                        _imageInfo.MediaType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                         break;
                     case DiskCategory.DVDRAM:
@@ -398,7 +398,7 @@ namespace Aaru.DiscImages
 
                         break;
                     case DiskCategory.DVDRW:
-                        _imageInfo.MediaType = decPfi.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                        _imageInfo.MediaType = decPfi.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                         break;
                     case DiskCategory.HDDVDR:

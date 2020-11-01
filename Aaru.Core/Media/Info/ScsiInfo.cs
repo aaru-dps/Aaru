@@ -191,7 +191,7 @@ namespace Aaru.Core.Media.Info
                     {
                         ReadCapacity = cmdBuf;
                         Blocks       = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        BlockSize    = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8)  + cmdBuf[7]);
+                        BlockSize    = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
 
                     sense = dev.ReadCapacity16(out cmdBuf, out senseBuf, dev.Timeout, out _);
@@ -278,7 +278,7 @@ namespace Aaru.Core.Media.Info
                     {
                         ReadCapacity = cmdBuf;
                         Blocks       = (ulong)((cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3]);
-                        BlockSize    = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8)  + cmdBuf[7]);
+                        BlockSize    = (uint)((cmdBuf[5]  << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                     }
 
                     break;
@@ -541,7 +541,7 @@ namespace Aaru.Core.Media.Info
 
                                         break;
                                     case DiskCategory.DVDR:
-                                        MediaType = DecodedPfi.Value.PartVersion == 6 ? MediaType.DVDRDL
+                                        MediaType = DecodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL
                                                         : MediaType.DVDR;
 
                                         break;
@@ -554,7 +554,7 @@ namespace Aaru.Core.Media.Info
 
                                         break;
                                     case DiskCategory.DVDRW:
-                                        MediaType = DecodedPfi.Value.PartVersion == 3 ? MediaType.DVDRWDL
+                                        MediaType = DecodedPfi.Value.PartVersion >= 3 ? MediaType.DVDRWDL
                                                         : MediaType.DVDRW;
 
                                         break;

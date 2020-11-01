@@ -312,7 +312,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                         break;
                                     case DiskCategory.DVDR:
-                                        dskType = decPfi.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                                        dskType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                                         break;
                                     case DiskCategory.DVDRAM:
@@ -324,7 +324,7 @@ namespace Aaru.Core.Devices.Dumping
 
                                         break;
                                     case DiskCategory.DVDRW:
-                                        dskType = decPfi.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                                        dskType = decPfi.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                                         break;
                                     case DiskCategory.HDDVDR:

@@ -532,43 +532,40 @@ namespace Aaru.DiscImages
                                         chars.FileFilter =
                                             filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                path.ToLower(CultureInfo.
-                                                                                                CurrentCulture)));
+                                                                                   CurrentCulture)));
                                     }
                                     else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                path.ToUpper(CultureInfo.
-                                                                                                CurrentCulture))) !=
-                                            null)
+                                                                                   CurrentCulture))) != null)
                                     {
                                         chars.FilePath = path.ToUpper(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
                                             filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                path.ToUpper(CultureInfo.
-                                                                                                CurrentCulture)));
+                                                                                   CurrentCulture)));
                                     }
                                     else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                dataFile.Filename.ToLower(CultureInfo.
-                                                                                                             CurrentCulture))) !=
-                                            null)
+                                                                                   CurrentCulture))) != null)
                                     {
                                         chars.FilePath = dataFile.Filename.ToLower(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
                                             filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                dataFile.Filename.ToLower(CultureInfo.
-                                                                                                             CurrentCulture)));
+                                                                                   CurrentCulture)));
                                     }
                                     else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                dataFile.Filename.ToUpper(CultureInfo.
-                                                                                                             CurrentCulture))) !=
-                                            null)
+                                                                                   CurrentCulture))) != null)
                                     {
                                         chars.FilePath = dataFile.Filename.ToUpper(CultureInfo.CurrentCulture);
 
                                         chars.FileFilter =
                                             filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                dataFile.Filename.ToUpper(CultureInfo.
-                                                                                                             CurrentCulture)));
+                                                                                   CurrentCulture)));
                                     }
                                     else if(filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                                dataFile.Filename)) != null)
@@ -773,8 +770,8 @@ namespace Aaru.DiscImages
                     track.TrackEndSector   = (ulong)(trk.sectors  + trk.startLba);
 
                     foreach(DataFileCharacteristics chars in _filePaths.Where(chars => trk.startLba >= chars.StartLba &&
-                                                                                       trk.startLba   + trk.sectors <=
-                                                                                       chars.StartLba + chars.Sectors))
+                                                                                  trk.startLba   + trk.sectors <=
+                                                                                  chars.StartLba + chars.Sectors))
                     {
                         track.TrackFilter = chars.FileFilter;
                         track.TrackFile   = chars.FileFilter.GetFilename();
@@ -916,7 +913,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case DiskCategory.DVDR:
-                            _imageInfo.MediaType = pfi0.Value.PartVersion == 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                            _imageInfo.MediaType = pfi0.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
                             break;
                         case DiskCategory.DVDRAM:
@@ -928,7 +925,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case DiskCategory.DVDRW:
-                            _imageInfo.MediaType = pfi0.Value.PartVersion == 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                            _imageInfo.MediaType = pfi0.Value.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                             break;
                         case DiskCategory.HDDVDR:

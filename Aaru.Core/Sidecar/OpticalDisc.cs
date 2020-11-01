@@ -282,11 +282,11 @@ namespace Aaru.Core
                                 }
 
                                 if(dskType               == MediaType.DVDR &&
-                                   pfi.Value.PartVersion == 6)
+                                   pfi.Value.PartVersion >= 6)
                                     dskType = MediaType.DVDRDL;
 
                                 if(dskType               == MediaType.DVDRW &&
-                                   pfi.Value.PartVersion == 3)
+                                   pfi.Value.PartVersion >= 3)
                                     dskType = MediaType.DVDRWDL;
 
                                 if(dskType            == MediaType.GOD &&
