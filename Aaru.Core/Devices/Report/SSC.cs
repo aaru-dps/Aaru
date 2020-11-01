@@ -170,9 +170,8 @@ namespace Aaru.Core.Devices.Report
             {
                 seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
 
-                if(decMode.Value.Header.BlockDescriptors        != null &&
-                   decMode.Value.Header.BlockDescriptors.Length > 0)
-                    seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                if(decMode.Value.Header.BlockDescriptors?.Length > 0)
+                    seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors?[0].Density;
             }
 
             AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");

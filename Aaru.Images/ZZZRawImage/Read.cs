@@ -930,8 +930,7 @@ namespace Aaru.DiscImages
                 {
                     mediumType = (byte)decMode.Value.Header.MediumType;
 
-                    if(decMode.Value.Header.BlockDescriptors        != null &&
-                       decMode.Value.Header.BlockDescriptors.Length >= 1)
+                    if(decMode?.Header.BlockDescriptors?.Length > 0)
                         densityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                     if(decMode.Value.Pages != null)

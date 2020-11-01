@@ -285,8 +285,7 @@ namespace Aaru.Core.Devices.Dumping
             {
                 scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
 
-                if(decMode.Value.Header.BlockDescriptors        != null &&
-                   decMode.Value.Header.BlockDescriptors.Length >= 1)
+                if(decMode.Value.Header.BlockDescriptors?.Length > 0)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                 blockSize = decMode.Value.Header.BlockDescriptors?[0].BlockLength ?? 0;
@@ -301,7 +300,7 @@ namespace Aaru.Core.Devices.Dumping
                 BlockLimits.BlockLimitsData? blockLimits = BlockLimits.Decode(cmdBuf);
 
                 if(blockLimits?.minBlockLen > blockSize)
-                    blockSize = blockLimits.Value.minBlockLen;
+                    blockSize = blockLimits?.minBlockLen ?? 0;
             }
 
             if(blockSize == 0)
@@ -774,15 +773,12 @@ namespace Aaru.Core.Devices.Dumping
 
                 currentTapeFile =
                     (_outputPlugin as IWritableTapeImage).Files.FirstOrDefault(f => f.LastBlock ==
-                                                                                    (_outputPlugin as IWritableTapeImage
-                                                                                    )?.Files.Max(g => g.LastBlock));
+                                                                                   (_outputPlugin as IWritableTapeImage
+                                                                                   )?.Files.Max(g => g.LastBlock));
 
                 currentTapePartition =
                     (_outputPlugin as IWritableTapeImage).TapePartitions.FirstOrDefault(p => p.LastBlock ==
-                                                                                             (_outputPlugin as
-                                                                                                  IWritableTapeImage)?.
-                                                                                             TapePartitions.
-                                                                                             Max(g => g.LastBlock));
+                        (_outputPlugin as IWritableTapeImage)?.TapePartitions.Max(g => g.LastBlock));
             }
 
             if(mode6Data != null)

@@ -630,10 +630,10 @@ namespace Aaru.Core.Devices.Report
 
             if(decMode != null)
             {
-                mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
+                mediaTest.MediumType = (byte?)decMode?.Header.MediumType;
 
-                if(decMode?.Header.BlockDescriptors.Length > 0)
-                    mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
+                if(decMode?.Header.BlockDescriptors?.Length > 0)
+                    mediaTest.Density = (byte?)decMode?.Header.BlockDescriptors?[0].Density;
             }
 
             if(mediaType.StartsWith("CD-", StringComparison.Ordinal)   ||
@@ -1280,12 +1280,10 @@ namespace Aaru.Core.Devices.Report
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 11, 2714,
-                                                                                  1, MmcSectorTypes.Cdda, false, false,
-                                                                                  false, MmcHeaderCodes.None, true,
-                                                                                  false,
-                                                                                  MmcErrorField.C2PointersAndBlock,
-                                                                                  MmcSubchannel.Rw, _dev.Timeout,
-                                                                                  out _);
+                                                                         1, MmcSectorTypes.Cdda, false, false,
+                                                                         false, MmcHeaderCodes.None, true, false,
+                                                                         MmcErrorField.C2PointersAndBlock,
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                !mediaTest.CanReadCorrectedSubchannelWithC2);
@@ -1389,12 +1387,10 @@ namespace Aaru.Core.Devices.Report
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714,
-                                                                                  1, MmcSectorTypes.AllTypes, false,
-                                                                                  false, true,
-                                                                                  MmcHeaderCodes.AllHeaders, true, true,
-                                                                                  MmcErrorField.C2PointersAndBlock,
-                                                                                  MmcSubchannel.Rw, _dev.Timeout,
-                                                                                  out _);
+                                                                         1, MmcSectorTypes.AllTypes, false, false,
+                                                                         true, MmcHeaderCodes.AllHeaders, true,
+                                                                         true, MmcErrorField.C2PointersAndBlock,
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                !mediaTest.CanReadCorrectedSubchannelWithC2);
@@ -1496,12 +1492,10 @@ namespace Aaru.Core.Devices.Report
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440,
-                                                                                  1, MmcSectorTypes.AllTypes, false,
-                                                                                  false, false, MmcHeaderCodes.None,
-                                                                                  true, false,
-                                                                                  MmcErrorField.C2PointersAndBlock,
-                                                                                  MmcSubchannel.Rw, _dev.Timeout,
-                                                                                  out _);
+                                                                         1, MmcSectorTypes.AllTypes, false, false,
+                                                                         false, MmcHeaderCodes.None, true, false,
+                                                                         MmcErrorField.C2PointersAndBlock,
+                                                                         MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                !mediaTest.CanReadCorrectedSubchannelWithC2);
@@ -1825,12 +1819,12 @@ namespace Aaru.Core.Devices.Report
 
                         // Skip Lead-Out pre-gap
                         uint firstSessionLeadOutLba = (uint)((firstSessionLeadOutTrack.PMIN * 60 * 75) +
-                                                             (firstSessionLeadOutTrack.PSEC      * 75) +
+                                                             (firstSessionLeadOutTrack.PSEC * 75)      +
                                                              firstSessionLeadOutTrack.PFRAME           + 150);
 
                         // Skip second session track pre-gap
                         uint secondSessionLeadInLba = (uint)(((secondSessionFirstTrack.PMIN * 60 * 75) +
-                                                              (secondSessionFirstTrack.PSEC      * 75) +
+                                                              (secondSessionFirstTrack.PSEC * 75)      +
                                                               secondSessionFirstTrack.PFRAME) - 300);
 
                         AaruConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
@@ -1845,23 +1839,21 @@ namespace Aaru.Core.Devices.Report
                         if(mediaTest.CanReadingIntersessionLeadOut == false)
                         {
                             mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                   firstSessionLeadOutLba, 2368, 1,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, false,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   false, MmcErrorField.None,
-                                                                                   MmcSubchannel.Q16, _dev.Timeout,
-                                                                                   out _);
+                                                                          firstSessionLeadOutLba, 2368, 1,
+                                                                          MmcSectorTypes.AllTypes, false, false,
+                                                                          false, MmcHeaderCodes.AllHeaders, true,
+                                                                          false, MmcErrorField.None,
+                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
 
                             if(mediaTest.CanReadingIntersessionLeadOut == false)
                                 mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                       firstSessionLeadOutLba, 2352, 1,
-                                                                                       MmcSectorTypes.AllTypes, false,
-                                                                                       false, false,
-                                                                                       MmcHeaderCodes.AllHeaders, true,
-                                                                                       false, MmcErrorField.None,
-                                                                                       MmcSubchannel.None, _dev.Timeout,
-                                                                                       out _);
+                                                                              firstSessionLeadOutLba, 2352, 1,
+                                                                              MmcSectorTypes.AllTypes, false,
+                                                                              false, false,
+                                                                              MmcHeaderCodes.AllHeaders, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.None, _dev.Timeout,
+                                                                              out _);
                         }
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
@@ -1881,22 +1873,20 @@ namespace Aaru.Core.Devices.Report
                         if(mediaTest.CanReadingIntersessionLeadIn == false)
                         {
                             mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                  secondSessionLeadInLba, 2368, 1,
-                                                                                  MmcSectorTypes.AllTypes, false, false,
-                                                                                  false, MmcHeaderCodes.AllHeaders,
-                                                                                  true, false, MmcErrorField.None,
-                                                                                  MmcSubchannel.Q16, _dev.Timeout,
-                                                                                  out _);
+                                                                         secondSessionLeadInLba, 2368, 1,
+                                                                         MmcSectorTypes.AllTypes, false, false,
+                                                                         false, MmcHeaderCodes.AllHeaders, true,
+                                                                         false, MmcErrorField.None,
+                                                                         MmcSubchannel.Q16, _dev.Timeout, out _);
 
                             if(mediaTest.CanReadingIntersessionLeadIn == false)
                                 mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                      secondSessionLeadInLba, 2352, 1,
-                                                                                      MmcSectorTypes.AllTypes, false,
-                                                                                      false, false,
-                                                                                      MmcHeaderCodes.AllHeaders, true,
-                                                                                      false, MmcErrorField.None,
-                                                                                      MmcSubchannel.None, _dev.Timeout,
-                                                                                      out _);
+                                                                             secondSessionLeadInLba, 2352, 1,
+                                                                             MmcSectorTypes.AllTypes, false, false,
+                                                                             false, MmcHeaderCodes.AllHeaders,
+                                                                             true, false, MmcErrorField.None,
+                                                                             MmcSubchannel.None, _dev.Timeout,
+                                                                             out _);
                         }
 
                         AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",

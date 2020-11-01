@@ -167,8 +167,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         scsiMediumType = (byte)decMode.Value.Header.MediumType;
 
-                        if(decMode.Value.Header.BlockDescriptors        != null &&
-                           decMode.Value.Header.BlockDescriptors.Length >= 1)
+                        if(decMode.Value.Header.BlockDescriptors?.Length > 0)
                             scsiDensityCode = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
 
                         containsFloppyPage = decMode.Value.Pages?.Aggregate(containsFloppyPage,

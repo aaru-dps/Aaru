@@ -166,8 +166,7 @@ namespace Aaru.Core.Media.Info
             {
                 scsiMediumType = (byte)DeviceInfo.ScsiMode.Value.Header.MediumType;
 
-                if(DeviceInfo.ScsiMode.Value.Header.BlockDescriptors        != null &&
-                   DeviceInfo.ScsiMode.Value.Header.BlockDescriptors.Length >= 1)
+                if(DeviceInfo.ScsiMode?.Header.BlockDescriptors?.Length > 0)
                     scsiDensityCode = (byte)DeviceInfo.ScsiMode.Value.Header.BlockDescriptors[0].Density;
 
                 if(DeviceInfo.ScsiMode.Value.Pages != null)

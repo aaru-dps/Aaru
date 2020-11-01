@@ -425,8 +425,7 @@ namespace Aaru.Core.Devices.Report
             {
                 mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
 
-                if(decMode.Value.Header.BlockDescriptors        != null &&
-                   decMode.Value.Header.BlockDescriptors.Length > 0)
+                if(decMode?.Header.BlockDescriptors?.Length > 0)
                     mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
@@ -634,8 +633,7 @@ namespace Aaru.Core.Devices.Report
             {
                 capabilities.MediumType = (byte)decMode.Value.Header.MediumType;
 
-                if(decMode.Value.Header.BlockDescriptors        != null &&
-                   decMode.Value.Header.BlockDescriptors.Length > 0)
+                if(decMode?.Header.BlockDescriptors?.Length > 0)
                     capabilities.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
