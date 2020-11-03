@@ -333,6 +333,8 @@ namespace Aaru.Core.Devices.Dumping
                             timeSpeedStart   = DateTime.UtcNow;
                         }
 
+                        _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+
                         end = DateTime.Now;
                         EndProgress?.Invoke();
                         mhddLog.Close();
@@ -554,6 +556,8 @@ namespace Aaru.Core.Devices.Dumping
                                 }
                             }
                         }
+
+                        _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
 
                         end = DateTime.Now;
                         EndProgress?.Invoke();

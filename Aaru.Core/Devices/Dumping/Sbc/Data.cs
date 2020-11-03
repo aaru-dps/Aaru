@@ -25,6 +25,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using Aaru.CommonTypes.Extents;
 using Aaru.Core.Logging;
 using Schemas;
@@ -93,6 +94,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(_dev.Manufacturer.ToLowerInvariant() == "insite")
                     {
                         _resume.BadBlocks.Add(i);
+                        _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
                         _resume.NextBlock++;
                         _aborted = true;
 
@@ -140,6 +142,8 @@ namespace Aaru.Core.Devices.Dumping
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
+
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
 
             EndProgress?.Invoke();
         }

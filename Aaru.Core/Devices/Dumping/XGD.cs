@@ -686,6 +686,8 @@ namespace Aaru.Core.Devices.Dumping
                     currentSector = extentEnd + 1;
             }
 
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+
             EndProgress?.Invoke();
 
             // Middle Zone D
@@ -976,8 +978,8 @@ namespace Aaru.Core.Devices.Dumping
                                 Modes.DecodeMode10(readBuffer, PeripheralDeviceTypes.MultiMediaDevice);
 
                             if(dcMode10.HasValue)
-                                foreach(var modePage in dcMode10.Value.Pages.Where(modePage => modePage.Page    == 0x01 &&
-                                                                                               modePage.Subpage == 0x00))
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
+                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                     currentModePage = modePage;
                         }
                     }
@@ -988,8 +990,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(dcMode6.HasValue)
                             foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                                                                             modePage.Page    == 0x01 &&
-                                                                                             modePage.Subpage == 0x00))
+                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                 currentModePage = modePage;
                     }
 

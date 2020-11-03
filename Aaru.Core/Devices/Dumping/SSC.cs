@@ -1019,8 +1019,9 @@ namespace Aaru.Core.Devices.Dumping
                 timeSpeedStart   = DateTime.UtcNow;
             }
 
-            blocks = currentBlock + 1;
-            end    = DateTime.UtcNow;
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+            blocks            = currentBlock + 1;
+            end               = DateTime.UtcNow;
 
             // If not aborted this is added at the end of medium
             if(_aborted)

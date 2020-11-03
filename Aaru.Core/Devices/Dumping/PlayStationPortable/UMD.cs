@@ -274,6 +274,8 @@ namespace Aaru.Core.Devices.Dumping
                 timeSpeedStart   = DateTime.UtcNow;
             }
 
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+
             end = DateTime.UtcNow;
             EndProgress?.Invoke();
             mhddLog.Close();
@@ -368,8 +370,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         if(dcMode6.HasValue)
                             foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage =>
-                                                                                             modePage.Page    == 0x01 &&
-                                                                                             modePage.Subpage == 0x00))
+                                modePage.Page == 0x01 && modePage.Subpage == 0x00))
                                 currentModePage = modePage;
                     }
 

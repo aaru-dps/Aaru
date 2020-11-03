@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Aaru.CommonTypes.Extents;
 using Aaru.Console;
 using Aaru.Core.Logging;
@@ -239,6 +240,8 @@ namespace Aaru.Core.Devices.Dumping
                     timeSpeedStart   = DateTime.UtcNow;
                 }
             }
+
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
 
             EndProgress?.Invoke();
         }

@@ -671,6 +671,8 @@ namespace Aaru.Core.Devices.Dumping
 
             EndProgress?.Invoke();
 
+            _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
+
             if(!failedCrossingLeadOut)
                 return;
 
