@@ -106,7 +106,7 @@ namespace Aaru.CommonTypes
             }
 
             if(!noFilter?.Identify(path) == true)
-                return noFilter;
+                return null;
 
             noFilter?.Open(path);
 
