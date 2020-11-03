@@ -748,6 +748,11 @@ namespace Aaru.DiscImages
                 Sessions.Add(session);
             }
 
+            // As long as subchannel is written for any track, it is present for all tracks
+            if(Tracks.Any(t => t.TrackSubchannelType == TrackSubchannelType.Packed))
+                foreach(Track track in Tracks)
+                    track.TrackSubchannelType = TrackSubchannelType.Packed;
+
             _imageInfo.MediaType = MediaType.CD;
 
             _imageInfo.Application        = "BlindWrite";
