@@ -767,7 +767,7 @@ namespace Aaru.DiscImages
 
                     track.TrackDescription = $"Track {trk.point}";
                     track.TrackStartSector = (ulong)(trk.startLba + trk.pregap);
-                    track.TrackEndSector   = (ulong)(trk.sectors  + trk.startLba);
+                    track.TrackEndSector   = (ulong)(trk.sectors + trk.startLba) - 1;
 
                     foreach(DataFileCharacteristics chars in _filePaths.Where(chars => trk.startLba >= chars.StartLba &&
                                                                                   trk.startLba   + trk.sectors <=
@@ -820,7 +820,7 @@ namespace Aaru.DiscImages
                     partition.Size = (track.TrackEndSector - track.TrackStartSector) *
                                      (ulong)track.TrackRawBytesPerSector;
 
-                    partition.Length   = track.TrackEndSector - track.TrackStartSector;
+                    partition.Length   = (track.TrackEndSector - track.TrackStartSector) + 1;
                     partition.Sequence = track.TrackSequence;
                     partition.Offset   = offsetBytes;
                     partition.Start    = track.TrackStartSector;
