@@ -500,7 +500,6 @@ namespace Aaru.DiscImages
             _offsetmap  = new Dictionary<uint, ulong>();
             _trackFlags = new Dictionary<uint, byte>();
             ushort maxSession = 0;
-            ulong  currentPos = 0;
 
             foreach(Bw4TrackDescriptor bwTrack in _bwTracks)
                 if(bwTrack.point < 0xA0)
@@ -580,8 +579,8 @@ namespace Aaru.DiscImages
 
                     track.TrackFile = _dataFilter.GetFilename();
 
-                    track.TrackFileOffset       = currentPos * 2352;
-                    track.TrackSubchannelOffset = currentPos * 96;
+                    track.TrackFileOffset       = bwTrack.offset;
+                    track.TrackSubchannelOffset = (bwTrack.offset / 2352) * 96;
 
                     if(bwTrack.pregap > 0)
                     {
@@ -593,8 +592,6 @@ namespace Aaru.DiscImages
                         track.TrackPregap      = 0;
                         track.TrackStartSector = (ulong)bwTrack.startSector;
                     }
-
-                    currentPos += bwTrack.lastSector - track.TrackStartSector;
 
                     track.TrackFileType          = "BINARY";
                     track.TrackRawBytesPerSector = 2352;
