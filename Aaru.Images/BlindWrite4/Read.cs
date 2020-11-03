@@ -200,6 +200,9 @@ namespace Aaru.DiscImages
                 track.lastSector = BitConverter.ToUInt32(tmpUInt, 0);
                 track.unknown12  = (byte)stream.ReadByte();
 
+                // This is off by one
+                track.lastSector--;
+                
                 stream.Read(tmpUInt, 0, 4);
                 track.pregap = BitConverter.ToInt32(tmpUInt, 0);
                 stream.Read(tmpUInt, 0, 4);
