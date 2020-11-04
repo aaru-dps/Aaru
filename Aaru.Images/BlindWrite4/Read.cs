@@ -202,7 +202,7 @@ namespace Aaru.DiscImages
 
                 // This is off by one
                 track.lastSector--;
-                
+
                 stream.Read(tmpUInt, 0, 4);
                 track.pregap = BitConverter.ToInt32(tmpUInt, 0);
                 stream.Read(tmpUInt, 0, 4);
@@ -399,54 +399,44 @@ namespace Aaru.DiscImages
 
                     _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                      _header.DataFile.ToLower(CultureInfo.
-                                                                                                  CurrentCulture)));
+                                                                         CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
 
                     _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                      _header.DataFile.ToUpper(CultureInfo.
-                                                                                                  CurrentCulture)));
+                                                                         CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                                    DataFile.Split(new[]
-                                                                                                                   {
-                                                                                                                       '\\'
-                                                                                                                   },
-                                                                                                                   StringSplitOptions.
-                                                                                                                       RemoveEmptyEntries).
-                                                                                                    Last()));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                                                                         Split(new[]
+                                                                         {
+                                                                             '\\'
+                                                                         }, StringSplitOptions.RemoveEmptyEntries).
+                                                                         Last()));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                                    DataFile.Split(new[]
-                                                                                                                   {
-                                                                                                                       '\\'
-                                                                                                                   },
-                                                                                                                   StringSplitOptions.
-                                                                                                                       RemoveEmptyEntries).
-                                                                                                    Last().
-                                                                                                    ToLower(CultureInfo.
-                                                                                                                CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                                                                         Split(new[]
+                                                                         {
+                                                                             '\\'
+                                                                         }, StringSplitOptions.RemoveEmptyEntries).
+                                                                         Last().ToLower(CultureInfo.CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
 
-                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                                    DataFile.Split(new[]
-                                                                                                                   {
-                                                                                                                       '\\'
-                                                                                                                   },
-                                                                                                                   StringSplitOptions.
-                                                                                                                       RemoveEmptyEntries).
-                                                                                                    Last().
-                                                                                                    ToUpper(CultureInfo.
-                                                                                                                CurrentCulture)));
+                    _dataFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.DataFile.
+                                                                         Split(new[]
+                                                                         {
+                                                                             '\\'
+                                                                         }, StringSplitOptions.RemoveEmptyEntries).
+                                                                         Last().ToUpper(CultureInfo.CurrentCulture)));
 
                     if(_dataFilter != null)
                         break;
@@ -467,32 +457,21 @@ namespace Aaru.DiscImages
                        ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                _header.SubchannelFile.
                                                                        ToUpper(CultureInfo.CurrentCulture)))) ??
-                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                        SubchannelFile.Split(new[]
-                                                                                                             {
-                                                                                                                 '\\'
-                                                                                                             },
-                                                                                                             StringSplitOptions.
-                                                                                                                 RemoveEmptyEntries).
-                                                                                        Last()))
-                     ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                            SubchannelFile.Split(new[]
-                                                                                                                 {
-                                                                                                                     '\\'
-                                                                                                                 },
-                                                                                                                 StringSplitOptions.
-                                                                                                                     RemoveEmptyEntries).
-                                                                                            Last().ToLower(CultureInfo.
-                                                                                                               CurrentCulture)))
-                    ) ?? filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.
-                                                                                           SubchannelFile.Split(new[]
-                                                                                                                {
-                                                                                                                    '\\'
-                                                                                                                },
-                                                                                                                StringSplitOptions.
-                                                                                                                    RemoveEmptyEntries).
-                                                                                           Last().ToUpper(CultureInfo.
-                                                                                                              CurrentCulture)));
+                      filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.
+                                                             Split(new[]
+                                                             {
+                                                                 '\\'
+                                                             }, StringSplitOptions.RemoveEmptyEntries).Last()))) ??
+                     filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.
+                                                            Split(new[]
+                                                            {
+                                                                '\\'
+                                                            }, StringSplitOptions.RemoveEmptyEntries).Last().
+                                                            ToLower(CultureInfo.CurrentCulture)))) ??
+                    filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(), _header.SubchannelFile.Split(new[]
+                    {
+                        '\\'
+                    }, StringSplitOptions.RemoveEmptyEntries).Last().ToUpper(CultureInfo.CurrentCulture)));
             }
 
             Tracks      = new List<Track>();
@@ -522,7 +501,7 @@ namespace Aaru.DiscImages
                             track.TrackFilter =
                                 filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    bwTrack.filename.ToLower(CultureInfo.
-                                                                                                CurrentCulture)));
+                                                                       CurrentCulture)));
 
                             if(track.TrackFilter != null)
                                 break;
@@ -530,47 +509,45 @@ namespace Aaru.DiscImages
                             track.TrackFilter =
                                 filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                    bwTrack.filename.ToUpper(CultureInfo.
-                                                                                                CurrentCulture)));
+                                                                       CurrentCulture)));
 
                             if(track.TrackFilter != null)
                                 break;
 
                             track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                                   bwTrack.filename.Split(new[]
-                                                                                                          {
-                                                                                                              '\\'
-                                                                                                          },
-                                                                                                          StringSplitOptions.
-                                                                                                              RemoveEmptyEntries).
-                                                                                   Last()));
+                                                                          bwTrack.filename.Split(new[]
+                                                                                  {
+                                                                                      '\\'
+                                                                                  },
+                                                                                  StringSplitOptions.
+                                                                                      RemoveEmptyEntries).
+                                                                              Last()));
 
                             if(track.TrackFilter != null)
                                 break;
 
                             track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                                   bwTrack.filename.Split(new[]
-                                                                                                          {
-                                                                                                              '\\'
-                                                                                                          },
-                                                                                                          StringSplitOptions.
-                                                                                                              RemoveEmptyEntries).
-                                                                                           Last().
-                                                                                           ToLower(CultureInfo.
-                                                                                                       CurrentCulture)));
+                                                                          bwTrack.filename.Split(new[]
+                                                                                  {
+                                                                                      '\\'
+                                                                                  },
+                                                                                  StringSplitOptions.
+                                                                                      RemoveEmptyEntries).
+                                                                              Last().
+                                                                              ToLower(CultureInfo.CurrentCulture)));
 
                             if(track.TrackFilter != null)
                                 break;
 
                             track.TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
-                                                                                   bwTrack.filename.Split(new[]
-                                                                                                          {
-                                                                                                              '\\'
-                                                                                                          },
-                                                                                                          StringSplitOptions.
-                                                                                                              RemoveEmptyEntries).
-                                                                                           Last().
-                                                                                           ToUpper(CultureInfo.
-                                                                                                       CurrentCulture)));
+                                                                          bwTrack.filename.Split(new[]
+                                                                                  {
+                                                                                      '\\'
+                                                                                  },
+                                                                                  StringSplitOptions.
+                                                                                      RemoveEmptyEntries).
+                                                                              Last().
+                                                                              ToUpper(CultureInfo.CurrentCulture)));
 
                             track.TrackFilter = _dataFilter;
                         } while(true);
@@ -703,7 +680,8 @@ namespace Aaru.DiscImages
                     if(!_trackFlags.ContainsKey(track.TrackSequence))
                         _trackFlags.Add(track.TrackSequence, (byte)(bwTrack.adrCtl & 0x0F));
 
-                    _imageInfo.Sectors += (ulong)((bwTrack.lastSector - bwTrack.startSector) + 1);
+                    if(bwTrack.lastSector > _imageInfo.Sectors)
+                        _imageInfo.Sectors = bwTrack.lastSector + 1;
                 }
                 else
                 {

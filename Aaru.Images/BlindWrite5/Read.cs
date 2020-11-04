@@ -831,10 +831,12 @@ namespace Aaru.DiscImages
                     if(track.TrackStartSector >= trk.pregap)
                         track.TrackStartSector -= trk.pregap;
 
+                    if(track.TrackEndSector > _imageInfo.Sectors)
+                        _imageInfo.Sectors = track.TrackEndSector + 1;
+
                     Tracks.Add(track);
                     Partitions.Add(partition);
                     _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
-                    _imageInfo.Sectors += partition.Length;
                 }
             }
 
