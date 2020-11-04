@@ -640,15 +640,14 @@ namespace Aaru.DiscImages
 
             foreach(Bw5SessionDescriptor ses in _bwSessions)
             {
-                // TODO: This does nothing, should it?
-                /*
-                Session session = new Session {SessionSequence = ses.Sequence};
-                if(ses.Start < 0) session.StartSector = 0;
-                else session.StartSector = (ulong)ses.Start;
-                session.EndSector = (ulong)ses.End;
-                session.StartTrack = ses.FirstTrack;
-                session.EndTrack = ses.LastTrack;
-                */
+                Sessions.Add(new Session
+                {
+                    SessionSequence = ses.Sequence,
+                    StartSector     = ses.Start < 0 ? 0 : (ulong)ses.Start,
+                    EndSector       = (ulong)ses.End - 1,
+                    StartTrack      = ses.FirstTrack,
+                    EndTrack        = ses.LastTrack
+                });
 
                 if(ses.Sequence < firstSession)
                     firstSession = (byte)ses.Sequence;
