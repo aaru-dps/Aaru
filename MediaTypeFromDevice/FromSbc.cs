@@ -348,11 +348,6 @@ namespace Aaru.CommonTypes
                                                        blocks);
 
                             return MediaType.Bernoulli10;
-                        case 173400 when vendor.ToLowerInvariant() == "syquest":
-                            AaruConsole.DebugWriteLine("Media detection",
-                                                       "Drive manufacturer is SyQuest, media has 173400 blocks of 256 bytes, setting media type to SQ400.");
-
-                            return MediaType.SQ400;
                     }
 
                     break;
@@ -519,6 +514,11 @@ namespace Aaru.CommonTypes
                                                        "Drive manufacturer is IOMEGA, media has 78882 blocks of 512 bytes, setting media type to PocketZIP.");
 
                             return MediaType.PocketZip;
+                        case 86700 when vendor.ToLowerInvariant() == "syquest":
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Drive manufacturer is SyQuest, media has 86700 blocks of 512 bytes, setting media type to SQ400.");
+
+                            return MediaType.SQ400;
                         case 87040 when vendor.StartsWith("iomega", StringComparison.OrdinalIgnoreCase):
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Drive manufacturer is IOMEGA, media has 87040 blocks of 512 bytes, setting media type to 44Mb Bernoulli Box II.");

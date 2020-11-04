@@ -703,7 +703,9 @@ namespace Aaru.CommonTypes.Metadata
                     dmns.Thickness       = 9.5;
 
                     return dmns;
+                case CommonTypes.MediaType.SQ400:
                 case CommonTypes.MediaType.SQ800:
+                case CommonTypes.MediaType.SQ2000:
                     dmns.Height          = 137;
                     dmns.HeightSpecified = true;
                     dmns.Width           = 137;
