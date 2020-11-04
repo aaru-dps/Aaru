@@ -161,16 +161,9 @@ namespace Aaru.Core.Devices.Dumping
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                                           desiredSubchannel, sub, i,
-                                                                                           _maximumReadable, subLog,
-                                                                                           isrcs, 0xAA, ref mcn, tracks,
-                                                                                           subchannelExtents,
-                                                                                           _fixSubchannelPosition,
-                                                                                           _outputPlugin,
-                                                                                           _fixSubchannel,
-                                                                                           _fixSubchannelCrc, _dumpLog,
-                                                                                           UpdateStatus,
-                                                                                           smallestPregapLbaPerTrack);
+                                desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
+                                subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -336,16 +329,9 @@ namespace Aaru.Core.Devices.Dumping
                             _outputPlugin.WriteSectorsLong(data, i, _maximumReadable);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                                                                           desiredSubchannel, sub, i,
-                                                                                           _maximumReadable, subLog,
-                                                                                           isrcs, 0xAA, ref mcn, tracks,
-                                                                                           subchannelExtents,
-                                                                                           _fixSubchannelPosition,
-                                                                                           _outputPlugin,
-                                                                                           _fixSubchannel,
-                                                                                           _fixSubchannelCrc, _dumpLog,
-                                                                                           UpdateStatus,
-                                                                                           smallestPregapLbaPerTrack);
+                                desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
+                                subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
+                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                             // Set tracks and go back
                             if(indexesChanged)

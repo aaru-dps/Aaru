@@ -202,7 +202,7 @@ namespace Aaru.Core.Devices.Dumping
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel, sub, badSector, 1, subLog, isrcs, (byte)track.TrackSequence, ref mcn,
                         tracks, subchannelExtents, _fixSubchannelPosition, _outputPlugin, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack);
+                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                     // Set tracks and go back
                     if(!indexesChanged)

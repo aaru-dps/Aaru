@@ -676,17 +676,13 @@ namespace Aaru.Gui.ViewModels.Windows
             });
 
             foreach(MediaTagType mediaTag in _inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-                                                                                           !outputFormat.
-                                                                                            SupportedMediaTags.
-                                                                                            Contains(mediaTag) &&
-                                                                                           !ForceChecked))
+                !outputFormat.SupportedMediaTags.Contains(mediaTag) && !ForceChecked))
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                            $"Converting image will lose media tag {mediaTag}, not continuing...",
-                                                                                                            icon: Icon.
-                                                                                                                Error).
-                                                                                ShowDialog(_view));
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Converting image will lose media tag {mediaTag}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
                 return;
             }
@@ -694,9 +690,7 @@ namespace Aaru.Gui.ViewModels.Windows
             bool useLong = _inputFormat.Info.ReadableSectorTags.Count != 0;
 
             foreach(SectorTagType sectorTag in _inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
-                                                                                              !outputFormat.
-                                                                                               SupportedSectorTags.
-                                                                                               Contains(sectorTag)))
+                !outputFormat.SupportedSectorTags.Contains(sectorTag)))
             {
                 if(ForceChecked)
                 {
@@ -709,11 +703,10 @@ namespace Aaru.Gui.ViewModels.Windows
                 }
 
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                            $"Converting image will lose sector tag {sectorTag}, not continuing...",
-                                                                                                            icon: Icon.
-                                                                                                                Error).
-                                                                                ShowDialog(_view));
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Converting image will lose sector tag {sectorTag}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
                 return;
             }
@@ -763,11 +756,10 @@ namespace Aaru.Gui.ViewModels.Windows
                                     _inputFormat.Info.Sectors, _inputFormat.Info.SectorSize))
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                            $"Error {outputFormat.ErrorMessage} creating output image.",
-                                                                                                            icon: Icon.
-                                                                                                                Error).
-                                                                                ShowDialog(_view));
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {outputFormat.ErrorMessage} creating output image.",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
                 AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
@@ -810,12 +802,9 @@ namespace Aaru.Gui.ViewModels.Windows
                     if(ForceChecked != true)
                     {
                         await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                        GetMessageBoxStandardWindow("Error",
-                                                                                                                    $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
-                                                                                                                    icon
-                                                                                                                    : Icon.
-                                                                                                                        Error).
-                                                                                        ShowDialog(_view));
+                                                                  GetMessageBoxStandardWindow("Error",
+                                                                      $"Error {outputFormat.ErrorMessage} setting metadata, not continuing...",
+                                                                      icon: Icon.Error).ShowDialog(_view));
 
                         AaruConsole.ErrorWriteLine("not continuing...");
 
@@ -841,12 +830,10 @@ namespace Aaru.Gui.ViewModels.Windows
                 if(!outputOptical.SetTracks(tracks))
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                    GetMessageBoxStandardWindow("Error",
-                                                                                                                $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
-                                                                                                                icon:
-                                                                                                                Icon.
-                                                                                                                    Error).
-                                                                                    ShowDialog(_view));
+                                                                                  GetMessageBoxStandardWindow("Error",
+                                                                                      $"Error {outputFormat.ErrorMessage} sending tracks list to output image.",
+                                                                                      icon: Icon.Error).
+                                                                                  ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                                outputFormat.ErrorMessage);
@@ -881,12 +868,10 @@ namespace Aaru.Gui.ViewModels.Windows
                 else
                 {
                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                    GetMessageBoxStandardWindow("Error",
-                                                                                                                $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
-                                                                                                                icon:
-                                                                                                                Icon.
-                                                                                                                    Error).
-                                                                                    ShowDialog(_view));
+                                                                                  GetMessageBoxStandardWindow("Error",
+                                                                                      $"Error {outputFormat.ErrorMessage} writing media tag, not continuing...",
+                                                                                      icon: Icon.Error).
+                                                                                  ShowDialog(_view));
 
                     AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                                outputFormat.ErrorMessage);
@@ -990,12 +975,9 @@ namespace Aaru.Gui.ViewModels.Windows
                         else
                         {
                             await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                            GetMessageBoxStandardWindow("Error",
-                                                                                                                        $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                                                                        icon
-                                                                                                                        : Icon.
-                                                                                                                            Error).
-                                                                                            ShowDialog(_view));
+                                                                      GetMessageBoxStandardWindow("Error",
+                                                                          $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                          icon: Icon.Error).ShowDialog(_view));
 
                             AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                        outputFormat.ErrorMessage, doneSectors);
@@ -1121,14 +1103,9 @@ namespace Aaru.Gui.ViewModels.Windows
                                track != null)
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                                                                         MmcSubchannel.Raw, sector,
-                                                                                         doneSectors, 1, null, isrcs,
-                                                                                         (byte)track.TrackSequence,
-                                                                                         ref mcn, tracks.ToArray(),
-                                                                                         subchannelExtents, false,
-                                                                                         outputFormat, false, false,
-                                                                                         null, null,
-                                                                                         smallestPregapLbaPerTrack);
+                                    MmcSubchannel.Raw, sector, doneSectors, 1, null, isrcs,
+                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1148,15 +1125,9 @@ namespace Aaru.Gui.ViewModels.Windows
 
                             {
                                 bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                                                                         MmcSubchannel.Raw, sector,
-                                                                                         doneSectors, sectorsToDo, null,
-                                                                                         isrcs,
-                                                                                         (byte)track.TrackSequence,
-                                                                                         ref mcn, tracks.ToArray(),
-                                                                                         subchannelExtents, false,
-                                                                                         outputFormat, false, false,
-                                                                                         null, null,
-                                                                                         smallestPregapLbaPerTrack);
+                                    MmcSubchannel.Raw, sector, doneSectors, sectorsToDo, null, isrcs,
+                                    (byte)track.TrackSequence, ref mcn, tracks.ToArray(), subchannelExtents, false,
+                                    outputFormat, false, false, null, null, smallestPregapLbaPerTrack, false);
 
                                 if(indexesChanged)
                                     outputOptical.SetTracks(tracks.ToList());
@@ -1178,12 +1149,10 @@ namespace Aaru.Gui.ViewModels.Windows
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                                            $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                                                                            icon
-                                                                                                                            : Icon.
-                                                                                                                                Error).
-                                                                                                ShowDialog(_view));
+                                                                          GetMessageBoxStandardWindow("Error",
+                                                                              $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                              icon: Icon.Error).
+                                                                          ShowDialog(_view));
 
                                 AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                            outputFormat.ErrorMessage, doneSectors);
@@ -1301,12 +1270,10 @@ namespace Aaru.Gui.ViewModels.Windows
                             else
                             {
                                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                                            $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
-                                                                                                                            icon
-                                                                                                                            : Icon.
-                                                                                                                                Error).
-                                                                                                ShowDialog(_view));
+                                                                          GetMessageBoxStandardWindow("Error",
+                                                                              $"Error {outputFormat.ErrorMessage} writing sector {doneSectors}, not continuing...",
+                                                                              icon: Icon.Error).
+                                                                          ShowDialog(_view));
 
                                 return;
                             }
@@ -1323,9 +1290,8 @@ namespace Aaru.Gui.ViewModels.Windows
                     Progress2Value = Progress2MaxValue;
                 });
 
-                foreach(SectorTagType tag in _inputFormat.
-                                             Info.ReadableSectorTags.OrderBy(t => t).
-                                             TakeWhile(tag => useLong && !_cancel))
+                foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.OrderBy(t => t).
+                                                          TakeWhile(tag => useLong && !_cancel))
                 {
                     switch(tag)
                     {
@@ -1380,12 +1346,10 @@ namespace Aaru.Gui.ViewModels.Windows
                                     {
                                         await Dispatcher.UIThread.InvokeAsync(action: async () =>
                                                                                   await MessageBoxManager.
-                                                                                        GetMessageBoxStandardWindow("Error",
-                                                                                                                    $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
-                                                                                                                    icon
-                                                                                                                    : Icon.
-                                                                                                                        Error).
-                                                                                        ShowDialog(_view));
+                                                                                      GetMessageBoxStandardWindow("Error",
+                                                                                          $"Error {outputFormat.ErrorMessage} writing tag, not continuing...",
+                                                                                          icon: Icon.Error).
+                                                                                      ShowDialog(_view));
 
                                         return;
                                     }
@@ -1440,12 +1404,10 @@ namespace Aaru.Gui.ViewModels.Windows
                                 else
                                 {
                                     await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                                    GetMessageBoxStandardWindow("Error",
-                                                                                                                                $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
-                                                                                                                                icon
-                                                                                                                                : Icon.
-                                                                                                                                    Error).
-                                                                                                    ShowDialog(_view));
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {outputFormat.ErrorMessage} writing tag for sector {doneSectors}, not continuing...",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
                                     return;
                                 }
@@ -1523,11 +1485,10 @@ namespace Aaru.Gui.ViewModels.Windows
             if(!outputFormat.Close())
             {
                 await Dispatcher.UIThread.InvokeAsync(action: async () => await MessageBoxManager.
-                                                                                GetMessageBoxStandardWindow("Error",
-                                                                                                            $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
-                                                                                                            icon: Icon.
-                                                                                                                Error).
-                                                                                ShowDialog(_view));
+                                                                              GetMessageBoxStandardWindow("Error",
+                                                                                  $"Error {outputFormat.ErrorMessage} closing output image... Contents are not correct.",
+                                                                                  icon: Icon.Error).
+                                                                              ShowDialog(_view));
 
                 return;
             }
