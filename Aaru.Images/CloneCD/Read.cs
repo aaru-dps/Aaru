@@ -433,8 +433,6 @@ namespace Aaru.DiscImages
 
                                             Tracks.Add(currentTrack);
                                         }
-                                        else
-                                            firstTrackInSession = false;
 
                                         currentTrack = new Track
                                         {
@@ -448,6 +446,23 @@ namespace Aaru.DiscImages
                                                 GetLba(descriptor.PMIN, descriptor.PSEC, descriptor.PFRAME),
                                             TrackSession = descriptor.SessionNumber
                                         };
+
+                                        if(firstTrackInSession)
+                                        {
+                                            currentTrack.TrackPregap = 150;
+
+                                            if(currentTrack.TrackStartSector > 0)
+                                            {
+                                                currentTrack.Indexes[0] = (int)currentTrack.TrackStartSector - 150;
+
+                                                if(currentTrack.Indexes[0] < 0)
+                                                    currentTrack.Indexes[0] = 0;
+                                            }
+                                        }
+
+                                        currentTrack.Indexes[1] = (int)currentTrack.TrackStartSector;
+
+                                        firstTrackInSession = false;
 
                                         // Need to check exact data type later
                                         if((TocControl)(descriptor.CONTROL & 0x0D) == TocControl.DataTrack ||
