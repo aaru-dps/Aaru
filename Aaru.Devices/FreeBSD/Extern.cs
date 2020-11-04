@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 
 namespace Aaru.Devices.FreeBSD
 {
+    [Obsolete]
     internal static class Extern
     {
         [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]

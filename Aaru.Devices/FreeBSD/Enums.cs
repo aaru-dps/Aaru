@@ -35,7 +35,7 @@ using System;
 
 namespace Aaru.Devices.FreeBSD
 {
-    [Flags]
+    [Flags, Obsolete]
     internal enum FileFlags
     {
         /// <summary>O_RDONLY</summary>
@@ -78,7 +78,7 @@ namespace Aaru.Devices.FreeBSD
         CloseOnExec = 0x00100000
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum CamAtaIoFlags : byte
     {
         /// <summary>48-bit command</summary>
@@ -94,7 +94,7 @@ namespace Aaru.Devices.FreeBSD
     }
 
     /// <summary>XPT Opcodes for xpt_action</summary>
-    [Flags]
+    [Flags, Obsolete]
     internal enum XptOpcode
     {
         // Function code flags are bits greater than 0xff
@@ -201,18 +201,20 @@ namespace Aaru.Devices.FreeBSD
         XptVunique = 0x80
     }
 
+    [Obsolete]
     internal enum CcbDevMatchStatus
     {
         CamDevMatchLast, CamDevMatchMore, CamDevMatchListChanged,
         CamDevMatchSizeError, CamDevMatchError
     }
 
+    [Obsolete]
     internal enum DevMatchType
     {
         DevMatchPeriph = 0, DevMatchDevice, DevMatchBus
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum PeriphPatternFlags
     {
         PeriphMatchNone = 0x000, PeriphMatchPath = 0x001, PeriphMatchTarget = 0x002,
@@ -221,7 +223,7 @@ namespace Aaru.Devices.FreeBSD
         //  PERIPH_MATCH_ANY = 0x01f
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum DevPatternFlags
     {
         DevMatchNone = 0x000, DevMatchPath    = 0x001, DevMatchTarget = 0x002,
@@ -230,7 +232,7 @@ namespace Aaru.Devices.FreeBSD
         //  DEV_MATCH_ANY = 0x00f
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum BusPatternFlags
     {
         BusMatchNone = 0x000, BusMatchPath  = 0x001, BusMatchName = 0x002,
@@ -239,12 +241,13 @@ namespace Aaru.Devices.FreeBSD
         //  BUS_MATCH_ANY = 0x00f
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum DevResultFlags
     {
         DevResultNoflag = 0x00, DevResultUnconfigured = 0x01
     }
 
+    [Obsolete]
     internal enum CamProto
     {
         ProtoUnknown, ProtoUnspecified,
@@ -271,20 +274,21 @@ namespace Aaru.Devices.FreeBSD
         ProtoMmcsd
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum MmcCardFeatures
     {
         CardFeatureMemory = 0x1, CardFeatureSdhc = 0x1 << 1, CardFeatureSdio = 0x1 << 2,
         CardFeatureSd20   = 0x1                        << 3, CardFeatureMmc  = 0x1 << 4, CardFeature18V = 0x1 << 5
     }
 
+    [Obsolete]
     internal enum CamGenerations : uint
     {
         CamBusGeneration    = 0x00, CamTargetGeneration = 0x01, CamDevGeneration = 0x02,
         CamPeriphGeneration = 0x03
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum DevPosType
     {
         CamDevPosNone   = 0x000, CamDevPosBus    = 0x001, CamDevPosTarget = 0x002,
@@ -294,12 +298,13 @@ namespace Aaru.Devices.FreeBSD
         CamDevPosEdt = 0x100, CamDevPosPdrv = 0x200
     }
 
+    [Obsolete]
     internal enum FreebsdIoctl : uint
     {
         Camiocommand = 0xC4D81802
     }
 
-    [Flags]
+    [Flags, Obsolete]
     internal enum CcbFlags : uint
     {
         /// <summary>The CDB field is a pointer</summary>
@@ -389,6 +394,7 @@ namespace Aaru.Devices.FreeBSD
         CamUnlocked = 0x80000000
     }
 
+    [Obsolete]
     internal enum CamStatus : uint
     {
         /// <summary>CCB request is in progress</summary>

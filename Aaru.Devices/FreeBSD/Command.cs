@@ -40,7 +40,7 @@ using static Aaru.Devices.FreeBSD.Extern;
 
 namespace Aaru.Devices.FreeBSD
 {
-    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
+    [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags"), Obsolete]
     internal static class Command
     {
         const int CAM_MAX_CDBLEN = 16;
@@ -58,6 +58,7 @@ namespace Aaru.Devices.FreeBSD
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
+        [Obsolete]
         internal static int SendScsiCommand64(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                               uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
@@ -176,6 +177,7 @@ namespace Aaru.Devices.FreeBSD
         ///     <c>True</c> if SCSI error returned non-OK status and <paramref name="senseBuffer" /> contains SCSI
         ///     sense
         /// </param>
+        [Obsolete]
         internal static int SendScsiCommand(IntPtr dev, byte[] cdb, ref byte[] buffer, out byte[] senseBuffer,
                                             uint timeout, CcbFlags direction, out double duration, out bool sense)
         {
@@ -284,6 +286,7 @@ namespace Aaru.Devices.FreeBSD
         /// <summary>Converts ATA protocol to CAM flags</summary>
         /// <param name="protocol">ATA protocol</param>
         /// <returns>CAM flags</returns>
+        [Obsolete]
         static CcbFlags AtaProtocolToCamFlags(AtaProtocol protocol)
         {
             switch(protocol)
@@ -312,6 +315,7 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
+        [Obsolete]
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersChs registers,
                                            out AtaErrorRegistersChs errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -414,6 +418,7 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
+        [Obsolete]
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba28 registers,
                                            out AtaErrorRegistersLba28 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)
@@ -516,6 +521,7 @@ namespace Aaru.Devices.FreeBSD
         /// <param name="registers">Registers to send to drive</param>
         /// <param name="errorRegisters">Registers returned by drive</param>
         /// <param name="protocol">ATA protocol to use</param>
+        [Obsolete]
         internal static int SendAtaCommand(IntPtr dev, AtaRegistersLba48 registers,
                                            out AtaErrorRegistersLba48 errorRegisters, AtaProtocol protocol,
                                            ref byte[] buffer, uint timeout, out double duration, out bool sense)

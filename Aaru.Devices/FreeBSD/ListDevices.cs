@@ -42,10 +42,12 @@ using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Devices.FreeBSD
 {
+    [Obsolete]
     internal static class ListDevices
     {
         /// <summary>Gets a list of all known storage devices on FreeBSD</summary>
         /// <returns>List of devices</returns>
+        [Obsolete]
         internal static DeviceInfo[] GetList()
         {
             string[]         passDevices = Directory.GetFiles("/dev/", "pass*", SearchOption.TopDirectoryOnly);

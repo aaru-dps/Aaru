@@ -45,7 +45,7 @@ using target_id_t = System.UInt32;
 
 namespace Aaru.Devices.FreeBSD
 {
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct AtaCmd
     {
         public CamAtaIoFlags flags;
@@ -64,7 +64,7 @@ namespace Aaru.Devices.FreeBSD
         public byte          control;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct AtaRes
     {
         public CamAtaIoFlags flags;
@@ -81,7 +81,7 @@ namespace Aaru.Devices.FreeBSD
         public byte          sector_count_exp;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CamPinfo
     {
         public uint priority;
@@ -89,7 +89,7 @@ namespace Aaru.Devices.FreeBSD
         public int  index;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct ListEntry
     {
         /// <summary>LIST_ENTRY(ccb_hdr)=le->*le_next</summary>
@@ -98,14 +98,14 @@ namespace Aaru.Devices.FreeBSD
         public IntPtr LePrev;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct SlistEntry
     {
         /// <summary>SLIST_ENTRY(ccb_hdr)=sle->*sle_next</summary>
         public IntPtr SleNext;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct TailqEntry
     {
         /// <summary>TAILQ_ENTRY(ccb_hdr)=tqe->*tqe_next</summary>
@@ -114,14 +114,14 @@ namespace Aaru.Devices.FreeBSD
         public IntPtr TqePrev;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct StailqEntry
     {
         /// <summary>STAILQ_ENTRY(ccb_hdr)=stqe->*stqe_next</summary>
         public IntPtr StqeNext;
     }
 
-    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CamqEntry
     {
         [FieldOffset(0)]
@@ -134,7 +134,7 @@ namespace Aaru.Devices.FreeBSD
         public StailqEntry stqe;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct Timeval
     {
         public long tv_sec;
@@ -142,7 +142,7 @@ namespace Aaru.Devices.FreeBSD
         public IntPtr tv_usec;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbQosArea
     {
         public Timeval etime;
@@ -150,7 +150,7 @@ namespace Aaru.Devices.FreeBSD
         public UIntPtr periph_data;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbHdr
     {
         public CamPinfo  pinfo;
@@ -176,7 +176,7 @@ namespace Aaru.Devices.FreeBSD
         public Timeval    softtimeout;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct ScsiSenseData
     {
         const  int  SSD_FULL_SIZE = 252;
@@ -186,7 +186,7 @@ namespace Aaru.Devices.FreeBSD
     }
 
     /// <summary>SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.</summary>
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbScsiio
     {
         public CcbHdr ccb_h;
@@ -232,7 +232,7 @@ namespace Aaru.Devices.FreeBSD
     }
 
     /// <summary>SCSI I/O Request CCB used for the XPT_SCSI_IO and XPT_CONT_TARGET_IO function codes.</summary>
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbScsiio64
     {
         public CcbHdr ccb_h;
@@ -279,7 +279,7 @@ namespace Aaru.Devices.FreeBSD
     }
 
     /// <summary>ATA I/O Request CCB used for the XPT_ATA_IO function code.</summary>
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbAtaio
     {
         public CcbHdr ccb_h;
@@ -301,7 +301,7 @@ namespace Aaru.Devices.FreeBSD
         public uint unused;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct NvmeCommand
     {
         readonly ushort opc_fuse_rsvd1;
@@ -340,7 +340,7 @@ namespace Aaru.Devices.FreeBSD
         public byte Rsvd1 => (byte)(opc_fuse_rsvd1 & 0x3F);
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct NvmeStatus
     {
         readonly ushort status;
@@ -364,7 +364,7 @@ namespace Aaru.Devices.FreeBSD
         public byte Dnr => (byte)(status & 0x1);
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct NvmeCompletion
     {
         /// <summary>command-specific</summary>
@@ -386,7 +386,7 @@ namespace Aaru.Devices.FreeBSD
     }
 
     /// <summary>NVMe I/O Request CCB used for the XPT_NVME_IO and XPT_NVME_ADMIN function codes.</summary>
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbNvmeio
     {
         public CcbHdr ccb_h;
@@ -406,7 +406,7 @@ namespace Aaru.Devices.FreeBSD
         public ushort unused;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct PeriphMatchPattern
     {
         const int DEV_IDLEN = 16;
@@ -420,7 +420,7 @@ namespace Aaru.Devices.FreeBSD
         public PeriphPatternFlags flags;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DeviceIdMatchPattern
     {
         public byte id_len;
@@ -428,7 +428,7 @@ namespace Aaru.Devices.FreeBSD
         public byte[] id;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct ScsiStaticInquiryPattern
     {
         const  int  SID_VENDOR_SIZE   = 8;
@@ -444,7 +444,7 @@ namespace Aaru.Devices.FreeBSD
         public byte[] revision;
     }
 
-    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DeviceMatchPatternData
     {
         [FieldOffset(0)]
@@ -453,7 +453,7 @@ namespace Aaru.Devices.FreeBSD
         public DeviceIdMatchPattern devid_pat;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DeviceMatchPattern
     {
         public uint                   path_id;
@@ -463,7 +463,7 @@ namespace Aaru.Devices.FreeBSD
         public DeviceMatchPatternData data;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct BusMatchPattern
     {
         const int DEV_IDLEN = 16;
@@ -476,7 +476,7 @@ namespace Aaru.Devices.FreeBSD
         readonly BusPatternFlags flags;
     }
 
-    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct MatchPattern
     {
         [FieldOffset(0)]
@@ -487,14 +487,14 @@ namespace Aaru.Devices.FreeBSD
         public BusMatchPattern bus_pattern;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DevMatchPattern
     {
         public DevMatchType type;
         public MatchPattern pattern;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct PeriphMatchResult
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -505,7 +505,7 @@ namespace Aaru.Devices.FreeBSD
         public lun_id_t    target_lun;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct MmcCid
     {
         public uint mid;
@@ -519,7 +519,7 @@ namespace Aaru.Devices.FreeBSD
         public byte   fwrev;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct MmcParams
     {
         /// <summary>Card model</summary>
@@ -552,7 +552,7 @@ namespace Aaru.Devices.FreeBSD
         public byte sdio_func_count;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DeviceMatchResult
     {
         public path_id_t   path_id;
@@ -567,7 +567,7 @@ namespace Aaru.Devices.FreeBSD
         public MmcParams      mmc_ident_data;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct BusMatchResult
     {
         public path_id_t path_id;
@@ -578,7 +578,7 @@ namespace Aaru.Devices.FreeBSD
         public uint bus_id;
     }
 
-    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct MatchResult
     {
         [FieldOffset(0)]
@@ -589,14 +589,14 @@ namespace Aaru.Devices.FreeBSD
         public BusMatchResult bus_result;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct DevMatchResult
     {
         public DevMatchType type;
         public MatchResult  result;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbDmCookie
     {
         public IntPtr bus;
@@ -606,7 +606,7 @@ namespace Aaru.Devices.FreeBSD
         public IntPtr pdrv;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbDevPosition
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -615,7 +615,7 @@ namespace Aaru.Devices.FreeBSD
         public   CcbDmCookie cookie;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbDevMatch
     {
         public   CcbHdr            ccb_h;
@@ -635,7 +635,7 @@ namespace Aaru.Devices.FreeBSD
         public CcbDevPosition pos;
     }
 
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CamDevice
     {
         const int MAXPATHLEN = 1024;
@@ -690,7 +690,7 @@ namespace Aaru.Devices.FreeBSD
         public int Fd;
     }
 
-    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), Obsolete]
     internal struct CcbGetdev
     {
         public CcbHdr   ccb_h;
