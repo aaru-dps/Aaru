@@ -809,10 +809,16 @@ namespace Aaru.DiscImages
                     track.TrackSequence = trk.point;
                     track.TrackType     = BlindWriteTrackTypeToTrackType(trk.type);
 
-                    if(trk.pregap > 0)
-                        track.Indexes.Add(0, (int)(track.TrackStartSector - trk.pregap));
+                    if(trk.pregap             > 0 &&
+                       track.TrackStartSector > 0)
+                    {
+                        track.Indexes[0] = (int)track.TrackStartSector - (int)trk.pregap;
 
-                    track.Indexes.Add(1, (int)track.TrackStartSector);
+                        if(track.Indexes[0] < 0)
+                            track.Indexes[0] = 0;
+                    }
+
+                    track.Indexes[1] = (int)track.TrackStartSector;
 
                     partition.Description = track.TrackDescription;
 
