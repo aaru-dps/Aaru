@@ -561,6 +561,11 @@ namespace Aaru.CommonTypes
                                                        "Drive manufacturer is SyQuest, media has 262144 blocks of 512 bytes, setting media type to EZ135.");
 
                             return MediaType.EZ135;
+                        case 294918 when vendor.StartsWith("iomega", StringComparison.OrdinalIgnoreCase):
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Drive manufacturer is IOMEGA, media has 294918 blocks of 512 bytes, setting media type to 150Mb Bernoulli Box II.");
+
+                            return MediaType.Bernoulli150;
                         case 390696 when vendor.ToLowerInvariant() == "syquest":
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Drive manufacturer is SyQuest, media has 390696 blocks of 512 bytes, setting media type to SQ2000.");
