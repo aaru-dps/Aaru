@@ -280,11 +280,25 @@ namespace Aaru.DiscImages
             _header.applicationMajorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Major;
             _header.applicationMinorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Minor;
 
-            _index = new List<IndexEntry>();
+            // Initialize tables
+            _index                        = new List<IndexEntry>();
+            _mediaTags                    = new Dictionary<MediaTagType, byte[]>();
+            _checksumProvider             = SHA256.Create();
+            _deduplicationTable           = new Dictionary<string, ulong>();
+            _trackIsrcs                   = new Dictionary<byte, string>();
+            _trackFlags                   = new Dictionary<byte, byte>();
+            _imageInfo.ReadableSectorTags = new List<SectorTagType>();
 
             // If there exists an index, we are appending, so read index
             if(_header.indexOffset > 0)
             {
+                List<CompactDiscIndexEntry> compactDiscIndexes = null;
+
+                // Initialize caches
+                _blockCache       = new Dictionary<ulong, byte[]>();
+                _blockHeaderCache = new Dictionary<ulong, BlockHeader>();
+                _currentCacheSize = 0;
+
                 // Can't calculate checksum of an appended image
                 _md5Provider     = null;
                 _sha1Provider    = null;
@@ -587,6 +601,289 @@ namespace Aaru.DiscImages
 
                             break;
 
+                        // Logical geometry block. It doesn't have a CRC coz, well, it's not so important
+                        case BlockType.GeometryBlock:
+                            _structureBytes = new byte[Marshal.SizeOf<GeometryBlock>()];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                            _geometryBlock = Marshal.SpanToStructureLittleEndian<GeometryBlock>(_structureBytes);
+
+                            if(_geometryBlock.identifier == BlockType.GeometryBlock)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Geometry set to {0} cylinders {1} heads {2} sectors per track",
+                                                           _geometryBlock.cylinders, _geometryBlock.heads,
+                                                           _geometryBlock.sectorsPerTrack);
+
+                                _imageInfo.Cylinders       = _geometryBlock.cylinders;
+                                _imageInfo.Heads           = _geometryBlock.heads;
+                                _imageInfo.SectorsPerTrack = _geometryBlock.sectorsPerTrack;
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
+                            }
+
+                            break;
+
+                        // Metadata block
+                        case BlockType.MetadataBlock:
+                            _structureBytes = new byte[Marshal.SizeOf<MetadataBlock>()];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+
+                            MetadataBlock metadataBlock =
+                                Marshal.SpanToStructureLittleEndian<MetadataBlock>(_structureBytes);
+
+                            if(metadataBlock.identifier != entry.blockType)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Incorrect identifier for data block at position {0}",
+                                                           entry.offset);
+
+                                break;
+                            }
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Found metadata block at position {0}",
+                                                       entry.offset);
+
+                            byte[] metadata = new byte[metadataBlock.blockSize];
+                            _imageStream.Position = (long)entry.offset;
+                            _imageStream.Read(metadata, 0, metadata.Length);
+
+                            if(metadataBlock.mediaSequence     > 0 &&
+                               metadataBlock.lastMediaSequence > 0)
+                            {
+                                _imageInfo.MediaSequence     = metadataBlock.mediaSequence;
+                                _imageInfo.LastMediaSequence = metadataBlock.lastMediaSequence;
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media sequence as {0} of {1}",
+                                                           _imageInfo.MediaSequence, _imageInfo.LastMediaSequence);
+                            }
+
+                            if(metadataBlock.creatorLength                               > 0 &&
+                               metadataBlock.creatorLength + metadataBlock.creatorOffset <= metadata.Length)
+                            {
+                                _imageInfo.Creator =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.creatorOffset,
+                                                               (int)(metadataBlock.creatorLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting creator: {0}",
+                                                           _imageInfo.Creator);
+                            }
+
+                            if(metadataBlock.commentsOffset                                > 0 &&
+                               metadataBlock.commentsLength + metadataBlock.commentsOffset <= metadata.Length)
+                            {
+                                _imageInfo.Comments =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.commentsOffset,
+                                                               (int)(metadataBlock.commentsLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting comments: {0}",
+                                                           _imageInfo.Comments);
+                            }
+
+                            if(metadataBlock.mediaTitleOffset                                  > 0 &&
+                               metadataBlock.mediaTitleLength + metadataBlock.mediaTitleOffset <= metadata.Length)
+                            {
+                                _imageInfo.MediaTitle =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaTitleOffset,
+                                                               (int)(metadataBlock.mediaTitleLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media title: {0}",
+                                                           _imageInfo.MediaTitle);
+                            }
+
+                            if(metadataBlock.mediaManufacturerOffset > 0 &&
+                               metadataBlock.mediaManufacturerLength + metadataBlock.mediaManufacturerOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.MediaManufacturer =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaManufacturerOffset,
+                                                               (int)(metadataBlock.mediaManufacturerLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media manufacturer: {0}",
+                                                           _imageInfo.MediaManufacturer);
+                            }
+
+                            if(metadataBlock.mediaModelOffset                                  > 0 &&
+                               metadataBlock.mediaModelLength + metadataBlock.mediaModelOffset <= metadata.Length)
+                            {
+                                _imageInfo.MediaModel =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaModelOffset,
+                                                               (int)(metadataBlock.mediaModelLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media model: {0}",
+                                                           _imageInfo.MediaModel);
+                            }
+
+                            if(metadataBlock.mediaSerialNumberOffset > 0 &&
+                               metadataBlock.mediaSerialNumberLength + metadataBlock.mediaSerialNumberOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.MediaSerialNumber =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaSerialNumberOffset,
+                                                               (int)(metadataBlock.mediaSerialNumberLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media serial number: {0}",
+                                                           _imageInfo.MediaSerialNumber);
+                            }
+
+                            if(metadataBlock.mediaBarcodeOffset                                    > 0 &&
+                               metadataBlock.mediaBarcodeLength + metadataBlock.mediaBarcodeOffset <= metadata.Length)
+                            {
+                                _imageInfo.MediaBarcode =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaBarcodeOffset,
+                                                               (int)(metadataBlock.mediaBarcodeLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media barcode: {0}",
+                                                           _imageInfo.MediaBarcode);
+                            }
+
+                            if(metadataBlock.mediaPartNumberOffset > 0 &&
+                               metadataBlock.mediaPartNumberLength + metadataBlock.mediaPartNumberOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.MediaPartNumber =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaPartNumberOffset,
+                                                               (int)(metadataBlock.mediaPartNumberLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting media part number: {0}",
+                                                           _imageInfo.MediaPartNumber);
+                            }
+
+                            if(metadataBlock.driveManufacturerOffset > 0 &&
+                               metadataBlock.driveManufacturerLength + metadataBlock.driveManufacturerOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.DriveManufacturer =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveManufacturerOffset,
+                                                               (int)(metadataBlock.driveManufacturerLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting drive manufacturer: {0}",
+                                                           _imageInfo.DriveManufacturer);
+                            }
+
+                            if(metadataBlock.driveModelOffset                                  > 0 &&
+                               metadataBlock.driveModelLength + metadataBlock.driveModelOffset <= metadata.Length)
+                            {
+                                _imageInfo.DriveModel =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveModelOffset,
+                                                               (int)(metadataBlock.driveModelLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting drive model: {0}",
+                                                           _imageInfo.DriveModel);
+                            }
+
+                            if(metadataBlock.driveSerialNumberOffset > 0 &&
+                               metadataBlock.driveSerialNumberLength + metadataBlock.driveSerialNumberOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.DriveSerialNumber =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveSerialNumberOffset,
+                                                               (int)(metadataBlock.driveSerialNumberLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting drive serial number: {0}",
+                                                           _imageInfo.DriveSerialNumber);
+                            }
+
+                            if(metadataBlock.driveFirmwareRevisionOffset > 0 &&
+                               metadataBlock.driveFirmwareRevisionLength + metadataBlock.driveFirmwareRevisionOffset <=
+                               metadata.Length)
+                            {
+                                _imageInfo.DriveFirmwareRevision =
+                                    Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveFirmwareRevisionOffset,
+                                                               (int)(metadataBlock.driveFirmwareRevisionLength - 2));
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Setting drive firmware revision: {0}",
+                                                           _imageInfo.DriveFirmwareRevision);
+                            }
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                       GC.GetTotalMemory(false));
+
+                            break;
+
+                        // Optical disc tracks block
+                        case BlockType.TracksBlock:
+                            _structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+
+                            TracksHeader tracksHeader =
+                                Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
+
+                            if(tracksHeader.identifier != BlockType.TracksBlock)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Incorrect identifier for tracks block at position {0}",
+                                                           entry.offset);
+
+                                break;
+                            }
+
+                            _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * tracksHeader.entries];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                            Crc64Context.Data(_structureBytes, out byte[] trksCrc);
+
+                            if(BitConverter.ToUInt64(trksCrc, 0) != tracksHeader.crc64)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                           BitConverter.ToUInt64(trksCrc, 0), tracksHeader.crc64);
+
+                                break;
+                            }
+
+                            _imageStream.Position -= _structureBytes.Length;
+
+                            Tracks      = new List<Track>();
+                            _trackFlags = new Dictionary<byte, byte>();
+                            _trackIsrcs = new Dictionary<byte, string>();
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Found {0} tracks at position {0}",
+                                                       tracksHeader.entries, entry.offset);
+
+                            for(ushort i = 0; i < tracksHeader.entries; i++)
+                            {
+                                _structureBytes = new byte[Marshal.SizeOf<TrackEntry>()];
+                                _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+
+                                TrackEntry trackEntry =
+                                    Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(_structureBytes);
+
+                                Tracks.Add(new Track
+                                {
+                                    TrackSequence    = trackEntry.sequence,
+                                    TrackType        = trackEntry.type,
+                                    TrackStartSector = (ulong)trackEntry.start,
+                                    TrackEndSector   = (ulong)trackEntry.end,
+                                    TrackPregap      = (ulong)trackEntry.pregap,
+                                    TrackSession     = trackEntry.session,
+                                    TrackFileType    = "BINARY"
+                                });
+
+                                if(trackEntry.type == TrackType.Data)
+                                    continue;
+
+                                _trackFlags.Add(trackEntry.sequence, trackEntry.flags);
+
+                                if(!string.IsNullOrEmpty(trackEntry.isrc))
+                                    _trackIsrcs.Add(trackEntry.sequence, trackEntry.isrc);
+                            }
+
+                            if(_trackFlags.Count > 0 &&
+                               !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
+
+                            if(_trackIsrcs.Count > 0 &&
+                               !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackIsrc))
+                                _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackIsrc);
+
+                            _imageInfo.HasPartitions = true;
+                            _imageInfo.HasSessions   = true;
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                       GC.GetTotalMemory(false));
+
+                            break;
+
                         // CICM XML metadata block
                         case BlockType.CicmBlock:
                             _structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
@@ -823,6 +1120,59 @@ namespace Aaru.DiscImages
                             IsTape = true;
 
                             break;
+
+                        // Optical disc tracks block
+                        case BlockType.CompactDiscIndexesBlock:
+                            _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexesHeader>()];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+
+                            CompactDiscIndexesHeader indexesHeader =
+                                Marshal.SpanToStructureLittleEndian<CompactDiscIndexesHeader>(_structureBytes);
+
+                            if(indexesHeader.identifier != BlockType.CompactDiscIndexesBlock)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Incorrect identifier for compact disc indexes block at position {0}",
+                                                           entry.offset);
+
+                                break;
+                            }
+
+                            _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>() * indexesHeader.entries];
+                            _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+                            Crc64Context.Data(_structureBytes, out byte[] idsxCrc);
+
+                            if(BitConverter.ToUInt64(idsxCrc, 0) != indexesHeader.crc64)
+                            {
+                                AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                           "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
+                                                           BitConverter.ToUInt64(idsxCrc, 0), indexesHeader.crc64);
+
+                                break;
+                            }
+
+                            _imageStream.Position -= _structureBytes.Length;
+
+                            compactDiscIndexes = new List<CompactDiscIndexEntry>();
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                       "Found {0} compact disc indexes at position {0}",
+                                                       indexesHeader.entries, entry.offset);
+
+                            for(ushort i = 0; i < indexesHeader.entries; i++)
+                            {
+                                _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>()];
+                                _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+
+                                compactDiscIndexes.Add(Marshal.
+                                                           ByteArrayToStructureLittleEndian<CompactDiscIndexEntry
+                                                           >(_structureBytes));
+                            }
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                       GC.GetTotalMemory(false));
+
+                            break;
                     }
                 }
 
@@ -842,6 +1192,153 @@ namespace Aaru.DiscImages
                     _sectorSuffixDdt = null;
                     _sectorPrefixMs  = null;
                     _sectorPrefixDdt = null;
+                }
+
+                if(!_inMemoryDdt)
+                    _ddtEntryCache = new Dictionary<ulong, ulong>();
+
+                // Initialize tracks, sessions and partitions
+                if(_imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
+                {
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    if(Tracks       == null ||
+                       Tracks.Count == 0)
+                    {
+                        Tracks = new List<Track>
+                        {
+                            new Track
+                            {
+                                TrackBytesPerSector    = (int)_imageInfo.SectorSize,
+                                TrackEndSector         = _imageInfo.Sectors - 1,
+                                TrackFileType          = "BINARY",
+                                TrackRawBytesPerSector = (int)_imageInfo.SectorSize,
+                                TrackSession           = 1,
+                                TrackSequence          = 1,
+                                TrackType              = TrackType.Data
+                            }
+                        };
+
+                        _trackFlags = new Dictionary<byte, byte>
+                        {
+                            {
+                                1, (byte)CdFlags.DataTrack
+                            }
+                        };
+
+                        _trackIsrcs = new Dictionary<byte, string>();
+                    }
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    Sessions = new List<Session>();
+
+                    for(int i = 1; i <= Tracks.Max(t => t.TrackSession); i++)
+                        Sessions.Add(new Session
+                        {
+                            SessionSequence = (ushort)i,
+                            StartTrack      = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackSequence),
+                            EndTrack        = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackSequence),
+                            StartSector     = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
+                            EndSector       = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
+                        });
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    foreach(Track track in Tracks.OrderBy(t => t.TrackStartSector))
+                    {
+                        if(track.TrackSequence == 1)
+                        {
+                            track.TrackPregap = 150;
+                            track.Indexes[0]  = -150;
+                            track.Indexes[1]  = (int)track.TrackStartSector;
+
+                            continue;
+                        }
+
+                        if(track.TrackPregap > 0)
+                        {
+                            track.Indexes[0] = (int)track.TrackStartSector;
+                            track.Indexes[1] = (int)(track.TrackStartSector + track.TrackPregap);
+                        }
+                        else
+                            track.Indexes[1] = (int)track.TrackStartSector;
+                    }
+
+                    ulong currentTrackOffset = 0;
+                    Partitions = new List<Partition>();
+
+                    foreach(Track track in Tracks.OrderBy(t => t.TrackStartSector))
+                    {
+                        Partitions.Add(new Partition
+                        {
+                            Sequence = track.TrackSequence,
+                            Type     = track.TrackType.ToString(),
+                            Name     = $"Track {track.TrackSequence}",
+                            Offset   = currentTrackOffset,
+                            Start    = (ulong)track.Indexes[1],
+                            Size = ((track.TrackEndSector - (ulong)track.Indexes[1]) + 1) *
+                                   (ulong)track.TrackBytesPerSector,
+                            Length = (track.TrackEndSector - (ulong)track.Indexes[1]) + 1,
+                            Scheme = "Optical disc track"
+                        });
+
+                        currentTrackOffset += ((track.TrackEndSector - track.TrackStartSector) + 1) *
+                                              (ulong)track.TrackBytesPerSector;
+                    }
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    Track[] tracks = Tracks.ToArray();
+
+                    foreach(Track trk in tracks)
+                    {
+                        byte[] sector = ReadSector(trk.TrackStartSector);
+                        trk.TrackBytesPerSector = sector.Length;
+
+                        trk.TrackRawBytesPerSector =
+                            (_sectorPrefix    != null && _sectorSuffix    != null) ||
+                            (_sectorPrefixDdt != null && _sectorSuffixDdt != null) ? 2352 : sector.Length;
+
+                        if(_sectorSubchannel == null)
+                            continue;
+
+                        trk.TrackSubchannelFile   = trk.TrackFile;
+                        trk.TrackSubchannelFilter = trk.TrackFilter;
+                        trk.TrackSubchannelType   = TrackSubchannelType.Raw;
+                    }
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    Tracks = tracks.ToList();
+
+                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                               GC.GetTotalMemory(false));
+
+                    if(compactDiscIndexes != null)
+                    {
+                        foreach(CompactDiscIndexEntry compactDiscIndex in compactDiscIndexes.OrderBy(i => i.Track).
+                            ThenBy(i => i.Index))
+                        {
+                            Track track = Tracks.FirstOrDefault(t => t.TrackSequence == compactDiscIndex.Track);
+
+                            if(track is null)
+                                continue;
+
+                            track.Indexes[compactDiscIndex.Index] = compactDiscIndex.Lba;
+                        }
+                    }
+                }
+                else
+                {
+                    Tracks     = null;
+                    Sessions   = null;
+                    Partitions = null;
                 }
             }
 
@@ -908,13 +1405,7 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("Aaru Format plugin", "In memory DDT?: {0}", _inMemoryDdt);
 
-            // Initialize tables
             _imageStream.Seek(0, SeekOrigin.End);
-            _mediaTags          = new Dictionary<MediaTagType, byte[]>();
-            _checksumProvider   = SHA256.Create();
-            _deduplicationTable = new Dictionary<string, ulong>();
-            _trackIsrcs         = new Dictionary<byte, string>();
-            _trackFlags         = new Dictionary<byte, byte>();
 
             // Initialize compressors properties (all maxed)
             _lzmaEncoderProperties = new LzmaEncoderProperties(true, (int)dictionary, 273);
@@ -3115,8 +3606,7 @@ namespace Aaru.DiscImages
                         {
                             _structurePointer =
                                 System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.
-                                                                                        SizeOf<CompactDiscIndexEntry
-                                                                                        >());
+                                    SizeOf<CompactDiscIndexEntry>());
 
                             _structureBytes = new byte[Marshal.SizeOf<CompactDiscIndexEntry>()];
                             System.Runtime.InteropServices.Marshal.StructureToPtr(entry, _structurePointer, true);
