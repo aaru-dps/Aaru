@@ -832,34 +832,35 @@ namespace Aaru.Core.Devices.Dumping
                 // TODO: Replace for error number
             }
 
-            foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
-            {
-                try
+            if((_outputPlugin as IWritableOpticalImage).Tracks != null)
+                foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
                 {
-                    byte[] isrcBytes =
-                        (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.TrackSequence,
-                                                                               SectorTagType.CdTrackIsrc);
+                    try
+                    {
+                        byte[] isrcBytes =
+                            (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.TrackSequence,
+                                SectorTagType.CdTrackIsrc);
 
-                    if(isrcBytes != null)
-                        isrcs[(byte)imgTrack.TrackSequence] = Encoding.ASCII.GetString(isrcBytes);
+                        if(isrcBytes != null)
+                            isrcs[(byte)imgTrack.TrackSequence] = Encoding.ASCII.GetString(isrcBytes);
+                    }
+                    catch(Exception)
+                    {
+                        // TODO: Replace for error number
+                    }
+
+                    Track trk = tracks.FirstOrDefault(t => t.TrackSequence == imgTrack.TrackSequence);
+
+                    if(trk != null)
+                    {
+                        trk.TrackPregap      = imgTrack.TrackPregap;
+                        trk.TrackStartSector = imgTrack.TrackStartSector;
+                        trk.TrackEndSector   = imgTrack.TrackEndSector;
+
+                        foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
+                            trk.Indexes[imgIdx.Key] = imgIdx.Value;
+                    }
                 }
-                catch(Exception)
-                {
-                    // TODO: Replace for error number
-                }
-
-                Track trk = tracks.FirstOrDefault(t => t.TrackSequence == imgTrack.TrackSequence);
-
-                if(trk != null)
-                {
-                    trk.TrackPregap      = imgTrack.TrackPregap;
-                    trk.TrackStartSector = imgTrack.TrackStartSector;
-                    trk.TrackEndSector   = imgTrack.TrackEndSector;
-
-                    foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
-                        trk.Indexes[imgIdx.Key] = imgIdx.Value;
-                }
-            }
 
             // Send track list to output plugin. This may fail if subchannel is set but unsupported.
             ret = (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
