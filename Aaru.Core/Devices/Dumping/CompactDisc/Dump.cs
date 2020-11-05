@@ -820,6 +820,47 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
+            try
+            {
+                byte[] mcnBytes = _outputPlugin.ReadDiskTag(MediaTagType.CD_MCN);
+
+                if(mcnBytes != null)
+                    mcn = Encoding.ASCII.GetString(mcnBytes);
+            }
+            catch(Exception)
+            {
+                // TODO: Replace for error number
+            }
+
+            foreach(Track imgTrack in (_outputPlugin as IWritableOpticalImage).Tracks)
+            {
+                try
+                {
+                    byte[] isrcBytes =
+                        (_outputPlugin as IWritableOpticalImage).ReadSectorTag(imgTrack.TrackSequence,
+                                                                               SectorTagType.CdTrackIsrc);
+
+                    if(isrcBytes != null)
+                        isrcs[(byte)imgTrack.TrackSequence] = Encoding.ASCII.GetString(isrcBytes);
+                }
+                catch(Exception)
+                {
+                    // TODO: Replace for error number
+                }
+
+                Track trk = tracks.FirstOrDefault(t => t.TrackSequence == imgTrack.TrackSequence);
+
+                if(trk != null)
+                {
+                    trk.TrackPregap      = imgTrack.TrackPregap;
+                    trk.TrackStartSector = imgTrack.TrackStartSector;
+                    trk.TrackEndSector   = imgTrack.TrackEndSector;
+
+                    foreach(KeyValuePair<ushort, int> imgIdx in imgTrack.Indexes)
+                        trk.Indexes[imgIdx.Key] = imgIdx.Value;
+                }
+            }
+
             // Send track list to output plugin. This may fail if subchannel is set but unsupported.
             ret = (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
 
@@ -904,8 +945,8 @@ namespace Aaru.Core.Devices.Dumping
 
                     isrcs[(byte)trk.TrackSequence] = isrc;
 
-                    UpdateStatus?.Invoke($"Found ISRC for track {trk.TrackSequence}: {mcn}");
-                    _dumpLog.WriteLine($"Found ISRC for track {trk.TrackSequence}: {mcn}");
+                    UpdateStatus?.Invoke($"Found ISRC for track {trk.TrackSequence}: {isrc}");
+                    _dumpLog.WriteLine($"Found ISRC for track {trk.TrackSequence}: {isrc}");
                 }
 
             if(supportedSubchannel != MmcSubchannel.None &&
@@ -1303,6 +1344,16 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
                 _dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
             }
+
+            foreach(Track trk in tracks)
+            {
+                if(trk.Indexes.TryGetValue(0, out int idx0) &&
+                   trk.Indexes.TryGetValue(1, out int idx1) &&
+                   idx0 == idx1)
+                    trk.Indexes.Remove(0);
+            }
+
+            (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
 
             _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
