@@ -345,23 +345,20 @@ namespace Aaru.DiscImages
                     switch(entry.blockType)
                     {
                         case BlockType.DataBlock:
-                            switch(entry.dataType)
-                            {
-                                case DataType.CdSectorPrefix:
-                                case DataType.CdSectorSuffix:
-                                case DataType.CdSectorPrefixCorrected:
-                                case DataType.CdSectorSuffixCorrected:
-                                case DataType.CdSectorSubchannel:
-                                case DataType.AppleProfileTag:
-                                case DataType.AppleSonyTag:
-                                case DataType.PriamDataTowerTag: break;
-                                default: continue;
-                            }
+                            // NOP block, skip
+                            if(entry.dataType == DataType.NoData)
+                                break;
+
+                            _imageStream.Position = (long)entry.offset;
 
                             _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
                             _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
                             BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(_structureBytes);
                             _imageInfo.ImageSize += blockHeader.cmpLength;
+
+                            // Unused, skip
+                            if(entry.dataType == DataType.UserData)
+                                break;
 
                             if(blockHeader.identifier != entry.blockType)
                             {
@@ -387,10 +384,26 @@ namespace Aaru.DiscImages
                                                        "Found data block type {0} at position {1}", entry.dataType,
                                                        entry.offset);
 
-                            if(blockHeader.compression == CompressionType.Lzma)
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                       GC.GetTotalMemory(false));
+
+                            // Decompress media tag
+                            if(blockHeader.compression == CompressionType.Lzma ||
+                               blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
                             {
-                                byte[] compressedTag  = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
-                                byte[] lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
+                                if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform &&
+                                   entry.dataType          != DataType.CdSectorSubchannel)
+                                {
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                               "Invalid compression type {0} for block with data type {1}, continuing...",
+                                                               blockHeader.compression, entry.dataType);
+
+                                    break;
+                                }
+
+                                DateTime startDecompress = DateTime.Now;
+                                byte[]   compressedTag   = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
+                                byte[]   lzmaProperties  = new byte[LZMA_PROPERTIES_LENGTH];
                                 _imageStream.Read(lzmaProperties, 0, LZMA_PROPERTIES_LENGTH);
                                 _imageStream.Read(compressedTag, 0, compressedTag.Length);
                                 var compressedTagMs = new MemoryStream(compressedTag);
@@ -399,11 +412,25 @@ namespace Aaru.DiscImages
                                 lzmaBlock.Read(data, 0, (int)blockHeader.length);
                                 lzmaBlock.Close();
                                 compressedTagMs.Close();
+
+                                if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform)
+                                    data = ClauniaSubchannelUntransform(data);
+
+                                DateTime endDecompress = DateTime.Now;
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to decompress block",
+                                                           (endDecompress - startDecompress).TotalSeconds);
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
                             }
                             else if(blockHeader.compression == CompressionType.None)
                             {
                                 data = new byte[blockHeader.length];
                                 _imageStream.Read(data, 0, (int)blockHeader.length);
+
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
                             }
                             else
                             {
@@ -414,8 +441,8 @@ namespace Aaru.DiscImages
                                 break;
                             }
 
+                            // Check CRC, if not correct, skip it
                             Crc64Context.Data(data, out byte[] blockCrc);
-                            blockCrc = blockCrc.ToArray();
 
                             if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                             {
@@ -426,31 +453,103 @@ namespace Aaru.DiscImages
                                 break;
                             }
 
+                            // Check if it's not a media tag, but a sector tag, and fill the appropriate table then
                             switch(entry.dataType)
                             {
                                 case DataType.CdSectorPrefix:
-                                    _sectorPrefix = data;
+                                case DataType.CdSectorPrefixCorrected:
+                                    if(entry.dataType == DataType.CdSectorPrefixCorrected)
+                                    {
+                                        _sectorPrefixMs = new NonClosableStream();
+                                        _sectorPrefixMs.Write(data, 0, data.Length);
+                                    }
+                                    else
+                                        _sectorPrefix = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
 
                                     break;
                                 case DataType.CdSectorSuffix:
-                                    _sectorSuffix = data;
-
-                                    break;
-                                case DataType.CdSectorPrefixCorrected:
-                                    _sectorPrefixMs = new NonClosableStream();
-                                    _sectorPrefixMs.Write(data, 0, data.Length);
-
-                                    break;
                                 case DataType.CdSectorSuffixCorrected:
-                                    _sectorSuffixMs = new NonClosableStream();
-                                    _sectorSuffixMs.Write(data, 0, data.Length);
+                                    if(entry.dataType == DataType.CdSectorSuffixCorrected)
+                                    {
+                                        _sectorSuffixMs = new NonClosableStream();
+                                        _sectorSuffixMs.Write(data, 0, data.Length);
+                                    }
+                                    else
+                                        _sectorSuffix = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
 
                                     break;
                                 case DataType.CdSectorSubchannel:
+                                    _sectorSubchannel = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
                                 case DataType.AppleProfileTag:
                                 case DataType.AppleSonyTag:
                                 case DataType.PriamDataTowerTag:
                                     _sectorSubchannel = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
+                                case DataType.CompactDiscMode2Subheader:
+                                    _mode2Subheaders = data;
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
+                                default:
+                                    MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
+
+                                    if(_mediaTags.ContainsKey(mediaTagType))
+                                    {
+                                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                                   "Media tag type {0} duplicated, removing previous entry...",
+                                                                   mediaTagType);
+
+                                        _mediaTags.Remove(mediaTagType);
+                                    }
+
+                                    _mediaTags.Add(mediaTagType, data);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
 
                                     break;
                             }
