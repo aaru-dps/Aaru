@@ -196,7 +196,6 @@ namespace Aaru.Core.Media.Detection
             return false;
         }
 
-        // TODO: Negative offset
         static byte[] DescrambleAndFixOffset(byte[] sector, int offsetBytes, int sectorsForOffset)
         {
             byte[] descrambled = new byte[2352];
@@ -584,8 +583,8 @@ namespace Aaru.Core.Media.Detection
 
                                 if(combinedOffset < 0)
                                 {
-                                    lba0  -= sectorsForOffset - 1;
-                                    lba16 -= sectorsForOffset - 1;
+                                    lba0  -= sectorsForOffset;
+                                    lba16 -= sectorsForOffset;
                                 }
 
                                 dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
