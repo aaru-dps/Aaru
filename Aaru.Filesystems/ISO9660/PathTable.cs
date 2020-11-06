@@ -47,9 +47,18 @@ namespace Aaru.Filesystems
 
             int off = 0;
 
+            PathTableEntry entry =
+                Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
+
+            if(entry.name_len                         != 1                                ||
+               entry.parent_dirno                     != 1                                ||
+               data.Length                            <= Marshal.SizeOf<PathTableEntry>() ||
+               data[Marshal.SizeOf<PathTableEntry>()] != 0x00)
+                return null;
+            
             while(off < data.Length)
             {
-                PathTableEntry entry =
+                entry =
                     Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
                 if(entry.name_len == 0)
