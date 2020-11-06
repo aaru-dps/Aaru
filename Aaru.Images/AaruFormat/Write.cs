@@ -4242,8 +4242,9 @@ namespace Aaru.DiscImages
                     track = Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
                                                          sectorAddress <= trk.TrackEndSector);
 
-                    if(track.TrackSequence    == 0 &&
-                       track.TrackStartSector == 0 &&
+                    if(track                  != null &&
+                       track.TrackSequence    == 0    &&
+                       track.TrackStartSector == 0    &&
                        track.TrackEndSector   == 0)
                         track.TrackType = TrackType.Data;
 
