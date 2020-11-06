@@ -444,6 +444,15 @@ namespace Aaru.Core.Devices.Dumping
                                 if(trkInfo is null)
                                     continue;
 
+                                // Fixes a firmware bug in some DVD drives
+                                if((int)trkInfo.LogicalTrackStartAddress < 0)
+                                {
+                                    trkInfo.LogicalTrackSize =
+                                        (uint)((int)trkInfo.LogicalTrackSize - (int)trkInfo.LogicalTrackStartAddress);
+
+                                    trkInfo.LogicalTrackStartAddress = 0;
+                                }
+
                                 var track = new Track
                                 {
                                     TrackSequence = trkInfo.LogicalTrackNumber,
