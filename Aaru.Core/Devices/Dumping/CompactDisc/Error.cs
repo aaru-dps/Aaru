@@ -73,15 +73,11 @@ namespace Aaru.Core.Devices.Dumping
 
                     break;
                 case MmcSubchannel.Raw:
-                    supportedPlextorSubchannel = PlextorSubchannel.All;
+                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
 
                     break;
                 case MmcSubchannel.Q16:
                     supportedPlextorSubchannel = PlextorSubchannel.Q16;
-
-                    break;
-                case MmcSubchannel.Rw:
-                    supportedPlextorSubchannel = PlextorSubchannel.Pack;
 
                     break;
                 default:

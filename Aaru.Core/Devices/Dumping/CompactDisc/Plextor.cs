@@ -66,40 +66,29 @@ namespace Aaru.Core.Devices.Dumping
 
             uint subSize = supportedPlextorSubchannel == PlextorSubchannel.Q16 ? 16u : 96u;
 
-            sense = _dev.PlextorReadCdDa(out byte[] dataBuf, out senseBuf, firstSectorToRead, 2352, blocksToRead,
-                                         PlextorSubchannel.None, 0, out cmdDuration);
-
-            if(!sense)
+            if(supportedPlextorSubchannel == PlextorSubchannel.Q16 ||
+               supportedPlextorSubchannel == PlextorSubchannel.Pack)
             {
-                sense = _dev.PlextorReadCdDa(out subBuf, out senseBuf, firstSectorToRead, subSize, blocksToRead,
-                                             supportedPlextorSubchannel, 0, out cmdDuration);
+                sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf, firstSectorToRead, 2352 + subSize, blocksToRead,
+                                             supportedPlextorSubchannel, _dev.Timeout, out cmdDuration);
 
                 if(!sense)
-                {
-                    cmdBuf = new byte[(2352 * blocksToRead) + (subSize * blocksToRead)];
-
-                    for(int b = 0; b < blocksToRead; b++)
-                    {
-                        Array.Copy(dataBuf, 2352   * b, cmdBuf, (2352 + subSize) * b, 2352);
-                        Array.Copy(subBuf, subSize * b, cmdBuf, ((2352 + subSize) * b) + 2352, subSize);
-                    }
-
                     return false;
-                }
             }
 
             // As a workaround for some firmware bugs, seek far away.
             _dev.PlextorReadCdDa(out _, out senseBuf, firstSectorToRead - 32, blockSize, blocksToRead,
                                  supportedPlextorSubchannel, 0, out _);
 
-            sense = _dev.PlextorReadCdDa(out dataBuf, out senseBuf, firstSectorToRead, 2352, blocksToRead,
+            sense = _dev.PlextorReadCdDa(out byte[] dataBuf, out senseBuf, firstSectorToRead, 2352, blocksToRead,
                                          PlextorSubchannel.None, 0, out cmdDuration);
 
             if(sense)
                 return true;
 
             sense = _dev.PlextorReadCdDa(out subBuf, out senseBuf, firstSectorToRead, subSize, blocksToRead,
-                                         supportedPlextorSubchannel, 0, out cmdDuration);
+                                         supportedPlextorSubchannel == PlextorSubchannel.Pack ? PlextorSubchannel.All
+                                             : supportedPlextorSubchannel, 0, out cmdDuration);
 
             if(sense)
                 return true;
