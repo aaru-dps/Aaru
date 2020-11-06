@@ -278,6 +278,8 @@ namespace Aaru.Filesystems
 
             if(_highSierra)
             {
+                _blockSize = hsvd.Value.logical_block_size;
+
                 pathTableData = ReadSingleExtent(0, hsvd.Value.path_table_size,
                                                  Swapping.Swap(hsvd.Value.mandatory_path_table_msb));
 
@@ -288,6 +290,8 @@ namespace Aaru.Filesystems
             }
             else if(_cdi)
             {
+                _blockSize = fsvd.Value.logical_block_size;
+
                 pathTableData = ReadSingleExtent(0, fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
 
                 fsFormat = "CD-i";
@@ -299,6 +303,8 @@ namespace Aaru.Filesystems
             }
             else
             {
+                _blockSize = pvd.Value.logical_block_size;
+
                 pathTableData =
                     ReadSingleExtent(0, pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table));
 

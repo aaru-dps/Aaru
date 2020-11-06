@@ -124,7 +124,8 @@ namespace Aaru.Filesystems
 
             offset += entry.XattrLength;
 
-            if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true && entry.Extents.Count == 1)
+            if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true &&
+               entry.Extents.Count                                                 == 1)
             {
                 try
                 {
@@ -568,7 +569,7 @@ namespace Aaru.Filesystems
                     try
                     {
                         byte[] fullSector =
-                            _image.ReadSectorTag(extents[i].extent + currentExtentSector,
+                            _image.ReadSectorTag(((extents[i].extent + currentExtentSector) * _blockSize) / 2048,
                                                  SectorTagType.CdSectorSubHeader);
 
                         ms.Write(fullSector, copy ? 0 : 4, 4);

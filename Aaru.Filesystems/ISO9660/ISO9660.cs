@@ -58,6 +58,7 @@ namespace Aaru.Filesystems
         bool                                      _useEvd;
         bool                                      _usePathTable;
         bool                                      _useTransTbl;
+        ushort                                    _blockSize;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

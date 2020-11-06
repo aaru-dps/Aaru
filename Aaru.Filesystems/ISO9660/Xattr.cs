@@ -83,7 +83,7 @@ namespace Aaru.Filesystems
                entry.Extents.Count == 0)
                 return Errno.NoError;
 
-            byte[] sector = _image.ReadSectorLong(entry.Extents[0].extent);
+            byte[] sector = _image.ReadSectorLong((entry.Extents[0].extent * _blockSize) / 2048);
 
             if(sector[15] != 2)
                 return Errno.NoError;
