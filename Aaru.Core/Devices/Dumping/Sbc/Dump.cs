@@ -336,20 +336,27 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
             _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
-            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", sbcProfile);
-            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+            var  mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private);
+            var  ibgLog = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
+            bool imageCreated = false;
 
-            // Cannot create image
-            if(!ret)
+            if(!opticalDisc)
             {
-                _dumpLog.WriteLine("Error creating output image, not continuing.");
-                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+                ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
-                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             _outputPlugin.ErrorMessage);
+                // Cannot create image
+                if(!ret)
+                {
+                    _dumpLog.WriteLine("Error creating output image, not continuing.");
+                    _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
-                return;
+                    StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+
+                imageCreated = true;
             }
 
             start = DateTime.UtcNow;
@@ -468,6 +475,22 @@ namespace Aaru.Core.Devices.Dumping
 
                             tracks = tracks.OrderBy(t => t.TrackSequence).ToList();
 
+                            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+
+                            // Cannot create image
+                            if(!ret)
+                            {
+                                _dumpLog.WriteLine("Error creating output image, not continuing.");
+                                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+
+                                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
+                                                             Environment.NewLine + _outputPlugin.ErrorMessage);
+
+                                return;
+                            }
+
+                            imageCreated = true;
+
                         #if DEBUG
                             foreach(Track trk in tracks)
                                 UpdateStatus?.
@@ -560,6 +583,23 @@ namespace Aaru.Core.Devices.Dumping
 
                         setGeometry = true;
                     }
+            }
+
+            if(!imageCreated)
+            {
+                ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
+
+                // Cannot create image
+                if(!ret)
+                {
+                    _dumpLog.WriteLine("Error creating output image, not continuing.");
+                    _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
+
+                    StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
             }
 
             DumpHardwareType currentTry = null;
