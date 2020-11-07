@@ -161,6 +161,9 @@ namespace Aaru.Filters
 
         public bool Identify(string path)
         {
+            if(!File.Exists(path))
+                return false;
+
             var fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
             if(fstream.Length < 128)
