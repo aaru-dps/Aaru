@@ -58,8 +58,9 @@ namespace Aaru.DiscImages
             _imageStream.Read(descriptor, 0, dscLen);
 
             // Sessions
-            if(descriptor[0] > 99 ||
-               descriptor[0] == 0)
+            if(descriptor.Length < 1  ||
+               descriptor[0]     > 99 ||
+               descriptor[0]     == 0)
                 return false;
 
             // Seems all sessions start with this data
