@@ -83,10 +83,18 @@ namespace Aaru.Filesystems
                entry.Extents.Count == 0)
                 return Errno.NoError;
 
-            byte[] sector = _image.ReadSectorLong((entry.Extents[0].extent * _blockSize) / 2048);
+            // TODO: No more exceptions
+            try
+            {
+                byte[] sector = _image.ReadSectorLong((entry.Extents[0].extent * _blockSize) / 2048);
 
-            if(sector[15] != 2)
+                if(sector[15] != 2)
+                    return Errno.NoError;
+            }
+            catch
+            {
                 return Errno.NoError;
+            }
 
             xattrs.Add("org.iso.mode2.subheader");
             xattrs.Add("org.iso.mode2.subheader.copy");
@@ -115,7 +123,7 @@ namespace Aaru.Filesystems
                     if(entry.Extents is null)
                         return Errno.InvalidArgument;
 
-                    buf = ReadSingleExtent(0, entry.XattrLength, entry.Extents[0].extent);
+                    buf = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent);
 
                     return Errno.NoError;
                 case "org.iso.9660.AssociatedFile":

@@ -280,7 +280,7 @@ namespace Aaru.Filesystems
             {
                 _blockSize = hsvd.Value.logical_block_size;
 
-                pathTableData = ReadSingleExtent(0, hsvd.Value.path_table_size,
+                pathTableData = ReadSingleExtent(hsvd.Value.path_table_size,
                                                  Swapping.Swap(hsvd.Value.mandatory_path_table_msb));
 
                 fsFormat = "High Sierra Format";
@@ -292,7 +292,7 @@ namespace Aaru.Filesystems
             {
                 _blockSize = fsvd.Value.logical_block_size;
 
-                pathTableData = ReadSingleExtent(0, fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
+                pathTableData = ReadSingleExtent(fsvd.Value.path_table_size, fsvd.Value.path_table_addr);
 
                 fsFormat = "CD-i";
 
@@ -305,8 +305,7 @@ namespace Aaru.Filesystems
             {
                 _blockSize = pvd.Value.logical_block_size;
 
-                pathTableData =
-                    ReadSingleExtent(0, pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table));
+                pathTableData = ReadSingleExtent(pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table));
 
                 fsFormat = "ISO9660";
 
@@ -451,7 +450,7 @@ namespace Aaru.Filesystems
 
             try
             {
-                _ = ReadSingleExtent(0, rootSize, rootLocation);
+                _ = ReadSingleExtent(rootSize, rootLocation);
             }
             catch
             {
@@ -476,10 +475,10 @@ namespace Aaru.Filesystems
 
             if(_namespace != Namespace.Joliet)
                 _rootDirectoryCache = _cdi
-                                          ? DecodeCdiDirectory(rootLocation, rootSize, rootXattrLength)
+                                          ? DecodeCdiDirectory(rootLocation + rootXattrLength, rootSize)
                                           : _highSierra
-                                              ? DecodeHighSierraDirectory(rootLocation, rootSize, rootXattrLength)
-                                              : DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
+                                              ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize)
+                                              : DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
 
             XmlFsType.Type = fsFormat;
 
@@ -493,7 +492,7 @@ namespace Aaru.Filesystems
 
                 _joliet = true;
 
-                _rootDirectoryCache = DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
+                _rootDirectoryCache = DecodeIsoDirectory(rootLocation + rootXattrLength, rootSize);
 
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 

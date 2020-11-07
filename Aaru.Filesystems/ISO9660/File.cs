@@ -122,7 +122,7 @@ namespace Aaru.Filesystems
             if(size + offset >= (long)entry.Size)
                 size = (long)entry.Size - offset;
 
-            offset += entry.XattrLength;
+            offset += entry.XattrLength * _blockSize;
 
             if(entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true &&
                entry.Extents.Count                                                 == 1)
@@ -379,7 +379,7 @@ namespace Aaru.Filesystems
                     stat.Mode |= 256;
             }
 
-            byte[] ea = ReadSingleExtent(0, entry.XattrLength, entry.Extents[0].extent);
+            byte[] ea = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent);
 
             ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
@@ -484,6 +484,13 @@ namespace Aaru.Filesystems
 
             return Errno.NoError;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        byte[] ReadSingleExtent(long size, uint startingSector, bool interleaved = false, byte fileNumber = 0) =>
+            ReadWithExtents(0, size, new List<(uint extent, uint size)>
+            {
+                (startingSector, (uint)size)
+            }, interleaved, fileNumber);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         byte[] ReadSingleExtent(long offset, long size, uint startingSector, bool interleaved = false,

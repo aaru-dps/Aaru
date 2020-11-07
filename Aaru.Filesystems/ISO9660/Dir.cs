@@ -109,14 +109,13 @@ namespace Aaru.Filesystems
                     return Errno.InvalidArgument;
 
                 currentDirectory = _cdi
-                                       ? DecodeCdiDirectory(entry.Value.Extents[0].extent, entry.Value.Extents[0].size,
-                                                            entry.Value.XattrLength)
+                                       ? DecodeCdiDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                            entry.Value.Extents[0].size)
                                        : _highSierra
-                                           ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent,
-                                                                       entry.Value.Extents[0].size,
-                                                                       entry.Value.XattrLength)
-                                           : DecodeIsoDirectory(entry.Value.Extents[0].extent,
-                                                                entry.Value.Extents[0].size, entry.Value.XattrLength);
+                                           ? DecodeHighSierraDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                                       entry.Value.Extents[0].size)
+                                           : DecodeIsoDirectory(entry.Value.Extents[0].extent + entry.Value.XattrLength,
+                                                                entry.Value.Extents[0].size);
 
                 if(_usePathTable)
                     foreach(DecodedDirectoryEntry subDirectory in _cdi
@@ -159,12 +158,12 @@ namespace Aaru.Filesystems
             return contents;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size, byte xattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = 0;
 
-            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+            byte[] data = ReadSingleExtent(size, (uint)start);
 
             while(entryOff + _cdiDirectoryRecordSize < data.Length)
             {
@@ -227,18 +226,18 @@ namespace Aaru.Filesystems
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint size, byte xattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(ulong start, uint size)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = 0;
 
-            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+            byte[] data = ReadSingleExtent(size, (uint)start);
 
             while(entryOff + _directoryRecordSize < data.Length)
             {
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
-                                                                                        _highSierraDirectoryRecordSize);
+                        _highSierraDirectoryRecordSize);
 
                 if(record.length == 0)
                     break;
@@ -289,12 +288,12 @@ namespace Aaru.Filesystems
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint size, byte xattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(ulong start, uint size)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = 0;
 
-            byte[] data = ReadSingleExtent(xattrLength, size, (uint)start);
+            byte[] data = ReadSingleExtent(size, (uint)start);
 
             while(entryOff + _directoryRecordSize < data.Length)
             {
@@ -356,7 +355,7 @@ namespace Aaru.Filesystems
                 if(_joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
                     entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
 
-                int systemAreaStart  = entryOff + record.name_len      + _directoryRecordSize;
+                int systemAreaStart  = entryOff      + record.name_len + _directoryRecordSize;
                 int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
@@ -531,10 +530,7 @@ namespace Aaru.Filesystems
                             case AppleId.ProDOS:
                                 AppleProDOSSystemUse appleProDosSystemUse =
                                     Marshal.ByteArrayToStructureLittleEndian<AppleProDOSSystemUse>(data, systemAreaOff,
-                                                                                                   Marshal.
-                                                                                                       SizeOf<
-                                                                                                           AppleProDOSSystemUse
-                                                                                                       >());
+                                        Marshal.SizeOf<AppleProDOSSystemUse>());
 
                                 entry.AppleProDosType = appleProDosSystemUse.aux_type;
                                 entry.AppleDosType    = appleProDosSystemUse.type;
@@ -543,10 +539,7 @@ namespace Aaru.Filesystems
                             case AppleId.HFS:
                                 AppleHFSSystemUse appleHfsSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSSystemUse>(data, systemAreaOff,
-                                                                                             Marshal.
-                                                                                                 SizeOf<
-                                                                                                     AppleHFSSystemUse
-                                                                                                 >());
+                                        Marshal.SizeOf<AppleHFSSystemUse>());
 
                                 hasResourceFork = true;
 
@@ -570,11 +563,7 @@ namespace Aaru.Filesystems
                             case AppleOldId.ProDOS:
                                 AppleProDOSOldSystemUse appleProDosOldSystemUse =
                                     Marshal.ByteArrayToStructureLittleEndian<AppleProDOSOldSystemUse>(data,
-                                                                                                      systemAreaOff,
-                                                                                                      Marshal.
-                                                                                                          SizeOf<
-                                                                                                              AppleProDOSOldSystemUse
-                                                                                                          >());
+                                        systemAreaOff, Marshal.SizeOf<AppleProDOSOldSystemUse>());
 
                                 entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
                                 entry.AppleDosType    = appleProDosOldSystemUse.type;
@@ -586,11 +575,7 @@ namespace Aaru.Filesystems
                             case AppleOldId.TypeCreatorBundle:
                                 AppleHFSTypeCreatorSystemUse appleHfsTypeCreatorSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSTypeCreatorSystemUse>(data,
-                                                                                                        systemAreaOff,
-                                                                                                        Marshal.
-                                                                                                            SizeOf<
-                                                                                                                AppleHFSTypeCreatorSystemUse
-                                                                                                            >());
+                                        systemAreaOff, Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>());
 
                                 hasResourceFork = true;
 
@@ -606,10 +591,7 @@ namespace Aaru.Filesystems
                             case AppleOldId.TypeCreatorIconBundle:
                                 AppleHFSIconSystemUse appleHfsIconSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSIconSystemUse>(data, systemAreaOff,
-                                                                                                 Marshal.
-                                                                                                     SizeOf<
-                                                                                                         AppleHFSIconSystemUse
-                                                                                                     >());
+                                        Marshal.SizeOf<AppleHFSIconSystemUse>());
 
                                 hasResourceFork = true;
 
@@ -625,10 +607,7 @@ namespace Aaru.Filesystems
                             case AppleOldId.HFS:
                                 AppleHFSOldSystemUse appleHfsSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSOldSystemUse>(data, systemAreaOff,
-                                                                                                Marshal.
-                                                                                                    SizeOf<
-                                                                                                        AppleHFSOldSystemUse
-                                                                                                    >());
+                                        Marshal.SizeOf<AppleHFSOldSystemUse>());
 
                                 hasResourceFork = true;
 
@@ -651,7 +630,7 @@ namespace Aaru.Filesystems
                         break;
                     case XA_MAGIC:
                         entry.XA = Marshal.ByteArrayToStructureBigEndian<CdromXa>(data, systemAreaOff,
-                                                                                  Marshal.SizeOf<CdromXa>());
+                            Marshal.SizeOf<CdromXa>());
 
                         systemAreaOff += Marshal.SizeOf<CdromXa>();
 
@@ -670,10 +649,8 @@ namespace Aaru.Filesystems
                         {
                             entry.AmigaProtection =
                                 Marshal.ByteArrayToStructureBigEndian<AmigaProtection>(data,
-                                                                                       systemAreaOff +
-                                                                                       Marshal.SizeOf<AmigaEntry>(),
-                                                                                       Marshal.
-                                                                                           SizeOf<AmigaProtection>());
+                                    systemAreaOff + Marshal.SizeOf<AmigaEntry>(),
+                                    Marshal.SizeOf<AmigaProtection>());
 
                             protectionLength = Marshal.SizeOf<AmigaProtection>();
                         }
@@ -713,16 +690,11 @@ namespace Aaru.Filesystems
                         if(pxLength == 36)
                             entry.PosixAttributesOld =
                                 Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data, systemAreaOff,
-                                                                                             Marshal.
-                                                                                                 SizeOf<
-                                                                                                     PosixAttributesOld
-                                                                                                 >());
+                                    Marshal.SizeOf<PosixAttributesOld>());
                         else if(pxLength >= 44)
                             entry.PosixAttributes =
                                 Marshal.ByteArrayToStructureLittleEndian<PosixAttributes>(data, systemAreaOff,
-                                                                                          Marshal.
-                                                                                              SizeOf<PosixAttributes
-                                                                                              >());
+                                    Marshal.SizeOf<PosixAttributes>());
 
                         systemAreaOff += pxLength;
 
@@ -732,9 +704,7 @@ namespace Aaru.Filesystems
 
                         entry.PosixDeviceNumber =
                             Marshal.ByteArrayToStructureLittleEndian<PosixDeviceNumber>(data, systemAreaOff,
-                                                                                        Marshal.
-                                                                                            SizeOf<PosixDeviceNumber
-                                                                                            >());
+                                Marshal.SizeOf<PosixDeviceNumber>());
 
                         systemAreaOff += pnLength;
 
@@ -744,17 +714,12 @@ namespace Aaru.Filesystems
 
                         SymbolicLink sl =
                             Marshal.ByteArrayToStructureLittleEndian<SymbolicLink>(data, systemAreaOff,
-                                                                                   Marshal.SizeOf<SymbolicLink>());
+                                Marshal.SizeOf<SymbolicLink>());
 
                         SymbolicLinkComponent slc =
                             Marshal.ByteArrayToStructureLittleEndian<SymbolicLinkComponent>(data,
-                                                                                            systemAreaOff +
-                                                                                            Marshal.
-                                                                                                SizeOf<SymbolicLink>(),
-                                                                                            Marshal.
-                                                                                                SizeOf<
-                                                                                                    SymbolicLinkComponent
-                                                                                                >());
+                                systemAreaOff + Marshal.SizeOf<SymbolicLink>(),
+                                Marshal.SizeOf<SymbolicLinkComponent>());
 
                         if(!continueSymlink ||
                            entry.SymbolicLink is null)
@@ -777,13 +742,8 @@ namespace Aaru.Filesystems
                                                   ? Environment.MachineName
                                                   : _joliet
                                                       ? Encoding.BigEndianUnicode.GetString(data,
-                                                                                            systemAreaOff +
-                                                                                            Marshal.
-                                                                                                SizeOf<SymbolicLink>() +
-                                                                                            Marshal.
-                                                                                                SizeOf<
-                                                                                                    SymbolicLinkComponent
-                                                                                                >(), slc.length)
+                                                          systemAreaOff + Marshal.SizeOf<SymbolicLink>() +
+                                                          Marshal.SizeOf<SymbolicLinkComponent>(), slc.length)
                                                       : Encoding.GetString(data,
                                                                            systemAreaOff                  +
                                                                            Marshal.SizeOf<SymbolicLink>() +
@@ -808,7 +768,7 @@ namespace Aaru.Filesystems
 
                         AlternateName alternateName =
                             Marshal.ByteArrayToStructureLittleEndian<AlternateName>(data, systemAreaOff,
-                                                                                    Marshal.SizeOf<AlternateName>());
+                                Marshal.SizeOf<AlternateName>());
 
                         byte[] nm;
 
@@ -855,7 +815,7 @@ namespace Aaru.Filesystems
 
                         ChildLink cl =
                             Marshal.ByteArrayToStructureLittleEndian<ChildLink>(data, systemAreaOff,
-                                                                                Marshal.SizeOf<ChildLink>());
+                                                                                    Marshal.SizeOf<ChildLink>());
 
                         byte[] childSector = ReadSector(cl.child_dir_lba);
 
@@ -898,7 +858,7 @@ namespace Aaru.Filesystems
 
                         Timestamps timestamps =
                             Marshal.ByteArrayToStructureLittleEndian<Timestamps>(data, systemAreaOff,
-                                                                                 Marshal.SizeOf<Timestamps>());
+                                Marshal.SizeOf<Timestamps>());
 
                         int tfOff = systemAreaOff + Marshal.SizeOf<Timestamps>();
                         int tfLen = timestamps.flags.HasFlag(TimestampFlags.LongFormat) ? 17 : 7;
@@ -965,8 +925,7 @@ namespace Aaru.Filesystems
 
                         ContinuationArea ca =
                             Marshal.ByteArrayToStructureLittleEndian<ContinuationArea>(data, systemAreaOff,
-                                                                                       Marshal.
-                                                                                           SizeOf<ContinuationArea>());
+                                Marshal.SizeOf<ContinuationArea>());
 
                         byte[] caData = ReadSingleExtent(ca.offset, ca.ca_length, ca.block);
 
@@ -1045,9 +1004,7 @@ namespace Aaru.Filesystems
                 while(currentPiece < pieces.Length)
                 {
                     PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                                                                                         p.Name.ToLower(CultureInfo.
-                                                                                                            CurrentUICulture) ==
-                                                                                         pieces[currentPiece]);
+                        p.Name.ToLower(CultureInfo.CurrentUICulture) == pieces[currentPiece]);
 
                     if(currentEntry is null)
                         break;
@@ -1147,8 +1104,8 @@ namespace Aaru.Filesystems
                         (record.extent, record.size)
                     };
 
-                int systemAreaStart  = record.name_len                 + _directoryRecordSize;
-                int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
+                int systemAreaStart  = record.name_len + _directoryRecordSize;
+                int systemAreaLength = record.length   - record.name_len - _directoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                 {
@@ -1175,7 +1132,7 @@ namespace Aaru.Filesystems
 
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
-                                                                                        _highSierraDirectoryRecordSize);
+                        _highSierraDirectoryRecordSize);
 
                 var entry = new DecodedDirectoryEntry
                 {
