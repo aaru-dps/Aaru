@@ -460,6 +460,9 @@ namespace Aaru.Core.Devices.Dumping
                                     TrackSubchannelType = TrackSubchannelType.None
                                 };
 
+                                if(track.TrackEndSector >= blocks)
+                                    blocks = track.TrackEndSector + 1;
+
                                 tracks.Add(track);
                             }
 
