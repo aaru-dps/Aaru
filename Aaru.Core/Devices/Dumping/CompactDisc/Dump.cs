@@ -607,15 +607,38 @@ namespace Aaru.Core.Devices.Dumping
                     continue;
                 }
 
-                switch(cmdBuf[15])
+                int bufOffset = 0;
+
+                while(cmdBuf[0  + bufOffset] != 0x00 ||
+                      cmdBuf[1  + bufOffset] != 0xFF ||
+                      cmdBuf[2  + bufOffset] != 0xFF ||
+                      cmdBuf[3  + bufOffset] != 0xFF ||
+                      cmdBuf[4  + bufOffset] != 0xFF ||
+                      cmdBuf[5  + bufOffset] != 0xFF ||
+                      cmdBuf[6  + bufOffset] != 0xFF ||
+                      cmdBuf[7  + bufOffset] != 0xFF ||
+                      cmdBuf[8  + bufOffset] != 0xFF ||
+                      cmdBuf[9  + bufOffset] != 0xFF ||
+                      cmdBuf[10 + bufOffset] != 0xFF ||
+                      cmdBuf[11 + bufOffset] != 0x00)
+                {
+                    if(bufOffset + 12 >= cmdBuf.Length)
+                        break;
+
+                    bufOffset++;
+                }
+
+                switch(cmdBuf[15 + bufOffset])
                 {
                     case 1:
+                    case 0x61: // Scrambled
                         UpdateStatus?.Invoke($"Track {trk.TrackSequence} is MODE1");
                         _dumpLog.WriteLine("Track {0} is MODE1", trk.TrackSequence);
                         trk.TrackType = TrackType.CdMode1;
 
                         break;
                     case 2:
+                    case 0x62: // Scrambled
                         if(dskType == MediaType.CDI ||
                            dskType == MediaType.CDIREADY)
                         {
