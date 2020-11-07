@@ -41,22 +41,22 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
-        public static bool SupportsRwSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus)
+        public static bool SupportsRwSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
         {
             dumpLog?.WriteLine("Checking if drive supports full raw subchannel reading...");
             updateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
 
-            return !dev.ReadCd(out _, out _, 0, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
+            return !dev.ReadCd(out _, out _, lba, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
                                dev.Timeout, out _);
         }
 
-        public static bool SupportsPqSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus)
+        public static bool SupportsPqSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
         {
             dumpLog?.WriteLine("Checking if drive supports PQ subchannel reading...");
             updateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
 
-            return !dev.ReadCd(out _, out _, 0, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
+            return !dev.ReadCd(out _, out _, lba, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
                                dev.Timeout, out _);
         }

@@ -565,15 +565,15 @@ namespace Aaru.Commands.Media
             if(scsiInfo.Toc    != null ||
                scsiInfo.RawToc != null)
             {
-                uint blockSize = 2352;
-
-                Track[] tracks = Dump.GetCdTracks(ref blockSize, dev, null, false, out long lastSector, null, null,
-                                                  null, TrackSubchannelType.None, out _, null, null);
+                Track[] tracks = Dump.GetCdTracks(dev, null, false, out long lastSector, null, null,
+                                                  null, out _, null, null);
 
                 if(tracks != null)
                 {
-                    bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null);
-                    bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
+                    uint  firstLba             = (uint)tracks.Min(t => t.TrackStartSector);
+                    
+                    bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null, firstLba);
+                    bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null, firstLba);
 
                     // Open main database
                     var ctx = AaruContext.Create(Settings.Settings.MainDbPath);

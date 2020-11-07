@@ -48,7 +48,6 @@ namespace Aaru.Core.Devices.Dumping
     partial class Dump
     {
         /// <summary>Reads the TOC, processes it, returns the track list and last sector</summary>
-        /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="dev">Device</param>
         /// <param name="dumpLog">Dump log</param>
         /// <param name="force">Force dump enabled</param>
@@ -56,17 +55,15 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="leadOutStarts">Lead-out starts</param>
         /// <param name="mediaTags">Media tags</param>
         /// <param name="stoppingErrorMessage">Stopping error message handler</param>
-        /// <param name="subType">Track subchannel type</param>
         /// <param name="toc">Full CD TOC</param>
         /// <param name="trackFlags">Track flags</param>
         /// <param name="updateStatus">Update status handler</param>
         /// <returns>List of tracks</returns>
-        public static Track[] GetCdTracks(ref uint blockSize, Device dev, DumpLog dumpLog, bool force,
-                                          out long lastSector, Dictionary<int, long> leadOutStarts,
+        public static Track[] GetCdTracks(Device dev, DumpLog dumpLog, bool force, out long lastSector,
+                                          Dictionary<int, long> leadOutStarts,
                                           Dictionary<MediaTagType, byte[]> mediaTags,
-                                          ErrorMessageHandler stoppingErrorMessage, TrackSubchannelType subType,
-                                          out FullTOC.CDFullTOC? toc, Dictionary<byte, byte> trackFlags,
-                                          UpdateStatusHandler updateStatus)
+                                          ErrorMessageHandler stoppingErrorMessage, out FullTOC.CDFullTOC? toc,
+                                          Dictionary<byte, byte> trackFlags, UpdateStatusHandler updateStatus)
         {
             byte[]      cmdBuf;                        // Data buffer
             const uint  sectorSize = 2352;             // Full sector size
@@ -118,8 +115,7 @@ namespace Aaru.Core.Devices.Dumping
                                 (ulong)(((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) +
                                          trk.PFRAME) - 150),
                             TrackBytesPerSector    = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize,
-                            TrackSubchannelType    = subType
+                            TrackRawBytesPerSector = (int)sectorSize
                         });
 
                         trackFlags?.Add(trk.POINT, trk.CONTROL);
@@ -163,7 +159,7 @@ namespace Aaru.Core.Devices.Dumping
                         }
 
                         lastSector = ((phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe) - 150;
-                        leadOutStarts?.Add(trk.SessionNumber, lastSector                   + 1);
+                        leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
                     }
                     else if(trk.POINT == 0xA0 &&
                             trk.ADR   == 1)
@@ -194,9 +190,9 @@ namespace Aaru.Core.Devices.Dumping
                 }
 
                 if(oldToc.HasValue)
-                    foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.
-                                                                Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
-                                                                Where(trk => trk.ADR == 1 || trk.ADR == 4))
+                    foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.
+                                                                       OrderBy(t => t.TrackNumber).
+                                                                       Where(trk => trk.ADR == 1 || trk.ADR == 4))
                         if(trk.TrackNumber >= 0x01 &&
                            trk.TrackNumber <= 0x63)
                         {
@@ -209,8 +205,7 @@ namespace Aaru.Core.Devices.Dumping
                                                 ? TrackType.Data : TrackType.Audio,
                                 TrackStartSector       = trk.TrackStartAddress,
                                 TrackBytesPerSector    = (int)sectorSize,
-                                TrackRawBytesPerSector = (int)sectorSize,
-                                TrackSubchannelType    = subType
+                                TrackRawBytesPerSector = (int)sectorSize
                             });
 
                             trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
@@ -238,8 +233,7 @@ namespace Aaru.Core.Devices.Dumping
                     TrackType              = leadoutTrackType,
                     TrackStartSector       = 0,
                     TrackBytesPerSector    = (int)sectorSize,
-                    TrackRawBytesPerSector = (int)sectorSize,
-                    TrackSubchannelType    = subType
+                    TrackRawBytesPerSector = (int)sectorSize
                 });
 
                 trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
@@ -256,17 +250,13 @@ namespace Aaru.Core.Devices.Dumping
                     Array.Copy(cmdBuf, 0, temp, 0, 8);
                     Array.Reverse(temp);
                     lastSector = (long)BitConverter.ToUInt64(temp, 0);
-                    blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
                 }
                 else
                 {
                     sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
                     if(!sense)
-                    {
                         lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
-                        blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
-                    }
                 }
 
                 if(lastSector <= 0)

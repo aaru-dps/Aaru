@@ -117,6 +117,7 @@ namespace Aaru.Core.Devices.Dumping
             string                   mcn                 = null;
             HashSet<int>             subchannelExtents   = new HashSet<int>();
             bool                     cdiReadyReadAsAudio = false;
+            uint                     firstLba;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
             Dictionary<byte, int>            smallestPregapLbaPerTrack = new Dictionary<byte, int>();
@@ -131,9 +132,22 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
+            tracks = GetCdTracks(_dev, _dumpLog, _force, out lastSector, leadOutStarts, mediaTags, StoppingErrorMessage,
+                                 out toc, trackFlags, UpdateStatus);
+
+            if(tracks is null)
+            {
+                _dumpLog.WriteLine("Could not get tracks!");
+                StoppingErrorMessage?.Invoke("Could not get tracks!");
+
+                return;
+            }
+
+            firstLba = (uint)tracks.Min(t => t.TrackStartSector);
+
             // Check subchannels support
-            supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus);
-            supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus);
+            supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus, firstLba);
+            supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus, firstLba);
 
             if(supportsRwSubchannel)
                 supportedSubchannel = MmcSubchannel.Raw;
@@ -233,8 +247,8 @@ namespace Aaru.Core.Devices.Dumping
                     _dumpLog.WriteLine("Checking if drive supports reading without subchannel...");
                     UpdateStatus?.Invoke("Checking if drive supports reading without subchannel...");
 
-                    readcd = !_dev.ReadCd(out cmdBuf, out _, 0, sectorSize, 1, MmcSectorTypes.AllTypes, false, false,
-                                          true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                    readcd = !_dev.ReadCd(out cmdBuf, out _, firstLba, sectorSize, 1, MmcSectorTypes.AllTypes, false,
+                                          false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                           supportedSubchannel, _dev.Timeout, out _);
 
                     if(!readcd)
@@ -244,23 +258,23 @@ namespace Aaru.Core.Devices.Dumping
 
                         _dumpLog.WriteLine("Checking if drive supports READ(6)...");
                         UpdateStatus?.Invoke("Checking if drive supports READ(6)...");
-                        read6 = !_dev.Read6(out cmdBuf, out _, 0, 2048, 1, _dev.Timeout, out _);
+                        read6 = !_dev.Read6(out cmdBuf, out _, firstLba, 2048, 1, _dev.Timeout, out _);
                         _dumpLog.WriteLine("Checking if drive supports READ(10)...");
                         UpdateStatus?.Invoke("Checking if drive supports READ(10)...");
 
-                        read10 = !_dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1,
+                        read10 = !_dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1,
                                               _dev.Timeout, out _);
 
                         _dumpLog.WriteLine("Checking if drive supports READ(12)...");
                         UpdateStatus?.Invoke("Checking if drive supports READ(12)...");
 
-                        read12 = !_dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1, false,
-                                              _dev.Timeout, out _);
+                        read12 = !_dev.Read12(out cmdBuf, out _, 0, false, true, false, false, firstLba, 2048, 0, 1,
+                                              false, _dev.Timeout, out _);
 
                         _dumpLog.WriteLine("Checking if drive supports READ(16)...");
                         UpdateStatus?.Invoke("Checking if drive supports READ(16)...");
 
-                        read16 = !_dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 1, false,
+                        read16 = !_dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba, 2048, 0, 1, false,
                                               _dev.Timeout, out _);
 
                         if(!read6  &&
@@ -354,9 +368,9 @@ namespace Aaru.Core.Devices.Dumping
             // Check if subchannel is BCD
             if(supportedSubchannel != MmcSubchannel.None)
             {
-                sense = _dev.ReadCd(out cmdBuf, out _, 35, blockSize, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                    MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
-                                    _dev.Timeout, out _);
+                sense = _dev.ReadCd(out cmdBuf, out _, (((firstLba / 75) + 1) * 75) + 35, blockSize, 1,
+                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                    MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -386,11 +400,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
             }
 
-            tracks = GetCdTracks(ref blockSize, _dev, _dumpLog, _force, out lastSector, leadOutStarts, mediaTags,
-                                 StoppingErrorMessage, subType, out toc, trackFlags, UpdateStatus);
-
-            if(tracks is null)
-                return;
+            foreach(Track trk in tracks)
+                trk.TrackSubchannelType = subType;
 
             _dumpLog.WriteLine("Calculating pregaps, can take some time...");
             UpdateStatus?.Invoke("Calculating pregaps, can take some time...");
@@ -548,7 +559,7 @@ namespace Aaru.Core.Devices.Dumping
             MMC.DetectDiscType(ref dskType, sessions, toc, _dev, out hiddenTrack, out hiddenData,
                                firstTrackLastSession);
 
-            if(hiddenTrack)
+            if(hiddenTrack || firstLba > 0)
             {
                 _dumpLog.WriteLine("Disc contains a hidden track...");
                 UpdateStatus?.Invoke("Disc contains a hidden track...");
@@ -760,24 +771,24 @@ namespace Aaru.Core.Devices.Dumping
             {
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out _, 0, blockSize, _maximumReadable, MmcSectorTypes.AllTypes,
-                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out _);
+                    sense = _dev.ReadCd(out cmdBuf, out _, firstLba, blockSize, _maximumReadable,
+                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
                         _maximumReadable /= 2;
                 }
                 else if(read16)
                 {
-                    sense = _dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, blockSize, 0, _maximumReadable,
-                                        false, _dev.Timeout, out _);
+                    sense = _dev.Read16(out cmdBuf, out _, 0, false, true, false, firstLba, blockSize, 0,
+                                        _maximumReadable, false, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
                         _maximumReadable /= 2;
                 }
                 else if(read12)
                 {
-                    sense = _dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, blockSize, 0,
+                    sense = _dev.Read12(out cmdBuf, out _, 0, false, true, false, false, firstLba, blockSize, 0,
                                         _maximumReadable, false, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
@@ -785,7 +796,7 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if(read10)
                 {
-                    sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, blockSize, 0,
+                    sense = _dev.Read10(out cmdBuf, out _, 0, false, true, false, false, firstLba, blockSize, 0,
                                         (ushort)_maximumReadable, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
@@ -793,7 +804,8 @@ namespace Aaru.Core.Devices.Dumping
                 }
                 else if(read6)
                 {
-                    sense = _dev.Read6(out cmdBuf, out _, 0, blockSize, (byte)_maximumReadable, _dev.Timeout, out _);
+                    sense = _dev.Read6(out cmdBuf, out _, firstLba, blockSize, (byte)_maximumReadable, _dev.Timeout,
+                                       out _);
 
                     if(_dev.Error || sense)
                         _maximumReadable /= 2;
