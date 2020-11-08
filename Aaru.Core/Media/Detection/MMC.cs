@@ -224,7 +224,7 @@ namespace Aaru.Core.Media.Detection
             bool isData = IsData(sector0);
 
             if(!isData ||
-               sector0[0xF] != 2)
+               (sector0[0xF] != 2 && sector0[0xF] != 1))
                 return false;
 
             byte[] testMark = new byte[4];
@@ -406,15 +406,18 @@ namespace Aaru.Core.Media.Detection
 
                 if((mediaType == MediaType.CD || mediaType == MediaType.CDROM) && hasDataTrack)
                 {
-                    foreach(uint startAddress in decodedToc.
-                                                 Value.TrackDescriptors.
-                                                 Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
-                                                            ((TocControl)(t.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                                             (TocControl)(t.CONTROL & 0x0D) ==
-                                                             TocControl.DataTrackIncremental)).
-                                                 Select(track => (uint)(((track.PHOUR * 3600 * 75) +
-                                                                         (track.PMIN * 60    * 75) + (track.PSEC * 75) +
-                                                                         track.PFRAME) - 150) + 16))
+                    foreach(uint startAddress in decodedToc.Value.TrackDescriptors.
+                                                            Where(t => t.POINT > 0 && t.POINT <= 0x99 &&
+                                                                       ((TocControl)(t.CONTROL & 0x0D) ==
+                                                                        TocControl.DataTrack ||
+                                                                        (TocControl)(t.CONTROL & 0x0D) ==
+                                                                        TocControl.DataTrackIncremental)).
+                                                            Select(track => (uint)(((track.PHOUR * 3600 * 75) +
+                                                                                                    (track.PMIN * 60 *
+                                                                                                            75)       +
+                                                                                                    (track.PSEC * 75) +
+                                                                                                    track.PFRAME) -
+                                                                                        150) + 16))
                     {
                         sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false,
                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
@@ -456,7 +459,7 @@ namespace Aaru.Core.Media.Detection
 
                 uint firstSectorSecondSessionFirstTrack =
                     (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
-                            (secondSessionFirstTrackTrack.PMIN * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
+                            (secondSessionFirstTrackTrack.PMIN  * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
                             secondSessionFirstTrackTrack.PFRAME) - 150);
 
                 sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
@@ -530,7 +533,7 @@ namespace Aaru.Core.Media.Detection
             if(firstTrack?.POINT == 1)
             {
                 uint firstTrackSector = (uint)(((firstTrack.Value.PHOUR * 3600 * 75) +
-                                                (firstTrack.Value.PMIN * 60    * 75) + (firstTrack.Value.PSEC * 75) +
+                                                (firstTrack.Value.PMIN  * 60   * 75) + (firstTrack.Value.PSEC * 75) +
                                                 firstTrack.Value.PFRAME) - 150);
 
                 // Check for hidden data before start of track 1
@@ -587,11 +590,22 @@ namespace Aaru.Core.Media.Detection
                                     lba16 -= sectorsForOffset;
                                 }
 
-                                dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
-                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                sense = dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
+                                                   MmcSectorTypes.AllTypes, false, false, true,
+                                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
 
-                                sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
+                                // Drive does not support reading negative sectors?
+                                if(sense && lba0 < 0)
+                                {
+                                    dev.ReadCd(out sector0, out _, 0, 2352, 2, MmcSectorTypes.AllTypes, false, false,
+                                               true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                                    sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
+                                }
+                                else
+                                    sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
 
                                 dev.ReadCd(out byte[] sector16, out _, (uint)lba16, 2352, (uint)sectorsForOffset + 1,
                                            MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
