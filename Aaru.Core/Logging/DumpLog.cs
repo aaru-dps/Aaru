@@ -83,6 +83,7 @@ namespace Aaru.Core.Logging
             _logSw.WriteLine("################# Program information ################");
             _logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
             _logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
+            _logSw.WriteLine("Running as superuser: {0}", DetectOS.IsAdmin ? "Yes" : "No");
         #if DEBUG
             _logSw.WriteLine("DEBUG version");
         #endif
@@ -124,6 +125,7 @@ namespace Aaru.Core.Logging
 
                 _logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
                 _logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
+                _logSw.WriteLine("Running as superuser: {0}", dev.IsRemoteAdmin ? "Yes" : "No");
                 _logSw.WriteLine("######################################################");
             }
 
