@@ -454,9 +454,10 @@ namespace Aaru.Core.Logging
             {
                 _logSw.WriteLine("SCSI reading LBA {0} operating system error: {1}.", block, errno);
                 _logSw.Flush();
-
-                return;
             }
+
+            if(senseBuffer is null || senseBuffer.Length == 0)
+                return;
 
             FixedSense?      decodedFixedSense      = Sense.DecodeFixed(senseBuffer);
             DescriptorSense? decodedDescriptorSense = Sense.DecodeDescriptor(senseBuffer);
