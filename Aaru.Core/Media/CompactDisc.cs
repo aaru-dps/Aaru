@@ -87,8 +87,6 @@ namespace Aaru.Core.Media
                 bool pOk     = true;
                 int  pWeight = 0;
 
-                bool rwOk = true;
-
                 for(int p = subPos; p < subPos + 12; p++)
                 {
                     if(deSub[p] != 0 &&
@@ -100,10 +98,26 @@ namespace Aaru.Core.Media
                             pWeight++;
                 }
 
-                if(!deSub.Skip(subPos + 24).Take(96 - 24).All(rw => rw == 0) &&
-                   !deSub.Skip(subPos + 24).Take(96 - 24).All(rw => rw == 0xFF))
-                    rwOk = false;
+                // This seems to be a somewhat common pattern
+                bool rOk = deSub.Skip(subPos + 24).Take(12).All(r => r == 0x00) ||
+                           deSub.Skip(subPos + 24).Take(12).All(r => r == 0xFF);
 
+                bool sOk = deSub.Skip(subPos + 36).Take(12).All(s => s == 0x00) ||
+                           deSub.Skip(subPos + 36).Take(12).All(s => s == 0xFF);
+
+                bool tOk = deSub.Skip(subPos + 48).Take(12).All(t => t == 0x00) ||
+                           deSub.Skip(subPos + 48).Take(12).All(t => t == 0xFF);
+
+                bool uOk = deSub.Skip(subPos + 60).Take(12).All(u => u == 0x00) ||
+                           deSub.Skip(subPos + 60).Take(12).All(u => u == 0xFF);
+
+                bool vOk = deSub.Skip(subPos + 72).Take(12).All(v => v == 0x00) ||
+                           deSub.Skip(subPos + 72).Take(12).All(v => v == 0xFF);
+
+                bool wOk = deSub.Skip(subPos + 84).Take(12).All(w => w == 0x00) ||
+                           deSub.Skip(subPos + 84).Take(12).All(w => w == 0xFF);
+
+                bool rwOk         = rOk && sOk && tOk && uOk && vOk && wOk;
                 bool rwPacket     = false;
                 bool cdtextPacket = false;
 
