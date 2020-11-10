@@ -1863,7 +1863,7 @@ namespace Aaru.Tests.Filesystems
             null, null, null, null, null, null, null,
 
             // MS-DOS 4.01 for Toshiba
-            "VOLUMELABEL", "NO NAME    ", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "NO NAME    ",
+            "VOLUMELABEL", "NO NAME", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "NO NAME",
 
             // Novell DOS 7.00
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
@@ -2022,16 +2022,16 @@ namespace Aaru.Tests.Filesystems
             null, null, null,
 
             // Epson MS-DOS 5.00 for PC-98
-            "NO NAME    ", "NO NAME    ",
+            "NO NAME", "NO NAME",
 
             // NEC MS-DOS 3.30 for PC-98
             null, null,
 
             // NEC MS-DOS 5.00 for PC-98
-            "NO NAME    ", "NO NAME    ",
+            "NO NAME", "NO NAME",
 
             // NEC MS-DOS 6.20 for PC-98
-            "NO NAME    ", "NO NAME    ",
+            "NO NAME", "NO NAME",
 
             // GEOS 1.2
             "GEOS12",
