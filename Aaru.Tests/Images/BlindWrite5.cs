@@ -44,123 +44,414 @@ namespace Aaru.Tests.Images
         readonly string[] _testFiles =
         {
             "audiocd_cdtext.B5T", "cdg.B5T", "cdplus.B5T", "cdr.B5T", "cdrom80mm.B5T", "cdrom.B5T", "cdrw.B5T",
-            "dvdrom.B5T", "cdi.B5T", "gdrom.B5T", "jaguarcd.B5T", "mixed.B5T", "multitrack.B5T", "pcengine.B5T",
-            "pcfx.B5T", "videocd.B5T"
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            //"dvdrom.B5T", 
+            "cdi.B5T", "gdrom.B5T", "jaguarcd.B5T", "mixed.B5T", "multitrack.B5T", "pcengine.B5T", "pcfx.B5T",
+            "videocd.B5T"
         };
 
         readonly ulong[] _sectors =
         {
-            222187, 309546, 303316, 97765, 19042, 502, 1219, 2287072, 1385, 6400, 243587, 283397, 328360, 160956,
-            246680, 205072
+            // "audiocd_cdtext.B5T"
+            222187,
+
+            // "cdg.B5T"
+            309546,
+
+            // "cdplus.B5T"
+            303316,
+
+            // "cdr.B5T"
+            97765,
+
+            // "cdrom80mm.B5T"
+            19042,
+
+            // "cdrom.B5T"
+            502,
+
+            // "cdrw.B5T"
+            355500,
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //2287072,
+            // "cdi.B5T"
+            309834,
+
+            // "gdrom.B5T"
+            6400,
+
+            // "jaguarcd.B5T"
+            243587,
+
+            // "mixed.B5T"
+            283397,
+
+            // "multitrack.B5T"
+            328360,
+
+            // "pcengine.B5T"
+            160956,
+
+            // "pcfx.B5T"
+            246680,
+
+            // "videocd.B5T"
+            205072
         };
 
         readonly MediaType[] _mediaTypes =
         {
-            MediaType.CDDA, MediaType.CDDA, MediaType.CDPLUS, MediaType.CDR, MediaType.CDROM, MediaType.CDROM,
-            MediaType.CDRW, MediaType.DVDROM, MediaType.CDR, MediaType.CDROMXA, MediaType.CDDA, MediaType.CDROMXA,
-            MediaType.CDROM, MediaType.CD, MediaType.CD, MediaType.CDROMXA
+            // "audiocd_cdtext.B5T"
+            MediaType.CDDA,
+
+            // "cdg.B5T"
+            MediaType.CDDA,
+
+            // "cdplus.B5T"
+            MediaType.CDPLUS,
+
+            // "cdr.B5T"
+            MediaType.CDR,
+
+            // "cdrom80mm.B5T"
+            MediaType.CDROM,
+
+            // "cdrom.B5T"
+            MediaType.CDROM,
+
+            // "cdrw.B5T"
+            MediaType.CDRW,
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //MediaType.DVDROM,
+            // "cdi.B5T"
+            MediaType.CDROMXA,
+
+            // "gdrom.B5T"
+            MediaType.CDROMXA,
+
+            // "jaguarcd.B5T"
+            MediaType.CDDA,
+
+            // "mixed.B5T"
+            MediaType.CDROMXA,
+
+            // "multitrack.B5T"
+            MediaType.CDROM,
+
+            // "pcengine.B5T"
+            MediaType.CD,
+
+            // "pcfx.B5T"
+            MediaType.CD,
+
+            // "videocd.B5T"
+            MediaType.CDROMXA
         };
 
         readonly string[] _md5S =
         {
-            "1a4f916dff70030e26fe0454729d0e79", "d61ace888212ea274071e4c454dfaf5c", "056639b0a0d5c9aa8874ee49a75a31c4",
-            "7bd3f0b9ebc90c48f5dfce2bf67cc7a3", "20a0307dc58aa2ab409e903b3ba85518", "a637b6849f983623efd86563af30e6d9",
-            "a280948374cacd96d11417be74b504e1", "b9b0b4318e6264c405c3f96128901815", "d68b727b1ea31011ad36f06c1e79d0b1",
-            "919202f8dc03fefd2d8a3cb92f5a1a0a", "8086a3654d6dede562621d24ae18729e", "c68e679f86b62b02b9cb66b5e217d15b",
-            "41458c6ff3e35aa635cc2f2fdb5582ae", "0dac1b20a9dc65c4ed1b11f6160ed983", "bc514cb4f3c7e2ee6857b2a3d470278b",
-            "c28398b4b49c45dce49aa04c71893baa"
+            // "audiocd_cdtext.B5T"
+            "1a4f916dff70030e26fe0454729d0e79",
+
+            // "cdg.B5T"
+            "d61ace888212ea274071e4c454dfaf5c",
+
+            // "cdplus.B5T"
+            "22c1dc74889d87ffb80e0a4d03cac230",
+
+            // "cdr.B5T"
+            "d5c765d46834abc33a1f303a379ec840",
+
+            // "cdrom80mm.B5T"
+            "20a0307dc58aa2ab409e903b3ba85518",
+
+            // "cdrom.B5T"
+            "a637b6849f983623efd86563af30e6d9",
+
+            // "cdrw.B5T"
+            "bd2bc3f0a72a4c41b1afc7267bd70430",
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //"b9b0b4318e6264c405c3f96128901815",
+            // "cdi.B5T"
+            "b6aea697cf5580f3f798ffc4d86f48b8",
+
+            // "gdrom.B5T"
+            "b8795d40ccbd9d480cfe79961b9fb3cc",
+
+            // "jaguarcd.B5T"
+            "3dd5bd0f7d95a40d411761d69255567a",
+
+            // "mixed.B5T"
+            "556b0159070ee11a926f3932650c8f2c",
+
+            // "multitrack.B5T"
+            "41458c6ff3e35aa635cc2f2fdb5582ae",
+
+            // "pcengine.B5T"
+            "4f5165069b3c5f11afe5f59711bd945d",
+
+            // "pcfx.B5T"
+            "c1bc8de499756453d1387542bb32bb4d",
+
+            // "videocd.B5T"
+            "47284e4065fbb26c94cf13870cb31c5d"
         };
 
         readonly string[] _longMd5S =
         {
-            "1a4f916dff70030e26fe0454729d0e79", "d61ace888212ea274071e4c454dfaf5c", "aa01f7aa762633732d1afc611e9261d2",
-            "784fd68573817893a3a0a6e05684ea52", "a940232a64a51e2848fdd7ea22cbb5f1", "e242fd3e7e353af1661b453dfe7f0562",
-            "5657eb302e16577ddade84c87219f5e6", "b9b0b4318e6264c405c3f96128901815", "d68b727b1ea31011ad36f06c1e79d0b1",
-            "9e624b9d02cb876640015e7f7027766c", "8086a3654d6dede562621d24ae18729e", "e431e3438d45af3156c0c2348d29217a",
-            "2d349b97860ab08666416fdc424097b1", "f1c1dbe1cd9df11fe2c1f0a97130c25f", "dac5dc0961fa435da3c7d433477cda1a",
-            "ab9f7cd1c27eec3292ab438df99381ce"
+            // "audiocd_cdtext.B5T"
+            "1a4f916dff70030e26fe0454729d0e79",
+
+            // "cdg.B5T"
+            "d61ace888212ea274071e4c454dfaf5c",
+
+            // "cdplus.B5T"
+            "b59128c19a617782f5a1f22263046ad7",
+
+            // "cdr.B5T"
+            "18569ebb43ef9eb45f5f26bcbff3ebd7",
+
+            // "cdrom80mm.B5T"
+            "a940232a64a51e2848fdd7ea22cbb5f1",
+
+            // "cdrom.B5T"
+            "e242fd3e7e353af1661b453dfe7f0562",
+
+            // "cdrw.B5T"
+            "40a83558b159ea0a7dae0f87f9fd60d8",
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //"b9b0b4318e6264c405c3f96128901815",
+            // "cdi.B5T"
+            "a071c4ff0e6bf75dec2f9293af52fc64",
+
+            // "gdrom.B5T"
+            "b2297e21f26a509701d48507626e8990",
+
+            // "jaguarcd.B5T"
+            "3dd5bd0f7d95a40d411761d69255567a",
+
+            // "mixed.B5T"
+            "ca7e0d49553f026098bfc5cfd5cdc7d0",
+
+            // "multitrack.B5T"
+            "6d8d9c35156b26cad81e1c598cc326ac",
+
+            // "pcengine.B5T"
+            "fd30db9486f67654179c90c8a5052edb",
+
+            // "pcfx.B6T"    
+            "455ec326506d2c5b974c4617c1010796",
+
+            // "videocd.B6T"
+            "93dccc154dabfbe98790b462f1b8dec3"
         };
 
         readonly string[] _subchannelMd5S =
         {
-            "52a66b04f28fd3161bb4d41b80c621dc", "6d77b37c8ca0946f56a6452930910390", "c1fd2a298224d7d3b0fd096fbc97c758",
-            "6f3d69f6ea2fa81e84c325a36d37ecb8", "fab80226b764a4bde04a1b182f5f68f5", "6c08365c619d9020e72f1dc6d42b6959",
-            "9f6910ce13a752a0fae0b5ab17f4fdcd", "db0b4318e6264c405c3f96128901815", "2af826aec596b10393eaabb994471236",
-            "a8599b043483431b4b9380b9f71ec228", "83ec1010fc44694d69dc48bacec5481a", "614fdc36219120b833fdfa62eee5b0f7",
-            "a9158c3b13aee6fdde14031be61d9a5c", "9e9a6b51bc2e5ec67400cb33ad0ca33f", "e3a0d78b6c32f5795b1b513bd13a6bda",
-            "85b051cae460fe505644e734dde032a0"
+            // "audiocd_cdtext.B5T"
+            null,
+
+            // "cdg.B5T"
+            null,
+
+            // "cdplus.B5T"
+            null,
+
+            // "cdr.B5T"
+            null,
+
+            // "cdrom80mm.B5T"
+            null,
+
+            // "cdrom.B5T"
+            null,
+
+            // "cdrw.B5T"
+            null,
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //null,
+            // "cdi.B5T"
+            null,
+
+            // "gdrom.B5T"
+            null,
+
+            // "jaguarcd.B5T"
+            null,
+
+            // "mixed.B5T"
+            null,
+
+            // "multitrack.B5T"
+            null,
+
+            // "pcengine.B6T"
+            null,
+
+            // "pcfx.B6T"    
+            null,
+
+            // "videocd.B6T"
+            null
         };
 
         readonly int[] _tracks =
         {
-            13, 16, 14, 2, 1, 1, 1, 1, 3, 2, 11, 11, 3, 16, 8, 18
+            // "audiocd_cdtext.B5T"
+            13,
+
+            // "cdg.B5T"
+            16,
+
+            // "cdplus.B5T"
+            14,
+
+            // "cdr.B5T"
+            2,
+
+            // "cdrom80mm.B5T"
+            1,
+
+            // "cdrom.B5T"
+            1,
+
+            // "cdrw.B5T"
+            1,
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            //1, 
+            // "cdi.B5T"
+            1,
+
+            // "gdrom.B5T"
+            2,
+
+            // "jaguarcd.B5T"
+            11,
+
+            // "mixed.B5T"
+            11,
+
+            // "multitrack.B5T"
+            3,
+
+            // "pcengine.B5T"
+            16,
+
+            // "pcfx.B5T"
+            8,
+
+            // "videocd.B5T"
+            18
         };
 
         readonly int[][] _trackSessions =
         {
+            // "audiocd_cdtext.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // "cdg.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // "cdplus.B5T"
             new[]
             {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 // TODO: 2 goes here
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2
             },
+
+            // "cdr.B5T"
             new[]
             {
-                1, 1 // TODO: 2 goes here
+                1, 2
             },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1
-            },
+
+            // "cdrom80mm.B5T"
             new[]
             {
                 1
             },
+
+            // "cdrom.B5T"
             new[]
             {
-                1, 1, 1
+                1
             },
+
+            // "cdrw.B5T"
+            new[]
+            {
+                1
+            },
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            /*
+            new[]
+            {
+                1
+            },
+            */
+            // "cdi.B5T"
+            new[]
+            {
+                1
+            },
+
+            // "gdrom.B5T"
             new[]
             {
                 1, 1
             },
+
+            // "jaguarcd.B5T"
             new[]
             {
-                // TODO
-                // 2 goes here
-                // 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
             },
+
+            // "mixed.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // "multitrack.B5T"
             new[]
             {
                 1, 1, 1
             },
+
+            // "pcengine.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // "pcfx.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // "videocd.B5T"
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
@@ -169,68 +460,101 @@ namespace Aaru.Tests.Images
 
         readonly ulong[][] _trackStarts =
         {
+            // "audiocd_cdtext.B5T"
             new ulong[]
             {
                 0, 14710, 31607, 48487, 70120, 86710, 103485, 122540, 139935, 153990, 172670, 190525, 205465
             },
+
+            // "cdg.B5T"
             new ulong[]
             {
                 0, 17377, 38525, 54936, 72860, 90755, 114546, 136451, 154773, 172150, 193298, 209709, 227633, 245528,
                 269319, 291224
             },
+
+            // "cdplus.B5T"
             new ulong[]
             {
-                0, 15661, 33959, 51330, 71973, 87582, 103305, 117691, 136167, 153418, 166932, 187113, 201441, 234180
+                0, 15661, 33959, 51330, 71973, 87582, 103305, 117691, 136167, 153418, 166932, 187113, 201441, 234030
             },
+
+            // "cdr.B5T"
             new ulong[]
             {
-                0, 42887
+                0, 42737
             },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0
-            },
+
+            // "cdrom80mm.B5T"
             new ulong[]
             {
                 0
             },
+
+            // "cdrom.B5T"
             new ulong[]
             {
-                0, 450, 900
+                0
             },
+
+            // "cdrw.B5T"
+            new ulong[]
+            {
+                0
+            },
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            /*
+            new ulong[]
+            {
+                0
+            },
+            */
+            // "cdi.B5T"
+            new ulong[]
+            {
+                0
+            },
+
+            // "gdrom.B5T"
             new ulong[]
             {
                 0, 450
             },
+
+            // "jaguarcd.B5T"
             new ulong[]
             {
-                0, 27640, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
+                0, 27490, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
             },
+
+            // "mixed.B5T"
             new ulong[]
             {
-                0, 16736, 40043, 51156, 88837, 116403, 149909, 188938, 214294, 243625, 259729
+                0, 16586, 40043, 51156, 88837, 116403, 149909, 188938, 214294, 243625, 259729
             },
+
+            // "multitrack.B5T"
             new ulong[]
             {
                 0, 48658, 207528
             },
+
+            // "pcengine.B5T"
             new ulong[]
             {
-                0, 3590, 38614, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
+                0, 3590, 38464, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
                 126229
             },
+
+            // "pcfx.B5T"
             new ulong[]
             {
-                0, 4395, 4909, 5941, 42059, 220795, 225646, 235498
+                0, 4395, 4909, 5941, 42059, 220645, 225646, 235498
             },
+
+            // "videocd.B5T"
             new ulong[]
             {
                 0, 2100, 12985, 20451, 39498, 47368, 56600, 67387, 71546, 77030, 80535, 95180, 110808, 115449, 118723,
@@ -240,202 +564,302 @@ namespace Aaru.Tests.Images
 
         readonly ulong[][] _trackEnds =
         {
+            // "audiocd_cdtext.B5T"
             new ulong[]
             {
                 14709, 31606, 48486, 70119, 86709, 103484, 122539, 139934, 153989, 172669, 190524, 205464, 222186
             },
+
+            // "cdg.B5T"
             new ulong[]
             {
                 17376, 38524, 54935, 72859, 90754, 114545, 136450, 154772, 172149, 193297, 209708, 227632, 245527,
                 269318, 291223, 309545
             },
+
+            // "cdplus.B5T"
             new ulong[]
             {
                 15660, 33958, 51329, 71972, 87581, 103304, 117690, 136166, 153417, 166931, 187112, 201440, 222779,
                 303315
             },
+
+            // "cdr.B5T"
             new ulong[]
             {
-                31486, 97764
+                31336, 97764
             },
+
+            // "cdrom80mm.B5T"
             new ulong[]
             {
                 19041
             },
+
+            // "cdrom.B5T"
             new ulong[]
             {
                 501
             },
+
+            // "cdrw.B5T"
             new ulong[]
             {
-                1218
+                355499
             },
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            /*
             new ulong[]
             {
-                2287071
+            2287071
             },
+            */
+            // "cdi.B5T"
             new ulong[]
             {
-                449, 899, 1384
+                309833
             },
+
+            // "gdrom.B5T"
             new ulong[]
             {
-                299, 6399
+                449, 6399
             },
+
+            // "jaguarcd.B5T"
             new ulong[]
             {
                 16239, 28236, 78891, 100053, 133202, 160907, 181465, 202023, 222581, 243139, 243586
             },
+
+            // "mixed.B5T"
             new ulong[]
             {
                 16585, 40042, 51155, 88836, 116402, 149908, 188937, 214293, 243624, 259728, 283396
             },
+
+            // "multitrack.B5T"
             new ulong[]
             {
                 48657, 207527, 328359
             },
+
+            // "pcengine.B5T"
             new ulong[]
             {
-                3439, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269,
-                126078, 160955
+                3589, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269,
+                126228, 160955
             },
+
+            // "pcfx.B5T"
             new ulong[]
             {
-                4244, 4908, 5940, 42058, 220644, 225645, 235497, 246679
+                4394, 4908, 5940, 42058, 220644, 225645, 235497, 246679
             },
+
+            // "videocd.B5T"
             new ulong[]
             {
-                1949, 12984, 20450, 39497, 47367, 56599, 67386, 71545, 77029, 80534, 95179, 110807, 115448, 118722,
+                2099, 12984, 20450, 39497, 47367, 56599, 67386, 71545, 77029, 80534, 95179, 110807, 115448, 118722,
                 123265, 128327, 131636, 205071
             }
         };
 
         readonly ulong[][] _trackPregaps =
         {
+            // "audiocd_cdtext.B5T"
             new ulong[]
             {
                 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "cdg.B5T"
             new ulong[]
             {
                 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "cdplus.B5T"
             new ulong[]
             {
                 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150
             },
+
+            // "cdr.B5T"
             new ulong[]
             {
                 150, 150
             },
+
+            // "cdrom80mm.B5T"
             new ulong[]
             {
                 150
             },
+
+            // "cdrom.B5T"
             new ulong[]
             {
                 150
             },
+
+            // "cdrw.B5T"
             new ulong[]
             {
                 150
             },
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            /*
             new ulong[]
             {
-                0
+            0
             },
+            */
+            // "cdi.B5T"
             new ulong[]
             {
-                150, 0, 0
+                150
             },
+
+            // "gdrom.B5T"
             new ulong[]
             {
-                150, 150
+                150, 0
             },
+
+            // "jaguarcd.B5T"
             new ulong[]
             {
                 150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "mixed.B5T"
             new ulong[]
             {
                 150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "multitrack.B5T"
             new ulong[]
             {
                 150, 0, 0
             },
+
+            // "pcengine.B5T"
             new ulong[]
             {
-                150, 150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150
+                150, 0, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "pcfx.B5T"
             new ulong[]
             {
-                150, 150, 0, 0, 0, 150, 0, 0
+                150, 0, 0, 0, 0, 150, 0, 0
             },
+
+            // "videocd.B5T"
             new ulong[]
             {
-                150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             }
         };
 
         readonly byte[][] _trackFlags =
         {
+            // "audiocd_cdtext.B5T"
             new byte[]
             {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "cdg.B5T"
             new byte[]
             {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "cdplus.B5T"
             new byte[]
             {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
             },
+
+            // "cdr.B5T"
             new byte[]
             {
                 4, 4
             },
+
+            // "cdrom80mm.B5T"
             new byte[]
             {
                 4
             },
+
+            // "cdrom.B5T"
             new byte[]
             {
                 4
             },
+
+            // "cdrw.B5T"
             new byte[]
             {
                 4
             },
-            null, new byte[]
+
+            // TODO: https://github.com/aaru-dps/Aaru/issues/430
+            // "dvdrom.B5T"
+            /*
+            null,
+            */
+            // "cdi.B5T"
+            new byte[]
             {
-                2, 2, 2
+                4
             },
+
+            // "gdrom.B5T"
             new byte[]
             {
                 4, 0
             },
+
+            // "jaguarcd.B5T"
             new byte[]
             {
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "mixed.B5T"
             new byte[]
             {
                 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
+
+            // "multitrack.B5T"
             new byte[]
             {
                 4, 4, 4
             },
+
+            // "pcengine.B5T"
             new byte[]
             {
                 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
             },
+
+            // "pcfx.B5T"
             new byte[]
             {
                 0, 4, 4, 4, 4, 0, 0, 0
             },
+
+            // "videocd.B5T"
             new byte[]
             {
                 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
