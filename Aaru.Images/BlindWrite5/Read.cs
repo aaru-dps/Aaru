@@ -845,6 +845,15 @@ namespace Aaru.DiscImages
                 }
             }
 
+            foreach(Track track in Tracks)
+            {
+                Session trackSession =
+                    Sessions.FirstOrDefault(s => track.TrackSequence >= s.StartTrack &&
+                                                 track.TrackSequence <= s.EndTrack);
+
+                track.TrackSession = trackSession.SessionSequence;
+            }
+
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing track map");
 
             foreach(Track track in Tracks)
