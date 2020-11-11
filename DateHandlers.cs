@@ -87,10 +87,10 @@ namespace Aaru.Helpers
         /// <returns>.NET DateTime</returns>
         public static DateTime HighSierraToDateTime(byte[] vdDateTime)
         {
-            byte[] isotime = new byte[17];
-            Array.Copy(vdDateTime, 0, isotime, 0, 16);
+            byte[] isoTime = new byte[17];
+            Array.Copy(vdDateTime, 0, isoTime, 0, 16);
 
-            return Iso9660ToDateTime(isotime);
+            return Iso9660ToDateTime(isoTime);
         }
 
         // TODO: Timezone
@@ -99,72 +99,72 @@ namespace Aaru.Helpers
         /// <returns>.NET DateTime</returns>
         public static DateTime Iso9660ToDateTime(byte[] vdDateTime)
         {
-            byte[] twocharvalue  = new byte[2];
-            byte[] fourcharvalue = new byte[4];
+            byte[] twoCharValue  = new byte[2];
+            byte[] fourCharValue = new byte[4];
 
-            fourcharvalue[0] = vdDateTime[0];
-            fourcharvalue[1] = vdDateTime[1];
-            fourcharvalue[2] = vdDateTime[2];
-            fourcharvalue[3] = vdDateTime[3];
+            fourCharValue[0] = vdDateTime[0];
+            fourCharValue[1] = vdDateTime[1];
+            fourCharValue[2] = vdDateTime[2];
+            fourCharValue[3] = vdDateTime[3];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
-                                       StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(fourCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out int year))
+            if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII), out int year))
                 year = 0;
 
-            twocharvalue[0] = vdDateTime[4];
-            twocharvalue[1] = vdDateTime[5];
+            twoCharValue[0] = vdDateTime[4];
+            twoCharValue[1] = vdDateTime[5];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int month))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int month))
                 month = 0;
 
-            twocharvalue[0] = vdDateTime[6];
-            twocharvalue[1] = vdDateTime[7];
+            twoCharValue[0] = vdDateTime[6];
+            twoCharValue[1] = vdDateTime[7];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int day))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int day))
                 day = 0;
 
-            twocharvalue[0] = vdDateTime[8];
-            twocharvalue[1] = vdDateTime[9];
+            twoCharValue[0] = vdDateTime[8];
+            twoCharValue[1] = vdDateTime[9];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hour))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hour))
                 hour = 0;
 
-            twocharvalue[0] = vdDateTime[10];
-            twocharvalue[1] = vdDateTime[11];
+            twoCharValue[0] = vdDateTime[10];
+            twoCharValue[1] = vdDateTime[11];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int minute))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int minute))
                 minute = 0;
 
-            twocharvalue[0] = vdDateTime[12];
-            twocharvalue[1] = vdDateTime[13];
+            twoCharValue[0] = vdDateTime[12];
+            twoCharValue[1] = vdDateTime[13];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int second))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int second))
                 second = 0;
 
-            twocharvalue[0] = vdDateTime[14];
-            twocharvalue[1] = vdDateTime[15];
+            twoCharValue[0] = vdDateTime[14];
+            twoCharValue[1] = vdDateTime[15];
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
-                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
+                                       StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-            if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths))
+            if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hundredths))
                 hundredths = 0;
 
             AaruConsole.DebugWriteLine("ISO9600ToDateTime handler",
@@ -173,8 +173,7 @@ namespace Aaru.Helpers
 
             sbyte difference = (sbyte)vdDateTime[16];
 
-            var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10,
-                                         DateTimeKind.Utc);
+            var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Utc);
 
             return decodedDt.AddMinutes(difference * -15);
         }
@@ -239,18 +238,18 @@ namespace Aaru.Helpers
                                        "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
                                        second);
 
-            DateTime dosdate;
+            DateTime dosDate;
 
             try
             {
-                dosdate = new DateTime(year, month, day, hour, minute, second);
+                dosDate = new DateTime(year, month, day, hour, minute, second);
             }
             catch(ArgumentOutOfRangeException)
             {
-                dosdate = new DateTime(1980, 1, 1, 0, 0, 0);
+                dosDate = new DateTime(1980, 1, 1, 0, 0, 0);
             }
 
-            return dosdate;
+            return dosDate;
         }
 
         /// <summary>Converts a CP/M timestamp to .NET DateTime</summary>

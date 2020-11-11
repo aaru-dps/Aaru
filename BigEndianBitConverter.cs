@@ -305,16 +305,16 @@ namespace Aaru.Helpers
         public static ulong ToUInt64(byte[] value, int startIndex) =>
             BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
 
-        public static Guid ToGuid(byte[] value, int startIndex) => new Guid(ToUInt32(value, 0    + startIndex),
-                                                                            ToUInt16(value, 4    + startIndex),
-                                                                            ToUInt16(value, 6    + startIndex),
-                                                                            value[8 + startIndex + 0],
-                                                                            value[8 + startIndex + 1],
-                                                                            value[8 + startIndex + 2],
-                                                                            value[8 + startIndex + 3],
-                                                                            value[8 + startIndex + 5],
-                                                                            value[8 + startIndex + 5],
-                                                                            value[8 + startIndex + 6],
-                                                                            value[8 + startIndex + 7]);
+        public static Guid ToGuid(byte[] value, int startIndex) => new Guid(ToUInt32(value, 0 + startIndex),
+                                                                            ToUInt16(value, 4 + startIndex),
+                                                                            ToUInt16(value, 6 + startIndex),
+                                                                            value[8           + startIndex + 0],
+                                                                            value[8           + startIndex + 1],
+                                                                            value[8           + startIndex + 2],
+                                                                            value[8           + startIndex + 3],
+                                                                            value[8           + startIndex + 5],
+                                                                            value[8           + startIndex + 5],
+                                                                            value[8           + startIndex + 6],
+                                                                            value[8           + startIndex + 7]);
     }
 }
