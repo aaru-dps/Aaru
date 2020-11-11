@@ -230,7 +230,7 @@ namespace Aaru.Decoders.CD
                 }
 
                 eccA                                = _eccBTable[_eccFTable[eccA] ^ eccB];
-                ecc[major              + eccOffset] = eccA;
+                ecc[major + eccOffset]              = eccA;
                 ecc[major + majorCount + eccOffset] = (byte)(eccA ^ eccB);
             }
         }

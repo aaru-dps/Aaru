@@ -93,8 +93,8 @@ namespace Aaru.Decoders.CD
                 decoded.PMADescriptors[i].Frame    = CDPMAResponse[6 + (i * 11) + 4];
                 decoded.PMADescriptors[i].HOUR     = (byte)((CDPMAResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
                 decoded.PMADescriptors[i].PHOUR    = (byte)(CDPMAResponse[7 + (i * 11) + 4] & 0x0F);
-                decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8 + (i * 11)  + 4];
-                decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9 + (i * 11)  + 4];
+                decoded.PMADescriptors[i].PMIN     = CDPMAResponse[8  + (i * 11) + 4];
+                decoded.PMADescriptors[i].PSEC     = CDPMAResponse[9  + (i * 11) + 4];
                 decoded.PMADescriptors[i].PFRAME   = CDPMAResponse[10 + (i * 11) + 4];
             }
 

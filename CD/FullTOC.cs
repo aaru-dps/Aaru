@@ -100,8 +100,8 @@ namespace Aaru.Decoders.CD
                 decoded.TrackDescriptors[i].Zero          = CDFullTOCResponse[7 + (i * 11) + 4];
                 decoded.TrackDescriptors[i].HOUR          = (byte)((CDFullTOCResponse[7 + (i * 11) + 4] & 0xF0) >> 4);
                 decoded.TrackDescriptors[i].PHOUR         = (byte)(CDFullTOCResponse[7 + (i * 11) + 4] & 0x0F);
-                decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8 + (i * 11)  + 4];
-                decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9 + (i * 11)  + 4];
+                decoded.TrackDescriptors[i].PMIN          = CDFullTOCResponse[8  + (i * 11) + 4];
+                decoded.TrackDescriptors[i].PSEC          = CDFullTOCResponse[9  + (i * 11) + 4];
                 decoded.TrackDescriptors[i].PFRAME        = CDFullTOCResponse[10 + (i * 11) + 4];
             }
 

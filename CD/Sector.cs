@@ -314,7 +314,7 @@ namespace Aaru.Decoders.CD
             }
 
             lba += (((min >> 4) * 10) + (min & 0x0F)) * 75 * 60;
-            lba += (((sec >> 4) * 10) + (sec & 0x0F))      * 75;
+            lba += (((sec >> 4) * 10) + (sec & 0x0F)) * 75;
             lba += ((frame >> 4) * 10) + (frame & 0x0F);
             lba -= 150;
 
