@@ -281,17 +281,17 @@ namespace Aaru.DiscImages
 
                         DumpHardwareType existingDump =
                             DumpHardware.FirstOrDefault(d =>
-                                                            d.Manufacturer == matchDumpExtent.
-                                                                              Groups["manufacturer"].Value         &&
+                                                            d.Manufacturer == matchDumpExtent.Groups["manufacturer"].
+                                                                Value                                              &&
                                                             d.Model    == matchDumpExtent.Groups["model"].Value    &&
                                                             d.Firmware == matchDumpExtent.Groups["firmware"].Value &&
                                                             d.Serial   == matchDumpExtent.Groups["serial"].Value   &&
-                                                            d.Software.Name ==
-                                                            matchDumpExtent.Groups["application"].Value &&
+                                                            d.Software.Name == matchDumpExtent.Groups["application"].
+                                                                Value &&
                                                             d.Software.Version == matchDumpExtent.
-                                                                                  Groups["version"].Value &&
+                                                                Groups["version"].Value &&
                                                             d.Software.OperatingSystem == matchDumpExtent.
-                                                                                          Groups["os"].Value);
+                                                                Groups["os"].Value);
 
                         if(existingDump is null)
                         {

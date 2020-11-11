@@ -37,7 +37,7 @@ namespace Aaru.Filesystems
     public sealed partial class OperaFS
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>0x000, Record type, must be 1</summary>
             public readonly byte record_type;
@@ -71,7 +71,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryHeader
+        readonly struct DirectoryHeader
         {
             /// <summary>Next block from this directory, -1 if last</summary>
             public readonly int next_block;
@@ -86,7 +86,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             /// <summary>File flags, see <see cref="FileFlags" /></summary>
             public readonly uint flags;

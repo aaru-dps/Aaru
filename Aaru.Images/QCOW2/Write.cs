@@ -92,13 +92,13 @@ namespace Aaru.DiscImages
             string extension = Path.GetExtension(path);
             bool   version3  = extension == ".qcow3" || extension == ".qc3";
 
-            _qHdr = new QCow2Header
+            _qHdr = new Header
             {
                 magic         = QCOW_MAGIC,
                 version       = version3 ? QCOW_VERSION3 : QCOW_VERSION2,
                 size          = sectors * sectorSize,
                 cluster_bits  = 16,
-                header_length = (uint)Marshal.SizeOf<QCow2Header>()
+                header_length = (uint)Marshal.SizeOf<Header>()
             };
 
             _clusterSize    = 1 << (int)_qHdr.cluster_bits;
@@ -243,9 +243,9 @@ namespace Aaru.DiscImages
             _writingStream.Seek((long)(offset + (byteAddress & _sectorMask)), SeekOrigin.Begin);
             _writingStream.Write(data, 0, data.Length);
 
-            int   refCountBlockEntries = (_clusterSize * 8)                   / 16;
+            int   refCountBlockEntries = (_clusterSize * 8) / 16;
             ulong refCountBlockIndex   = (offset       / (ulong)_clusterSize) % (ulong)refCountBlockEntries;
-            ulong refCountTableIndex   = offset / (ulong)_clusterSize         / (ulong)refCountBlockEntries;
+            ulong refCountTableIndex   = offset / (ulong)_clusterSize / (ulong)refCountBlockEntries;
 
             ulong refBlockOffset = _refCountTable[refCountTableIndex];
 

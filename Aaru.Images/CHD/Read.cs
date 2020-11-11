@@ -81,17 +81,16 @@ namespace Aaru.DiscImages
             {
                 case 1:
                 {
-                    ChdHeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV1>(buffer);
+                    HeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<HeaderV1>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"",
                                                Encoding.ASCII.GetString(hdrV1.tag));
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (ChdFlags)hdrV1.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (Flags)hdrV1.flags);
 
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}",
-                                               (ChdCompression)hdrV1.compression);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}", (Compression)hdrV1.compression);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
@@ -156,17 +155,16 @@ namespace Aaru.DiscImages
 
                 case 2:
                 {
-                    ChdHeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
+                    HeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<HeaderV2>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"",
                                                Encoding.ASCII.GetString(hdrV2.tag));
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (ChdFlags)hdrV2.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (Flags)hdrV2.flags);
 
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}",
-                                               (ChdCompression)hdrV2.compression);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}", (Compression)hdrV2.compression);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
@@ -234,17 +232,16 @@ namespace Aaru.DiscImages
 
                 case 3:
                 {
-                    ChdHeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
+                    HeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<HeaderV3>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"",
                                                Encoding.ASCII.GetString(hdrV3.tag));
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (ChdFlags)hdrV3.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (Flags)hdrV3.flags);
 
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}",
-                                               (ChdCompression)hdrV3.compression);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}", (Compression)hdrV3.compression);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
@@ -288,17 +285,16 @@ namespace Aaru.DiscImages
 
                 case 4:
                 {
-                    ChdHeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
+                    HeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<HeaderV4>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"",
                                                Encoding.ASCII.GetString(hdrV4.tag));
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (ChdFlags)hdrV4.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (Flags)hdrV4.flags);
 
-                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}",
-                                               (ChdCompression)hdrV4.compression);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}", (Compression)hdrV4.compression);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
@@ -342,7 +338,7 @@ namespace Aaru.DiscImages
                     // TODO: Check why reading is misaligned
                     throw new ImageNotSupportedException("CHD version 5 is not yet supported.");
 
-                    ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
+                    HeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<HeaderV5>(buffer);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"",
                                                Encoding.ASCII.GetString(hdrV5.tag));
@@ -459,8 +455,8 @@ namespace Aaru.DiscImages
                     byte[] hdrBytes = new byte[16];
                     stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
                     stream.Read(hdrBytes, 0, hdrBytes.Length);
-                    ChdMetadataHeader header = Marshal.ByteArrayToStructureBigEndian<ChdMetadataHeader>(hdrBytes);
-                    byte[]            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
+                    MetadataHeader header = Marshal.ByteArrayToStructureBigEndian<MetadataHeader>(hdrBytes);
+                    byte[]         meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                     stream.Read(meta, 0, meta.Length);
 
                     AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
@@ -509,7 +505,7 @@ namespace Aaru.DiscImages
 
                             for(uint i = 0; i < chdTracksNumber; i++)
                             {
-                                var chdTrack = new ChdTrackOld
+                                var chdTrack = new TrackOld
                                 {
                                     type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 0)),
                                     subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 4)),
@@ -521,46 +517,46 @@ namespace Aaru.DiscImages
 
                                 var aaruTrack = new Track();
 
-                                switch((ChdOldTrackType)chdTrack.type)
+                                switch((TrackTypeOld)chdTrack.type)
                                 {
-                                    case ChdOldTrackType.Audio:
+                                    case TrackTypeOld.Audio:
                                         aaruTrack.TrackBytesPerSector    = 2352;
                                         aaruTrack.TrackRawBytesPerSector = 2352;
                                         aaruTrack.TrackType              = TrackType.Audio;
 
                                         break;
-                                    case ChdOldTrackType.Mode1:
+                                    case TrackTypeOld.Mode1:
                                         aaruTrack.TrackBytesPerSector    = 2048;
                                         aaruTrack.TrackRawBytesPerSector = 2048;
                                         aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
-                                    case ChdOldTrackType.Mode1Raw:
+                                    case TrackTypeOld.Mode1Raw:
                                         aaruTrack.TrackBytesPerSector    = 2048;
                                         aaruTrack.TrackRawBytesPerSector = 2352;
                                         aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
-                                    case ChdOldTrackType.Mode2:
-                                    case ChdOldTrackType.Mode2FormMix:
+                                    case TrackTypeOld.Mode2:
+                                    case TrackTypeOld.Mode2FormMix:
                                         aaruTrack.TrackBytesPerSector    = 2336;
                                         aaruTrack.TrackRawBytesPerSector = 2336;
                                         aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
-                                    case ChdOldTrackType.Mode2Form1:
+                                    case TrackTypeOld.Mode2Form1:
                                         aaruTrack.TrackBytesPerSector    = 2048;
                                         aaruTrack.TrackRawBytesPerSector = 2048;
                                         aaruTrack.TrackType              = TrackType.CdMode2Form1;
 
                                         break;
-                                    case ChdOldTrackType.Mode2Form2:
+                                    case TrackTypeOld.Mode2Form2:
                                         aaruTrack.TrackBytesPerSector    = 2324;
                                         aaruTrack.TrackRawBytesPerSector = 2324;
                                         aaruTrack.TrackType              = TrackType.CdMode2Form2;
 
                                         break;
-                                    case ChdOldTrackType.Mode2Raw:
+                                    case TrackTypeOld.Mode2Raw:
                                         aaruTrack.TrackBytesPerSector    = 2336;
                                         aaruTrack.TrackRawBytesPerSector = 2352;
                                         aaruTrack.TrackType              = TrackType.CdMode2Formless;
@@ -570,19 +566,19 @@ namespace Aaru.DiscImages
                                         throw new ImageNotSupportedException($"Unsupported track type {chdTrack.type}");
                                 }
 
-                                switch((ChdOldSubType)chdTrack.subType)
+                                switch((SubTypeOld)chdTrack.subType)
                                 {
-                                    case ChdOldSubType.Cooked:
+                                    case SubTypeOld.Cooked:
                                         aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         aaruTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
-                                    case ChdOldSubType.None:
+                                    case SubTypeOld.None:
                                         aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                                         break;
-                                    case ChdOldSubType.Raw:
+                                    case SubTypeOld.Raw:
                                         aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                                         aaruTrack.TrackSubchannelFilter = imageFilter;
@@ -760,7 +756,7 @@ namespace Aaru.DiscImages
                                 uint   trackNo   = uint.Parse(cht2Match.Groups["track"].Value);
                                 uint   frames    = uint.Parse(cht2Match.Groups["frames"].Value);
                                 string subtype   = cht2Match.Groups["sub_type"].Value;
-                                string tracktype = cht2Match.Groups["track_type"].Value;
+                                string trackType = cht2Match.Groups["track_type"].Value;
 
                                 uint pregap = uint.Parse(cht2Match.Groups["pregap"].Value);
 
@@ -772,7 +768,7 @@ namespace Aaru.DiscImages
 
                                 // This is a recommendation (shall) of 150 sectors at the end of the last data track,
                                 // or of any data track followed by an audio track, according to Yellow Book.
-                                // It is undistinguishible from normal data.
+                                // It is indistinguishable from normal data.
                                 // TODO: Does CHD store it, or like CDRWin, ignores it?
                                 uint postgap = uint.Parse(cht2Match.Groups["postgap"].Value);
 
@@ -781,7 +777,7 @@ namespace Aaru.DiscImages
 
                                 var aaruTrack = new Track();
 
-                                switch(tracktype)
+                                switch(trackType)
                                 {
                                     case TRACK_TYPE_AUDIO:
                                         aaruTrack.TrackBytesPerSector    = 2352;
@@ -833,7 +829,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
+                                        throw new ImageNotSupportedException($"Unsupported track type {trackType}");
                                 }
 
                                 switch(subtype)
@@ -924,7 +920,7 @@ namespace Aaru.DiscImages
                                 uint   trackNo   = uint.Parse(chgdMatch.Groups["track"].Value);
                                 uint   frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
                                 string subtype   = chgdMatch.Groups["sub_type"].Value;
-                                string tracktype = chgdMatch.Groups["track_type"].Value;
+                                string trackType = chgdMatch.Groups["track_type"].Value;
 
                                 // TODO: Check pregap, postgap and pad behaviour
                                 uint   pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
@@ -938,7 +934,7 @@ namespace Aaru.DiscImages
 
                                 var aaruTrack = new Track();
 
-                                switch(tracktype)
+                                switch(trackType)
                                 {
                                     case TRACK_TYPE_AUDIO:
                                         aaruTrack.TrackBytesPerSector    = 2352;
@@ -990,7 +986,7 @@ namespace Aaru.DiscImages
 
                                         break;
                                     default:
-                                        throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
+                                        throw new ImageNotSupportedException($"Unsupported track type {trackType}");
                                 }
 
                                 switch(subtype)

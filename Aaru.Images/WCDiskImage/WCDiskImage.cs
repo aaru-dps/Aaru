@@ -42,14 +42,14 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public sealed partial class WCDiskImage : IMediaImage
     {
-        public Dictionary<(int cylinder, int head, int sector), bool> badSectors =
+        readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors =
             new Dictionary<(int cylinder, int head, int sector), bool>();
         /// <summary>The file header after the image has been opened</summary>
-        WcDiskImageFileHeader _fileHeader;
+        FileHeader _fileHeader;
         ImageInfo _imageInfo;
 
         /* the sectors are cached here */
-        public Dictionary<(int cylinder, int head, int sector), byte[]> sectorCache =
+        readonly Dictionary<(int cylinder, int head, int sector), byte[]> _sectorCache =
             new Dictionary<(int cylinder, int head, int sector), byte[]>();
 
         /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>

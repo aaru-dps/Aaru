@@ -594,9 +594,8 @@ namespace Aaru.Gui.ViewModels.Windows
                                 Name = scheme
                             };
 
-                            foreach(CommonTypes.Partition partition in partitions.
-                                                                       Where(p => p.Scheme == scheme).
-                                                                       OrderBy(p => p.Start))
+                            foreach(CommonTypes.Partition partition in partitions.Where(p => p.Scheme == scheme).
+                                OrderBy(p => p.Start))
                             {
                                 var partitionModel = new PartitionModel
                                 {
@@ -771,9 +770,8 @@ namespace Aaru.Gui.ViewModels.Windows
                 AaruConsole.WriteLine("Refreshing devices");
                 _devicesRoot.Devices.Clear();
 
-                foreach(Devices.DeviceInfo device in Device.
-                                                     ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
-                                                     ThenBy(d => d.Model))
+                foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).
+                                                            OrderBy(d => d.Vendor).ThenBy(d => d.Model))
                 {
                     AaruConsole.DebugWriteLine("Main window",
                                                "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",

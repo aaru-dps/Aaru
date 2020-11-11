@@ -219,7 +219,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct Superblock
+        readonly struct Superblock
         {
             /* 0:   fs size incl. bb 0 (in bb) */
             public readonly int sb_size;

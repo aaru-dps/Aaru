@@ -40,7 +40,7 @@ namespace Aaru.Filesystems
     {
         /// <summary>BIOS Parameter Block, at sector 0, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BiosParameterBlock
+        readonly struct BiosParameterBlock
         {
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -99,7 +99,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Media Information Block, at sector 13, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MediaInformationBlock
+        readonly struct MediaInformationBlock
         {
             /// <summary>Block identifier "MEDINFO "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -149,7 +149,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Volume Information Block, at sector 14, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeInformationBlock
+        readonly struct VolumeInformationBlock
         {
             /// <summary>Block identifier "VOLINFO "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -186,7 +186,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Extent
+        readonly struct Extent
         {
             /// <summary>Extent length in sectors</summary>
             public readonly ushort length;
@@ -197,7 +197,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SubFile
+        readonly struct SubFile
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public readonly Extent[] extents;
@@ -222,7 +222,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Direct
+        readonly struct Direct
         {
             /// <summary>Unknown</summary>
             public readonly uint unknown;
@@ -267,7 +267,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MasterRecord
+        readonly struct MasterRecord
         {
             /// <summary>"MAST"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -293,7 +293,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DciKey
+        readonly struct DciKey
         {
             /// <summary>Unknown</summary>
             public readonly byte unknown;
@@ -312,7 +312,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DciEntry
+        readonly struct DciEntry
         {
             /// <summary>Key length</summary>
             public readonly ushort key_len;
@@ -329,7 +329,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Dci
+        readonly struct Dci
         {
             /// <summary>"DATA"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]

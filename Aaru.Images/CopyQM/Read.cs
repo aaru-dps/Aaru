@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[133];
 
             stream.Read(hdr, 0, 133);
-            _header = Marshal.ByteArrayToStructureLittleEndian<CopyQmHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
             AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}", _header.magic);
             AaruConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}", _header.mark);

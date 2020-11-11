@@ -48,10 +48,10 @@ namespace Aaru.Filesystems
     {
         public List<Type> GetAllChecksumPlugins() => null;
 
-        public List<Type> GetAllFilesystemPlugins() => Assembly.
-                                                       GetExecutingAssembly().GetTypes().
-                                                       Where(t => t.GetInterfaces().Contains(typeof(IFilesystem))).
-                                                       Where(t => t.IsClass).ToList();
+        public List<Type> GetAllFilesystemPlugins() => Assembly.GetExecutingAssembly().GetTypes().
+                                                                Where(t => t.GetInterfaces().
+                                                                             Contains(typeof(IFilesystem))).
+                                                                Where(t => t.IsClass).ToList();
 
         public List<Type> GetAllFilterPlugins() => null;
 
@@ -61,11 +61,11 @@ namespace Aaru.Filesystems
 
         public List<Type> GetAllPartitionPlugins() => null;
 
-        public List<Type> GetAllReadOnlyFilesystemPlugins() => Assembly.
-                                                               GetExecutingAssembly().GetTypes().
-                                                               Where(t => t.GetInterfaces().
-                                                                            Contains(typeof(IReadOnlyFilesystem))).
-                                                               Where(t => t.IsClass).ToList();
+        public List<Type> GetAllReadOnlyFilesystemPlugins() => Assembly.GetExecutingAssembly().GetTypes().
+                                                                        Where(t => t.GetInterfaces().
+                                                                                  Contains(typeof(IReadOnlyFilesystem
+                                                                                  ))).Where(t => t.IsClass).
+                                                                        ToList();
 
         public List<Type> GetAllWritableFloppyImagePlugins() => null;
 

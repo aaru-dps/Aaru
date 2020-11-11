@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class CopyQm
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CopyQmHeader
+        readonly struct Header
         {
             /// <summary>0x00 magic, "CQ"</summary>
             public readonly ushort magic;

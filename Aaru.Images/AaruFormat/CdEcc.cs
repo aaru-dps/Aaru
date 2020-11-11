@@ -164,7 +164,7 @@ namespace Aaru.DiscImages
 
                 eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
-                if(ecc[major              + eccOffset] != eccA ||
+                if(ecc[major + eccOffset]              != eccA ||
                    ecc[major + majorCount + eccOffset] != (eccA ^ eccB))
                     return false;
             }
@@ -199,7 +199,7 @@ namespace Aaru.DiscImages
                 }
 
                 eccA                                = _eccBTable[_eccFTable[eccA] ^ eccB];
-                ecc[major              + eccOffset] = eccA;
+                ecc[major + eccOffset]              = eccA;
                 ecc[major + majorCount + eccOffset] = (byte)(eccA ^ eccB);
             }
         }

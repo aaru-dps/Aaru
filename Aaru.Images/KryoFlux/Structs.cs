@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class KryoFlux
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OobBlock
+        readonly struct OobBlock
         {
             public readonly BlockIds blockId;
             public readonly OobTypes blockType;

@@ -53,9 +53,9 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<PartimageHeader>()];
-            stream.Read(hdrB, 0, Marshal.SizeOf<PartimageHeader>());
-            _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(hdrB);
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(hdrB, 0, Marshal.SizeOf<Header>());
+            _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
                                        StringHandlers.CToString(_cVolumeHeader.magic));
@@ -73,9 +73,9 @@ namespace Aaru.DiscImages
             if(_cVolumeHeader.volumeNumber > 0)
                 throw new FeatureSupportedButNotImplementedImageException("Support for multiple volumes not supported");
 
-            hdrB = new byte[Marshal.SizeOf<PartimageMainHeader>()];
-            stream.Read(hdrB, 0, Marshal.SizeOf<PartimageMainHeader>());
-            _cMainHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageMainHeader>(hdrB);
+            hdrB = new byte[Marshal.SizeOf<MainHeader>()];
+            stream.Read(hdrB, 0, Marshal.SizeOf<MainHeader>());
+            _cMainHeader = Marshal.ByteArrayToStructureLittleEndian<MainHeader>(hdrB);
 
             AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
                                        StringHandlers.CToString(_cMainHeader.szFileSystem));

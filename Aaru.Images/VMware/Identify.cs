@@ -45,26 +45,26 @@ namespace Aaru.DiscImages
 
             byte[] ddfMagic = new byte[0x15];
 
-            if(stream.Length > Marshal.SizeOf<VMwareExtentHeader>())
+            if(stream.Length > Marshal.SizeOf<ExtentHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
-                stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
-                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
 
-                _vmCHdr = new VMwareCowHeader();
+                _vmCHdr = new CowHeader();
 
-                if(stream.Length <= Marshal.SizeOf<VMwareCowHeader>())
+                if(stream.Length <= Marshal.SizeOf<CowHeader>())
                     return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                            _vmCHdr.magic                                           == VMWARE_COW_MAGIC;
 
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
-                stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
-                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
                 return _ddfMagicBytes.SequenceEqual(ddfMagic) || _vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                        _vmCHdr.magic                                           == VMWARE_COW_MAGIC;

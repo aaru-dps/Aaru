@@ -68,7 +68,7 @@ namespace Aaru.DiscImages
             if(!_bw4Signature.SequenceEqual(tmpArray))
                 return false;
 
-            _header = new Bw4Header
+            _header = new Header
             {
                 Signature = tmpArray
             };
@@ -151,13 +151,13 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", _header.Unknown3);
             AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown4.Length = {0}", _header.Unknown4.Length);
 
-            _bwTracks = new List<Bw4TrackDescriptor>();
+            _bwTracks = new List<TrackDescriptor>();
 
             for(int i = 0; i < _header.TrackDescriptors; i++)
             {
                 AaruConsole.DebugWriteLine("BlindWrite4 plugin", "stream.Position = {0}", stream.Position);
 
-                var track = new Bw4TrackDescriptor();
+                var track = new TrackDescriptor();
 
                 stream.Read(tmpUInt, 0, 4);
                 track.filenameLen = BitConverter.ToUInt32(tmpUInt, 0);
@@ -182,7 +182,7 @@ namespace Aaru.DiscImages
                 track.adrCtl   = (byte)stream.ReadByte();
 
                 track.unknown5  = (byte)stream.ReadByte();
-                track.trackMode = (Bw4TrackType)stream.ReadByte();
+                track.trackMode = (TrackType)stream.ReadByte();
                 track.unknown6  = (byte)stream.ReadByte();
                 track.point     = (byte)stream.ReadByte();
 
@@ -476,11 +476,11 @@ namespace Aaru.DiscImages
 
             Tracks      = new List<Track>();
             Partitions  = new List<Partition>();
-            _offsetmap  = new Dictionary<uint, ulong>();
+            _offsetMap  = new Dictionary<uint, ulong>();
             _trackFlags = new Dictionary<uint, byte>();
             ushort maxSession = 0;
 
-            foreach(Bw4TrackDescriptor bwTrack in _bwTracks)
+            foreach(TrackDescriptor bwTrack in _bwTracks)
                 if(bwTrack.point < 0xA0)
                 {
                     var track = new Track
@@ -594,14 +594,14 @@ namespace Aaru.DiscImages
 
                     switch(bwTrack.trackMode)
                     {
-                        case Bw4TrackType.Audio:
-                            track.TrackType           = TrackType.Audio;
+                        case TrackType.Audio:
+                            track.TrackType           = CommonTypes.Enums.TrackType.Audio;
                             _imageInfo.SectorSize     = 2352;
                             track.TrackBytesPerSector = 2352;
 
                             break;
-                        case Bw4TrackType.Mode1:
-                            track.TrackType = TrackType.CdMode1;
+                        case TrackType.Mode1:
+                            track.TrackType = CommonTypes.Enums.TrackType.CdMode1;
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -630,8 +630,8 @@ namespace Aaru.DiscImages
                             track.TrackBytesPerSector = 2048;
 
                             break;
-                        case Bw4TrackType.Mode2:
-                            track.TrackType = TrackType.CdMode2Formless;
+                        case TrackType.Mode2:
+                            track.TrackType = CommonTypes.Enums.TrackType.CdMode2Formless;
 
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -646,7 +646,7 @@ namespace Aaru.DiscImages
 
                             break;
                         default:
-                            track.TrackType              = TrackType.Data;
+                            track.TrackType              = CommonTypes.Enums.TrackType.Data;
                             track.TrackRawBytesPerSector = 2048;
                             _imageInfo.SectorSize        = 2048;
                             track.TrackBytesPerSector    = 2048;
@@ -674,8 +674,8 @@ namespace Aaru.DiscImages
                     Partitions.Add(partition);
                     Tracks.Add(track);
 
-                    if(!_offsetmap.ContainsKey(track.TrackSequence))
-                        _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    if(!_offsetMap.ContainsKey(track.TrackSequence))
+                        _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
 
                     if(!_trackFlags.ContainsKey(track.TrackSequence))
                         _trackFlags.Add(track.TrackSequence, (byte)(bwTrack.adrCtl & 0x0F));
@@ -741,27 +741,27 @@ namespace Aaru.DiscImages
 
             bool data       = false;
             bool mode2      = false;
-            bool firstaudio = false;
-            bool firstdata  = false;
+            bool firstAudio = false;
+            bool firstData  = false;
             bool audio      = false;
 
             foreach(Track bwTrack in Tracks)
             {
                 // First track is audio
-                firstaudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == TrackType.Audio;
+                firstAudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
 
                 // First track is data
-                firstdata |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != TrackType.Audio;
+                firstData |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
 
                 // Any non first track is data
-                data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != TrackType.Audio;
+                data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
 
                 // Any non first track is audio
-                audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == TrackType.Audio;
+                audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
 
                 switch(bwTrack.TrackType)
                 {
-                    case TrackType.CdMode2Formless:
+                    case CommonTypes.Enums.TrackType.CdMode2Formless:
                         mode2 = true;
 
                         break;
@@ -769,14 +769,14 @@ namespace Aaru.DiscImages
             }
 
             if(!data &&
-               !firstdata)
+               !firstData)
                 _imageInfo.MediaType = MediaType.CDDA;
-            else if(firstaudio         &&
+            else if(firstAudio         &&
                     data               &&
                     Sessions.Count > 1 &&
                     mode2)
                 _imageInfo.MediaType = MediaType.CDPLUS;
-            else if((firstdata && audio) || mode2)
+            else if((firstData && audio) || mode2)
                 _imageInfo.MediaType = MediaType.CDROMXA;
             else if(!audio)
                 _imageInfo.MediaType = MediaType.CDROM;
@@ -788,7 +788,7 @@ namespace Aaru.DiscImages
             AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", _imageInfo.MediaType);
 
             if(!string.IsNullOrEmpty(_imageInfo.Comments))
-                AaruConsole.VerboseWriteLine("BlindrWrite comments: {0}", _imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("BlindWrite comments: {0}", _imageInfo.Comments);
 
             return true;
         }
@@ -820,7 +820,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -832,7 +832,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -870,7 +870,7 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode1:
                 {
                     sectorOffset = 16;
                     sectorSize   = 2048;
@@ -878,7 +878,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
                 {
                     mode2        = true;
                     sectorOffset = 0;
@@ -887,7 +887,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Audio:
+                case CommonTypes.Enums.TrackType.Audio:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
@@ -895,7 +895,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Data:
+                case CommonTypes.Enums.TrackType.Data:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2048;
@@ -971,7 +971,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            if(aaruTrack.TrackType == TrackType.Data)
+            if(aaruTrack.TrackType == CommonTypes.Enums.TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -997,7 +997,7 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode1:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1062,7 +1062,7 @@ namespace Aaru.DiscImages
                     }
 
                     break;
-                case TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
                 {
                     switch(tag)
                     {
@@ -1101,7 +1101,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Audio:
+                case CommonTypes.Enums.TrackType.Audio:
                 {
                     switch(tag)
                     {
@@ -1153,7 +1153,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1190,10 +1190,10 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.Audio:
-                case TrackType.CdMode1:
-                case TrackType.CdMode2Formless:
-                case TrackType.Data:
+                case CommonTypes.Enums.TrackType.Audio:
+                case CommonTypes.Enums.TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.Data:
                 {
                     sectorOffset = 0;
                     sectorSize   = (uint)aaruTrack.TrackRawBytesPerSector;

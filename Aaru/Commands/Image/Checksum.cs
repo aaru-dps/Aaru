@@ -265,7 +265,7 @@ namespace Aaru.Commands.Image
 
             switch(inputFormat)
             {
-                case IOpticalMediaImage opticalInput when opticalInput.Tracks != null:
+                case IOpticalMediaImage { Tracks: {} } opticalInput:
                     try
                     {
                         Checksum trackChecksum = null;

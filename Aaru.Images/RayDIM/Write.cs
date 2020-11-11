@@ -129,7 +129,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -162,7 +162,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -218,7 +218,7 @@ namespace Aaru.DiscImages
             string headerSignature =
                 $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved. Aaru ";
 
-            var header = new RayHdr
+            var header = new Header
             {
                 signature       = Encoding.ASCII.GetBytes(headerSignature),
                 cylinders       = (byte)_imageInfo.Cylinders,
@@ -229,8 +229,8 @@ namespace Aaru.DiscImages
 
             header.signature[0x4A] = 0x00;
 
-            byte[] hdr    = new byte[Marshal.SizeOf<RayHdr>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RayHdr>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class Anex86
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Anex86Header
+        struct Header
         {
             public readonly int unknown;
             public readonly int hddtype;

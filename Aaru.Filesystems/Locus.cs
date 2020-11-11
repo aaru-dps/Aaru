@@ -328,7 +328,7 @@ namespace Aaru.Filesystems
 
         [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle"),
          StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldSuperblock
+        readonly struct OldSuperblock
         {
             public readonly uint s_magic; /* identifies this as a locus filesystem */
             /* defined as a constant below */

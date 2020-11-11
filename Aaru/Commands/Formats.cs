@@ -87,10 +87,7 @@ namespace Aaru.Commands
                 AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
 
             foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
-                                                                                                    GetInterfaces().
-                                                                                                    Contains(typeof(
-                                                                                                                 IWritableImage
-                                                                                                             ))))
+                GetInterfaces().Contains(typeof(IWritableImage))))
                 if(verbose)
                     AaruConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
@@ -118,10 +115,7 @@ namespace Aaru.Commands
                 AaruConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
 
             foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
-                                                                                               GetInterfaces().
-                                                                                               Contains(typeof(
-                                                                                                            IReadOnlyFilesystem
-                                                                                                        ))))
+                GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
                 if(verbose)
                     AaruConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else

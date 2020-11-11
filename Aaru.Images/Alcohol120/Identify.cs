@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
 
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            AlcoholHeader header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
+            Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
             return header.signature.SequenceEqual(_alcoholSignature) && header.version[0] <= _maximumSupportedVersion;
         }

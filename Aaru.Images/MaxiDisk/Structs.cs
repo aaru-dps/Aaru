@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class MaxiDisk
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdkHeader
+        struct Header
         {
             public readonly byte unknown;
             public          byte diskType;

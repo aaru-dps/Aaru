@@ -53,7 +53,7 @@ namespace Aaru.DiscImages
             if(buffer[0] > 63)
                 return false;
 
-            var tmpHeader = new Dc42Header();
+            var tmpHeader = new Header();
 
             Array.Copy(buffer, 0, pString, 0, 64);
 

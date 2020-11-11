@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[40];
             stream.Read(hdr, 0, 40);
 
-            _header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
             return (_header.magic == SDF_MAGIC || _header.magic == SDF_MAGIC_COMPRESSED ||
                     _header.magic == SDF_MAGIC_OLD) && _header.fatCopies <= 2 && _header.padding == 0 &&

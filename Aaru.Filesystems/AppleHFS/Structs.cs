@@ -45,7 +45,7 @@ namespace Aaru.Filesystems
     {
         /// <summary>Master Directory Block, should be sector 2 in volume</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MasterDirectoryBlock // Should be sector 2 in volume
+        readonly struct MasterDirectoryBlock // Should be sector 2 in volume
         {
             /// <summary>0x000, Signature, 0x4244</summary>
             public readonly ushort drSigWord;
@@ -133,7 +133,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NodeDescriptor
+        readonly struct NodeDescriptor
         {
             /// <summary>A link to the next node of this type, or <c>null</c> if this is the last one.</summary>
             public readonly uint ndFLink;
@@ -151,7 +151,7 @@ namespace Aaru.Filesystems
 
         /// <summary>B*-tree header</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BTHdrRed
+        readonly struct BTHdrRed
         {
             /// <summary>Current depth of tree.</summary>
             public readonly ushort bthDepth;
@@ -178,7 +178,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Catalog key record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CatKeyRec
+        readonly struct CatKeyRec
         {
             /// <summary>Key length.</summary>
             public readonly sbyte ckrKeyLen;
@@ -193,7 +193,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Catalog data record header</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CatDataRec
+        readonly struct CatDataRec
         {
             public readonly CatDataType cdrType;
             public readonly sbyte       cdrResvr2;
@@ -201,7 +201,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdrDirRec
+        readonly struct CdrDirRec
         {
             public readonly CatDataRec dirHdr;
             /// <summary>Directory flags.</summary>
@@ -227,7 +227,7 @@ namespace Aaru.Filesystems
 
         /// <summary>File record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdrFilRec
+        readonly struct CdrFilRec
         {
             public readonly CatDataRec filHdr;
             /// <summary>File flags.</summary>
@@ -270,7 +270,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory thread record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdrThdRec
+        readonly struct CdrThdRec
         {
             public readonly CatDataRec thdHdr;
             /// <summary>Reserved.</summary>
@@ -285,7 +285,7 @@ namespace Aaru.Filesystems
 
         /// <summary>File thread record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdrFThdRec
+        readonly struct CdrFThdRec
         {
             public readonly CatDataRec fthdHdr;
             /// <summary>Reserved.</summary>
@@ -300,7 +300,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Extent descriptor</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtDescriptor
+        readonly struct ExtDescriptor
         {
             /// <summary>First allocation block</summary>
             public readonly ushort xdrStABN;
@@ -310,7 +310,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Extent data record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtDataRec
+        readonly struct ExtDataRec
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly ExtDescriptor[] xdr;
@@ -318,7 +318,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Extent key record</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtKeyRec
+        readonly struct ExtKeyRec
         {
             /// <summary>Key length.</summary>
             public readonly sbyte xkrKeyLen;

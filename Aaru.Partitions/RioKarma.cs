@@ -57,7 +57,7 @@ namespace Aaru.Partitions
             if(sector.Length < 512)
                 return false;
 
-            RioKarmaTable table = Marshal.ByteArrayToStructureLittleEndian<RioKarmaTable>(sector);
+            Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
             if(table.magic != KARMA_MAGIC)
                 return false;
@@ -79,19 +79,19 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RioKarmaTable
+        readonly struct Table
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 270)]
             public readonly byte[] reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public readonly RioKarmaEntry[] entries;
+            public readonly Entry[] entries;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 208)]
             public readonly byte[] padding;
             public readonly ushort magic;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RioKarmaEntry
+        readonly struct Entry
         {
             public readonly uint reserved;
             public readonly byte type;

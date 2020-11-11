@@ -352,11 +352,10 @@ namespace Aaru.Tests.Devices
                                                        : ArrayHelpers.ArrayIsNullOrEmpty(scrambledBuffer)
                                                            ? "empty"
                                                            : $"{scrambledBuffer.Length} bytes", scrambledSense is null
-                                                                                                    ? "null"
-                                                                                                    : ArrayHelpers.
-                                                                                                        ArrayIsNullOrEmpty(scrambledSense)
-                                                                                                        ? "empty"
-                                                                                                        : $"{scrambledSense.Length}");
+                                      ? "null"
+                                      : ArrayHelpers.ArrayIsNullOrEmpty(scrambledSense)
+                                          ? "empty"
+                                          : $"{scrambledSense.Length}");
 
             AaruConsole.WriteLine("LBA {0}'s PQ sense is {1}, buffer is {2}, sense buffer is {3}.", sectors + 5,
                                   pqResult, pqBuffer is null
@@ -364,11 +363,10 @@ namespace Aaru.Tests.Devices
                                                 : ArrayHelpers.ArrayIsNullOrEmpty(pqBuffer)
                                                     ? "empty"
                                                     : $"{pqBuffer.Length} bytes", pqSense is null
-                                                                                      ? "null"
-                                                                                      : ArrayHelpers.
-                                                                                          ArrayIsNullOrEmpty(pqSense)
-                                                                                          ? "empty"
-                                                                                          : $"{pqSense.Length}");
+                                      ? "null"
+                                      : ArrayHelpers.ArrayIsNullOrEmpty(pqSense)
+                                          ? "empty"
+                                          : $"{pqSense.Length}");
 
             AaruConsole.WriteLine("LBA {0}'s RW sense is {1}, buffer is {2}, sense buffer is {3}.", sectors + 5,
                                   rwResult, rwBuffer is null
@@ -376,11 +374,10 @@ namespace Aaru.Tests.Devices
                                                 : ArrayHelpers.ArrayIsNullOrEmpty(rwBuffer)
                                                     ? "empty"
                                                     : $"{rwBuffer.Length} bytes", rwSense is null
-                                                                                      ? "null"
-                                                                                      : ArrayHelpers.
-                                                                                          ArrayIsNullOrEmpty(rwSense)
-                                                                                          ? "empty"
-                                                                                          : $"{rwSense.Length}");
+                                      ? "null"
+                                      : ArrayHelpers.ArrayIsNullOrEmpty(rwSense)
+                                          ? "empty"
+                                          : $"{rwSense.Length}");
 
             AaruConsole.WriteLine();
             AaruConsole.WriteLine("Choose what to do:");

@@ -92,7 +92,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HighSierraPrimaryVolumeDescriptor
+        readonly struct HighSierraPrimaryVolumeDescriptor
         {
             public readonly uint volume_lbn;
             public readonly uint volume_lbn_be;
@@ -159,7 +159,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HighSierraDirectoryRecord
+        readonly struct HighSierraDirectoryRecord
         {
             public readonly byte                length;
             public readonly byte                xattr_len;
@@ -180,7 +180,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HighSierraTimestamp
+        readonly struct HighSierraTimestamp
         {
             public readonly byte Years;
             public readonly byte Month;
@@ -192,7 +192,7 @@ namespace Aaru.Filesystems
 
         // There are two tables one in little endian one in big endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HighSierraPathTableEntry
+        readonly struct HighSierraPathTableEntry
         {
             public readonly uint   start_lbn;
             public readonly byte   xattr_len;

@@ -52,9 +52,9 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
-            _pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
+            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+            _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}", StringHandlers.CToString(_pHdr.magic));
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}", _pHdr.version);
@@ -68,7 +68,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}", _pHdr.flags);
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}", _pHdr.ext_off);
 
-            _extended = _parallelsExtMagic.SequenceEqual(_pHdr.magic);
+            _extended = _extMagic.SequenceEqual(_pHdr.magic);
             AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", _extended);
 
             AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");

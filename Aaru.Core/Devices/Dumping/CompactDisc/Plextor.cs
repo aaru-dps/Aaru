@@ -37,6 +37,15 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Reads a sector using Plextor's D8h READ CDDA command with subchannel</summary>
+        /// <param name="cmdBuf">Data buffer</param>
+        /// <param name="senseBuf">Sense buffer</param>
+        /// <param name="firstSectorToRead">Fix sector to read</param>
+        /// <param name="blockSize">Sector size in bytes</param>
+        /// <param name="blocksToRead">How many sectors to read</param>
+        /// <param name="supportedPlextorSubchannel">Supported subchannel type</param>
+        /// <param name="cmdDuration">Time spent sending commands to the drive</param>
+        /// <returns><c>true</c> if an error occured, <c>false</c> otherwise</returns>
         bool ReadPlextorWithSubchannel(out byte[] cmdBuf, out byte[] senseBuf, uint firstSectorToRead, uint blockSize,
                                        uint blocksToRead, PlextorSubchannel supportedPlextorSubchannel,
                                        out double cmdDuration)

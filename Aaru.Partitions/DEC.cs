@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
@@ -49,9 +48,10 @@ namespace Aaru.Partitions
         public Guid   Id     => new Guid("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
         public string Author => "Natalia Portillo";
 
-        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
+                                   ulong sectorOffset)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             if(31 + sectorOffset >= imagePlugin.Info.Sectors)
                 return false;
@@ -61,7 +61,7 @@ namespace Aaru.Partitions
             if(sector.Length < 512)
                 return false;
 
-            DECLabel table = Marshal.ByteArrayToStructureLittleEndian<DECLabel>(sector);
+            Label table = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
             if(table.pt_magic != PT_MAGIC ||
                table.pt_valid != PT_VALID)
@@ -69,7 +69,7 @@ namespace Aaru.Partitions
 
             ulong counter = 0;
 
-            foreach(Partition part in table.pt_part.Select(entry => new Partition
+            foreach(CommonTypes.Partition part in table.pt_part.Select(entry => new CommonTypes.Partition
             {
                 Start    = entry.pi_blkoff,
                 Offset   = (ulong)(entry.pi_blkoff * sector.Length),
@@ -87,18 +87,18 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DECLabel
+        readonly struct Label
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
             public readonly byte[] padding;
             public readonly int pt_magic;
             public readonly int pt_valid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly DECPartition[] pt_part;
+            public readonly Partition[] pt_part;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DECPartition
+        readonly struct Partition
         {
             public readonly int  pi_nblocks;
             public readonly uint pi_blkoff;

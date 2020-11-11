@@ -55,7 +55,7 @@ namespace Aaru.Filesystems
                data.Length                            <= Marshal.SizeOf<PathTableEntry>() ||
                data[Marshal.SizeOf<PathTableEntry>()] != 0x00)
                 return null;
-            
+
             while(off < data.Length)
             {
                 entry =
@@ -98,9 +98,7 @@ namespace Aaru.Filesystems
             {
                 HighSierraPathTableEntry entry =
                     Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                                                                                    Marshal.
-                                                                                        SizeOf<HighSierraPathTableEntry
-                                                                                        >());
+                        Marshal.SizeOf<HighSierraPathTableEntry>());
 
                 if(entry.name_len == 0)
                     break;

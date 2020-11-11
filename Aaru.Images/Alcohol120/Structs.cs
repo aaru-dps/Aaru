@@ -37,14 +37,14 @@ namespace Aaru.DiscImages
     public sealed partial class Alcohol120
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholHeader
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public byte[] version;
-            public AlcoholMediumType type;
-            public ushort            sessions;
+            public MediumType type;
+            public ushort     sessions;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public ushort[] unknown1;
             public readonly ushort bcaLength;
@@ -61,7 +61,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholSession
+        struct Session
         {
             public          int    sessionStart;
             public          int    sessionEnd;
@@ -75,22 +75,22 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrack
+        struct Track
         {
-            public AlcoholTrackMode      mode;
-            public AlcoholSubchannelMode subMode;
-            public byte                  adrCtl;
-            public byte                  tno;
-            public byte                  point;
-            public byte                  min;
-            public byte                  sec;
-            public byte                  frame;
-            public byte                  zero;
-            public byte                  pmin;
-            public byte                  psec;
-            public byte                  pframe;
-            public uint                  extraOffset;
-            public ushort                sectorSize;
+            public TrackMode      mode;
+            public SubchannelMode subMode;
+            public byte           adrCtl;
+            public byte           tno;
+            public byte           point;
+            public byte           min;
+            public byte           sec;
+            public byte           frame;
+            public byte           zero;
+            public byte           pmin;
+            public byte           psec;
+            public byte           pframe;
+            public uint           extraOffset;
+            public ushort         sectorSize;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
             public byte[] unknown;
             public uint  startLba;
@@ -102,14 +102,14 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholTrackExtra
+        struct TrackExtra
         {
             public uint pregap;
             public uint sectors;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlcoholFooter
+        struct Footer
         {
             public          uint filenameOffset;
             public          uint widechar;

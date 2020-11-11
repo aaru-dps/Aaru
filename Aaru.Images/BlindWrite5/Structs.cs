@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     public sealed partial class BlindWrite5
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5Header
+        readonly struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] signature;
@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5DataFile
+        struct DataFile
         {
             public uint Type;
             public uint Length;
@@ -105,27 +105,27 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5TrackDescriptor
+        readonly struct TrackDescriptor
         {
-            public readonly Bw5TrackType type;
+            public readonly TrackType type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] unknown1;
-            public readonly uint               unknown2;
-            public readonly Bw5TrackSubchannel subchannel;
-            public readonly byte               unknown3;
-            public readonly byte               ctl;
-            public readonly byte               adr;
-            public readonly byte               point;
-            public readonly byte               tno;
-            public readonly byte               min;
-            public readonly byte               sec;
-            public readonly byte               frame;
-            public readonly byte               zero;
-            public readonly byte               pmin;
-            public readonly byte               psec;
-            public readonly byte               pframe;
-            public readonly byte               unknown5;
-            public readonly uint               pregap;
+            public readonly uint            unknown2;
+            public readonly TrackSubchannel subchannel;
+            public readonly byte            unknown3;
+            public readonly byte            ctl;
+            public readonly byte            adr;
+            public readonly byte            point;
+            public readonly byte            tno;
+            public readonly byte            min;
+            public readonly byte            sec;
+            public readonly byte            frame;
+            public readonly byte            zero;
+            public readonly byte            pmin;
+            public readonly byte            psec;
+            public readonly byte            pframe;
+            public readonly byte            unknown5;
+            public readonly uint            pregap;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly uint[] unknown6;
             public readonly int startLba;
@@ -141,16 +141,16 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw5SessionDescriptor
+        struct SessionDescriptor
         {
-            public ushort               Sequence;
-            public byte                 Entries;
-            public byte                 Unknown;
-            public int                  Start;
-            public int                  End;
-            public ushort               FirstTrack;
-            public ushort               LastTrack;
-            public Bw5TrackDescriptor[] Tracks;
+            public ushort            Sequence;
+            public byte              Entries;
+            public byte              Unknown;
+            public int               Start;
+            public int               End;
+            public ushort            FirstTrack;
+            public ushort            LastTrack;
+            public TrackDescriptor[] Tracks;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

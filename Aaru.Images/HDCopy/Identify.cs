@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
             byte[] header = new byte[2 + (2 * 82)];
             stream.Read(header, 0, 2 + (2 * 82));
 
-            HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
+            FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
             /* Some sanity checks on the values we just read.
              * We know the image is from a DOS floppy disk, so assume

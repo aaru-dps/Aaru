@@ -40,15 +40,15 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Nero
     {
-        public ImageInfo              Info         => _imageInfo;
-        public string                 Name         => "Nero Burning ROM image";
-        public Guid                   Id           => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
-        public string                 Author       => "Natalia Portillo";
-        public string                 Format       => "Nero Burning ROM";
-        public List<Partition>        Partitions   { get; }
-        public List<Track>            Tracks       { get; private set; }
-        public List<Session>          Sessions     { get; }
-        public List<DumpHardwareType> DumpHardware => null;
-        public CICMMetadataType       CicmMetadata => null;
+        public ImageInfo                         Info         => _imageInfo;
+        public string                            Name         => "Nero Burning ROM image";
+        public Guid                              Id           => new Guid("D160F9FF-5941-43FC-B037-AD81DD141F05");
+        public string                            Author       => "Natalia Portillo";
+        public string                            Format       => "Nero Burning ROM";
+        public List<Partition>                   Partitions   { get; }
+        public List<Track>                       Tracks       { get; private set; }
+        public List<CommonTypes.Structs.Session> Sessions     { get; }
+        public List<DumpHardwareType>            DumpHardware => null;
+        public CICMMetadataType                  CicmMetadata => null;
     }
 }

@@ -133,7 +133,10 @@ namespace Aaru.Filesystems
             var    eaMs                  = new MemoryStream();
             uint[] rootDirectoryClusters = GetClusters(entryFat32Ea.start_cluster);
 
-            foreach(var buffer in rootDirectoryClusters.Select(cluster => _image.ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster), _sectorsPerCluster)))
+            foreach(byte[] buffer in rootDirectoryClusters.Select(cluster =>
+                                                                      _image.
+                                                                          ReadSectors(_firstClusterSector + (cluster * _sectorsPerCluster),
+                                                                              _sectorsPerCluster)))
             {
                 eaMs.Write(buffer, 0, buffer.Length);
             }

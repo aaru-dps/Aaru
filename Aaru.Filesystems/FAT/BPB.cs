@@ -514,100 +514,97 @@ namespace Aaru.Filesystems
 
                         break;
                     case 0xFE:
-                        if(imagePlugin.Info.Sectors    == 320 &&
-                           imagePlugin.Info.SectorSize == 512)
+                        switch(imagePlugin.Info.Sectors)
                         {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" SSDD.");
-                            fakeBpb.bps      = 512;
-                            fakeBpb.spc      = 1;
-                            fakeBpb.rsectors = 1;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 64;
-                            fakeBpb.sectors  = 320;
-                            fakeBpb.media    = 0xFE;
-                            fakeBpb.sptrk    = 8;
-                            fakeBpb.heads    = 1;
-                            fakeBpb.hsectors = 0;
-                            fakeBpb.spfat    = 1;
-                        }
-                        else if(imagePlugin.Info.Sectors    == 2002 &&
-                                imagePlugin.Info.SectorSize == 128)
-                        {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                            fakeBpb.bps      = 128;
-                            fakeBpb.spc      = 4;
-                            fakeBpb.rsectors = 1;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 68;
-                            fakeBpb.sectors  = 2002;
-                            fakeBpb.media    = 0xFE;
-                            fakeBpb.sptrk    = 26;
-                            fakeBpb.heads    = 1;
-                            fakeBpb.hsectors = 0;
-                            fakeBpb.spfat    = 6;
-                        }
-                        else if(imagePlugin.Info.Sectors    == 1232 &&
-                                imagePlugin.Info.SectorSize == 1024)
-                        {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                            fakeBpb.bps      = 1024;
-                            fakeBpb.spc      = 1;
-                            fakeBpb.rsectors = 1;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 192;
-                            fakeBpb.sectors  = 1232;
-                            fakeBpb.media    = 0xFE;
-                            fakeBpb.sptrk    = 8;
-                            fakeBpb.heads    = 2;
-                            fakeBpb.hsectors = 0;
-                            fakeBpb.spfat    = 2;
-                        }
-                        else if(imagePlugin.Info.Sectors    == 616 &&
-                                imagePlugin.Info.SectorSize == 1024)
-                        {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                            fakeBpb.bps      = 1024;
-                            fakeBpb.spc      = 1;
-                            fakeBpb.rsectors = 1;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 6192;
-                            fakeBpb.sectors  = 616;
-                            fakeBpb.media    = 0xFE;
-                            fakeBpb.sptrk    = 8;
-                            fakeBpb.heads    = 2;
-                            fakeBpb.hsectors = 0;
-                        }
-                        else if(imagePlugin.Info.Sectors    == 720 &&
-                                imagePlugin.Info.SectorSize == 128)
-                        {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
-                            fakeBpb.bps      = 128;
-                            fakeBpb.spc      = 2;
-                            fakeBpb.rsectors = 54;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 64;
-                            fakeBpb.sectors  = 720;
-                            fakeBpb.media    = 0xFE;
-                            fakeBpb.sptrk    = 18;
-                            fakeBpb.heads    = 1;
-                            fakeBpb.hsectors = 0;
-                            fakeBpb.spfat    = 4;
-                        }
-                        else if(imagePlugin.Info.Sectors    == 640 &&
-                                imagePlugin.Info.SectorSize == 512)
-                        {
-                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
-                            fakeBpb.bps      = 512;
-                            fakeBpb.spc      = 2;
-                            fakeBpb.rsectors = 1;
-                            fakeBpb.fats_no  = 2;
-                            fakeBpb.root_ent = 112;
-                            fakeBpb.sectors  = 640;
-                            fakeBpb.media    = 0xFF;
-                            fakeBpb.sptrk    = 8;
-                            fakeBpb.heads    = 2;
-                            fakeBpb.hsectors = 0;
-                            fakeBpb.spfat    = 1;
+                            case 320 when imagePlugin.Info.SectorSize == 512:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" SSDD.");
+                                fakeBpb.bps      = 512;
+                                fakeBpb.spc      = 1;
+                                fakeBpb.rsectors = 1;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 64;
+                                fakeBpb.sectors  = 320;
+                                fakeBpb.media    = 0xFE;
+                                fakeBpb.sptrk    = 8;
+                                fakeBpb.heads    = 1;
+                                fakeBpb.hsectors = 0;
+                                fakeBpb.spfat    = 1;
+
+                                break;
+                            case 2002 when imagePlugin.Info.SectorSize == 128:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                                fakeBpb.bps      = 128;
+                                fakeBpb.spc      = 4;
+                                fakeBpb.rsectors = 1;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 68;
+                                fakeBpb.sectors  = 2002;
+                                fakeBpb.media    = 0xFE;
+                                fakeBpb.sptrk    = 26;
+                                fakeBpb.heads    = 1;
+                                fakeBpb.hsectors = 0;
+                                fakeBpb.spfat    = 6;
+
+                                break;
+                            case 1232 when imagePlugin.Info.SectorSize == 1024:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                                fakeBpb.bps      = 1024;
+                                fakeBpb.spc      = 1;
+                                fakeBpb.rsectors = 1;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 192;
+                                fakeBpb.sectors  = 1232;
+                                fakeBpb.media    = 0xFE;
+                                fakeBpb.sptrk    = 8;
+                                fakeBpb.heads    = 2;
+                                fakeBpb.hsectors = 0;
+                                fakeBpb.spfat    = 2;
+
+                                break;
+                            case 616 when imagePlugin.Info.SectorSize == 1024:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                                fakeBpb.bps      = 1024;
+                                fakeBpb.spc      = 1;
+                                fakeBpb.rsectors = 1;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 6192;
+                                fakeBpb.sectors  = 616;
+                                fakeBpb.media    = 0xFE;
+                                fakeBpb.sptrk    = 8;
+                                fakeBpb.heads    = 2;
+                                fakeBpb.hsectors = 0;
+
+                                break;
+                            case 720 when imagePlugin.Info.SectorSize == 128:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                                fakeBpb.bps      = 128;
+                                fakeBpb.spc      = 2;
+                                fakeBpb.rsectors = 54;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 64;
+                                fakeBpb.sectors  = 720;
+                                fakeBpb.media    = 0xFE;
+                                fakeBpb.sptrk    = 18;
+                                fakeBpb.heads    = 1;
+                                fakeBpb.hsectors = 0;
+                                fakeBpb.spfat    = 4;
+
+                                break;
+                            case 640 when imagePlugin.Info.SectorSize == 512:
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
+                                fakeBpb.bps      = 512;
+                                fakeBpb.spc      = 2;
+                                fakeBpb.rsectors = 1;
+                                fakeBpb.fats_no  = 2;
+                                fakeBpb.root_ent = 112;
+                                fakeBpb.sectors  = 640;
+                                fakeBpb.media    = 0xFF;
+                                fakeBpb.sptrk    = 8;
+                                fakeBpb.heads    = 2;
+                                fakeBpb.hsectors = 0;
+                                fakeBpb.spfat    = 1;
+
+                                break;
                         }
 
                         break;

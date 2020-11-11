@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class DiscFerret
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DfiBlockHeader
+        readonly struct BlockHeader
         {
             public readonly ushort cylinder;
             public readonly ushort head;

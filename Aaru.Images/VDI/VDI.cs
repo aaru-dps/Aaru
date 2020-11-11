@@ -48,7 +48,7 @@ namespace Aaru.DiscImages
         ImageInfo                 _imageInfo;
         Stream                    _imageStream;
         Dictionary<ulong, byte[]> _sectorCache;
-        VdiHeader                 _vHdr;
+        Header                    _vHdr;
         FileStream                _writingStream;
 
         public Vdi() => _imageInfo = new ImageInfo

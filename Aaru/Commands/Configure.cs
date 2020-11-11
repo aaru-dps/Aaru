@@ -280,7 +280,7 @@ namespace Aaru.Commands
                 Settings.Settings.Current.Stats = null;
             #endregion Statistics
 
-            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
+            Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
             Settings.Settings.SaveSettings();
 
             return (int)ErrorNumber.NoError;

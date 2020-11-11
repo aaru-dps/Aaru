@@ -43,20 +43,20 @@ namespace Aaru.DiscImages
     {
         byte[]                        _atip;
         byte[]                        _bca;
-        List<Bw5SessionDescriptor>    _bwSessions;
+        List<SessionDescriptor>       _bwSessions;
         byte[]                        _cdtext;
-        List<Bw5DataFile>             _dataFiles;
+        List<DataFile>                _dataFiles;
         string                        _dataPath;
         byte[]                        _discInformation;
         byte[]                        _dmi;
         byte[]                        _dpm;
         List<DataFileCharacteristics> _filePaths;
         byte[]                        _fullToc;
-        Bw5Header                     _header;
+        Header                        _header;
         ImageInfo                     _imageInfo;
         Stream                        _imageStream;
         byte[]                        _mode2A;
-        Dictionary<uint, ulong>       _offsetmap;
+        Dictionary<uint, ulong>       _offsetMap;
         byte[]                        _pfi;
         byte[]                        _pma;
         Dictionary<uint, byte>        _trackFlags;

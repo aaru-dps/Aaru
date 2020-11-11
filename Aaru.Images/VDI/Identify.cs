@@ -46,9 +46,9 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] vHdrB = new byte[Marshal.SizeOf<VdiHeader>()];
-            stream.Read(vHdrB, 0, Marshal.SizeOf<VdiHeader>());
-            _vHdr = Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
+            byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+            _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
             return _vHdr.magic == VDI_MAGIC;
         }

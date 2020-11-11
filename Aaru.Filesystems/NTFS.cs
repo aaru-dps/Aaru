@@ -155,7 +155,7 @@ namespace Aaru.Filesystems
 
         /// <summary>NTFS $BOOT</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BiosParameterBlock
+        readonly struct BiosParameterBlock
         {
             // Start of BIOS Parameter Block
             /// <summary>0x000, Jump to boot code</summary>

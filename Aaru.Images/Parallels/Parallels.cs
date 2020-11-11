@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
         bool                      _extended;
         ImageInfo                 _imageInfo;
         Stream                    _imageStream;
-        ParallelsHeader           _pHdr;
+        Header                    _pHdr;
         Dictionary<ulong, byte[]> _sectorCache;
         FileStream                _writingStream;
 

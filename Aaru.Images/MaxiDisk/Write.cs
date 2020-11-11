@@ -143,7 +143,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -176,7 +176,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -209,7 +209,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            var header = new HdkHeader
+            var header = new Header
             {
                 diskType        = (byte)HdkDiskTypes.Dos2880,
                 cylinders       = (byte)_imageInfo.Cylinders,
@@ -223,8 +223,8 @@ namespace Aaru.DiscImages
                 i >>= 1;
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<HdkHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<HdkHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

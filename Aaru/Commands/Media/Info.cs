@@ -565,13 +565,13 @@ namespace Aaru.Commands.Media
             if(scsiInfo.Toc    != null ||
                scsiInfo.RawToc != null)
             {
-                Track[] tracks = Dump.GetCdTracks(dev, null, false, out long lastSector, null, null,
-                                                  null, out _, null, null);
+                Track[] tracks = Dump.GetCdTracks(dev, null, false, out long lastSector, null, null, null, out _, null,
+                                                  null);
 
                 if(tracks != null)
                 {
-                    uint  firstLba             = (uint)tracks.Min(t => t.TrackStartSector);
-                    
+                    uint firstLba = (uint)tracks.Min(t => t.TrackStartSector);
+
                     bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null, firstLba);
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null, firstLba);
 

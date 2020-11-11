@@ -162,7 +162,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Superblock
+        readonly struct Superblock
         {
             public readonly uint   rev_level;
             public readonly ushort minor_rev_level;

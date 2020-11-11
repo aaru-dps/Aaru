@@ -40,11 +40,11 @@ namespace Aaru.DiscImages
 {
     public sealed partial class SaveDskF : IWritableImage, IVerifiableImage
     {
-        uint           _calculatedChk;
-        byte[]         _decodedDisk;
-        SaveDskFHeader _header;
-        ImageInfo      _imageInfo;
-        FileStream     _writingStream;
+        uint       _calculatedChk;
+        byte[]     _decodedDisk;
+        Header     _header;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
         public SaveDskF() => _imageInfo = new ImageInfo
         {

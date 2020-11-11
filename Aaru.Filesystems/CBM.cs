@@ -170,7 +170,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BAM
+        readonly struct BAM
         {
             /// <summary>Track where directory starts</summary>
             public readonly byte directoryTrack;
@@ -213,7 +213,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
+        readonly struct Header
         {
             /// <summary>Track where directory starts</summary>
             public readonly byte directoryTrack;

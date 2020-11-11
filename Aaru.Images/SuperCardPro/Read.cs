@@ -139,14 +139,14 @@ namespace Aaru.DiscImages
 
                     if(footerMagic == FOOTER_SIGNATURE)
                     {
-                        _scpStream.Seek(-Marshal.SizeOf<ScpFooter>(), SeekOrigin.Current);
+                        _scpStream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.Current);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", _scpStream.Position);
 
-                        byte[] ftr = new byte[Marshal.SizeOf<ScpFooter>()];
-                        _scpStream.Read(ftr, 0, Marshal.SizeOf<ScpFooter>());
+                        byte[] ftr = new byte[Marshal.SizeOf<Footer>()];
+                        _scpStream.Read(ftr, 0, Marshal.SizeOf<Footer>());
 
-                        ScpFooter footer = Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
+                        Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);
 
                         AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}",
                                                    footer.manufacturerOffset);

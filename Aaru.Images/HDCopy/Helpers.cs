@@ -38,16 +38,16 @@ namespace Aaru.DiscImages
 {
     public sealed partial class HdCopy
     {
-        void ReadTrackIntoCache(Stream stream, int tracknum)
+        void ReadTrackIntoCache(Stream stream, int trackNum)
         {
             byte[] trackData = new byte[_imageInfo.SectorSize * _imageInfo.SectorsPerTrack];
             byte[] blkHeader = new byte[3];
 
             // check that track is present
-            if(_trackOffset[tracknum] == -1)
+            if(_trackOffset[trackNum] == -1)
                 throw new InvalidDataException("Tried reading a track that is not present in image");
 
-            stream.Seek(_trackOffset[tracknum], SeekOrigin.Begin);
+            stream.Seek(_trackOffset[trackNum], SeekOrigin.Begin);
 
             // read the compressed track data
             stream.Read(blkHeader, 0, 3);
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
                 throw new InvalidDataException("Track decompression yielded incomplete data");
 
             // store track in cache
-            _trackCache[tracknum] = trackData;
+            _trackCache[trackNum] = trackData;
         }
     }
 }

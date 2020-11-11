@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
         uint                          _currentChunkCacheSize;
         ulong                         _currentSector;
         Crc32Context                  _dataForkChecksum;
-        UdifFooter                    _footer;
+        Footer                        _footer;
         ImageInfo                     _imageInfo;
         Stream                        _imageStream;
         Crc32Context                  _masterChecksum;

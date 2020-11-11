@@ -36,7 +36,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Blu
     {
-        // TODO: Check tag checkums
+        // TODO: Check tag checksums
         public bool? VerifySector(ulong sectorAddress) => null;
 
         public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,

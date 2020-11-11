@@ -152,7 +152,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeHeader
+        readonly struct VolumeHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] jump;

@@ -38,7 +38,7 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AmigaEntry
+        readonly struct AmigaEntry
         {
             public readonly ushort     signature;
             public readonly byte       length;
@@ -50,7 +50,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AmigaProtection
+        readonly struct AmigaProtection
         {
             public readonly byte            User;
             public readonly byte            Reserved;

@@ -106,7 +106,7 @@ namespace Aaru.Tests.Devices
             sb.AppendFormat("Head: {0}", registers.DeviceHead & 0xF).AppendLine();
             sb.AppendFormat("Sector: {0}", registers.Sector).AppendLine();
             sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
+            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
             sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
             sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
@@ -125,7 +125,7 @@ namespace Aaru.Tests.Devices
                             registers.LbaLow);
 
             sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
+            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
             sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
             sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 
@@ -145,7 +145,7 @@ namespace Aaru.Tests.Devices
                             registers.LbaLow);
 
             sb.AppendFormat("Count: {0}", registers.SectorCount).AppendLine();
-            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x40)).AppendLine();
+            sb.AppendFormat("LBA?: {0}", Convert.ToBoolean(registers.DeviceHead       & 0x40)).AppendLine();
             sb.AppendFormat("Bit 7 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x80)).AppendLine();
             sb.AppendFormat("Bit 5 set?: {0}", Convert.ToBoolean(registers.DeviceHead & 0x20)).AppendLine();
 

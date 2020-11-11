@@ -245,10 +245,8 @@ namespace Aaru.Gui.ViewModels.Panels
                         string corrected = new string(chars);
 
                         mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Unsupported filename",
-                                                                                         $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
-                                                                                         ButtonEnum.YesNoCancel,
-                                                                                         Icon.Warning).
-                                                             ShowDialog(_view);
+                                         $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
+                                         ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
 
                         if(mboxResult == ButtonResult.Cancel)
                             return;
@@ -264,9 +262,8 @@ namespace Aaru.Gui.ViewModels.Panels
                 if(File.Exists(outputPath))
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Existing file",
-                                                                                     $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
-                                                                                     ButtonEnum.YesNoCancel,
-                                                                                     Icon.Warning).ShowDialog(_view);
+                                     $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
+                                     ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
 
                     if(mboxResult == ButtonResult.Cancel)
                         return;
@@ -281,9 +278,8 @@ namespace Aaru.Gui.ViewModels.Panels
                     catch(IOException)
                     {
                         mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
-                                                                                         "Could not delete existing file.\nDo you want to continue?",
-                                                                                         ButtonEnum.YesNo, Icon.Error).
-                                                             ShowDialog(_view);
+                                         "Could not delete existing file.\nDo you want to continue?",
+                                         ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
 
                         if(mboxResult == ButtonResult.No)
                             return;
@@ -299,9 +295,8 @@ namespace Aaru.Gui.ViewModels.Panels
                     if(error != Errno.NoError)
                     {
                         mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Error reading file",
-                                                                                         $"Error {error} reading file.\nDo you want to continue?",
-                                                                                         ButtonEnum.YesNo, Icon.Error).
-                                                             ShowDialog(_view);
+                                         $"Error {error} reading file.\nDo you want to continue?",
+                                         ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
 
                         if(mboxResult == ButtonResult.No)
                             return;
@@ -349,9 +344,8 @@ namespace Aaru.Gui.ViewModels.Panels
                 catch(IOException)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot create file",
-                                                                                     "Could not create destination file.\nDo you want to continue?",
-                                                                                     ButtonEnum.YesNo, Icon.Error).
-                                                         ShowDialog(_view);
+                                     "Could not create destination file.\nDo you want to continue?",
+                                     ButtonEnum.YesNo, Icon.Error).ShowDialog(_view);
 
                     if(mboxResult == ButtonResult.No)
                         return;

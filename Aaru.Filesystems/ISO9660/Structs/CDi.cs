@@ -91,7 +91,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FileStructureVolumeDescriptor
+        readonly struct FileStructureVolumeDescriptor
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
@@ -162,7 +162,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdiDirectoryRecord
+        readonly struct CdiDirectoryRecord
         {
             public readonly byte                length;
             public readonly byte                xattr_len;
@@ -183,7 +183,7 @@ namespace Aaru.Filesystems
 
         // Follows filename on directory record
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdiSystemArea
+        readonly struct CdiSystemArea
         {
             public readonly ushort        group;
             public readonly ushort        owner;

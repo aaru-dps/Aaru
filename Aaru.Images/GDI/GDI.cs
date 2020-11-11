@@ -44,12 +44,12 @@ namespace Aaru.DiscImages
     public sealed partial class Gdi : IOpticalMediaImage
     {
         ulong        _densitySeparationSectors;
-        GdiDisc      _discimage;
+        GdiDisc      _discImage;
         StreamReader _gdiStream;
         ImageInfo    _imageInfo;
         Stream       _imageStream;
         /// <summary>Dictionary, index is track #, value is track number, or 0 if a TOC</summary>
-        Dictionary<uint, ulong> _offsetmap;
+        Dictionary<uint, ulong> _offsetMap;
         SectorBuilder _sectorBuilder;
 
         public Gdi() => _imageInfo = new ImageInfo

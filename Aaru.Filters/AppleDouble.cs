@@ -73,14 +73,14 @@ namespace Aaru.Filters
         {
             0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
         };
-        string            _basePath;
-        DateTime          _creationTime;
-        AppleDoubleEntry  _dataFork;
-        AppleDoubleHeader _header;
-        string            _headerPath;
-        DateTime          _lastWriteTime;
-        bool              _opened;
-        AppleDoubleEntry  _rsrcFork;
+        string   _basePath;
+        DateTime _creationTime;
+        Entry    _dataFork;
+        Header   _header;
+        string   _headerPath;
+        DateTime _lastWriteTime;
+        bool     _opened;
+        Entry    _rsrcFork;
 
         public string Name   => "AppleDouble";
         public Guid   Id     => new Guid("1B2165EE-C9DF-4B21-BBBB-9E5892B2DF4D");
@@ -168,7 +168,7 @@ namespace Aaru.Filters
                 {
                     byte[] prodosB = new byte[26];
                     prodosStream.Read(prodosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodosB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
                     prodosStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -186,7 +186,7 @@ namespace Aaru.Filters
                 {
                     byte[] unixB = new byte[26];
                     unixStream.Read(unixB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unixB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
                     unixStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -204,7 +204,7 @@ namespace Aaru.Filters
                 {
                     byte[] dosB = new byte[26];
                     dosStream.Read(dosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
                     dosStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -222,7 +222,7 @@ namespace Aaru.Filters
                 {
                     byte[] doslB = new byte[26];
                     doslStream.Read(doslB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(doslB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
                     doslStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -240,7 +240,7 @@ namespace Aaru.Filters
                 {
                     byte[] netatalkB = new byte[26];
                     netatalkStream.Read(netatalkB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalkB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
                     netatalkStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -258,7 +258,7 @@ namespace Aaru.Filters
                 {
                     byte[] daveB = new byte[26];
                     daveStream.Read(daveB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(daveB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
                     daveStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -276,7 +276,7 @@ namespace Aaru.Filters
                 {
                     byte[] osxB = new byte[26];
                     osxStream.Read(osxB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osxB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
                     osxStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -296,7 +296,7 @@ namespace Aaru.Filters
 
             byte[] unarB = new byte[26];
             unarStream.Read(unarB, 0, 26);
-            _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unarB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
             unarStream.Close();
 
             return _header.magic == MAGIC && (_header.version == VERSION || _header.version == VERSION2);
@@ -355,7 +355,7 @@ namespace Aaru.Filters
                 {
                     byte[] prodosB = new byte[26];
                     prodosStream.Read(prodosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(prodosB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(prodosB);
                     prodosStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -373,7 +373,7 @@ namespace Aaru.Filters
                 {
                     byte[] unixB = new byte[26];
                     unixStream.Read(unixB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unixB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unixB);
                     unixStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -391,7 +391,7 @@ namespace Aaru.Filters
                 {
                     byte[] dosB = new byte[26];
                     dosStream.Read(dosB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(dosB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(dosB);
                     dosStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -409,7 +409,7 @@ namespace Aaru.Filters
                 {
                     byte[] doslB = new byte[26];
                     doslStream.Read(doslB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(doslB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(doslB);
                     doslStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -427,7 +427,7 @@ namespace Aaru.Filters
                 {
                     byte[] netatalkB = new byte[26];
                     netatalkStream.Read(netatalkB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(netatalkB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(netatalkB);
                     netatalkStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -445,7 +445,7 @@ namespace Aaru.Filters
                 {
                     byte[] daveB = new byte[26];
                     daveStream.Read(daveB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(daveB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(daveB);
                     daveStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -463,7 +463,7 @@ namespace Aaru.Filters
                 {
                     byte[] osxB = new byte[26];
                     osxStream.Read(osxB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(osxB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(osxB);
                     osxStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -481,7 +481,7 @@ namespace Aaru.Filters
                 {
                     byte[] unarB = new byte[26];
                     unarStream.Read(unarB, 0, 26);
-                    _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(unarB);
+                    _header = Marshal.ByteArrayToStructureBigEndian<Header>(unarB);
                     unarStream.Close();
 
                     if(_header.magic == MAGIC &&
@@ -495,86 +495,81 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[26];
             fs.Read(hdrB, 0, 26);
-            _header = Marshal.ByteArrayToStructureBigEndian<AppleDoubleHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-            AppleDoubleEntry[] entries = new AppleDoubleEntry[_header.entries];
+            Entry[] entries = new Entry[_header.entries];
 
             for(int i = 0; i < _header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 fs.Read(entry, 0, 12);
-                entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleDoubleEntry>(entry);
+                entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
             }
 
             _creationTime  = DateTime.UtcNow;
             _lastWriteTime = _creationTime;
 
-            foreach(AppleDoubleEntry entry in entries)
-                switch((AppleDoubleEntryID)entry.id)
+            foreach(Entry entry in entries)
+                switch((EntryId)entry.id)
                 {
-                    case AppleDoubleEntryID.DataFork:
+                    case EntryId.DataFork:
                         // AppleDouble have datafork in separated file
                         break;
-                    case AppleDoubleEntryID.FileDates:
+                    case EntryId.FileDates:
                         fs.Seek(entry.offset, SeekOrigin.Begin);
                         byte[] datesB = new byte[16];
                         fs.Read(datesB, 0, 16);
 
-                        AppleDoubleFileDates dates =
-                            Marshal.ByteArrayToStructureBigEndian<AppleDoubleFileDates>(datesB);
+                        FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
                         _creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
                         _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
 
                         break;
-                    case AppleDoubleEntryID.FileInfo:
+                    case EntryId.FileInfo:
                         fs.Seek(entry.offset, SeekOrigin.Begin);
                         byte[] finfo = new byte[entry.length];
                         fs.Read(finfo, 0, finfo.Length);
 
                         if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleDoubleMacFileInfo macinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleDoubleMacFileInfo>(finfo);
+                            MacFileInfo macinfo = Marshal.ByteArrayToStructureBigEndian<MacFileInfo>(finfo);
 
                             _creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             _lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(_proDosHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleDoubleProDOSFileInfo prodosinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleDoubleProDOSFileInfo>(finfo);
+                            ProDOSFileInfo prodosinfo = Marshal.ByteArrayToStructureBigEndian<ProDOSFileInfo>(finfo);
 
                             _creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             _lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(_unixHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleDoubleUnixFileInfo unixinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleDoubleUnixFileInfo>(finfo);
+                            UnixFileInfo unixinfo = Marshal.ByteArrayToStructureBigEndian<UnixFileInfo>(finfo);
 
                             _creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             _lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(_dosHome.SequenceEqual(_header.homeFilesystem))
                         {
-                            AppleDoubleDOSFileInfo dosinfo =
-                                Marshal.ByteArrayToStructureBigEndian<AppleDoubleDOSFileInfo>(finfo);
+                            DOSFileInfo dosinfo = Marshal.ByteArrayToStructureBigEndian<DOSFileInfo>(finfo);
 
                             _lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
 
                         break;
-                    case AppleDoubleEntryID.ResourceFork:
+                    case EntryId.ResourceFork:
                         _rsrcFork = entry;
 
                         break;
                 }
 
-            _dataFork = new AppleDoubleEntry
+            _dataFork = new Entry
             {
-                id = (uint)AppleDoubleEntryID.DataFork
+                id = (uint)EntryId.DataFork
             };
 
             if(File.Exists(path))
@@ -589,7 +584,7 @@ namespace Aaru.Filters
             _basePath = path;
         }
 
-        enum AppleDoubleEntryID : uint
+        enum EntryId : uint
         {
             Invalid     = 0, DataFork    = 1, ResourceFork    = 2,
             RealName    = 3, Comment     = 4, Icon            = 5,
@@ -600,7 +595,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleHeader
+        readonly struct Header
         {
             public readonly uint magic;
             public readonly uint version;
@@ -610,7 +605,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleEntry
+        struct Entry
         {
             public          uint id;
             public readonly uint offset;
@@ -618,7 +613,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleFileDates
+        readonly struct FileDates
         {
             public readonly uint creationDate;
             public readonly uint modificationDate;
@@ -627,7 +622,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleMacFileInfo
+        readonly struct MacFileInfo
         {
             public readonly uint creationDate;
             public readonly uint modificationDate;
@@ -636,7 +631,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleUnixFileInfo
+        readonly struct UnixFileInfo
         {
             public readonly uint creationDate;
             public readonly uint accessDate;
@@ -644,7 +639,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleDOSFileInfo
+        readonly struct DOSFileInfo
         {
             public readonly ushort modificationDate;
             public readonly ushort modificationTime;
@@ -652,7 +647,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleDoubleProDOSFileInfo
+        readonly struct ProDOSFileInfo
         {
             public readonly uint   creationDate;
             public readonly uint   modificationDate;

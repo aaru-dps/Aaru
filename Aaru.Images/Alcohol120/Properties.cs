@@ -61,36 +61,36 @@ namespace Aaru.DiscImages
 
         public List<Partition> Partitions { get; private set; }
 
-        public List<Track> Tracks
+        public List<CommonTypes.Structs.Track> Tracks
         {
             get
             {
-                List<Track> tracks = new List<Track>();
+                List<CommonTypes.Structs.Track> tracks = new List<CommonTypes.Structs.Track>();
 
-                foreach(AlcoholTrack alcTrack in _alcTracks.Values)
+                foreach(Track alcTrack in _alcTracks.Values)
                 {
                     ushort sessionNo =
                         (from session in Sessions
                          where alcTrack.point >= session.StartTrack || alcTrack.point <= session.EndTrack
                          select session.SessionSequence).FirstOrDefault();
 
-                    if(!_alcTrackExtras.TryGetValue(alcTrack.point, out AlcoholTrackExtra alcExtra))
+                    if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
                         continue;
 
-                    var aaruTrack = new Track
+                    var aaruTrack = new CommonTypes.Structs.Track
                     {
                         TrackStartSector       = alcTrack.startLba,
                         TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1,
                         TrackPregap            = alcExtra.pregap,
                         TrackSession           = sessionNo,
                         TrackSequence          = alcTrack.point,
-                        TrackType              = AlcoholTrackTypeToTrackType(alcTrack.mode),
+                        TrackType              = TrackModeToTrackType(alcTrack.mode),
                         TrackFilter            = _alcImage,
                         TrackFile              = _alcImage.GetFilename(),
                         TrackFileOffset        = alcTrack.startOffset,
                         TrackFileType          = "BINARY",
                         TrackRawBytesPerSector = alcTrack.sectorSize,
-                        TrackBytesPerSector    = AlcoholTrackModeToCookedBytesPerSector(alcTrack.mode)
+                        TrackBytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
                     };
 
                     if(alcExtra.pregap > 0)
@@ -100,22 +100,22 @@ namespace Aaru.DiscImages
 
                     switch(alcTrack.subMode)
                     {
-                        case AlcoholSubchannelMode.Interleaved:
+                        case SubchannelMode.Interleaved:
                             aaruTrack.TrackSubchannelFilter = _alcImage;
                             aaruTrack.TrackSubchannelFile   = _alcImage.GetFilename();
                             aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
                             aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
                             break;
-                        case AlcoholSubchannelMode.None:
+                        case SubchannelMode.None:
                             aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                             break;
                     }
 
-                    if(_header.type != AlcoholMediumType.CD  &&
-                       _header.type != AlcoholMediumType.CDR &&
-                       _header.type != AlcoholMediumType.CDRW)
+                    if(_header.type != MediumType.CD  &&
+                       _header.type != MediumType.CDR &&
+                       _header.type != MediumType.CDRW)
                     {
                         aaruTrack.TrackPregap = 0;
                         aaruTrack.Indexes?.Clear();
@@ -128,7 +128,7 @@ namespace Aaru.DiscImages
             }
         }
 
-        public List<Session> Sessions { get; private set; }
+        public List<CommonTypes.Structs.Session> Sessions { get; private set; }
 
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;

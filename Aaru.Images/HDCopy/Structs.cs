@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>The global header of a HDCP image file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdcpFileHeader
+        readonly struct FileHeader
         {
             /// <summary>Last cylinder (zero-based)</summary>
             public readonly byte lastCylinder;
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
 
         /// <summary>The header for a RLE-compressed block</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HdcpBlockHeader
+        readonly struct BlockHeader
         {
             /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
             public readonly ushort length;

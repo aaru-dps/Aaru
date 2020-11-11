@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
             byte[] hdr = new byte[40];
 
             stream.Read(hdr, 0, 40);
-            _header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
             AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}", _header.magic);
             AaruConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}", _header.mediaType);
@@ -125,7 +125,7 @@ namespace Aaru.DiscImages
                 throw new
                     FeatureSupportedButNotImplementedImageException("Compressed SaveDskF images are not supported.");
 
-            // SaveDskF only ommits ending clusters, leaving no gaps behind, so reading all data we have...
+            // SaveDskF only omits ending clusters, leaving no gaps behind, so reading all data we have...
             stream.Seek(_header.dataOffset, SeekOrigin.Begin);
             _decodedDisk = new byte[_imageInfo.Sectors * _imageInfo.SectorSize];
             stream.Read(_decodedDisk, 0, (int)(stream.Length - _header.dataOffset));

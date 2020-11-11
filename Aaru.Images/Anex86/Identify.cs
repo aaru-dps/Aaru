@@ -44,25 +44,25 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<Anex86Header>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            _fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
+            _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
 
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", _fdihdr.unknown);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", _fdihdr.hddtype);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", _fdihdr.hdrSize);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", _fdihdr.dskSize);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", _fdihdr.bps);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", _fdihdr.spt);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", _fdihdr.heads);
-            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", _fdihdr.cylinders);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}", _header.unknown);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}", _header.hddtype);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}", _header.hdrSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}", _header.dskSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}", _header.bps);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}", _header.spt);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}", _header.heads);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", _header.cylinders);
 
-            return stream.Length   == _fdihdr.hdrSize + _fdihdr.dskSize &&
-                   _fdihdr.dskSize == _fdihdr.bps * _fdihdr.spt * _fdihdr.heads * _fdihdr.cylinders;
+            return stream.Length   == _header.hdrSize + _header.dskSize &&
+                   _header.dskSize == _header.bps * _header.spt * _header.heads * _header.cylinders;
         }
     }
 }

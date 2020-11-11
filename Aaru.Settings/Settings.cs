@@ -47,8 +47,8 @@ namespace Aaru.Settings
         ///     Level for GDPR compliance checking. Every time a new feature may share user information this level should go
         ///     up, and the user asked to opt-in.
         /// </summary>
-        public const ulong GdprLevel = 1;
-        /// <summary>Set of GDPR compliance, if lower than <see cref="GdprLevel" />, ask user for compliance.</summary>
+        public const ulong GDPR_LEVEL = 1;
+        /// <summary>Set of GDPR compliance, if lower than <see cref="GDPR_LEVEL" />, ask user for compliance.</summary>
         public ulong GdprCompliance;
 
         /// <summary>If set to <c>true</c>, reports will be saved locally</summary>
@@ -101,7 +101,7 @@ namespace Aaru.Settings
         const string XDG_CONFIG_HOME          = "XDG_CONFIG_HOME";
         const string XDG_DATA_HOME_RESOLVED   = ".local/share";
         const string XDG_CONFIG_HOME_RESOLVED = ".config";
-        /// <summary>Current statistcs</summary>
+        /// <summary>Current statistics</summary>
         public static DicSettings Current;
 
         /// <summary>Global path to save reports</summary>
@@ -120,7 +120,7 @@ namespace Aaru.Settings
             PlatformID ptId     = DetectOS.GetRealPlatformID();
             string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             LocalDbPath = "local.db";
-            string OldMainDbPath = "master.db";
+            string oldMainDbPath = "master.db";
             MainDbPath = "main.db";
 
             try
@@ -150,7 +150,7 @@ namespace Aaru.Settings
 
                         LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                         MainDbPath    = Path.Combine(aaruPath, MainDbPath);
-                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
+                        oldMainDbPath = Path.Combine(aaruPath, oldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -191,7 +191,7 @@ namespace Aaru.Settings
 
                         LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                         MainDbPath    = Path.Combine(aaruPath, MainDbPath);
-                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
+                        oldMainDbPath = Path.Combine(aaruPath, oldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -233,7 +233,7 @@ namespace Aaru.Settings
 
                         LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                         MainDbPath    = Path.Combine(aaruPath, MainDbPath);
-                        OldMainDbPath = Path.Combine(aaruPath, OldMainDbPath);
+                        oldMainDbPath = Path.Combine(aaruPath, oldMainDbPath);
 
                         ReportsPath = Path.Combine(aaruPath, "Reports");
 
@@ -249,8 +249,8 @@ namespace Aaru.Settings
                         break;
                 }
 
-                if(File.Exists(OldMainDbPath))
-                    File.Move(OldMainDbPath, MainDbPath);
+                if(File.Exists(oldMainDbPath))
+                    File.Move(oldMainDbPath, MainDbPath);
             }
             catch
             {
@@ -572,8 +572,8 @@ namespace Aaru.Settings
                     case PlatformID.WinCE:
                     case PlatformID.WindowsPhone:
                     {
-                        RegistryKey parentKey =
-                            Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.CreateSubKey("Claunia.com");
+                        RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.
+                                                         CreateSubKey("Claunia.com");
 
                         RegistryKey key = parentKey?.CreateSubKey("Aaru");
 

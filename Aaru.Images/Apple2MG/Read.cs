@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            _imageHeader = new A2ImgHeader();
+            _imageHeader = new Header();
 
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
             Array.Copy(header, 0, magic, 0, 4);
             Array.Copy(header, 4, creator, 0, 4);
 
-            _imageHeader = Marshal.SpanToStructureLittleEndian<A2ImgHeader>(header);
+            _imageHeader = Marshal.SpanToStructureLittleEndian<Header>(header);
 
             if(_imageHeader.DataSize == 0x00800C00)
             {
@@ -142,7 +142,7 @@ namespace Aaru.DiscImages
                     {
                         for(int s = 0; s < 16; s++)
                             Array.Copy(tmp, (t * 16 * 256) + (s          * 256), _decodedImage,
-                                       (t * 16      * 256) + (offsets[s] * 256), 256);
+                                       (t      * 16 * 256) + (offsets[s] * 256), 256);
                     }
 
                     _imageInfo.Sectors    = 560;
@@ -160,7 +160,7 @@ namespace Aaru.DiscImages
                     {
                         for(int s = 0; s < 16; s++)
                             Array.Copy(tmp, (t * 16 * 256) + (s          * 256), _decodedImage,
-                                       (t * 16      * 256) + (offsets[s] * 256), 256);
+                                       (t      * 16 * 256) + (offsets[s] * 256), 256);
                     }
 
                     _imageInfo.Sectors    = 1600;

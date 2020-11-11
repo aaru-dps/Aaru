@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class RayDim
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RayHdr
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
             public byte[] signature;

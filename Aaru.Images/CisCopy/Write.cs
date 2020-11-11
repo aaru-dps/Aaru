@@ -136,17 +136,17 @@ namespace Aaru.DiscImages
                     break;
             }
 
-            int headstep = 1;
+            int headStep = 1;
 
             if(diskType == DiskType.MD1DD ||
                diskType == DiskType.MD1DD8)
-                headstep = 2;
+                headStep = 2;
 
-            for(int i = 0; i < tracks; i += headstep)
+            for(int i = 0; i < tracks; i += headStep)
             {
                 _writingStream.WriteByte((byte)TrackType.Copied);
 
-                if(headstep == 2)
+                if(headStep == 2)
                     _writingStream.WriteByte(0);
             }
 

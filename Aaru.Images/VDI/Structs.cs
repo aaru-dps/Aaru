@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>VDI disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VdiHeader
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
             public string creator;

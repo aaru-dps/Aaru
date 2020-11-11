@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class SaveDskF
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SaveDskFHeader
+        struct Header
         {
             /// <summary>0x00 magic number</summary>
             public ushort magic;

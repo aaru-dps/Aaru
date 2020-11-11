@@ -101,13 +101,13 @@ namespace Aaru.DiscImages
             _ibm                    = new uint[ibmEntries];
             _currentWritingPosition = headerSectors * sectorSize;
 
-            _vHdr = new VdiHeader
+            _vHdr = new Header
             {
                 creator      = DIC_AARU,
                 magic        = VDI_MAGIC,
                 majorVersion = 1,
                 minorVersion = 1,
-                headerSize   = Marshal.SizeOf<VdiHeader>() - 72,
+                headerSize   = Marshal.SizeOf<Header>() - 72,
                 imageType    = VdiImageType.Normal,
                 offsetBlocks = sectorSize,
                 offsetData   = _currentWritingPosition,
@@ -280,8 +280,8 @@ namespace Aaru.DiscImages
                 }
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<VdiHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<VdiHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_vHdr, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

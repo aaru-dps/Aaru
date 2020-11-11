@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
     {
         // Little-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleProDOSSystemUse
+        readonly struct AppleProDOSSystemUse
         {
             public readonly ushort  signature;
             public readonly byte    length;
@@ -50,7 +50,7 @@ namespace Aaru.Filesystems
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleHFSSystemUse
+        readonly struct AppleHFSSystemUse
         {
             public readonly ushort                  signature;
             public readonly byte                    length;
@@ -62,7 +62,7 @@ namespace Aaru.Filesystems
 
         // Little-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleProDOSOldSystemUse
+        readonly struct AppleProDOSOldSystemUse
         {
             public readonly ushort     signature;
             public readonly AppleOldId id;
@@ -72,7 +72,7 @@ namespace Aaru.Filesystems
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleHFSTypeCreatorSystemUse
+        readonly struct AppleHFSTypeCreatorSystemUse
         {
             public readonly ushort     signature;
             public readonly AppleOldId id;
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleHFSIconSystemUse
+        readonly struct AppleHFSIconSystemUse
         {
             public readonly ushort     signature;
             public readonly AppleOldId id;
@@ -94,7 +94,7 @@ namespace Aaru.Filesystems
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AppleHFSOldSystemUse
+        readonly struct AppleHFSOldSystemUse
         {
             public readonly ushort     signature;
             public readonly AppleOldId id;

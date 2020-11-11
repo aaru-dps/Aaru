@@ -39,7 +39,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>Drive codes change according to CMOS stored valued</summary>
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        enum DriDriveCodes : byte
+        enum DriveCode : byte
         {
             /// <summary>5.25" 360k</summary>
             md2dd = 0,

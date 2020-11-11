@@ -196,8 +196,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SD_CID:
-                        if(sidecar.BlockMedia[0].SecureDigital == null)
-                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
                         {
@@ -207,8 +206,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SD_CSD:
-                        if(sidecar.BlockMedia[0].SecureDigital == null)
-                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
                         {
@@ -218,8 +216,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SD_SCR:
-                        if(sidecar.BlockMedia[0].SecureDigital == null)
-                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                         {
@@ -229,8 +226,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SD_OCR:
-                        if(sidecar.BlockMedia[0].SecureDigital == null)
-                            sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
+                        sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
 
                         sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
                         {
@@ -240,8 +236,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.MMC_CID:
-                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
-                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
                         {
@@ -251,8 +246,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.MMC_CSD:
-                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
-                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
                         {
@@ -262,8 +256,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.MMC_OCR:
-                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
-                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
                         {
@@ -273,8 +266,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.MMC_ExtendedCSD:
-                        if(sidecar.BlockMedia[0].MultiMediaCard == null)
-                            sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
+                        sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
 
                         sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                         {
@@ -285,8 +277,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.USB_Descriptors:
-                        if(sidecar.BlockMedia[0].USB == null)
-                            sidecar.BlockMedia[0].USB = new USBType();
+                        sidecar.BlockMedia[0].USB ??= new USBType();
 
                         sidecar.BlockMedia[0].USB.Descriptors = new DumpType
                         {
@@ -297,8 +288,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SCSI_MODESENSE_6:
-                        if(sidecar.BlockMedia[0].SCSI == null)
-                            sidecar.BlockMedia[0].SCSI = new SCSIType();
+                        sidecar.BlockMedia[0].SCSI ??= new SCSIType();
 
                         sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                         {
@@ -309,8 +299,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.SCSI_MODESENSE_10:
-                        if(sidecar.BlockMedia[0].SCSI == null)
-                            sidecar.BlockMedia[0].SCSI = new SCSIType();
+                        sidecar.BlockMedia[0].SCSI ??= new SCSIType();
 
                         sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                         {
@@ -356,13 +345,13 @@ namespace Aaru.Core
                     if(sectors - doneSectors >= sectorsToRead)
                     {
                         sector = image.ReadSectors(doneSectors, sectorsToRead);
-                        UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
+                        UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
                         doneSectors += sectorsToRead;
                     }
                     else
                     {
                         sector = image.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
-                        UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors, (long)sectors);
+                        UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
                         doneSectors += sectors - doneSectors;
                     }
 
@@ -927,8 +916,8 @@ namespace Aaru.Core
                                 scpBlockTrackTypes.Add(scpBlockTrackType);
                             }
 
-                            sidecar.BlockMedia[0].Track =
-                                scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                            sidecar.BlockMedia[0].Track = scpBlockTrackTypes.OrderBy(t => t.Cylinder).
+                                                                             ThenBy(t => t.Head).ToArray();
                         }
                         else
                             AaruConsole.
@@ -1032,8 +1021,8 @@ namespace Aaru.Core
                                 kfBlockTrackTypes.Add(kfBlockTrackType);
                             }
 
-                            sidecar.BlockMedia[0].Track =
-                                kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                            sidecar.BlockMedia[0].Track = kfBlockTrackTypes.OrderBy(t => t.Cylinder).
+                                                                            ThenBy(t => t.Head).ToArray();
                         }
                         else
                             AaruConsole.

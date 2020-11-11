@@ -53,10 +53,7 @@ namespace Aaru.Core
 
                 // Check all but RAW plugin
                 foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                                                                                             imagePlugin.Id !=
-                                                                                             new
-                                                                                                 Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                )
+                    imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
                     try
                     {
                         AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imagePlugin.Name);
@@ -79,10 +76,7 @@ namespace Aaru.Core
 
                 // Check only RAW plugin
                 foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                                                                                             imagePlugin.Id ==
-                                                                                             new
-                                                                                                 Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-                )
+                    imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
                     try
                     {
                         AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imagePlugin.Name);

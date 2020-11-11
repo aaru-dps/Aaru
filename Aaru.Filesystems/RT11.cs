@@ -122,7 +122,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HomeBlock
+        readonly struct HomeBlock
         {
             /// <summary>Bad block replacement table</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)]

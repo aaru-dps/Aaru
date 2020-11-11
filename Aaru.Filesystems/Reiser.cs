@@ -177,7 +177,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct JournalParameters
+        readonly struct JournalParameters
         {
             public readonly uint journal_1stblock;
             public readonly uint journal_dev;

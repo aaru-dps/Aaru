@@ -40,6 +40,12 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Retries errored data when dumping from a SCSI Block Commands compliant device</summary>
+        /// <param name="currentTry">Resume information</param>
+        /// <param name="extents">Correctly dump extents</param>
+        /// <param name="totalDuration">Total time spent in commands</param>
+        /// <param name="scsiReader">SCSI reader</param>
+        /// <param name="blankExtents">Blank extents</param>
         void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents,
                           ref double totalDuration, ExtentsULong blankExtents)
         {

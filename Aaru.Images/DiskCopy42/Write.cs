@@ -46,7 +46,7 @@ namespace Aaru.DiscImages
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
         {
-            header = new Dc42Header();
+            header = new Header();
             bool tags   = false;
             bool macosx = false;
 
@@ -383,11 +383,11 @@ namespace Aaru.DiscImages
             writingStream.Seek(0x54, SeekOrigin.Begin);
             byte[] data = new byte[header.DataSize];
             writingStream.Read(data, 0, (int)header.DataSize);
-            header.DataChecksum = DC42CheckSum(data);
+            header.DataChecksum = CheckSum(data);
             writingStream.Seek(0x54 + header.DataSize, SeekOrigin.Begin);
             data = new byte[header.TagSize];
             writingStream.Read(data, 0, (int)header.TagSize);
-            header.TagChecksum = DC42CheckSum(data);
+            header.TagChecksum = CheckSum(data);
 
             writingStream.Seek(0, SeekOrigin.Begin);
 

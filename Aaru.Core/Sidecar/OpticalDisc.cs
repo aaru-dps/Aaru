@@ -366,8 +366,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.Xbox_SecuritySector:
-                        if(sidecar.OpticalDisc[0].Xbox == null)
-                            sidecar.OpticalDisc[0].Xbox = new XboxType();
+                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                         sidecar.OpticalDisc[0].Xbox.SecuritySectors = new[]
                         {
@@ -388,8 +387,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.Xbox_PFI:
-                        if(sidecar.OpticalDisc[0].Xbox == null)
-                            sidecar.OpticalDisc[0].Xbox = new XboxType();
+                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                         sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
                         {
@@ -400,8 +398,7 @@ namespace Aaru.Core
 
                         break;
                     case MediaTagType.Xbox_DMI:
-                        if(sidecar.OpticalDisc[0].Xbox == null)
-                            sidecar.OpticalDisc[0].Xbox = new XboxType();
+                        sidecar.OpticalDisc[0].Xbox ??= new XboxType();
 
                         sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
                         {
@@ -601,7 +598,7 @@ namespace Aaru.Core
                         {
                             sector = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber);
 
-                            UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
+                            UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
                                             (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectorsToRead;
@@ -611,7 +608,7 @@ namespace Aaru.Core
                             sector = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
                                                            xmlTrk.Sequence.TrackNumber);
 
-                            UpdateProgress2("Hashings sector {0} of {1}", (long)doneSectors,
+                            UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors,
                                             (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectors - doneSectors;
@@ -689,7 +686,7 @@ namespace Aaru.Core
                             sector = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.TrackNumber,
                                                           SectorTagType.CdSectorSubchannel);
 
-                            UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
+                            UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectorsToRead;
@@ -700,7 +697,7 @@ namespace Aaru.Core
                                                           xmlTrk.Sequence.TrackNumber,
                                                           SectorTagType.CdSectorSubchannel);
 
-                            UpdateProgress2("Hashings subchannel sector {0} of {1}", (long)doneSectors,
+                            UpdateProgress2("Hashing subchannel sector {0} of {1}", (long)doneSectors,
                                             (long)((trk.TrackEndSector - trk.TrackStartSector) + 1));
 
                             doneSectors += sectors - doneSectors;

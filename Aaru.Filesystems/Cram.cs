@@ -123,7 +123,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             public readonly uint magic;
             public readonly uint size;

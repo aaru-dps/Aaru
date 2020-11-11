@@ -33,6 +33,7 @@
 // ReSharper disable InconsistentNaming
 
 // ReSharper disable UnusedMember.Local
+
 namespace Aaru.Filesystems
 {
     public sealed partial class AppleHFS

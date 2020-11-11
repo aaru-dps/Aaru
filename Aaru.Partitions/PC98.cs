@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -48,9 +47,10 @@ namespace Aaru.Partitions
         public Guid   Id     => new Guid("27333401-C7C2-447D-961C-22AD0641A09A");
         public string Author => "Natalia Portillo";
 
-        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
+                                   ulong sectorOffset)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             if(sectorOffset != 0)
                 return false;
@@ -66,11 +66,11 @@ namespace Aaru.Partitions
             if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT")
                 return false;
 
-            PC98Table table = Marshal.ByteArrayToStructureLittleEndian<PC98Table>(sector);
+            Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
             ulong counter = 0;
 
-            foreach(PC98Partition entry in table.entries)
+            foreach(Partition entry in table.entries)
             {
                 AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}", entry.dp_mid);
                 AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}", entry.dp_sid);
@@ -99,7 +99,7 @@ namespace Aaru.Partitions
                    entry.dp_esect > imagePlugin.Info.SectorsPerTrack)
                     continue;
 
-                var part = new Partition
+                var part = new CommonTypes.Partition
                 {
                     Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
                                       imagePlugin.Info.SectorsPerTrack),
@@ -158,14 +158,14 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PC98Table
+        readonly struct Table
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly PC98Partition[] entries;
+            public readonly Partition[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PC98Partition
+        readonly struct Partition
         {
             /// <summary>Some ID, if 0x80 bit is set, it is bootable</summary>
             public readonly byte dp_mid;

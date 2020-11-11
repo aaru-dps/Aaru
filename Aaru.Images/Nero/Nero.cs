@@ -38,7 +38,6 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
-using Session = Aaru.CommonTypes.Structs.Session;
 
 #pragma warning disable 414
 #pragma warning disable 169
@@ -52,19 +51,19 @@ namespace Aaru.DiscImages
         bool                                 _imageNewFormat;
         Stream                               _imageStream;
         ImageInfo                            _imageInfo;
-        NeroCdText                           _neroCdtxt;
-        NeroV1Cuesheet                       _neroCuesheetV1;
-        NeroV2Cuesheet                       _neroCuesheetV2;
-        NeroV1Dao                            _neroDaov1;
-        NeroV2Dao                            _neroDaov2;
-        NeroDiscInformation                  _neroDiscInfo;
+        CdText                               _cdtxt;
+        CuesheetV1                           _cuesheetV1;
+        CuesheetV2                           _cuesheetV2;
+        DaoV1                                _neroDaov1;
+        DaoV2                                _neroDaov2;
+        DiscInformation                      _discInfo;
         IFilter                              _neroFilter;
-        NeroMediaType                        _neroMediaTyp;
-        NeroReloChunk                        _neroRelo;
+        MediaType                            _mediaType;
+        ReloChunk                            _relo;
         readonly Dictionary<ushort, uint>    _neroSessions;
-        NeroV1Tao                            _neroTaov1;
-        NeroV2Tao                            _neroTaov2;
-        NeroTocChunk                         _neroToc;
+        TaoV1                                _taoV1;
+        TaoV2                                _taoV2;
+        TocChunk                             _toc;
         readonly Dictionary<uint, NeroTrack> _neroTracks;
         readonly Dictionary<uint, ulong>     _offsetmap;
         Dictionary<uint, byte[]>             _trackIsrCs;
@@ -84,7 +83,7 @@ namespace Aaru.DiscImages
             _neroSessions = new Dictionary<ushort, uint>();
             _neroTracks   = new Dictionary<uint, NeroTrack>();
             _offsetmap    = new Dictionary<uint, ulong>();
-            Sessions      = new List<Session>();
+            Sessions      = new List<CommonTypes.Structs.Session>();
             Partitions    = new List<Partition>();
         }
     }

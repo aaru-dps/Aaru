@@ -134,8 +134,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(mediaTags != null)
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.
-                                                                                         SupportedMediaTags.
-                                                                                         Contains(tag.Key)))
+                    SupportedMediaTags.Contains(tag.Key)))
                     AddMediaTagToSidecar(_outputPath, tag, ref sidecar);
 
             UpdateStatus?.Invoke("Writing metadata sidecar");

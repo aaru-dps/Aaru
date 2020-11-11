@@ -134,7 +134,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Header
+        readonly struct Header
         {
             /// <summary>Magic number</summary>
             public readonly uint magic;
@@ -153,7 +153,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>Magic number</summary>
             public readonly uint magic;

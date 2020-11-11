@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
         /// <summary>Disk image file</summary>
         IFilter dc42ImageFilter;
         /// <summary>Header of opened image</summary>
-        Dc42Header header;
+        Header header;
         ImageInfo imageInfo;
         /// <summary>Start of tags in disk image, after data sectors</summary>
         uint tagOffset;

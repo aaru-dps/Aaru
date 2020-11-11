@@ -105,8 +105,8 @@ namespace Aaru.Filesystems
                 entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
                 Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
-                string lowerFilename = StringHandlers.
-                                       PascalToString(entry.flNam, Encoding).ToLowerInvariant().Replace('/', ':');
+                string lowerFilename = StringHandlers.PascalToString(entry.flNam, Encoding).ToLowerInvariant().
+                                                      Replace('/', ':');
 
                 if(entry.flFlags.HasFlag(FileFlags.Used)     &&
                    !_idToFilename.ContainsKey(entry.flFlNum) &&

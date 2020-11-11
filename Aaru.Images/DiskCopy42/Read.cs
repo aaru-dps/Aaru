@@ -60,7 +60,7 @@ namespace Aaru.DiscImages
             if(buffer[0] > 63)
                 return false;
 
-            header = new Dc42Header();
+            header = new Header();
 
             Array.Copy(buffer, 0, pString, 0, 64);
             header.DiskName     = StringHandlers.PascalToString(pString, Encoding.GetEncoding("macintosh"));
@@ -233,13 +233,13 @@ namespace Aaru.DiscImages
                 twiggyCacheTags = new byte[header.TagSize];
                 twiggy          = true;
 
-                Stream datastream = imageFilter.GetDataForkStream();
-                datastream.Seek(dataOffset, SeekOrigin.Begin);
-                datastream.Read(data, 0, (int)header.DataSize);
+                Stream dataStream = imageFilter.GetDataForkStream();
+                dataStream.Seek(dataOffset, SeekOrigin.Begin);
+                dataStream.Read(data, 0, (int)header.DataSize);
 
-                Stream tagstream = imageFilter.GetDataForkStream();
-                tagstream.Seek(tagOffset, SeekOrigin.Begin);
-                tagstream.Read(tags, 0, (int)header.TagSize);
+                Stream tagStream = imageFilter.GetDataForkStream();
+                tagStream.Seek(tagOffset, SeekOrigin.Begin);
+                tagStream.Read(tags, 0, (int)header.TagSize);
 
                 ushort mfsMagic     = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x400);
                 ushort mfsAllBlocks = BigEndianBitConverter.ToUInt16(data, (data.Length / 2) + 0x412);
@@ -297,12 +297,12 @@ namespace Aaru.DiscImages
                            i <= 45)
                             sectorsToCopy = 15;
 
-                        Array.Copy(data, (header.DataSize / 2)                + (copiedSectors * 512), twiggyCache,
-                                   twiggyCache.Length - (copiedSectors * 512) - (sectorsToCopy * 512),
+                        Array.Copy(data, (header.DataSize / 2) + (copiedSectors * 512), twiggyCache,
+                                   twiggyCache.Length          - (copiedSectors * 512) - (sectorsToCopy * 512),
                                    sectorsToCopy * 512);
 
                         Array.Copy(tags, (header.TagSize / 2) + (copiedSectors * bptag), twiggyCacheTags,
-                                   twiggyCacheTags.Length - (copiedSectors * bptag) - (sectorsToCopy * bptag),
+                                   twiggyCacheTags.Length     - (copiedSectors * bptag) - (sectorsToCopy * bptag),
                                    sectorsToCopy * bptag);
 
                         copiedSectors += sectorsToCopy;

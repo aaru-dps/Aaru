@@ -78,9 +78,8 @@ namespace Aaru.DiscImages
 
                     if(length == _sectorsPerHunk * _imageInfo.SectorSize)
                         hunk = compHunk;
-                    else if((ChdCompression)_hdrCompression > ChdCompression.Zlib)
-                        throw new
-                            ImageNotSupportedException($"Unsupported compression {(ChdCompression)_hdrCompression}");
+                    else if((Compression)_hdrCompression > Compression.Zlib)
+                        throw new ImageNotSupportedException($"Unsupported compression {(Compression)_hdrCompression}");
                     else
                     {
                         var zStream = new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
@@ -98,17 +97,17 @@ namespace Aaru.DiscImages
                 case 3:
                     byte[] entryBytes = new byte[16];
                     Array.Copy(_hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
-                    ChdMapV3Entry entry = Marshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
+                    MapEntryV3 entry = Marshal.ByteArrayToStructureBigEndian<MapEntryV3>(entryBytes);
 
-                    switch((Chdv3EntryFlags)(entry.flags & 0x0F))
+                    switch((EntryFlagsV3)(entry.flags & 0x0F))
                     {
-                        case Chdv3EntryFlags.Invalid: throw new ArgumentException("Invalid hunk found.");
-                        case Chdv3EntryFlags.Compressed:
-                            switch((ChdCompression)_hdrCompression)
+                        case EntryFlagsV3.Invalid: throw new ArgumentException("Invalid hunk found.");
+                        case EntryFlagsV3.Compressed:
+                            switch((Compression)_hdrCompression)
                             {
-                                case ChdCompression.None: goto uncompressedV3;
-                                case ChdCompression.Zlib:
-                                case ChdCompression.ZlibPlus:
+                                case Compression.None: goto uncompressedV3;
+                                case Compression.Zlib:
+                                case Compression.ZlibPlus:
                                     if(_isHdd)
                                     {
                                         byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
@@ -134,20 +133,20 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException("Compressed CD/GD-ROM hunks are not yet supported");
 
                                     break;
-                                case ChdCompression.Av:
+                                case Compression.Av:
                                     throw new
-                                        ImageNotSupportedException($"Unsupported compression {(ChdCompression)_hdrCompression}");
+                                        ImageNotSupportedException($"Unsupported compression {(Compression)_hdrCompression}");
                             }
 
                             break;
-                        case Chdv3EntryFlags.Uncompressed:
+                        case EntryFlagsV3.Uncompressed:
                             uncompressedV3:
                             hunk = new byte[_bytesPerHunk];
                             _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
                             _imageStream.Read(hunk, 0, hunk.Length);
 
                             break;
-                        case Chdv3EntryFlags.Mini:
+                        case EntryFlagsV3.Mini:
                             hunk = new byte[_bytesPerHunk];
                             byte[] mini;
                             mini = BigEndianBitConverter.GetBytes(entry.offset);
@@ -156,10 +155,10 @@ namespace Aaru.DiscImages
                                 hunk[i] = mini[i % 8];
 
                             break;
-                        case Chdv3EntryFlags.SelfHunk: return GetHunk(entry.offset);
-                        case Chdv3EntryFlags.ParentHunk:
+                        case EntryFlagsV3.SelfHunk: return GetHunk(entry.offset);
+                        case EntryFlagsV3.ParentHunk:
                             throw new ImageNotSupportedException("Parent images are not supported");
-                        case Chdv3EntryFlags.SecondCompressed:
+                        case EntryFlagsV3.SecondCompressed:
                             throw new ImageNotSupportedException("FLAC is not supported");
                         default:
                             throw new ImageNotSupportedException($"Hunk type {entry.flags & 0xF} is not supported");

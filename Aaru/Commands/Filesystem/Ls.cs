@@ -246,10 +246,9 @@ namespace Aaru.Commands.Filesystem
                                 {
                                     AaruConsole.WriteLine($"As identified by {plugin.Name}.");
 
-                                    var fs = (IReadOnlyFilesystem)plugin.
-                                                                  GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                  Invoke(new object[]
-                                                                             {});
+                                    var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                         Invoke(new object[]
+                                                                                    {});
 
                                     if(fs == null)
                                         continue;
@@ -277,9 +276,9 @@ namespace Aaru.Commands.Filesystem
 
                             AaruConsole.WriteLine($"Identified by {plugin.Name}.");
 
-                            var fs = (IReadOnlyFilesystem)plugin.
-                                                          GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
-                                                                                                                {});
+                            var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
+                                                                 Invoke(new object[]
+                                                                            {});
 
                             if(fs == null)
                                 continue;

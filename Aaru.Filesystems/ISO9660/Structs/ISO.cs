@@ -93,7 +93,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PrimaryVolumeDescriptor
+        readonly struct PrimaryVolumeDescriptor
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
@@ -158,7 +158,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootRecord
+        readonly struct BootRecord
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
@@ -173,7 +173,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartitionDescriptor
+        readonly struct PartitionDescriptor
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
@@ -193,7 +193,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryRecord
+        readonly struct DirectoryRecord
         {
             public readonly byte         length;
             public readonly byte         xattr_len;
@@ -213,7 +213,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtendedAttributeRecord
+        readonly struct ExtendedAttributeRecord
         {
             public readonly ushort      owner;
             public readonly ushort      owner_be;
@@ -246,7 +246,7 @@ namespace Aaru.Filesystems
 
         // There are two tables one in little endian one in big endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PathTableEntry
+        readonly struct PathTableEntry
         {
             public readonly byte   name_len;
             public readonly byte   xattr_len;
@@ -257,7 +257,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct IsoTimestamp
+        readonly struct IsoTimestamp
         {
             public readonly byte  Years;
             public readonly byte  Month;

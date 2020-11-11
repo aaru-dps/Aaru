@@ -108,7 +108,7 @@ namespace Aaru.Filesystems
 
         // Followed by directory entries
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Block0
+        readonly struct Block0
         {
             /// <summary>BK starts booting here</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
@@ -140,7 +140,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             /// <summary>File status</summary>
             public readonly byte status;

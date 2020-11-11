@@ -200,7 +200,7 @@ namespace Aaru.DiscImages
                     break;
 
                 // Sony tag, convert to Priam
-                case 12 when longSectorSize == 536:
+                case 12:
                     oldTag = new byte[12];
                     Array.Copy(data, 512, oldTag, 0, 12);
                     newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
@@ -215,7 +215,7 @@ namespace Aaru.DiscImages
                     break;
 
                 // Profile tag, convert to Priam
-                case 20 when longSectorSize == 536:
+                case 20:
                     oldTag = new byte[20];
                     Array.Copy(data, 512, oldTag, 0, 20);
                     newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
@@ -231,7 +231,7 @@ namespace Aaru.DiscImages
                     break;
 
                 // Priam tag, copy to Priam
-                case 24 when longSectorSize == 536:
+                case 24:
                     newTag = new byte[24];
                     Array.Copy(data, 512, newTag, 0, 24);
 
@@ -304,7 +304,7 @@ namespace Aaru.DiscImages
                         break;
 
                     // Sony tag, convert to Priam
-                    case 12 when longSectorSize == 536:
+                    case 12:
                         oldTag = new byte[12];
                         Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 12);
                         newTag = LisaTag.DecodeSonyTag(oldTag)?.ToPriam().GetBytes();
@@ -319,7 +319,7 @@ namespace Aaru.DiscImages
                         break;
 
                     // Profile tag, convert to Priam
-                    case 20 when longSectorSize == 536:
+                    case 20:
                         oldTag = new byte[20];
                         Array.Copy(data, (givenSectorSize * i) + 512, oldTag, 0, 20);
                         newTag = LisaTag.DecodeProfileTag(oldTag)?.ToPriam().GetBytes();
@@ -335,7 +335,7 @@ namespace Aaru.DiscImages
                         break;
 
                     // Priam tag, copy to Priam
-                    case 24 when longSectorSize == 536:
+                    case 24:
                         newTag = new byte[24];
                         Array.Copy(data, (givenSectorSize * i) + 512, newTag, 0, 24);
 

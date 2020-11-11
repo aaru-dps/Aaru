@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmpHeader = Marshal.ByteArrayToStructureLittleEndian<HdkHeader>(buffer);
+            Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
             // This is hardcoded
             // But its possible values are unknown...

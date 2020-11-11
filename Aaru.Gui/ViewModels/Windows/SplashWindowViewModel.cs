@@ -216,7 +216,7 @@ namespace Aaru.Gui.ViewModels.Windows
             Message = "Checking GDPR compliance...";
             AaruConsole.WriteLine("Checking GDPR compliance...");
 
-            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+            if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
             {
                 var settingsDialog          = new SettingsDialog();
                 var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);

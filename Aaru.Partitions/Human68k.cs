@@ -82,7 +82,7 @@ namespace Aaru.Partitions
                 default: return false;
             }
 
-            X68kTable table = Marshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
+            Table table = Marshal.ByteArrayToStructureBigEndian<Table>(sector);
 
             AaruConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
@@ -90,7 +90,7 @@ namespace Aaru.Partitions
                 return false;
 
             for(int i = 0; i < table.entries.Length; i++)
-                table.entries[i] = (X68kEntry)Marshal.SwapStructureMembersEndian(table.entries[i]);
+                table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
             AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
             AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
@@ -98,7 +98,7 @@ namespace Aaru.Partitions
 
             ulong counter = 0;
 
-            foreach(X68kEntry entry in table.entries)
+            foreach(Entry entry in table.entries)
             {
                 AaruConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
                                            StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
@@ -132,18 +132,18 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct X68kTable
+        readonly struct Table
         {
             public readonly uint magic;
             public readonly uint size;
             public readonly uint size2;
             public readonly uint unknown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly X68kEntry[] entries;
+            public readonly Entry[] entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct X68kEntry
+        readonly struct Entry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] name;

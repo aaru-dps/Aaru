@@ -40,7 +40,7 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ContinuationArea
+        readonly struct ContinuationArea
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -54,7 +54,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PaddingArea
+        readonly struct PaddingArea
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -62,7 +62,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct IndicatorArea
+        readonly struct IndicatorArea
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -72,7 +72,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TerminatorArea
+        readonly struct TerminatorArea
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ReferenceArea
+        readonly struct ReferenceArea
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -96,7 +96,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SelectorArea
+        readonly struct SelectorArea
         {
             public readonly ushort signature;
             public readonly byte   length;

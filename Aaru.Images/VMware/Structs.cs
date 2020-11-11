@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class VMware
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VMwareExtentHeader
+        struct ExtentHeader
         {
             public readonly uint  magic;
             public readonly uint  version;
@@ -63,7 +63,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VMwareCowHeader
+        struct CowHeader
         {
             public readonly uint magic;
             public readonly uint version;
@@ -95,7 +95,7 @@ namespace Aaru.DiscImages
             public readonly byte[] padding;
         }
 
-        struct VMwareExtent
+        struct Extent
         {
             public string  Access;
             public uint    Sectors;

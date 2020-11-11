@@ -100,7 +100,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Partable
+        readonly struct Partable
         {
             public readonly ushort p_magic; /* magic number validity indicator */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAXPARTS)]
@@ -108,7 +108,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Partition
+        readonly struct Partition
         {
             public readonly int p_off;  /*start 1K block no of partition*/
             public readonly int p_size; /*# of 1K blocks in partition*/

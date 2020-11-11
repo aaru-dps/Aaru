@@ -49,10 +49,10 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdrB = new byte[Marshal.SizeOf<RsIdeHeader>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            RsIdeHeader hdr = Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
+            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             if(!hdr.magic.SequenceEqual(_signature))
                 return false;

@@ -61,16 +61,16 @@ namespace Aaru.DiscImages
         byte[]                    _sectorBitmap;
         ulong[]                   _sectorBitmapPointers;
         Dictionary<ulong, byte[]> _sectorCache;
-        VhdxFileParameters        _vFileParms;
-        VhdxHeader                _vHdr;
-        VhdxIdentifier            _vhdxId;
+        FileParameters            _vFileParms;
+        Header                    _vHdr;
+        Identifier                _id;
         ulong                     _virtualDiskSize;
-        VhdxMetadataTableHeader   _vMetHdr;
-        VhdxMetadataTableEntry[]  _vMets;
-        VhdxParentLocatorHeader   _vParHdr;
-        VhdxParentLocatorEntry[]  _vPars;
-        VhdxRegionTableHeader     _vRegHdr;
-        VhdxRegionTableEntry[]    _vRegs;
+        MetadataTableHeader       _vMetHdr;
+        MetadataTableEntry[]      _vMets;
+        ParentLocatorHeader       _vParHdr;
+        ParentLocatorEntry[]      _vPars;
+        RegionTableHeader         _vRegHdr;
+        RegionTableEntry[]        _vRegs;
 
         public Vhdx() => _imageInfo = new ImageInfo
         {

@@ -47,15 +47,13 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            var hdr = new FdiHeader();
-
-            if(stream.Length < Marshal.SizeOf<FdiHeader>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
+            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
             AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}", hdr.cylinders);

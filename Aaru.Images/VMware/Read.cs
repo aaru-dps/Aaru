@@ -52,24 +52,24 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            _vmEHdr = new VMwareExtentHeader();
-            _vmCHdr = new VMwareCowHeader();
+            _vmEHdr = new ExtentHeader();
+            _vmCHdr = new CowHeader();
             bool embedded = false;
 
-            if(stream.Length > Marshal.SizeOf<VMwareExtentHeader>())
+            if(stream.Length > Marshal.SizeOf<ExtentHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
-                stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
-                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                byte[] vmEHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+                _vmEHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(vmEHdrB);
             }
 
-            if(stream.Length > Marshal.SizeOf<VMwareCowHeader>())
+            if(stream.Length > Marshal.SizeOf<CowHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
-                stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
-                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+                _vmCHdr = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
             }
 
             var  ddfStream = new MemoryStream();
@@ -113,7 +113,7 @@ namespace Aaru.DiscImages
                 ddfStream.Write(ddfExternal, 0, ddfExternal.Length);
             }
 
-            _extents = new Dictionary<ulong, VMwareExtent>();
+            _extents = new Dictionary<ulong, Extent>();
             ulong currentSector = 0;
 
             bool matchedCyls = false, matchedHds = false, matchedSpt = false;
@@ -138,18 +138,17 @@ namespace Aaru.DiscImages
                     IFilter extentFilter = new FiltersList().GetFilter(curPath);
                     Stream  extentStream = extentFilter.GetDataForkStream();
 
-                    if(stream.Length > Marshal.SizeOf<VMwareCowHeader>())
+                    if(stream.Length > Marshal.SizeOf<CowHeader>())
                     {
-                        var extHdrCow = new VMwareCowHeader();
                         extentStream.Seek(0, SeekOrigin.Begin);
-                        byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
-                        extentStream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
-                        extHdrCow = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                        byte[] vmCHdrB = new byte[Marshal.SizeOf<CowHeader>()];
+                        extentStream.Read(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
+                        CowHeader extHdrCow = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
                         if(extHdrCow.magic != VMWARE_COW_MAGIC)
                             break;
 
-                        var newExtent = new VMwareExtent
+                        var newExtent = new Extent
                         {
                             Access   = "RW",
                             Filter   = extentFilter,
@@ -226,7 +225,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchExtent.Success)
                     {
-                        var newExtent = new VMwareExtent
+                        var newExtent = new Extent
                         {
                             Access = matchExtent.Groups["access"].Value
                         };
@@ -304,7 +303,7 @@ namespace Aaru.DiscImages
 
             bool oneNoFlat = cowD;
 
-            foreach(VMwareExtent extent in _extents.Values)
+            foreach(Extent extent in _extents.Values)
             {
                 if(extent.Filter == null)
                     throw new Exception($"Extent file {extent.Filename} not found.");
@@ -324,9 +323,9 @@ namespace Aaru.DiscImages
                 if(extentStream.Length < SECTOR_SIZE)
                     throw new Exception($"Extent {extent.Filename} is too small.");
 
-                byte[] extentHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
-                extentStream.Read(extentHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
-                VMwareExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(extentHdrB);
+                byte[] extentHdrB = new byte[Marshal.SizeOf<ExtentHeader>()];
+                extentStream.Read(extentHdrB, 0, Marshal.SizeOf<ExtentHeader>());
+                ExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<ExtentHeader>(extentHdrB);
 
                 if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
                     throw new Exception($"{extent.Filter} is not an VMware extent.");
@@ -438,7 +437,7 @@ namespace Aaru.DiscImages
             {
                 if(grains    == 0 ||
                    gdEntries == 0)
-                    throw new Exception("Some error ocurred setting GD sizes");
+                    throw new Exception("Some error occurred setting GD sizes");
 
                 AaruConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables",
                                            _imageInfo.Sectors, grains, gdEntries);
@@ -535,11 +534,11 @@ namespace Aaru.DiscImages
             if(_sectorCache.TryGetValue(sectorAddress, out byte[] sector))
                 return sector;
 
-            var   currentExtent     = new VMwareExtent();
+            var   currentExtent     = new Extent();
             bool  extentFound       = false;
             ulong extentStartSector = 0;
 
-            foreach(KeyValuePair<ulong, VMwareExtent> kvp in _extents.Where(kvp => sectorAddress >= kvp.Key))
+            foreach(KeyValuePair<ulong, Extent> kvp in _extents.Where(kvp => sectorAddress >= kvp.Key))
             {
                 currentExtent     = kvp.Value;
                 extentFound       = true;

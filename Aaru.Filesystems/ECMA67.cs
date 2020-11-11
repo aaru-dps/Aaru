@@ -99,7 +99,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeLabel
+        readonly struct VolumeLabel
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] labelIdentifier;

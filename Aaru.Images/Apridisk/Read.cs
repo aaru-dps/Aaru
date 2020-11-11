@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
             int totalCylinders = -1;
             int totalHeads     = -1;
             int maxSector      = -1;
-            int recordSize     = Marshal.SizeOf<ApridiskRecord>();
+            int recordSize     = Marshal.SizeOf<Record>();
 
             // Count cylinders
             while(stream.Position < stream.Length)
@@ -62,7 +62,7 @@ namespace Aaru.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Marshal.SpanToStructureLittleEndian<ApridiskRecord>(recB);
+                Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
 
                 switch(record.type)
                 {
@@ -151,7 +151,7 @@ namespace Aaru.DiscImages
 
             _imageInfo.SectorSize = uint.MaxValue;
 
-            ulong headersizes = 0;
+            ulong headerSizes = 0;
 
             // Read sectors
             stream.Seek(_signature.Length, SeekOrigin.Begin);
@@ -161,7 +161,7 @@ namespace Aaru.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Marshal.SpanToStructureLittleEndian<ApridiskRecord>(recB);
+                Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
 
                 switch(record.type)
                 {
@@ -170,7 +170,7 @@ namespace Aaru.DiscImages
                     case RecordType.Comment:
                     case RecordType.Creator:
                         stream.Seek((record.headerSize - recordSize) + record.dataSize, SeekOrigin.Current);
-                        headersizes += record.headerSize + record.dataSize;
+                        headerSizes += record.headerSize + record.dataSize;
 
                         break;
                     case RecordType.Sector:
@@ -191,7 +191,7 @@ namespace Aaru.DiscImages
                         if(realLength < _imageInfo.SectorSize)
                             _imageInfo.SectorSize = realLength;
 
-                        headersizes += record.headerSize + record.dataSize;
+                        headerSizes += record.headerSize + record.dataSize;
 
                         break;
                 }
@@ -219,7 +219,7 @@ namespace Aaru.DiscImages
                                                           (ushort)_imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
                                                           false));
 
-            _imageInfo.ImageSize            = (ulong)stream.Length - headersizes;
+            _imageInfo.ImageSize            = (ulong)stream.Length - headerSizes;
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());

@@ -37,18 +37,18 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed partial class Chd
     {
-        enum ChdCompression : uint
+        enum Compression : uint
         {
             None = 0, Zlib = 1, ZlibPlus = 2,
             Av   = 3
         }
 
-        enum ChdFlags : uint
+        enum Flags : uint
         {
             HasParent = 1, Writable = 2
         }
 
-        enum Chdv3EntryFlags : byte
+        enum EntryFlagsV3 : byte
         {
             /// <summary>Invalid</summary>
             Invalid = 0,
@@ -66,14 +66,14 @@ namespace Aaru.DiscImages
             SecondCompressed = 6
         }
 
-        enum ChdOldTrackType : uint
+        enum TrackTypeOld : uint
         {
             Mode1 = 0, Mode1Raw, Mode2,
             Mode2Form1, Mode2Form2, Mode2FormMix,
             Mode2Raw, Audio
         }
 
-        enum ChdOldSubType : uint
+        enum SubTypeOld : uint
         {
             Cooked = 0, Raw, None
         }

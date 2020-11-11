@@ -364,7 +364,7 @@ namespace Aaru.DiscImages
                     tocMs.WriteByte(descriptor.PFRAME);
                 }
 
-                _fulltoc = tocMs.ToArray();
+                _fullToc = tocMs.ToArray();
                 _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
                 string dataFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".img";
@@ -701,7 +701,7 @@ namespace Aaru.DiscImages
                 };
 
                 Partitions = new List<Partition>();
-                _offsetmap = new Dictionary<uint, ulong>();
+                _offsetMap = new Dictionary<uint, ulong>();
 
                 foreach(Track track in Tracks)
                 {
@@ -745,22 +745,22 @@ namespace Aaru.DiscImages
 
                     _imageInfo.Sectors += partition.Length;
                     Partitions.Add(partition);
-                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                 }
 
                 bool data       = false;
                 bool mode2      = false;
-                bool firstaudio = false;
-                bool firstdata  = false;
+                bool firstAudio = false;
+                bool firstData  = false;
                 bool audio      = false;
 
                 for(int i = 0; i < Tracks.Count; i++)
                 {
                     // First track is audio
-                    firstaudio |= i == 0 && Tracks[i].TrackType == TrackType.Audio;
+                    firstAudio |= i == 0 && Tracks[i].TrackType == TrackType.Audio;
 
                     // First track is data
-                    firstdata |= i == 0 && Tracks[i].TrackType != TrackType.Audio;
+                    firstData |= i == 0 && Tracks[i].TrackType != TrackType.Audio;
 
                     // Any non first track is data
                     data |= i != 0 && Tracks[i].TrackType != TrackType.Audio;
@@ -783,14 +783,14 @@ namespace Aaru.DiscImages
                 _cdtext = cdtMs.ToArray();
 
                 if(!data &&
-                   !firstdata)
+                   !firstData)
                     _imageInfo.MediaType = MediaType.CDDA;
-                else if(firstaudio         &&
+                else if(firstAudio         &&
                         data               &&
                         Sessions.Count > 1 &&
                         mode2)
                     _imageInfo.MediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2)
+                else if((firstData && audio) || mode2)
                     _imageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio)
                     _imageInfo.MediaType = MediaType.CDROM;
@@ -819,7 +819,7 @@ namespace Aaru.DiscImages
         {
             switch(tag)
             {
-                case MediaTagType.CD_FullTOC: return _fulltoc;
+                case MediaTagType.CD_FullTOC: return _fullToc;
                 case MediaTagType.CD_TEXT:
                 {
                     if(_cdtext        != null &&
@@ -844,7 +844,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -856,7 +856,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in _offsetmap.Where(kvp => sectorAddress >= kvp.Value).
+            foreach(KeyValuePair<uint, ulong> kvp in _offsetMap.Where(kvp => sectorAddress >= kvp.Value).
                                                                 SelectMany(kvp => Tracks, (kvp, track) => new
                                                                 {
                                                                     kvp,
@@ -1249,7 +1249,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1

@@ -63,9 +63,9 @@ namespace Aaru.DiscImages
             {
                 long thisOffset = stream.Position;
 
-                byte[] blk = new byte[Marshal.SizeOf<DfiBlockHeader>()];
-                stream.Read(blk, 0, Marshal.SizeOf<DfiBlockHeader>());
-                DfiBlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
+                byte[] blk = new byte[Marshal.SizeOf<BlockHeader>()];
+                stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
+                BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
                 AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
                                            blockHeader.cylinder);

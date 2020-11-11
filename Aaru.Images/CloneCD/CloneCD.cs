@@ -48,9 +48,9 @@ namespace Aaru.DiscImages
         IFilter                 _dataFilter;
         Stream                  _dataStream;
         StreamWriter            _descriptorStream;
-        byte[]                  _fulltoc;
+        byte[]                  _fullToc;
         ImageInfo               _imageInfo;
-        Dictionary<uint, ulong> _offsetmap;
+        Dictionary<uint, ulong> _offsetMap;
         bool                    _scrambled;
         IFilter                 _subFilter;
         Stream                  _subStream;

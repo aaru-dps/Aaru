@@ -15,6 +15,25 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>
+        ///     Dumps data when dumping from a SCSI Block Commands compliant device, optical variant (magneto-optical and
+        ///     successors)
+        /// </summary>
+        /// <param name="blocks">Media blocks</param>
+        /// <param name="maxBlocksToRead">Maximum number of blocks to read in a single command</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="currentTry">Resume information</param>
+        /// <param name="extents">Correctly dump extents</param>
+        /// <param name="currentSpeed">Current speed</param>
+        /// <param name="minSpeed">Minimum speed</param>
+        /// <param name="maxSpeed">Maximum speed</param>
+        /// <param name="totalDuration">Total time spent in commands</param>
+        /// <param name="scsiReader">SCSI reader</param>
+        /// <param name="mhddLog">MHDD log</param>
+        /// <param name="ibgLog">ImgBurn log</param>
+        /// <param name="imageWriteDuration">Total time spent writing to image</param>
+        /// <param name="newTrim">Set if we need to start a trim</param>
+        /// <param name="blankExtents">Blank extents</param>
         void ReadOpticalData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
                              ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
                              ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,

@@ -38,7 +38,7 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ElToritoBootRecord
+        readonly struct ElToritoBootRecord
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
@@ -54,7 +54,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ElToritoValidationEntry
+        readonly struct ElToritoValidationEntry
         {
             public readonly ElToritoIndicator header_id;
             public readonly ElToritoPlatform  platform_id;
@@ -80,7 +80,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ElToritoSectionHeaderEntry
+        readonly struct ElToritoSectionHeaderEntry
         {
             public readonly ElToritoIndicator header_id;
             public readonly ElToritoPlatform  platform_id;
@@ -90,7 +90,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ElToritoSectionEntry
+        readonly struct ElToritoSectionEntry
         {
             public readonly ElToritoIndicator bootable;
             public readonly ElToritoEmulation boot_type;
@@ -105,7 +105,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ElToritoSectionEntryExtension
+        readonly struct ElToritoSectionEntryExtension
         {
             public readonly ElToritoIndicator extension_indicator;
             public readonly ElToritoFlags     extension_flags;

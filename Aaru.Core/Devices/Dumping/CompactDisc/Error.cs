@@ -52,6 +52,25 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Retried errored sectors in CompactDisc</summary>
+        /// <param name="audioExtents">Extents with audio sectors</param>
+        /// <param name="blockSize">Size of the read sector in bytes</param>
+        /// <param name="currentTry">Current dump hardware try</param>
+        /// <param name="extents">Extents</param>
+        /// <param name="offsetBytes">Read offset</param>
+        /// <param name="readcd">Device supports READ CD</param>
+        /// <param name="sectorsForOffset">Sectors needed to fix offset</param>
+        /// <param name="subSize">Subchannel size in bytes</param>
+        /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
+        /// <param name="supportsLongSectors">Supports reading EDC and ECC</param>
+        /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void RetryCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                              ExtentsULong extents, int offsetBytes, bool readcd, int sectorsForOffset, uint subSize,
                              MmcSubchannel supportedSubchannel, ref double totalDuration, SubchannelLog subLog,
@@ -307,11 +326,11 @@ namespace Aaru.Core.Devices.Dumping
                         _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true);
 
                     // Set tracks and go back
-                    if(indexesChanged)
-                    {
-                        (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
-                        i--;
-                    }
+                    if(!indexesChanged)
+                        continue;
+
+                    (_outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+                    i--;
                 }
                 else
                 {
@@ -482,6 +501,18 @@ namespace Aaru.Core.Devices.Dumping
             EndProgress?.Invoke();
         }
 
+        /// <summary>Retried errored subchannels in CompactDisc</summary>
+        /// <param name="readcd">Device supports READ CD</param>
+        /// <param name="subSize">Subchannel size in bytes</param>
+        /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
+        /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void RetrySubchannel(bool readcd, uint subSize, MmcSubchannel supportedSubchannel, ref double totalDuration,
                              SubchannelLog subLog, MmcSubchannel desiredSubchannel, Track[] tracks,
                              Dictionary<byte, string> isrcs, ref string mcn, HashSet<int> subchannelExtents,

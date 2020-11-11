@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class Nhdr0
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Nhdr0Header
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
             public byte[] szFileID;

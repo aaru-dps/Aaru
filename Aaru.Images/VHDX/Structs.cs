@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class Vhdx
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxIdentifier
+        readonly struct Identifier
         {
             /// <summary>Signature, <see cref="Vhdx.VHDX_SIGNATURE" /></summary>
             public readonly ulong signature;
@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
 
         #pragma warning disable 649
         #pragma warning disable 169
-        struct VhdxHeader
+        struct Header
         {
             /// <summary>Signature, <see cref="Vhdx.VHDX_HEADER_SIG" /></summary>
             public uint Signature;
@@ -78,7 +78,7 @@ namespace Aaru.DiscImages
         #pragma warning restore 169
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxRegionTableHeader
+        readonly struct RegionTableHeader
         {
             /// <summary>Signature, <see cref="Vhdx.VHDX_REGION_SIG" /></summary>
             public readonly uint signature;
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxRegionTableEntry
+        readonly struct RegionTableEntry
         {
             /// <summary>Object identifier</summary>
             public readonly Guid guid;
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxMetadataTableHeader
+        readonly struct MetadataTableHeader
         {
             /// <summary>Signature</summary>
             public readonly ulong signature;
@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxMetadataTableEntry
+        readonly struct MetadataTableEntry
         {
             /// <summary>Metadata ID</summary>
             public readonly Guid itemId;
@@ -133,7 +133,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxFileParameters
+        struct FileParameters
         {
             /// <summary>Block size in bytes</summary>
             public uint blockSize;
@@ -142,7 +142,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxParentLocatorHeader
+        readonly struct ParentLocatorHeader
         {
             /// <summary>Type of parent virtual disk</summary>
             public readonly Guid locatorType;
@@ -152,7 +152,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VhdxParentLocatorEntry
+        readonly struct ParentLocatorEntry
         {
             /// <summary>Offset from metadata to key</summary>
             public readonly uint keyOffset;

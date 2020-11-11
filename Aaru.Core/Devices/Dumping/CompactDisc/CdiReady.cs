@@ -49,6 +49,9 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Detects if a sector contains data</summary>
+        /// <param name="sector">Sector contents</param>
+        /// <returns><c>true</c> if it contains Yellow Book data, <c>false</c> otherwise</returns>
         static bool IsData(byte[] sector)
         {
             if(sector?.Length != 2352)
@@ -65,6 +68,11 @@ namespace Aaru.Core.Devices.Dumping
             return syncMark.SequenceEqual(testMark) && (sector[0xF] == 0 || sector[0xF] == 1 || sector[0xF] == 2);
         }
 
+        /// <summary>Detects if a sector contains scrambled data</summary>
+        /// <param name="sector">Sector contents</param>
+        /// <param name="wantedLba">What LBA we intended to read</param>
+        /// <param name="offset">Offset in bytes, if found</param>
+        /// <returns><c>true</c> if it contains Yellow Book data, <c>false</c> otherwise</returns>
         static bool IsScrambledData(byte[] sector, int wantedLba, out int? offset)
         {
             offset = 0;
@@ -83,30 +91,29 @@ namespace Aaru.Core.Devices.Dumping
             {
                 Array.Copy(sector, i, testMark, 0, 12);
 
-                if(syncMark.SequenceEqual(testMark) &&
-                   (sector[i + 0xF] == 0x60 || sector[i + 0xF] == 0x61 || sector[i + 0xF] == 0x62))
+                if(!syncMark.SequenceEqual(testMark) ||
+                   (sector[i + 0xF] != 0x60 && sector[i + 0xF] != 0x61 && sector[i + 0xF] != 0x62))
+                    continue;
 
-                {
-                    // De-scramble M and S
-                    int minute = sector[i + 12] ^ 0x01;
-                    int second = sector[i + 13] ^ 0x80;
-                    int frame  = sector[i + 14];
+                // De-scramble M and S
+                int minute = sector[i + 12] ^ 0x01;
+                int second = sector[i + 13] ^ 0x80;
+                int frame  = sector[i + 14];
 
-                    // Convert to binary
-                    minute = ((minute / 16) * 10) + (minute & 0x0F);
-                    second = ((second / 16) * 10) + (second & 0x0F);
-                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                // Convert to binary
+                minute = ((minute / 16) * 10) + (minute & 0x0F);
+                second = ((second / 16) * 10) + (second & 0x0F);
+                frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
 
-                    // Calculate the first found LBA
-                    int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                // Calculate the first found LBA
+                int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
 
-                    // Calculate the difference between the found LBA and the requested one
-                    int diff = wantedLba - lba;
+                // Calculate the difference between the found LBA and the requested one
+                int diff = wantedLba - lba;
 
-                    offset = i + (2352 * diff);
+                offset = i + (2352 * diff);
 
-                    return true;
-                }
+                return true;
             }
 
             return false;
@@ -114,7 +121,7 @@ namespace Aaru.Core.Devices.Dumping
 
         // TODO: Set pregap for Track 1
         // TODO: Detect errors in sectors
-        /// <summary>Reads all CD user data</summary>
+        /// <summary>Reads all the hidden track in CD-i Ready discs</summary>
         /// <param name="blocks">Total number of positive sectors</param>
         /// <param name="blockSize">Size of the read sector in bytes</param>
         /// <param name="currentSpeed">Current read speed</param>

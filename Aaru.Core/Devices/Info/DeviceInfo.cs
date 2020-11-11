@@ -329,8 +329,7 @@ namespace Aaru.Core.Devices.Info
                                         for(byte i = 0; i < 4; i++)
                                         {
                                             plxtSense = dev.PlextorReadEepromBlock(out byte[] plxtBufSmall,
-                                                                                   out senseBuf, i, 256, dev.Timeout,
-                                                                                   out _);
+                                                out senseBuf, i, 256, dev.Timeout, out _);
 
                                             if(plxtSense)
                                                 break;
@@ -347,7 +346,7 @@ namespace Aaru.Core.Devices.Info
                                     {
                                         if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
                                             plxtSense = dev.PlextorReadEepromCdr(out plxtBuf, out senseBuf, dev.Timeout,
-                                                                                 out _);
+                                                out _);
 
                                         break;
                                     }

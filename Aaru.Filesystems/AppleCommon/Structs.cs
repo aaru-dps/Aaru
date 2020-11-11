@@ -42,7 +42,7 @@ namespace Aaru.Filesystems
     {
         /// <summary>Should be sectors 0 and 1 in volume, followed by boot code</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock // Should be sectors 0 and 1 in volume
+        readonly struct BootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
             public readonly ushort bbID;

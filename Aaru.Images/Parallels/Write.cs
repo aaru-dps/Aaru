@@ -92,14 +92,14 @@ namespace Aaru.DiscImages
             if((sectors * sectorSize) % DEFAULT_CLUSTER_SIZE > 0)
                 batEntries++;
 
-            uint headerSectors = (uint)Marshal.SizeOf<ParallelsHeader>() + (batEntries * 4);
+            uint headerSectors = (uint)Marshal.SizeOf<Header>() + (batEntries * 4);
 
-            if((uint)Marshal.SizeOf<ParallelsHeader>() + (batEntries % 4) > 0)
+            if((uint)Marshal.SizeOf<Header>() + (batEntries % 4) > 0)
                 headerSectors++;
 
-            _pHdr = new ParallelsHeader
+            _pHdr = new Header
             {
-                magic        = _parallelsMagic,
+                magic        = _magic,
                 version      = PARALLELS_VERSION,
                 sectors      = sectors,
                 in_use       = PARALLELS_CLOSED,
@@ -264,8 +264,8 @@ namespace Aaru.DiscImages
                 }
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<ParallelsHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ParallelsHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_pHdr, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

@@ -91,20 +91,20 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            _footer = new DriFooter
+            _footer = new Footer
             {
                 signature = new byte[51],
-                bpb = new DriBpb
+                bpb = new Bpb
                 {
-                    five      = 5,
-                    driveCode = DriDriveCodes.mf2ed,
-                    cylinders = geometry.cylinders,
-                    bps       = (ushort)_imageInfo.SectorSize,
-                    sectors   = (ushort)_imageInfo.Sectors,
-                    sptrack   = (ushort)_imageInfo.SectorsPerTrack,
-                    heads     = (ushort)_imageInfo.Heads,
-                    sptrack2  = (ushort)_imageInfo.SectorsPerTrack,
-                    unknown5  = new byte[144]
+                    five       = 5,
+                    _driveCode = DriveCode.mf2ed,
+                    cylinders  = geometry.cylinders,
+                    bps        = (ushort)_imageInfo.SectorSize,
+                    sectors    = (ushort)_imageInfo.Sectors,
+                    sptrack    = (ushort)_imageInfo.SectorsPerTrack,
+                    heads      = (ushort)_imageInfo.Heads,
+                    sptrack2   = (ushort)_imageInfo.SectorsPerTrack,
+                    unknown5   = new byte[144]
                 }
             };
 
@@ -211,8 +211,8 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<DriFooter>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DriFooter>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Footer>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Footer>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_footer, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

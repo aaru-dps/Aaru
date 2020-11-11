@@ -60,8 +60,8 @@ namespace Aaru.Partitions
             if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
                 return false;
 
-            byte[]    hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
-            GptHeader hdr;
+            byte[] hdrBytes = imagePlugin.ReadSector(1 + sectorOffset);
+            Header hdr;
 
             ulong signature  = BitConverter.ToUInt64(hdrBytes, 0);
             bool  misaligned = false;
@@ -91,7 +91,7 @@ namespace Aaru.Partitions
 
             try
             {
-                hdr = Marshal.ByteArrayToStructureLittleEndian<GptHeader>(hdrBytes);
+                hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrBytes);
             }
             catch
             {
@@ -141,7 +141,7 @@ namespace Aaru.Partitions
             byte[] temp         = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo);
             byte[] entriesBytes = new byte[temp.Length - (modulo       * 512)];
             Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
-            List<GptEntry> entries = new List<GptEntry>();
+            List<Entry> entries = new List<Entry>();
 
             for(int i = 0; i < hdr.entries; i++)
             {
@@ -149,7 +149,7 @@ namespace Aaru.Partitions
                 {
                     byte[] entryBytes = new byte[hdr.entriesSize];
                     Array.Copy(entriesBytes, hdr.entriesSize * i, entryBytes, 0, hdr.entriesSize);
-                    entries.Add(Marshal.ByteArrayToStructureLittleEndian<GptEntry>(entryBytes));
+                    entries.Add(Marshal.ByteArrayToStructureLittleEndian<Entry>(entryBytes));
                 }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
@@ -162,10 +162,10 @@ namespace Aaru.Partitions
             if(entries.Count == 0)
                 return false;
 
-            ulong pseq = 0;
+            ulong pSeq = 0;
 
-            foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
-                                                             entry.partitionId   != Guid.Empty))
+            foreach(Entry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
+                                                          entry.partitionId   != Guid.Empty))
             {
                 AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}", entry.partitionType);
                 AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}", entry.partitionId);
@@ -184,7 +184,7 @@ namespace Aaru.Partitions
                     Size        = ((entry.endLBA - entry.startLBA) + 1) * sectorSize,
                     Name        = entry.name,
                     Length      = ((entry.endLBA - entry.startLBA) + 1) / divisor,
-                    Sequence    = pseq++,
+                    Sequence    = pSeq++,
                     Offset      = entry.startLBA * sectorSize,
                     Start       = entry.startLBA / divisor,
                     Type        = GetGuidTypeName(entry.partitionType),
@@ -308,7 +308,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        struct GptHeader
+        struct Header
         {
             public readonly ulong signature;
             public readonly uint  revision;
@@ -327,7 +327,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        struct GptEntry
+        struct Entry
         {
             public readonly Guid  partitionType;
             public readonly Guid  partitionId;

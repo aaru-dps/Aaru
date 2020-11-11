@@ -41,6 +41,16 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Fix offset in audio/scrambled sectors</summary>
+        /// <param name="offsetBytes">Offset in bytes</param>
+        /// <param name="sectorSize">Sector size in bytes</param>
+        /// <param name="sectorsForOffset">How many extra sectors we got for offset</param>
+        /// <param name="supportedSubchannel">Subchannel type</param>
+        /// <param name="blocksToRead">How many sectors did we got</param>
+        /// <param name="subSize">Subchannel size in bytes</param>
+        /// <param name="cmdBuf">Data buffer</param>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="failedCrossingLeadOut">Set if we failed to cross into the Lead-Out</param>
         static void FixOffsetData(int offsetBytes, uint sectorSize, int sectorsForOffset,
                                   MmcSubchannel supportedSubchannel, ref uint blocksToRead, uint subSize,
                                   ref byte[] cmdBuf, uint blockSize, bool failedCrossingLeadOut)

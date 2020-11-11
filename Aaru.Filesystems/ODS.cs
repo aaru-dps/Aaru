@@ -273,7 +273,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HomeBlock
+        readonly struct HomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
             public readonly uint homelbn;

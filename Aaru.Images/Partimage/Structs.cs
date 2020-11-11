@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>Partimage disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartimageHeader
+        struct Header
         {
             /// <summary>Magic, <see cref="Partimage._partimageMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
@@ -75,7 +75,7 @@ namespace Aaru.DiscImages
 
         /// <summary>Partimage CMainHeader</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartimageMainHeader
+        struct MainHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public readonly byte[] szFileSystem; // ext2fs, ntfs, reiserfs, ...

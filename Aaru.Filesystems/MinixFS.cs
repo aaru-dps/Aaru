@@ -324,7 +324,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Superblock for Minix v1 and V2 filesystems</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>0x00, inodes on volume</summary>
             public readonly ushort s_ninodes;

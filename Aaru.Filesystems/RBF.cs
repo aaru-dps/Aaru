@@ -285,7 +285,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Identification sector. Wherever the sector this resides on, becomes LSN 0.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct IdSector
+        readonly struct IdSector
         {
             /// <summary>Sectors on disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -342,7 +342,7 @@ namespace Aaru.Filesystems
         ///     big or little endian.
         /// </summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewIdSector
+        readonly struct NewIdSector
         {
             /// <summary>Magic number</summary>
             public readonly uint rid_sync;

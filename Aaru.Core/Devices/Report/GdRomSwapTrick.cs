@@ -292,12 +292,11 @@ namespace Aaru.Core.Devices.Report
             AaruConsole.Write("Reading LBA 0 as audio (scrambled)... ");
 
             report.GdRomSwapDiscCapabilities.Lba0ScrambledReadable = !_dev.ReadCd(out byte[] lba0ScrambledBuffer,
-                                                                                  out byte[] lba0ScrambledSense, 0,
-                                                                                  2352, 1, MmcSectorTypes.Cdda, false,
-                                                                                  false, false, MmcHeaderCodes.None,
-                                                                                  true, false, MmcErrorField.None,
-                                                                                  MmcSubchannel.None, _dev.Timeout,
-                                                                                  out _);
+                                                                         out byte[] lba0ScrambledSense, 0, 2352, 1,
+                                                                         MmcSectorTypes.Cdda, false, false, false,
+                                                                         MmcHeaderCodes.None, true, false,
+                                                                         MmcErrorField.None, MmcSubchannel.None,
+                                                                         _dev.Timeout, out _);
 
             report.GdRomSwapDiscCapabilities.Lba0ScrambledData         = lba0ScrambledBuffer;
             report.GdRomSwapDiscCapabilities.Lba0ScrambledSense        = lba0ScrambledSense;
@@ -311,15 +310,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba100000AudioReadable = !_dev.ReadCd(out byte[] lba100000AudioBuffer,
-                                                                                       out byte[]
-                                                                                               lba100000AudioSenseBuffer,
-                                                                                       100000, 2352, cluster,
-                                                                                       MmcSectorTypes.Cdda, false,
-                                                                                       false, false,
-                                                                                       MmcHeaderCodes.None, true, false,
-                                                                                       MmcErrorField.None,
-                                                                                       MmcSubchannel.None, _dev.Timeout,
-                                                                                       out _);
+                                                                              out byte[] lba100000AudioSenseBuffer,
+                                                                              100000, 2352, cluster,
+                                                                              MmcSectorTypes.Cdda, false, false,
+                                                                              false, MmcHeaderCodes.None, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.None, _dev.Timeout,
+                                                                              out _);
 
                 report.GdRomSwapDiscCapabilities.Lba100000AudioData  = lba100000AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba100000AudioSense = lba100000AudioSenseBuffer;
@@ -346,14 +343,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba50000AudioReadable = !_dev.ReadCd(out byte[] lba50000AudioBuffer,
-                                                                                      out byte[]
-                                                                                              lba50000AudioSenseBuffer,
-                                                                                      50000, 2352, cluster,
-                                                                                      MmcSectorTypes.Cdda, false, false,
-                                                                                      false, MmcHeaderCodes.None, true,
-                                                                                      false, MmcErrorField.None,
-                                                                                      MmcSubchannel.None, _dev.Timeout,
-                                                                                      out _);
+                                                                             out byte[] lba50000AudioSenseBuffer,
+                                                                             50000, 2352, cluster,
+                                                                             MmcSectorTypes.Cdda, false, false,
+                                                                             false, MmcHeaderCodes.None, true,
+                                                                             false, MmcErrorField.None,
+                                                                             MmcSubchannel.None, _dev.Timeout,
+                                                                             out _);
 
                 report.GdRomSwapDiscCapabilities.Lba50000AudioData  = lba50000AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba50000AudioSense = lba50000AudioSenseBuffer;
@@ -380,15 +376,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba450000AudioReadable = !_dev.ReadCd(out byte[] lba450000AudioBuffer,
-                                                                                       out byte[]
-                                                                                               lba450000AudioSenseBuffer,
-                                                                                       450000, 2352, cluster,
-                                                                                       MmcSectorTypes.Cdda, false,
-                                                                                       false, false,
-                                                                                       MmcHeaderCodes.None, true, false,
-                                                                                       MmcErrorField.None,
-                                                                                       MmcSubchannel.None, _dev.Timeout,
-                                                                                       out _);
+                                                                              out byte[] lba450000AudioSenseBuffer,
+                                                                              450000, 2352, cluster,
+                                                                              MmcSectorTypes.Cdda, false, false,
+                                                                              false, MmcHeaderCodes.None, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.None, _dev.Timeout,
+                                                                              out _);
 
                 report.GdRomSwapDiscCapabilities.Lba450000AudioData  = lba450000AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba450000AudioSense = lba450000AudioSenseBuffer;
@@ -415,15 +409,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba400000AudioReadable = !_dev.ReadCd(out byte[] lba400000AudioBuffer,
-                                                                                       out byte[]
-                                                                                               lba400000AudioSenseBuffer,
-                                                                                       400000, 2352, cluster,
-                                                                                       MmcSectorTypes.Cdda, false,
-                                                                                       false, false,
-                                                                                       MmcHeaderCodes.None, true, false,
-                                                                                       MmcErrorField.None,
-                                                                                       MmcSubchannel.None, _dev.Timeout,
-                                                                                       out _);
+                                                                              out byte[] lba400000AudioSenseBuffer,
+                                                                              400000, 2352, cluster,
+                                                                              MmcSectorTypes.Cdda, false, false,
+                                                                              false, MmcHeaderCodes.None, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.None, _dev.Timeout,
+                                                                              out _);
 
                 report.GdRomSwapDiscCapabilities.Lba400000AudioData  = lba400000AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba400000AudioSense = lba400000AudioSenseBuffer;
@@ -450,14 +442,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba45000AudioReadable = !_dev.ReadCd(out byte[] lba45000AudioBuffer,
-                                                                                      out byte[]
-                                                                                              lba45000AudioSenseBuffer,
-                                                                                      45000, 2352, cluster,
-                                                                                      MmcSectorTypes.Cdda, false, false,
-                                                                                      false, MmcHeaderCodes.None, true,
-                                                                                      false, MmcErrorField.None,
-                                                                                      MmcSubchannel.None, _dev.Timeout,
-                                                                                      out _);
+                                                                             out byte[] lba45000AudioSenseBuffer,
+                                                                             45000, 2352, cluster,
+                                                                             MmcSectorTypes.Cdda, false, false,
+                                                                             false, MmcHeaderCodes.None, true,
+                                                                             false, MmcErrorField.None,
+                                                                             MmcSubchannel.None, _dev.Timeout,
+                                                                             out _);
 
                 report.GdRomSwapDiscCapabilities.Lba45000AudioData  = lba45000AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba45000AudioSense = lba45000AudioSenseBuffer;
@@ -484,14 +475,13 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba44990AudioReadable = !_dev.ReadCd(out byte[] lba44990AudioBuffer,
-                                                                                      out byte[]
-                                                                                              lba44990AudioSenseBuffer,
-                                                                                      44990, 2352, cluster,
-                                                                                      MmcSectorTypes.Cdda, false, false,
-                                                                                      false, MmcHeaderCodes.None, true,
-                                                                                      false, MmcErrorField.None,
-                                                                                      MmcSubchannel.None, _dev.Timeout,
-                                                                                      out _);
+                                                                             out byte[] lba44990AudioSenseBuffer,
+                                                                             44990, 2352, cluster,
+                                                                             MmcSectorTypes.Cdda, false, false,
+                                                                             false, MmcHeaderCodes.None, true,
+                                                                             false, MmcErrorField.None,
+                                                                             MmcSubchannel.None, _dev.Timeout,
+                                                                             out _);
 
                 report.GdRomSwapDiscCapabilities.Lba44990AudioData  = lba44990AudioBuffer;
                 report.GdRomSwapDiscCapabilities.Lba44990AudioSense = lba44990AudioSenseBuffer;
@@ -866,13 +856,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba100000Readable = !_dev.ReadCd(out byte[] lba100000Buffer,
-                                                                                  out byte[] lba100000SenseBuffer,
-                                                                                  100000, 2352, cluster,
-                                                                                  MmcSectorTypes.AllTypes, false, false,
-                                                                                  true, MmcHeaderCodes.AllHeaders, true,
-                                                                                  true, MmcErrorField.None,
-                                                                                  MmcSubchannel.None, _dev.Timeout,
-                                                                                  out _);
+                                                                         out byte[] lba100000SenseBuffer, 100000,
+                                                                         2352, cluster, MmcSectorTypes.AllTypes,
+                                                                         false, false, true,
+                                                                         MmcHeaderCodes.AllHeaders, true, true,
+                                                                         MmcErrorField.None, MmcSubchannel.None,
+                                                                         _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba100000Data            = lba100000Buffer;
                 report.GdRomSwapDiscCapabilities.Lba100000Sense           = lba100000SenseBuffer;
@@ -896,12 +885,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba50000Readable = !_dev.ReadCd(out byte[] lba50000Buffer,
-                                                                                 out byte[] lba50000SenseBuffer, 50000,
-                                                                                 2352, cluster, MmcSectorTypes.AllTypes,
-                                                                                 false, false, true,
-                                                                                 MmcHeaderCodes.AllHeaders, true, true,
-                                                                                 MmcErrorField.None, MmcSubchannel.None,
-                                                                                 _dev.Timeout, out _);
+                                                                        out byte[] lba50000SenseBuffer, 50000,
+                                                                        2352, cluster, MmcSectorTypes.AllTypes,
+                                                                        false, false, true,
+                                                                        MmcHeaderCodes.AllHeaders, true, true,
+                                                                        MmcErrorField.None, MmcSubchannel.None,
+                                                                        _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba50000Data            = lba50000Buffer;
                 report.GdRomSwapDiscCapabilities.Lba50000Sense           = lba50000SenseBuffer;
@@ -925,13 +914,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba450000Readable = !_dev.ReadCd(out byte[] lba450000Buffer,
-                                                                                  out byte[] lba450000SenseBuffer,
-                                                                                  450000, 2352, cluster,
-                                                                                  MmcSectorTypes.AllTypes, false, false,
-                                                                                  true, MmcHeaderCodes.AllHeaders, true,
-                                                                                  true, MmcErrorField.None,
-                                                                                  MmcSubchannel.None, _dev.Timeout,
-                                                                                  out _);
+                                                                         out byte[] lba450000SenseBuffer, 450000,
+                                                                         2352, cluster, MmcSectorTypes.AllTypes,
+                                                                         false, false, true,
+                                                                         MmcHeaderCodes.AllHeaders, true, true,
+                                                                         MmcErrorField.None, MmcSubchannel.None,
+                                                                         _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba450000Data            = lba450000Buffer;
                 report.GdRomSwapDiscCapabilities.Lba450000Sense           = lba450000SenseBuffer;
@@ -955,13 +943,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba400000Readable = !_dev.ReadCd(out byte[] lba400000Buffer,
-                                                                                  out byte[] lba400000SenseBuffer,
-                                                                                  400000, 2352, cluster,
-                                                                                  MmcSectorTypes.AllTypes, false, false,
-                                                                                  true, MmcHeaderCodes.AllHeaders, true,
-                                                                                  true, MmcErrorField.None,
-                                                                                  MmcSubchannel.None, _dev.Timeout,
-                                                                                  out _);
+                                                                         out byte[] lba400000SenseBuffer, 400000,
+                                                                         2352, cluster, MmcSectorTypes.AllTypes,
+                                                                         false, false, true,
+                                                                         MmcHeaderCodes.AllHeaders, true, true,
+                                                                         MmcErrorField.None, MmcSubchannel.None,
+                                                                         _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba400000Data            = lba400000Buffer;
                 report.GdRomSwapDiscCapabilities.Lba400000Sense           = lba400000SenseBuffer;
@@ -985,12 +972,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba45000Readable = !_dev.ReadCd(out byte[] lba45000Buffer,
-                                                                                 out byte[] lba45000SenseBuffer, 45000,
-                                                                                 2352, cluster, MmcSectorTypes.AllTypes,
-                                                                                 false, false, true,
-                                                                                 MmcHeaderCodes.AllHeaders, true, true,
-                                                                                 MmcErrorField.None, MmcSubchannel.None,
-                                                                                 _dev.Timeout, out _);
+                                                                        out byte[] lba45000SenseBuffer, 45000,
+                                                                        2352, cluster, MmcSectorTypes.AllTypes,
+                                                                        false, false, true,
+                                                                        MmcHeaderCodes.AllHeaders, true, true,
+                                                                        MmcErrorField.None, MmcSubchannel.None,
+                                                                        _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba45000Data            = lba45000Buffer;
                 report.GdRomSwapDiscCapabilities.Lba45000Sense           = lba45000SenseBuffer;
@@ -1014,12 +1001,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba44990Readable = !_dev.ReadCd(out byte[] lba44990Buffer,
-                                                                                 out byte[] lba44990SenseBuffer, 44990,
-                                                                                 2352, cluster, MmcSectorTypes.AllTypes,
-                                                                                 false, false, true,
-                                                                                 MmcHeaderCodes.AllHeaders, true, true,
-                                                                                 MmcErrorField.None, MmcSubchannel.None,
-                                                                                 _dev.Timeout, out _);
+                                                                        out byte[] lba44990SenseBuffer, 44990,
+                                                                        2352, cluster, MmcSectorTypes.AllTypes,
+                                                                        false, false, true,
+                                                                        MmcHeaderCodes.AllHeaders, true, true,
+                                                                        MmcErrorField.None, MmcSubchannel.None,
+                                                                        _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba44990Data            = lba44990Buffer;
                 report.GdRomSwapDiscCapabilities.Lba44990Sense           = lba44990SenseBuffer;
@@ -1043,14 +1030,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba100000PqReadable = !_dev.ReadCd(out byte[] lba100000PqBuffer,
-                                                                                    out byte[] lba100000PqSenseBuffer,
-                                                                                    100000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba100000PqSenseBuffer,
+                                                                           100000, 2368, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba100000PqData = lba100000PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba100000PqSense = lba100000PqSenseBuffer;
@@ -1074,14 +1059,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba50000PqReadable = !_dev.ReadCd(out byte[] lba50000PqBuffer,
-                                                                                   out byte[] lba50000PqSenseBuffer,
-                                                                                   50000, 2368, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Q16, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba50000PqSenseBuffer, 50000,
+                                                                          2368, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Q16,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba50000PqData            = lba50000PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba50000PqSense           = lba50000PqSenseBuffer;
@@ -1105,14 +1088,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba450000PqReadable = !_dev.ReadCd(out byte[] lba450000PqBuffer,
-                                                                                    out byte[] lba450000PqSenseBuffer,
-                                                                                    450000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba450000PqSenseBuffer,
+                                                                           450000, 2368, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba450000PqData = lba450000PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba450000PqSense = lba450000PqSenseBuffer;
@@ -1136,14 +1117,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba400000PqReadable = !_dev.ReadCd(out byte[] lba400000PqBuffer,
-                                                                                    out byte[] lba400000PqSenseBuffer,
-                                                                                    400000, 2368, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Q16, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba400000PqSenseBuffer,
+                                                                           400000, 2368, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba400000PqData = lba400000PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba400000PqSense = lba400000PqSenseBuffer;
@@ -1167,14 +1146,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba45000PqReadable = !_dev.ReadCd(out byte[] lba45000PqBuffer,
-                                                                                   out byte[] lba45000PqSenseBuffer,
-                                                                                   45000, 2368, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Q16, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba45000PqSenseBuffer, 45000,
+                                                                          2368, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Q16,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba45000PqData            = lba45000PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba45000PqSense           = lba45000PqSenseBuffer;
@@ -1198,14 +1175,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba44990PqReadable = !_dev.ReadCd(out byte[] lba44990PqBuffer,
-                                                                                   out byte[] lba44990PqSenseBuffer,
-                                                                                   44990, 2368, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Q16, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba44990PqSenseBuffer, 44990,
+                                                                          2368, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Q16,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba44990PqData            = lba44990PqBuffer;
                 report.GdRomSwapDiscCapabilities.Lba44990PqSense           = lba44990PqSenseBuffer;
@@ -1229,14 +1204,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba100000RwReadable = !_dev.ReadCd(out byte[] lba100000RwBuffer,
-                                                                                    out byte[] lba100000RwSenseBuffer,
-                                                                                    100000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba100000RwSenseBuffer,
+                                                                           100000, 2448, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba100000RwData = lba100000RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba100000RwSense = lba100000RwSenseBuffer;
@@ -1260,14 +1233,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba50000RwReadable = !_dev.ReadCd(out byte[] lba50000RwBuffer,
-                                                                                   out byte[] lba50000RwSenseBuffer,
-                                                                                   50000, 2448, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Raw, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba50000RwSenseBuffer, 50000,
+                                                                          2448, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Raw,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba50000RwData            = lba50000RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba50000RwSense           = lba50000RwSenseBuffer;
@@ -1291,14 +1262,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba450000RwReadable = !_dev.ReadCd(out byte[] lba450000RwBuffer,
-                                                                                    out byte[] lba450000RwSenseBuffer,
-                                                                                    450000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba450000RwSenseBuffer,
+                                                                           450000, 2448, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba450000RwData = lba450000RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba450000RwSense = lba450000RwSenseBuffer;
@@ -1322,14 +1291,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba400000RwReadable = !_dev.ReadCd(out byte[] lba400000RwBuffer,
-                                                                                    out byte[] lba400000RwSenseBuffer,
-                                                                                    400000, 2448, cluster,
-                                                                                    MmcSectorTypes.AllTypes, false,
-                                                                                    false, true,
-                                                                                    MmcHeaderCodes.AllHeaders, true,
-                                                                                    true, MmcErrorField.None,
-                                                                                    MmcSubchannel.Raw, _dev.Timeout,
-                                                                                    out _);
+                                                                           out byte[] lba400000RwSenseBuffer,
+                                                                           400000, 2448, cluster,
+                                                                           MmcSectorTypes.AllTypes, false, false,
+                                                                           true, MmcHeaderCodes.AllHeaders, true,
+                                                                           true, MmcErrorField.None,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba400000RwData = lba400000RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba400000RwSense = lba400000RwSenseBuffer;
@@ -1353,14 +1320,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba45000RwReadable = !_dev.ReadCd(out byte[] lba45000RwBuffer,
-                                                                                   out byte[] lba45000RwSenseBuffer,
-                                                                                   45000, 2448, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Raw, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba45000RwSenseBuffer, 45000,
+                                                                          2448, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Raw,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba45000RwData            = lba45000RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba45000RwSense           = lba45000RwSenseBuffer;
@@ -1384,14 +1349,12 @@ namespace Aaru.Core.Devices.Report
             while(true)
             {
                 report.GdRomSwapDiscCapabilities.Lba44990RwReadable = !_dev.ReadCd(out byte[] lba44990RwBuffer,
-                                                                                   out byte[] lba44990RwSenseBuffer,
-                                                                                   44990, 2448, cluster,
-                                                                                   MmcSectorTypes.AllTypes, false,
-                                                                                   false, true,
-                                                                                   MmcHeaderCodes.AllHeaders, true,
-                                                                                   true, MmcErrorField.None,
-                                                                                   MmcSubchannel.Raw, _dev.Timeout,
-                                                                                   out _);
+                                                                          out byte[] lba44990RwSenseBuffer, 44990,
+                                                                          2448, cluster, MmcSectorTypes.AllTypes,
+                                                                          false, false, true,
+                                                                          MmcHeaderCodes.AllHeaders, true, true,
+                                                                          MmcErrorField.None, MmcSubchannel.Raw,
+                                                                          _dev.Timeout, out _);
 
                 report.GdRomSwapDiscCapabilities.Lba44990RwData            = lba44990RwBuffer;
                 report.GdRomSwapDiscCapabilities.Lba44990RwSense           = lba44990RwSenseBuffer;
@@ -1596,13 +1559,9 @@ namespace Aaru.Core.Devices.Report
                             ? _dev.ReadCd(out buffer, out senseBuffer, lba, blockSize, cluster, MmcSectorTypes.Cdda,
                                           false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                           subchannel, _dev.Timeout, out _) : _dev.ReadCd(out buffer, out senseBuffer,
-                                                                                         lba, blockSize, cluster,
-                                                                                         MmcSectorTypes.AllTypes, false,
-                                                                                         false, true,
-                                                                                         MmcHeaderCodes.AllHeaders,
-                                                                                         true, true, MmcErrorField.None,
-                                                                                         subchannel, _dev.Timeout,
-                                                                                         out _);
+                                lba, blockSize, cluster, MmcSectorTypes.AllTypes, false, false, true,
+                                MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, subchannel,
+                                _dev.Timeout, out _);
 
                 if(sense)
                 {

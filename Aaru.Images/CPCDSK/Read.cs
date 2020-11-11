@@ -57,7 +57,7 @@ namespace Aaru.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
+            DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
             if(!_cpcdskId.SequenceEqual(header.magic.Take(_cpcdskId.Length)) &&
                !_edskId.SequenceEqual(header.magic)                          &&
@@ -111,7 +111,7 @@ namespace Aaru.DiscImages
 
                     byte[] trackB = new byte[256];
                     stream.Read(trackB, 0, 256);
-                    CpcTrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<CpcTrackInfo>(trackB);
+                    TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
                     if(!_trackId.SequenceEqual(trackInfo.magic))
                     {
@@ -260,18 +260,6 @@ namespace Aaru.DiscImages
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.MediaType            = MediaType.CompactFloppy;
             _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
-
-            // Debug writing full disk as raw
-            /*
-            FileStream foo = new FileStream(Path.GetFileNameWithoutExtension(imageFilter.GetFilename()) + ".bin", FileMode.Create);
-            for(ulong i = 0; i < (ulong)sectors.Count; i++)
-            {
-                byte[] foob;
-                sectors.TryGetValue(i, out foob);
-                foo.Write(foob, 0, foob.Length);
-            }
-            foo.Close();
-            */
 
             _imageInfo.Cylinders       = header.tracks;
             _imageInfo.Heads           = header.sides;

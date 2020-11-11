@@ -122,13 +122,13 @@ namespace Aaru.Filesystems
         }
 
         [Flags]
-        enum VMfsFlags : byte
+        enum Flags : byte
         {
             RecyledFolder = 64, CaseSensitive = 128
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeInfo
+        readonly struct VolumeInfo
         {
             public readonly uint magic;
             public readonly uint version;

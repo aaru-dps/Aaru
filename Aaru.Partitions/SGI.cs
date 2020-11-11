@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
@@ -54,22 +53,23 @@ namespace Aaru.Partitions
         public Guid   Id     => new Guid("AEF5AB45-4880-4CE8-8735-F0A402E2E5F2");
         public string Author => "Natalia Portillo";
 
-        public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
+        public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions,
+                                   ulong sectorOffset)
         {
-            partitions = new List<Partition>();
+            partitions = new List<CommonTypes.Partition>();
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
             if(sector.Length < 512)
                 return false;
 
-            SGILabel dvh = Marshal.ByteArrayToStructureBigEndian<SGILabel>(sector);
+            Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
 
             for(int i = 0; i < dvh.volume.Length; i++)
-                dvh.volume[i] = (SGIVolume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
+                dvh.volume[i] = (Volume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
 
             for(int i = 0; i < dvh.partitions.Length; i++)
-                dvh.partitions[i] = (SGIPartition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
+                dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
             AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
                                        SGI_MAGIC);
@@ -142,7 +142,7 @@ namespace Aaru.Partitions
                 dvh.partitions[i].type = (SGIType)Swapping.Swap((uint)dvh.partitions[i].type);
                 AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
 
-                var part = new Partition
+                var part = new CommonTypes.Partition
                 {
                     Start = (dvh.partitions[i].first_block * dvh.device_params.dp_secbytes) /
                             imagePlugin.Info.SectorSize,
@@ -193,7 +193,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SGILabel
+        readonly struct Label
         {
             /// <summary></summary>
             public readonly uint magic;
@@ -205,13 +205,13 @@ namespace Aaru.Partitions
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] boot_file;
             /// <summary></summary>
-            public readonly SGIDeviceParameters device_params;
+            public readonly DeviceParameters device_params;
             /// <summary></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-            public readonly SGIVolume[] volume;
+            public readonly Volume[] volume;
             /// <summary></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly SGIPartition[] partitions;
+            public readonly Partition[] partitions;
             /// <summary></summary>
             public readonly uint csum;
             /// <summary></summary>
@@ -219,7 +219,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SGIVolume
+        readonly struct Volume
         {
             /// <summary></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -241,7 +241,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SGIPartition
+        struct Partition
         {
             /// <summary></summary>
             public readonly uint num_blocks;
@@ -251,7 +251,7 @@ namespace Aaru.Partitions
             public SGIType type;
         }
 
-        struct SGIDeviceParameters
+        struct DeviceParameters
         {
             public byte   dp_skew;
             public byte   dp_gap1;

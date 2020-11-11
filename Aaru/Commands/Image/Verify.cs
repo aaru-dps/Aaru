@@ -169,8 +169,7 @@ namespace Aaru.Commands.Image
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
-                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage &&
-                   opticalMediaImage.Tracks != null)
+                if(verifiableSectorsImage is IOpticalMediaImage { Tracks: {} } opticalMediaImage)
                 {
                     List<Track> inputTracks      = opticalMediaImage.Tracks;
                     ulong       currentSectorAll = 0;

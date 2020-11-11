@@ -151,7 +151,7 @@ namespace Aaru
             }
 
             if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+               Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
                 new ConfigureCommand(true, true).Invoke(args);
 
             Statistics.LoadStats();

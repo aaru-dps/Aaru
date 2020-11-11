@@ -243,7 +243,7 @@ namespace Aaru.Gui.Controls
                 case NotifyCollectionChangedAction.Add:
                 case NotifyCollectionChangedAction.Replace:
                 {
-                    if(!(e.NewItems is { } items))
+                    if(!(e.NewItems is {} items))
                         throw new ArgumentException("Invalid list of items");
 
                     using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
@@ -264,8 +264,8 @@ namespace Aaru.Gui.Controls
                 case NotifyCollectionChangedAction.Remove:
                 case NotifyCollectionChangedAction.Move:
                 {
-                    if(!(e.NewItems is { } newItems) ||
-                       !(e.OldItems is { } oldItems))
+                    if(!(e.NewItems is {} newItems) ||
+                       !(e.OldItems is {} oldItems))
                         throw new ArgumentException("Invalid list of items");
 
                     using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);

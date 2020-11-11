@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
         // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
         // Sectors are fixed at 512 bytes/sector
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV1
+        readonly struct HeaderV1
         {
             /// <summary>Magic identifier, 'MComprHD'</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -50,9 +50,9 @@ namespace Aaru.DiscImages
             public readonly uint length;
             /// <summary>Image format version</summary>
             public readonly uint version;
-            /// <summary>Image flags, <see cref="ChdFlags" /></summary>
+            /// <summary>Image flags, <see cref="Flags" /></summary>
             public readonly uint flags;
-            /// <summary>Compression algorithm, <see cref="ChdCompression" /></summary>
+            /// <summary>Compression algorithm, <see cref="Compression" /></summary>
             public readonly uint compression;
             /// <summary>Sectors per hunk</summary>
             public readonly uint hunksize;
@@ -74,7 +74,7 @@ namespace Aaru.DiscImages
 
         // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV2
+        readonly struct HeaderV2
         {
             /// <summary>Magic identifier, 'MComprHD'</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -83,9 +83,9 @@ namespace Aaru.DiscImages
             public readonly uint length;
             /// <summary>Image format version</summary>
             public readonly uint version;
-            /// <summary>Image flags, <see cref="ChdFlags" /></summary>
+            /// <summary>Image flags, <see cref="Flags" /></summary>
             public readonly uint flags;
-            /// <summary>Compression algorithm, <see cref="ChdCompression" /></summary>
+            /// <summary>Compression algorithm, <see cref="Compression" /></summary>
             public readonly uint compression;
             /// <summary>Sectors per hunk</summary>
             public readonly uint hunksize;
@@ -108,7 +108,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV3
+        readonly struct HeaderV3
         {
             /// <summary>Magic identifier, 'MComprHD'</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -117,9 +117,9 @@ namespace Aaru.DiscImages
             public readonly uint length;
             /// <summary>Image format version</summary>
             public readonly uint version;
-            /// <summary>Image flags, <see cref="ChdFlags" /></summary>
+            /// <summary>Image flags, <see cref="Flags" /></summary>
             public readonly uint flags;
-            /// <summary>Compression algorithm, <see cref="ChdCompression" /></summary>
+            /// <summary>Compression algorithm, <see cref="Compression" /></summary>
             public readonly uint compression;
             /// <summary>Total # of hunk in image</summary>
             public readonly uint totalhunks;
@@ -144,7 +144,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMapV3Entry
+        readonly struct MapEntryV3
         {
             /// <summary>Offset to hunk from start of image</summary>
             public readonly ulong offset;
@@ -159,7 +159,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdTrackOld
+        struct TrackOld
         {
             public uint type;
             public uint subType;
@@ -170,7 +170,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV4
+        readonly struct HeaderV4
         {
             /// <summary>Magic identifier, 'MComprHD'</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -179,9 +179,9 @@ namespace Aaru.DiscImages
             public readonly uint length;
             /// <summary>Image format version</summary>
             public readonly uint version;
-            /// <summary>Image flags, <see cref="ChdFlags" /></summary>
+            /// <summary>Image flags, <see cref="Flags" /></summary>
             public readonly uint flags;
-            /// <summary>Compression algorithm, <see cref="ChdCompression" /></summary>
+            /// <summary>Compression algorithm, <see cref="Compression" /></summary>
             public readonly uint compression;
             /// <summary>Total # of hunk in image</summary>
             public readonly uint totalhunks;
@@ -203,7 +203,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdHeaderV5
+        readonly struct HeaderV5
         {
             /// <summary>Magic identifier, 'MComprHD'</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -242,7 +242,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdCompressedMapHeaderV5
+        readonly struct CompressedMapHeaderV5
         {
             /// <summary>Length of compressed map</summary>
             public readonly uint length;
@@ -258,7 +258,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMapV5Entry
+        readonly struct MapEntryV5
         {
             /// <summary>Compression (8 bits) and length (24 bits)</summary>
             public readonly uint compAndLength;
@@ -267,7 +267,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChdMetadataHeader
+        readonly struct MetadataHeader
         {
             public readonly uint  tag;
             public readonly uint  flagsAndLength;
@@ -275,14 +275,14 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HunkSector
+        readonly struct HunkSector
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
             public readonly ulong[] hunkEntry;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HunkSectorSmall
+        readonly struct HunkSectorSmall
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public readonly uint[] hunkEntry;

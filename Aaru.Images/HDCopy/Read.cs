@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
             byte[] header = new byte[2 + (2 * 82)];
             stream.Read(header, 0, 2 + (2 * 82));
 
-            HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
+            FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
             AaruConsole.DebugWriteLine("HDCP plugin",
                                        "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
@@ -61,8 +61,8 @@ namespace Aaru.DiscImages
             _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
             _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
             _imageInfo.Heads           = 2;   // only 2-sided floppies are supported
-            _imageInfo.Sectors         = 2 * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
-            _imageInfo.ImageSize       = _imageInfo.Sectors       * _imageInfo.SectorSize;
+            _imageInfo.Sectors         = 2                  * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+            _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
             _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 

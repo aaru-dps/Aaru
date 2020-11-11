@@ -173,14 +173,11 @@ namespace Aaru.Core
 
                 if(partitionableImage.Partitions != null)
                     childPartitions.AddRange(partitionableImage.Partitions.Where(imagePartition =>
-                                                                                     !startLocations.
-                                                                                         Contains(imagePartition.
-                                                                                                      Start)));
+                                                 !startLocations.Contains(imagePartition.Start)));
             }
 
-            Partition[] childArray = childPartitions.
-                                     OrderBy(part => part.Start).ThenBy(part => part.Length).
-                                     ThenBy(part => part.Scheme).ToArray();
+            Partition[] childArray = childPartitions.OrderBy(part => part.Start).ThenBy(part => part.Length).
+                                                     ThenBy(part => part.Scheme).ToArray();
 
             for(long i = 0; i < childArray.LongLength; i++)
                 childArray[i].Sequence = (ulong)i;

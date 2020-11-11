@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
             Sessions    = new List<Session>();
             Tracks      = new List<Track>();
             Partitions  = new List<Partition>();
-            _offsetmap  = new Dictionary<uint, ulong>();
+            _offsetMap  = new Dictionary<uint, ulong>();
             _trackFlags = new Dictionary<uint, byte>();
             ushort mediumType;
             byte   maxS = descriptor[0];
@@ -586,7 +586,7 @@ namespace Aaru.DiscImages
 
                     _imageInfo.Sectors += partition.Length;
                     Partitions.Add(partition);
-                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                     Tracks.Add(track);
                     _trackFlags.Add(track.TrackSequence, (byte)(trackCtl & 0xFF));
                     addedATrack = true;
@@ -760,7 +760,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -772,7 +772,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1170,7 +1170,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1

@@ -47,11 +47,11 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
-            _pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
+            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+            _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-            return _parallelsMagic.SequenceEqual(_pHdr.magic) || _parallelsExtMagic.SequenceEqual(_pHdr.magic);
+            return _magic.SequenceEqual(_pHdr.magic) || _extMagic.SequenceEqual(_pHdr.magic);
         }
     }
 }

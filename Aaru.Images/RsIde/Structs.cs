@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class RsIde
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RsIdeHeader
+        struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
             public byte[] magic;

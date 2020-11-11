@@ -69,7 +69,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Amstrad superblock, for PCW</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AmstradSuperBlock
+        readonly struct AmstradSuperBlock
         {
             /// <summary>Format ID. 0 single-side, 3 double-side. 1 and 2 are for CPC but they don't use the superblock</summary>
             public readonly byte format;
@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Superblock found on CP/M-86 hard disk volumes</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HardDiskSuperBlock
+        readonly struct HardDiskSuperBlock
         {
             /// <summary>Value so the sum of all the superblock's sector bytes taken as 16-bit values gives 0</summary>
             public readonly ushort checksum;
@@ -186,7 +186,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Volume label entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LabelEntry
+        readonly struct LabelEntry
         {
             /// <summary>Must be 0x20</summary>
             public readonly byte signature;
@@ -215,7 +215,7 @@ namespace Aaru.Filesystems
 
         /// <summary>CP/M 3 timestamp entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DateEntry
+        readonly struct DateEntry
         {
             /// <summary>Must be 0x21</summary>
             public readonly byte signature;
@@ -250,7 +250,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Password entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PasswordEntry
+        readonly struct PasswordEntry
         {
             /// <summary>16 + user number</summary>
             public readonly byte userNumber;
@@ -275,7 +275,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Timestamp for Z80DOS or DOS+</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TrdPartyDateEntry
+        readonly struct TrdPartyDateEntry
         {
             /// <summary>Must be 0x21</summary>
             public readonly byte signature;
@@ -311,7 +311,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory entry for &lt;256 allocation blocks</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             /// <summary>User number. Bit 7 set in CP/M 1 means hidden</summary>
             public readonly byte statusUser;
@@ -339,7 +339,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory entry for &gt;256 allocation blocks</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry16
+        readonly struct DirectoryEntry16
         {
             /// <summary>User number. Bit 7 set in CP/M 1 means hidden</summary>
             public readonly byte statusUser;

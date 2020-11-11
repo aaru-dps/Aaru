@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
         uint         _calculatedDataCrc;
         byte[]       _decodedDisk;
         MemoryStream _decodedImage;
-        CopyQmHeader _header;
+        Header       _header;
         bool         _headerChecksumOk;
         ImageInfo    _imageInfo;
 

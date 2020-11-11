@@ -44,22 +44,22 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0)
+            if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
                 return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
+            byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            DriFooter tmpFooter = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
+            Footer tmpFooter = Marshal.ByteArrayToStructureLittleEndian<Footer>(buffer);
 
             string sig = StringHandlers.CToString(tmpFooter.signature);
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.signature = \"{0}\"", sig);
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.five = {0}", tmpFooter.bpb.five);
 
-            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.driveCode = {0}",
-                                       tmpFooter.bpb.driveCode);
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb._driveCode = {0}",
+                                       tmpFooter.bpb._driveCode);
 
             AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "tmp_footer.bpb.unknown = {0}", tmpFooter.bpb.unknown);
 
@@ -100,7 +100,7 @@ namespace Aaru.DiscImages
             if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
                 return false;
 
-            return (tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf<DriFooter>() == stream.Length;
+            return (tmpFooter.bpb.sectors * tmpFooter.bpb.bps) + Marshal.SizeOf<Footer>() == stream.Length;
         }
     }
 }

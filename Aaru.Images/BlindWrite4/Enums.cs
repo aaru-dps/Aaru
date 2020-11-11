@@ -34,7 +34,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class BlindWrite4
     {
-        enum Bw4TrackType : byte
+        enum TrackType : byte
         {
             Audio = 0, Mode1 = 1, Mode2 = 2
         }

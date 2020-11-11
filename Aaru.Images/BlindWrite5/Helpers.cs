@@ -31,23 +31,22 @@
 // ****************************************************************************/
 
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Enums;
 using Aaru.Decoders.SCSI.MMC;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class BlindWrite5
     {
-        static TrackType BlindWriteTrackTypeToTrackType(Bw5TrackType trackType)
+        static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType)
         {
             switch(trackType)
             {
-                case Bw5TrackType.Mode1:   return TrackType.CdMode1;
-                case Bw5TrackType.Mode2F1: return TrackType.CdMode2Form1;
-                case Bw5TrackType.Mode2F2: return TrackType.CdMode2Form2;
-                case Bw5TrackType.Mode2:   return TrackType.CdMode2Formless;
-                case Bw5TrackType.Audio:   return TrackType.Audio;
-                default:                   return TrackType.Data;
+                case TrackType.Mode1:   return CommonTypes.Enums.TrackType.CdMode1;
+                case TrackType.Mode2F1: return CommonTypes.Enums.TrackType.CdMode2Form1;
+                case TrackType.Mode2F2: return CommonTypes.Enums.TrackType.CdMode2Form2;
+                case TrackType.Mode2:   return CommonTypes.Enums.TrackType.CdMode2Formless;
+                case TrackType.Audio:   return CommonTypes.Enums.TrackType.Audio;
+                default:                return CommonTypes.Enums.TrackType.Data;
             }
         }
 

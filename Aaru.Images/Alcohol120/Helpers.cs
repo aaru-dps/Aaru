@@ -37,51 +37,51 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Alcohol120
     {
-        static ushort AlcoholTrackModeToCookedBytesPerSector(AlcoholTrackMode trackMode)
+        static ushort TrackModeToCookedBytesPerSector(TrackMode trackMode)
         {
             switch(trackMode)
             {
-                case AlcoholTrackMode.Mode1:
-                case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F1Alt: return 2048;
-                case AlcoholTrackMode.Mode2F2:
-                case AlcoholTrackMode.Mode2F2Alt: return 2324;
-                case AlcoholTrackMode.Mode2: return 2336;
-                case AlcoholTrackMode.Audio: return 2352;
-                case AlcoholTrackMode.DVD:   return 2048;
-                default:                     return 0;
+                case TrackMode.Mode1:
+                case TrackMode.Mode2F1:
+                case TrackMode.Mode2F1Alt: return 2048;
+                case TrackMode.Mode2F2:
+                case TrackMode.Mode2F2Alt: return 2324;
+                case TrackMode.Mode2: return 2336;
+                case TrackMode.Audio: return 2352;
+                case TrackMode.DVD:   return 2048;
+                default:              return 0;
             }
         }
 
-        static TrackType AlcoholTrackTypeToTrackType(AlcoholTrackMode trackType)
+        static TrackType TrackModeToTrackType(TrackMode trackType)
         {
             switch(trackType)
             {
-                case AlcoholTrackMode.Mode1: return TrackType.CdMode1;
-                case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
-                case AlcoholTrackMode.Mode2F2:
-                case AlcoholTrackMode.Mode2F2Alt: return TrackType.CdMode2Form2;
-                case AlcoholTrackMode.Mode2: return TrackType.CdMode2Formless;
-                case AlcoholTrackMode.Audio: return TrackType.Audio;
-                default:                     return TrackType.Data;
+                case TrackMode.Mode1: return TrackType.CdMode1;
+                case TrackMode.Mode2F1:
+                case TrackMode.Mode2F1Alt: return TrackType.CdMode2Form1;
+                case TrackMode.Mode2F2:
+                case TrackMode.Mode2F2Alt: return TrackType.CdMode2Form2;
+                case TrackMode.Mode2: return TrackType.CdMode2Formless;
+                case TrackMode.Audio: return TrackType.Audio;
+                default:              return TrackType.Data;
             }
         }
 
-        static MediaType AlcoholMediumTypeToMediaType(AlcoholMediumType discType)
+        static MediaType MediumTypeToMediaType(MediumType discType)
         {
             switch(discType)
             {
-                case AlcoholMediumType.CD:   return MediaType.CD;
-                case AlcoholMediumType.CDR:  return MediaType.CDR;
-                case AlcoholMediumType.CDRW: return MediaType.CDRW;
-                case AlcoholMediumType.DVD:  return MediaType.DVDROM;
-                case AlcoholMediumType.DVDR: return MediaType.DVDR;
-                default:                     return MediaType.Unknown;
+                case MediumType.CD:   return MediaType.CD;
+                case MediumType.CDR:  return MediaType.CDR;
+                case MediumType.CDRW: return MediaType.CDRW;
+                case MediumType.DVD:  return MediaType.DVDROM;
+                case MediumType.DVDR: return MediaType.DVDR;
+                default:              return MediaType.Unknown;
             }
         }
 
-        static AlcoholMediumType MediaTypeToAlcohol(MediaType type)
+        static MediumType MediaTypeToMediumType(MediaType type)
         {
             switch(type)
             {
@@ -118,31 +118,31 @@ namespace Aaru.DiscImages
                 case MediaType.VideoNow:
                 case MediaType.VideoNowColor:
                 case MediaType.VideoNowXp:
-                case MediaType.CVD: return AlcoholMediumType.CD;
-                case MediaType.CDR: return AlcoholMediumType.CDR;
+                case MediaType.CVD: return MediumType.CD;
+                case MediaType.CDR: return MediumType.CDR;
                 case MediaType.CDRW:
-                case MediaType.CDMRW: return AlcoholMediumType.CDRW;
+                case MediaType.CDMRW: return MediumType.CDRW;
                 case MediaType.DVDR:
                 case MediaType.DVDRW:
                 case MediaType.DVDPR:
                 case MediaType.DVDRDL:
                 case MediaType.DVDRWDL:
                 case MediaType.DVDPRDL:
-                case MediaType.DVDPRWDL: return AlcoholMediumType.DVDR;
-                default: return AlcoholMediumType.DVD;
+                case MediaType.DVDPRWDL: return MediumType.DVDR;
+                default: return MediumType.DVD;
             }
         }
 
-        static AlcoholTrackMode TrackTypeToAlcohol(TrackType type)
+        static TrackMode TrackTypeToTrackMode(TrackType type)
         {
             switch(type)
             {
-                case TrackType.Audio:           return AlcoholTrackMode.Audio;
-                case TrackType.CdMode1:         return AlcoholTrackMode.Mode1;
-                case TrackType.CdMode2Formless: return AlcoholTrackMode.Mode2;
-                case TrackType.CdMode2Form1:    return AlcoholTrackMode.Mode2F1;
-                case TrackType.CdMode2Form2:    return AlcoholTrackMode.Mode2F2;
-                default:                        return AlcoholTrackMode.DVD;
+                case TrackType.Audio:           return TrackMode.Audio;
+                case TrackType.CdMode1:         return TrackMode.Mode1;
+                case TrackType.CdMode2Formless: return TrackMode.Mode2;
+                case TrackType.CdMode2Form1:    return TrackMode.Mode2F1;
+                case TrackType.CdMode2Form2:    return TrackMode.Mode2F2;
+                default:                        return TrackMode.DVD;
             }
         }
 

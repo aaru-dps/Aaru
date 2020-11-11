@@ -142,7 +142,7 @@ namespace Aaru.Filesystems
                 {
                     DirectoryEntry dirent =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer, pos,
-                                                                                 Marshal.SizeOf<DirectoryEntry>());
+                            Marshal.SizeOf<DirectoryEntry>());
 
                     if(dirent.filename[0] == DIRENT_FINISHED)
                         break;
@@ -249,9 +249,7 @@ namespace Aaru.Filesystems
                     {
                         HumanDirectoryEntry humanEntry =
                             Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(directoryBuffer, pos,
-                                                                                          Marshal.
-                                                                                              SizeOf<HumanDirectoryEntry
-                                                                                              >());
+                                Marshal.SizeOf<HumanDirectoryEntry>());
 
                         completeEntry.HumanDirent = humanEntry;
 
@@ -322,12 +320,7 @@ namespace Aaru.Filesystems
                 if(_fat32 || _debug)
                 {
                     List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars = currentDirectory.
-                                                                                         Where(t =>
-                                                                                                   t.Key.
-                                                                                                     EndsWith(FAT32_EA_TAIL,
-                                                                                                              true,
-                                                                                                              _cultureInfo)).
-                                                                                         ToList();
+                        Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).ToList();
 
                     foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                     {

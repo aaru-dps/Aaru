@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
             byte[] header = new byte[32];
             stream.Read(header, 0, 32);
 
-            WcDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WcDiskImageFileHeader>(header);
+            FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
             AaruConsole.DebugWriteLine("d2f plugin",
                                        "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
@@ -64,8 +64,8 @@ namespace Aaru.DiscImages
             _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
             _imageInfo.SectorSize      = 512; // only 512 bytes per sector supported
             _imageInfo.Heads           = fheader.heads;
-            _imageInfo.Sectors         = _imageInfo.Heads * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
-            _imageInfo.ImageSize       = _imageInfo.Sectors                      * _imageInfo.SectorSize;
+            _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
+            _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
             _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
@@ -125,8 +125,7 @@ namespace Aaru.DiscImages
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WcDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
+                SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Comment)
                     throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
@@ -142,8 +141,7 @@ namespace Aaru.DiscImages
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WcDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
+                SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Directory)
                     throw new InvalidDataException($"Invalid sector type '{sheader.flag.ToString()}' encountered");
@@ -170,20 +168,20 @@ namespace Aaru.DiscImages
             int headNumber     = _imageInfo.Heads > 1 ? trackNumber % 2 : 0;
             int cylinderNumber = _imageInfo.Heads > 1 ? trackNumber / 2 : trackNumber;
 
-            if(badSectors[(cylinderNumber, headNumber, sectorNumber)])
+            if(_badSectors[(cylinderNumber, headNumber, sectorNumber)])
             {
                 AaruConsole.DebugWriteLine("d2f plugin", "reading bad sector {0} ({1},{2},{3})", sectorAddress,
                                            cylinderNumber, headNumber, sectorNumber);
 
                 /* if we have sector data, return that */
-                if(sectorCache.ContainsKey((cylinderNumber, headNumber, sectorNumber)))
-                    return sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+                if(_sectorCache.ContainsKey((cylinderNumber, headNumber, sectorNumber)))
+                    return _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
 
                 /* otherwise, return an empty sector */
                 return new byte[512];
             }
 
-            return sectorCache[(cylinderNumber, headNumber, sectorNumber)];
+            return _sectorCache[(cylinderNumber, headNumber, sectorNumber)];
         }
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
@@ -215,8 +213,7 @@ namespace Aaru.DiscImages
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
-                WcDiskImageSectorHeader sheader =
-                    Marshal.ByteArrayToStructureLittleEndian<WcDiskImageSectorHeader>(sheaderBuffer);
+                SectorHeader sheader = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(sheaderBuffer);
 
                 /* validate the sector header */
                 if(sheader.cylinder != cyl  ||
@@ -232,14 +229,14 @@ namespace Aaru.DiscImages
                 {
                     case SectorFlag.Normal: /* read a normal sector and store it in cache */
                         stream.Read(sectorData, 0, 512);
-                        sectorCache[(cyl, head, sect)] = sectorData;
+                        _sectorCache[(cyl, head, sect)] = sectorData;
                         CRC16IBMContext.Data(sectorData, 512, out crc);
                         calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                         /*
                         AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                             cyl, head, sect, sheader.crc, 256 * crc[0] + crc[1]);
                          */
-                        badSectors[(cyl, head, sect)] = sheader.crc != calculatedCRC;
+                        _badSectors[(cyl, head, sect)] = sheader.crc != calculatedCRC;
 
                         if(calculatedCRC != sheader.crc)
                             AaruConsole.DebugWriteLine("d2f plugin",
@@ -252,7 +249,7 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Bad sector",
                             cyl, head, sect);
                          */
-                        badSectors[(cyl, head, sect)] = true;
+                        _badSectors[(cyl, head, sect)] = true;
 
                         break;
                     case SectorFlag.RepeatByte:
@@ -263,8 +260,8 @@ namespace Aaru.DiscImages
                         for(int i = 0; i < 512; i++)
                             sectorData[i] = (byte)(sheader.crc & 0xff);
 
-                        sectorCache[(cyl, head, sect)] = sectorData;
-                        badSectors[(cyl, head, sect)]  = false;
+                        _sectorCache[(cyl, head, sect)] = sectorData;
+                        _badSectors[(cyl, head, sect)]  = false;
 
                         break;
                     default:

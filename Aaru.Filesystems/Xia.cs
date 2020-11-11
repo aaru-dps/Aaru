@@ -133,7 +133,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>1st sector reserved for boot</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
@@ -174,7 +174,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia directory entry</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             public readonly uint   d_ino;
             public readonly ushort d_rec_len;
@@ -185,7 +185,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Xia inode</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Inode
+        readonly struct Inode
         {
             public readonly ushort i_mode;
             public readonly ushort i_nlinks;

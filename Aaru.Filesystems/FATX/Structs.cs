@@ -37,7 +37,7 @@ namespace Aaru.Filesystems
     public sealed partial class XboxFatPlugin
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Superblock
+        readonly struct Superblock
         {
             public readonly uint magic;
             public readonly uint id;
@@ -50,7 +50,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             public readonly byte       filenameSize;
             public readonly Attributes attributes;

@@ -513,7 +513,8 @@ namespace Aaru.DiscImages
                                                     flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                     }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) && !string.IsNullOrWhiteSpace(isrc))
+                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
+                   !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("    ISRC {0}", isrc);
 
                 if(track.TrackPregap > 0)
@@ -543,9 +544,8 @@ namespace Aaru.DiscImages
                 if(currentSession >= lastSession)
                     continue;
 
-                Track lastTrackInSession = _writingTracks.
-                                           Where(t => t.TrackSession == currentSession).OrderBy(t => t.TrackSequence).
-                                           LastOrDefault();
+                Track lastTrackInSession = _writingTracks.Where(t => t.TrackSession == currentSession).
+                                                          OrderBy(t => t.TrackSequence).LastOrDefault();
 
                 if(track.TrackSequence != lastTrackInSession.TrackSequence)
                     continue;

@@ -42,14 +42,14 @@ namespace Aaru.DiscImages
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
     public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
-        readonly List<ulong>       _sectorsWhereCrcHasFailed;
-        bool                       _aDiskCrcHasFailed;
-        byte[]                     _commentBlock;
-        TeleDiskCommentBlockHeader _commentHeader;
-        TeleDiskHeader             _header;
-        ImageInfo                  _imageInfo;
-        Stream                     _inStream;
-        byte[]                     _leadOut;
+        readonly List<ulong> _sectorsWhereCrcHasFailed;
+        bool                 _aDiskCrcHasFailed;
+        byte[]               _commentBlock;
+        CommentBlockHeader   _commentHeader;
+        Header               _header;
+        ImageInfo            _imageInfo;
+        Stream               _inStream;
+        byte[]               _leadOut;
 
         // Cylinder by head, sector data matrix
         byte[][][][] _sectorsData;

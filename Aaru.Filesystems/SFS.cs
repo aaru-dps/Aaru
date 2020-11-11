@@ -130,7 +130,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootBlock
+        readonly struct RootBlock
         {
             public readonly uint   blockId;
             public readonly uint   blockChecksum;

@@ -175,7 +175,7 @@ namespace Aaru.Filesystems
 
                             torito =
                                 Marshal.ByteArrayToStructureLittleEndian<ElToritoBootRecord>(vdSector, hsOff,
-                                                                                             2048 - hsOff);
+                                    2048 - hsOff);
                         }
 
                         break;
@@ -675,7 +675,7 @@ namespace Aaru.Filesystems
 
                 ElToritoValidationEntry valentry =
                     Marshal.ByteArrayToStructureLittleEndian<ElToritoValidationEntry>(vdSector, toritoOff,
-                                                                                      EL_TORITO_ENTRY_SIZE);
+                        EL_TORITO_ENTRY_SIZE);
 
                 if(valentry.signature != EL_TORITO_MAGIC)
                     goto exit_torito;
@@ -684,7 +684,7 @@ namespace Aaru.Filesystems
 
                 ElToritoInitialEntry initialEntry =
                     Marshal.ByteArrayToStructureLittleEndian<ElToritoInitialEntry>(vdSector, toritoOff,
-                                                                                   EL_TORITO_ENTRY_SIZE);
+                        EL_TORITO_ENTRY_SIZE);
 
                 initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
@@ -765,7 +765,7 @@ namespace Aaru.Filesystems
                 {
                     ElToritoSectionHeaderEntry sectionHeader =
                         Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionHeaderEntry>(vdSector, toritoOff,
-                                                                                             EL_TORITO_ENTRY_SIZE);
+                            EL_TORITO_ENTRY_SIZE);
 
                     toritoOff += EL_TORITO_ENTRY_SIZE;
 
@@ -779,7 +779,7 @@ namespace Aaru.Filesystems
                     {
                         ElToritoSectionEntry sectionEntry =
                             Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntry>(vdSector, toritoOff,
-                                                                                           EL_TORITO_ENTRY_SIZE);
+                                EL_TORITO_ENTRY_SIZE);
 
                         toritoOff += EL_TORITO_ENTRY_SIZE;
 
@@ -862,8 +862,7 @@ namespace Aaru.Filesystems
                         {
                             ElToritoSectionEntryExtension sectionExtension =
                                 Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntryExtension>(vdSector,
-                                                                                                        toritoOff,
-                                                                                                        EL_TORITO_ENTRY_SIZE);
+                                    toritoOff, EL_TORITO_ENTRY_SIZE);
 
                             toritoOff += EL_TORITO_ENTRY_SIZE;
 

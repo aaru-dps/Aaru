@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
+            DiskInfo header = Marshal.ByteArrayToStructureLittleEndian<DiskInfo>(headerB);
 
             AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                        StringHandlers.CToString(header.magic));

@@ -40,10 +40,10 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Anex86 : IWritableImage
     {
-        IFilter      _anexImageFilter;
-        Anex86Header _fdihdr;
-        ImageInfo    _imageInfo;
-        FileStream   _writingStream;
+        IFilter    _anexImageFilter;
+        Header     _header;
+        ImageInfo  _imageInfo;
+        FileStream _writingStream;
 
         public Anex86() => _imageInfo = new ImageInfo
         {

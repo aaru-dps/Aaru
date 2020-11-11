@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class UkvFdi
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FdiHeader
+        readonly struct Header
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] magic;

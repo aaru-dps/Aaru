@@ -239,7 +239,7 @@ namespace Aaru.Filesystems
 
         /// <summary>BIOS Parameter Block, at sector 0</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BiosParameterBlock
+        readonly struct BiosParameterBlock
         {
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
@@ -294,7 +294,7 @@ namespace Aaru.Filesystems
 
         /// <summary>HPFS superblock at sector 16</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>0x000, 0xF995E849</summary>
             public readonly uint magic1;
@@ -346,7 +346,7 @@ namespace Aaru.Filesystems
 
         /// <summary>HPFS spareblock at sector 17</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SpareBlock
+        readonly struct SpareBlock
         {
             /// <summary>0x000, 0xF9911849</summary>
             public readonly uint magic1;

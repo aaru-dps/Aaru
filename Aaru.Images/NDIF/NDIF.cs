@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
     // TODO: Implement compression
     public sealed partial class Ndif : IMediaImage
     {
-        uint                          _buffersize;
+        uint                          _bufferSize;
         Dictionary<ulong, byte[]>     _chunkCache;
         Dictionary<ulong, BlockChunk> _chunks;
         uint                          _currentChunkCacheSize;

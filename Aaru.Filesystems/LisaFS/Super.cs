@@ -181,7 +181,7 @@ namespace Aaru.Filesystems.LisaFS
                     // Check that the MDDF is correct
                     if(_mddf.mddf_block       != i - _volumePrefix                                  ||
                        _mddf.vol_size         > _device.Info.Sectors                                ||
-                       _mddf.vol_size     - 1 != _mddf.volsize_minus_one                            ||
+                       _mddf.vol_size - 1     != _mddf.volsize_minus_one                            ||
                        _mddf.vol_size - i - 1 != _mddf.volsize_minus_mddf_minus_one - _volumePrefix ||
                        _mddf.datasize         > _mddf.blocksize                                     ||
                        _mddf.blocksize        < _device.Info.SectorSize                             ||

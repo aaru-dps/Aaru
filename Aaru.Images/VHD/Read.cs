@@ -149,7 +149,7 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
                                        _thisFooter.CreatorApplication,
                                        Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisFooter.
-                                                                                                   CreatorApplication)));
+                                                                    CreatorApplication)));
 
             AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}",
                                        _thisFooter.CreatorVersion);
@@ -434,9 +434,7 @@ namespace Aaru.DiscImages
                                                "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
                                                _thisDynamic.LocatorEntries[i].PlatformCode,
                                                Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(_thisDynamic.
-                                                                                                       LocatorEntries
-                                                                                                           [i].
-                                                                                                       PlatformCode)));
+                                                                            LocatorEntries[i].PlatformCode)));
 
                     AaruConsole.DebugWriteLine("VirtualPC plugin",
                                                "dynamic.locatorEntries[{0}].platformDataSpace = {1}", i,
@@ -474,8 +472,8 @@ namespace Aaru.DiscImages
 
                 ReadOnlySpan<byte> span = bat;
 
-                _blockAllocationTable = MemoryMarshal.
-                                        Cast<byte, uint>(span).Slice(0, (int)_thisDynamic.MaxTableEntries).ToArray();
+                _blockAllocationTable = MemoryMarshal.Cast<byte, uint>(span).
+                                                      Slice(0, (int)_thisDynamic.MaxTableEntries).ToArray();
 
                 for(int i = 0; i < _blockAllocationTable.Length; i++)
                     _blockAllocationTable[i] = Swapping.Swap(_blockAllocationTable[i]);
@@ -487,11 +485,11 @@ namespace Aaru.DiscImages
 
                 _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize / 512
 
-                                                                                  // 1 bit per sector on the bitmap
-                                                                                / 8
+                                                 // 1 bit per sector on the bitmap
+                                               / 8
 
-                                                                                  // and aligned to 512 byte boundary
-                                                                                / 512);
+                                                 // and aligned to 512 byte boundary
+                                               / 512);
 
                 AaruConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", _bitmapSize);
             }
@@ -572,8 +570,8 @@ namespace Aaru.DiscImages
                                 break;
                             case PLATFORM_CODE_MACINTOSH_URI:
                                 parentPath =
-                                    Uri.UnescapeDataString(Encoding.UTF8.GetString(_locatorEntriesData
-                                                                                       [currentLocator]));
+                                    Uri.UnescapeDataString(Encoding.UTF8.
+                                                                    GetString(_locatorEntriesData[currentLocator]));
 
                                 if(parentPath.StartsWith("file://localhost", StringComparison.InvariantCulture))
                                     parentPath = parentPath.Remove(0, 16);

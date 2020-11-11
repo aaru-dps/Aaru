@@ -201,7 +201,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)]
             public readonly byte[] checksum;
@@ -243,7 +243,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DevItem
+        readonly struct DevItem
         {
             public readonly ulong id;
             public readonly ulong bytes;

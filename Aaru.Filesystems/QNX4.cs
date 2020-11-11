@@ -208,7 +208,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Inode
+        readonly struct Inode
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] di_fname;
@@ -230,7 +230,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LinkInfo
+        readonly struct LinkInfo
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
             public readonly byte[] dl_fname;
@@ -242,7 +242,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtentBlock
+        readonly struct ExtentBlock
         {
             public readonly uint next_xblk;
             public readonly uint prev_xblk;
@@ -258,7 +258,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Superblock
+        readonly struct Superblock
         {
             public readonly Inode rootDir;
             public readonly Inode inode;

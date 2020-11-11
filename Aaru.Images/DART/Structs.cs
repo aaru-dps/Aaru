@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
     public sealed partial class Dart
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DartHeader
+        struct Header
         {
             public readonly byte  srcCmp;
             public readonly byte  srcType;

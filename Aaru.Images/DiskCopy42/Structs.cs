@@ -35,7 +35,7 @@ namespace Aaru.DiscImages
     public sealed partial class DiskCopy42
     {
         // DiskCopy 4.2 header, big-endian, data-fork, start of file, 84 bytes
-        struct Dc42Header
+        struct Header
         {
             /// <summary>0x00, 64 bytes, pascal string, disk name or "-not a Macintosh disk-", filled with garbage</summary>
             public string DiskName;

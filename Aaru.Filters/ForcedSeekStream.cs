@@ -119,9 +119,9 @@ namespace Aaru.Filters
             }
 
             _backStream.Position = _backStream.Length;
-            long   toposition      = position - _backStream.Position;
-            int    fullBufferReads = (int)(toposition / BUFFER_LEN);
-            int    restToRead      = (int)(toposition % BUFFER_LEN);
+            long   toPosition      = position - _backStream.Position;
+            int    fullBufferReads = (int)(toPosition / BUFFER_LEN);
+            int    restToRead      = (int)(toPosition % BUFFER_LEN);
             byte[] buffer;
 
             for(int i = 0; i < fullBufferReads; i++)

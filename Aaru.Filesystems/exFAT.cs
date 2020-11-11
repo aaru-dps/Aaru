@@ -168,7 +168,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct VolumeBootRecord
+        readonly struct VolumeBootRecord
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] jump;
@@ -199,7 +199,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OemParameter
+        readonly struct OemParameter
         {
             public readonly Guid OemParameterType;
             public readonly uint eraseBlockSize;
@@ -214,7 +214,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OemParameterTable
+        readonly struct OemParameterTable
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public readonly OemParameter[] parameters;
@@ -223,7 +223,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChecksumSector
+        readonly struct ChecksumSector
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
             public readonly uint[] checksum;

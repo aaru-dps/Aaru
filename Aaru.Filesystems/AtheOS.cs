@@ -168,7 +168,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Be superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]

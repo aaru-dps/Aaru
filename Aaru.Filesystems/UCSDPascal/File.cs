@@ -183,11 +183,10 @@ namespace Aaru.Filesystems.UCSDPascal
 
             foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
                                                                   string.Compare(path,
-                                                                                 StringHandlers.
-                                                                                     PascalToString(ent.Filename,
-                                                                                                    Encoding),
-                                                                                 StringComparison.
-                                                                                     InvariantCultureIgnoreCase) == 0))
+                                                                      StringHandlers.PascalToString(ent.Filename,
+                                                                          Encoding),
+                                                                      StringComparison.
+                                                                          InvariantCultureIgnoreCase) == 0))
             {
                 entry = ent;
 

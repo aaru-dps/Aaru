@@ -77,49 +77,49 @@ namespace Aaru.DiscImages
             if(cmpr != Compression.None)
                 throw new FeatureSupportedButNotImplementedImageException("Compressed images are not supported.");
 
-            int tracksize = 0;
+            int trackSize = 0;
 
             switch(type)
             {
                 case DiskType.MD1DD8:
                 case DiskType.MD2DD8:
-                    tracksize = 8 * 512;
+                    trackSize = 8 * 512;
 
                     break;
                 case DiskType.MD1DD:
                 case DiskType.MD2DD:
                 case DiskType.MF2DD:
-                    tracksize = 9 * 512;
+                    trackSize = 9 * 512;
 
                     break;
                 case DiskType.MD2HD:
-                    tracksize = 15 * 512;
+                    trackSize = 15 * 512;
 
                     break;
                 case DiskType.MF2HD:
-                    tracksize = 18 * 512;
+                    trackSize = 18 * 512;
 
                     break;
             }
 
-            int headstep = 1;
+            int headStep = 1;
 
             if(type == DiskType.MD1DD ||
                type == DiskType.MD1DD8)
-                headstep = 2;
+                headStep = 2;
 
             var decodedImage = new MemoryStream();
 
-            for(int i = 0; i < tracks; i += headstep)
+            for(int i = 0; i < tracks; i += headStep)
             {
-                byte[] track = new byte[tracksize];
+                byte[] track = new byte[trackSize];
 
                 if((TrackType)trackBytes[i] == TrackType.Copied)
-                    stream.Read(track, 0, tracksize);
+                    stream.Read(track, 0, trackSize);
                 else
                     ArrayHelpers.ArrayFill(track, (byte)0xF6);
 
-                decodedImage.Write(track, 0, tracksize);
+                decodedImage.Write(track, 0, trackSize);
             }
 
             _imageInfo.Application          = "CisCopy";

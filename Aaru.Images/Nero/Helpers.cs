@@ -30,47 +30,46 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
     public sealed partial class Nero
     {
-        static MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
+        static CommonTypes.MediaType NeroMediaTypeToMediaType(NeroMediaTypes type)
         {
             switch(type)
             {
-                case NeroMediaTypes.NeroMtypDdcd: return MediaType.DDCD;
+                case NeroMediaTypes.NeroMtypDdcd: return CommonTypes.MediaType.DDCD;
                 case NeroMediaTypes.NeroMtypDvdM:
-                case NeroMediaTypes.NeroMtypDvdMR: return MediaType.DVDR;
+                case NeroMediaTypes.NeroMtypDvdMR: return CommonTypes.MediaType.DVDR;
                 case NeroMediaTypes.NeroMtypDvdP:
-                case NeroMediaTypes.NeroMtypDvdPR: return MediaType.DVDPR;
-                case NeroMediaTypes.NeroMtypDvdRam: return MediaType.DVDRAM;
+                case NeroMediaTypes.NeroMtypDvdPR: return CommonTypes.MediaType.DVDPR;
+                case NeroMediaTypes.NeroMtypDvdRam: return CommonTypes.MediaType.DVDRAM;
                 case NeroMediaTypes.NeroMtypMl:
                 case NeroMediaTypes.NeroMtypMrw:
-                case NeroMediaTypes.NeroMtypCdrw: return MediaType.CDRW;
-                case NeroMediaTypes.NeroMtypCdr: return MediaType.CDR;
+                case NeroMediaTypes.NeroMtypCdrw: return CommonTypes.MediaType.CDRW;
+                case NeroMediaTypes.NeroMtypCdr: return CommonTypes.MediaType.CDR;
                 case NeroMediaTypes.NeroMtypDvdRom:
                 case NeroMediaTypes.NeroMtypDvdAny:
                 case NeroMediaTypes.NeroMtypDvdAnyR9:
-                case NeroMediaTypes.NeroMtypDvdAnyOld: return MediaType.DVDROM;
-                case NeroMediaTypes.NeroMtypCdrom:  return MediaType.CDROM;
-                case NeroMediaTypes.NeroMtypDvdMRw: return MediaType.DVDRW;
-                case NeroMediaTypes.NeroMtypDvdPRw: return MediaType.DVDPRW;
-                case NeroMediaTypes.NeroMtypDvdPR9: return MediaType.DVDPRDL;
-                case NeroMediaTypes.NeroMtypDvdMR9: return MediaType.DVDRDL;
+                case NeroMediaTypes.NeroMtypDvdAnyOld: return CommonTypes.MediaType.DVDROM;
+                case NeroMediaTypes.NeroMtypCdrom:  return CommonTypes.MediaType.CDROM;
+                case NeroMediaTypes.NeroMtypDvdMRw: return CommonTypes.MediaType.DVDRW;
+                case NeroMediaTypes.NeroMtypDvdPRw: return CommonTypes.MediaType.DVDPRW;
+                case NeroMediaTypes.NeroMtypDvdPR9: return CommonTypes.MediaType.DVDPRDL;
+                case NeroMediaTypes.NeroMtypDvdMR9: return CommonTypes.MediaType.DVDRDL;
                 case NeroMediaTypes.NeroMtypBd:
                 case NeroMediaTypes.NeroMtypBdAny:
-                case NeroMediaTypes.NeroMtypBdRom: return MediaType.BDROM;
-                case NeroMediaTypes.NeroMtypBdR:  return MediaType.BDR;
-                case NeroMediaTypes.NeroMtypBdRe: return MediaType.BDRE;
+                case NeroMediaTypes.NeroMtypBdRom: return CommonTypes.MediaType.BDROM;
+                case NeroMediaTypes.NeroMtypBdR:  return CommonTypes.MediaType.BDR;
+                case NeroMediaTypes.NeroMtypBdRe: return CommonTypes.MediaType.BDRE;
                 case NeroMediaTypes.NeroMtypHdDvd:
                 case NeroMediaTypes.NeroMtypHdDvdAny:
-                case NeroMediaTypes.NeroMtypHdDvdRom: return MediaType.HDDVDROM;
-                case NeroMediaTypes.NeroMtypHdDvdR:  return MediaType.HDDVDR;
-                case NeroMediaTypes.NeroMtypHdDvdRw: return MediaType.HDDVDRW;
-                default:                             return MediaType.CD;
+                case NeroMediaTypes.NeroMtypHdDvdRom: return CommonTypes.MediaType.HDDVDROM;
+                case NeroMediaTypes.NeroMtypHdDvdR:  return CommonTypes.MediaType.HDDVDR;
+                case NeroMediaTypes.NeroMtypHdDvdRw: return CommonTypes.MediaType.HDDVDRW;
+                default:                             return CommonTypes.MediaType.CD;
             }
         }
 

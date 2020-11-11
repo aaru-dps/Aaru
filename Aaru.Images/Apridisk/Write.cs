@@ -169,7 +169,7 @@ namespace Aaru.DiscImages
             _writingStream.Seek(0, SeekOrigin.Begin);
             _writingStream.Write(_signature, 0, _signature.Length);
 
-            byte[] hdr = new byte[Marshal.SizeOf<ApridiskRecord>()];
+            byte[] hdr = new byte[Marshal.SizeOf<Record>()];
 
             for(ushort c = 0; c < _imageInfo.Cylinders; c++)
             {
@@ -181,11 +181,11 @@ namespace Aaru.DiscImages
                            _sectorsData[c][h][s].Length == 0)
                             continue;
 
-                        var record = new ApridiskRecord
+                        var record = new Record
                         {
                             type        = RecordType.Sector,
                             compression = CompressType.Uncompresed,
-                            headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                            headerSize  = (ushort)Marshal.SizeOf<Record>(),
                             dataSize    = (uint)_sectorsData[c][h][s].Length,
                             head        = h,
                             sector      = s,
@@ -204,11 +204,11 @@ namespace Aaru.DiscImages
             {
                 byte[] creatorBytes = Encoding.UTF8.GetBytes(_imageInfo.Creator);
 
-                var creatorRecord = new ApridiskRecord
+                var creatorRecord = new Record
                 {
                     type        = RecordType.Creator,
                     compression = CompressType.Uncompresed,
-                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                    headerSize  = (ushort)Marshal.SizeOf<Record>(),
                     dataSize    = (uint)creatorBytes.Length + 1,
                     head        = 0,
                     sector      = 0,
@@ -226,11 +226,11 @@ namespace Aaru.DiscImages
             {
                 byte[] commentBytes = Encoding.UTF8.GetBytes(_imageInfo.Comments);
 
-                var commentRecord = new ApridiskRecord
+                var commentRecord = new Record
                 {
                     type        = RecordType.Comment,
                     compression = CompressType.Uncompresed,
-                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
+                    headerSize  = (ushort)Marshal.SizeOf<Record>(),
                     dataSize    = (uint)commentBytes.Length + 1,
                     head        = 0,
                     sector      = 0,

@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
             byte[] header = new byte[32];
             stream.Read(header, 0, 32);
 
-            WcDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WcDiskImageFileHeader>(header);
+            FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
             /* check the signature */
             if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != _fileSignature)

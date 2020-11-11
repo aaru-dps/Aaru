@@ -150,7 +150,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Hammer superblock</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
             public readonly ulong vol_signature;

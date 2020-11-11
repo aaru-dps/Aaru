@@ -47,16 +47,16 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<Anex86Header>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            _fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
+            _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
 
-            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_fdihdr.cylinders, (byte)_fdihdr.heads,
-                                                          (ushort)_fdihdr.spt, (uint)_fdihdr.bps, MediaEncoding.MFM,
+            _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_header.cylinders, (byte)_header.heads,
+                                                          (ushort)_header.spt, (uint)_header.bps, MediaEncoding.MFM,
                                                           false));
 
             if(_imageInfo.MediaType == MediaType.Unknown)
@@ -64,16 +64,16 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
-            _imageInfo.ImageSize            = (ulong)_fdihdr.dskSize;
+            _imageInfo.ImageSize            = (ulong)_header.dskSize;
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
-            _imageInfo.Sectors              = (ulong)(_fdihdr.cylinders * _fdihdr.heads * _fdihdr.spt);
+            _imageInfo.Sectors              = (ulong)(_header.cylinders * _header.heads * _header.spt);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
-            _imageInfo.SectorSize           = (uint)_fdihdr.bps;
-            _imageInfo.Cylinders            = (uint)_fdihdr.cylinders;
-            _imageInfo.Heads                = (uint)_fdihdr.heads;
-            _imageInfo.SectorsPerTrack      = (uint)_fdihdr.spt;
+            _imageInfo.SectorSize           = (uint)_header.bps;
+            _imageInfo.Cylinders            = (uint)_header.cylinders;
+            _imageInfo.Heads                = (uint)_header.heads;
+            _imageInfo.SectorsPerTrack      = (uint)_header.spt;
 
             _anexImageFilter = imageFilter;
 
@@ -94,7 +94,7 @@ namespace Aaru.DiscImages
 
             Stream stream = _anexImageFilter.GetDataForkStream();
 
-            stream.Seek((long)((ulong)_fdihdr.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
+            stream.Seek((long)((ulong)_header.hdrSize + (sectorAddress * _imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
 

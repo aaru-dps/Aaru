@@ -41,6 +41,12 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Check if the drive can read RW raw subchannel</summary>
+        /// <param name="dev">Device</param>
+        /// <param name="dumpLog">Dumping log</param>
+        /// <param name="updateStatus">Progress update callback</param>
+        /// <param name="lba">LBA to try</param>
+        /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
         public static bool SupportsRwSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
         {
             dumpLog?.WriteLine("Checking if drive supports full raw subchannel reading...");
@@ -51,6 +57,12 @@ namespace Aaru.Core.Devices.Dumping
                                dev.Timeout, out _);
         }
 
+        /// <summary>Check if the drive can read RW raw subchannel</summary>
+        /// <param name="dev">Device</param>
+        /// <param name="dumpLog">Dumping log</param>
+        /// <param name="updateStatus">Progress update callback</param>
+        /// <param name="lba">LBA to try</param>
+        /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
         public static bool SupportsPqSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
         {
             dumpLog?.WriteLine("Checking if drive supports PQ subchannel reading...");

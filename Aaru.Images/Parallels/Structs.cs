@@ -38,9 +38,9 @@ namespace Aaru.DiscImages
     {
         /// <summary>Parallels disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ParallelsHeader
+        struct Header
         {
-            /// <summary>Magic, <see cref="Parallels._parallelsMagic" /> or <see cref="Parallels._parallelsExtMagic" /></summary>
+            /// <summary>Magic, <see cref="Parallels._magic" /> or <see cref="Parallels._extMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] magic;
             /// <summary>Version</summary>

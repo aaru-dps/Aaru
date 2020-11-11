@@ -164,17 +164,8 @@ namespace Aaru.Core.Logging
                 if(raw)
                     for(uint i = 12 * block; i < (12 * block) + 12; i++)
                     {
-                        if((r[i] == 0 &&
-                            s[i] == 0 &&
-                            t[i] == 0 &&
-                            u[i] == 0 &&
-                            v[i] == 0 &&
-                            w[i] == 0) ||
-                           (r[i] == 0xFF &&
-                            s[i] == 0xFF &&
-                            t[i] == 0xFF &&
-                            u[i] == 0xFF &&
-                            v[i] == 0xFF &&
+                        if((r[i] == 0 && s[i] == 0 && t[i] == 0 && u[i] == 0 && v[i] == 0 && w[i] == 0) ||
+                           (r[i] == 0xFF && s[i] == 0xFF && t[i] == 0xFF && u[i] == 0xFF && v[i] == 0xFF &&
                             w[i] == 0xFF))
                             continue;
 
@@ -260,7 +251,7 @@ namespace Aaru.Core.Logging
         {
             long   minute = (lba + 150)          / 4500;
             long   second = ((lba + 150) % 4500) / 75;
-            long   frame  = (lba + 150) % 4500   % 75;
+            long   frame  = (lba + 150)          % 4500 % 75;
             string area   = lba < 0 ? "Lead-In" : "Program";
 
             _logSw.WriteLine($"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {message}");

@@ -56,10 +56,10 @@ namespace Aaru.DiscImages
                 return false;
 
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] headerB = new byte[Marshal.SizeOf<DartHeader>()];
+            byte[] headerB = new byte[Marshal.SizeOf<Header>()];
 
-            stream.Read(headerB, 0, Marshal.SizeOf<DartHeader>());
-            DartHeader header = Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
+            stream.Read(headerB, 0, Marshal.SizeOf<Header>());
+            Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
             if(header.srcCmp > COMPRESS_NONE)
                 return false;

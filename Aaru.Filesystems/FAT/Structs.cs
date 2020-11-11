@@ -796,7 +796,7 @@ namespace Aaru.Filesystems
 
         /// <summary>FAT32 FS Information Sector</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FsInfoSector
+        readonly struct FsInfoSector
         {
             /// <summary>Signature must be <see cref="FAT.FSINFO_SIGNATURE1" /></summary>
             public readonly uint signature1;
@@ -818,7 +818,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Human68k Parameter Block, big endian, 512 bytes even on 256 bytes/sector.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HumanParameterBlock
+        readonly struct HumanParameterBlock
         {
             /// <summary>68k bra.S</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
@@ -850,7 +850,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] filename;
@@ -870,7 +870,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HumanDirectoryEntry
+        readonly struct HumanDirectoryEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public readonly byte[] name1;
@@ -886,7 +886,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LfnEntry
+        readonly struct LfnEntry
         {
             public readonly byte sequence;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
@@ -902,7 +902,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct EaHeader
+        readonly struct EaHeader
         {
             public readonly ushort  magic;
             public readonly ushort  cluster;
@@ -915,7 +915,7 @@ namespace Aaru.Filesystems
 
         /// <summary>This structure is 256 bytes large, depending on the name, only part of it is written to disk</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct UmsdosDirectoryEntry
+        readonly struct UmsdosDirectoryEntry
         {
             /// <summary>if == 0, then this entry is not used</summary>
             public readonly byte name_len;

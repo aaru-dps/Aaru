@@ -44,12 +44,12 @@ namespace Aaru.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            if(stream.Length < Marshal.SizeOf<FdiHeader>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
-            FdiHeader hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
+            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             return hdr.magic.SequenceEqual(_signature);
         }

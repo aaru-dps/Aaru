@@ -47,9 +47,9 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] qHdrB = new byte[Marshal.SizeOf<QCow2Header>()];
-            stream.Read(qHdrB, 0, Marshal.SizeOf<QCow2Header>());
-            _qHdr = Marshal.SpanToStructureBigEndian<QCow2Header>(qHdrB);
+            byte[] qHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
+            _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
             AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
             AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);

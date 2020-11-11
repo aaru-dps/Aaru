@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
         IFilter _driImageFilter;
 
         /// <summary>Footer of opened image</summary>
-        DriFooter _footer;
+        Footer _footer;
         ImageInfo  _imageInfo;
         FileStream _writingStream;
 

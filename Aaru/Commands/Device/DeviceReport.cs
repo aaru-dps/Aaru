@@ -267,7 +267,7 @@ namespace Aaru.Commands.Device
                     }
                     else if(!removable &&
                             report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.
-                                                                                             Removable) == true)
+                                Removable) == true)
                     {
                         pressedKey = new ConsoleKeyInfo();
 
@@ -427,9 +427,8 @@ namespace Aaru.Commands.Device
                         break;
 
                     report.SCSI.EVPDPages =
-                        reporter.ReportEvpdPages(StringHandlers.
-                                                 CToString(report.SCSI.Inquiry?.VendorIdentification)?.Trim().
-                                                 ToLowerInvariant());
+                        reporter.ReportEvpdPages(StringHandlers.CToString(report.SCSI.Inquiry?.VendorIdentification)?.
+                                                                Trim().ToLowerInvariant());
 
                     reporter.ReportScsiModes(ref report, out byte[] cdromMode);
 
@@ -441,8 +440,8 @@ namespace Aaru.Commands.Device
                     {
                         case PeripheralDeviceTypes.MultiMediaDevice:
                         {
-                            bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
-                                             dev.Model.ToLowerInvariant().
+                            bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" && dev.Model.
+                                                 ToLowerInvariant().
                                                  StartsWith("rrd", StringComparison.OrdinalIgnoreCase);
 
                             if(trapDisc)

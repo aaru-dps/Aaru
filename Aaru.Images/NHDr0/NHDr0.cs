@@ -41,10 +41,10 @@ namespace Aaru.DiscImages
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
     public sealed partial class Nhdr0 : IWritableImage
     {
-        ImageInfo   _imageInfo;
-        Nhdr0Header _nhdhdr;
-        IFilter     _nhdImageFilter;
-        FileStream  _writingStream;
+        ImageInfo  _imageInfo;
+        Header     _nhdhdr;
+        IFilter    _nhdImageFilter;
+        FileStream _writingStream;
 
         public Nhdr0() => _imageInfo = new ImageInfo
         {

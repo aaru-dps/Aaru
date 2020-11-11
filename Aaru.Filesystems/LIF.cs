@@ -109,7 +109,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SystemBlock
+        readonly struct SystemBlock
         {
             public readonly ushort magic;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]

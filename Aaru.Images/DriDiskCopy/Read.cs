@@ -47,14 +47,14 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0)
+            if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
                 return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
+            byte[] buffer = new byte[Marshal.SizeOf<Footer>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            _footer = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
+            _footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(buffer);
 
             string sig = StringHandlers.CToString(_footer.signature);
 
@@ -67,7 +67,7 @@ namespace Aaru.DiscImages
             if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
                 return false;
 
-            if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<DriFooter>() != stream.Length)
+            if((_footer.bpb.sectors * _footer.bpb.bps) + Marshal.SizeOf<Footer>() != stream.Length)
                 return false;
 
             _imageInfo.Cylinders          = _footer.bpb.cylinders;
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
 
             _driImageFilter = imageFilter;
 
-            _imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<DriFooter>());
+            _imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<Footer>());
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
                _imageInfo.Heads           == 2   &&
                _imageInfo.SectorsPerTrack == 16  &&
                _imageInfo.SectorSize      == 512 &&
-               (_footer.bpb.driveCode == DriDriveCodes.md2hd || _footer.bpb.driveCode == DriDriveCodes.mf2hd))
+               (_footer.bpb._driveCode == DriveCode.md2hd || _footer.bpb._driveCode == DriveCode.mf2hd))
             {
                 _imageInfo.SectorsPerTrack = 8;
                 _imageInfo.SectorSize      = 1024;
@@ -103,18 +103,18 @@ namespace Aaru.DiscImages
 
             switch(_imageInfo.MediaType)
             {
-                case MediaType.NEC_525_HD when _footer.bpb.driveCode == DriDriveCodes.mf2hd ||
-                                               _footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                case MediaType.NEC_525_HD when _footer.bpb._driveCode == DriveCode.mf2hd ||
+                                               _footer.bpb._driveCode == DriveCode.mf2ed:
                     _imageInfo.MediaType = MediaType.NEC_35_HD_8;
 
                     break;
-                case MediaType.DOS_525_HD when _footer.bpb.driveCode == DriDriveCodes.mf2hd ||
-                                               _footer.bpb.driveCode == DriDriveCodes.mf2ed:
+                case MediaType.DOS_525_HD when _footer.bpb._driveCode == DriveCode.mf2hd ||
+                                               _footer.bpb._driveCode == DriveCode.mf2ed:
                     _imageInfo.MediaType = MediaType.NEC_35_HD_15;
 
                     break;
-                case MediaType.RX50 when _footer.bpb.driveCode == DriDriveCodes.md2dd ||
-                                         _footer.bpb.driveCode == DriDriveCodes.md2hd:
+                case MediaType.RX50 when _footer.bpb._driveCode == DriveCode.md2dd ||
+                                         _footer.bpb._driveCode == DriveCode.md2hd:
                     _imageInfo.MediaType = MediaType.ATARI_35_SS_DD;
 
                     break;

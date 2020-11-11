@@ -37,7 +37,7 @@ namespace Aaru.Filesystems
     public sealed partial class AppleDOS
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Vtoc
+        readonly struct Vtoc
         {
             public readonly byte unused1;
             public readonly byte catalogTrack;
@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CatalogSector
+        readonly struct CatalogSector
         {
             public readonly byte unused1;
             public readonly byte trackOfNext;
@@ -75,7 +75,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FileEntry
+        readonly struct FileEntry
         {
             public readonly byte extentTrack;
             public readonly byte extentSector;
@@ -86,7 +86,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TrackSectorList
+        readonly struct TrackSectorList
         {
             public readonly byte unused1;
             public readonly byte nextListTrack;
@@ -101,7 +101,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TrackSectorListEntry
+        readonly struct TrackSectorListEntry
         {
             public readonly byte track;
             public readonly byte sector;

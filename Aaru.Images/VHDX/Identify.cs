@@ -46,11 +46,11 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
-            stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());
-            _vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
+            byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+            stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
+            _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
-            return _vhdxId.signature == VHDX_SIGNATURE;
+            return _id.signature == VHDX_SIGNATURE;
         }
     }
 }

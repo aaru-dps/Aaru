@@ -115,10 +115,10 @@ namespace Aaru.Filters
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                var    datEntry  = new PcExchangeEntry();
+                var    datEntry  = new Entry();
                 byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PcExchangeEntry>(datEntryB);
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
                 // TODO: Add support for encoding on filters
                 string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
@@ -172,10 +172,10 @@ namespace Aaru.Filters
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
-                var    datEntry  = new PcExchangeEntry();
+                var    datEntry  = new Entry();
                 byte[] datEntryB = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PcExchangeEntry>(datEntryB);
+                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
                 string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
 
@@ -226,7 +226,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PcExchangeEntry
+        readonly struct Entry
         {
             /// <summary>
             ///     Name in Macintosh. If PCExchange version supports FAT's LFN they are the same. Illegal characters for FAT get

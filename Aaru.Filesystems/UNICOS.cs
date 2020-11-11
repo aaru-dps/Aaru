@@ -148,7 +148,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct nc1ireg_sb
+        readonly struct nc1ireg_sb
         {
             public readonly ushort i_unused; /* reserved */
             public readonly ushort i_nblk;   /* number of blocks */
@@ -156,7 +156,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct nc1fdev_sb
+        readonly struct nc1fdev_sb
         {
             public readonly long fd_name; /* Physical device name */
             public readonly uint fd_sblk; /* Start block number */
@@ -167,7 +167,7 @@ namespace Aaru.Filesystems
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming"),
          SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
-        struct Superblock
+        readonly struct Superblock
         {
             public readonly ulong s_magic; /* magic number to indicate file system type */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]

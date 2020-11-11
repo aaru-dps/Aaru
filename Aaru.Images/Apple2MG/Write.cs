@@ -194,7 +194,7 @@ namespace Aaru.DiscImages
             bool isDos = tmp[0x01] == 17 && tmp[0x02] < 16 && tmp[0x27] <= 122 && tmp[0x34] == 35 && tmp[0x35] == 16 &&
                          tmp[0x36] == 0  && tmp[0x37] == 1;
 
-            _imageHeader = new A2ImgHeader
+            _imageHeader = new Header
             {
                 Blocks     = (uint)(_imageInfo.Sectors * _imageInfo.SectorSize) / 512,
                 Creator    = CREATOR_AARU,
@@ -218,8 +218,8 @@ namespace Aaru.DiscImages
                 _writingStream.WriteByte(0);
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<A2ImgHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<A2ImgHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_imageHeader, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

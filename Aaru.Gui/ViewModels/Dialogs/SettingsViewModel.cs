@@ -286,7 +286,7 @@ pool with no way of using them to identify you.";
             else
                 Settings.Settings.Current.Stats = null;
 
-            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
+            Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
             Settings.Settings.SaveSettings();
             _view.Close();
         }

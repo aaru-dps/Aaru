@@ -141,7 +141,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Boot block, first 2 sectors</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
+        readonly struct BootBlock
         {
             /// <summary>"PFS\1" disk type</summary>
             public readonly uint diskType;
@@ -150,7 +150,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootBlock
+        readonly struct RootBlock
         {
             /// <summary>Disk type</summary>
             public readonly uint diskType;

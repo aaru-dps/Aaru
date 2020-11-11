@@ -49,6 +49,30 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Trims errored sectors in a CompactDisc</summary>
+        /// <param name="audioExtents">Extents with audio sectors</param>
+        /// <param name="blockSize">Size of the read sector in bytes</param>
+        /// <param name="currentTry">Current dump hardware try</param>
+        /// <param name="extents">Extents</param>
+        /// <param name="newTrim">Is trim a new one?</param>
+        /// <param name="offsetBytes">Read offset</param>
+        /// <param name="read6">Device supports READ(6)</param>
+        /// <param name="read10">Device supports READ(10)</param>
+        /// <param name="read12">Device supports READ(12)</param>
+        /// <param name="read16">Device supports READ(16)</param>
+        /// <param name="readcd">Device supports READ CD</param>
+        /// <param name="sectorsForOffset">Sectors needed to fix offset</param>
+        /// <param name="subSize">Subchannel size in bytes</param>
+        /// <param name="supportedSubchannel">Drive's maximum supported subchannel</param>
+        /// <param name="supportsLongSectors">Supports reading EDC and ECC</param>
+        /// <param name="totalDuration">Total commands duration</param>
+        /// <param name="tracks">Disc tracks</param>
+        /// <param name="subLog">Subchannel log</param>
+        /// <param name="desiredSubchannel">Subchannel desired to save</param>
+        /// <param name="isrcs">List of disc ISRCs</param>
+        /// <param name="mcn">Disc media catalogue number</param>
+        /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
+        /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
         void TrimCdUserData(ExtentsULong audioExtents, uint blockSize, DumpHardwareType currentTry,
                             ExtentsULong extents, bool newTrim, int offsetBytes, bool read6, bool read10, bool read12,
                             bool read16, bool readcd, int sectorsForOffset, uint subSize,

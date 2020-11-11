@@ -79,8 +79,8 @@ namespace Aaru.DiscImages
             bool topHead = false;
 
             string basename = Path.Combine(imageFilter.GetParentFolder(),
-                                           imageFilter.
-                                               GetFilename().Substring(0, imageFilter.GetFilename().Length - 8));
+                                           imageFilter.GetFilename().
+                                                       Substring(0, imageFilter.GetFilename().Length - 8));
 
             for(byte t = 0; t < 166; t += step)
             {

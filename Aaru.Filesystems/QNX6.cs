@@ -167,7 +167,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RootNode
+        readonly struct RootNode
         {
             public readonly ulong size;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -179,7 +179,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             public readonly uint   magic;
             public readonly uint   checksum;
@@ -204,7 +204,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AudiSuperBlock
+        readonly struct AudiSuperBlock
         {
             public readonly uint  magic;
             public readonly uint  checksum;

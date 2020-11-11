@@ -344,7 +344,7 @@ namespace Aaru.DiscImages
                         string[] lengthString = matchFile.Groups["length"].Value.Split(':');
 
                         ulong nextIndexPos = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                             (ulong.Parse(lengthString[1])      * 75) + ulong.Parse(lengthString[2]);
+                                             (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
 
                         currentTrack.Indexes.Add(nextIndex,
                                                  nextIndexPos + currentTrack.Pregap + currentTrack.StartSector);
@@ -375,7 +375,7 @@ namespace Aaru.DiscImages
                         string[] lengthString = matchZeroPregap.Groups["length"].Value.Split(':');
 
                         currentTrack.Pregap = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                              (ulong.Parse(lengthString[1])      * 75) + ulong.Parse(lengthString[2]);
+                                              (ulong.Parse(lengthString[1]) * 75)      + ulong.Parse(lengthString[2]);
                     }
                     else if(matchZeroData.Success)
                         AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ZERO \"{1}\" at line {0}", lineNumber,
@@ -413,7 +413,7 @@ namespace Aaru.DiscImages
                                 string[] startString = matchAudioFile.Groups["start"].Value.Split(':');
 
                                 startSectors = (ulong.Parse(startString[0]) * 60 * 75) +
-                                               (ulong.Parse(startString[1])      * 75) + ulong.Parse(startString[2]);
+                                               (ulong.Parse(startString[1]) * 75)      + ulong.Parse(startString[2]);
                             }
 
                             currentTrack.Trackfile.Offset += startSectors * currentTrack.Bps;
@@ -423,7 +423,7 @@ namespace Aaru.DiscImages
                                 string[] lengthString = matchAudioFile.Groups["length"].Value.Split(':');
 
                                 currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                                       (ulong.Parse(lengthString[1])      * 75) +
+                                                       (ulong.Parse(lengthString[1]) * 75)      +
                                                        ulong.Parse(lengthString[2]);
                             }
                             else
@@ -455,7 +455,7 @@ namespace Aaru.DiscImages
                                 string[] lengthString = matchFile.Groups["length"].Value.Split(':');
 
                                 currentTrack.Sectors = (ulong.Parse(lengthString[0]) * 60 * 75) +
-                                                       (ulong.Parse(lengthString[1])      * 75) +
+                                                       (ulong.Parse(lengthString[1]) * 75)      +
                                                        ulong.Parse(lengthString[2]);
                             }
                             else

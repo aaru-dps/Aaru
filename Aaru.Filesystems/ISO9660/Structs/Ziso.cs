@@ -40,7 +40,7 @@ namespace Aaru.Filesystems
     public sealed partial class ISO9660
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ZisofsHeader
+        readonly struct ZisofsHeader
         {
             public readonly ulong magic;
             public readonly uint  uncomp_len;
@@ -50,7 +50,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ZisofsEntry
+        readonly struct ZisofsEntry
         {
             public readonly ushort signature;
             public readonly byte   length;

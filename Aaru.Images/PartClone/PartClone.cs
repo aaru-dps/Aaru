@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
         Dictionary<ulong, ulong>  _extentsOff;
         ImageInfo                 _imageInfo;
         Stream                    _imageStream;
-        PartCloneHeader           _pHdr;
+        Header                    _pHdr;
         Dictionary<ulong, byte[]> _sectorCache;
 
         public PartClone() => _imageInfo = new ImageInfo

@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
         /// <summary>The offset in the file where each track starts, or -1 if the track is not present</summary>
         readonly Dictionary<int, long> _trackOffset = new Dictionary<int, long>();
         /// <summary>The HDCP file header after the image has been opened</summary>
-        HdcpFileHeader _fileHeader;
+        FileHeader _fileHeader;
 
         /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
         IFilter _hdcpImageFilter;

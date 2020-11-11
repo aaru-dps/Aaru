@@ -492,11 +492,11 @@ namespace Aaru.DiscImages
                                                        FileShare.None));
             else
             {
-                var jointstream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
                                                  FileShare.None);
 
                 foreach(Track track in _writingTracks)
-                    _writingStreams.Add(track.TrackSequence, jointstream);
+                    _writingStreams.Add(track.TrackSequence, jointStream);
             }
 
             return true;
@@ -593,7 +593,8 @@ namespace Aaru.DiscImages
                                                 flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
                 }
 
-                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) && !string.IsNullOrWhiteSpace(isrc))
+                if(_trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc) &&
+                   !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("ISRC {0}", isrc);
 
                 (byte minute, byte second, byte frame) msf =

@@ -50,10 +50,9 @@ namespace Aaru.Filters
 
         public List<Type> GetAllFilesystemPlugins() => null;
 
-        public List<Type> GetAllFilterPlugins() => Assembly.
-                                                   GetExecutingAssembly().GetTypes().
-                                                   Where(t => t.GetInterfaces().Contains(typeof(IFilter))).
-                                                   Where(t => t.IsClass).ToList();
+        public List<Type> GetAllFilterPlugins() => Assembly.GetExecutingAssembly().GetTypes().
+                                                            Where(t => t.GetInterfaces().Contains(typeof(IFilter))).
+                                                            Where(t => t.IsClass).ToList();
 
         public List<Type> GetAllFloppyImagePlugins() => null;
 

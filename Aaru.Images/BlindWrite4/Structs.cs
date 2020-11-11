@@ -37,7 +37,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class BlindWrite4
     {
-        struct Bw4Header
+        struct Header
         {
             public byte[] Signature;
             public uint   Unknown1;
@@ -70,7 +70,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Bw4TrackDescriptor
+        struct TrackDescriptor
         {
             public uint   filenameLen;
             public byte[] filenameBytes;
@@ -78,24 +78,24 @@ namespace Aaru.DiscImages
             public byte   subchannel;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public byte[] unknown1;
-            public uint         unknown2;
-            public byte         unknown3;
-            public byte         session;
-            public byte         unknown4;
-            public byte         adrCtl;
-            public byte         unknown5;
-            public Bw4TrackType trackMode;
-            public byte         unknown6;
-            public byte         point;
-            public uint         unknown7;
-            public uint         unknown8;
-            public uint         unknown9;
-            public uint         unknown10;
-            public ushort       unknown11;
-            public uint         lastSector;
-            public byte         unknown12;
-            public int          pregap;
-            public int          startSector;
+            public uint      unknown2;
+            public byte      unknown3;
+            public byte      session;
+            public byte      unknown4;
+            public byte      adrCtl;
+            public byte      unknown5;
+            public TrackType trackMode;
+            public byte      unknown6;
+            public byte      point;
+            public uint      unknown7;
+            public uint      unknown8;
+            public uint      unknown9;
+            public uint      unknown10;
+            public ushort    unknown11;
+            public uint      lastSector;
+            public byte      unknown12;
+            public int       pregap;
+            public int       startSector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public uint[] unknown13;
             public uint   titleLen;

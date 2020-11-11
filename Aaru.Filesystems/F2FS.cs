@@ -158,7 +158,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "InconsistentNaming")]
-        struct Superblock
+        readonly struct Superblock
         {
             public readonly uint   magic;
             public readonly ushort major_ver;

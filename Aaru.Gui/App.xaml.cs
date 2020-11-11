@@ -83,9 +83,10 @@ namespace Aaru.Gui
 
         void OnAboutClicked(object sender, EventArgs args)
         {
-            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) ||
-               !(desktop.MainWindow is MainWindow mainWindow)                            ||
-               !(mainWindow.DataContext is MainWindowViewModel mainWindowViewModel))
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                    {
+                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                    }))
                 return;
 
             mainWindowViewModel.ExecuteAboutCommand();
@@ -93,9 +94,10 @@ namespace Aaru.Gui
 
         void OnQuitClicked(object sender, EventArgs args)
         {
-            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) ||
-               !(desktop.MainWindow is MainWindow mainWindow)                            ||
-               !(mainWindow.DataContext is MainWindowViewModel mainWindowViewModel))
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                    {
+                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                    }))
                 return;
 
             mainWindowViewModel.ExecuteExitCommand();
@@ -103,9 +105,10 @@ namespace Aaru.Gui
 
         void OnPreferencesClicked(object sender, EventArgs args)
         {
-            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) ||
-               !(desktop.MainWindow is MainWindow mainWindow)                            ||
-               !(mainWindow.DataContext is MainWindowViewModel mainWindowViewModel))
+            if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
+                    {
+                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
+                    }))
                 return;
 
             mainWindowViewModel.ExecuteSettingsCommand();

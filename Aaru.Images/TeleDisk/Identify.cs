@@ -41,7 +41,7 @@ namespace Aaru.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            _header = new TeleDiskHeader();
+            _header = new Header();
             byte[] headerBytes = new byte[12];
             Stream stream      = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);

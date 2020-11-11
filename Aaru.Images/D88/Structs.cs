@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class D88
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct D88Header
+        readonly struct Header
         {
             /// <summary>Disk name, nul-terminated ASCII ディスクの名前(ASCII + '\0')</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SectorHeader
+        readonly struct SectorHeader
         {
             /// <summary>Cylinder ID の C</summary>
             public readonly byte c;

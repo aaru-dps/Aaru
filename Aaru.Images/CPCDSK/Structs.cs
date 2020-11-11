@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class Cpcdsk
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcDiskInfo
+        readonly struct DiskInfo
         {
             /// <summary>Magic number, "MV - CPC" in old files, "EXTENDED CPC DSK File" in extended ones</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
@@ -64,7 +64,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcTrackInfo
+        readonly struct TrackInfo
         {
             /// <summary>Magic number, "Track-Info\r\n"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
@@ -91,12 +91,12 @@ namespace Aaru.DiscImages
             public readonly byte filler;
             /// <summary>Information for up to 32 sectors</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public readonly CpcSectorInfo[] sectorsInfo;
+            public readonly SectorInfo[] sectorsInfo;
         }
 
         /// <summary>Sector information</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CpcSectorInfo
+        readonly struct SectorInfo
         {
             /// <summary>Track number from address mark</summary>
             public readonly byte track;

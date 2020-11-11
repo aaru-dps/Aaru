@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     public sealed partial class Ndif
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChunkHeader
+        readonly struct ChunkHeader
         {
             /// <summary>Version</summary>
             public readonly short version;
@@ -88,7 +88,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SegmentHeader
+        readonly struct SegmentHeader
         {
             /// <summary>Segment #</summary>
             public readonly ushort segment;

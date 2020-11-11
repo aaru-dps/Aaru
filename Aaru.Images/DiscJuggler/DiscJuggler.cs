@@ -46,7 +46,7 @@ namespace Aaru.DiscImages
         byte[]                  _cdtext;
         ImageInfo               _imageInfo;
         Stream                  _imageStream;
-        Dictionary<uint, ulong> _offsetmap;
+        Dictionary<uint, ulong> _offsetMap;
         SectorBuilder           _sectorBuilder;
         Dictionary<uint, byte>  _trackFlags;
 

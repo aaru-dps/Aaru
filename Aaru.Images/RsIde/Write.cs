@@ -140,7 +140,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -173,7 +173,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * _imageInfo.SectorSize)),
+            _writingStream.Seek((long)((ulong)Marshal.SizeOf<Header>() + (sectorAddress * _imageInfo.SectorSize)),
                                 SeekOrigin.Begin);
 
             _writingStream.Write(data, 0, data.Length);
@@ -231,11 +231,11 @@ namespace Aaru.DiscImages
                 }
             }
 
-            var header = new RsIdeHeader
+            var header = new Header
             {
                 magic    = _signature,
                 identify = new byte[106],
-                dataOff  = (ushort)Marshal.SizeOf<RsIdeHeader>(),
+                dataOff  = (ushort)Marshal.SizeOf<Header>(),
                 revision = 1,
                 reserved = new byte[11]
             };
@@ -249,16 +249,16 @@ namespace Aaru.DiscImages
                 {
                     GeneralConfiguration =
                         CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
-                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
-                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
-                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
-                    Cylinders       = (ushort)_imageInfo.Cylinders,
-                    Heads           = (ushort)_imageInfo.Heads,
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM | CommonTypes.Structs.
+                            Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
+                    Cylinders = (ushort)_imageInfo.Cylinders,
+                    Heads = (ushort)_imageInfo.Heads,
                     SectorsPerTrack = (ushort)_imageInfo.SectorsPerTrack,
-                    VendorWord47    = 0x80,
+                    VendorWord47 = 0x80,
                     Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
-                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
-                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
+                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY | CommonTypes.Structs.
+                                       Devices.ATA.Identify.CapabilitiesBit.LBASupport,
                     ExtendedIdentify = CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
                     CurrentCylinders = (ushort)_imageInfo.Cylinders,
                     CurrentHeads = (ushort)_imageInfo.Heads,
@@ -300,8 +300,8 @@ namespace Aaru.DiscImages
             else
                 Array.Copy(_identify, 0, header.identify, 0, 106);
 
-            byte[] hdr    = new byte[Marshal.SizeOf<RsIdeHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RsIdeHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);

@@ -66,14 +66,14 @@ namespace Aaru.DiscImages
                 // Initialize all RegEx matches
 
                 // Initialize disc
-                _discimage = new GdiDisc
+                _discImage = new GdiDisc
                 {
                     Sessions = new List<Session>(),
                     Tracks   = new List<GdiTrack>()
                 };
 
                 ulong currentStart = 0;
-                _offsetmap                = new Dictionary<uint, ulong>();
+                _offsetMap                = new Dictionary<uint, ulong>();
                 _densitySeparationSectors = 0;
 
                 while(_gdiStream.Peek() >= 0)
@@ -109,19 +109,18 @@ namespace Aaru.DiscImages
                             Offset      = long.Parse(trackMatch.Groups["offset"].Value),
                             Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
                             StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                            Trackfilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
+                            TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.GetParentFolder(),
                                                                              trackMatch.Groups["filename"].Value.
-                                                                                        Replace("\\\"", "\"").
-                                                                                        Trim('"')))
+                                                                                 Replace("\\\"", "\"").Trim('"')))
                         };
 
-                        currentTrack.Trackfile = currentTrack.Trackfilter.GetFilename();
+                        currentTrack.TrackFile = currentTrack.TrackFilter.GetFilename();
 
                         if(currentTrack.StartSector - currentStart > 0)
                             if(currentTrack.StartSector == 45000)
                             {
                                 highDensity = true;
-                                _offsetmap.Add(0, currentStart);
+                                _offsetMap.Add(0, currentStart);
                                 _densitySeparationSectors = currentTrack.StartSector - currentStart;
                                 currentStart              = currentTrack.StartSector;
                             }
@@ -131,21 +130,21 @@ namespace Aaru.DiscImages
                                 currentTrack.StartSector -= currentTrack.StartSector - currentStart;
                             }
 
-                        if((currentTrack.Trackfilter.GetDataForkLength() - currentTrack.Offset) % currentTrack.Bps != 0)
+                        if((currentTrack.TrackFilter.GetDataForkLength() - currentTrack.Offset) % currentTrack.Bps != 0)
                             throw new ImageNotSupportedException("Track size not a multiple of sector size");
 
                         currentTrack.Sectors =
-                            (ulong)((currentTrack.Trackfilter.GetDataForkLength() - currentTrack.Offset) /
+                            (ulong)((currentTrack.TrackFilter.GetDataForkLength() - currentTrack.Offset) /
                                     currentTrack.Bps);
 
                         currentTrack.Sectors     += currentTrack.Pregap;
                         currentStart             += currentTrack.Sectors;
                         currentTrack.HighDensity =  highDensity;
 
-                        currentTrack.Tracktype =
+                        currentTrack.TrackType =
                             (currentTrack.Flags & 0x4) == 0x4 ? TrackType.CdMode1 : TrackType.Audio;
 
-                        _discimage.Tracks.Add(currentTrack);
+                        _discImage.Tracks.Add(currentTrack);
                     }
                 }
 
@@ -156,7 +155,7 @@ namespace Aaru.DiscImages
                     {
                         sessions[s].SessionSequence = 1;
 
-                        foreach(GdiTrack trk in _discimage.Tracks.Where(trk => !trk.HighDensity))
+                        foreach(GdiTrack trk in _discImage.Tracks.Where(trk => !trk.HighDensity))
                         {
                             if(sessions[s].StartTrack == 0)
                                 sessions[s].StartTrack = trk.Sequence;
@@ -177,7 +176,7 @@ namespace Aaru.DiscImages
                     {
                         sessions[s].SessionSequence = 2;
 
-                        foreach(GdiTrack trk in _discimage.Tracks.Where(trk => trk.HighDensity))
+                        foreach(GdiTrack trk in _discImage.Tracks.Where(trk => trk.HighDensity))
                         {
                             if(sessions[s].StartTrack == 0)
                                 sessions[s].StartTrack = trk.Sequence;
@@ -195,58 +194,58 @@ namespace Aaru.DiscImages
                         }
                     }
 
-                _discimage.Sessions.Add(sessions[0]);
-                _discimage.Sessions.Add(sessions[1]);
+                _discImage.Sessions.Add(sessions[0]);
+                _discImage.Sessions.Add(sessions[1]);
 
-                _discimage.Disktype = MediaType.GDROM;
+                _discImage.Disktype = MediaType.GDROM;
 
                 // DEBUG information
                 AaruConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
 
                 AaruConsole.DebugWriteLine("GDI plugin", "Session information:");
-                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", _discimage.Sessions.Count);
+                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
 
-                for(int i = 0; i < _discimage.Sessions.Count; i++)
+                for(int i = 0; i < _discImage.Sessions.Count; i++)
                 {
                     AaruConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
 
                     AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}",
-                                               _discimage.Sessions[i].StartTrack);
+                                               _discImage.Sessions[i].StartTrack);
 
                     AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting sector: {0}",
-                                               _discimage.Sessions[i].StartSector);
+                                               _discImage.Sessions[i].StartSector);
 
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}", _discimage.Sessions[i].EndTrack);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}", _discImage.Sessions[i].EndTrack);
 
                     AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding sector: {0}",
-                                               _discimage.Sessions[i].EndSector);
+                                               _discImage.Sessions[i].EndSector);
                 }
 
                 AaruConsole.DebugWriteLine("GDI plugin", "Track information:");
-                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", _discimage.Tracks.Count);
+                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
 
-                for(int i = 0; i < _discimage.Tracks.Count; i++)
+                for(int i = 0; i < _discImage.Tracks.Count; i++)
                 {
-                    AaruConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", _discimage.Tracks[i].Sequence);
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", _discimage.Tracks[i].Bps);
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors", _discimage.Tracks[i].Pregap);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", _discImage.Tracks[i].Sequence);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
 
-                    if((_discimage.Tracks[i].Flags & 0x8) == 0x8)
+                    if((_discImage.Tracks[i].Flags & 0x8) == 0x8)
                         AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
 
-                    if((_discimage.Tracks[i].Flags & 0x4) == 0x4)
+                    if((_discImage.Tracks[i].Flags & 0x4) == 0x4)
                         AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
 
-                    if((_discimage.Tracks[i].Flags & 0x2) == 0x2)
+                    if((_discImage.Tracks[i].Flags & 0x2) == 0x2)
                         AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
 
-                    if((_discimage.Tracks[i].Flags & 0x1) == 0x1)
+                    if((_discImage.Tracks[i].Flags & 0x1) == 0x1)
                         AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
 
                     AaruConsole.DebugWriteLine("GDI plugin",
                                                "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                               _discimage.Tracks[i].Trackfilter, _discimage.Tracks[i].Tracktype,
-                                               _discimage.Tracks[i].Offset);
+                                               _discImage.Tracks[i].TrackFilter, _discImage.Tracks[i].TrackType,
+                                               _discImage.Tracks[i].Offset);
                 }
 
                 AaruConsole.DebugWriteLine("GDI plugin", "Building offset map");
@@ -254,41 +253,41 @@ namespace Aaru.DiscImages
                 Partitions = new List<Partition>();
                 ulong byteOffset = 0;
 
-                for(int i = 0; i < _discimage.Tracks.Count; i++)
+                for(int i = 0; i < _discImage.Tracks.Count; i++)
                 {
-                    if(_discimage.Tracks[i].Sequence == 1 &&
+                    if(_discImage.Tracks[i].Sequence == 1 &&
                        i                             != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
                     // Index 01
                     var partition = new Partition
                     {
-                        Description = $"Track {_discimage.Tracks[i].Sequence}.",
+                        Description = $"Track {_discImage.Tracks[i].Sequence}.",
                         Name        = null,
-                        Start       = _discimage.Tracks[i].StartSector,
-                        Size        = _discimage.Tracks[i].Sectors * _discimage.Tracks[i].Bps,
-                        Length      = _discimage.Tracks[i].Sectors,
-                        Sequence    = _discimage.Tracks[i].Sequence,
+                        Start       = _discImage.Tracks[i].StartSector,
+                        Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps,
+                        Length      = _discImage.Tracks[i].Sectors,
+                        Sequence    = _discImage.Tracks[i].Sequence,
                         Offset      = byteOffset,
-                        Type        = _discimage.Tracks[i].Tracktype.ToString()
+                        Type        = _discImage.Tracks[i].TrackType.ToString()
                     };
 
                     byteOffset += partition.Size;
-                    _offsetmap.Add(_discimage.Tracks[i].Sequence, partition.Start);
+                    _offsetMap.Add(_discImage.Tracks[i].Sequence, partition.Start);
                     Partitions.Add(partition);
                 }
 
-                foreach(GdiTrack track in _discimage.Tracks)
+                foreach(GdiTrack track in _discImage.Tracks)
                     _imageInfo.ImageSize += track.Bps * track.Sectors;
 
-                foreach(GdiTrack track in _discimage.Tracks)
+                foreach(GdiTrack track in _discImage.Tracks)
                     _imageInfo.Sectors += track.Sectors;
 
                 _imageInfo.Sectors += _densitySeparationSectors;
 
                 _imageInfo.SectorSize = 2352; // All others
 
-                foreach(GdiTrack unused in _discimage.Tracks.Where(track => (track.Flags & 0x4) == 0x4 &&
+                foreach(GdiTrack unused in _discImage.Tracks.Where(track => (track.Flags & 0x4) == 0x4 &&
                                                                             track.Bps           == 2352))
                 {
                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -303,7 +302,7 @@ namespace Aaru.DiscImages
                 _imageInfo.CreationTime         = imageFilter.GetCreationTime();
                 _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-                _imageInfo.MediaType = _discimage.Disktype;
+                _imageInfo.MediaType = _discImage.Disktype;
 
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
@@ -336,13 +335,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                     from gdiTrack in _discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from gdiTrack in _discImage.Tracks
                                                      where gdiTrack.Sequence         == kvp.Key
                                                      where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key);
 
-            _offsetmap.TryGetValue(0, out ulong transitionStart);
+            _offsetMap.TryGetValue(0, out ulong transitionStart);
 
             if(sectorAddress >= transitionStart &&
                sectorAddress < _densitySeparationSectors + transitionStart)
@@ -353,13 +352,13 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                     from gdiTrack in _discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from gdiTrack in _discImage.Tracks
                                                      where gdiTrack.Sequence         == kvp.Key
                                                      where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag);
 
-            _offsetmap.TryGetValue(0, out ulong transitionStart);
+            _offsetMap.TryGetValue(0, out ulong transitionStart);
 
             if(sectorAddress >= transitionStart &&
                sectorAddress < _densitySeparationSectors + transitionStart)
@@ -384,7 +383,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(GdiTrack gdiTrack in _discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
+            foreach(GdiTrack gdiTrack in _discImage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
             {
                 aaruTrack = gdiTrack;
 
@@ -402,7 +401,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(aaruTrack.Tracktype)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.Audio:
                 {
@@ -447,7 +446,7 @@ namespace Aaru.DiscImages
             if(remainingSectors == 0)
                 return buffer;
 
-            _imageStream = aaruTrack.Trackfilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
@@ -512,7 +511,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(GdiTrack gdiTrack in _discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
+            foreach(GdiTrack gdiTrack in _discImage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
             {
                 aaruTrack = gdiTrack;
 
@@ -549,7 +548,7 @@ namespace Aaru.DiscImages
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
-            switch(aaruTrack.Tracktype)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.Audio: throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case TrackType.CdMode1:
@@ -633,7 +632,7 @@ namespace Aaru.DiscImages
             if(remainingSectors == 0)
                 return buffer;
 
-            _imageStream = aaruTrack.Trackfilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
@@ -679,8 +678,8 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress >= kvp.Value
-                                                     from gdiTrack in _discimage.Tracks
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
+                                                     from gdiTrack in _discImage.Tracks
                                                      where gdiTrack.Sequence         == kvp.Key
                                                      where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key);
@@ -704,7 +703,7 @@ namespace Aaru.DiscImages
                 Sequence = 0
             };
 
-            foreach(GdiTrack gdiTrack in _discimage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
+            foreach(GdiTrack gdiTrack in _discImage.Tracks.Where(gdiTrack => gdiTrack.Sequence == track))
             {
                 aaruTrack = gdiTrack;
 
@@ -722,7 +721,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(aaruTrack.Tracktype)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.Audio:
                 {
@@ -767,7 +766,7 @@ namespace Aaru.DiscImages
             if(remainingSectors == 0)
                 return buffer;
 
-            _imageStream = aaruTrack.Trackfilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             long pos = aaruTrack.Offset + (long)((sectorAddress    * (sectorOffset + sectorSize + sectorSkip)) -
@@ -804,7 +803,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            switch(aaruTrack.Tracktype)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.CdMode1 when aaruTrack.Bps == 2048:
                 {
@@ -830,7 +829,7 @@ namespace Aaru.DiscImages
 
         public List<Track> GetSessionTracks(Session session)
         {
-            if(_discimage.Sessions.Contains(session))
+            if(_discImage.Sessions.Contains(session))
                 return GetSessionTracks(session.SessionSequence);
 
             throw new ImageNotSupportedException("Session does not exist in disc image");
@@ -854,7 +853,7 @@ namespace Aaru.DiscImages
                 default: throw new ImageNotSupportedException("Session does not exist in disc image");
             }
 
-            foreach(GdiTrack gdiTrack in _discimage.Tracks)
+            foreach(GdiTrack gdiTrack in _discImage.Tracks)
                 if(gdiTrack.HighDensity == expectedDensity)
                 {
                     var track = new Track
@@ -864,13 +863,13 @@ namespace Aaru.DiscImages
                         TrackPregap            = gdiTrack.Pregap,
                         TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
                         TrackSequence          = gdiTrack.Sequence,
-                        TrackType              = gdiTrack.Tracktype,
-                        TrackFilter            = gdiTrack.Trackfilter,
-                        TrackFile              = gdiTrack.Trackfile,
+                        TrackType              = gdiTrack.TrackType,
+                        TrackFilter            = gdiTrack.TrackFilter,
+                        TrackFile              = gdiTrack.TrackFile,
                         TrackFileOffset        = (ulong)gdiTrack.Offset,
                         TrackFileType          = "BINARY",
                         TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector    = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
+                        TrackBytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
                         TrackSubchannelType    = TrackSubchannelType.None
                     };
 

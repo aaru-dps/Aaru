@@ -83,7 +83,7 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AaruPacketResponseListDevices
+    public readonly struct AaruPacketResponseListDevices
     {
         public readonly AaruPacketHeader hdr;
         public readonly ushort           devices;

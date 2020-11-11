@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
     {
         public bool Open(IFilter imageFilter)
         {
-            _header = new TeleDiskHeader();
+            _header = new Header();
             byte[] headerBytes = new byte[12];
             _inStream = imageFilter.GetDataForkStream();
             var stream = new MemoryStream();
@@ -145,7 +145,7 @@ namespace Aaru.DiscImages
 
             if((_header.Stepping & COMMENT_BLOCK_PRESENT) == COMMENT_BLOCK_PRESENT)
             {
-                _commentHeader = new TeleDiskCommentBlockHeader();
+                _commentHeader = new CommentBlockHeader();
 
                 byte[] commentHeaderBytes = new byte[10];
 
@@ -224,7 +224,7 @@ namespace Aaru.DiscImages
             // Count cylinders
             while(true)
             {
-                var teleDiskTrack = new TeleDiskTrackHeader
+                var teleDiskTrack = new TrackHeader
                 {
                     Sectors  = (byte)stream.ReadByte(),
                     Cylinder = (byte)stream.ReadByte(),
@@ -243,8 +243,8 @@ namespace Aaru.DiscImages
 
                 for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
                 {
-                    var    teleDiskSector = new TeleDiskSectorHeader();
-                    var    teleDiskData   = new TeleDiskDataHeader();
+                    var    teleDiskSector = new SectorHeader();
+                    var    teleDiskData   = new DataHeader();
                     byte[] dataSizeBytes  = new byte[2];
 
                     teleDiskSector.Cylinder     = (byte)stream.ReadByte();
@@ -292,7 +292,7 @@ namespace Aaru.DiscImages
 
             while(true)
             {
-                var teleDiskTrack = new TeleDiskTrackHeader
+                var teleDiskTrack = new TrackHeader
                 {
                     Sectors  = (byte)stream.ReadByte(),
                     Cylinder = (byte)stream.ReadByte(),
@@ -317,8 +317,8 @@ namespace Aaru.DiscImages
 
                 for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
                 {
-                    var    teleDiskSector = new TeleDiskSectorHeader();
-                    var    teleDiskData   = new TeleDiskDataHeader();
+                    var    teleDiskSector = new SectorHeader();
+                    var    teleDiskData   = new DataHeader();
                     byte[] dataSizeBytes  = new byte[2];
 
                     teleDiskSector.Cylinder     = (byte)stream.ReadByte();
@@ -365,7 +365,7 @@ namespace Aaru.DiscImages
 
             while(true)
             {
-                var    teleDiskTrack = new TeleDiskTrackHeader();
+                var    teleDiskTrack = new TrackHeader();
                 byte[] tdTrackForCrc = new byte[3];
 
                 teleDiskTrack.Sectors  = (byte)stream.ReadByte();
@@ -401,8 +401,8 @@ namespace Aaru.DiscImages
 
                 for(byte processedSectors = 0; processedSectors < teleDiskTrack.Sectors; processedSectors++)
                 {
-                    var    teleDiskSector = new TeleDiskSectorHeader();
-                    var    teleDiskData   = new TeleDiskDataHeader();
+                    var    teleDiskSector = new SectorHeader();
+                    var    teleDiskData   = new DataHeader();
                     byte[] dataSizeBytes  = new byte[2];
                     byte[] decodedData;
 
@@ -430,7 +430,7 @@ namespace Aaru.DiscImages
                                                teleDiskSector.Crc);
 
                     uint lba = (uint)((teleDiskSector.Cylinder * _header.Sides * _imageInfo.SectorsPerTrack) +
-                                      (teleDiskSector.Head                     * _imageInfo.SectorsPerTrack) +
+                                      (teleDiskSector.Head     * _imageInfo.SectorsPerTrack)                 +
                                       (teleDiskSector.SectorNumber - 1));
 
                     if((teleDiskSector.Flags & FLAGS_SECTOR_DATALESS) != FLAGS_SECTOR_DATALESS &&

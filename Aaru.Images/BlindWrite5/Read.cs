@@ -65,7 +65,7 @@ namespace Aaru.DiscImages
 
             byte[] hdr = new byte[260];
             stream.Read(hdr, 0, 260);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Bw5Header>(hdr);
+            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
                                        StringHandlers.CToString(_header.signature));
@@ -257,13 +257,13 @@ namespace Aaru.DiscImages
             _dataPath = Encoding.Unicode.GetString(dataPathBytes);
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", _dataPath);
 
-            _dataFiles = new List<Bw5DataFile>();
+            _dataFiles = new List<DataFile>();
 
             for(int cD = 0; cD < dataBlockCount; cD++)
             {
                 tmpArray = new byte[52];
 
-                var dataFile = new Bw5DataFile
+                var dataFile = new DataFile
                 {
                     Unknown1 = new uint[4],
                     Unknown2 = new uint[3]
@@ -315,11 +315,11 @@ namespace Aaru.DiscImages
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown3 = {0}", dataFile.Unknown3);
             }
 
-            _bwSessions = new List<Bw5SessionDescriptor>();
+            _bwSessions = new List<SessionDescriptor>();
 
             for(int ses = 0; ses < _header.sessions; ses++)
             {
-                var session = new Bw5SessionDescriptor();
+                var session = new SessionDescriptor();
                 tmpArray = new byte[16];
                 stream.Read(tmpArray, 0, tmpArray.Length);
                 session.Sequence   = BitConverter.ToUInt16(tmpArray, 0);
@@ -329,7 +329,7 @@ namespace Aaru.DiscImages
                 session.End        = BitConverter.ToInt32(tmpArray, 8);
                 session.FirstTrack = BitConverter.ToUInt16(tmpArray, 12);
                 session.LastTrack  = BitConverter.ToUInt16(tmpArray, 14);
-                session.Tracks     = new Bw5TrackDescriptor[session.Entries];
+                session.Tracks     = new TrackDescriptor[session.Entries];
 
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].filename = {1}", ses, session.Sequence);
                 AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].entries = {1}", ses, session.Entries);
@@ -347,10 +347,10 @@ namespace Aaru.DiscImages
                 {
                     byte[] trk = new byte[72];
                     stream.Read(trk, 0, 72);
-                    session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<Bw5TrackDescriptor>(trk);
+                    session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<TrackDescriptor>(trk);
 
-                    if(session.Tracks[tSeq].type == Bw5TrackType.Dvd ||
-                       session.Tracks[tSeq].type == Bw5TrackType.NotData)
+                    if(session.Tracks[tSeq].type == TrackType.Dvd ||
+                       session.Tracks[tSeq].type == TrackType.NotData)
                     {
                         session.Tracks[tSeq].unknown9[0] = 0;
                         session.Tracks[tSeq].unknown9[1] = 0;
@@ -435,8 +435,8 @@ namespace Aaru.DiscImages
                     AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
                                                tSeq, session.Tracks[tSeq].unknown8);
 
-                    if(session.Tracks[tSeq].type == Bw5TrackType.Dvd ||
-                       session.Tracks[tSeq].type == Bw5TrackType.NotData)
+                    if(session.Tracks[tSeq].type == TrackType.Dvd ||
+                       session.Tracks[tSeq].type == TrackType.NotData)
                         continue;
 
                     {
@@ -468,7 +468,7 @@ namespace Aaru.DiscImages
 
             _filePaths = new List<DataFileCharacteristics>();
 
-            foreach(Bw5DataFile dataFile in _dataFiles)
+            foreach(DataFile dataFile in _dataFiles)
             {
                 var    chars       = new DataFileCharacteristics();
                 string path        = Path.Combine(_dataPath, dataFile.Filename);
@@ -629,7 +629,7 @@ namespace Aaru.DiscImages
             }, 0, 2);
 
             ulong offsetBytes = 0;
-            _offsetmap = new Dictionary<uint, ulong>();
+            _offsetMap = new Dictionary<uint, ulong>();
             bool isDvd        = false;
             byte firstSession = byte.MaxValue;
             byte lastSession  = 0;
@@ -638,7 +638,7 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Building maps");
 
-            foreach(Bw5SessionDescriptor ses in _bwSessions)
+            foreach(SessionDescriptor ses in _bwSessions)
             {
                 Sessions.Add(new Session
                 {
@@ -655,7 +655,7 @@ namespace Aaru.DiscImages
                 if(ses.Sequence > lastSession)
                     lastSession = (byte)ses.Sequence;
 
-                foreach(Bw5TrackDescriptor trk in ses.Tracks)
+                foreach(TrackDescriptor trk in ses.Tracks)
                 {
                     byte adrCtl = (byte)((trk.adr << 4) + trk.ctl);
                     fullTocStream.WriteByte((byte)trk.session);
@@ -680,7 +680,7 @@ namespace Aaru.DiscImages
 
                     switch(trk.type)
                     {
-                        case Bw5TrackType.Audio:
+                        case TrackType.Audio:
                             track.TrackBytesPerSector    = 2352;
                             track.TrackRawBytesPerSector = 2352;
 
@@ -688,8 +688,8 @@ namespace Aaru.DiscImages
                                 _imageInfo.SectorSize = 2352;
 
                             break;
-                        case Bw5TrackType.Mode1:
-                        case Bw5TrackType.Mode2F1:
+                        case TrackType.Mode1:
+                        case TrackType.Mode2F1:
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
@@ -718,7 +718,7 @@ namespace Aaru.DiscImages
                                 _imageInfo.SectorSize = 2048;
 
                             break;
-                        case Bw5TrackType.Mode2:
+                        case TrackType.Mode2:
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
@@ -732,7 +732,7 @@ namespace Aaru.DiscImages
                                 _imageInfo.SectorSize = 2336;
 
                             break;
-                        case Bw5TrackType.Mode2F2:
+                        case TrackType.Mode2F2:
                             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                 _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
 
@@ -752,7 +752,7 @@ namespace Aaru.DiscImages
                                 _imageInfo.SectorSize = 2324;
 
                             break;
-                        case Bw5TrackType.Dvd:
+                        case TrackType.Dvd:
                             track.TrackBytesPerSector    = 2048;
                             track.TrackRawBytesPerSector = 2048;
 
@@ -841,7 +841,7 @@ namespace Aaru.DiscImages
 
                     Tracks.Add(track);
                     Partitions.Add(partition);
-                    _offsetmap.Add(track.TrackSequence, track.TrackStartSector);
+                    _offsetMap.Add(track.TrackSequence, track.TrackStartSector);
                 }
             }
 
@@ -982,29 +982,29 @@ namespace Aaru.DiscImages
             {
                 bool data       = false;
                 bool mode2      = false;
-                bool firstaudio = false;
-                bool firstdata  = false;
+                bool firstAudio = false;
+                bool firstData  = false;
                 bool audio      = false;
 
                 foreach(Track bwTrack in Tracks)
                 {
                     // First track is audio
-                    firstaudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == TrackType.Audio;
+                    firstAudio |= bwTrack.TrackSequence == 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
 
                     // First track is data
-                    firstdata |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != TrackType.Audio;
+                    firstData |= bwTrack.TrackSequence == 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
 
                     // Any non first track is data
-                    data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != TrackType.Audio;
+                    data |= bwTrack.TrackSequence != 1 && bwTrack.TrackType != CommonTypes.Enums.TrackType.Audio;
 
                     // Any non first track is audio
-                    audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == TrackType.Audio;
+                    audio |= bwTrack.TrackSequence != 1 && bwTrack.TrackType == CommonTypes.Enums.TrackType.Audio;
 
                     switch(bwTrack.TrackType)
                     {
-                        case TrackType.CdMode2Formless:
-                        case TrackType.CdMode2Form1:
-                        case TrackType.CdMode2Form2:
+                        case CommonTypes.Enums.TrackType.CdMode2Formless:
+                        case CommonTypes.Enums.TrackType.CdMode2Form1:
+                        case CommonTypes.Enums.TrackType.CdMode2Form2:
                             mode2 = true;
 
                             break;
@@ -1012,14 +1012,14 @@ namespace Aaru.DiscImages
                 }
 
                 if(!data &&
-                   !firstdata)
+                   !firstData)
                     _imageInfo.MediaType = MediaType.CDDA;
-                else if(firstaudio         &&
+                else if(firstAudio         &&
                         data               &&
                         Sessions.Count > 1 &&
                         mode2)
                     _imageInfo.MediaType = MediaType.CDPLUS;
-                else if((firstdata && audio) || mode2)
+                else if((firstData && audio) || mode2)
                     _imageInfo.MediaType = MediaType.CDROMXA;
                 else if(!audio)
                     _imageInfo.MediaType = MediaType.CDROM;
@@ -1235,7 +1235,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1247,7 +1247,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1297,7 +1297,7 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode1:
                 {
                     sectorOffset = 16;
                     sectorSize   = 2048;
@@ -1305,9 +1305,9 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.CdMode2Formless:
-                case TrackType.CdMode2Form1:
-                case TrackType.CdMode2Form2:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.CdMode2Form1:
+                case CommonTypes.Enums.TrackType.CdMode2Form2:
                 {
                     mode2        = true;
                     sectorOffset = 0;
@@ -1316,7 +1316,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Audio:
+                case CommonTypes.Enums.TrackType.Audio:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
@@ -1324,7 +1324,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Data:
+                case CommonTypes.Enums.TrackType.Data:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2048;
@@ -1425,7 +1425,7 @@ namespace Aaru.DiscImages
                chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
 
-            if(aaruTrack.TrackType == TrackType.Data)
+            if(aaruTrack.TrackType == CommonTypes.Enums.TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -1455,7 +1455,7 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode1:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1514,7 +1514,7 @@ namespace Aaru.DiscImages
                     }
 
                     break;
-                case TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
                 {
                     switch(tag)
                     {
@@ -1572,7 +1572,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.CdMode2Form1:
+                case CommonTypes.Enums.TrackType.CdMode2Form1:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1662,7 +1662,7 @@ namespace Aaru.DiscImages
                     }
 
                     break;
-                case TrackType.CdMode2Form2:
+                case CommonTypes.Enums.TrackType.CdMode2Form2:
                     switch(tag)
                     {
                         case SectorTagType.CdSectorSync:
@@ -1728,7 +1728,7 @@ namespace Aaru.DiscImages
                     }
 
                     break;
-                case TrackType.Audio:
+                case CommonTypes.Enums.TrackType.Audio:
                 {
                     switch(tag)
                     {
@@ -1823,7 +1823,7 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
-            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetmap where sectorAddress     >= kvp.Value
+            foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress     >= kvp.Value
                                                      from track in Tracks where track.TrackSequence == kvp.Key
                                                      where sectorAddress                                   - kvp.Value <
                                                            (track.TrackEndSector - track.TrackStartSector) + 1
@@ -1872,11 +1872,11 @@ namespace Aaru.DiscImages
 
             switch(aaruTrack.TrackType)
             {
-                case TrackType.CdMode1:
-                case TrackType.CdMode2Formless:
-                case TrackType.CdMode2Form1:
-                case TrackType.CdMode2Form2:
-                case TrackType.Audio:
+                case CommonTypes.Enums.TrackType.CdMode1:
+                case CommonTypes.Enums.TrackType.CdMode2Formless:
+                case CommonTypes.Enums.TrackType.CdMode2Form1:
+                case CommonTypes.Enums.TrackType.CdMode2Form2:
+                case CommonTypes.Enums.TrackType.Audio:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
@@ -1884,7 +1884,7 @@ namespace Aaru.DiscImages
 
                     break;
                 }
-                case TrackType.Data:
+                case CommonTypes.Enums.TrackType.Data:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2048;

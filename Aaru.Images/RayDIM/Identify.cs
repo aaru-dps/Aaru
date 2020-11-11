@@ -44,14 +44,14 @@ namespace Aaru.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < Marshal.SizeOf<RayHdr>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf<RayHdr>()];
+            byte[] buffer = new byte[Marshal.SizeOf<Header>()];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            RayHdr header = Marshal.ByteArrayToStructureLittleEndian<RayHdr>(buffer);
+            Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
             string signature = StringHandlers.CToString(header.signature);
 

@@ -126,7 +126,7 @@ namespace Aaru.DiscImages
                     byte[] sector = new byte[4];
                     Array.Copy(bcem, 128 + 0 + (i * 12), sector, 1, 3);
                     bChnk.sector = BigEndianBitConverter.ToUInt32(sector, 0);
-                    bChnk.type   = bcem[128 + 3                                 + (i * 12)];
+                    bChnk.type   = bcem[128                                 + 3 + (i * 12)];
                     bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + (i * 12));
                     bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + (i * 12));
 
@@ -258,7 +258,7 @@ namespace Aaru.DiscImages
             _chunkCache            = new Dictionary<ulong, byte[]>();
             _currentChunkCacheSize = 0;
             _imageStream           = imageFilter.GetDataForkStream();
-            _buffersize            = _header.maxSectorsPerChunk * SECTOR_SIZE;
+            _bufferSize            = _header.maxSectorsPerChunk * SECTOR_SIZE;
 
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
@@ -354,8 +354,8 @@ namespace Aaru.DiscImages
                         case CHUNK_TYPE_ADC:
                         {
                             Stream decStream = new ADCStream(cmpMs);
-                            byte[] tmpBuffer = new byte[_buffersize];
-                            realSize = decStream.Read(tmpBuffer, 0, (int)_buffersize);
+                            byte[] tmpBuffer = new byte[_bufferSize];
+                            realSize = decStream.Read(tmpBuffer, 0, (int)_bufferSize);
                             buffer   = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
 
@@ -364,11 +364,11 @@ namespace Aaru.DiscImages
 
                         case CHUNK_TYPE_RLE:
                         {
-                            byte[] tmpBuffer = new byte[_buffersize];
+                            byte[] tmpBuffer = new byte[_bufferSize];
                             realSize = 0;
                             var rle = new AppleRle(cmpMs);
 
-                            for(int i = 0; i < _buffersize; i++)
+                            for(int i = 0; i < _bufferSize; i++)
                             {
                                 int b = rle.ProduceByte();
 

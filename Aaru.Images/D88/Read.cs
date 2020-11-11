@@ -54,40 +54,40 @@ namespace Aaru.DiscImages
             // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             var shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<D88Header>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<D88Header>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
-            D88Header d88Hdr = Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
+            Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
-                                       StringHandlers.CToString(d88Hdr.name, shiftjis));
+                                       StringHandlers.CToString(hdr.name, shiftjis));
 
             AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
-                                       d88Hdr.reserved.SequenceEqual(_reservedEmpty));
+                                       hdr.reserved.SequenceEqual(_reservedEmpty));
 
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
 
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
-                                       (byte)d88Hdr.disk_type);
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", hdr.disk_type,
+                                       (byte)hdr.disk_type);
 
-            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", hdr.disk_size);
 
-            if(d88Hdr.disk_size != stream.Length)
+            if(hdr.disk_size != stream.Length)
                 return false;
 
-            if(d88Hdr.disk_type != DiskType.D2  &&
-               d88Hdr.disk_type != DiskType.Dd2 &&
-               d88Hdr.disk_type != DiskType.Hd2)
+            if(hdr.disk_type != DiskType.D2  &&
+               hdr.disk_type != DiskType.Dd2 &&
+               hdr.disk_type != DiskType.Hd2)
                 return false;
 
-            if(!d88Hdr.reserved.SequenceEqual(_reservedEmpty))
+            if(!hdr.reserved.SequenceEqual(_reservedEmpty))
                 return false;
 
             int trkCounter = 0;
 
-            foreach(int t in d88Hdr.track_table)
+            foreach(int t in hdr.track_table)
             {
                 if(t > 0)
                     trkCounter++;
@@ -103,7 +103,7 @@ namespace Aaru.DiscImages
                 return false;
 
             hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
-            stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
+            stream.Seek(hdr.track_table[0], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
 
             SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
@@ -125,7 +125,7 @@ namespace Aaru.DiscImages
 
             for(int i = 0; i < trkCounter; i++)
             {
-                stream.Seek(d88Hdr.track_table[i], SeekOrigin.Begin);
+                stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
                 stream.Read(hdrB, 0, hdrB.Length);
                 SortedDictionary<byte, byte[]> sectors = new SortedDictionary<byte, byte[]>();
 
@@ -202,7 +202,7 @@ namespace Aaru.DiscImages
                         bps        == IBMSectorSizeCode.Kilo)
                     _imageInfo.MediaType = MediaType.NEC_525_HD;
                 else if(bps == IBMSectorSizeCode.HalfKilo)
-                    switch(d88Hdr.track_table.Length)
+                    switch(hdr.track_table.Length)
                     {
                         case 40:
                         {
@@ -269,12 +269,12 @@ namespace Aaru.DiscImages
 
             AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", _imageInfo.MediaType);
 
-            _imageInfo.ImageSize            = (ulong)d88Hdr.disk_size;
+            _imageInfo.ImageSize            = (ulong)hdr.disk_size;
             _imageInfo.CreationTime         = imageFilter.GetCreationTime();
             _imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             _imageInfo.Sectors              = (ulong)_sectorsData.Count;
-            _imageInfo.Comments             = StringHandlers.CToString(d88Hdr.name, shiftjis);
+            _imageInfo.Comments             = StringHandlers.CToString(hdr.name, shiftjis);
             _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
             _imageInfo.SectorSize           = (uint)(128 << (int)bps);
 

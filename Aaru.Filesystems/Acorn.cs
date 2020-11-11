@@ -621,7 +621,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Boot block, used in hard disks and ADFS-F and higher.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
+        readonly struct BootBlock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
             public readonly byte[] spare;
@@ -633,7 +633,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Disc record, used in hard disks and ADFS-E and higher.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DiscRecord
+        readonly struct DiscRecord
         {
             public readonly byte   log2secsize;
             public readonly byte   spt;
@@ -663,7 +663,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Free block map, sector 0, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldMapSector0
+        readonly struct OldMapSector0
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
             public readonly byte[] freeStart;
@@ -677,7 +677,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Free block map, sector 1, used in ADFS-S, ADFS-L, ADFS-M and ADFS-D</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldMapSector1
+        readonly struct OldMapSector1
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
             public readonly byte[] freeStart;
@@ -691,7 +691,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Free block map, sector 0, used in ADFS-E</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewMap
+        readonly struct NewMap
         {
             public readonly byte       zoneChecksum;
             public readonly ushort     freeLink;
@@ -701,7 +701,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory header, common to "old" and "new" directories</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryHeader
+        readonly struct DirectoryHeader
         {
             public readonly byte masterSequence;
             public readonly uint magic;
@@ -709,7 +709,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory header, common to "old" and "new" directories</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DirectoryEntry
+        readonly struct DirectoryEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public readonly byte[] name;
@@ -723,7 +723,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory tail, new format</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewDirectoryTail
+        readonly struct NewDirectoryTail
         {
             public readonly byte   lastMark;
             public readonly ushort reserved;
@@ -740,7 +740,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory tail, old format</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldDirectoryTail
+        readonly struct OldDirectoryTail
         {
             public readonly byte lastMark;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
@@ -758,7 +758,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory, old format</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct OldDirectory
+        readonly struct OldDirectory
         {
             public readonly DirectoryHeader header;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)]
@@ -768,7 +768,7 @@ namespace Aaru.Filesystems
 
         /// <summary>Directory, new format</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NewDirectory
+        readonly struct NewDirectory
         {
             public readonly DirectoryHeader header;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)]

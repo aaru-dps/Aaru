@@ -39,7 +39,7 @@ namespace Aaru.Filesystems
     {
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CdromXa
+        readonly struct CdromXa
         {
             public readonly ushort       group;
             public readonly ushort       user;

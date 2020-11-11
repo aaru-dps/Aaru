@@ -34,7 +34,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class DiskCopy42
     {
-        static uint DC42CheckSum(byte[] buffer)
+        static uint CheckSum(byte[] buffer)
         {
             uint dc42Chk = 0;
 

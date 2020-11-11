@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>QCOW header, big-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct QCow2Header
+        struct Header
         {
             /// <summary>
             ///     <see cref="Qcow2.QCOW_MAGIC" />

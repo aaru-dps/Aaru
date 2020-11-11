@@ -212,7 +212,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Extent
+        readonly struct Extent
         {
             /// <summary>Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2" /></summary>
             public readonly uint len_addr;
@@ -220,14 +220,14 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TimeStruct
+        readonly struct TimeStruct
         {
             public readonly uint tv_sec;
             public readonly uint tv_nsec;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SuperBlock
+        readonly struct SuperBlock
         {
             public readonly uint       s_magic;
             public readonly uint       s_version;

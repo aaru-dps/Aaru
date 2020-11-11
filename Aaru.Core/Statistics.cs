@@ -720,21 +720,19 @@ namespace Aaru.Core
                         {
                             dto.OperatingSystems = new List<OsStats>();
 
-                            foreach(string osName in ctx.
-                                                     OperatingSystems.Where(c => !c.Synchronized).Select(c => c.Name).
-                                                     Distinct())
+                            foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized).
+                                                         Select(c => c.Name).Distinct())
                             {
-                                foreach(string osVersion in ctx.
-                                                            OperatingSystems.
-                                                            Where(c => !c.Synchronized && c.Name == osName).
-                                                            Select(c => c.Version).Distinct())
+                                foreach(string osVersion in ctx.OperatingSystems.
+                                                                Where(c => !c.Synchronized && c.Name == osName).
+                                                                Select(c => c.Version).Distinct())
                                     dto.OperatingSystems.Add(new OsStats
                                     {
                                         name    = osName,
                                         version = osVersion,
-                                        Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
-                                                                                    c.Name    == osName &&
-                                                                                    c.Version == osVersion)
+                                        Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized    &&
+                                                                                   c.Name    == osName &&
+                                                                                   c.Version == osVersion)
                                     });
                             }
                         }
@@ -743,22 +741,19 @@ namespace Aaru.Core
                         {
                             dto.RemoteApplications = new List<OsStats>();
 
-                            foreach(string remoteAppName in ctx.
-                                                            RemoteApplications.Where(c => !c.Synchronized).
-                                                            Select(c => c.Name).Distinct())
+                            foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized).
+                                                                Select(c => c.Name).Distinct())
                             {
-                                foreach(string remoteAppVersion in ctx.
-                                                                   RemoteApplications.
-                                                                   Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName).
-                                                                   Select(c => c.Version).Distinct())
+                                foreach(string remoteAppVersion in ctx.RemoteApplications.
+                                                                       Where(c => !c.Synchronized &&
+                                                                                 c.Name == remoteAppName).
+                                                                       Select(c => c.Version).Distinct())
                                     dto.RemoteApplications.Add(new OsStats
                                     {
-                                        name    = remoteAppName,
+                                        name = remoteAppName,
                                         version = remoteAppVersion,
-                                        Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
-                                                                                      c.Name    == remoteAppName &&
-                                                                                      c.Version == remoteAppVersion)
+                                        Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized &&
+                                            c.Name == remoteAppName && c.Version == remoteAppVersion)
                                     });
                             }
                         }
@@ -780,21 +775,19 @@ namespace Aaru.Core
                         {
                             dto.RemoteOperatingSystems = new List<OsStats>();
 
-                            foreach(string remoteOsName in ctx.
-                                                           RemoteOperatingSystems.Where(c => !c.Synchronized).
-                                                           Select(c => c.Name).Distinct())
+                            foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized).
+                                                               Select(c => c.Name).Distinct())
                             {
-                                foreach(string remoteOsVersion in ctx.
-                                                                  RemoteOperatingSystems.
-                                                                  Where(c => !c.Synchronized && c.Name == remoteOsName).
-                                                                  Select(c => c.Version).Distinct())
+                                foreach(string remoteOsVersion in ctx.RemoteOperatingSystems.
+                                                                      Where(c => !c.Synchronized &&
+                                                                                c.Name == remoteOsName).
+                                                                      Select(c => c.Version).Distinct())
                                     dto.RemoteOperatingSystems.Add(new OsStats
                                     {
-                                        name    = remoteOsName,
+                                        name = remoteOsName,
                                         version = remoteOsVersion,
-                                        Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
-                                                                                          c.Name    == remoteOsName &&
-                                                                                          c.Version == remoteOsVersion)
+                                        Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized &&
+                                            c.Name == remoteOsName && c.Version == remoteOsVersion)
                                     });
                             }
                         }
@@ -872,7 +865,7 @@ namespace Aaru.Core
                                 ctx.Filesystems.Update(existing);
 
                                 ctx.Filesystems.RemoveRange(ctx.Filesystems.Where(c => !c.Synchronized &&
-                                                                                       c.Name == nvs));
+                                                                c.Name == nvs));
                             }
 
                         if(ctx.Filters.Any(c => !c.Synchronized))
@@ -909,7 +902,7 @@ namespace Aaru.Core
                                 ctx.MediaFormats.Update(existing);
 
                                 ctx.MediaFormats.RemoveRange(ctx.MediaFormats.Where(c => !c.Synchronized &&
-                                                                                         c.Name == nvs));
+                                                                 c.Name == nvs));
                             }
 
                         if(ctx.Partitions.Any(c => !c.Synchronized))
@@ -967,7 +960,7 @@ namespace Aaru.Core
                                     ctx.Medias.Update(existing);
 
                                     ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized && c.Type == media &&
-                                                                                 c.Real));
+                                                                                c.Real));
                                 }
 
                                 if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
@@ -989,7 +982,7 @@ namespace Aaru.Core
                                     ctx.Medias.Update(existing);
 
                                     ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized && c.Type == media &&
-                                                                                 !c.Real));
+                                                                                !c.Real));
                                 }
                             }
 
@@ -1001,18 +994,16 @@ namespace Aaru.Core
                             }
 
                         if(ctx.OperatingSystems.Any(c => !c.Synchronized))
-                            foreach(string osName in ctx.
-                                                     OperatingSystems.Where(c => !c.Synchronized).Select(c => c.Name).
-                                                     Distinct())
+                            foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized).
+                                                         Select(c => c.Name).Distinct())
                             {
-                                foreach(string osVersion in ctx.
-                                                            OperatingSystems.
-                                                            Where(c => !c.Synchronized && c.Name == osName).
-                                                            Select(c => c.Version).Distinct())
+                                foreach(string osVersion in ctx.OperatingSystems.
+                                                                Where(c => !c.Synchronized && c.Name == osName).
+                                                                Select(c => c.Version).Distinct())
                                 {
                                     OperatingSystem existing =
                                         ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized && c.Name == osName &&
-                                                                                 c.Version == osVersion) ??
+                                                                                c.Version == osVersion) ??
                                         new OperatingSystem
                                         {
                                             Synchronized = true,
@@ -1021,34 +1012,31 @@ namespace Aaru.Core
                                         };
 
                                     existing.Count +=
-                                        (ulong)ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
-                                                                                   c.Name    == osName &&
-                                                                                   c.Version == osVersion);
+                                        (ulong)ctx.OperatingSystems.LongCount(c => !c.Synchronized    &&
+                                                                                  c.Name    == osName &&
+                                                                                  c.Version == osVersion);
 
                                     ctx.OperatingSystems.Update(existing);
 
-                                    ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c => !c.Synchronized  &&
-                                                                                                     c.Name == osName &&
-                                                                                                     c.Version ==
-                                                                                                     osVersion));
+                                    ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c => !c.Synchronized &&
+                                                                         c.Name    == osName                         &&
+                                                                         c.Version == osVersion));
                                 }
                             }
 
                         if(ctx.RemoteApplications.Any(c => !c.Synchronized))
-                            foreach(string remoteAppName in ctx.
-                                                            RemoteApplications.Where(c => !c.Synchronized).
-                                                            Select(c => c.Name).Distinct())
+                            foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized).
+                                                                Select(c => c.Name).Distinct())
                             {
-                                foreach(string remoteAppVersion in ctx.
-                                                                   RemoteApplications.
-                                                                   Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName).
-                                                                   Select(c => c.Version).Distinct())
+                                foreach(string remoteAppVersion in ctx.RemoteApplications.
+                                                                       Where(c => !c.Synchronized &&
+                                                                                 c.Name == remoteAppName).
+                                                                       Select(c => c.Version).Distinct())
                                 {
                                     RemoteApplication existing =
-                                        ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
-                                                                                   c.Name    == remoteAppName &&
-                                                                                   c.Version == remoteAppVersion) ??
+                                        ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized            &&
+                                                                                  c.Name    == remoteAppName &&
+                                                                                  c.Version == remoteAppVersion) ??
                                         new RemoteApplication
                                         {
                                             Synchronized = true,
@@ -1057,19 +1045,16 @@ namespace Aaru.Core
                                         };
 
                                     existing.Count +=
-                                        (ulong)ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
-                                                                                     c.Name    == remoteAppName &&
-                                                                                     c.Version == remoteAppVersion);
+                                        (ulong)ctx.RemoteApplications.LongCount(c => !c.Synchronized           &&
+                                                                                    c.Name    == remoteAppName &&
+                                                                                    c.Version == remoteAppVersion);
 
                                     ctx.RemoteApplications.Update(existing);
 
                                     ctx.RemoteApplications.RemoveRange(ctx.RemoteApplications.Where(c =>
-                                                                                                        !c.
-                                                                                                            Synchronized &&
-                                                                                                        c.Name ==
-                                                                                                        remoteAppName &&
-                                                                                                        c.Version ==
-                                                                                                        remoteAppVersion));
+                                                                           !c.Synchronized            &&
+                                                                           c.Name    == remoteAppName &&
+                                                                           c.Version == remoteAppVersion));
                                 }
                             }
 
@@ -1094,19 +1079,17 @@ namespace Aaru.Core
                                                                         Where(c => !c.Synchronized && c.Name == nvs));
                             }
 
-                        foreach(string remoteOsName in ctx.
-                                                       RemoteOperatingSystems.Where(c => !c.Synchronized).
-                                                       Select(c => c.Name).Distinct())
+                        foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized).
+                                                           Select(c => c.Name).Distinct())
                         {
-                            foreach(string remoteOsVersion in ctx.
-                                                              RemoteOperatingSystems.
-                                                              Where(c => !c.Synchronized && c.Name == remoteOsName).
-                                                              Select(c => c.Version).Distinct())
+                            foreach(string remoteOsVersion in ctx.RemoteOperatingSystems.
+                                                                  Where(c => !c.Synchronized && c.Name == remoteOsName).
+                                                                  Select(c => c.Version).Distinct())
                             {
                                 RemoteOperatingSystem existing =
-                                    ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
-                                                                                   c.Name    == remoteOsName &&
-                                                                                   c.Version == remoteOsVersion) ??
+                                    ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized           &&
+                                                                                  c.Name    == remoteOsName &&
+                                                                                  c.Version == remoteOsVersion) ??
                                     new RemoteOperatingSystem
                                     {
                                         Synchronized = true,
@@ -1115,19 +1098,16 @@ namespace Aaru.Core
                                     };
 
                                 existing.Count +=
-                                    (ulong)ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
-                                                                                     c.Name    == remoteOsName &&
-                                                                                     c.Version == remoteOsVersion);
+                                    (ulong)ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized          &&
+                                                                                    c.Name    == remoteOsName &&
+                                                                                    c.Version == remoteOsVersion);
 
                                 ctx.RemoteOperatingSystems.Update(existing);
 
                                 ctx.RemoteOperatingSystems.RemoveRange(ctx.RemoteOperatingSystems.Where(c =>
-                                                                                                            !c.
-                                                                                                                Synchronized &&
-                                                                                                            c.Name ==
-                                                                                                            remoteOsName &&
-                                                                                                            c.Version ==
-                                                                                                            remoteOsVersion));
+                                                                           !c.Synchronized           &&
+                                                                           c.Name    == remoteOsName &&
+                                                                           c.Version == remoteOsVersion));
                             }
                         }
 

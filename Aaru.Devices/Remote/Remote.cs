@@ -1392,18 +1392,17 @@ namespace Aaru.Devices.Remote
 
         static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
         {
-            int gotten;
             int offset = 0;
 
             while(size > 0)
             {
-                gotten = socket.Receive(buffer, offset, size, socketFlags);
+                int got = socket.Receive(buffer, offset, size, socketFlags);
 
-                if(gotten <= 0)
+                if(got <= 0)
                     break;
 
-                offset += gotten;
-                size   -= gotten;
+                offset += got;
+                size   -= got;
             }
 
             return offset;

@@ -46,17 +46,17 @@ namespace Aaru.Partitions
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     public sealed class BSD : IPartition
     {
-        const uint DISKMAGIC = 0x82564557;
-        const uint DISKCIGAM = 0x57455682;
+        const uint DISK_MAGIC = 0x82564557;
+        const uint DISK_CIGAM = 0x57455682;
         /// <summary>Maximum size of a disklabel with 22 partitions</summary>
         const uint MAX_LABEL_SIZE = 500;
         /// <summary>Known sector locations for BSD disklabel</summary>
-        readonly ulong[] labelLocations =
+        readonly ulong[] _labelLocations =
         {
             0, 1, 2, 9
         };
         /// <summary>Known byte offsets for BSD disklabel</summary>
-        readonly uint[] labelOffsets =
+        readonly uint[] _labelOffsets =
         {
             0, 9, 64, 128, 516
         };
@@ -68,22 +68,22 @@ namespace Aaru.Partitions
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
             partitions = new List<Partition>();
-            uint run = (MAX_LABEL_SIZE + labelOffsets.Last()) / imagePlugin.Info.SectorSize;
+            uint run = (MAX_LABEL_SIZE + _labelOffsets.Last()) / imagePlugin.Info.SectorSize;
 
-            if((MAX_LABEL_SIZE + labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0)
+            if((MAX_LABEL_SIZE + _labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0)
                 run++;
 
             var  dl    = new DiskLabel();
             bool found = false;
 
-            foreach(ulong location in labelLocations)
+            foreach(ulong location in _labelLocations)
             {
                 if(location + run + sectorOffset >= imagePlugin.Info.Sectors)
                     return false;
 
                 byte[] tmp = imagePlugin.ReadSectors(location + sectorOffset, run);
 
-                foreach(uint offset in labelOffsets)
+                foreach(uint offset in _labelOffsets)
                 {
                     byte[] sector = new byte[MAX_LABEL_SIZE];
 
@@ -95,10 +95,10 @@ namespace Aaru.Partitions
 
                     AaruConsole.DebugWriteLine("BSD plugin",
                                                "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
-                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
+                                               location + sectorOffset, offset, dl.d_magic, DISK_MAGIC);
 
-                    if((dl.d_magic != DISKMAGIC || dl.d_magic2 != DISKMAGIC) &&
-                       (dl.d_magic != DISKCIGAM || dl.d_magic2 != DISKCIGAM))
+                    if((dl.d_magic != DISK_MAGIC || dl.d_magic2 != DISK_MAGIC) &&
+                       (dl.d_magic != DISK_CIGAM || dl.d_magic2 != DISK_CIGAM))
                         continue;
 
                     found = true;
@@ -113,8 +113,8 @@ namespace Aaru.Partitions
             if(!found)
                 return false;
 
-            if(dl.d_magic  == DISKCIGAM &&
-               dl.d_magic2 == DISKCIGAM)
+            if(dl.d_magic  == DISK_CIGAM &&
+               dl.d_magic2 == DISK_CIGAM)
                 dl = SwapDiskLabel(dl);
 
             AaruConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}", dl.d_type);
@@ -403,7 +403,7 @@ namespace Aaru.Partitions
         struct DiskLabel
         {
             /// <summary>
-            ///     <see cref="DISKMAGIC" />
+            ///     <see cref="BSD.DISK_MAGIC" />
             /// </summary>
             public readonly uint d_magic;
             /// <summary>
@@ -458,7 +458,7 @@ namespace Aaru.Partitions
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public readonly uint[] d_spare;
-            /// <summary><see cref="DISKMAGIC" /> again</summary>
+            /// <summary><see cref="BSD.DISK_MAGIC" /> again</summary>
             public readonly uint d_magic2;
             /// <summary>XOR of data</summary>
             public readonly ushort d_checksum;

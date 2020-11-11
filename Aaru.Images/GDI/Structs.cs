@@ -45,9 +45,9 @@ namespace Aaru.DiscImages
             /// <summary>Track #</summary>
             public uint Sequence;
             /// <summary>Track filter</summary>
-            public IFilter Trackfilter;
+            public IFilter TrackFilter;
             /// <summary>Track file</summary>
-            public string Trackfile;
+            public string TrackFile;
             /// <summary>Track byte offset in file</summary>
             public long Offset;
             /// <summary>Track flags</summary>
@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
             /// <summary>Sectors in track</summary>
             public ulong Sectors;
             /// <summary>Track type</summary>
-            public TrackType Tracktype;
+            public TrackType TrackType;
             /// <summary>Track session</summary>
             public bool HighDensity;
             /// <summary>Pregap sectors not stored in track file</summary>

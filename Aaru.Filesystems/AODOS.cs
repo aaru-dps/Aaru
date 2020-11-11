@@ -111,7 +111,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BootBlock
+        readonly struct BootBlock
         {
             /// <summary>A NOP opcode</summary>
             public readonly byte nop;

@@ -40,24 +40,24 @@ namespace Aaru.DiscImages
 {
     public sealed partial class Alcohol120 : IWritableOpticalImage
     {
-        AlcoholFooter                                  _alcFooter;
-        IFilter                                        _alcImage;
-        Dictionary<int, AlcoholSession>                _alcSessions;
-        Dictionary<int, Dictionary<int, AlcoholTrack>> _alcToc;
-        Dictionary<int, AlcoholTrackExtra>             _alcTrackExtras;
-        Dictionary<int, AlcoholTrack>                  _alcTracks;
-        byte[]                                         _bca;
-        FileStream                                     _descriptorStream;
-        byte[]                                         _dmi;
-        byte[]                                         _fullToc;
-        AlcoholHeader                                  _header;
-        ImageInfo                                      _imageInfo;
-        Stream                                         _imageStream;
-        bool                                           _isDvd;
-        Dictionary<uint, ulong>                        _offsetmap;
-        byte[]                                         _pfi;
-        Dictionary<byte, byte>                         _trackFlags;
-        List<Track>                                    _writingTracks;
+        Footer                                  _alcFooter;
+        IFilter                                 _alcImage;
+        Dictionary<int, Session>                _alcSessions;
+        Dictionary<int, Dictionary<int, Track>> _alcToc;
+        Dictionary<int, TrackExtra>             _alcTrackExtras;
+        Dictionary<int, Track>                  _alcTracks;
+        byte[]                                  _bca;
+        FileStream                              _descriptorStream;
+        byte[]                                  _dmi;
+        byte[]                                  _fullToc;
+        Header                                  _header;
+        ImageInfo                               _imageInfo;
+        Stream                                  _imageStream;
+        bool                                    _isDvd;
+        Dictionary<uint, ulong>                 _offsetMap;
+        byte[]                                  _pfi;
+        Dictionary<byte, byte>                  _trackFlags;
+        List<CommonTypes.Structs.Track>         _writingTracks;
 
         public Alcohol120() => _imageInfo = new ImageInfo
         {

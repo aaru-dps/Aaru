@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class Udif
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct UdifFooter
+        struct Footer
         {
             public          uint  signature;
             public          uint  version;

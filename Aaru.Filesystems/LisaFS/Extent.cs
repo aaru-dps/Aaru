@@ -189,7 +189,7 @@ namespace Aaru.Filesystems.LisaFS
             for(int j = 0; j < extentsCount; j++)
                 file.extents[j] = new Extent
                 {
-                    start  = BigEndianBitConverter.ToInt32(sector, extentsOffset           + (j * 6)),
+                    start  = BigEndianBitConverter.ToInt32(sector, extentsOffset + (j * 6)),
                     length = BigEndianBitConverter.ToInt16(sector, extentsOffset + (j * 6) + 4)
                 };
 

@@ -183,7 +183,7 @@ namespace Aaru.Compression
                             return count; // fatal error
 
                         _tdctl.Bufpos = (ushort)((_tdctl.R - pos - 1) & (N - 1));
-                        _tdctl.Bufcnt = (ushort)((c              - 255) + THRESHOLD);
+                        _tdctl.Bufcnt = (ushort)((c        - 255) + THRESHOLD);
                         _tdctl.Bufndx = 0;
                     }
                 }

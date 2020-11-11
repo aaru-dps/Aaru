@@ -338,7 +338,7 @@ namespace Aaru.DiscImages
                 }
             }.ToXmlPropertyList());
 
-            _footer = new UdifFooter
+            _footer = new Footer
             {
                 signature       = UDIF_SIGNATURE,
                 version         = 4,

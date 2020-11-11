@@ -44,17 +44,17 @@ namespace Aaru.Filters
     /// <summary>Decodes MacBinary files</summary>
     public sealed class MacBinary : IFilter
     {
-        const uint      MAGIC = 0x6D42494E;
-        string          _basePath;
-        byte[]          _bytes;
-        DateTime        _creationTime;
-        long            _dataForkOff;
-        string          _filename;
-        MacBinaryHeader _header;
-        bool            _isBytes, _isStream, _isPath, _opened;
-        DateTime        _lastWriteTime;
-        long            _rsrcForkOff;
-        Stream          _stream;
+        const uint MAGIC = 0x6D42494E;
+        string     _basePath;
+        byte[]     _bytes;
+        DateTime   _creationTime;
+        long       _dataForkOff;
+        string     _filename;
+        Header     _header;
+        bool       _isBytes, _isStream, _isPath, _opened;
+        DateTime   _lastWriteTime;
+        long       _rsrcForkOff;
+        Stream     _stream;
 
         public string Name   => "MacBinary";
         public Guid   Id     => new Guid("D7C321D3-E51F-45DF-A150-F6BFDF0D7704");
@@ -134,7 +134,7 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[128];
             Array.Copy(buffer, 0, hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             return _header.magic == MAGIC || (_header.version     == 0 && _header.filename[0] > 0 &&
                                               _header.filename[0] < 64 && _header.zero1 == 0 && _header.zero2 == 0 &&
@@ -151,7 +151,7 @@ namespace Aaru.Filters
             byte[] hdrB = new byte[128];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             return _header.magic == MAGIC || (_header.version     == 0 && _header.filename[0] > 0 &&
                                               _header.filename[0] < 64 && _header.zero1 == 0 && _header.zero2 == 0 &&
@@ -171,7 +171,7 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[128];
             fstream.Read(hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             fstream.Close();
 
@@ -190,7 +190,7 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[128];
             ms.Read(hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             uint blocks = 1;
             blocks += (uint)(_header.secondaryHeaderLength / 128);
@@ -222,7 +222,7 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[128];
             stream.Read(hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             uint blocks = 1;
             blocks += (uint)(_header.secondaryHeaderLength / 128);
@@ -255,7 +255,7 @@ namespace Aaru.Filters
 
             byte[] hdrB = new byte[128];
             fs.Read(hdrB, 0, 128);
-            _header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdrB);
+            _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
             uint blocks = 1;
             blocks += (uint)(_header.secondaryHeaderLength / 128);
@@ -282,7 +282,7 @@ namespace Aaru.Filters
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MacBinaryHeader
+        struct Header
         {
             /// <summary>0x00, MacBinary version, 0</summary>
             public readonly byte version;

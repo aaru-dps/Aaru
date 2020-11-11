@@ -44,8 +44,8 @@ namespace Aaru.DiscImages
     public sealed partial class Partimage : IMediaImage, IVerifiableImage
     {
         byte[]                    _bitmap;
-        PartimageMainHeader       _cMainHeader;
-        PartimageHeader           _cVolumeHeader;
+        MainHeader                _cMainHeader;
+        Header                    _cVolumeHeader;
         long                      _dataOff;
         ExtentsULong              _extents;
         Dictionary<ulong, ulong>  _extentsOff;

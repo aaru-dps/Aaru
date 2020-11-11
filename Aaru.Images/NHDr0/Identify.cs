@@ -49,13 +49,13 @@ namespace Aaru.DiscImages
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             var shiftjis = Encoding.GetEncoding("shift_jis");
 
-            if(stream.Length < Marshal.SizeOf<Nhdr0Header>())
+            if(stream.Length < Marshal.SizeOf<Header>())
                 return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf<Nhdr0Header>()];
+            byte[] hdrB = new byte[Marshal.SizeOf<Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
+            _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
             if(!_nhdhdr.szFileID.SequenceEqual(_signature))
                 return false;

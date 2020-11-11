@@ -89,14 +89,14 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _qHdr = new QCowHeader
+            _qHdr = new Header
             {
                 magic           = QCOW_MAGIC,
                 version         = QCOW_VERSION,
                 size            = sectors * sectorSize,
                 cluster_bits    = 12,
                 l2_bits         = 9,
-                l1_table_offset = (ulong)Marshal.SizeOf<QCowHeader>()
+                l1_table_offset = (ulong)Marshal.SizeOf<Header>()
             };
 
             int shift = _qHdr.cluster_bits + _qHdr.l2_bits;

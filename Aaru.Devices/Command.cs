@@ -38,6 +38,8 @@ using Aaru.Devices.Windows;
 using Microsoft.Win32.SafeHandles;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
+// ReSharper disable UnusedMember.Global
+
 namespace Aaru.Devices
 {
     internal static class Command

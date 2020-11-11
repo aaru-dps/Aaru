@@ -50,6 +50,12 @@ namespace Aaru.Core.Devices.Dumping
     partial class Dump
     {
         // TODO: Fix offset
+        /// <summary>Reads the first track pregap from a CompactDisc</summary>
+        /// <param name="blockSize">Block size in bytes</param>
+        /// <param name="currentSpeed">Current speed</param>
+        /// <param name="mediaTags">List of media tags</param>
+        /// <param name="supportedSubchannel">Subchannel the drive can read</param>
+        /// <param name="totalDuration">Total time spent sending commands to a drive</param>
         void ReadCdFirstTrackPregap(uint blockSize, ref double currentSpeed, Dictionary<MediaTagType, byte[]> mediaTags,
                                     MmcSubchannel supportedSubchannel, ref double totalDuration)
         {
@@ -125,6 +131,16 @@ namespace Aaru.Core.Devices.Dumping
             firstTrackPregapMs.Close();
         }
 
+        /// <summary>Calculate track pregaps</summary>
+        /// <param name="dev">Device</param>
+        /// <param name="dumpLog">Dumping log</param>
+        /// <param name="updateStatus">Progress update callback</param>
+        /// <param name="tracks">List of tracks</param>
+        /// <param name="supportsPqSubchannel">Set if drive supports reading PQ subchannel</param>
+        /// <param name="supportsRwSubchannel">Set if drive supports reading RW subchannel</param>
+        /// <param name="dbDev">Database entry for device</param>
+        /// <param name="inexactPositioning">Set if we found the drive does not return the exact subchannel we requested</param>
+        /// <param name="dumping">Set if dumping, otherwise media info</param>
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
                                              Database.Models.Device dbDev, out bool inexactPositioning, bool dumping)
@@ -512,9 +528,9 @@ namespace Aaru.Core.Devices.Dumping
                     previousPregapIsPreviousTrack = false;
 
                     // Pregap according to Q position
-                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
-                    int diff    = posQ                               - lba;
-                    int pregapQ = (int)track.TrackStartSector        - lba;
+                    posQ = ((subBuf[7] * 60 * 75)             + (subBuf[8] * 75) + subBuf[9]) - 150;
+                    int diff    = posQ                        - lba;
+                    int pregapQ = (int)track.TrackStartSector - lba;
 
                     if(diff != 0)
                     {
@@ -589,6 +605,13 @@ namespace Aaru.Core.Devices.Dumping
             }
         }
 
+        /// <summary>Reads a RAW subchannel sector for pregap calculation</summary>
+        /// <param name="dev">Device</param>
+        /// <param name="lba">LBA</param>
+        /// <param name="dbDev">Database entry for device</param>
+        /// <param name="subBuf">Read subchannel</param>
+        /// <param name="audioTrack">Set if it is an audio track</param>
+        /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
         static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf,
                                           bool audioTrack)
         {
@@ -655,6 +678,12 @@ namespace Aaru.Core.Devices.Dumping
             return sense;
         }
 
+        /// <summary>Reads a Q16 subchannel sector for pregap calculation</summary>
+        /// <param name="dev">Device</param>
+        /// <param name="lba">LBA</param>
+        /// <param name="subBuf">Read subchannel</param>
+        /// <param name="audioTrack">Set if it is an audio track</param>
+        /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
         static bool GetSectorForPregapQ16(Device dev, uint lba, out byte[] subBuf, bool audioTrack)
         {
             byte[] cmdBuf;
@@ -707,6 +736,9 @@ namespace Aaru.Core.Devices.Dumping
             return sense;
         }
 
+        /// <summary>De-interleaves Q subchannel</summary>
+        /// <param name="subchannel">Interleaved subchannel</param>
+        /// <returns>De-interleaved Q subchannel</returns>
         static byte[] DeinterleaveQ(byte[] subchannel)
         {
             int[] q = new int[subchannel.Length / 8];
@@ -734,6 +766,8 @@ namespace Aaru.Core.Devices.Dumping
             return deQ;
         }
 
+        /// <summary>In place converts Q subchannel from binary to BCD numbering</summary>
+        /// <param name="q">Q subchannel</param>
         static void BinaryToBcdQ(byte[] q)
         {
             q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
@@ -747,6 +781,8 @@ namespace Aaru.Core.Devices.Dumping
             q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
         }
 
+        /// <summary>In place converts Q subchannel from BCD to binary numbering</summary>
+        /// <param name="q">Q subchannel</param>
         static void BcdToBinaryQ(byte[] q)
         {
             q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));

@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ScpFooter
+        readonly struct Footer
         {
             public readonly uint manufacturerOffset;
             public readonly uint modelOffset;

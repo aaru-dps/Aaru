@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
-            A2ImgHeader hdr = Marshal.SpanToStructureLittleEndian<A2ImgHeader>(header);
+            Header hdr = Marshal.SpanToStructureLittleEndian<Header>(header);
 
             if(hdr.Magic != MAGIC)
                 return false;

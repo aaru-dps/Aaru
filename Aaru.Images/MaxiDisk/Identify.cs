@@ -50,7 +50,7 @@ namespace Aaru.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            HdkHeader tmpHeader = Marshal.ByteArrayToStructureLittleEndian<HdkHeader>(buffer);
+            Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmpHeader.unknown);
             AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmpHeader.diskType);

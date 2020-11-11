@@ -54,7 +54,7 @@ namespace Aaru.DiscImages
         Dictionary<ulong, ulong[]> _l2TableCache;
         int                        _maxClusterCache;
         int                        _maxL2TableCache;
-        QCowHeader                 _qHdr;
+        Header                     _qHdr;
         Dictionary<ulong, byte[]>  _sectorCache;
         ulong                      _sectorMask;
         FileStream                 _writingStream;

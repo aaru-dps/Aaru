@@ -77,7 +77,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _basepath  = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
+            _basePath  = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
             _mediaTags = new Dictionary<MediaTagType, byte[]>();
 
             IsWriting    = true;
@@ -230,7 +230,7 @@ namespace Aaru.DiscImages
                 if(suffix == null)
                     continue;
 
-                var tagStream = new FileStream(_basepath + suffix, FileMode.Create, FileAccess.ReadWrite,
+                var tagStream = new FileStream(_basePath + suffix, FileMode.Create, FileAccess.ReadWrite,
                                                FileShare.None);
 
                 tagStream.Write(tag.Value, 0, tag.Value.Length);

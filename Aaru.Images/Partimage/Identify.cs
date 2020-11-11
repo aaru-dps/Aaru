@@ -47,9 +47,9 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf<PartimageHeader>()];
-            stream.Read(pHdrB, 0, Marshal.SizeOf<PartimageHeader>());
-            _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(pHdrB);
+            byte[] pHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+            _cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
             return _partimageMagic.SequenceEqual(_cVolumeHeader.magic);
         }

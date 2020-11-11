@@ -42,7 +42,7 @@ namespace Aaru.DiscImages
 
         /// <summary>The global header of a WCDiskImage file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct WcDiskImageFileHeader
+        readonly struct FileHeader
         {
             /// <summary>The signature should be "WC DISK IMAGE\0x1a\0x1a\0x00"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -87,7 +87,7 @@ namespace Aaru.DiscImages
 
         /// <summary>The Sector header that precedes each sector</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct WcDiskImageSectorHeader
+        readonly struct SectorHeader
         {
             /// <summary>The sector flag (i.e. type)</summary>
             public readonly SectorFlag flag;

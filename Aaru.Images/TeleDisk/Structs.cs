@@ -34,7 +34,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class TeleDisk
     {
-        struct TeleDiskHeader
+        struct Header
         {
             /// <summary>"TD" or "td" depending on compression</summary>
             public ushort Signature;
@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
             public ushort Crc;
         }
 
-        struct TeleDiskCommentBlockHeader
+        struct CommentBlockHeader
         {
             /// <summary>CRC of comment block after crc field</summary>
             public ushort Crc;
@@ -72,7 +72,7 @@ namespace Aaru.DiscImages
             public byte Second;
         }
 
-        struct TeleDiskTrackHeader
+        struct TrackHeader
         {
             /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
             public byte Sectors;
@@ -84,7 +84,7 @@ namespace Aaru.DiscImages
             public byte Crc;
         }
 
-        struct TeleDiskSectorHeader
+        struct SectorHeader
         {
             /// <summary>Cylinder as stored on sector address mark</summary>
             public byte Cylinder;
@@ -100,7 +100,7 @@ namespace Aaru.DiscImages
             public byte Crc;
         }
 
-        struct TeleDiskDataHeader
+        struct DataHeader
         {
             /// <summary>Size of all data (encoded) + next field (1)</summary>
             public ushort DataSize;

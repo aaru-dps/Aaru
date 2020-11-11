@@ -41,7 +41,7 @@ using System.Text;
 namespace Aaru.Devices.Windows
 {
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
-    /// <summary>Implements functions for getting and accesing information from the USB bus</summary>
+    /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
     [SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
     internal static partial class Usb
     {
@@ -680,9 +680,7 @@ namespace Aaru.Devices.Windows
                                    nBytes, out nBytesReturned, IntPtr.Zero))
                 {
                     driverKey = (UsbNodeConnectionDriverkeyName)Marshal.PtrToStructure(ptrDriverKey,
-                                                                                       typeof(
-                                                                                           UsbNodeConnectionDriverkeyName
-                                                                                       ));
+                        typeof(UsbNodeConnectionDriverkeyName));
 
                     device.DeviceDriverKey = driverKey.DriverKeyName;
 

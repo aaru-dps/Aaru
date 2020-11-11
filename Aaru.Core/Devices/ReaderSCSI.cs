@@ -216,150 +216,169 @@ namespace Aaru.Core.Devices
                     }
 
                     if(CanReadRaw && LongBlockSize == LogicalBlockSize)
-                        if(LogicalBlockSize == 512)
-                            foreach(ushort testSize in new ushort[]
-                            {
-                                // Long sector sizes for floppies
-                                514,
-
-                                // Long sector sizes for SuperDisk
-                                536, 558,
-
-                                // Long sector sizes for 512-byte magneto-opticals
-                                600, 610, 630
-                            })
-                            {
-                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
-
-                                if(!testSense &&
-                                   !_dev.Error)
-                                {
-                                    _readLong16   = true;
-                                    LongBlockSize = testSize;
-                                    CanReadRaw    = true;
-
-                                    break;
-                                }
-
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
-                                                            out _);
-
-                                if(testSense || _dev.Error)
-                                    continue;
-
-                                _readLong10   = true;
-                                LongBlockSize = testSize;
-                                CanReadRaw    = true;
-
-                                break;
-                            }
-                        else if(LogicalBlockSize == 1024)
-                            foreach(ushort testSize in new ushort[]
-                            {
-                                // Long sector sizes for floppies
-                                1026,
-
-                                // Long sector sizes for 1024-byte magneto-opticals
-                                1200
-                            })
-                            {
-                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
-
-                                if(!testSense &&
-                                   !_dev.Error)
-                                {
-                                    _readLong16   = true;
-                                    LongBlockSize = testSize;
-                                    CanReadRaw    = true;
-
-                                    break;
-                                }
-
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
-                                                            out _);
-
-                                if(testSense || _dev.Error)
-                                    continue;
-
-                                _readLong10   = true;
-                                LongBlockSize = testSize;
-                                CanReadRaw    = true;
-
-                                break;
-                            }
-                        else if(LogicalBlockSize == 2048)
+                        switch(LogicalBlockSize)
                         {
-                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 2380, _timeout, out _);
+                            case 512:
+                            {
+                                foreach(ushort testSize in new ushort[]
+                                {
+                                    // Long sector sizes for floppies
+                                    514,
 
-                            if(!testSense &&
-                               !_dev.Error)
-                            {
-                                _readLong16   = true;
-                                LongBlockSize = 2380;
-                                CanReadRaw    = true;
+                                    // Long sector sizes for SuperDisk
+                                    536, 558,
+
+                                    // Long sector sizes for 512-byte magneto-opticals
+                                    600, 610, 630
+                                })
+                                {
+                                    testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout,
+                                                                out _);
+
+                                    if(!testSense &&
+                                       !_dev.Error)
+                                    {
+                                        _readLong16   = true;
+                                        LongBlockSize = testSize;
+                                        CanReadRaw    = true;
+
+                                        break;
+                                    }
+
+                                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
+                                                                _timeout, out _);
+
+                                    if(testSense || _dev.Error)
+                                        continue;
+
+                                    _readLong10   = true;
+                                    LongBlockSize = testSize;
+                                    CanReadRaw    = true;
+
+                                    break;
+                                }
+
+                                break;
                             }
-                            else
+                            case 1024:
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, _timeout,
-                                                            out _);
+                                foreach(ushort testSize in new ushort[]
+                                {
+                                    // Long sector sizes for floppies
+                                    1026,
+
+                                    // Long sector sizes for 1024-byte magneto-opticals
+                                    1200
+                                })
+                                {
+                                    testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout,
+                                                                out _);
+
+                                    if(!testSense &&
+                                       !_dev.Error)
+                                    {
+                                        _readLong16   = true;
+                                        LongBlockSize = testSize;
+                                        CanReadRaw    = true;
+
+                                        break;
+                                    }
+
+                                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize,
+                                                                _timeout, out _);
+
+                                    if(testSense || _dev.Error)
+                                        continue;
+
+                                    _readLong10   = true;
+                                    LongBlockSize = testSize;
+                                    CanReadRaw    = true;
+
+                                    break;
+                                }
+
+                                break;
+                            }
+                            case 2048:
+                            {
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 2380, _timeout, out _);
 
                                 if(!testSense &&
                                    !_dev.Error)
                                 {
-                                    _readLong10   = true;
+                                    _readLong16   = true;
                                     LongBlockSize = 2380;
                                     CanReadRaw    = true;
                                 }
-                            }
-                        }
-                        else if(LogicalBlockSize == 4096)
-                        {
-                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 4760, _timeout, out _);
+                                else
+                                {
+                                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, _timeout,
+                                                                out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
-                            {
-                                _readLong16   = true;
-                                LongBlockSize = 4760;
-                                CanReadRaw    = true;
+                                    if(!testSense &&
+                                       !_dev.Error)
+                                    {
+                                        _readLong10   = true;
+                                        LongBlockSize = 2380;
+                                        CanReadRaw    = true;
+                                    }
+                                }
+
+                                break;
                             }
-                            else
+                            case 4096:
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, _timeout,
-                                                            out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 4760, _timeout, out _);
 
                                 if(!testSense &&
                                    !_dev.Error)
                                 {
-                                    _readLong10   = true;
+                                    _readLong16   = true;
                                     LongBlockSize = 4760;
                                     CanReadRaw    = true;
                                 }
-                            }
-                        }
-                        else if(LogicalBlockSize == 8192)
-                        {
-                            testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 9424, _timeout, out _);
+                                else
+                                {
+                                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, _timeout,
+                                                                out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
-                            {
-                                _readLong16   = true;
-                                LongBlockSize = 9424;
-                                CanReadRaw    = true;
+                                    if(!testSense &&
+                                       !_dev.Error)
+                                    {
+                                        _readLong10   = true;
+                                        LongBlockSize = 4760;
+                                        CanReadRaw    = true;
+                                    }
+                                }
+
+                                break;
                             }
-                            else
+                            case 8192:
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, _timeout,
-                                                            out _);
+                                testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 9424, _timeout, out _);
 
                                 if(!testSense &&
                                    !_dev.Error)
                                 {
-                                    _readLong10   = true;
+                                    _readLong16   = true;
                                     LongBlockSize = 9424;
                                     CanReadRaw    = true;
                                 }
+                                else
+                                {
+                                    testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, _timeout,
+                                                                out _);
+
+                                    if(!testSense &&
+                                       !_dev.Error)
+                                    {
+                                        _readLong10   = true;
+                                        LongBlockSize = 9424;
+                                        CanReadRaw    = true;
+                                    }
+                                }
+
+                                break;
                             }
                         }
 

@@ -102,7 +102,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Disklabel64
+        readonly struct Disklabel64
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public readonly byte[] d_reserved0;
@@ -125,7 +125,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Partition64
+        readonly struct Partition64
         {
             public readonly ulong p_boffset;
             public readonly ulong p_bsize;

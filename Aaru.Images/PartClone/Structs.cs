@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     {
         /// <summary>PartClone disk image header, little-endian</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PartCloneHeader
+        struct Header
         {
             /// <summary>Magic, <see cref="PartClone._partCloneMagic" /></summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]

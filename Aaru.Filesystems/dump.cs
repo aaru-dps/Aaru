@@ -331,7 +331,7 @@ namespace Aaru.Filesystems
 
         // 32-bit AIX format record
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct spcl_aix
+        readonly struct spcl_aix
         {
             /// <summary>Record type</summary>
             public readonly int c_type;
@@ -358,7 +358,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct s_spcl
+        readonly struct s_spcl
         {
             public readonly int    c_type;     /* record type (see below) */
             public readonly int    c_date;     /* date of this dump */
@@ -392,7 +392,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct dinode
+        readonly struct dinode
         {
             public readonly ushort di_mode;      /*   0: IFMT, permissions; see below. */
             public readonly short  di_nlink;     /*   2: File link count. */

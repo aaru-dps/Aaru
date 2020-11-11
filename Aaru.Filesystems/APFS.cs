@@ -118,7 +118,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ContainerSuperBlock
+        readonly struct ContainerSuperBlock
         {
             public readonly ulong unknown1; // Varies between copies of the superblock
             public readonly ulong unknown2;

@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
             {
                 List<Track> tracks = new List<Track>();
 
-                foreach(GdiTrack gdiTrack in _discimage.Tracks)
+                foreach(GdiTrack gdiTrack in _discImage.Tracks)
                 {
                     var track = new Track
                     {
@@ -65,13 +65,13 @@ namespace Aaru.DiscImages
                         TrackPregap            = gdiTrack.Pregap,
                         TrackSession           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
                         TrackSequence          = gdiTrack.Sequence,
-                        TrackType              = gdiTrack.Tracktype,
-                        TrackFilter            = gdiTrack.Trackfilter,
-                        TrackFile              = gdiTrack.Trackfile,
+                        TrackType              = gdiTrack.TrackType,
+                        TrackFilter            = gdiTrack.TrackFilter,
+                        TrackFile              = gdiTrack.TrackFile,
                         TrackFileOffset        = (ulong)gdiTrack.Offset,
                         TrackFileType          = "BINARY",
                         TrackRawBytesPerSector = gdiTrack.Bps,
-                        TrackBytesPerSector    = gdiTrack.Tracktype == TrackType.Data ? 2048 : 2352,
+                        TrackBytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
                         TrackSubchannelType    = TrackSubchannelType.None
                     };
 
@@ -84,7 +84,7 @@ namespace Aaru.DiscImages
             }
         }
 
-        public List<Session>          Sessions     => _discimage.Sessions;
+        public List<Session>          Sessions     => _discImage.Sessions;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

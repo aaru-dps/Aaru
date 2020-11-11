@@ -41,7 +41,7 @@ namespace Aaru.Filesystems
     {
         // RRIP 1.10
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PosixAttributesOld
+        readonly struct PosixAttributesOld
         {
             public readonly ushort    signature;
             public readonly byte      length;
@@ -58,7 +58,7 @@ namespace Aaru.Filesystems
 
         // RRIP 1.12
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PosixAttributes
+        readonly struct PosixAttributes
         {
             public readonly ushort    signature;
             public readonly byte      length;
@@ -76,7 +76,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PosixDeviceNumber
+        readonly struct PosixDeviceNumber
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -88,7 +88,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SymbolicLink
+        readonly struct SymbolicLink
         {
             public readonly ushort       signature;
             public readonly byte         length;
@@ -99,7 +99,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SymbolicLinkComponent
+        readonly struct SymbolicLinkComponent
         {
             public readonly SymlinkComponentFlags flags;
             public readonly byte                  length;
@@ -108,7 +108,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AlternateName
+        readonly struct AlternateName
         {
             public readonly ushort             signature;
             public readonly byte               length;
@@ -119,7 +119,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ChildLink
+        readonly struct ChildLink
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -129,7 +129,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ParentLink
+        readonly struct ParentLink
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -139,7 +139,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct RelocatedDirectory
+        readonly struct RelocatedDirectory
         {
             public readonly ushort signature;
             public readonly byte   length;
@@ -147,7 +147,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Timestamps
+        readonly struct Timestamps
         {
             public readonly ushort         signature;
             public readonly byte           length;
@@ -165,7 +165,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SparseFile
+        readonly struct SparseFile
         {
             public readonly ushort signature;
             public readonly byte   length;

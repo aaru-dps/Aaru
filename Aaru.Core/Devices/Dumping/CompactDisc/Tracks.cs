@@ -239,46 +239,45 @@ namespace Aaru.Core.Devices.Dumping
                 trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
             }
 
-            if(lastSector == 0)
+            if(lastSector != 0)
+                return trackList.ToArray();
+
+            sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
+
+            if(!sense)
             {
-                sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
+                byte[] temp = new byte[8];
+
+                Array.Copy(cmdBuf, 0, temp, 0, 8);
+                Array.Reverse(temp);
+                lastSector = (long)BitConverter.ToUInt64(temp, 0);
+            }
+            else
+            {
+                sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
                 if(!sense)
-                {
-                    byte[] temp = new byte[8];
-
-                    Array.Copy(cmdBuf, 0, temp, 0, 8);
-                    Array.Reverse(temp);
-                    lastSector = (long)BitConverter.ToUInt64(temp, 0);
-                }
-                else
-                {
-                    sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
-
-                    if(!sense)
-                        lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
-                }
-
-                if(lastSector <= 0)
-                {
-                    if(!force)
-                    {
-                        stoppingErrorMessage?.
-                            Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                        dumpLog?.
-                            WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                        return null;
-                    }
-
-                    updateStatus?.
-                        Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-
-                    dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-                    lastSector = 360000;
-                }
+                    lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
             }
+
+            if(lastSector > 0)
+                return trackList.ToArray();
+
+            if(!force)
+            {
+                stoppingErrorMessage?.
+                    Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+
+                dumpLog?.WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
+
+                return null;
+            }
+
+            updateStatus?.
+                Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+
+            dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+            lastSector = 360000;
 
             return trackList.ToArray();
         }

@@ -37,24 +37,24 @@ namespace Aaru.DiscImages
     public sealed partial class DriDiskCopy
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DriFooter
+        struct Footer
         {
             /// <summary>Signature: "DiskImage 2.01 (C) 1990,1991 Digital Research Inc\0"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 51)]
             public byte[] signature;
             /// <summary>Information about the disk image, mostly imitates FAT BPB</summary>
-            public DriBpb bpb;
+            public Bpb bpb;
             /// <summary>Information about the disk image, mostly imitates FAT BPB, copy</summary>
-            public DriBpb bpbcopy;
+            public Bpb bpbcopy;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DriBpb
+        struct Bpb
         {
             /// <summary>Seems to be always 0x05</summary>
             public byte five;
             /// <summary>A drive code that corresponds (but it not equal to) CMOS drive types</summary>
-            public DriDriveCodes driveCode;
+            public DriveCode _driveCode;
             /// <summary>Unknown seems to be always 2</summary>
             public readonly ushort unknown;
             /// <summary>Cylinders</summary>

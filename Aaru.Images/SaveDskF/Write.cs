@@ -140,7 +140,7 @@ namespace Aaru.DiscImages
             if(!string.IsNullOrWhiteSpace(_imageInfo.Comments))
             {
                 byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(_imageInfo.Comments);
-                _header.commentOffset = (ushort)Marshal.SizeOf<SaveDskFHeader>();
+                _header.commentOffset = (ushort)Marshal.SizeOf<Header>();
                 _writingStream.Seek(_header.commentOffset, SeekOrigin.Begin);
 
                 _writingStream.Write(commentsBytes, 0,
@@ -148,8 +148,8 @@ namespace Aaru.DiscImages
                                          : commentsBytes.Length);
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
+            byte[] hdr    = new byte[Marshal.SizeOf<Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -170,8 +170,8 @@ namespace Aaru.DiscImages
                     _header.checksum += (uint)b;
             } while(b >= 0);
 
-            hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
-            hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
+            hdr    = new byte[Marshal.SizeOf<Header>()];
+            hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
             System.Runtime.InteropServices.Marshal.StructureToPtr(_header, hdrPtr, true);
             System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
@@ -240,7 +240,7 @@ namespace Aaru.DiscImages
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
                 variableSectorsPerTrack, MediaType type) geometry = Geometry.GetGeometry(mediaType);
 
-            _header = new SaveDskFHeader
+            _header = new Header
             {
                 cylinders       = geometry.cylinders,
                 dataOffset      = 512,

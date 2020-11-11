@@ -38,7 +38,7 @@ namespace Aaru.DiscImages
     public sealed partial class Apple2Mg
     {
         [SuppressMessage("ReSharper", "NotAccessedField.Local"), StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct A2ImgHeader
+        struct Header
         {
             /// <summary>Offset 0x00, magic</summary>
             public uint Magic;

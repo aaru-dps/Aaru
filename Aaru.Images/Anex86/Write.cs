@@ -87,7 +87,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _fdihdr = new Anex86Header
+            _header = new Header
             {
                 hdrSize = 4096,
                 dskSize = (int)(sectors * sectorSize),
@@ -197,33 +197,33 @@ namespace Aaru.DiscImages
                 _imageInfo.MediaType == MediaType.CompactFlashType2 || _imageInfo.MediaType == MediaType.PCCardTypeI ||
                 _imageInfo.MediaType == MediaType.PCCardTypeII || _imageInfo.MediaType == MediaType.PCCardTypeIII ||
                 _imageInfo.MediaType == MediaType.PCCardTypeIV) &&
-               _fdihdr.cylinders == 0)
+               _header.cylinders == 0)
             {
-                _fdihdr.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
-                _fdihdr.heads     = 8;
-                _fdihdr.spt       = 33;
+                _header.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
+                _header.heads     = 8;
+                _header.spt       = 33;
 
-                while(_fdihdr.cylinders == 0)
+                while(_header.cylinders == 0)
                 {
-                    _fdihdr.heads--;
+                    _header.heads--;
 
-                    if(_fdihdr.heads == 0)
+                    if(_header.heads == 0)
                     {
-                        _fdihdr.spt--;
-                        _fdihdr.heads = 8;
+                        _header.spt--;
+                        _header.heads = 8;
                     }
 
-                    _fdihdr.cylinders = (int)_imageInfo.Sectors / _fdihdr.heads / _fdihdr.spt;
+                    _header.cylinders = (int)_imageInfo.Sectors / _header.heads / _header.spt;
 
-                    if(_fdihdr.cylinders == 0 &&
-                       _fdihdr.heads     == 0 &&
-                       _fdihdr.spt       == 0)
+                    if(_header.cylinders == 0 &&
+                       _header.heads     == 0 &&
+                       _header.spt       == 0)
                         break;
                 }
             }
 
-            byte[] hdr = new byte[Marshal.SizeOf<Anex86Header>()];
-            MemoryMarshal.Write(hdr, ref _fdihdr);
+            byte[] hdr = new byte[Marshal.SizeOf<Header>()];
+            MemoryMarshal.Write(hdr, ref _header);
 
             _writingStream.Seek(0, SeekOrigin.Begin);
             _writingStream.Write(hdr, 0, hdr.Length);
@@ -262,9 +262,9 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            _fdihdr.spt       = (int)sectorsPerTrack;
-            _fdihdr.heads     = (int)heads;
-            _fdihdr.cylinders = (int)cylinders;
+            _header.spt       = (int)sectorsPerTrack;
+            _header.heads     = (int)heads;
+            _header.cylinders = (int)cylinders;
 
             return true;
         }

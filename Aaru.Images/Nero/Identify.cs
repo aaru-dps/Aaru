@@ -42,8 +42,8 @@ namespace Aaru.DiscImages
         public bool Identify(IFilter imageFilter)
         {
             _imageStream = imageFilter.GetDataForkStream();
-            var footerV1 = new NeroV1Footer();
-            var footerV2 = new NeroV2Footer();
+            var footerV1 = new FooterV1();
+            var footerV2 = new FooterV2();
 
             _imageStream.Seek(-8, SeekOrigin.End);
             byte[] buffer = new byte[8];

@@ -35,6 +35,11 @@ namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
+        /// <summary>Trims data when dumping from a SCSI Block Commands compliant device</summary>
+        /// <param name="scsiReader">SCSI reader</param>
+        /// <param name="extents">Correctly dump extents</param>
+        /// <param name="currentTry">Resume information</param>
+        /// <param name="blankExtents">Blank extents</param>
         void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry,
                          ExtentsULong blankExtents)
         {

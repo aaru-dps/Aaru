@@ -43,40 +43,40 @@ namespace Aaru.Partitions
 {
     public sealed class Apricot : IPartition
     {
-        readonly int[] baudRates =
+        readonly int[] _baudRates =
         {
             50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200
         };
-        readonly string[] bootTypeCodes =
+        readonly string[] _bootTypeCodes =
         {
             "Non-bootable", "Apricot & XI RAM BIOS", "Generic ROM BIOS", "Apricot & XI ROM BIOS",
             "Apricot Portable ROM BIOS", "Apricot F1 ROM BIOS"
         };
-        readonly string[] diskTypeCodes =
+        readonly string[] _diskTypeCodes =
         {
             "MF1DD 70-track", "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"
         };
-        readonly int[] lineModes =
+        readonly int[] _lineModes =
         {
             256, 200
         };
-        readonly int[] lineWidths =
+        readonly int[] _lineWidths =
         {
             80, 40
         };
-        readonly string[] operatingSystemCodes =
+        readonly string[] _operatingSystemCodes =
         {
             "Invalid", "MS-DOS", "UCSD Pascal", "CP/M", "Concurrent CP/M"
         };
-        readonly string[] parityTypes =
+        readonly string[] _parityTypes =
         {
             "None", "Odd", "Even", "Mark", "Space"
         };
-        readonly string[] printDevices =
+        readonly string[] _printDevices =
         {
             "Parallel", "Serial"
         };
-        readonly double[] stopBits =
+        readonly double[] _stopBits =
         {
             1, 1.5, 2
         };
@@ -98,7 +98,7 @@ namespace Aaru.Partitions
             if(sector.Length < 512)
                 return false;
 
-            ApricotLabel label = Marshal.ByteArrayToStructureLittleEndian<ApricotLabel>(sector);
+            Label label = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
             // Not much to check but...
             ulong deviceSectors              = imagePlugin.Info.Sectors;
@@ -115,14 +115,14 @@ namespace Aaru.Partitions
                                        StringHandlers.CToString(label.version));
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.operatingSystem = {0} ({1})", label.operatingSystem,
-                                       label.operatingSystem < operatingSystemCodes.Length
-                                           ? operatingSystemCodes[label.operatingSystem] : "Unknown");
+                                       label.operatingSystem < _operatingSystemCodes.Length
+                                           ? _operatingSystemCodes[label.operatingSystem] : "Unknown");
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.writeProtected = {0}", label.writeProtected);
             AaruConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}", label.copyProtected);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
-                                       label.bootType < bootTypeCodes.Length ? bootTypeCodes[label.bootType]
+                                       label.bootType < _bootTypeCodes.Length ? _bootTypeCodes[label.bootType]
                                            : "Unknown");
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}", label.partitionCount);
@@ -165,8 +165,8 @@ namespace Aaru.Partitions
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})",
                                        label.mainBPB.diskType,
-                                       label.mainBPB.diskType < diskTypeCodes.Length
-                                           ? diskTypeCodes[label.mainBPB.diskType] : "Unknown");
+                                       label.mainBPB.diskType < _diskTypeCodes.Length
+                                           ? _diskTypeCodes[label.mainBPB.diskType] : "Unknown");
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}",
                                        label.mainBPB.startSector);
@@ -182,7 +182,7 @@ namespace Aaru.Partitions
             AaruConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}", label.diagnosticsFlag);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
-                                       label.prnDevice < printDevices.Length ? printDevices[label.prnDevice]
+                                       label.prnDevice < _printDevices.Length ? _printDevices[label.prnDevice]
                                            : "Unknown");
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}", label.bellVolume);
@@ -207,10 +207,10 @@ namespace Aaru.Partitions
                                        ArrayHelpers.ArrayIsNullOrEmpty(label.spareKeyboard));
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.lineMode = {0} ({1} lines)", label.lineMode,
-                                       label.lineMode < lineModes.Length ? lineModes[label.lineMode] : 0);
+                                       label.lineMode < _lineModes.Length ? _lineModes[label.lineMode] : 0);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.lineWidth = {0} ({1} columns)", label.lineWidth,
-                                       label.lineWidth < lineWidths.Length ? lineWidths[label.lineWidth] : 0);
+                                       label.lineWidth < _lineWidths.Length ? _lineWidths[label.lineWidth] : 0);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.imageOff = {0}", label.imageOff);
 
@@ -218,21 +218,21 @@ namespace Aaru.Partitions
                                        ArrayHelpers.ArrayIsNullOrEmpty(label.spareScreen));
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.txBaudRate = {0} ({1} bps)", label.txBaudRate,
-                                       label.txBaudRate < baudRates.Length ? baudRates[label.txBaudRate] : 0);
+                                       label.txBaudRate < _baudRates.Length ? _baudRates[label.txBaudRate] : 0);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.rxBaudRate = {0} ({1} bps)", label.rxBaudRate,
-                                       label.rxBaudRate < baudRates.Length ? baudRates[label.rxBaudRate] : 0);
+                                       label.rxBaudRate < _baudRates.Length ? _baudRates[label.rxBaudRate] : 0);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.txBits = {0}", label.txBits);
             AaruConsole.DebugWriteLine("Apricot partitions", "label.rxBits = {0}", label.rxBits);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.stopBits = {0} ({1} bits)", label.stopBits,
-                                       label.stopBits < stopBits.Length ? stopBits[label.stopBits] : 0);
+                                       label.stopBits < _stopBits.Length ? _stopBits[label.stopBits] : 0);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.parityCheck = {0}", label.parityCheck);
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.parityType = {0} ({1})", label.parityType,
-                                       label.parityType < parityTypes.Length ? parityTypes[label.parityType]
+                                       label.parityType < _parityTypes.Length ? _parityTypes[label.parityType]
                                            : "Unknown");
 
             AaruConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}", label.txXonXoff);
@@ -303,8 +303,8 @@ namespace Aaru.Partitions
 
                 AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].diskType = {0} ({2})",
                                            label.partitions[i].diskType, i,
-                                           label.partitions[i].diskType < diskTypeCodes.Length
-                                               ? diskTypeCodes[label.partitions[i].diskType] : "Unknown");
+                                           label.partitions[i].diskType < _diskTypeCodes.Length
+                                               ? _diskTypeCodes[label.partitions[i].diskType] : "Unknown");
 
                 AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].startSector = {0}",
                                            label.partitions[i].startSector, i);
@@ -342,7 +342,7 @@ namespace Aaru.Partitions
 
         /// <summary>Apricot Label.</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApricotLabel
+        readonly struct Label
         {
             /// <summary>Version of format which created disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -402,7 +402,7 @@ namespace Aaru.Partitions
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
             public readonly byte[] copyright;
             /// <summary>BPB for whole disk.</summary>
-            public readonly ApricotParameterBlock mainBPB;
+            public readonly ParameterBlock mainBPB;
             /// <summary>Name of FONT file.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public readonly byte[] fontName;
@@ -543,7 +543,7 @@ namespace Aaru.Partitions
             public readonly ushort[] badBlocks;
             /// <summary>Array of partition BPBs.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly ApricotParameterBlock[] partitions;
+            public readonly ParameterBlock[] partitions;
             /// <summary>Spare area.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
             public readonly byte[] spare;
@@ -552,7 +552,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ApricotParameterBlock
+        struct ParameterBlock
         {
             /// <summary>Bytes per sector</summary>
             public readonly ushort bps;

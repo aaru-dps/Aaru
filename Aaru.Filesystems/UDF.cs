@@ -237,16 +237,8 @@ namespace Aaru.Filesystems
                lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)
                 lvidiu =
                     Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
-                                                                                                                (int)
-                                                                                                                ((lvid.
-                                                                                                                      numberOfPartitions *
-                                                                                                                  8) +
-                                                                                                                 80),
-                                                                                                                System.
-                                                                                                                    Runtime.
-                                                                                                                    InteropServices.
-                                                                                                                    Marshal.
-                                                                                                                    SizeOf(lvidiu));
+                        (int)((lvid.numberOfPartitions * 8) + 80),
+                        System.Runtime.InteropServices.Marshal.SizeOf(lvidiu));
             else
                 lvid = new LogicalVolumeIntegrityDescriptor();
 
@@ -313,16 +305,8 @@ namespace Aaru.Filesystems
         }
 
         static DateTime EcmaToDateTime(Timestamp timestamp) => DateHandlers.EcmaToDateTime(timestamp.typeAndZone,
-                                                                                           timestamp.year,
-                                                                                           timestamp.month,
-                                                                                           timestamp.day,
-                                                                                           timestamp.hour,
-                                                                                           timestamp.minute,
-                                                                                           timestamp.second,
-                                                                                           timestamp.centiseconds,
-                                                                                           timestamp.
-                                                                                               hundredsMicroseconds,
-                                                                                           timestamp.microseconds);
+            timestamp.year, timestamp.month, timestamp.day, timestamp.hour, timestamp.minute, timestamp.second,
+            timestamp.centiseconds, timestamp.hundredsMicroseconds, timestamp.microseconds);
 
         [Flags]
         enum EntityFlags : byte
@@ -331,7 +315,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct EntityIdentifier
+        readonly struct EntityIdentifier
         {
             /// <summary>Entity flags</summary>
             public readonly EntityFlags flags;
@@ -344,7 +328,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct Timestamp
+        readonly struct Timestamp
         {
             public readonly ushort typeAndZone;
             public readonly short  year;
@@ -366,7 +350,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DescriptorTag
+        readonly struct DescriptorTag
         {
             public readonly TagIdentifier tagIdentifier;
             public readonly ushort        descriptorVersion;
@@ -379,14 +363,14 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtentDescriptor
+        readonly struct ExtentDescriptor
         {
             public readonly uint length;
             public readonly uint location;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct CharacterSpecification
+        readonly struct CharacterSpecification
         {
             public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
@@ -394,7 +378,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnchorVolumeDescriptorPointer
+        readonly struct AnchorVolumeDescriptorPointer
         {
             public readonly DescriptorTag    tag;
             public readonly ExtentDescriptor mainVolumeDescriptorSequenceExtent;
@@ -404,7 +388,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PrimaryVolumeDescriptor
+        readonly struct PrimaryVolumeDescriptor
         {
             public readonly DescriptorTag tag;
             public readonly uint          volumeDescriptorSequenceNumber;
@@ -435,7 +419,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LogicalVolumeDescriptor
+        readonly struct LogicalVolumeDescriptor
         {
             public readonly DescriptorTag          tag;
             public readonly uint                   volumeDescriptorSequenceNumber;
@@ -455,7 +439,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LogicalVolumeIntegrityDescriptor
+        readonly struct LogicalVolumeIntegrityDescriptor
         {
             public readonly DescriptorTag    tag;
             public readonly Timestamp        recordingDateTime;
@@ -472,7 +456,7 @@ namespace Aaru.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct LogicalVolumeIntegrityDescriptorImplementationUse
+        readonly struct LogicalVolumeIntegrityDescriptorImplementationUse
         {
             public readonly EntityIdentifier implementationId;
             public readonly uint             files;

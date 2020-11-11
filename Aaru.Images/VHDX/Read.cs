@@ -53,54 +53,54 @@ namespace Aaru.DiscImages
             if(stream.Length < 512)
                 return false;
 
-            byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
-            stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());
-            _vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
+            byte[] vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
+            stream.Read(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
+            _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
-            if(_vhdxId.signature != VHDX_SIGNATURE)
+            if(_id.signature != VHDX_SIGNATURE)
                 return false;
 
-            _imageInfo.Application = Encoding.Unicode.GetString(_vhdxId.creator);
+            _imageInfo.Application = Encoding.Unicode.GetString(_id.creator);
 
             stream.Seek(64 * 1024, SeekOrigin.Begin);
-            byte[] vHdrB = new byte[Marshal.SizeOf<VhdxHeader>()];
-            stream.Read(vHdrB, 0, Marshal.SizeOf<VhdxHeader>());
-            _vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
+            byte[] vHdrB = new byte[Marshal.SizeOf<Header>()];
+            stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+            _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
             if(_vHdr.Signature != VHDX_HEADER_SIG)
             {
                 stream.Seek(128 * 1024, SeekOrigin.Begin);
-                vHdrB = new byte[Marshal.SizeOf<VhdxHeader>()];
-                stream.Read(vHdrB, 0, Marshal.SizeOf<VhdxHeader>());
-                _vHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
+                vHdrB = new byte[Marshal.SizeOf<Header>()];
+                stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+                _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
                 if(_vHdr.Signature != VHDX_HEADER_SIG)
                     throw new ImageNotSupportedException("VHDX header not found");
             }
 
             stream.Seek(192 * 1024, SeekOrigin.Begin);
-            byte[] vRegTableB = new byte[Marshal.SizeOf<VhdxRegionTableHeader>()];
-            stream.Read(vRegTableB, 0, Marshal.SizeOf<VhdxRegionTableHeader>());
-            _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
+            byte[] vRegTableB = new byte[Marshal.SizeOf<RegionTableHeader>()];
+            stream.Read(vRegTableB, 0, Marshal.SizeOf<RegionTableHeader>());
+            _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<RegionTableHeader>(vRegTableB);
 
             if(_vRegHdr.signature != VHDX_REGION_SIG)
             {
                 stream.Seek(256 * 1024, SeekOrigin.Begin);
-                vRegTableB = new byte[Marshal.SizeOf<VhdxRegionTableHeader>()];
-                stream.Read(vRegTableB, 0, Marshal.SizeOf<VhdxRegionTableHeader>());
-                _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
+                vRegTableB = new byte[Marshal.SizeOf<RegionTableHeader>()];
+                stream.Read(vRegTableB, 0, Marshal.SizeOf<RegionTableHeader>());
+                _vRegHdr = Marshal.ByteArrayToStructureLittleEndian<RegionTableHeader>(vRegTableB);
 
                 if(_vRegHdr.signature != VHDX_REGION_SIG)
                     throw new ImageNotSupportedException("VHDX region table not found");
             }
 
-            _vRegs = new VhdxRegionTableEntry[_vRegHdr.entries];
+            _vRegs = new RegionTableEntry[_vRegHdr.entries];
 
             for(int i = 0; i < _vRegs.Length; i++)
             {
                 byte[] vRegB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i])];
                 stream.Read(vRegB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vRegs[i]));
-                _vRegs[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableEntry>(vRegB);
+                _vRegs[i] = Marshal.ByteArrayToStructureLittleEndian<RegionTableEntry>(vRegB);
 
                 if(_vRegs[i].guid == _batGuid)
                     _batOffset = (long)_vRegs[i].offset;
@@ -120,17 +120,17 @@ namespace Aaru.DiscImages
             uint fileParamsOff = 0, vdSizeOff = 0, p83Off = 0, logOff = 0, physOff = 0, parentOff = 0;
 
             stream.Seek(_metadataOffset, SeekOrigin.Begin);
-            byte[] metTableB = new byte[Marshal.SizeOf<VhdxMetadataTableHeader>()];
-            stream.Read(metTableB, 0, Marshal.SizeOf<VhdxMetadataTableHeader>());
-            _vMetHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableHeader>(metTableB);
+            byte[] metTableB = new byte[Marshal.SizeOf<MetadataTableHeader>()];
+            stream.Read(metTableB, 0, Marshal.SizeOf<MetadataTableHeader>());
+            _vMetHdr = Marshal.ByteArrayToStructureLittleEndian<MetadataTableHeader>(metTableB);
 
-            _vMets = new VhdxMetadataTableEntry[_vMetHdr.entries];
+            _vMets = new MetadataTableEntry[_vMetHdr.entries];
 
             for(int i = 0; i < _vMets.Length; i++)
             {
                 byte[] vMetB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i])];
                 stream.Read(vMetB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vMets[i]));
-                _vMets[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableEntry>(vMetB);
+                _vMets[i] = Marshal.ByteArrayToStructureLittleEndian<MetadataTableEntry>(vMetB);
 
                 if(_vMets[i].itemId == _fileParametersGuid)
                     fileParamsOff = _vMets[i].offset;
@@ -157,7 +157,7 @@ namespace Aaru.DiscImages
                 tmp = new byte[8];
                 stream.Read(tmp, 0, 8);
 
-                _vFileParms = new VhdxFileParameters
+                _vFileParms = new FileParameters
                 {
                     blockSize = BitConverter.ToUInt32(tmp, 0),
                     flags     = BitConverter.ToUInt32(tmp, 4)
@@ -208,21 +208,21 @@ namespace Aaru.DiscImages
                (_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
             {
                 stream.Seek(parentOff + _metadataOffset, SeekOrigin.Begin);
-                byte[] vParHdrB = new byte[Marshal.SizeOf<VhdxParentLocatorHeader>()];
-                stream.Read(vParHdrB, 0, Marshal.SizeOf<VhdxParentLocatorHeader>());
-                _vParHdr = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorHeader>(vParHdrB);
+                byte[] vParHdrB = new byte[Marshal.SizeOf<ParentLocatorHeader>()];
+                stream.Read(vParHdrB, 0, Marshal.SizeOf<ParentLocatorHeader>());
+                _vParHdr = Marshal.ByteArrayToStructureLittleEndian<ParentLocatorHeader>(vParHdrB);
 
                 if(_vParHdr.locatorType != _parentTypeVhdxGuid)
                     throw new
                         ImageNotSupportedException($"Found unsupported and required parent locator type {_vParHdr.locatorType}, not proceeding with image.");
 
-                _vPars = new VhdxParentLocatorEntry[_vParHdr.keyValueCount];
+                _vPars = new ParentLocatorEntry[_vParHdr.keyValueCount];
 
                 for(int i = 0; i < _vPars.Length; i++)
                 {
                     byte[] vParB = new byte[System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i])];
                     stream.Read(vParB, 0, System.Runtime.InteropServices.Marshal.SizeOf(_vPars[i]));
-                    _vPars[i] = Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorEntry>(vParB);
+                    _vPars[i] = Marshal.ByteArrayToStructureLittleEndian<ParentLocatorEntry>(vParB);
                 }
             }
             else if((_vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)
@@ -234,7 +234,7 @@ namespace Aaru.DiscImages
                 _parentImage = new Vhdx();
                 bool parentWorks = false;
 
-                foreach(VhdxParentLocatorEntry parentEntry in _vPars)
+                foreach(ParentLocatorEntry parentEntry in _vPars)
                 {
                     stream.Seek(parentEntry.keyOffset + _metadataOffset, SeekOrigin.Begin);
                     byte[] tmpKey = new byte[parentEntry.keyLength];

@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
 {
     public sealed partial class ZZZRawImage : IWritableOpticalImage
     {
-        string                           _basepath;
+        string                           _basePath;
         bool                             _differentTrackZeroSize;
         string                           _extension;
         bool                             _hasSubchannel;

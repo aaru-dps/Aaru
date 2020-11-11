@@ -42,7 +42,7 @@ namespace Aaru.Devices.Windows
     // You might not want to keep these in the USB class... your choice
     //
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
-    /// <summary>Implements functions for getting and accesing information from the USB bus</summary>
+    /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
     internal static partial class Usb
     {
         const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
@@ -313,7 +313,7 @@ namespace Aaru.Devices.Windows
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        struct StorageDeviceNumber
+        readonly struct StorageDeviceNumber
         {
             internal readonly int DeviceType;
             internal readonly int DeviceNumber;

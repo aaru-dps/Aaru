@@ -109,11 +109,11 @@ namespace Aaru.Partitions
 
             labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
 
-            NeXTLabel label    = Marshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
-            byte[]    disktabB = new byte[498];
+            Label  label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
+            byte[] disktabB = new byte[498];
             Array.Copy(labelSector, 44, disktabB, 0, 498);
-            label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
-            label.dl_dt.d_partitions = new NeXTEntry[8];
+            label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<DiskTab>(disktabB);
+            label.dl_dt.d_partitions = new Entry[8];
 
             AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
             AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}", label.dl_label_blkno);
@@ -162,7 +162,7 @@ namespace Aaru.Partitions
             {
                 byte[] partB = new byte[44];
                 Array.Copy(labelSector, 44 + 146 + (44 * i), partB, 0, 44);
-                label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<NeXTEntry>(partB);
+                label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(partB);
 
                 AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
                                            label.dl_dt.d_partitions[i].p_base);
@@ -263,7 +263,7 @@ namespace Aaru.Partitions
 
         /// <summary>NeXT v3 disklabel, 544 bytes</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NeXTLabel
+        struct Label
         {
             /// <summary>Signature</summary>
             public readonly uint dl_version;
@@ -279,14 +279,14 @@ namespace Aaru.Partitions
             /// <summary>Device tag</summary>
             public readonly uint dl_tag;
             /// <summary>Device info and partitions</summary>
-            public NeXTDiskTab dl_dt;
+            public DiskTab dl_dt;
             /// <summary>Checksum</summary>
             public readonly ushort dl_v3_checksum;
         }
 
         /// <summary>NeXT v1 and v2 disklabel, 7224 bytes</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NeXTLabelOld
+        readonly struct LabelOld
         {
             /// <summary>Signature</summary>
             public readonly uint dl_version;
@@ -302,7 +302,7 @@ namespace Aaru.Partitions
             /// <summary>Device tag</summary>
             public readonly uint dl_tag;
             /// <summary>Device info and partitions</summary>
-            public readonly NeXTDiskTab dl_dt;
+            public readonly DiskTab dl_dt;
             /// <summary>Bad sector table</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
             public readonly int[] dl_bad;
@@ -312,7 +312,7 @@ namespace Aaru.Partitions
 
         /// <summary>NeXT disktab and partitions, 498 bytes</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NeXTDiskTab
+        struct DiskTab
         {
             /// <summary>Drive name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
@@ -357,12 +357,12 @@ namespace Aaru.Partitions
             public readonly byte d_rwpartition;
             /// <summary>partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public NeXTEntry[] d_partitions;
+            public Entry[] d_partitions;
         }
 
         /// <summary>Partition entries, 44 bytes each</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        struct NeXTEntry
+        struct Entry
         {
             /// <summary>Sector of start, counting from front porch</summary>
             public readonly int p_base;

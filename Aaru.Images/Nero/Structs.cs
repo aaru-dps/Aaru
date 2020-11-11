@@ -40,7 +40,7 @@ namespace Aaru.DiscImages
     [SuppressMessage("ReSharper", "UnusedType.Local")]
     public sealed partial class Nero
     {
-        struct NeroV1Footer
+        struct FooterV1
         {
             /// <summary>"NERO"</summary>
             public uint ChunkId;
@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             public uint FirstChunkOffset;
         }
 
-        struct NeroV2Footer
+        struct FooterV2
         {
             /// <summary>"NER5"</summary>
             public uint ChunkId;
@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
             public ulong FirstChunkOffset;
         }
 
-        struct NeroV2CueEntry
+        struct CueEntryV2
         {
             /// <summary>Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data</summary>
             public byte Mode;
@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
             public int LbaStart;
         }
 
-        class NeroV2Cuesheet
+        class CuesheetV2
         {
             /// <summary>"CUEX"</summary>
             public uint ChunkId;
@@ -85,10 +85,10 @@ namespace Aaru.DiscImages
             public uint ChunkSize;
 
             /// <summary>Cuesheet entries</summary>
-            public List<NeroV2CueEntry> Entries;
+            public List<CueEntryV2> Entries;
         }
 
-        struct NeroV1CueEntry
+        struct CueEntryV1
         {
             /// <summary>Track mode. 0x01 for audio, 0x21 for copy-protected audio, 0x41 for data</summary>
             public byte Mode;
@@ -112,7 +112,7 @@ namespace Aaru.DiscImages
             public byte Frame;
         }
 
-        class NeroV1Cuesheet
+        class CuesheetV1
         {
             /// <summary>"CUES"</summary>
             public uint ChunkId;
@@ -121,10 +121,10 @@ namespace Aaru.DiscImages
             public uint ChunkSize;
 
             /// <summary>Cuesheet entries</summary>
-            public List<NeroV1CueEntry> Entries;
+            public List<CueEntryV1> Entries;
         }
 
-        struct NeroV1DaoEntry
+        struct DaoEntryV1
         {
             /// <summary>ISRC (12 bytes)</summary>
             public byte[] Isrc;
@@ -148,7 +148,7 @@ namespace Aaru.DiscImages
             public uint EndOfTrack;
         }
 
-        struct NeroV1Dao
+        struct DaoV1
         {
             /// <summary>"DAOI"</summary>
             public uint ChunkId;
@@ -172,10 +172,10 @@ namespace Aaru.DiscImages
             public byte LastTrack;
 
             /// <summary>Tracks</summary>
-            public List<NeroV1DaoEntry> Tracks;
+            public List<DaoEntryV1> Tracks;
         }
 
-        struct NeroV2DaoEntry
+        struct DaoEntryV2
         {
             /// <summary>ISRC (12 bytes)</summary>
             public byte[] Isrc;
@@ -199,7 +199,7 @@ namespace Aaru.DiscImages
             public ulong EndOfTrack;
         }
 
-        struct NeroV2Dao
+        struct DaoV2
         {
             /// <summary>"DAOX"</summary>
             public uint ChunkId;
@@ -223,10 +223,10 @@ namespace Aaru.DiscImages
             public byte LastTrack;
 
             /// <summary>Tracks</summary>
-            public List<NeroV2DaoEntry> Tracks;
+            public List<DaoEntryV2> Tracks;
         }
 
-        struct NeroCdTextPack
+        struct CdTextPack
         {
             /// <summary>Pack type</summary>
             public byte PackType;
@@ -247,7 +247,7 @@ namespace Aaru.DiscImages
             public ushort Crc;
         }
 
-        struct NeroCdText
+        struct CdText
         {
             /// <summary>"CDTX"</summary>
             public uint ChunkId;
@@ -256,10 +256,10 @@ namespace Aaru.DiscImages
             public uint ChunkSize;
 
             /// <summary>CD-TEXT packs</summary>
-            public List<NeroCdTextPack> Packs;
+            public List<CdTextPack> Packs;
         }
 
-        struct NeroV1TaoEntry
+        struct TaoEntryV1
         {
             /// <summary>Offset of track on image</summary>
             public uint Offset;
@@ -277,7 +277,7 @@ namespace Aaru.DiscImages
             public uint Unknown;
         }
 
-        struct NeroV1Tao
+        struct TaoV1
         {
             /// <summary>"ETNF"</summary>
             public uint ChunkId;
@@ -286,10 +286,10 @@ namespace Aaru.DiscImages
             public uint ChunkSize;
 
             /// <summary>CD-TEXT packs</summary>
-            public List<NeroV1TaoEntry> Tracks;
+            public List<TaoEntryV1> Tracks;
         }
 
-        struct NeroV2TaoEntry
+        struct TaoEntryV2
         {
             /// <summary>Offset of track on image</summary>
             public ulong Offset;
@@ -310,7 +310,7 @@ namespace Aaru.DiscImages
             public uint Sectors;
         }
 
-        struct NeroV2Tao
+        struct TaoV2
         {
             /// <summary>"ETN2"</summary>
             public uint ChunkId;
@@ -319,10 +319,10 @@ namespace Aaru.DiscImages
             public uint ChunkSize;
 
             /// <summary>CD-TEXT packs</summary>
-            public List<NeroV2TaoEntry> Tracks;
+            public List<TaoEntryV2> Tracks;
         }
 
-        struct NeroSession
+        struct Session
         {
             /// <summary>"SINF"</summary>
             public uint ChunkId;
@@ -334,7 +334,7 @@ namespace Aaru.DiscImages
             public uint Tracks;
         }
 
-        struct NeroMediaType
+        struct MediaType
         {
             /// <summary>"MTYP"</summary>
             public uint ChunkId;
@@ -346,7 +346,7 @@ namespace Aaru.DiscImages
             public uint Type;
         }
 
-        struct NeroDiscInformation
+        struct DiscInformation
         {
             /// <summary>"DINF"</summary>
             public uint ChunkId;
@@ -358,7 +358,7 @@ namespace Aaru.DiscImages
             public uint Unknown;
         }
 
-        struct NeroTocChunk
+        struct TocChunk
         {
             /// <summary>"TOCT"</summary>
             public uint ChunkId;
@@ -370,7 +370,7 @@ namespace Aaru.DiscImages
             public ushort Unknown;
         }
 
-        struct NeroReloChunk
+        struct ReloChunk
         {
             /// <summary>"RELO"</summary>
             public uint ChunkId;
@@ -382,7 +382,7 @@ namespace Aaru.DiscImages
             public uint Unknown;
         }
 
-        struct NeroEndOfChunkChain
+        struct EndOfChunkChain
         {
             /// <summary>"END!"</summary>
             public uint ChunkId;

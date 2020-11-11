@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
             }
 
             // Read up to 1MiB at a time for verification
-            const int VERIFY_SIZE = 1024 * 1024;
+            const int verifySize = 1024 * 1024;
 
             foreach(IndexEntry entry in vrIndex)
             {
@@ -114,9 +114,9 @@ namespace Aaru.DiscImages
                                                    "Verifying data block type {0} at position {1}", entry.dataType,
                                                    entry.offset);
 
-                        while(readBytes + VERIFY_SIZE < blockHeader.cmpLength)
+                        while(readBytes + verifySize < blockHeader.cmpLength)
                         {
-                            verifyBytes = new byte[VERIFY_SIZE];
+                            verifyBytes = new byte[verifySize];
                             _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
                             crcVerify.Update(verifyBytes);
                             readBytes += (ulong)verifyBytes.LongLength;
@@ -150,7 +150,7 @@ namespace Aaru.DiscImages
                                                    "Verifying deduplication table type {0} at position {1}",
                                                    entry.dataType, entry.offset);
 
-                        while(readBytes + VERIFY_SIZE < ddtHeader.cmpLength)
+                        while(readBytes + verifySize < ddtHeader.cmpLength)
                         {
                             verifyBytes = new byte[readBytes];
                             _imageStream.Read(verifyBytes, 0, verifyBytes.Length);
@@ -221,7 +221,7 @@ namespace Aaru.DiscImages
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
-            // Right now only CompactDisc sectors are verifyable
+            // Right now only CompactDisc sectors are verifiable
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             {
                 for(ulong i = sectorAddress; i < sectorAddress + length; i++)
@@ -263,7 +263,7 @@ namespace Aaru.DiscImages
         public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
-            // Right now only CompactDisc sectors are verifyable
+            // Right now only CompactDisc sectors are verifiable
             if(_imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
             {
                 failingLbas = new List<ulong>();

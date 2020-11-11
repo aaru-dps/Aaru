@@ -315,7 +315,7 @@ namespace Aaru.Partitions
                     return false;
             }
 
-            MbrPartitionEntry[] entries;
+            PartitionEntry[] entries;
 
             if(mbrOntrack.dm_magic == DM_MAGIC)
                 entries = mbrOntrack.entries;
@@ -324,7 +324,7 @@ namespace Aaru.Partitions
             else
                 entries = mbr.entries;
 
-            foreach(MbrPartitionEntry entry in entries)
+            foreach(PartitionEntry entry in entries)
             {
                 byte   startSector   = (byte)(entry.start_sector & 0x3F);
                 ushort startCylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
@@ -466,7 +466,7 @@ namespace Aaru.Partitions
 
                     ulong nextStart = 0;
 
-                    foreach(MbrPartitionEntry ebrEntry in ebr.entries)
+                    foreach(PartitionEntry ebrEntry in ebr.entries)
                     {
                         bool extValid = true;
                         startSector   = (byte)(ebrEntry.start_sector & 0x3F);
@@ -602,7 +602,7 @@ namespace Aaru.Partitions
 
             bool anyMnx = false;
 
-            foreach(MbrPartitionEntry mnxEntry in mnx.entries)
+            foreach(PartitionEntry mnxEntry in mnx.entries)
             {
                 bool   mnxValid      = true;
                 byte   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
@@ -682,14 +682,14 @@ namespace Aaru.Partitions
         static string DecodeMbrType(byte type) => MbrTypes[type];
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MasterBootRecord
+        readonly struct MasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
             public readonly byte[] boot_code;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -698,14 +698,14 @@ namespace Aaru.Partitions
 
         // TODO: IBM Boot Manager
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ExtendedBootRecord
+        readonly struct ExtendedBootRecord
         {
             /// <summary>Boot code, almost always unused</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
             public readonly byte[] boot_code;
             /// <summary>Partitions or pointers</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -713,7 +713,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct TimedMasterBootRecord
+        readonly struct TimedMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
@@ -733,7 +733,7 @@ namespace Aaru.Partitions
             public readonly byte[] boot_code2;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -741,7 +741,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct SerializedMasterBootRecord
+        readonly struct SerializedMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
@@ -752,7 +752,7 @@ namespace Aaru.Partitions
             public readonly ushort zero;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -760,7 +760,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct ModernMasterBootRecord
+        readonly struct ModernMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
@@ -784,7 +784,7 @@ namespace Aaru.Partitions
             public readonly ushort zero2;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -792,7 +792,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct NecMasterBootRecord
+        readonly struct NecMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 380)]
@@ -803,7 +803,7 @@ namespace Aaru.Partitions
             public readonly ushort nec_magic;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -811,7 +811,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DiskManagerMasterBootRecord
+        readonly struct DiskManagerMasterBootRecord
         {
             /// <summary>Boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
@@ -822,7 +822,7 @@ namespace Aaru.Partitions
             public readonly ushort dm_magic;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly MbrPartitionEntry[] entries;
+            public readonly PartitionEntry[] entries;
             /// <summary>
             ///     <see cref="MBR.MBR_MAGIC" />
             /// </summary>
@@ -830,7 +830,7 @@ namespace Aaru.Partitions
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct MbrPartitionEntry
+        readonly struct PartitionEntry
         {
             /// <summary>Partition status, 0x80 or 0x00, else invalid</summary>
             public readonly byte status;
