@@ -1033,8 +1033,8 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
 
             for(int i = 0; i < length; i += 2)
             {
-                outbuf[i] = buffer[offset + i + 1];
-                outbuf[i                      + 1] = buffer[offset + i];
+                outbuf[i] = buffer[offset + i                  + 1];
+                outbuf[i                  + 1] = buffer[offset + i];
             }
 
             string outStr = StringHandlers.CToString(outbuf);
