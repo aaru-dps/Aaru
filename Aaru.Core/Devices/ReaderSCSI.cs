@@ -117,9 +117,15 @@ namespace Aaru.Core.Devices
                !_read12 &&
                !_read16)
             {
-                ErrorMessage = "Cannot read medium, aborting scan...";
+                // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
+                if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+                {
+                    ErrorMessage = "Cannot read medium, aborting scan...";
 
-                return true;
+                    return true;
+                }
+
+                _read12 = true;
             }
 
             if(_read6   &&
@@ -576,6 +582,14 @@ namespace Aaru.Core.Devices
 
             if(!_dev.Error)
                 return false;
+
+            // Magneto-opticals may have LBA 0 empty, we can hard code the value to a safe one
+            if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+            {
+                BlocksToRead = 16;
+
+                return false;
+            }
 
             BlocksToRead = 1;
             ErrorMessage = $"Device error {_dev.LastError} trying to guess ideal transfer length.";
