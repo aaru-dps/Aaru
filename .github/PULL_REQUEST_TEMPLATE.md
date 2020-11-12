@@ -3,7 +3,7 @@
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] New filesystem, test images in [url]
-- [ ] New disc image, test images in [url]
+- [ ] New media image, test images in [url]
 - [ ] New partition scheme, test images in [url]
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 - [ ] I have read the **CONTRIBUTING** document.

@@ -265,7 +265,6 @@
     <None Include="..\.github\CODE_OF_CONDUCT.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\.github\ISSUE_TEMPLATE.md" />
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
   <ItemGroup>
