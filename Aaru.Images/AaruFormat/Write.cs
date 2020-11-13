@@ -2286,21 +2286,6 @@ namespace Aaru.DiscImages
             switch(_imageInfo.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
-                    Track track =
-                        Tracks.FirstOrDefault(trk => sectorAddress >= trk.TrackStartSector &&
-                                                     sectorAddress <= trk.TrackEndSector);
-
-                    if(track.TrackSequence    == 0 &&
-                       track.TrackStartSector == 0 &&
-                       track.TrackEndSector   == 0)
-                        track.TrackType = TrackType.Data; // TODO: Check intersession data type
-                    else if(sectorAddress + length > track.TrackEndSector + 1)
-                    {
-                        ErrorMessage = "Can't cross tracks";
-
-                        return false;
-                    }
-
                     if(data.Length % 2352 != 0)
                     {
                         ErrorMessage = "Incorrect data size";
