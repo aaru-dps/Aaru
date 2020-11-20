@@ -836,26 +836,26 @@ namespace Aaru.Commands.Device
                     AaruConsole.WriteLine("Drive has loaded a total of {0} discs", devInfo.PlextorFeatures.Discs);
 
                     AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading CDs",
-                                          devInfo.PlextorFeatures.CdReadTime        / 3600,
-                                          (devInfo.PlextorFeatures.CdReadTime / 60) % 60,
-                                          devInfo.PlextorFeatures.CdReadTime        % 60);
+                                          devInfo.PlextorFeatures.CdReadTime      / 3600,
+                                          devInfo.PlextorFeatures.CdReadTime / 60 % 60,
+                                          devInfo.PlextorFeatures.CdReadTime      % 60);
 
                     AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing CDs",
-                                          devInfo.PlextorFeatures.CdWriteTime        / 3600,
-                                          (devInfo.PlextorFeatures.CdWriteTime / 60) % 60,
-                                          devInfo.PlextorFeatures.CdWriteTime        % 60);
+                                          devInfo.PlextorFeatures.CdWriteTime      / 3600,
+                                          devInfo.PlextorFeatures.CdWriteTime / 60 % 60,
+                                          devInfo.PlextorFeatures.CdWriteTime      % 60);
 
                     if(devInfo.PlextorFeatures.IsDvd)
                     {
                         AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds reading DVDs",
-                                              devInfo.PlextorFeatures.DvdReadTime        / 3600,
-                                              (devInfo.PlextorFeatures.DvdReadTime / 60) % 60,
-                                              devInfo.PlextorFeatures.DvdReadTime        % 60);
+                                              devInfo.PlextorFeatures.DvdReadTime      / 3600,
+                                              devInfo.PlextorFeatures.DvdReadTime / 60 % 60,
+                                              devInfo.PlextorFeatures.DvdReadTime      % 60);
 
                         AaruConsole.WriteLine("Drive has spent {0} hours, {1} minutes and {2} seconds writing DVDs",
-                                              devInfo.PlextorFeatures.DvdWriteTime        / 3600,
-                                              (devInfo.PlextorFeatures.DvdWriteTime / 60) % 60,
-                                              devInfo.PlextorFeatures.DvdWriteTime        % 60);
+                                              devInfo.PlextorFeatures.DvdWriteTime      / 3600,
+                                              devInfo.PlextorFeatures.DvdWriteTime / 60 % 60,
+                                              devInfo.PlextorFeatures.DvdWriteTime      % 60);
                     }
                 }
 
@@ -1159,7 +1159,9 @@ namespace Aaru.Commands.Device
 
             // Search for read offset in main database
             CdOffset cdOffset =
-                ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model);
+                ctx.CdOffsets.FirstOrDefault(d => (d.Manufacturer == dev.Manufacturer ||
+                                                   d.Manufacturer == dev.Manufacturer.Replace('/', '-')) &&
+                                                  (d.Model == dev.Model || d.Model == dev.Model.Replace('/', '-')));
 
             AaruConsole.WriteLine(cdOffset is null ? "CD reading offset not found in database."
                                       : $"CD reading offset is {cdOffset.Offset} samples ({cdOffset.Offset * 4} bytes).");

@@ -1044,7 +1044,10 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Search for read offset in main database
-            cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
+            cdOffset =
+                _ctx.CdOffsets.FirstOrDefault(d => (d.Manufacturer == _dev.Manufacturer ||
+                                                    d.Manufacturer == _dev.Manufacturer.Replace('/', '-')) &&
+                                                   (d.Model == _dev.Model || d.Model == _dev.Model.Replace('/', '-')));
 
             Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,
                                              out int? driveOffset, out int? combinedOffset, out _supportsPlextorD8);
@@ -1270,23 +1273,23 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+                         blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             TrimCdUserData(audioExtents, blockSize, currentTry, extents, newTrim, offsetBytes, read6, read10, read12,
                            read16, readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors,
@@ -1420,7 +1423,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - dumpStart).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");

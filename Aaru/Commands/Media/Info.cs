@@ -608,8 +608,11 @@ namespace Aaru.Commands.Media
                     AaruConsole.WriteLine("Offsets:");
 
                     // Search for read offset in main database
-                    CdOffset cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
-                                                                          d.Model        == dev.Model);
+                    CdOffset cdOffset =
+                        ctx.CdOffsets.FirstOrDefault(d => (d.Manufacturer == dev.Manufacturer ||
+                                                           d.Manufacturer == dev.Manufacturer.Replace('/', '-')) &&
+                                                          (d.Model == dev.Model ||
+                                                           d.Model == dev.Model.Replace('/', '-')));
 
                     CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
                                           out int? driveOffset, out int? combinedOffset, out _);
