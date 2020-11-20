@@ -221,7 +221,7 @@ namespace Aaru.Decoders.DVD
 
                 // DVD-R and DVD-RW
                 case DiskCategory.DVDR when pfi.PartVersion  < 6:
-                case DiskCategory.DVDRW when pfi.PartVersion < 3:
+                case DiskCategory.DVDRW when pfi.PartVersion < 15:
                     pfi.CurrentBorderOutSector =
                         (uint)((response[36] << 24) + (response[37] << 16) + (response[38] << 8) + response[39]);
 
@@ -353,7 +353,7 @@ namespace Aaru.Decoders.DVD
 
                 // DVD-R DL and DVD-RW DL
                 case DiskCategory.DVDR when pfi.PartVersion  >= 6:
-                case DiskCategory.DVDRW when pfi.PartVersion >= 3:
+                case DiskCategory.DVDRW when pfi.PartVersion >= 15:
                     pfi.MaxRecordingSpeed = (DVDRecordingSpeed)response[21];
                     pfi.MinRecordingSpeed = (DVDRecordingSpeed)response[22];
                     pfi.RecordingSpeed1   = (DVDRecordingSpeed)response[23];
@@ -470,7 +470,7 @@ namespace Aaru.Decoders.DVD
 
                     break;
                 case DiskCategory.DVDRW:
-                    if(decoded.PartVersion >= 3)
+                    if(decoded.PartVersion >= 15)
                         sb.AppendFormat(categorySentence, sizeString, "DVD-RW DL", decoded.PartVersion).AppendLine();
                     else
                         sb.AppendFormat(categorySentence, sizeString, "DVD-RW", decoded.PartVersion).AppendLine();
@@ -751,7 +751,7 @@ namespace Aaru.Decoders.DVD
 
                     break;
                 case DiskCategory.DVDR when decoded.PartVersion  < 6:
-                case DiskCategory.DVDRW when decoded.PartVersion < 3:
+                case DiskCategory.DVDRW when decoded.PartVersion < 15:
                     sb.AppendFormat("Current Border-Out first sector is PSN {0:X}h", decoded.CurrentBorderOutSector).
                        AppendLine();
 
@@ -775,7 +775,7 @@ namespace Aaru.Decoders.DVD
             }
 
             if((decoded.DiskCategory != DiskCategory.DVDR  || decoded.PartVersion < 6) &&
-               (decoded.DiskCategory != DiskCategory.DVDRW || decoded.PartVersion < 3))
+               (decoded.DiskCategory != DiskCategory.DVDRW || decoded.PartVersion < 15))
                 return sb.ToString();
 
             sb.AppendFormat("Current RMD in extra Border zone starts at PSN {0:X}h", decoded.CurrentRMDExtraBorderPSN).
