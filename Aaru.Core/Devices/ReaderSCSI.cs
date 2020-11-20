@@ -61,6 +61,9 @@ namespace Aaru.Core.Devices
             if(Blocks == 0)
                 GetDeviceBlocks();
 
+            if(Blocks == 0)
+                return true;
+
             byte[] senseBuf;
             int    tries      = 0;
             uint   lba        = 0;
