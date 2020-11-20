@@ -349,7 +349,7 @@ namespace Aaru.DiscImages
                 session.StartSector     = startingTrack.startLba;
                 session.StartTrack      = alcSes.firstTrack;
                 session.SessionSequence = alcSes.sessionSequence;
-                session.EndSector       = (endingTrack.startLba + endingTrackExtra.sectors) - 1;
+                session.EndSector       = endingTrack.startLba + endingTrackExtra.sectors - 1;
                 session.EndTrack        = alcSes.lastTrack;
 
                 Sessions.Add(session);
@@ -416,7 +416,7 @@ namespace Aaru.DiscImages
                                 break;
                             case DiskCategory.DVDRW:
                                 _imageInfo.MediaType =
-                                    pfi0.Value.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                                    pfi0.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                                 break;
                             case DiskCategory.HDDVDR:

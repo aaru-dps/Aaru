@@ -398,7 +398,7 @@ namespace Aaru.DiscImages
 
                         break;
                     case DiskCategory.DVDRW:
-                        _imageInfo.MediaType = decPfi.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                        _imageInfo.MediaType = decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
                         break;
                     case DiskCategory.HDDVDR:

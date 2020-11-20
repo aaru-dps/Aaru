@@ -292,66 +292,65 @@ namespace Aaru.Core.Devices.Dumping
                             UpdateStatus?.Invoke($"PFI:\n{PFI.Prettify(decPfi)}");
 
                             // False book types
-                            if(dskType == MediaType.DVDROM)
-                                switch(decPfi.DiskCategory)
-                                {
-                                    case DiskCategory.DVDPR:
-                                        dskType = MediaType.DVDPR;
+                            switch(decPfi.DiskCategory)
+                            {
+                                case DiskCategory.DVDPR:
+                                    dskType = MediaType.DVDPR;
 
-                                        break;
-                                    case DiskCategory.DVDPRDL:
-                                        dskType = MediaType.DVDPRDL;
+                                    break;
+                                case DiskCategory.DVDPRDL:
+                                    dskType = MediaType.DVDPRDL;
 
-                                        break;
-                                    case DiskCategory.DVDPRW:
-                                        dskType = MediaType.DVDPRW;
+                                    break;
+                                case DiskCategory.DVDPRW:
+                                    dskType = MediaType.DVDPRW;
 
-                                        break;
-                                    case DiskCategory.DVDPRWDL:
-                                        dskType = MediaType.DVDPRWDL;
+                                    break;
+                                case DiskCategory.DVDPRWDL:
+                                    dskType = MediaType.DVDPRWDL;
 
-                                        break;
-                                    case DiskCategory.DVDR:
-                                        dskType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
+                                    break;
+                                case DiskCategory.DVDR:
+                                    dskType = decPfi.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR;
 
-                                        break;
-                                    case DiskCategory.DVDRAM:
-                                        dskType = MediaType.DVDRAM;
+                                    break;
+                                case DiskCategory.DVDRAM:
+                                    dskType = MediaType.DVDRAM;
 
-                                        break;
-                                    default:
-                                        dskType = MediaType.DVDROM;
+                                    break;
+                                default:
+                                    dskType = MediaType.DVDROM;
 
-                                        break;
-                                    case DiskCategory.DVDRW:
-                                        dskType = decPfi.PartVersion >= 3 ? MediaType.DVDRWDL : MediaType.DVDRW;
+                                    break;
+                                case DiskCategory.DVDRW:
+                                    dskType = decPfi.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW;
 
-                                        break;
-                                    case DiskCategory.HDDVDR:
-                                        dskType = MediaType.HDDVDR;
+                                    break;
+                                case DiskCategory.HDDVDR:
+                                    dskType = MediaType.HDDVDR;
 
-                                        break;
-                                    case DiskCategory.HDDVDRAM:
-                                        dskType = MediaType.HDDVDRAM;
+                                    break;
+                                case DiskCategory.HDDVDRAM:
+                                    dskType = MediaType.HDDVDRAM;
 
-                                        break;
-                                    case DiskCategory.HDDVDROM:
-                                        dskType = MediaType.HDDVDROM;
+                                    break;
+                                case DiskCategory.HDDVDROM:
+                                    dskType = MediaType.HDDVDROM;
 
-                                        break;
-                                    case DiskCategory.HDDVDRW:
-                                        dskType = MediaType.HDDVDRW;
+                                    break;
+                                case DiskCategory.HDDVDRW:
+                                    dskType = MediaType.HDDVDRW;
 
-                                        break;
-                                    case DiskCategory.Nintendo:
-                                        dskType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
+                                    break;
+                                case DiskCategory.Nintendo:
+                                    dskType = decPfi.DiscSize == DVDSize.Eighty ? MediaType.GOD : MediaType.WOD;
 
-                                        break;
-                                    case DiskCategory.UMD:
-                                        dskType = MediaType.UMD;
+                                    break;
+                                case DiskCategory.UMD:
+                                    dskType = MediaType.UMD;
 
-                                        break;
-                                }
+                                    break;
+                            }
                         }
 
                     _dumpLog.WriteLine("Reading Disc Manufacturing Information");

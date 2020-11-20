@@ -553,7 +553,7 @@ namespace Aaru.Core.Media.Info
 
                                         break;
                                     case DiskCategory.DVDRW:
-                                        MediaType = DecodedPfi.Value.PartVersion >= 3 ? MediaType.DVDRWDL
+                                        MediaType = DecodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL
                                                         : MediaType.DVDRW;
 
                                         break;
@@ -1307,10 +1307,10 @@ namespace Aaru.Core.Media.Info
                             AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors",
                                                        totalSize);
 
-                            ulong l0Video = (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                             PFI.Decode(cmdBuf).Value.DataAreaStartPSN) + 1;
+                            ulong l0Video = PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                                            PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1;
 
-                            ulong l1Video = (totalSize - l0Video) + 1;
+                            ulong l1Video = totalSize - l0Video + 1;
 
                             // Get game partition size
                             AaruConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
@@ -1374,8 +1374,8 @@ namespace Aaru.Core.Media.Info
                                                        totalSize);
 
                             ulong middleZone =
-                                (totalSize - ((PFI.Decode(cmdBuf).Value.Layer0EndPSN -
-                                               PFI.Decode(cmdBuf).Value.DataAreaStartPSN) + 1) - gameSize) + 1;
+                                totalSize - (PFI.Decode(cmdBuf).Value.Layer0EndPSN -
+                                             PFI.Decode(cmdBuf).Value.DataAreaStartPSN + 1) - gameSize + 1;
 
                             totalSize = l0Video + l1Video + (middleZone * 2) + gameSize;
                             ulong layerBreak = l0Video + middleZone + (gameSize / 2);
