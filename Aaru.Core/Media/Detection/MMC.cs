@@ -39,6 +39,7 @@ using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.Console;
 using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Sega;
 using Aaru.Devices;
 using Aaru.Helpers;
@@ -178,12 +179,12 @@ namespace Aaru.Core.Media.Detection
                 int frame  = sector[i + 14];
 
                 // Convert to binary
-                minute = ((minute / 16) * 10) + (minute & 0x0F);
-                second = ((second / 16) * 10) + (second & 0x0F);
-                frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+                minute = (minute / 16 * 10) + (minute & 0x0F);
+                second = (second / 16 * 10) + (second & 0x0F);
+                frame  = (frame  / 16 * 10) + (frame  & 0x0F);
 
                 // Calculate the first found LBA
-                int lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+                int lba = (minute * 60 * 75) + (second * 75) + frame - 150;
 
                 // Calculate the difference between the found LBA and the requested one
                 int diff = wantedLba - lba;
@@ -298,6 +299,135 @@ namespace Aaru.Core.Media.Detection
             hiddenTrack = false;
             hiddenData  = false;
 
+            sense = dev.GetConfiguration(out cmdBuf, out _, 0, MmcGetConfigurationRt.Current, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
+
+                AaruConsole.DebugWriteLine("Media-Info command", "GET CONFIGURATION current profile is {0:X4}h",
+                                           ftr.CurrentProfile);
+
+                switch(ftr.CurrentProfile)
+                {
+                    case 0x0001:
+                        mediaType = MediaType.GENERIC_HDD;
+
+                        break;
+                    case 0x0005:
+                        mediaType = MediaType.CDMO;
+
+                        break;
+                    case 0x0008:
+                        mediaType = MediaType.CD;
+
+                        break;
+                    case 0x0009:
+                        mediaType = MediaType.CDR;
+
+                        break;
+                    case 0x000A:
+                        mediaType = MediaType.CDRW;
+
+                        break;
+                    case 0x0010:
+                        mediaType = MediaType.DVDROM;
+
+                        break;
+                    case 0x0011:
+                        mediaType = MediaType.DVDR;
+
+                        break;
+                    case 0x0012:
+                        mediaType = MediaType.DVDRAM;
+
+                        break;
+                    case 0x0013:
+                    case 0x0014:
+                        mediaType = MediaType.DVDRW;
+
+                        break;
+                    case 0x0015:
+                    case 0x0016:
+                        mediaType = MediaType.DVDRDL;
+
+                        break;
+                    case 0x0017:
+                        mediaType = MediaType.DVDRWDL;
+
+                        break;
+                    case 0x0018:
+                        mediaType = MediaType.DVDDownload;
+
+                        break;
+                    case 0x001A:
+                        mediaType = MediaType.DVDPRW;
+
+                        break;
+                    case 0x001B:
+                        mediaType = MediaType.DVDPR;
+
+                        break;
+                    case 0x0020:
+                        mediaType = MediaType.DDCD;
+
+                        break;
+                    case 0x0021:
+                        mediaType = MediaType.DDCDR;
+
+                        break;
+                    case 0x0022:
+                        mediaType = MediaType.DDCDRW;
+
+                        break;
+                    case 0x002A:
+                        mediaType = MediaType.DVDPRWDL;
+
+                        break;
+                    case 0x002B:
+                        mediaType = MediaType.DVDPRDL;
+
+                        break;
+                    case 0x0040:
+                        mediaType = MediaType.BDROM;
+
+                        break;
+                    case 0x0041:
+                    case 0x0042:
+                        mediaType = MediaType.BDR;
+
+                        break;
+                    case 0x0043:
+                        mediaType = MediaType.BDRE;
+
+                        break;
+                    case 0x0050:
+                        mediaType = MediaType.HDDVDROM;
+
+                        break;
+                    case 0x0051:
+                        mediaType = MediaType.HDDVDR;
+
+                        break;
+                    case 0x0052:
+                        mediaType = MediaType.HDDVDRAM;
+
+                        break;
+                    case 0x0053:
+                        mediaType = MediaType.HDDVDRW;
+
+                        break;
+                    case 0x0058:
+                        mediaType = MediaType.HDDVDRDL;
+
+                        break;
+                    case 0x005A:
+                        mediaType = MediaType.HDDVDRWDL;
+
+                        break;
+                }
+            }
+
             if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == 2) == true)
                 secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
                                                      Min(t => t.POINT);
@@ -341,9 +471,8 @@ namespace Aaru.Core.Media.Detection
                         if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
                         {
-                            uint startAddress =
-                                (uint)(((track.PHOUR * 3600 * 75) + (track.PMIN * 60 * 75) + (track.PSEC * 75) +
-                                        track.PFRAME) - 150);
+                            uint startAddress = (uint)((track.PHOUR * 3600 * 75) + (track.PMIN * 60 * 75) +
+                                                       (track.PSEC  * 75)        + track.PFRAME - 150);
 
                             if(startAddress < startOfFirstDataTrack)
                                 startOfFirstDataTrack = startAddress;
@@ -412,12 +541,10 @@ namespace Aaru.Core.Media.Detection
                                                                         TocControl.DataTrack ||
                                                                         (TocControl)(t.CONTROL & 0x0D) ==
                                                                         TocControl.DataTrackIncremental)).
-                                                            Select(track => (uint)(((track.PHOUR * 3600 * 75) +
-                                                                                                    (track.PMIN * 60 *
-                                                                                                            75)       +
-                                                                                                    (track.PSEC * 75) +
-                                                                                                    track.PFRAME) -
-                                                                                        150) + 16))
+                                                            Select(track => (uint)((track.PHOUR     * 3600 * 75) +
+                                                                                        (track.PMIN * 60   * 75) +
+                                                                                        (track.PSEC * 75)        +
+                                                                                        track.PFRAME - 150) + 16))
                     {
                         sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false,
                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
@@ -458,9 +585,9 @@ namespace Aaru.Core.Media.Detection
                     decodedToc.Value.TrackDescriptors.First(t => t.POINT == secondSessionFirstTrack);
 
                 uint firstSectorSecondSessionFirstTrack =
-                    (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
-                            (secondSessionFirstTrackTrack.PMIN  * 60 * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
-                            secondSessionFirstTrackTrack.PFRAME) - 150);
+                    (uint)((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
+                           (secondSessionFirstTrackTrack.PMIN  * 60   * 75) + (secondSessionFirstTrackTrack.PSEC * 75) +
+                           secondSessionFirstTrackTrack.PFRAME - 150);
 
                 sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
@@ -532,9 +659,9 @@ namespace Aaru.Core.Media.Detection
 
             if(firstTrack?.POINT == 1)
             {
-                uint firstTrackSector = (uint)(((firstTrack.Value.PHOUR * 3600 * 75) +
-                                                (firstTrack.Value.PMIN  * 60   * 75) + (firstTrack.Value.PSEC * 75) +
-                                                firstTrack.Value.PFRAME) - 150);
+                uint firstTrackSector = (uint)((firstTrack.Value.PHOUR * 3600 * 75) +
+                                               (firstTrack.Value.PMIN  * 60   * 75) + (firstTrack.Value.PSEC * 75) +
+                                               firstTrack.Value.PFRAME - 150);
 
                 // Check for hidden data before start of track 1
                 if(firstTrackSector > 0)
