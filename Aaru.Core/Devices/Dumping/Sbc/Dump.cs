@@ -451,9 +451,17 @@ namespace Aaru.Core.Devices.Dumping
                                 if(trkInfo is null)
                                     continue;
 
+                                // Some drives return this invalid value with recordable discs
+                                if(trkInfo.LogicalTrackNumber == 0)
+                                    continue;
+
                                 // Fixes a firmware bug in some DVD drives
                                 if((int)trkInfo.LogicalTrackStartAddress < 0)
                                     trkInfo.LogicalTrackStartAddress = 0;
+
+                                // Some drives return this invalid value with recordable discs
+                                if(trkInfo.LogicalTrackSize == 0xFFFFFFFF)
+                                    trkInfo.LogicalTrackSize = (uint)(blocks - trkInfo.LogicalTrackStartAddress);
 
                                 var track = new Track
                                 {
@@ -461,7 +469,7 @@ namespace Aaru.Core.Devices.Dumping
                                     TrackSession = (ushort)(canStoreNotCdSessions ? trkInfo.SessionNumber : 1),
                                     TrackType = TrackType.Data,
                                     TrackStartSector = trkInfo.LogicalTrackStartAddress,
-                                    TrackEndSector = (trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress) - 1,
+                                    TrackEndSector = trkInfo.LogicalTrackSize + trkInfo.LogicalTrackStartAddress - 1,
                                     TrackRawBytesPerSector = (int)blockSize,
                                     TrackBytesPerSector = (int)blockSize,
                                     TrackSubchannelType = TrackSubchannelType.None
@@ -473,7 +481,19 @@ namespace Aaru.Core.Devices.Dumping
                                 tracks.Add(track);
                             }
 
-                            tracks = tracks.OrderBy(t => t.TrackSequence).ToList();
+                            if(tracks.Count == 0)
+                                tracks.Add(new Track
+                                {
+                                    TrackBytesPerSector    = (int)blockSize,
+                                    TrackEndSector         = blocks - 1,
+                                    TrackSequence          = 1,
+                                    TrackRawBytesPerSector = (int)blockSize,
+                                    TrackSubchannelType    = TrackSubchannelType.None,
+                                    TrackSession           = 1,
+                                    TrackType              = TrackType.Data
+                                });
+                            else
+                                tracks = tracks.OrderBy(t => t.TrackSequence).ToList();
 
                             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
@@ -656,23 +676,23 @@ namespace Aaru.Core.Devices.Dumping
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000), _devicePath);
+                         blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
             _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
             _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
 
             _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
+                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
@@ -940,12 +960,12 @@ namespace Aaru.Core.Devices.Dumping
                     UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
                     UpdateStatus?.
-                        Invoke($"Average checksum speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                        Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
                     _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
                     _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                       ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
+                                       (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
                     if(_preSidecar != null)
                     {
@@ -1154,7 +1174,7 @@ namespace Aaru.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             if(maxSpeed > 0)
                 UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
