@@ -1346,7 +1346,9 @@ namespace Aaru.Core.Devices.Dumping
             _resume.BadSubchannels.AddRange(subchannelExtents);
             _resume.BadSubchannels.Sort();
 
-            if(_generateSubchannels && _outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel))
+            if(_generateSubchannels                                                         &&
+               _outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+               !_aborted)
                 Media.CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, blocks, subLog, _dumpLog,
                                                       InitProgress, UpdateProgress, EndProgress, _outputPlugin);
 
