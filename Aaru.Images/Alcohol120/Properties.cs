@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
                     var aaruTrack = new CommonTypes.Structs.Track
                     {
                         TrackStartSector       = alcTrack.startLba,
-                        TrackEndSector         = (alcTrack.startLba + alcExtra.sectors) - 1,
+                        TrackEndSector         = alcTrack.startLba + alcExtra.sectors - 1,
                         TrackPregap            = alcExtra.pregap,
                         TrackSession           = sessionNo,
                         TrackSequence          = alcTrack.point,
@@ -157,7 +157,7 @@ namespace Aaru.DiscImages
             MediaType.SVOD, MediaType.SATURNCD, MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM,
             MediaType.UMD, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV,
             MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD,
-            MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD
+            MediaType.VideoNow, MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
         };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new (string name, Type type, string description, object @default)[]

@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
 
                     previousTrackFile = cdrTrack.TrackFile.DataFilter.GetFilename();
 
-                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
+                    aaruTrack.TrackEndSector = aaruTrack.TrackStartSector + cdrTrack.Sectors - 1;
 
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
@@ -211,7 +211,7 @@ namespace Aaru.DiscImages
             MediaType.ThreeDO, MediaType.UDO, MediaType.UDO2, MediaType.UDO2_WORM, MediaType.UMD, MediaType.VCD,
             MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX, MediaType.CDTV, MediaType.CD32, MediaType.Nuon,
             MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
-            MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD
+            MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
         };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
         {
