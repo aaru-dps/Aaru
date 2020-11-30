@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
@@ -46,6 +47,7 @@ using Aaru.Core;
 using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
 using Newtonsoft.Json;
@@ -516,6 +518,113 @@ namespace Aaru.Commands.Device
                                     Features        = reporter.ReportMmcFeatures()
                                 };
 
+                                if(report.SCSI.MultiMediaDevice.Features?.BinaryData != null)
+                                {
+                                    Features.SeparatedFeatures ftr =
+                                        Features.Separate(report.SCSI.MultiMediaDevice.Features.BinaryData);
+
+                                    if(ftr.Descriptors != null)
+                                    {
+                                        foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
+                                        {
+                                            if(desc.Code != 0x0000)
+                                                continue;
+
+                                            Feature_0000? ftr0000 = Features.Decode_0000(desc.Data);
+
+                                            if(ftr0000 == null)
+                                                continue;
+
+                                            foreach(Profile prof in ftr0000.Value.Profiles)
+                                            {
+                                                switch(prof.Number)
+                                                {
+                                                    case ProfileNumber.CDROM:
+                                                    case ProfileNumber.CDR:
+                                                    case ProfileNumber.CDRW:
+                                                        mediaTypes.Add("CD-ROM");
+                                                        mediaTypes.Add("Audio CD");
+                                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                                                        mediaTypes.Add("CD-R");
+                                                        mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                                        mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                                        mediaTypes.Add("CD-RW (marked 4x or lower)");
+
+                                                        break;
+                                                    case ProfileNumber.DVDRWRes:
+                                                    case ProfileNumber.DVDRWSeq:
+                                                    case ProfileNumber.DVDRDLSeq:
+                                                    case ProfileNumber.DVDRDLJump:
+                                                    case ProfileNumber.DVDRWDL:
+                                                    case ProfileNumber.DVDDownload:
+                                                    case ProfileNumber.DVDRWPlus:
+                                                    case ProfileNumber.DVDRPlus:
+                                                    case ProfileNumber.DVDRSeq:
+                                                    case ProfileNumber.DVDRWDLPlus:
+                                                    case ProfileNumber.DVDRDLPlus:
+
+                                                    case ProfileNumber.DVDROM:
+                                                        mediaTypes.Add("DVD-ROM");
+                                                        mediaTypes.Add("DVD-R");
+                                                        mediaTypes.Add("DVD-RW");
+                                                        mediaTypes.Add("DVD+R");
+                                                        mediaTypes.Add("DVD+RW");
+                                                        mediaTypes.Add("DVD-R DL");
+                                                        mediaTypes.Add("DVD+R DL");
+                                                        mediaTypes.Add("Nintendo GameCube game");
+                                                        mediaTypes.Add("Nintendo Wii game");
+
+                                                        break;
+                                                    case ProfileNumber.DVDRAM:
+                                                        mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                                        mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+
+                                                        break;
+                                                    case ProfileNumber.DDCDROM:
+                                                    case ProfileNumber.DDCDR:
+                                                    case ProfileNumber.DDCDRW:
+                                                        mediaTypes.Add("DDCD-ROM");
+                                                        mediaTypes.Add("DDCD-R");
+                                                        mediaTypes.Add("DDCD-RW");
+
+                                                        break;
+                                                    case ProfileNumber.BDROM:
+                                                    case ProfileNumber.BDRSeq:
+                                                    case ProfileNumber.BDRRdm:
+                                                    case ProfileNumber.BDRE:
+                                                        mediaTypes.Add("BD-ROM");
+                                                        mediaTypes.Add("BD-R HTL (not LTH)");
+                                                        mediaTypes.Add("BD-RE");
+                                                        mediaTypes.Add("BD-R LTH");
+                                                        mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                                        mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                                        mediaTypes.Add("Ultra HD Blu-ray movie");
+                                                        mediaTypes.Add("PlayStation 3 game");
+                                                        mediaTypes.Add("PlayStation 4 game");
+                                                        mediaTypes.Add("Xbox One game");
+                                                        mediaTypes.Add("Nintendo Wii U game");
+
+                                                        break;
+                                                    case ProfileNumber.HDDVDROM:
+                                                    case ProfileNumber.HDDVDR:
+                                                    case ProfileNumber.HDDVDRW:
+                                                    case ProfileNumber.HDDVDRDL:
+                                                    case ProfileNumber.HDDVDRWDL:
+                                                        mediaTypes.Add("HD DVD-ROM");
+                                                        mediaTypes.Add("HD DVD-R");
+                                                        mediaTypes.Add("HD DVD-RW");
+
+                                                        break;
+                                                    case ProfileNumber.HDDVDRAM:
+                                                        mediaTypes.Add("HD DVD-RAM");
+
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
                                 if(cdromMode != null &&
                                    !iomegaRev)
                                 {
@@ -558,79 +667,39 @@ namespace Aaru.Commands.Device
                                        report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
                                        report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
                                     {
-                                        if(!mediaTypes.Contains("BD-ROM"))
-                                            mediaTypes.Add("BD-ROM");
-
-                                        if(!mediaTypes.Contains("BD-R HTL (not LTH)"))
-                                            mediaTypes.Add("BD-R HTL (not LTH)");
-
-                                        if(!mediaTypes.Contains("BD-RE"))
-                                            mediaTypes.Add("BD-RE");
-
-                                        if(!mediaTypes.Contains("BD-R LTH"))
-                                            mediaTypes.Add("BD-R LTH");
-
-                                        if(!mediaTypes.Contains("BD-R Triple Layer (100Gb)"))
-                                            mediaTypes.Add("BD-R Triple Layer (100Gb)");
-
-                                        if(!mediaTypes.Contains("BD-R Quad Layer (128Gb)"))
-                                            mediaTypes.Add("BD-R Quad Layer (128Gb)");
-
-                                        if(!mediaTypes.Contains("Ultra HD Blu-ray movie"))
-                                            mediaTypes.Add("Ultra HD Blu-ray movie");
-
-                                        if(!mediaTypes.Contains("PlayStation 3 game"))
-                                            mediaTypes.Add("PlayStation 3 game");
-
-                                        if(!mediaTypes.Contains("PlayStation 4 game"))
-                                            mediaTypes.Add("PlayStation 4 game");
-
-                                        if(!mediaTypes.Contains("Xbox One game"))
-                                            mediaTypes.Add("Xbox One game");
-
-                                        if(!mediaTypes.Contains("Nintendo Wii U game"))
-                                            mediaTypes.Add("Nintendo Wii U game");
+                                        mediaTypes.Add("BD-ROM");
+                                        mediaTypes.Add("BD-R HTL (not LTH)");
+                                        mediaTypes.Add("BD-RE");
+                                        mediaTypes.Add("BD-R LTH");
+                                        mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                        mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                        mediaTypes.Add("Ultra HD Blu-ray movie");
+                                        mediaTypes.Add("PlayStation 3 game");
+                                        mediaTypes.Add("PlayStation 4 game");
+                                        mediaTypes.Add("Xbox One game");
+                                        mediaTypes.Add("Nintendo Wii U game");
                                     }
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
                                        report.SCSI.MultiMediaDevice.Features.MultiRead)
                                     {
-                                        if(!mediaTypes.Contains("CD-ROM"))
-                                            mediaTypes.Add("CD-ROM");
-
-                                        if(!mediaTypes.Contains("Audio CD"))
-                                            mediaTypes.Add("Audio CD");
-
-                                        if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
-                                            mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-
-                                        if(!mediaTypes.Contains("CD-R"))
-                                            mediaTypes.Add("CD-R");
-
-                                        if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
-                                            mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-
-                                        if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
-                                            mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-
-                                        if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
-                                            mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                        mediaTypes.Add("CD-ROM");
+                                        mediaTypes.Add("Audio CD");
+                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                                        mediaTypes.Add("CD-R");
+                                        mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                        mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                        mediaTypes.Add("CD-RW (marked 4x or lower)");
                                     }
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
-                                        if(!mediaTypes.Contains("CD-MRW"))
-                                            mediaTypes.Add("CD-MRW");
+                                        mediaTypes.Add("CD-MRW");
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
                                     {
-                                        if(!mediaTypes.Contains("DDCD-ROM"))
-                                            mediaTypes.Add("DDCD-ROM");
-
-                                        if(!mediaTypes.Contains("DDCD-R"))
-                                            mediaTypes.Add("DDCD-R");
-
-                                        if(!mediaTypes.Contains("DDCD-RW"))
-                                            mediaTypes.Add("DDCD-RW");
+                                        mediaTypes.Add("DDCD-ROM");
+                                        mediaTypes.Add("DDCD-R");
+                                        mediaTypes.Add("DDCD-RW");
                                     }
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
@@ -640,54 +709,32 @@ namespace Aaru.Commands.Device
                                        report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
                                        report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
                                     {
-                                        if(!mediaTypes.Contains("DVD-ROM"))
-                                            mediaTypes.Add("DVD-ROM");
-
-                                        if(!mediaTypes.Contains("DVD-R"))
-                                            mediaTypes.Add("DVD-R");
-
-                                        if(!mediaTypes.Contains("DVD-RW"))
-                                            mediaTypes.Add("DVD-RW");
-
-                                        if(!mediaTypes.Contains("DVD+R"))
-                                            mediaTypes.Add("DVD+R");
-
-                                        if(!mediaTypes.Contains("DVD+RW"))
-                                            mediaTypes.Add("DVD+RW");
-
-                                        if(!mediaTypes.Contains("DVD-R DL"))
-                                            mediaTypes.Add("DVD-R DL");
-
-                                        if(!mediaTypes.Contains("DVD+R DL"))
-                                            mediaTypes.Add("DVD+R DL");
-
-                                        if(!mediaTypes.Contains("Nintendo GameCube game"))
-                                            mediaTypes.Add("Nintendo GameCube game");
-
-                                        if(!mediaTypes.Contains("Nintendo Wii game"))
-                                            mediaTypes.Add("Nintendo Wii game");
+                                        mediaTypes.Add("DVD-ROM");
+                                        mediaTypes.Add("DVD-R");
+                                        mediaTypes.Add("DVD-RW");
+                                        mediaTypes.Add("DVD+R");
+                                        mediaTypes.Add("DVD+RW");
+                                        mediaTypes.Add("DVD-R DL");
+                                        mediaTypes.Add("DVD+R DL");
+                                        mediaTypes.Add("Nintendo GameCube game");
+                                        mediaTypes.Add("Nintendo Wii game");
+                                        mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                        mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
                                     }
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
-                                        if(!mediaTypes.Contains("DVD+MRW"))
-                                            mediaTypes.Add("DVD+MRW");
+                                        mediaTypes.Add("DVD+MRW");
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
                                        report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
                                     {
-                                        if(!mediaTypes.Contains("HD DVD-ROM"))
-                                            mediaTypes.Add("HD DVD-ROM");
-
-                                        if(!mediaTypes.Contains("HD DVD-R"))
-                                            mediaTypes.Add("HD DVD-R");
-
-                                        if(!mediaTypes.Contains("HD DVD-RW"))
-                                            mediaTypes.Add("HD DVD-RW");
+                                        mediaTypes.Add("HD DVD-ROM");
+                                        mediaTypes.Add("HD DVD-R");
+                                        mediaTypes.Add("HD DVD-RW");
                                     }
 
                                     if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM)
-                                        if(!mediaTypes.Contains("HD DVD-RAM"))
-                                            mediaTypes.Add("HD DVD-RAM");
+                                        mediaTypes.Add("HD DVD-RAM");
                                 }
 
                                 if(iomegaRev)
@@ -702,28 +749,16 @@ namespace Aaru.Commands.Device
                                 if(mediaTypes.Count == 0 ||
                                    mediaTypes.Contains("CD-ROM"))
                                 {
-                                    if(!mediaTypes.Contains("CD-ROM"))
-                                        mediaTypes.Add("CD-ROM");
-
-                                    if(!mediaTypes.Contains("Audio CD"))
-                                        mediaTypes.Add("Audio CD");
-
-                                    if(!mediaTypes.Contains("CD-R"))
-                                        mediaTypes.Add("CD-R");
-
-                                    if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
-                                        mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-
-                                    if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
-                                        mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-
-                                    if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
-                                        mediaTypes.Add("CD-RW (marked 4x or lower)");
-
-                                    if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
-                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                                    mediaTypes.Add("CD-ROM");
+                                    mediaTypes.Add("Audio CD");
+                                    mediaTypes.Add("CD-R");
+                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                 }
 
+                                mediaTypes = mediaTypes.Distinct().ToList();
                                 mediaTypes.Sort();
 
                                 bool tryPlextor      = false, tryHldtst = false, tryPioneer = false, tryNec = false,
