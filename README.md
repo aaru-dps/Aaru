@@ -4,9 +4,10 @@ Aaru
 
 Copyright © 2011-2020 Natalia Portillo <claunia@claunia.com>
 
-[![Build status](https://dev.azure.com/Aaru-dps/Aaru/_apis/build/status/Aaru-.NET%20Desktop-CI)](https://dev.azure.com/Aaru-dps/Aaru/_build/latest?definitionId=4)
-[![Build Status](https://travis-ci.org/aaru-dps/Aaru.svg?branch=master)](https://travis-ci.org/aaru-dps/Aaru)
+[![Build Status](https://dev.azure.com/Aaru-dps/aaru/_apis/build/status/aaru-dps.Aaru?branchName=master)](https://dev.azure.com/Aaru-dps/aaru/_build/latest?definitionId=7&branchName=master)
+[![Build Status](https://travis-ci.org/aaru-dps/Aaru.svg?branch=master)](https://travis-ci.org/github/aaru-dps/Aaru)
 [![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/aaru)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
 
 You can see statistics and device reports [here](https://www.aaru.app/Stats)
 
@@ -24,7 +25,6 @@ To see list of pending things to do, check the [TODO list](TODO.md).
 If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
 
 Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
-CI beta builds [here](https://goo.gl/6dZPMq).  
 
 
 System requirements
@@ -62,7 +62,7 @@ Features
 
 Feature requests
 ================
-[![Feature Requests](https://feathub.com/discimagechef/DiscImageChef?format=svg)](https://feathub.com/discimagechef/DiscImageChef)
+[![Feature Requests](https://feathub.com/aaru-dps/Aaru?format=svg)](https://feathub.com/aaru-dps/Aaru)
 
 Supported disk image formats (read-only)
 ========================================
@@ -265,4 +265,4 @@ These disk image formats cannot be read, but their contents can be checksummed o
 
 License
 =======
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_large)
