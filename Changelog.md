@@ -1,4 +1,4 @@
-# [5.2.0.3214] - 2020-12-03
+# [5.2.0.3330] - 2020-12-03
 ## Added
 ### - Aaru Image Format
 - Enable checksums by default when writing.
@@ -1499,7 +1499,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
-[5.2.0.3214]: https://github.com/aaru-dps/Aaru/releases/tag/v5.2.0.3214
+[5.2.0.3330]: https://github.com/aaru-dps/Aaru/releases/tag/v5.2.0.3330
 [5.1.0.3214]: https://github.com/aaru-dps/Aaru/releases/tag/v5.1.0.3214
 [5.0.1.2884]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.1.2884
 [5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
