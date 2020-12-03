@@ -149,11 +149,12 @@ namespace Aaru.Decoders.SCSI
                             break;
 
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
+                        int copyLen = pg.PageResponse.Length;
 
                         if(pg.PageResponse.Length + offset > modeResponse.Length)
-                            return decoded;
+                            copyLen = modeResponse.Length - offset;
 
-                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
                         pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
                         pg.Subpage =  modeResponse[offset + 1];
                         offset     += pg.PageResponse.Length;
@@ -164,11 +165,12 @@ namespace Aaru.Decoders.SCSI
                             break;
 
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
+                        int copyLen = pg.PageResponse.Length;
 
                         if(pg.PageResponse.Length + offset > modeResponse.Length)
-                            return decoded;
+                            copyLen = modeResponse.Length - offset;
 
-                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
+                        Array.Copy(modeResponse, offset, pg.PageResponse, 0, copyLen);
                         pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
                         pg.Subpage =  0;
                         offset     += pg.PageResponse.Length;
