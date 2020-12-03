@@ -61,52 +61,56 @@ This library includes code for handling Apple property lists.
 * [SharpCompress](https://github.com/adamhathcock/sharpcompress) -
 This library includes code for handling compression algorithms and compressed archives. Any
 need you have of compression or decompression should be handled with this library, and any new algorithm should be added here.
-* [Aaru](https://github.com/claunia/Aaru/tree/master/Aaru) -
+* [Aaru](https://github.com/aaru-dps/Aaru/tree/master/Aaru) -
 This module contains the command line interface. In the future a GUI will be added.
-* [Aaru.Checksums](https://github.com/claunia/Aaru/tree/master/Aaru.Checksums) -
+* [AaruRemote](https://github.com/aaru-dps/aaruremote) - 
+Standalone small application designed to run on older machines where Aaru does not run to allow device commands to be executed remotely.
+* [Aaru.Checksums](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Checksums) -
 This module contains the checksum, hashing and error correction algorithms.
-* [Aaru.CommonTypes](https://github.com/claunia/Aaru/tree/master/Aaru.CommonTypes) -
+* [Aaru.CommonTypes](https://github.com/aaru-dps/Aaru.CommonTypes) -
 This module contains interfaces, structures and enumerations needed by more than one of the other modules.
-* [Aaru.Console](https://github.com/claunia/Aaru/tree/master/Aaru.Console) -
+* [Aaru.Console](https://github.com/aaru-dps/Aaru.Console) -
 This module abstracts consoles used by other modules to output information, so they can be
 redirected to a CLI or to a GUI output.
-* [Aaru.Core](https://github.com/claunia/Aaru/tree/master/Aaru.Core) -
+* [Aaru.Core](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Core) -
 This module contains the implementation of the functions and commands that are called by the
 user interface itself.
-* [Aaru.Decoders](https://github.com/claunia/Aaru/tree/master/Aaru.Decoders) -
+* [Aaru.Decoders](https://github.com/aaru-dps/Aaru.Decoders) -
 This module contains internal disk, drive and protocol structures as well as code to marshal,
 decode and print them.
-* [Aaru.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Devices) -
+* [Aaru.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Devices) -
 This module contains code to talk with hardware devices in different platforms. Each platform
 has lowlevel calls in its own folder, and each device protocol has highlevel calls in its own
 folder. Device commands are separated by protocol standard, or vendor name.
-* [Aaru.Device.Report](https://github.com/claunia/Aaru/tree/master/Aaru.Device.Report) -
+* [Aaru.Device.Report](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Device.Report) -
 This is a separate application in C89 designed to create device reports on enviroments where
 you can't run .NET or Mono but can run Linux.
-* [Aaru.DiscImages](https://github.com/claunia/Aaru/tree/master/Aaru.DiscImages) -
+* [Aaru.DiscImages](https://github.com/aaru-dps/Aaru/tree/master/Aaru.DiscImages) -
 This module provides reading capabilities for the disk/disc images, one per file.
-* [Aaru.Filesystems](https://github.com/claunia/Aaru/tree/master/Aaru.Filesystems) -
+* [Aaru.DiscImages](https://github.com/aaru-dps/Aaru.Dto) -
+This module provides common structures between Aaru and Aaru.Server.
+* [Aaru.Filesystems](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Filesystems) -
 This module provides the filesystem support. If only identification is implemented a single
 file should be used. For full read-only support, a folder should be used.
-* [Aaru.Filters](https://github.com/claunia/Aaru/tree/master/Aaru.Filters) -
+* [Aaru.Filters](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Filters) -
 A filter is a modification of the data before it can be passed to the disk image module
 (compression, fork union, etc), and this module provides support for them. If a image is
 compressed, say in gzip, or encoded, say in AppleDouble, a filter is the responsible of
 decompressing or decoding it on-the-fly. 
-* [Aaru.Helpers](https://github.com/claunia/Aaru/tree/master/Aaru.Helpers) -
+* [Aaru.Helpers](https://github.com/aaru-dps/Aaru.Helpers) -
 This module contains a collection of helpers for array manipulation, big-endian marshalling,
 datetime conversion, hexadecimal printing, string manipulation and byte swapping.
-* [Aaru.Partitions](https://github.com/claunia/Aaru/tree/master/Aaru.Partitions) -
+* [Aaru.Partitions](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Partitions) -
 This module contains code for reading partition schemes.
-* [Aaru.Server](https://github.com/claunia/Aaru/tree/master/Aaru.Server) -
+* [Aaru.Server](https://github.com/aaru-dps/Aaru.Server) -
 This module contains the server-side code that's running at https://www.aaru.app
-* [Aaru.Settings](https://github.com/claunia/Aaru/tree/master/Aaru.Settings) -
+* [Aaru.Settings](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Settings) -
 This module contains code for handling Aaru settings.
-* [Aaru.Tests](https://github.com/claunia/Aaru/tree/master/Aaru.Tests) -
+* [Aaru.Tests](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests) -
 This module contains the unit tests for the rest of the modules. You should add new unit
 tests here but cannot run all of them because the test images they require amount to more
 than 100GiB.
-* [Aaru.Tests.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Tests.Devices) -
+* [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices) -
 This module presents a menu driven interface to send commands to devices, as a way to test
 the Core module, as those tests cannot be automated. It can be used to debug drive responses.
 
@@ -118,7 +122,7 @@ Aaru tries to be as universal as possible. However some devices do not behave in
 the expected ways, some media is unknown and needs to be known prior to enabling dumping of it,
 etc.
 
-For that reason, Aaru includes the [device-report command](https://github.com/claunia/Aaru/wiki/Reporting-physical-device-capabilities).
+For that reason, Aaru includes the [device-report command](https://github.com/aaru-dps/Aaru/wiki/Reporting-physical-device-capabilities).
 Using this command will guide you thru a series of questions about the device, and if it
 contains removable media, for you to insert the different media you have, and create a report
 of its abilities. The report will automatically be sent to our server and saved on your computer.
@@ -126,8 +130,8 @@ Please note that we do not store any personal information and when possible remo
 serial numbers from the report.
 
 If you have a drive attached to a computer that you cannot run the full Aaru on it
-but can compile a C89 application, you can use [Aaru.Device.Report](https://github.com/claunia/Aaru/tree/master/Aaru.Device.Report).
-In this case the report will only be created locally and you should attach it to a bug report.
+but can compile a C89 application, you can use [AaruRemote](https://github.com/aaru-dps/aaruremote)
+and an ethernet connection between that machine and a machine that can run the full Aaru.
 
 ### Reporting Bugs
 
@@ -147,7 +151,7 @@ new one.
 
 #### Before Submitting A Bug Report
 
-* **Check the [wiki](https://github.com/claunia/Aaru/wiki)** for a list of common
+* **Check the [wiki](https://github.com/aaru-dps/Aaru/wiki)** for a list of common
 questions and problems.
 * **Determine [which module the problem should be reported in](#aaru-and-modules)**.
 * **Perform a [cursory search](https://github.com/search?q=+is%3Aissue+user%3Aclaunia)**
@@ -170,7 +174,7 @@ you used in the terminal. Also note that some device commands requires you to ha
 administrative privileges, be in a specific group, or be the root user, so try it again with
 escalated privileges.
 * **Provide specific examples to demonstrate the steps**. Include links to media images, 
-reports of the devices, or the output of using [Aaru.Tests.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Tests.Devices).
+reports of the devices, or the output of using [Aaru.Tests.Devices](https://github.com/aaru-dps/Aaru/tree/master/Aaru.Tests.Devices).
 * **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
 * **Explain which behavior you expected to see instead and why.**
 * **Include a copy of the output in the terminal** enabling both verbose, using the `-v`
@@ -230,7 +234,7 @@ Unsure where to begin contributing to Aaru? You can start by looking through the
 Both issue lists are sorted by total number of comments. While not perfect, number of
 comments is a reasonable proxy for impact a given change will have.
 
-If you want to read about using Aaru, the [wiki](https://github.com/claunia/Aaru/wiki) is available.
+If you want to read about using Aaru, the [wiki](https://github.com/aaru-dps/Aaru/wiki) is available.
 
 Do not modify the interfaces. If you need or want to, comment in an issue how and why you
 want to change it and we'll discuss it. Same applies for creating new interfaces.
@@ -255,9 +259,7 @@ if possible.
 talk with a USB devices your pull request must implement calls both to `WinUsb` and `libusb`.
 
 ### Patronizing
-If you want to donate money you can become a patron at https://www.patreon.com/Aaru
-
-This money will be used to get more hardware on which to test Aaru.
+If you want to donate money you can become a patron at https://www.patreon.com/claunia
 
 ### Donating
 You may donate us one of the [devices we need](NEEDED.md).
@@ -275,24 +277,8 @@ support, you can provide us with that information to add support for them.
 * Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
 * Limit the first line to 72 characters or less
 * Reference issues and pull requests liberally after the first line
-* Consider starting the commit message with an applicable emoji:
-    * :art: `:art:` when improving the format/structure of the code
-    * :racehorse: `:racehorse:` when improving performance
-    * :non-potable_water: `:non-potable_water:` when plugging memory leaks
-    * :memo: `:memo:` when writing docs
-    * :penguin: `:penguin:` when fixing something on Linux
-    * :apple: `:apple:` when fixing something on macOS
-    * :checkered_flag: `:checkered_flag:` when fixing something on Windows
-    * :bug: `:bug:` when fixing a bug
-    * :fire: `:fire:` when removing code or files
-    * :green_heart: `:green_heart:` when fixing the CI build
-    * :white_check_mark: `:white_check_mark:` when adding tests
-    * :lock: `:lock:` when dealing with security
-    * :arrow_up: `:arrow_up:` when upgrading dependencies
-    * :arrow_down: `:arrow_down:` when downgrading dependencies
-    * :shirt: `:shirt:` when removing linter warnings
 
-### Code Styleguide
+### Code Style Guide
 
 - Braces are unindented at next line (BSD style).
 - Braces with no content should be opened and closed in the same line.
@@ -318,6 +304,8 @@ bodies.
 - Use inline variable declaration.
 - Use struct implicit constructor.
 - Use UNIX (`\n`) endline character.
+
+> Note: There is an included editorconfig file that sets the appropriate code style.
 
 > Note: Aaru is quite low-level so unneeded object-oriented abstractions
 (e.g. using classes when a struct suffices) will be rejected. LINQ is accepted.
