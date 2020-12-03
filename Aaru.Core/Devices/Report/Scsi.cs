@@ -191,139 +191,190 @@ namespace Aaru.Core.Devices.Report
         {
             Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = _dev.ScsiType;
-            byte[]                mode10CurrentBuffer;
-            byte[]                mode10ChangeableBuffer;
-            byte[]                mode6CurrentBuffer;
-            byte[]                mode6ChangeableBuffer;
+            byte[]                mode10Buffer;
+            byte[]                mode6Buffer;
+            bool                  sense;
+            mediumType = 0;
 
             AaruConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
 
-            bool sense = _dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default,
-                                          0x3F, 0xFF, _dev.Timeout, out _);
-
-            if(sense || _dev.Error)
+            foreach(ScsiModeSensePageControl pageControl in new[]
             {
-                AaruConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
+                ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current, ScsiModeSensePageControl.Changeable
+            })
+            {
+                bool saveBuffer = false;
 
-                sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default, 0x3F,
-                                         0x00, _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                                         out _);
 
-                if(!sense &&
-                   !_dev.Error)
+                if(sense || _dev.Error)
                 {
-                    report.SCSI.SupportsModeSense10  = true;
-                    report.SCSI.SupportsModeSubpages = false;
-                    decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
+                    sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0xFF,
+                                             _dev.Timeout, out _);
 
+                    if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense10(out mode10CurrentBuffer, out _, false, true,
-                                                 ScsiModeSensePageControl.Current, 0x3F, 0x00, _dev.Timeout, out _);
+                        sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0x00,
+                                                 _dev.Timeout, out _);
 
-                        if(!sense &&
-                           !_dev.Error)
-                            report.SCSI.ModeSense10CurrentData = mode10CurrentBuffer;
+                        if(sense || _dev.Error)
+                        {
+                            sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0x00,
+                                                     _dev.Timeout, out _);
 
-                        sense = _dev.ModeSense10(out mode10ChangeableBuffer, out _, false, true,
-                                                 ScsiModeSensePageControl.Changeable, 0x3F, 0x00, _dev.Timeout, out _);
-
-                        if(!sense &&
-                           !_dev.Error)
-                            report.SCSI.ModeSense10ChangeableData = mode10ChangeableBuffer;
+                            if(!sense &&
+                               !_dev.Error)
+                            {
+                                report.SCSI.SupportsModeSense10 =   true;
+                                decMode                         ??= Modes.DecodeMode10(mode10Buffer, devType);
+                                saveBuffer                      =   true;
+                            }
+                        }
+                        else
+                        {
+                            report.SCSI.SupportsModeSense10 =   true;
+                            decMode                         ??= Modes.DecodeMode10(mode10Buffer, devType);
+                            saveBuffer                      =   true;
+                        }
+                    }
+                    else
+                    {
+                        report.SCSI.SupportsModeSense10  =   true;
+                        report.SCSI.SupportsModeSubpages =   true;
+                        decMode                          ??= Modes.DecodeMode10(mode10Buffer, devType);
+                        saveBuffer                       =   true;
                     }
                 }
-            }
-            else
-            {
-                report.SCSI.SupportsModeSense10  = true;
-                report.SCSI.SupportsModeSubpages = true;
-                decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
-
+                else
                 {
-                    sense = _dev.ModeSense10(out mode10CurrentBuffer, out _, false, true,
-                                             ScsiModeSensePageControl.Current, 0x3F, 0xFF, _dev.Timeout, out _);
+                    report.SCSI.SupportsModeSense10  =   true;
+                    report.SCSI.SupportsModeSubpages =   true;
+                    decMode                          ??= Modes.DecodeMode10(mode10Buffer, devType);
+                    saveBuffer                       =   true;
+                }
 
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense10CurrentData = mode10CurrentBuffer;
+                if(!saveBuffer)
+                    continue;
 
-                    sense = _dev.ModeSense10(out mode10ChangeableBuffer, out _, false, true,
-                                             ScsiModeSensePageControl.Changeable, 0x3F, 0xFF, _dev.Timeout, out _);
+                switch(pageControl)
+                {
+                    case ScsiModeSensePageControl.Default:
+                        report.SCSI.ModeSense10Data = mode10Buffer;
 
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense10ChangeableData = mode10ChangeableBuffer;
+                        break;
+                    case ScsiModeSensePageControl.Changeable:
+                        report.SCSI.ModeSense10ChangeableData = mode10Buffer;
+
+                        break;
+                    case ScsiModeSensePageControl.Current:
+                        report.SCSI.ModeSense10CurrentData = mode10Buffer;
+
+                        break;
                 }
             }
 
             AaruConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
 
-            sense = _dev.ModeSense6(out byte[] mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF,
-                                    _dev.Timeout, out _);
-
-            if(sense || _dev.Error)
+            foreach(ScsiModeSensePageControl pageControl in new[]
             {
-                AaruConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
-
-                sense = _dev.ModeSense6(out mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0x00,
-                                        _dev.Timeout, out _);
+                ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current, ScsiModeSensePageControl.Changeable
+            })
+            {
+                bool saveBuffer = false;
+                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout, out _);
 
                 if(sense || _dev.Error)
                 {
-                    AaruConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
-                    sense = _dev.ModeSense(out mode6Buffer, out _, _dev.Timeout, out _);
+                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                                            out _);
+
+                    if(sense || _dev.Error)
+                    {
+                        sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0x00, _dev.Timeout,
+                                                out _);
+
+                        if(sense || _dev.Error)
+                        {
+                            sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0x00,
+                                                    _dev.Timeout, out _);
+
+                            if(sense || _dev.Error)
+                            {
+                                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x00, 0x00,
+                                                        _dev.Timeout, out _);
+
+                                if(sense || _dev.Error)
+                                {
+                                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x00, 0x00,
+                                                            _dev.Timeout, out _);
+
+                                    if(!sense &&
+                                       !_dev.Error)
+                                    {
+                                        report.SCSI.SupportsModeSense6 =   true;
+                                        decMode                        ??= Modes.DecodeMode6(mode6Buffer, devType);
+                                        saveBuffer                     =   true;
+                                    }
+                                }
+                                else
+                                {
+                                    report.SCSI.SupportsModeSense6 =   true;
+                                    decMode                        ??= Modes.DecodeMode6(mode6Buffer, devType);
+                                    saveBuffer                     =   true;
+                                }
+                            }
+                            else
+                            {
+                                report.SCSI.SupportsModeSense6 =   true;
+                                decMode                        ??= Modes.DecodeMode6(mode6Buffer, devType);
+                                saveBuffer                     =   true;
+                            }
+                        }
+                        else
+                        {
+                            report.SCSI.SupportsModeSense6 =   true;
+                            decMode                        ??= Modes.DecodeMode6(mode6Buffer, devType);
+                            saveBuffer                     =   true;
+                        }
+                    }
+                    else
+                    {
+                        report.SCSI.SupportsModeSense10  =   true;
+                        report.SCSI.SupportsModeSubpages =   true;
+                        decMode                          ??= Modes.DecodeMode6(mode6Buffer, devType);
+                        saveBuffer                       =   true;
+                    }
                 }
                 else
                 {
-                    sense = _dev.ModeSense6(out mode6CurrentBuffer, out _, false, ScsiModeSensePageControl.Current,
-                                            0x3F, 0x00, _dev.Timeout, out _);
-
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense6CurrentData = mode6CurrentBuffer;
-
-                    sense = _dev.ModeSense6(out mode6ChangeableBuffer, out _, false,
-                                            ScsiModeSensePageControl.Changeable, 0x3F, 0x00, _dev.Timeout, out _);
-
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense6ChangeableData = mode6ChangeableBuffer;
+                    report.SCSI.SupportsModeSense6   =   true;
+                    report.SCSI.SupportsModeSubpages =   true;
+                    decMode                          ??= Modes.DecodeMode6(mode6Buffer, devType);
+                    saveBuffer                       =   true;
                 }
-            }
-            else
-            {
-                report.SCSI.SupportsModeSubpages = true;
 
+                if(!saveBuffer)
+                    continue;
+
+                switch(pageControl)
                 {
-                    sense = _dev.ModeSense6(out mode6CurrentBuffer, out _, false, ScsiModeSensePageControl.Current,
-                                            0x3F, 0xFF, _dev.Timeout, out _);
+                    case ScsiModeSensePageControl.Default:
+                        report.SCSI.ModeSense6Data = mode6Buffer;
 
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense6CurrentData = mode6CurrentBuffer;
+                        break;
+                    case ScsiModeSensePageControl.Changeable:
+                        report.SCSI.ModeSense6ChangeableData = mode6Buffer;
 
-                    sense = _dev.ModeSense6(out mode6ChangeableBuffer, out _, false,
-                                            ScsiModeSensePageControl.Changeable, 0x3F, 0xFF, _dev.Timeout, out _);
+                        break;
+                    case ScsiModeSensePageControl.Current:
+                        report.SCSI.ModeSense6CurrentData = mode6Buffer;
 
-                    if(!sense &&
-                       !_dev.Error)
-                        report.SCSI.ModeSense6ChangeableData = mode6ChangeableBuffer;
+                        break;
                 }
             }
-
-            if(!sense      &&
-               !_dev.Error &&
-               !decMode.HasValue)
-                decMode = Modes.DecodeMode6(mode6Buffer, devType);
-
-            report.SCSI.SupportsModeSense6 |= !sense && !_dev.Error;
 
             cdromMode = null;
-
-            if(report.SCSI.SupportsModeSense6)
-                report.SCSI.ModeSense6Data = mode6Buffer;
-
-            if(report.SCSI.SupportsModeSense10)
-                report.SCSI.ModeSense10Data = mode10Buffer;
 
             if(!decMode.HasValue)
                 return;
