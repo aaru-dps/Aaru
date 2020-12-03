@@ -116,7 +116,7 @@ namespace Aaru.Core.Devices.Dumping
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -308,7 +308,7 @@ namespace Aaru.Core.Devices.Dumping
                     if((subBuf[0] & 0xF) != 1)
                         continue;
 
-                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
+                    posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
 
                     if(subBuf[1] != track.TrackSequence - 1 ||
                        subBuf[2] == 0                       ||
@@ -528,7 +528,7 @@ namespace Aaru.Core.Devices.Dumping
                     previousPregapIsPreviousTrack = false;
 
                     // Pregap according to Q position
-                    posQ = ((subBuf[7] * 60 * 75)             + (subBuf[8] * 75) + subBuf[9]) - 150;
+                    posQ = (subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9] - 150;
                     int diff    = posQ                        - lba;
                     int pregapQ = (int)track.TrackStartSector - lba;
 
@@ -582,6 +582,11 @@ namespace Aaru.Core.Devices.Dumping
             foreach(Track trk in tracks)
             {
                 trk.TrackPregap = (ulong)pregaps[trk.TrackSequence];
+
+                // Do not reduce pregap, or starting position of session's first track
+                if(tracks.Where(t => t.TrackSession == trk.TrackSession).OrderBy(t => t.TrackSequence).FirstOrDefault().
+                          TrackSequence == trk.TrackSequence)
+                    continue;
 
                 if(dumping)
                 {
@@ -785,15 +790,15 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="q">Q subchannel</param>
         static void BcdToBinaryQ(byte[] q)
         {
-            q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));
-            q[2] = (byte)(((q[2] / 16) * 10) + (q[2] & 0x0F));
-            q[3] = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
-            q[4] = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
-            q[5] = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
-            q[6] = (byte)(((q[6] / 16) * 10) + (q[6] & 0x0F));
-            q[7] = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
-            q[8] = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
-            q[9] = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
+            q[1] = (byte)((q[1] / 16 * 10) + (q[1] & 0x0F));
+            q[2] = (byte)((q[2] / 16 * 10) + (q[2] & 0x0F));
+            q[3] = (byte)((q[3] / 16 * 10) + (q[3] & 0x0F));
+            q[4] = (byte)((q[4] / 16 * 10) + (q[4] & 0x0F));
+            q[5] = (byte)((q[5] / 16 * 10) + (q[5] & 0x0F));
+            q[6] = (byte)((q[6] / 16 * 10) + (q[6] & 0x0F));
+            q[7] = (byte)((q[7] / 16 * 10) + (q[7] & 0x0F));
+            q[8] = (byte)((q[8] / 16 * 10) + (q[8] & 0x0F));
+            q[9] = (byte)((q[9] / 16 * 10) + (q[9] & 0x0F));
         }
     }
 }

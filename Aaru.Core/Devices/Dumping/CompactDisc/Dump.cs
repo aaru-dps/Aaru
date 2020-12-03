@@ -840,18 +840,6 @@ namespace Aaru.Core.Devices.Dumping
             UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
             UpdateStatus?.Invoke($"Media identified as {dskType}.");
 
-            if(sessions > 1                                               &&
-               _dev.Manufacturer.ToLowerInvariant().StartsWith("plextor") &&
-               _dev.IsUsb)
-            {
-                _dumpLog.WriteLine("Dumping multi-session discs using a Plextor connected to a USB bridge is failing at the moment.\nWill not continue the dump.\nWe'll fix this as soon as possible.\nCheck https://github.com/aaru-dps/Aaru/issues/406 for progress.");
-
-                StoppingErrorMessage?.
-                    Invoke("Dumping multi-session discs using a Plextor connected to a USB bridge is failing at the moment.\nWill not continue the dump.\nWe'll fix this as soon as possible.\nCheck https://github.com/aaru-dps/Aaru/issues/406 for progress.");
-
-                return;
-            }
-
             ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks,
                                        supportsLongSectors ? blockSize : 2048);
 
@@ -1400,6 +1388,19 @@ namespace Aaru.Core.Devices.Dumping
 
             foreach(Track trk in tracks)
             {
+                // Fix track starts in each session's first track
+                if(tracks.Where(t => t.TrackSession == trk.TrackSession).OrderBy(t => t.TrackSequence).FirstOrDefault().
+                          TrackSequence == trk.TrackSequence)
+                {
+                    if(trk.TrackSequence == 1)
+                        continue;
+
+                    trk.TrackStartSector -= trk.TrackPregap;
+                    trk.Indexes[0]       =  (int)trk.TrackStartSector;
+
+                    continue;
+                }
+
                 if(trk.Indexes.TryGetValue(0, out int idx0) &&
                    trk.Indexes.TryGetValue(1, out int idx1) &&
                    idx0 == idx1)
