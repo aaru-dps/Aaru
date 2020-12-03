@@ -47,9 +47,10 @@ namespace Aaru.CommonTypes
         /// <param name="densityCode">The density type byte from MODE SENSE</param>
         /// <param name="blocks">How many blocks are on the media</param>
         /// <param name="blockSize">Size in bytes of each block</param>
+        /// <param name="isUsb">Device is USB</param>
         /// <returns></returns>
         public static MediaType GetFromScsi(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                            byte densityCode, ulong blocks, uint blockSize)
+                                            byte densityCode, ulong blocks, uint blockSize, bool isUsb)
         {
             switch(scsiPeripheralType)
             {
@@ -74,7 +75,7 @@ namespace Aaru.CommonTypes
                 case 0x07: return GetFromOdc(mediumType, blocks, blockSize);
 
                 // MultiMedia Device
-                case 0x05: return GetFromMmc(model, mediumType, densityCode, blocks, blockSize);
+                case 0x05: return GetFromMmc(model, mediumType, densityCode, blocks, blockSize, isUsb);
 
                 // MD DATA drives
                 case 0x10 when model.StartsWith("MDM", StringComparison.Ordinal) ||

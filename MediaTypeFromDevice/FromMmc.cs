@@ -39,7 +39,8 @@ namespace Aaru.CommonTypes
 {
     public static partial class MediaTypeFromDevice
     {
-        static MediaType GetFromMmc(string model, byte mediumType, byte densityCode, ulong blocks, uint blockSize)
+        static MediaType GetFromMmc(string model, byte mediumType, byte densityCode, ulong blocks, uint blockSize,
+                                    bool isUsb)
         {
             switch(mediumType)
             {
@@ -121,6 +122,14 @@ namespace Aaru.CommonTypes
                                                "SCSI medium type is {0:X2}h, setting media type to CD-RW.", mediumType);
 
                     return MediaType.CDRW;
+                case 0x40 when isUsb:
+                case 0x41 when isUsb:
+                case 0x42 when isUsb:
+                    AaruConsole.DebugWriteLine("Media detection",
+                                               "SCSI medium type is {0:X2}h and device is USB, setting media type to Flash Drive.",
+                                               mediumType);
+
+                    return MediaType.FlashDrive;
                 case 0x80:
                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
                         switch(densityCode)
