@@ -283,7 +283,8 @@ namespace Aaru.Core.Media.Info
                     break;
             }
 
-            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice &&
+               !(dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42)))
             {
                 sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
                                              out _);
@@ -1397,7 +1398,8 @@ namespace Aaru.Core.Media.Info
 
                 case MediaType.Unknown:
                     MediaType = MediaTypeFromDevice.GetFromScsi((byte)dev.ScsiType, dev.Manufacturer, dev.Model,
-                                                                scsiMediumType, scsiDensityCode, Blocks, BlockSize);
+                                                                scsiMediumType, scsiDensityCode, Blocks, BlockSize,
+                                                                dev.IsUsb);
 
                     break;
             }
@@ -1407,7 +1409,8 @@ namespace Aaru.Core.Media.Info
                containsFloppyPage)
                 MediaType = MediaType.FlashDrive;
 
-            if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+            if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice ||
+               (dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42)))
                 return;
 
             sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,

@@ -990,7 +990,9 @@ namespace Aaru.DiscImages
                     _imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, _imageInfo.DriveManufacturer,
                                                                            _imageInfo.DriveModel, mediumType,
                                                                            densityCode, _imageInfo.Sectors,
-                                                                           _imageInfo.SectorSize);
+                                                                           _imageInfo.SectorSize,
+                                                                           _mediaTags.ContainsKey(MediaTagType.
+                                                                               USB_Descriptors));
                 }
 
                 if(_imageInfo.MediaType == MediaType.Unknown)
