@@ -187,7 +187,7 @@ namespace Aaru.Core.Devices.Report
             return pageResponse;
         }
 
-        public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode)
+        public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode, out MediumTypes mediumType)
         {
             Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = _dev.ScsiType;
@@ -378,6 +378,8 @@ namespace Aaru.Core.Devices.Report
 
             if(!decMode.HasValue)
                 return;
+
+            mediumType = decMode.Value.Header.MediumType;
 
             report.SCSI.ModeSense = new ScsiMode
             {

@@ -432,7 +432,7 @@ namespace Aaru.Commands.Device
                         reporter.ReportEvpdPages(StringHandlers.CToString(report.SCSI.Inquiry?.VendorIdentification)?.
                                                                 Trim().ToLowerInvariant());
 
-                    reporter.ReportScsiModes(ref report, out byte[] cdromMode);
+                    reporter.ReportScsiModes(ref report, out byte[] cdromMode, out MediumTypes mediumType);
 
                     string mediumManufacturer;
                     byte[] senseBuffer;
@@ -442,6 +442,12 @@ namespace Aaru.Commands.Device
                     {
                         case PeripheralDeviceTypes.MultiMediaDevice:
                         {
+                            if(dev.IsUsb &&
+                               (mediumType == MediumTypes.UnknownBlockDevice  ||
+                                mediumType == MediumTypes.ReadOnlyBlockDevice ||
+                                mediumType == MediumTypes.ReadWriteBlockDevice))
+                                goto default;
+
                             bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" && dev.Model.
                                                  ToLowerInvariant().
                                                  StartsWith("rrd", StringComparison.OrdinalIgnoreCase);
