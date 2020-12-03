@@ -1,5 +1,5 @@
 ---
-name: Media Bug Report Template
+name: Media Bug Report
 about: "Bugs report on commands that handle media, like dumping or retrieving information."
 
 ---

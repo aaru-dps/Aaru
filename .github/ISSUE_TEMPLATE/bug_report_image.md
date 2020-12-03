@@ -1,5 +1,5 @@
 ---
-name: Image Bug Report Template
+name: Image Bug Report
 about: "Bugs report on commands that handle images, like converting or extracting."
 
 ---

@@ -1,5 +1,5 @@
 ---
-name: General Bug Report Template
+name: General Bug Report
 about: "Bugs report on other commands."
 
 ---
