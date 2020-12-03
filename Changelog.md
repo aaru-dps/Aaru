@@ -1,3 +1,147 @@
+# [5.2.0.3214] - 2020-12-03
+## Added
+### - Aaru Image Format
+- Enable checksums by default when writing.
+
+### - Alcohol 120% disc image
+- Support writing PhotoCD.
+
+### - cdrdao disc image
+- Support writing PhotoCD.
+
+### - CDRWin cuesheet disc image
+- Support writing PhotoCD.
+
+### - CloneCD disc image
+- Support writing PhotoCD.
+
+### - Device report
+- Check DVD-RAM if the drive claims to be able to read any DVD based format.
+- Use features to see MMC drives read capabilities.
+
+### - ISO9660 filesystem
+- Support a block size different from 2048 bytes.
+
+### - Media detection
+- Handle calculating blank sectors when environment does not support MEDIUM SCAN command (consider all written and trim later).
+
+### - Media information
+- Add detection of 44Mb Bernoulli Box II disks.
+- Add detection of 150Mb Bernoulli Box II disks.
+- Add detection of ECMA-322 / ISO/IEC 22092 1024bps magneto-optical disks.
+- Add detection of ISO/IEC 10089 1024bps magneto-optical disks.
+- Add detection of ISO/IEC 14517 512bps and 1024bps magneto-optical disks.
+- Add detection of ISO/IEC 15286 2048bps and 1024bps media disks.
+- Add detection of SyQuest SQ400 disks.
+
+## Fixed
+### - Aaru Image Format
+- Fix reporting track flags and ISRCs on non-CD media.
+- Fix resuming subchannel and other CD structures.
+- Fix when writing subchannel that doesn't belong to any track.
+- Load more structures when resuming.
+- Remove check for track crossing when writing.
+
+### - AaruRemote
+- Catch when host is already an IP address.
+- Cover closing remote connection when socket is disposed.
+- Remove trailing slash on remote device command.
+
+### - AppleSingle filter
+- Do not try to open non-existing file.
+
+### - BlindWrite 4 disc image
+- Fix images that contain sectors 150 sectors of first track pregap.
+- Fix off by one track ends.
+- Fix track file offsets in BlindWrite 4 disc images.
+- If any track has subchannel, the subchannel sidecar file contains them for all tracks.
+
+### - BlindWrite 5/6 disc image
+- Add sessions.
+- Fix cross track detection.
+- Fix disc size calculation.
+- Fix length of tracks.
+- Fix negative index.
+- Fix setting track session.
+
+### - cdrdao disc image
+- Prevent empty ISRC from being added.
+
+### - CDRWin cuesheet disc image
+- Prevent empty ISRC from being added.
+
+### - CloneCD disc image
+- Fix indexes.
+
+### - DiscJuggler disc image
+- Do not try to read descriptors if there are none.
+- Fix cross track detection.
+
+### - Dumping
+- Add classifying rw full off 0xFF as being empty
+- Check MMC drive profile when dumping.
+- Consider RW subchannels as ok if some are all 0s and some are all 1s.
+- Consider the last sector of all the tracks on a DVD or Blu-ray as the last block on disc even if drive tells otherwise.
+- Continue printing SCSI sense buffer in error log even if we have an operating system error.
+- Disable FUA to fix reading from old SCSI disks.
+- Do not generate subchannels if aborted.
+- Do not recalculate logical track size when DVD drive returns a negative start.
+- Do not try to find SCSI read command if the medium is not written.
+- Ensure only unique bad blocks are saved in resume file.
+- Fix decoding of last digit of MCN subcode.
+- Fix detecting XGD3.
+- Fix log message when trimming found a blank block.
+- Fix MEDIUM SCAN SCSI command.
+- Fix retrieving CD drive offsets from database when model or manufacturer contains a slash.
+- Get back tracks, indexes, MCN and ISRCs from resumed file.
+- Guard against some firmware bugs when getting DVD/BD track number and length.
+- Handle calculating blank sectors when environment does not support MEDIUM SCAN command (consider all written and trim later).
+- Hardcode read command and blocks to read if we cannot calculate them for magneto-opticals.
+- If device returns "corrected error", consider it as a good read.
+- Use image capabilities when dumping CDs.
+
+### - FAT filesystem
+- Fix reading volume name from incorrect implementations that fill it with NULs.
+
+### - ISO9660 filesystem
+- Fix extended attributes.
+- Reject processing a path table that doesn't start with the root directory.
+
+### - MacBinary filter
+- Do not try to open non-existing file.
+
+### - Media detection
+- Do not decode invalid ATIP data.
+- Fix detection of CD-i Ready discs when negative offset and drive cannot read negative sectors.
+- Fix detection of dual layer DVDs.
+- Fix detection of hidden data track mode when drive returns it scrambled.
+- Fix detection of version 3 and upper DVD-RW and DVD-RW DL.
+- Fix negative offset calculating when detecting scrambled CD-i Ready.
+
+
+### - XZ filter
+- Fix crashing when file is too small.
+
+### - RAW (sector by sector) disk image
+- Fix capabilities.
+
+
+## Changes
+- Add new issue templates.
+- Add support for dumping CDs to images that only support cooked user data.
+- Allow to dump the video partition of XGD discs when forced is enable.
+- Allow user to choose maximum number of block to read at once when dumping media.
+- Change how pregap starting with 0 is calculated dumping versus converting.
+- Change method of reading subchannels in Plextor drives.
+- Continue trying filters when one raises an exception.
+- Do not dump multi-session CDs in Plextor drives connected to a USB bridge until it is fixed.
+- If there is an OS error only print the sense buffer if it contains data.
+- Mark FreeBSD code as obsolete. Pending removal.
+- Reverse used SCSI READ command, as some USB devices claim to support a later one but don't properly.
+- Scan blank blocks in magneto-optical disks before dumping, and do not treat them as errors.
+- Use track 1's first sector to check readability of CompactDisc media.
+
+
 # [5.1.0.3214] - 2020-07-25
 ## Added
 ### - Aaru Image Format
@@ -1355,6 +1499,7 @@ Aaru.Server (previously DiscImageChef.Server), aaruformat (previously dicformat)
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
 
+[5.2.0.3214]: https://github.com/aaru-dps/Aaru/releases/tag/v5.2.0.3214
 [5.1.0.3214]: https://github.com/aaru-dps/Aaru/releases/tag/v5.1.0.3214
 [5.0.1.2884]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.1.2884
 [5.0.0.2879]: https://github.com/aaru-dps/Aaru/releases/tag/v5.0.0.2879
