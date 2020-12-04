@@ -37,11 +37,13 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -193,6 +195,69 @@ namespace Aaru.Core.Devices.Dumping
 
                         break;
                 }
+            }
+
+            Modes.DecodedMode? decMode = null;
+
+            sense = _dev.ModeSense6(out cmdBuf, out _, true, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout,
+                                    out _);
+
+            if(sense || _dev.Error)
+            {
+                sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout,
+                                        out _);
+
+                if(!sense &&
+                   !_dev.Error)
+                    decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+            }
+            else
+                decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+
+            if(decMode is null)
+            {
+                sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                         _dev.Timeout, out _);
+
+                if(sense || _dev.Error)
+                {
+                    sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current, 0x3F,
+                                             0x00, _dev.Timeout, out _);
+
+                    if(sense || _dev.Error)
+                    {
+                        sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x00,
+                                                 0x00, _dev.Timeout, out _);
+
+                        if(sense || _dev.Error)
+                        {
+                            sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current,
+                                                     0x00, 0x00, _dev.Timeout, out _);
+
+                            if(!sense &&
+                               !_dev.Error)
+                                decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+                        }
+                        else
+                            decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+                    }
+                    else
+                        decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+                }
+                else
+                    decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+            }
+
+            if(decMode.HasValue &&
+               _dev.IsUsb       &&
+               (decMode.Value.Header.MediumType == MediumTypes.UnknownBlockDevice  ||
+                decMode.Value.Header.MediumType == MediumTypes.ReadOnlyBlockDevice ||
+                decMode.Value.Header.MediumType == MediumTypes.ReadWriteBlockDevice))
+            {
+                _speedMultiplier = -1;
+                Sbc(null, MediaType.Unknown, false);
+
+                return;
             }
 
             if(compactDisc)
