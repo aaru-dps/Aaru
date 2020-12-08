@@ -82,8 +82,8 @@ namespace Aaru.Decoders.SecureDigital
             {
                 Manufacturer        = response[0],
                 ProductRevision     = response[8],
-                ProductSerialNumber = BitConverter.ToUInt32(response, 9),
-                ManufacturingDate   = (ushort)(((response[13] & 0x0F) << 4) + response[14]),
+                ProductSerialNumber = Swapping.Swap(BitConverter.ToUInt32(response, 9)),
+                ManufacturingDate   = (ushort)(((response[13] & 0x0F) << 8) + response[14]),
                 CRC                 = (byte)((response[15] & 0xFE) >> 1)
             };
 
