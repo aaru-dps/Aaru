@@ -430,23 +430,58 @@ namespace Aaru.Helpers
 
         public static int ConvertFromHexAscii(string hex, out byte[] outBuf)
         {
-            if(hex.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-                hex = hex.Substring(2);
+            outBuf = null;
 
-            outBuf = new byte[hex.Length / 2];
+            if(hex is null ||
+               hex == "")
+                return -1;
+
+            int off = 0;
+
+            if(hex[0] == '0' &&
+               (hex[1] == 'x' || hex[1] == 'X'))
+            {
+                off = 2;
+            }
+
+            outBuf = new byte[(hex.Length - off) / 2];
             int count = 0;
 
-            try
+            for(int i = off; i < hex.Length; i += 2)
             {
-                for(int i = 0; i < hex.Length; i += 2)
-                {
-                    outBuf[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-                    count++;
-                }
-            }
-            catch
-            {
-                count = 0;
+                char c = hex[i];
+
+                if(c < '0'              ||
+                   (c > '9' && c < 'A') ||
+                   (c > 'F' && c < 'a') ||
+                   c > 'f')
+                    break;
+
+                c -= c >= 'a' && c <= 'f'
+                         ? '\u0057'
+                         : c >= 'A' && c <= 'F'
+                             ? '\u0037'
+                             : '\u0030';
+
+                outBuf[(i - off) / 2] = (byte)(c << 4);
+
+                c = hex[i + 1];
+
+                if(c < '0'              ||
+                   (c > '9' && c < 'A') ||
+                   (c > 'F' && c < 'a') ||
+                   c > 'f')
+                    break;
+
+                c -= c >= 'a' && c <= 'f'
+                         ? '\u0057'
+                         : c >= 'A' && c <= 'F'
+                             ? '\u0037'
+                             : '\u0030';
+
+                outBuf[(i - off) / 2] += (byte)c;
+
+                count++;
             }
 
             return count;
