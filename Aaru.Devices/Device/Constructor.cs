@@ -379,7 +379,8 @@ namespace Aaru.Devices
 
                             if(File.Exists("/sys/block/" + devPath + "/device/csd"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/csd", out _cachedCsd);
+                                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd",
+                                                                  out _cachedCsd);
 
                                 if(len == 0)
                                     _cachedCsd = null;
@@ -387,7 +388,8 @@ namespace Aaru.Devices
 
                             if(File.Exists("/sys/block/" + devPath + "/device/cid"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/cid", out _cachedCid);
+                                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid",
+                                                                  out _cachedCid);
 
                                 if(len == 0)
                                     _cachedCid = null;
@@ -395,7 +397,8 @@ namespace Aaru.Devices
 
                             if(File.Exists("/sys/block/" + devPath + "/device/scr"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/scr", out _cachedScr);
+                                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr",
+                                                                  out _cachedScr);
 
                                 if(len == 0)
                                     _cachedScr = null;
@@ -403,7 +406,8 @@ namespace Aaru.Devices
 
                             if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
                             {
-                                int len = ConvertFromHexAscii("/sys/block/" + devPath + "/device/ocr", out _cachedOcr);
+                                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr",
+                                                                  out _cachedOcr);
 
                                 if(len == 0)
                                     _cachedOcr = null;
@@ -921,29 +925,12 @@ namespace Aaru.Devices
             Serial = serialFeature.Value.Serial;
         }
 
-        static int ConvertFromHexAscii(string file, out byte[] outBuf)
+        static int ConvertFromFileHexAscii(string file, out byte[] outBuf)
         {
             var    sr  = new StreamReader(file);
             string ins = sr.ReadToEnd().Trim();
 
-            if(ins.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-                ins = ins.Substring(2);
-
-            outBuf = new byte[ins.Length / 2];
-            int count = 0;
-
-            try
-            {
-                for(int i = 0; i < ins.Length; i += 2)
-                {
-                    outBuf[i / 2] = Convert.ToByte(ins.Substring(i, 2), 16);
-                    count++;
-                }
-            }
-            catch
-            {
-                count = 0;
-            }
+            int count = Helpers.Marshal.ConvertFromHexAscii(ins, out outBuf);
 
             sr.Close();
 
