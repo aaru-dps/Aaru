@@ -427,5 +427,29 @@ namespace Aaru.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] StructureToByteArrayBigEndian<T>(T str) where T : struct =>
             StructureToByteArrayLittleEndian((T)SwapStructureMembersEndian(str));
+
+        public static int ConvertFromHexAscii(string hex, out byte[] outBuf)
+        {
+            if(hex.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+                hex = hex.Substring(2);
+
+            outBuf = new byte[hex.Length / 2];
+            int count = 0;
+
+            try
+            {
+                for(int i = 0; i < hex.Length; i += 2)
+                {
+                    outBuf[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                    count++;
+                }
+            }
+            catch
+            {
+                count = 0;
+            }
+
+            return count;
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace Aaru.Helpers
         /// <param name="maxSector">Number of sectors per track</param>
         /// <returns></returns>
         public static uint ToLBA(uint cyl, uint head, uint sector, uint maxHead, uint maxSector) =>
-            maxHead == 0 || maxSector == 0 ? ((((cyl * 16)      + head) * 63)        + sector) - 1
-                : ((((cyl                            * maxHead) + head) * maxSector) + sector) - 1;
+            maxHead == 0 || maxSector == 0 ? (((cyl * 16)      + head) * 63)        + sector - 1
+                : (((cyl                            * maxHead) + head) * maxSector) + sector - 1;
     }
 }
