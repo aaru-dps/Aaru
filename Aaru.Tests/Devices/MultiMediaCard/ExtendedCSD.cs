@@ -1,3 +1,4 @@
+using Aaru.Decoders.MMC;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -90,7 +91,7 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 {
                     52, 19, 0
                 },
-                PartitioningSupport                  = 7,
+                PartitioningSupport                  = (PartitioningSupport)7,
                 HPIManagement                        = 1,
                 HWResetFunction                      = 1,
                 EnableBackgroundOperationsHandshake  = 0,
@@ -103,9 +104,9 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 Reserved4                            = 0,
                 UserAreaWriteProtectionRegister      = 0,
                 Reserved5                            = 0,
-                BootAreaWriteProtectionRegister      = 17,
+                BootAreaWriteProtectionRegister      = (BootAreaWriteProtectionRegister)17,
                 BootWriteProtectionStatus            = 5,
-                HighCapacityEraseGroupDefinition     = 1,
+                HighCapacityEraseGroupDefinition     = (HighCapacityEraseGroupDefinition)1,
                 Reserved6                            = 0,
                 BootBusConditions                    = 0,
                 BootConfigProtection                 = 0,
@@ -126,8 +127,8 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 Reserved12                           = 0,
                 Structure                            = 2,
                 Reserved13                           = 0,
-                DeviceType                           = 87,
-                DriverStrength                       = 1,
+                DeviceType                           = (DeviceType)87,
+                DriverStrength                       = (DriverStrength)1,
                 OutOfInterruptBusyTiming             = 5,
                 PartitionSwitchingTime               = 10,
                 PowerClass52_195                     = 0,
@@ -141,7 +142,7 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 MinimumWritePerformance26            = 0,
                 MinimumReadPerformance52             = 0,
                 MinimumWritePerformance52            = 0,
-                SecureWriteProtectInformation        = 1,
+                SecureWriteProtectInformation        = (SecureWriteProtectInformation)1,
                 SectorCount                          = 120832000,
                 SleepNotificationTimeout             = 16,
                 SleepAwakeTimeout                    = 22,
@@ -155,10 +156,10 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 AccessSize                           = 6,
                 BootPartitionSize                    = 32,
                 Reserved15                           = 0,
-                BootInformation                      = 7,
+                BootInformation                      = (BootInformation)7,
                 SecureTRIMMultiplier                 = 17,
                 SecureEraseMultiplier                = 27,
-                SecureFeatureSupport                 = 85,
+                SecureFeatureSupport                 = (SecureFeatureSupport)85,
                 TRIMMultiplier                       = 5,
                 Reserved16                           = 0,
                 MinimumReadPerformanceDDR52          = 0,
@@ -184,27 +185,27 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 DeviceLifeEstimationTypeA            = 1,
                 DeviceLifeEstimationTypeB            = 1,
                 VendorHealthReport                   = new byte[32],
-                NumberofFWSectorsCorrectlyProgrammed = 0,
+                NumberOfFWSectorsCorrectlyProgrammed = 0,
                 Reserved17                           = 0,
                 CMDQueuingDepth                      = 31,
-                CMDQueuingSupport                    = 1,
+                CMDQueuingSupport                    = (CMDQueuingSupport)1,
                 Reserved18                           = new byte[177],
                 BarrierSupport                       = 0,
                 FFUArgument                          = 0,
                 OperationCodesTimeout                = 0,
                 FFUFeatures                          = 0,
-                SupportedModes                       = 3,
-                ExtendedPartitionsSupport            = 3,
+                SupportedModes                       = (SupportedModes)3,
+                ExtendedPartitionsSupport            = (ExtendedPartitionsSupport)3,
                 LargeUnitSize                        = 7,
                 ContextManagementCaps                = 5,
                 TagResourcesSize                     = 0,
                 TagUnitSize                          = 3,
-                DataTagSupport                       = 1,
+                DataTagSupport                       = (DataTagSupport)1,
                 MaxPackedWriteCommands               = 63,
                 MaxPackedReadCommands                = 63,
-                BackgroundOperationsSupport          = 1,
-                HPIFeatures                          = 1,
-                SupportedCommandSets                 = 1,
+                BackgroundOperationsSupport          = (BackgroundOperationsSupport)1,
+                HPIFeatures                          = (HPIFeatures)1,
+                SupportedCommandSets                 = (DeviceSupportedCommandSets)1,
                 ExtendedSecurityCommandsError        = 0,
                 Reserved19                           = new byte[6]
             }
@@ -218,6 +219,7 @@ namespace Aaru.Tests.Devices.MultiMediaCard
                 Decoders.MMC.ExtendedCSD csd = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd[i]);
                 Assert.IsNotNull(csd, $"Not decoded - {i}");
                 csd.Should().BeEquivalentTo(decoded[i]);
+                string foo = Decoders.MMC.Decoders.PrettifyExtendedCSD(csd);
             }
         }
     }
