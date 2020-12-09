@@ -39,174 +39,175 @@ namespace Aaru.Decoders.MMC
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "UnassignedField.Global"),
-     StructLayout(LayoutKind.Sequential)]
+     StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class ExtendedCSD
     {
-        public byte AccessSize;
-        public byte AddressedGroupToBeReleased;
-        public byte BackgroundOperationsStatus;
-        public byte BackgroundOperationsSupport;
-        public byte BadBlockManagementMode;
-        public byte BarrierControl;
-        public byte BarrierSupport;
-        public byte BootAreaWriteProtectionRegister;
-        public byte BootBusConditions;
-        public byte BootConfigProtection;
-        public byte BootInformation;
-        public byte BootPartitionSize;
-        public byte BootWriteProtectionStatus;
-        public byte BusWidth;
-        public byte CacheControl;
-        public byte CacheFlushing;
-        public byte CacheFlushingPolicy;
-        public uint CacheSize;
-        public byte Class6CommandsControl;
-        public byte CMDQueuingDepth;
-        public byte CMDQueuingSupport;
-        public byte CommandQueueModeEnable;
-        public byte CommandSet;
-        public byte CommandSetRevision;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
+        public byte[] Reserved0;
+        public byte   CommandQueueModeEnable;
+        public byte   SecureRemovalType;
+        public byte   ProductStateAwarenessEnablement;
+        public uint   MaxPreLoadingDataSize;
+        public uint   PreLoadingDataSize;
+        public byte   FFUStatus;
+        public ushort Reserved1;
+        public byte   ModeOperationCodes;
+        public byte   ModeConfig;
+        public byte   BarrierControl;
+        public byte   CacheFlushing;
+        public byte   CacheControl;
+        public byte   PowerOffNotification;
+        public byte   PackedCommandFailureIndex;
+        public byte   PackedCommandStatus;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
         public byte[] ContextConfiguration;
-        public byte   ContextManagementCaps;
-        public uint   CorrectlyProgrammedSectors;
-        public byte   DataTagSupport;
-        public byte   DeviceLifeEstimationTypeA;
-        public byte   DeviceLifeEstimationTypeB;
-        public byte   DeviceType;
-        public ushort DeviceVersion;
-        public byte   DriverStrength;
-        public byte   EnableBackgroundOperationsHandshake;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] EnhancedUserDataAreaSize;
-        public uint   EnhancedUserDataStartAddress;
-        public byte   ErasedMemoryContent;
-        public ushort ExceptionEventsControl;
-        public ushort ExceptionEventsStatus;
         public ushort ExtendedPartitionsAttribute;
-        public byte   ExtendedPartitionsSupport;
-        public byte   ExtendedSecurityCommandsError;
-        public uint   FFUArgument;
-        public byte   FFUFeatures;
-        public byte   FFUStatus;
-        public byte   FirmwareConfiguration;
-        public ulong  FirmwareVersion;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] GeneralPurposePartitionSize;
-        public byte GenericCMD6Timeout;
-        public byte HighCapacityEraseTimeout;
-        public byte HighCapacityEraseUnitSize;
-        public byte HighCapacityWriteProtectGroupSize;
-        public byte HighDensityEraseGroupDefinition;
-        public byte HighSpeedInterfaceTiming;
-        public byte HPIFeatures;
-        public byte HPIManagement;
-        public byte HWResetFunction;
-        public byte InitializationTimeAfterPartition;
-        public byte InitializationTimeout;
-        public byte LargeUnitSize;
-        public byte ManuallyStartBackgroundOperations;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] MaxEnhancedAreaSize;
-        public byte MaxPackedReadCommands;
-        public byte MaxPackedWriteCommands;
-        public uint MaxPreLoadingDataSize;
-        public byte MinimumReadPerformance26;
-        public byte MinimumReadPerformance26_4;
-        public byte MinimumReadPerformance52;
-        public byte MinimumReadPerformanceDDR52;
-        public byte MinimumWritePerformance26;
-        public byte MinimumWritePerformance26_4;
-        public byte MinimumWritePerformance52;
-        public byte MinimumWritePerformanceDDR52;
-        public byte ModeConfig;
-        public byte ModeOperationCodes;
-        public byte NativeSectorSize;
-        public uint NumberofFWSectorsCorrectlyProgrammed;
-        public byte OperationCodesTimeout;
-        public byte OptimalReadSize;
-        public byte OptimalTrimUnitSize;
-        public byte OptimalWriteSize;
-        public byte OutOfInterruptBusyTiming;
-        public byte PackageCaseTemperatureControl;
-        public byte PackedCommandFailureIndex;
-        public byte PackedCommandStatus;
-        public byte PartitionConfiguration;
-        public byte PartitioningSetting;
-        public byte PartitioningSupport;
-        public byte PartitionsAttribute;
-        public byte PartitionSwitchingTime;
-        public byte PeriodicWakeUp;
-        public byte PowerClass;
-        public byte PowerClass26;
-        public byte PowerClass26_195;
-        public byte PowerClass52;
-        public byte PowerClass52_195;
-        public byte PowerClassDDR200;
-        public byte PowerClassDDR200_130;
-        public byte PowerClassDDR200_195;
-        public byte PowerClassDDR52;
-        public byte PowerClassDDR52_195;
-        public byte PowerOffNotification;
-        public byte PowerOffNotificationTimeout;
-        public byte PreEOLInformation;
-        public uint PreLoadingDataSize;
-        public byte ProductionStateAwareness;
-        public byte ProductionStateAwarenessTimeout;
-        public byte ProductStateAwarenessEnablement;
-        public byte ReliableWriteSectorCount;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-        public byte[] Reserved0;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 177)]
-        public byte[] Reserved1;
-        public byte   Reserved10;
-        public byte   Reserved11;
-        public byte   Reserved12;
-        public byte   Reserved13;
-        public byte   Reserved14;
-        public byte   Reserved15;
-        public ushort Reserved16;
-        public ushort Reserved17;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        public byte[] Reserved18;
-        public byte Reserved2;
-        public byte Reserved3;
-        public byte Reserved4;
-        public byte Reserved5;
-        public byte Reserved6;
-        public byte Reserved7;
-        public byte Reserved8;
-        public byte Reserved9;
-        public byte Revision;
-        public byte RPMBSize;
-        public uint SectorCount;
-        public byte SectorSize;
-        public byte SectorSizeEmulation;
-        public byte SecureEraseMultiplier;
-        public byte SecureFeatureSupport;
-        public byte SecureRemovalType;
-        public byte SecureTRIMMultiplier;
-        public byte SecureWriteProtectInformation;
-        public byte SleepAwakeTimeout;
-        public byte SleepCurrentVcc;
-        public byte SleepCurrentVccq;
-        public byte SleepNotificationTimeout;
-        public byte StartSanitizeOperation;
-        public byte StrobeSupport;
-        public byte Structure;
-        public byte SupportedCommandSets;
-        public byte SupportedModes;
-        public byte SupportsProgramCxDInDDR;
-        public byte TagResourcesSize;
-        public byte TagUnitSize;
-        public byte TRIMMultiplier;
-        public byte UserAreaWriteProtectionRegister;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public byte[] VendorHealthReport;
+        public ushort ExceptionEventsStatus;
+        public ushort ExceptionEventsControl;
+        public byte   DyncapNeeded;
+        public byte   Class6CommandsControl;
+        public byte   InitializationTimeoutAfterEmulationChange;
+        public byte   SectorSize;
+        public byte   SectorSizeEmulation;
+        public byte   NativeSectorSize;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
         public byte[] VendorSpecific;
-        public byte WriteReliabilityParameterRegister;
-        public byte WriteReliabilitySettingRegister;
+        public ushort Reserved2;
+        public byte   SupportsProgramCxDInDDR;
+        public byte   PeriodicWakeUp;
+        public byte   PackageCaseTemperatureControl;
+        public byte   ProductionStateAwareness;
+        public byte   BadBlockManagementMode;
+        public byte   Reserved3;
+        public uint   EnhancedUserDataStartAddress;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] EnhancedUserDataAreaSize;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+        public byte[] GeneralPurposePartitionSize;
+        public byte PartitioningSetting;
+        public byte PartitionsAttribute;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] MaxEnhancedAreaSize;
+        public byte   PartitioningSupport;
+        public byte   HPIManagement;
+        public byte   HWResetFunction;
+        public byte   EnableBackgroundOperationsHandshake;
+        public byte   ManuallyStartBackgroundOperations;
+        public byte   StartSanitizeOperation;
+        public byte   WriteReliabilityParameterRegister;
+        public byte   WriteReliabilitySettingRegister;
+        public byte   RPMBSize;
+        public byte   FirmwareConfiguration;
+        public byte   Reserved4;
+        public byte   UserAreaWriteProtectionRegister;
+        public byte   Reserved5;
+        public byte   BootAreaWriteProtectionRegister;
+        public byte   BootWriteProtectionStatus;
+        public byte   HighCapacityEraseGroupDefinition;
+        public byte   Reserved6;
+        public byte   BootBusConditions;
+        public byte   BootConfigProtection;
+        public byte   PartitionConfiguration;
+        public byte   Reserved7;
+        public byte   ErasedMemoryContent;
+        public byte   Reserved8;
+        public byte   BusWidth;
+        public byte   StrobeSupport;
+        public byte   HighSpeedInterfaceTiming;
+        public byte   Reserved9;
+        public byte   PowerClass;
+        public byte   Reserved10;
+        public byte   CommandSetRevision;
+        public byte   Reserved11;
+        public byte   CommandSet;
+        public byte   Revision;
+        public byte   Reserved12;
+        public byte   Structure;
+        public byte   Reserved13;
+        public byte   DeviceType;
+        public byte   DriverStrength;
+        public byte   OutOfInterruptBusyTiming;
+        public byte   PartitionSwitchingTime;
+        public byte   PowerClass52_195;
+        public byte   PowerClass26_195;
+        public byte   PowerClass52;
+        public byte   PowerClass26;
+        public byte   Reserved14;
+        public byte   MinimumReadPerformance26_4;
+        public byte   MinimumWritePerformance26_4;
+        public byte   MinimumReadPerformance26;
+        public byte   MinimumWritePerformance26;
+        public byte   MinimumReadPerformance52;
+        public byte   MinimumWritePerformance52;
+        public byte   SecureWriteProtectInformation;
+        public uint   SectorCount;
+        public byte   SleepNotificationTimeout;
+        public byte   SleepAwakeTimeout;
+        public byte   ProductionStateAwarenessTimeout;
+        public byte   SleepCurrentVccQ;
+        public byte   SleepCurrentVcc;
+        public byte   HighCapacityWriteProtectGroupSize;
+        public byte   ReliableWriteSectorCount;
+        public byte   HighCapacityEraseTimeout;
+        public byte   HighCapacityEraseUnitSize;
+        public byte   AccessSize;
+        public byte   BootPartitionSize;
+        public byte   Reserved15;
+        public byte   BootInformation;
+        public byte   SecureTRIMMultiplier;
+        public byte   SecureEraseMultiplier;
+        public byte   SecureFeatureSupport;
+        public byte   TRIMMultiplier;
+        public byte   Reserved16;
+        public byte   MinimumReadPerformanceDDR52;
+        public byte   MinimumWritePerformanceDDR52;
+        public byte   PowerClassDDR200_130;
+        public byte   PowerClassDDR200_195;
+        public byte   PowerClassDDR52_195;
+        public byte   PowerClassDDR52;
+        public byte   CacheFlushingPolicy;
+        public byte   InitializationTimeAfterPartition;
+        public uint   CorrectlyProgrammedSectors;
+        public byte   BackgroundOperationsStatus;
+        public byte   PowerOffNotificationTimeout;
+        public byte   GenericCMD6Timeout;
+        public uint   CacheSize;
+        public byte   PowerClassDDR200;
+        public ulong  FirmwareVersion;
+        public ushort DeviceVersion;
+        public byte   OptimalTrimUnitSize;
+        public byte   OptimalWriteSize;
+        public byte   OptimalReadSize;
+        public byte   PreEOLInformation;
+        public byte   DeviceLifeEstimationTypeA;
+        public byte   DeviceLifeEstimationTypeB;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public byte[] VendorHealthReport;
+        public uint NumberofFWSectorsCorrectlyProgrammed;
+        public byte Reserved17;
+        public byte CMDQueuingDepth;
+        public byte CMDQueuingSupport;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 177)]
+        public byte[] Reserved18;
+        public byte BarrierSupport;
+        public uint FFUArgument;
+        public byte OperationCodesTimeout;
+        public byte FFUFeatures;
+        public byte SupportedModes;
+        public byte ExtendedPartitionsSupport;
+        public byte LargeUnitSize;
+        public byte ContextManagementCaps;
+        public byte TagResourcesSize;
+        public byte TagUnitSize;
+        public byte DataTagSupport;
+        public byte MaxPackedWriteCommands;
+        public byte MaxPackedReadCommands;
+        public byte BackgroundOperationsSupport;
+        public byte HPIFeatures;
+        public byte SupportedCommandSets;
+        public byte ExtendedSecurityCommandsError;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+        public byte[] Reserved19;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
@@ -470,7 +471,7 @@ namespace Aaru.Decoders.MMC
                 sb.AppendFormat("\tDevice has a {0} KiB boot partition", csd.BootPartitionSize * 128).AppendLine();
 
             if((csd.AccessSize & 0x0F) > 0)
-                sb.AppendFormat("\tDevice has a page size of {0} KiB", ((csd.AccessSize & 0x0F) * 512.0) / 1024.0).
+                sb.AppendFormat("\tDevice has a page size of {0} KiB", (csd.AccessSize & 0x0F) * 512.0 / 1024.0).
                    AppendLine();
 
             if(csd.HighCapacityEraseUnitSize > 0)
@@ -494,9 +495,9 @@ namespace Aaru.Decoders.MMC
                     sb.AppendFormat("\tDevice uses {0} μA on Vcc when sleeping", unit).AppendLine();
             }
 
-            if(csd.SleepCurrentVccq > 0)
+            if(csd.SleepCurrentVccQ > 0)
             {
-                unit = Math.Pow(2, csd.SleepCurrentVccq);
+                unit = Math.Pow(2, csd.SleepCurrentVccQ);
 
                 if(unit > 1000)
                     sb.AppendFormat("\tDevice uses {0} mA on Vccq when sleeping", unit / 1000).AppendLine();
