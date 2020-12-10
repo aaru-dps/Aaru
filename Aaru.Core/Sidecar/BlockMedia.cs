@@ -240,8 +240,8 @@ namespace Aaru.Core
 
                         sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CID).Length
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_CID)).ToArray(),
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_CID).Length
                         };
 
                         break;
@@ -250,8 +250,8 @@ namespace Aaru.Core
 
                         sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_CSD)).ToArray(),
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_CSD).Length
                         };
 
                         break;
@@ -260,8 +260,8 @@ namespace Aaru.Core
 
                         sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
                         {
-                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
-                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_OCR)).ToArray(),
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.MMC_OCR).Length
                         };
 
                         break;
@@ -411,7 +411,7 @@ namespace Aaru.Core
                         //goto skipImageChecksum;
 
                         uint  sectorsToRead = 64;
-                        ulong sectors       = (tapePartition.LastBlock - tapePartition.FirstBlock) + 1;
+                        ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
                         ulong doneSectors   = 0;
 
                         InitProgress2();
@@ -489,7 +489,7 @@ namespace Aaru.Core
                             //goto skipImageChecksum;
 
                             uint  sectorsToRead = 64;
-                            ulong sectors       = (tapeFile.LastBlock - tapeFile.FirstBlock) + 1;
+                            ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
                             ulong doneSectors   = 0;
 
                             InitProgress2();
@@ -903,9 +903,8 @@ namespace Aaru.Core
                                 if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                                 {
                                     byte[] trackContents =
-                                        new byte[((scpTrack.Entries.Last().dataOffset +
-                                                   scpTrack.Entries.Last().trackLength) - scpImage.Header.offsets[t]) +
-                                                 1];
+                                        new byte[scpTrack.Entries.Last().dataOffset +
+                                                 scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] + 1];
 
                                     scpStream.Position = scpImage.Header.offsets[t];
                                     scpStream.Read(trackContents, 0, trackContents.Length);
