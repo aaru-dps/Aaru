@@ -30,6 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using Aaru.Console;
 
 namespace Aaru.Devices
@@ -114,36 +115,144 @@ namespace Aaru.Devices
         public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
                          bool byteAddressed, uint timeout, out double duration)
         {
-            buffer = new byte[transferLength * blockSize];
+            bool sense = true;
+            buffer   = null;
+            response = null;
+            duration = -1;
+
+            if(transferLength <= 1)
+                return ReadSingleBlock(out buffer, out response, lba, blockSize, byteAddressed, timeout, out duration);
+
+            if(!_readMultipleBlockCannotSetBlockCount)
+                sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
+                                          timeout, out duration);
+
+            if(_readMultipleBlockCannotSetBlockCount)
+                return ReadMultipleUsingSingle(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
+                                               timeout, out duration);
+
+            return sense;
+        }
+
+        public bool ReadSingleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
+                                    bool byteAddressed, uint timeout, out double duration)
+        {
             uint address;
+            buffer   = new byte[blockSize];
+            response = null;
 
             if(byteAddressed)
                 address = lba * blockSize;
             else
                 address = lba;
 
-            MmcCommands command = transferLength > 1 ? MmcCommands.ReadMultipleBlock : MmcCommands.ReadSingleBlock;
-
-            LastError = SendMmcCommand(command, false, false,
+            LastError = SendMmcCommand(MmcCommands.ReadSingleBlock, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize, transferLength, ref buffer, out response, out duration,
-                                       out bool sense, timeout);
+                                       blockSize, 1, ref buffer, out response, out duration, out bool sense, timeout);
 
             Error = LastError != 0;
 
+            AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+
+            return sense;
+        }
+
+        static bool _readMultipleBlockCannotSetBlockCount;
+
+        public bool ReadMultipleBlock(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
+                                      ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+        {
+            buffer = new byte[transferLength * blockSize];
+            byte[] foo         = new byte[0];
+            double setDuration = 0;
+            bool   sense;
+            uint   address;
+            response = null;
+
+            if(byteAddressed)
+                address = lba * blockSize;
+            else
+                address = lba;
+
             if(transferLength > 1)
             {
-                byte[] foo = new byte[0];
+                LastError = SendMmcCommand(MmcCommands.SetBlockCount, false, false,
+                                           MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
+                                           transferLength, 0, 0, ref foo, out _, out setDuration, out sense, timeout);
 
+                Error = LastError != 0;
+
+                if(Error || sense)
+                {
+                    duration = setDuration;
+
+                    return sense;
+                }
+            }
+
+            LastError = SendMmcCommand(MmcCommands.ReadMultipleBlock, false, false,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
+                                       blockSize, transferLength, ref buffer, out response, out duration, out sense,
+                                       timeout);
+
+            Error = LastError != 0;
+
+            // Seems that SET_BLOCK_COUNT followed by READ_MULTIPLE_BLOCK is not atomic in Linux and is giving an error status.
+            // TODO: Check Windows
+            if(LastError == 110)
+            {
                 SendMmcCommand(MmcCommands.StopTransmission, false, false,
-                               MmcFlags.ResponseR1B | MmcFlags.ResponseSpiR1B | MmcFlags.CommandAc, 0, 0, 0, ref foo,
-                               out _, out double stopDuration, out bool _, timeout);
+                               MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 0, 0, ref foo,
+                               out _, out _, out _, timeout);
 
-                duration += stopDuration;
+                _readMultipleBlockCannotSetBlockCount = true;
+            }
+
+            if(transferLength > 1)
+            {
+                duration += setDuration;
                 AaruConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
             }
             else
                 AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+
+            return sense;
+        }
+
+        bool ReadMultipleUsingSingle(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
+                                     ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+        {
+            buffer = new byte[transferLength * blockSize];
+            byte[] blockBuffer = new byte[blockSize];
+            duration = 0;
+            bool sense = true;
+            response = null;
+
+            for(uint i = 0; i < transferLength; i++)
+            {
+                uint address;
+
+                if(byteAddressed)
+                    address = (lba + i) * blockSize;
+                else
+                    address = lba + i;
+
+                LastError = SendMmcCommand(MmcCommands.ReadSingleBlock, false, false,
+                                           MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
+                                           blockSize, 1, ref blockBuffer, out response, out double blockDuration,
+                                           out sense, timeout);
+
+                Error = LastError != 0;
+
+                duration += blockDuration;
+
+                if(Error || sense)
+                    break;
+
+                Array.Copy(blockBuffer, 0, buffer, i * blockSize, blockSize);
+            }
+
+            AaruConsole.DebugWriteLine("MMC Device", "Multiple READ_SINGLE_BLOCKs took {0} ms.", duration);
 
             return sense;
         }
