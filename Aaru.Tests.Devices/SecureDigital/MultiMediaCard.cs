@@ -113,7 +113,7 @@ namespace Aaru.Tests.Devices.SecureDigital
         {
             uint   address   = 0;
             uint   blockSize = 512;
-            uint   count     = 1;
+            ushort count     = 1;
             bool   byteAddr  = false;
             string strDev;
             int    item;
@@ -183,7 +183,7 @@ namespace Aaru.Tests.Devices.SecureDigital
                             AaruConsole.Write("How many blocks to read?");
                             strDev = System.Console.ReadLine();
 
-                            if(!uint.TryParse(strDev, out count))
+                            if(!ushort.TryParse(strDev, out count))
                             {
                                 AaruConsole.WriteLine("Not a number. Press any key to continue...");
                                 count = 1;
@@ -211,8 +211,8 @@ namespace Aaru.Tests.Devices.SecureDigital
             start:
             System.Console.Clear();
 
-            bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : 1,
-                                  byteAddr, dev.Timeout, out double duration);
+            bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize,
+                                  multiple ? count : (ushort)1, byteAddr, dev.Timeout, out double duration);
 
             menu:
             AaruConsole.WriteLine("Device: {0}", devPath);

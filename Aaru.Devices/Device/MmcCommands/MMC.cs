@@ -111,7 +111,7 @@ namespace Aaru.Devices
             return sense;
         }
 
-        public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, uint transferLength,
+        public bool Read(out byte[] buffer, out uint[] response, uint lba, uint blockSize, ushort transferLength,
                          bool byteAddressed, uint timeout, out double duration)
         {
             buffer = new byte[transferLength * blockSize];
