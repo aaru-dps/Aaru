@@ -75,7 +75,7 @@ namespace Aaru.Core.Devices.Dumping
             const ushort sdProfile = 0x0001;
             const uint   timeout   = 5;
             double       duration;
-            uint         blocksToRead      = 1;
+            ushort       blocksToRead      = 128;
             uint         blockSize         = 512;
             ulong        blocks            = 0;
             byte[]       csd               = null;
@@ -92,46 +92,50 @@ namespace Aaru.Core.Devices.Dumping
             {
                 case DeviceType.MMC:
                 {
-                    UpdateStatus?.Invoke("Reading Extended CSD");
-                    _dumpLog.WriteLine("Reading Extended CSD");
-                    sense = _dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
-
-                    if(!sense)
-                    {
-                        ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
-                        blocksToRead = ecsdDecoded.OptimalReadSize;
-                        blocks       = ecsdDecoded.SectorCount;
-                        blockSize    = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
-
-                        if(ecsdDecoded.NativeSectorSize == 0)
-                            physicalBlockSize = 512;
-                        else if(ecsdDecoded.NativeSectorSize == 1)
-                            physicalBlockSize = 4096;
-
-                        // Supposing it's high-capacity MMC if it has Extended CSD...
-                        byteAddressed = false;
-                        mediaTags.Add(MediaTagType.MMC_ExtendedCSD, null);
-                    }
-                    else
-                    {
-                        _errorLog?.WriteLine("Read eCSD", _dev.Error, _dev.LastError, response);
-                        ecsd = null;
-                    }
-
                     UpdateStatus?.Invoke("Reading CSD");
                     _dumpLog.WriteLine("Reading CSD");
                     sense = _dev.ReadCsd(out csd, out response, timeout, out duration);
 
                     if(!sense)
                     {
-                        if(blocks == 0)
-                        {
-                            CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
-                            blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
-                            blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
-                        }
+                        CSD csdDecoded = Decoders.MMC.Decoders.DecodeCSD(csd);
+                        blocks    = (ulong)((csdDecoded.Size + 1) * Math.Pow(2, csdDecoded.SizeMultiplier + 2));
+                        blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
 
                         mediaTags.Add(MediaTagType.MMC_CSD, null);
+
+                        if(csdDecoded.Size == 0xFFF)
+                        {
+                            UpdateStatus?.Invoke("Reading Extended CSD");
+                            _dumpLog.WriteLine("Reading Extended CSD");
+                            sense = _dev.ReadExtendedCsd(out ecsd, out response, timeout, out duration);
+
+                            if(!sense)
+                            {
+                                ExtendedCSD ecsdDecoded = Decoders.MMC.Decoders.DecodeExtendedCSD(ecsd);
+                                blocks    = ecsdDecoded.SectorCount;
+                                blockSize = (uint)(ecsdDecoded.SectorSize == 1 ? 4096 : 512);
+
+                                if(ecsdDecoded.NativeSectorSize == 0)
+                                    physicalBlockSize = 512;
+                                else if(ecsdDecoded.NativeSectorSize == 1)
+                                    physicalBlockSize = 4096;
+
+                                blocksToRead = (ushort)(ecsdDecoded.OptimalReadSize * 4096 / blockSize);
+
+                                if(blocksToRead == 0)
+                                    blocksToRead = 128;
+
+                                // Supposing it's high-capacity MMC if it has Extended CSD...
+                                byteAddressed = false;
+                                mediaTags.Add(MediaTagType.MMC_ExtendedCSD, null);
+                            }
+                            else
+                            {
+                                _errorLog?.WriteLine("Read eCSD", _dev.Error, _dev.LastError, response);
+                                ecsd = null;
+                            }
+                        }
                     }
                     else
                     {

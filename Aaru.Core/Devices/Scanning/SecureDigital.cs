@@ -52,7 +52,7 @@ namespace Aaru.Core.Devices.Scanning
             const uint   timeout = 5;
             double       duration;
             const ushort sdProfile     = 0x0001;
-            uint         blocksToRead  = 128;
+            ushort       blocksToRead  = 128;
             uint         blockSize     = 512;
             bool         byteAddressed = true;
 
@@ -60,28 +60,32 @@ namespace Aaru.Core.Devices.Scanning
             {
                 case DeviceType.MMC:
                 {
-                    sense = _dev.ReadExtendedCsd(out cmdBuf, out _, timeout, out _);
+                    sense = _dev.ReadCsd(out cmdBuf, out _, timeout, out _);
 
                     if(!sense)
                     {
-                        ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
-                        blocksToRead   = ecsd.OptimalReadSize;
-                        results.Blocks = ecsd.SectorCount;
-                        blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+                        CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                        results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
+                        blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
 
-                        // Supposing it's high-capacity MMC if it has Extended CSD...
-                        byteAddressed = false;
-                    }
-
-                    if(sense || results.Blocks == 0)
-                    {
-                        sense = _dev.ReadCsd(out cmdBuf, out _, timeout, out _);
-
-                        if(!sense)
+                        if(csd.Size == 0xFFF)
                         {
-                            CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
-                            results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
-                            blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
+                            sense = _dev.ReadExtendedCsd(out cmdBuf, out _, timeout, out _);
+
+                            if(!sense)
+                            {
+                                ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                                results.Blocks = ecsd.SectorCount;
+                                blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
+
+                                blocksToRead = (ushort)(ecsd.OptimalReadSize * 4096 / blockSize);
+
+                                if(blocksToRead == 0)
+                                    blocksToRead = 128;
+
+                                // Supposing it's high-capacity MMC if it has Extended CSD...
+                                byteAddressed = false;
+                            }
                         }
                     }
 
