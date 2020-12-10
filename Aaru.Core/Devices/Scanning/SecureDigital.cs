@@ -164,7 +164,7 @@ namespace Aaru.Core.Devices.Scanning
             results.SeekMax           = double.MinValue;
             results.SeekMin           = double.MaxValue;
             results.SeekTotal         = 0;
-            const int SEEK_TIMES = 1000;
+            const int SEEK_TIMES = 100;
 
             var rnd = new Random();
 
