@@ -558,7 +558,8 @@ namespace Aaru.Core.Devices.Info
 
                     sense = dev.ReadExtendedCsd(out mmcBuf, out _, dev.Timeout, out _);
 
-                    if(!sense)
+                    if(!sense &&
+                       !ArrayHelpers.ArrayIsNullOrEmpty(mmcBuf))
                         ExtendedCSD = mmcBuf;
                 }
 
