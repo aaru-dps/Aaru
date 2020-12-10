@@ -177,6 +177,15 @@ namespace Aaru.Core.Devices.Dumping
                         // Structure >=1 for SDHC/SDXC, so that's block addressed
                         byteAddressed = csdDecoded.Structure == 0;
                         mediaTags.Add(MediaTagType.SD_CSD, null);
+
+                        physicalBlockSize = blockSize;
+
+                        if(blockSize != 512)
+                        {
+                            uint ratio = blockSize / 512;
+                            blocks    *= ratio;
+                            blockSize =  512;
+                        }
                     }
                     else
                     {

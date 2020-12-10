@@ -108,6 +108,13 @@ namespace Aaru.Core.Devices.Scanning
 
                         // Structure >=1 for SDHC/SDXC, so that's block addressed
                         byteAddressed = csd.Structure == 0;
+
+                        if(blockSize != 512)
+                        {
+                            uint ratio = blockSize / 512;
+                            results.Blocks *= ratio;
+                            blockSize      =  512;
+                        }
                     }
 
                     break;
