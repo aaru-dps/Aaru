@@ -338,6 +338,120 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
+            if(cid != null)
+            {
+                if(_dev.Type == DeviceType.SecureDigital && _private)
+                {
+                    // Clear serial number and manufacturing date
+                    cid[9]  = 0;
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+                }
+                else if(_dev.Type == DeviceType.MMC && _private)
+                {
+                    // Clear serial number and manufacturing date
+                    cid[10] = 0;
+                    cid[11] = 0;
+                    cid[12] = 0;
+                    cid[13] = 0;
+                    cid[14] = 0;
+                }
+
+                ret =
+                    _outputPlugin.WriteMediaTag(cid,
+                                                _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CID
+                                                    : MediaTagType.MMC_CID);
+
+                // Cannot write CID to image
+                if(!ret &&
+                   !_force)
+                {
+                    _dumpLog.WriteLine("Cannot write CID to output image.");
+
+                    StoppingErrorMessage?.Invoke("Cannot write CID to output image." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+            }
+
+            if(csd != null)
+            {
+                ret =
+                    _outputPlugin.WriteMediaTag(csd,
+                                                _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CSD
+                                                    : MediaTagType.MMC_CSD);
+
+                // Cannot write CSD to image
+                if(!ret &&
+                   !_force)
+                {
+                    _dumpLog.WriteLine("Cannot write CSD to output image.");
+
+                    StoppingErrorMessage?.Invoke("Cannot write CSD to output image." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+            }
+
+            if(ecsd != null)
+            {
+                ret = _outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
+
+                // Cannot write Extended CSD to image
+                if(!ret &&
+                   !_force)
+                {
+                    _dumpLog.WriteLine("Cannot write Extended CSD to output image.");
+
+                    StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+            }
+
+            if(ocr != null)
+            {
+                ret =
+                    _outputPlugin.WriteMediaTag(ocr,
+                                                _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_OCR
+                                                    : MediaTagType.MMC_OCR);
+
+                // Cannot write OCR to image
+                if(!ret &&
+                   !_force)
+                {
+                    _dumpLog.WriteLine("Cannot write OCR to output image.");
+
+                    StoppingErrorMessage?.Invoke("Cannot write OCR to output image." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+            }
+
+            if(scr != null)
+            {
+                ret = _outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
+
+                // Cannot write SCR to image
+                if(!ret &&
+                   !_force)
+                {
+                    _dumpLog.WriteLine("Cannot write SCR to output image.");
+
+                    StoppingErrorMessage?.Invoke("Cannot write SCR to output image." + Environment.NewLine +
+                                                 _outputPlugin.ErrorMessage);
+
+                    return;
+                }
+            }
+
             if(_resume.NextBlock > 0)
             {
                 UpdateStatus?.Invoke($"Resuming from block {_resume.NextBlock}.");
@@ -626,187 +740,6 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     _preSidecar.BlockMedia = sidecar.BlockMedia;
                     sidecar                = _preSidecar;
-                }
-
-                switch(_dev.Type)
-                {
-                    case DeviceType.MMC:
-                        sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
-
-                        break;
-                    case DeviceType.SecureDigital:
-                        sidecar.BlockMedia[0].SecureDigital = new SecureDigitalType();
-
-                        break;
-                }
-
-                DumpType cidDump = null;
-                DumpType csdDump = null;
-                DumpType ocrDump = null;
-
-                if(cid != null)
-                {
-                    if(_dev.Type == DeviceType.SecureDigital && _private)
-                    {
-                        // Clear serial number and manufacturing date
-                        cid[9]  = 0;
-                        cid[10] = 0;
-                        cid[11] = 0;
-                        cid[12] = 0;
-                        cid[13] = 0;
-                        cid[14] = 0;
-                    }
-                    else if(_dev.Type == DeviceType.MMC && _private)
-                    {
-                        // Clear serial number and manufacturing date
-                        cid[10] = 0;
-                        cid[11] = 0;
-                        cid[12] = 0;
-                        cid[13] = 0;
-                        cid[14] = 0;
-                    }
-
-                    cidDump = new DumpType
-                    {
-                        Image     = _outputPath,
-                        Size      = (ulong)cid.Length,
-                        Checksums = Checksum.GetChecksums(cid).ToArray()
-                    };
-
-                    ret =
-                        _outputPlugin.WriteMediaTag(cid,
-                                                    _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CID
-                                                        : MediaTagType.MMC_CID);
-
-                    // Cannot write CID to image
-                    if(!ret &&
-                       !_force)
-                    {
-                        _dumpLog.WriteLine("Cannot write CID to output image.");
-
-                        StoppingErrorMessage?.Invoke("Cannot write CID to output image." + Environment.NewLine +
-                                                     _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-                }
-
-                if(csd != null)
-                {
-                    csdDump = new DumpType
-                    {
-                        Image     = _outputPath,
-                        Size      = (ulong)csd.Length,
-                        Checksums = Checksum.GetChecksums(csd).ToArray()
-                    };
-
-                    ret =
-                        _outputPlugin.WriteMediaTag(csd,
-                                                    _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_CSD
-                                                        : MediaTagType.MMC_CSD);
-
-                    // Cannot write CSD to image
-                    if(!ret &&
-                       !_force)
-                    {
-                        _dumpLog.WriteLine("Cannot write CSD to output image.");
-
-                        StoppingErrorMessage?.Invoke("Cannot write CSD to output image." + Environment.NewLine +
-                                                     _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-                }
-
-                if(ecsd != null)
-                {
-                    sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
-                    {
-                        Image     = _outputPath,
-                        Size      = (ulong)ecsd.Length,
-                        Checksums = Checksum.GetChecksums(ecsd).ToArray()
-                    };
-
-                    ret = _outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
-
-                    // Cannot write Extended CSD to image
-                    if(!ret &&
-                       !_force)
-                    {
-                        _dumpLog.WriteLine("Cannot write Extended CSD to output image.");
-
-                        StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image." +
-                                                     Environment.NewLine + _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-                }
-
-                if(ocr != null)
-                {
-                    ocrDump = new DumpType
-                    {
-                        Image     = _outputPath,
-                        Size      = (ulong)ocr.Length,
-                        Checksums = Checksum.GetChecksums(ocr).ToArray()
-                    };
-
-                    ret =
-                        _outputPlugin.WriteMediaTag(ocr,
-                                                    _dev.Type == DeviceType.SecureDigital ? MediaTagType.SD_OCR
-                                                        : MediaTagType.MMC_OCR);
-
-                    // Cannot write OCR to image
-                    if(!ret &&
-                       !_force)
-                    {
-                        _dumpLog.WriteLine("Cannot write OCR to output image.");
-
-                        StoppingErrorMessage?.Invoke("Cannot write OCR to output image." + Environment.NewLine +
-                                                     _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-                }
-
-                if(scr != null)
-                {
-                    sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
-                    {
-                        Image     = _outputPath,
-                        Size      = (ulong)scr.Length,
-                        Checksums = Checksum.GetChecksums(scr).ToArray()
-                    };
-
-                    ret = _outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
-
-                    // Cannot write SCR to image
-                    if(!ret &&
-                       !_force)
-                    {
-                        _dumpLog.WriteLine("Cannot write SCR to output image.");
-
-                        StoppingErrorMessage?.Invoke("Cannot write SCR to output image." + Environment.NewLine +
-                                                     _outputPlugin.ErrorMessage);
-
-                        return;
-                    }
-                }
-
-                switch(_dev.Type)
-                {
-                    case DeviceType.MMC:
-                        sidecar.BlockMedia[0].MultiMediaCard.CID = cidDump;
-                        sidecar.BlockMedia[0].MultiMediaCard.CSD = csdDump;
-                        sidecar.BlockMedia[0].MultiMediaCard.OCR = ocrDump;
-
-                        break;
-                    case DeviceType.SecureDigital:
-                        sidecar.BlockMedia[0].SecureDigital.CID = cidDump;
-                        sidecar.BlockMedia[0].SecureDigital.CSD = csdDump;
-                        sidecar.BlockMedia[0].SecureDigital.OCR = ocrDump;
-
-                        break;
                 }
 
                 end = DateTime.UtcNow;
