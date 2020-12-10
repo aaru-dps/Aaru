@@ -164,6 +164,15 @@ namespace Aaru.Devices
             if(Error)
                 throw new DeviceException(LastError);
 
+            // Seems ioctl(2) does not allow the atomicity needed
+            if(_remote is null)
+            {
+                if(PlatformId == PlatformID.Linux)
+                    _readMultipleBlockCannotSetBlockCount = true;
+            }
+            else if(_remote.ServerOperatingSystem == "Linux")
+                _readMultipleBlockCannotSetBlockCount = true;
+
             Type     = DeviceType.Unknown;
             ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
