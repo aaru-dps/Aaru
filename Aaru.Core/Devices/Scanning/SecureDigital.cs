@@ -211,6 +211,8 @@ namespace Aaru.Core.Devices.Scanning
 
             if(supportsCmd23 || blocksToRead == 1)
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            else if(_useBufferedReads)
+                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time using OS buffered reads.");
             else
                 UpdateStatus?.Invoke($"Reading {blocksToRead} sectors using sequential single commands.");
 
@@ -250,6 +252,8 @@ namespace Aaru.Core.Devices.Scanning
                 else if(supportsCmd23)
                     error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                     timeout, out duration);
+                else if(_useBufferedReads)
+                    throw new NotImplementedException();
                 else
                     error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
                                                          byteAddressed, timeout, out duration);

@@ -62,6 +62,15 @@ namespace Aaru.Commands.Media
                     Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--use-buffered-reads"
+                }, "For MMC/SD, use OS buffered reads if CMD23 is not supported.")
+                {
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
+                });
+
             AddArgument(new Argument<string>
             {
                 Arity       = ArgumentArity.ExactlyOne,
@@ -72,7 +81,8 @@ namespace Aaru.Commands.Media
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string devicePath, string ibgLog, string mhddLog)
+        public static int Invoke(bool debug, bool verbose, string devicePath, string ibgLog, string mhddLog,
+                                 bool useBufferedReads)
         {
             MainClass.PrintCopyright();
 
@@ -89,6 +99,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
             AaruConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
             AaruConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--use-buffered-reads={0}", useBufferedReads);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
@@ -122,7 +133,7 @@ namespace Aaru.Commands.Media
 
             Statistics.AddDevice(dev);
 
-            var scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev);
+            var scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
             scanner.UpdateStatus         += Progress.UpdateStatus;
             scanner.StoppingErrorMessage += Progress.ErrorMessage;
             scanner.UpdateProgress       += Progress.UpdateProgress;

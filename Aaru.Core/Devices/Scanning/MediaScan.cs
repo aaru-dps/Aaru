@@ -44,20 +44,27 @@ namespace Aaru.Core.Devices.Scanning
         readonly string _mhddLogPath;
         readonly bool   _seekTest;
         bool            _aborted;
+        readonly bool   _useBufferedReads;
 
         /// <param name="mhddLogPath">Path to a MHDD log file</param>
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
         /// <param name="devicePath">Device path</param>
         /// <param name="dev">Device</param>
         /// <param name="seekTest">Enable seek test</param>
-        public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev, bool seekTest = true)
+        /// <param name="useBufferedReads">
+        ///     If MMC/SD does not support CMD23, use OS buffered reads instead of multiple single block
+        ///     commands
+        /// </param>
+        public MediaScan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev, bool useBufferedReads,
+                         bool seekTest = true)
         {
-            _mhddLogPath = mhddLogPath;
-            _ibgLogPath  = ibgLogPath;
-            _devicePath  = devicePath;
-            _dev         = dev;
-            _aborted     = false;
-            _seekTest    = seekTest;
+            _mhddLogPath      = mhddLogPath;
+            _ibgLogPath       = ibgLogPath;
+            _devicePath       = devicePath;
+            _dev              = dev;
+            _aborted          = false;
+            _seekTest         = seekTest;
+            _useBufferedReads = useBufferedReads;
         }
 
         public ScanResults Scan()

@@ -274,12 +274,7 @@ namespace Aaru.Core.Devices.Dumping
                                                 out duration);
 
                 if(sense || _dev.Error)
-                {
-                    UpdateStatus?.
-                        Invoke("Environment does not support setting block count, downgrading to OS reading.");
-
                     supportsCmd23 = false;
-                }
 
                 // Need to restart device, otherwise is it just busy streaming data with no one listening
                 sense = _dev.ReOpen();
@@ -322,6 +317,11 @@ namespace Aaru.Core.Devices.Dumping
             {
                 UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
                 _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+            }
+            else if(_useBufferedReads)
+            {
+                UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time using OS buffered reads.");
+                _dumpLog.WriteLine("Device can read {0} blocks at a time using OS buffered reads.", blocksToRead);
             }
             else
             {
@@ -549,6 +549,8 @@ namespace Aaru.Core.Devices.Dumping
                 else if(supportsCmd23)
                     error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                     timeout, out duration);
+                else if(_useBufferedReads)
+                    throw new NotImplementedException();
                 else
                     error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
                                                          byteAddressed, timeout, out duration);

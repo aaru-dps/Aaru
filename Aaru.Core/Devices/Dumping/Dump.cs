@@ -93,6 +93,7 @@ namespace Aaru.Core.Devices.Dumping
         int                                 _speed;
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;
+        readonly bool                       _useBufferedReads;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -128,13 +129,18 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="errorLog">Error log</param>
         /// <param name="generateSubchannels">Generate missing subchannels</param>
         /// <param name="maximumReadable">Number of maximum blocks to be read at once (can be overriden by database)</param>
+        /// <param name="useBufferedReads">
+        ///     If MMC/SD does not support CMD23, use OS buffered reads instead of multiple single block
+        ///     commands
+        /// </param>
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
-                    bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable)
+                    bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
+                    bool useBufferedReads)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -171,6 +177,7 @@ namespace Aaru.Core.Devices.Dumping
             _skipCdireadyHole      = skipCdireadyHole;
             _errorLog              = errorLog;
             _generateSubchannels   = generateSubchannels;
+            _useBufferedReads      = useBufferedReads;
         }
 
         /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>

@@ -280,6 +280,15 @@ namespace Aaru.Commands.Media
                     Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--use-buffered-reads"
+                }, "For MMC/SD, use OS buffered reads if CMD23 is not supported.")
+                {
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -289,7 +298,7 @@ namespace Aaru.Commands.Media
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                                  bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
-                                 uint maxBlocks)
+                                 uint maxBlocks, bool useBufferedReads)
         {
             MainClass.PrintCopyright();
 
@@ -338,6 +347,7 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--skip-cdiready-hole={0}", skipCdiReadyHole);
             AaruConsole.DebugWriteLine("Dump-Media command", "--eject={0}", eject);
             AaruConsole.DebugWriteLine("Dump-Media command", "--max-blocks={0}", maxBlocks);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--use-buffered-reads={0}", useBufferedReads);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -624,7 +634,7 @@ namespace Aaru.Commands.Media
                                       outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
                                       firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
                                       fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks);
+                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads);
 
                 dumper.UpdateStatus         += Progress.UpdateStatus;
                 dumper.ErrorMessage         += Progress.ErrorMessage;
