@@ -190,8 +190,9 @@ namespace Aaru.Devices
             return sense;
         }
 
-        bool ReadMultipleUsingSingle(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
-                                     ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+        public bool ReadMultipleUsingSingle(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
+                                            ushort transferLength, bool byteAddressed, uint timeout,
+                                            out double duration)
         {
             buffer = new byte[transferLength * blockSize];
             byte[] blockBuffer = new byte[blockSize];

@@ -95,7 +95,7 @@ namespace Aaru.Devices.Linux
         SgGetVersionNum = 0x2282, SgIo = 0x2285,
 
         // MMC IOCtl
-        MmcIocCmd = 0xC048B300
+        MmcIocCmd = 0xC048B300, MmcIocMultiCmd = 0xC008B301
     }
 
     [Flags]

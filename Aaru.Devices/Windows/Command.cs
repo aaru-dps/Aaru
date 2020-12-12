@@ -524,8 +524,10 @@ namespace Aaru.Devices.Windows
             commandDescriptor.cmdClass          = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
             commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
 
-            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc) ? SdTransferType.SingleBlock
-                                                 : SdTransferType.CmdOnly;
+            commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
+                                                 ? command == MmcCommands.ReadMultipleBlock
+                                                       ? SdTransferType.MultiBlock
+                                                       : SdTransferType.SingleBlock : SdTransferType.CmdOnly;
 
             commandDescriptor.responseType = 0;
 
@@ -583,6 +585,40 @@ namespace Aaru.Devices.Windows
 
             response = new uint[4];
             duration = (end - start).TotalMilliseconds;
+
+            return error;
+        }
+
+        internal static int SendMultipleMmcCommands(SafeFileHandle fd, Device.MmcSingleCommand[] commands,
+                                                    out double duration, out bool sense, uint timeout = 0)
+        {
+            int error = 0;
+            duration = 0;
+            sense    = false;
+
+            if(commands.Length     >= 2 &&
+               commands[1].command == MmcCommands.ReadMultipleBlock)
+                return SendMmcCommand(fd, commands[1].command, commands[1].write, commands[1].isApplication,
+                                      commands[1].flags, commands[1].argument, commands[1].blockSize,
+                                      commands[1].blocks, ref commands[1].buffer, out commands[1].response,
+                                      out duration, out sense, timeout);
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                int singleError = SendMmcCommand(fd, command.command, command.write, command.isApplication,
+                                                 command.flags, command.argument, command.blockSize, command.blocks,
+                                                 ref command.buffer, out command.response, out double cmdDuration,
+                                                 out bool cmdSense, timeout);
+
+                if(error       == 0 &&
+                   singleError != 0)
+                    error = singleError;
+
+                duration += cmdDuration;
+
+                if(cmdSense)
+                    sense = true;
+            }
 
             return error;
         }

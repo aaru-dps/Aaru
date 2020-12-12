@@ -214,13 +214,59 @@ namespace Aaru.Devices
                 }
             }
 
-            if(!(_remote is null))
-                return _remote.SendMmcCommand(command, write, isApplication, flags, argument, blockSize, blocks,
-                                              ref buffer, out response, out duration, out sense, timeout);
+            return _remote is null
+                       ? Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
+                                                blockSize, blocks, ref buffer, out response, out duration, out sense,
+                                                timeout) : _remote.SendMmcCommand(command, write, isApplication, flags,
+                           argument, blockSize, blocks, ref buffer, out response, out duration, out sense,
+                           timeout);
+        }
 
-            return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
-                                          blockSize, blocks, ref buffer, out response, out duration, out sense,
-                                          timeout);
+        public class MmcSingleCommand
+        {
+            public uint        argument;
+            public uint        blocks;
+            public uint        blockSize;
+            public byte[]      buffer;
+            public MmcCommands command;
+            public MmcFlags    flags;
+            public bool        isApplication;
+            public uint[]      response;
+            public bool        write;
+        }
+
+        public int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
+                                           uint timeout = 0)
+        {
+            if(_remote is null)
+                return Command.SendMultipleMmcCommands(PlatformId, FileHandle, commands, out duration, out sense,
+                                                       timeout);
+
+            if(_remote.ServerProtocolVersion >= 2)
+                return _remote.SendMultipleMmcCommands(commands, out duration, out sense, timeout);
+
+            int error = 0;
+            duration = 0;
+            sense    = false;
+
+            foreach(MmcSingleCommand command in commands)
+            {
+                int singleError = _remote.SendMmcCommand(command.command, command.write, command.isApplication,
+                                                         command.flags, command.argument, command.blockSize,
+                                                         command.blocks, ref command.buffer, out command.response,
+                                                         out double cmdDuration, out bool cmdSense, timeout);
+
+                if(error       == 0 &&
+                   singleError != 0)
+                    error = singleError;
+
+                duration += cmdDuration;
+
+                if(cmdSense)
+                    sense = true;
+            }
+
+            return error;
         }
     }
 }

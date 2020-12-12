@@ -372,22 +372,16 @@ namespace Aaru.Devices
             switch(ptId)
             {
                 case PlatformID.Win32NT:
-                {
                     // No check for Windows version. A 48-bit ATA disk simply does not work on earlier systems
                     return Windows.Command.SendAtaCommand((SafeFileHandle)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
-                }
                 case PlatformID.Linux:
-                {
                     return Linux.Command.SendAtaCommand((int)fd, registers, out errorRegisters, protocol,
                                                         transferRegister, ref buffer, timeout, transferBlocks,
                                                         out duration, out sense);
-                }
                 case PlatformID.FreeBSD:
-                {
                     return FreeBSD.Command.SendAtaCommand((IntPtr)fd, registers, out errorRegisters, protocol,
                                                           ref buffer, timeout, out duration, out sense);
-                }
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
@@ -444,17 +438,27 @@ namespace Aaru.Devices
             switch(ptId)
             {
                 case PlatformID.Win32NT:
-                {
                     return Windows.Command.SendMmcCommand((SafeFileHandle)fd, command, write, isApplication, flags,
                                                           argument, blockSize, blocks, ref buffer, out response,
                                                           out duration, out sense, timeout);
-                }
                 case PlatformID.Linux:
-                {
                     return Linux.Command.SendMmcCommand((int)fd, command, write, isApplication, flags, argument,
                                                         blockSize, blocks, ref buffer, out response, out duration,
                                                         out sense, timeout);
-                }
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
+            }
+        }
+
+        internal static int SendMultipleMmcCommands(PlatformID ptId, object fd, Device.MmcSingleCommand[] commands,
+                                                    out double duration, out bool sense, uint timeout = 0)
+        {
+            switch(ptId)
+            {
+                case PlatformID.Win32NT:
+                    return Windows.Command.SendMultipleMmcCommands((SafeFileHandle)fd, commands, out duration,
+                                                                   out sense, timeout);
+                case PlatformID.Linux:
+                    return Linux.Command.SendMultipleMmcCommands((int)fd, commands, out duration, out sense, timeout);
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }

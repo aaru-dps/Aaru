@@ -68,5 +68,8 @@ namespace Aaru.Devices.Linux
 
         [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
         internal static extern string udev_device_get_property_value(IntPtr udevDevice, string key);
+
+        [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int ioctlMmcMulti(int fd, LinuxIoctl request, IntPtr value);
     }
 }

@@ -1433,5 +1433,15 @@ namespace Aaru.Devices.Remote
                 // Ignore if already disposed
             }
         }
+
+        public int SendMultipleMmcCommands(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
+                                           uint timeout = 0)
+        {
+            duration = 0;
+            sense    = true;
+
+            // TODO: Not yet implemented
+            return -1;
+        }
     }
 }

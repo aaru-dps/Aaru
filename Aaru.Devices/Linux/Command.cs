@@ -444,6 +444,98 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
+        internal static int SendMultipleMmcCommands(int fd, Device.MmcSingleCommand[] commands, out double duration,
+                                                    out bool sense, uint timeout = 0)
+        {
+            duration = 0;
+            sense    = false;
+            int off = 0;
+
+            // Create array for buffers
+            IntPtr[] bufferPointers = new IntPtr[commands.Length];
+
+            // Allocate memory for the native array for commands
+            IntPtr ioMultiCmd = Marshal.AllocHGlobal(sizeof(ulong) + (Marshal.SizeOf<MmcIocCmd>() * commands.Length));
+
+            // First value of native array is uint64 with count of commands
+            Marshal.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, sizeof(ulong));
+            off = sizeof(ulong);
+
+            for(int i = 0; i < commands.Length; i++)
+            {
+                // Create command
+                var ioCmd = new MmcIocCmd();
+
+                // Allocate buffer
+                bufferPointers[i] = Marshal.AllocHGlobal(commands[i].buffer.Length);
+
+                // Define command
+                ioCmd.write_flag = commands[i].write;
+                ioCmd.is_ascmd   = commands[i].isApplication;
+                ioCmd.opcode     = (uint)commands[i].command;
+                ioCmd.arg        = commands[i].argument;
+                ioCmd.flags      = commands[i].flags;
+                ioCmd.blksz      = commands[i].blockSize;
+                ioCmd.blocks     = commands[i].blocks;
+
+                if(timeout > 0)
+                {
+                    ioCmd.data_timeout_ns = timeout * 1000000000;
+                    ioCmd.cmd_timeout_ms  = timeout * 1000;
+                }
+
+                ioCmd.data_ptr = (ulong)bufferPointers[i];
+
+                // Copy buffer to unmanaged space
+                Marshal.Copy(commands[i].buffer, 0, bufferPointers[i], commands[i].buffer.Length);
+
+                // Copy command to unmanaged space
+                Marshal.StructureToPtr(ioCmd, ioMultiCmd + off, false);
+
+                // Advance pointer
+                off += Marshal.SizeOf<MmcIocCmd>();
+            }
+
+            // Send command
+            DateTime start = DateTime.UtcNow;
+            int      error = Extern.ioctlMmcMulti(fd, LinuxIoctl.MmcIocMultiCmd, ioMultiCmd);
+            DateTime end   = DateTime.UtcNow;
+
+            sense |= error < 0;
+
+            if(error < 0)
+                error = Marshal.GetLastWin32Error();
+
+            duration = (end - start).TotalMilliseconds;
+
+            off = sizeof(ulong);
+
+            // TODO: Use real pointers this is too slow
+            for(int i = 0; i < commands.Length; i++)
+            {
+                byte[] tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
+
+                // Copy command to managed space
+                var gch = GCHandle.Alloc(commands[i]);
+                Marshal.Copy(ioMultiCmd + off, tmp, 0, tmp.Length);
+                Marshal.Copy(tmp, 0, GCHandle.ToIntPtr(gch), tmp.Length);
+                gch.Free();
+
+                // Copy buffer to managed space
+                Marshal.Copy(bufferPointers[i], commands[i].buffer, 0, commands[i].buffer.Length);
+
+                // Free buffer
+                Marshal.FreeHGlobal(bufferPointers[i]);
+
+                // Advance pointer
+                off += Marshal.SizeOf<MmcIocCmd>();
+            }
+
+            Marshal.FreeHGlobal(ioMultiCmd);
+
+            return error;
+        }
+
         /// <summary>Reads the contents of a symbolic link</summary>
         /// <param name="path">Path to the symbolic link</param>
         /// <returns>Contents of the symbolic link</returns>
