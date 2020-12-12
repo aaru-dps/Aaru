@@ -163,9 +163,7 @@ namespace Aaru.Devices
                                       ushort transferLength, bool byteAddressed, uint timeout, out double duration)
         {
             buffer = new byte[transferLength * blockSize];
-            byte[] foo         = new byte[0];
             double setDuration = 0;
-            bool   sense;
             uint   address;
             response = null;
 
@@ -174,39 +172,12 @@ namespace Aaru.Devices
             else
                 address = lba;
 
-            if(transferLength > 1)
-            {
-                LastError = SendMmcCommand(MmcCommands.SetBlockCount, false, false,
-                                           MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
-                                           transferLength, 0, 0, ref foo, out _, out setDuration, out sense, timeout);
-
-                Error = LastError != 0;
-
-                if(Error || sense)
-                {
-                    duration = setDuration;
-
-                    return sense;
-                }
-            }
-
             LastError = SendMmcCommand(MmcCommands.ReadMultipleBlock, false, false,
                                        MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize, transferLength, ref buffer, out response, out duration, out sense,
-                                       timeout);
+                                       blockSize, transferLength, ref buffer, out response, out duration,
+                                       out bool sense, timeout);
 
             Error = LastError != 0;
-
-            // Seems that SET_BLOCK_COUNT followed by READ_MULTIPLE_BLOCK is not atomic in Linux and is giving an error status.
-            // TODO: Check Windows
-            if(LastError == 110)
-            {
-                SendMmcCommand(MmcCommands.StopTransmission, false, false,
-                               MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 0, 0, ref foo,
-                               out _, out _, out _, timeout);
-
-                _readMultipleBlockCannotSetBlockCount = true;
-            }
 
             if(transferLength > 1)
             {
