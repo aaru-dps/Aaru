@@ -594,5 +594,30 @@ namespace Aaru.Devices.Linux
 
             return Encoding.ASCII.GetString(resultString);
         }
+
+        internal static int BufferedOsRead(int fd, out byte[] buffer, long offset, uint length, out double duration)
+        {
+            buffer = new byte[length];
+
+            DateTime start = DateTime.Now;
+
+            long sense = Extern.lseek(fd, offset, SeekWhence.Begin);
+
+            DateTime end = DateTime.Now;
+
+            if(sense < 0)
+            {
+                duration = (end - start).TotalMilliseconds;
+
+                return Marshal.GetLastWin32Error();
+            }
+
+            sense = DetectOS.Is64Bit ? Extern.read64(fd, buffer, length) : Extern.read(fd, buffer, (int)length);
+
+            end      = DateTime.Now;
+            duration = (end - start).TotalMilliseconds;
+
+            return sense < 0 ? Marshal.GetLastWin32Error() : 0;
+        }
     }
 }

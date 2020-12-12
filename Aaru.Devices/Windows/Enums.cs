@@ -356,4 +356,9 @@ namespace Aaru.Devices.Windows
         public static Guid GuidDevinterfaceDisk =
             new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
     }
+
+    internal enum MoveMethod : uint
+    {
+        Begin = 0, Current = 1, End = 2
+    }
 }

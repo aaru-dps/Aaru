@@ -1445,5 +1445,8 @@ namespace Aaru.Devices.Remote
         }
 
         public bool ReOpen() => throw new NotImplementedException();
+
+        public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration) =>
+            throw new NotImplementedException();
     }
 }

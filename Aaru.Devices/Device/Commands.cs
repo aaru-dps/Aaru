@@ -283,5 +283,18 @@ namespace Aaru.Devices
 
             return Error;
         }
+
+        public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
+        {
+            if(!(_remote is null))
+                return _remote.BufferedOsRead(out buffer, offset, length, out duration);
+
+            int ret = Command.BufferedOsRead(PlatformId, FileHandle, out buffer, offset, length, out duration);
+
+            Error     = ret != 0;
+            LastError = ret;
+
+            return Error;
+        }
     }
 }

@@ -633,5 +633,32 @@ namespace Aaru.Devices.Windows
 
             return ((SafeFileHandle)newFd).IsInvalid ? Marshal.GetLastWin32Error() : 0;
         }
+
+        internal static int BufferedOsRead(SafeFileHandle fd, out byte[] buffer, long offset, uint length,
+                                           out double duration)
+        {
+            buffer = new byte[length];
+
+            DateTime start = DateTime.Now;
+
+            bool sense = !Extern.SetFilePointerEx(fd, offset, out _, MoveMethod.Begin);
+            ;
+
+            DateTime end = DateTime.Now;
+
+            if(sense)
+            {
+                duration = (end - start).TotalMilliseconds;
+
+                return Marshal.GetLastWin32Error();
+            }
+
+            sense = !Extern.ReadFile(fd, buffer, length, out _, IntPtr.Zero);
+
+            end      = DateTime.Now;
+            duration = (end - start).TotalMilliseconds;
+
+            return sense ? Marshal.GetLastWin32Error() : 0;
+        }
     }
 }

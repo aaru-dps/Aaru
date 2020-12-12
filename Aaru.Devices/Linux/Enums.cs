@@ -124,4 +124,10 @@ namespace Aaru.Devices.Linux
         DirectIo = 1, UnusedLunInhibit = 2, MmapIo     = 4,
         NoDxfer  = 0x10000, QAtTail    = 0x10, QAtHead = 0x20
     }
+
+    internal enum SeekWhence
+    {
+        Begin = 0, Current = 1, End = 2,
+        Data  = 3, Hole    = 4
+    }
 }

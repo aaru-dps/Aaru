@@ -71,5 +71,14 @@ namespace Aaru.Devices.Linux
 
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
         internal static extern int ioctlMmcMulti(int fd, LinuxIoctl request, IntPtr value);
+
+        [DllImport("libc", SetLastError = true)]
+        internal static extern long lseek(int fd, long offset, SeekWhence whence);
+
+        [DllImport("libc", SetLastError = true)]
+        internal static extern int read(int fd, byte[] buf, int count);
+
+        [DllImport("libc", EntryPoint = "read", SetLastError = true)]
+        internal static extern long read64(int fd, byte[] buf, long count);
     }
 }

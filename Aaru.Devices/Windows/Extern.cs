@@ -112,5 +112,13 @@ namespace Aaru.Devices.Windows
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern bool CloseHandle(SafeFileHandle hDevice);
+
+        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove,
+                                                   out long lpNewFilePointer, MoveMethod dwMoveMethod);
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern bool ReadFile(SafeFileHandle hFile, byte[] lpBuffer, uint nNumberOfBytesToRead,
+                                           out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
     }
 }

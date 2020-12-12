@@ -550,7 +550,8 @@ namespace Aaru.Core.Devices.Dumping
                     error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
                                                     timeout, out duration);
                 else if(_useBufferedReads)
-                    throw new NotImplementedException();
+                    error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead,
+                                                out duration);
                 else
                     error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
                                                          byteAddressed, timeout, out duration);

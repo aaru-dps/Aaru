@@ -472,5 +472,18 @@ namespace Aaru.Devices
                 default:                 throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
+
+        internal static int BufferedOsRead(PlatformID ptId, object fd, out byte[] buffer, long offset, uint length,
+                                           out double duration)
+        {
+            switch(ptId)
+            {
+                case PlatformID.Win32NT:
+                    return Windows.Command.BufferedOsRead((SafeFileHandle)fd, out buffer, offset, length, out duration);
+                case PlatformID.Linux:
+                    return Linux.Command.BufferedOsRead((int)fd, out buffer, offset, length, out duration);
+                default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
+            }
+        }
     }
 }
