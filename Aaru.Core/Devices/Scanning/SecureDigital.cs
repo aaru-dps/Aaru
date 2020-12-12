@@ -34,6 +34,8 @@ using System;
 using System.Collections.Generic;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
+using Aaru.Decoders.SecureDigital;
+using CSD = Aaru.Decoders.MMC.CSD;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -55,6 +57,7 @@ namespace Aaru.Core.Devices.Scanning
             ushort       blocksToRead  = 128;
             uint         blockSize     = 512;
             bool         byteAddressed = true;
+            bool         supportsCmd23 = false;
 
             switch(_dev.Type)
             {
@@ -67,6 +70,9 @@ namespace Aaru.Core.Devices.Scanning
                         CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                         results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                         blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
+
+                        // Found at least since MMC System Specification 3.31
+                        supportsCmd23 = csd.Version >= 3;
 
                         if(csd.Size == 0xFFF)
                         {
@@ -115,6 +121,12 @@ namespace Aaru.Core.Devices.Scanning
                             results.Blocks *= ratio;
                             blockSize      =  512;
                         }
+
+                        sense = _dev.ReadScr(out cmdBuf, out _, timeout, out _);
+
+                        if(!sense)
+                            supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.CommandSupport.
+                                                     HasFlag(CommandSupport.SetBlockCount) ?? false;
                     }
 
                     break;
@@ -128,23 +140,52 @@ namespace Aaru.Core.Devices.Scanning
                 return results;
             }
 
-            while(true)
+            if(supportsCmd23)
             {
-                sense = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
+                sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
+                                                out duration);
+
+                if(sense || _dev.Error)
+                {
+                    UpdateStatus?.
+                        Invoke("Environment does not support setting block count, downgrading to OS reading.");
+
+                    supportsCmd23 = false;
+                }
+
+                // Need to restart device, otherwise is it just busy streaming data with no one listening
+                sense = _dev.ReOpen();
 
                 if(sense)
-                    blocksToRead /= 2;
+                {
+                    StoppingErrorMessage?.Invoke($"Error {_dev.LastError} reopening device.");
 
-                if(!sense ||
-                   blocksToRead == 1)
-                    break;
+                    return results;
+                }
             }
 
-            if(sense)
+            if(supportsCmd23)
             {
-                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                while(true)
+                {
+                    sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
+                                                    timeout, out duration);
 
-                return results;
+                    if(sense)
+                        blocksToRead /= 2;
+
+                    if(!sense ||
+                       blocksToRead == 1)
+                        break;
+                }
+
+                if(sense)
+                {
+                    StoppingErrorMessage?.
+                        Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+
+                    return results;
+                }
             }
 
             results.A       = 0; // <3ms
@@ -164,11 +205,14 @@ namespace Aaru.Core.Devices.Scanning
             results.SeekMax           = double.MinValue;
             results.SeekMin           = double.MaxValue;
             results.SeekTotal         = 0;
-            const int SEEK_TIMES = 100;
+            const int seekTimes = 100;
 
             var rnd = new Random();
 
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            if(supportsCmd23 || blocksToRead == 1)
+                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            else
+                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors using sequential single commands.");
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, sdProfile);
             var mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
@@ -198,8 +242,17 @@ namespace Aaru.Core.Devices.Scanning
                 UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)results.Blocks);
 
-                bool error = _dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, timeout,
-                                       out duration);
+                bool error;
+
+                if(blocksToRead == 1)
+                    error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
+                                                 out duration);
+                else if(supportsCmd23)
+                    error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                                    timeout, out duration);
+                else
+                    error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
+                                                         byteAddressed, timeout, out duration);
 
                 if(!error)
                 {
@@ -256,7 +309,7 @@ namespace Aaru.Core.Devices.Scanning
 
             InitProgress?.Invoke();
 
-            for(int i = 0; i < SEEK_TIMES; i++)
+            for(int i = 0; i < seekTimes; i++)
             {
                 if(_aborted || !_seekTest)
                     break;
@@ -285,7 +338,7 @@ namespace Aaru.Core.Devices.Scanning
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;
             results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
-            results.SeekTimes      =  SEEK_TIMES;
+            results.SeekTimes      =  seekTimes;
 
             return results;
         }

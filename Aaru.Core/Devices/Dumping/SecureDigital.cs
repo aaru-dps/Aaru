@@ -42,7 +42,9 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Core.Logging;
 using Aaru.Decoders.MMC;
+using Aaru.Decoders.SecureDigital;
 using Schemas;
+using CSD = Aaru.Decoders.MMC.CSD;
 using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
 using MediaType = Aaru.CommonTypes.MediaType;
 using Version = Aaru.CommonTypes.Interop.Version;
@@ -85,6 +87,7 @@ namespace Aaru.Core.Devices.Dumping
             uint         physicalBlockSize = 0;
             bool         byteAddressed     = true;
             uint[]       response;
+            bool         supportsCmd23 = false;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
@@ -103,6 +106,9 @@ namespace Aaru.Core.Devices.Dumping
                         blockSize = (uint)Math.Pow(2, csdDecoded.ReadBlockLength);
 
                         mediaTags.Add(MediaTagType.MMC_CSD, null);
+
+                        // Found at least since MMC System Specification 3.31
+                        supportsCmd23 = csdDecoded.Version >= 3;
 
                         if(csdDecoded.Size == 0xFFF)
                         {
@@ -215,7 +221,12 @@ namespace Aaru.Core.Devices.Dumping
                         scr = null;
                     }
                     else
+                    {
+                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.CommandSupport.
+                                                 HasFlag(CommandSupport.SetBlockCount) ?? false;
+
                         mediaTags.Add(MediaTagType.SD_SCR, null);
+                    }
 
                     break;
                 }
@@ -254,28 +265,69 @@ namespace Aaru.Core.Devices.Dumping
             byte[] cmdBuf;
             bool   error;
 
-            while(true)
+            if(blocksToRead > _maximumReadable)
+                blocksToRead = (ushort)_maximumReadable;
+
+            if(supportsCmd23 && blocksToRead > 1)
             {
-                error = _dev.Read(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout, out duration);
+                sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
+                                                out duration);
+
+                if(sense || _dev.Error)
+                {
+                    UpdateStatus?.
+                        Invoke("Environment does not support setting block count, downgrading to OS reading.");
+
+                    supportsCmd23 = false;
+                }
+
+                // Need to restart device, otherwise is it just busy streaming data with no one listening
+                sense = _dev.ReOpen();
+
+                if(sense)
+                {
+                    StoppingErrorMessage?.Invoke($"Error {_dev.LastError} reopening device.");
+
+                    return;
+                }
+            }
+
+            if(supportsCmd23 && blocksToRead > 1)
+            {
+                while(true)
+                {
+                    error = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
+                                                    timeout, out duration);
+
+                    if(error)
+                        blocksToRead /= 2;
+
+                    if(!error ||
+                       blocksToRead == 1)
+                        break;
+                }
 
                 if(error)
-                    blocksToRead /= 2;
+                {
+                    _dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", _dev.LastError);
 
-                if(!error ||
-                   blocksToRead == 1)
-                    break;
+                    StoppingErrorMessage?.
+                        Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+
+                    return;
+                }
             }
 
-            if(error)
+            if(supportsCmd23 || blocksToRead == 1)
             {
-                _dumpLog.WriteLine("ERROR: Cannot get blocks to read, device error {0}.", _dev.LastError);
-                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
-
-                return;
+                UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
+                _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
             }
-
-            UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
-            _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+            else
+            {
+                UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks using sequential commands.");
+                _dumpLog.WriteLine("Device can read {0} blocks using sequential commands.", blocksToRead);
+            }
 
             if(_skip < blocksToRead)
                 _skip = blocksToRead;
@@ -491,8 +543,15 @@ namespace Aaru.Core.Devices.Dumping
                 UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
-                error = _dev.Read(out cmdBuf, out response, (uint)i, blockSize, blocksToRead, byteAddressed, timeout,
-                                  out duration);
+                if(blocksToRead == 1)
+                    error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
+                                                 out duration);
+                else if(supportsCmd23)
+                    error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
+                                                    timeout, out duration);
+                else
+                    error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead,
+                                                         byteAddressed, timeout, out duration);
 
                 if(!error)
                 {
@@ -588,8 +647,8 @@ namespace Aaru.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
-                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout,
-                                      out duration);
+                    error = _dev.ReadSingleBlock(out cmdBuf, out response, (uint)badSector, blockSize, byteAddressed,
+                                                 timeout, out duration);
 
                     totalDuration += duration;
 
@@ -640,8 +699,8 @@ namespace Aaru.Core.Devices.Dumping
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
-                    error = _dev.Read(out cmdBuf, out response, (uint)badSector, blockSize, 1, byteAddressed, timeout,
-                                      out duration);
+                    error = _dev.ReadSingleBlock(out cmdBuf, out response, (uint)badSector, blockSize, byteAddressed,
+                                                 timeout, out duration);
 
                     totalDuration += duration;
 

@@ -243,5 +243,63 @@ namespace Aaru.Devices
 
             return sense;
         }
+
+        public bool ReadWithBlockCount(out byte[] buffer, out uint[] response, uint lba, uint blockSize,
+                                       ushort transferLength, bool byteAddressed, uint timeout, out double duration)
+        {
+            uint               address  = byteAddressed ? lba * blockSize : lba;
+            MmcSingleCommand[] commands = new MmcSingleCommand[3];
+
+            // SET_BLOCK_COUNT
+            commands[0] = new MmcSingleCommand
+            {
+                command       = MmcCommands.SetBlockCount,
+                write         = false,
+                isApplication = false,
+                flags         = MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
+                argument      = transferLength,
+                blockSize     = 0,
+                blocks        = 0,
+                buffer        = new byte[0]
+            };
+
+            // READ_MULTIPLE_BLOCK
+            commands[1] = new MmcSingleCommand
+            {
+                command       = MmcCommands.ReadMultipleBlock,
+                write         = false,
+                isApplication = false,
+                flags         = MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                argument      = address,
+                blockSize     = blockSize,
+                blocks        = transferLength,
+                buffer        = new byte[transferLength * blockSize]
+            };
+
+            // STOP_TRANSMISSION
+            // Needed if the previous command fails
+            commands[2] = new MmcSingleCommand
+            {
+                command       = MmcCommands.StopTransmission,
+                write         = false,
+                isApplication = false,
+                flags         = MmcFlags.ResponseSpiR1B | MmcFlags.ResponseR1B | MmcFlags.CommandAc,
+                argument      = 0,
+                blockSize     = 0,
+                blocks        = 0,
+                buffer        = new byte[0]
+            };
+
+            LastError = SendMultipleMmcCommands(commands, out duration, out bool sense, timeout);
+
+            Error = LastError != 0;
+
+            AaruConsole.DebugWriteLine("SecureDigital Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
+
+            buffer   = commands[1].buffer;
+            response = commands[1].response;
+
+            return sense;
+        }
     }
 }
