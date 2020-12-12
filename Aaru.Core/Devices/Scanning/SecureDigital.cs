@@ -323,7 +323,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
-                _dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, timeout,
+                _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout,
                           out double seekCur);
 
                 if(seekCur > results.SeekMax &&
