@@ -164,6 +164,7 @@ namespace Aaru.Devices
 
         readonly Remote.Remote _remote;
         bool?                  _isRemoteAdmin;
+        readonly string        _devicePath;
 
         public bool IsRemoteAdmin
         {

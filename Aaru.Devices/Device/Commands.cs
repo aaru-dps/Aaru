@@ -268,5 +268,20 @@ namespace Aaru.Devices
 
             return error;
         }
+
+        public bool ReOpen()
+        {
+            if(!(_remote is null))
+                return _remote.ReOpen();
+
+            int ret = Command.ReOpen(PlatformId, _devicePath, FileHandle, out object newFileHandle);
+
+            FileHandle = newFileHandle;
+
+            Error     = ret != 0;
+            LastError = ret;
+
+            return Error;
+        }
     }
 }

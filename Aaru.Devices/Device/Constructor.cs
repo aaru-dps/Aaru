@@ -71,6 +71,7 @@ namespace Aaru.Devices
             Timeout     = 15;
             Error       = false;
             IsRemovable = false;
+            _devicePath = devicePath;
 
             if(devicePath.StartsWith("dic://", StringComparison.OrdinalIgnoreCase) ||
                devicePath.StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))

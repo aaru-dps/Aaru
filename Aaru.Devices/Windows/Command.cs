@@ -622,5 +622,16 @@ namespace Aaru.Devices.Windows
 
             return error;
         }
+
+        internal static int ReOpen(string devicePath, SafeFileHandle fd, out object newFd)
+        {
+            Extern.CloseHandle(fd);
+
+            newFd = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                                      FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
+                                      FileAttributes.Normal, IntPtr.Zero);
+
+            return ((SafeFileHandle)newFd).IsInvalid ? Marshal.GetLastWin32Error() : 0;
+        }
     }
 }

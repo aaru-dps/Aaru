@@ -1443,5 +1443,7 @@ namespace Aaru.Devices.Remote
             // TODO: Not yet implemented
             return -1;
         }
+
+        public bool ReOpen() => throw new NotImplementedException();
     }
 }

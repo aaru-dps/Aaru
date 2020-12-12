@@ -536,6 +536,31 @@ namespace Aaru.Devices.Linux
             return error;
         }
 
+        internal static int ReOpen(string devicePath, int fd, out object newFd)
+        {
+            newFd = -1;
+
+            int ret = Extern.close(fd);
+
+            if(ret < 0)
+                return Marshal.GetLastWin32Error();
+
+            newFd = Extern.open(devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+
+            if((int)newFd >= 0)
+                return 0;
+
+            int error = Marshal.GetLastWin32Error();
+
+            if(error != 13 &&
+               error != 30)
+                return Marshal.GetLastWin32Error();
+
+            newFd = Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+
+            return (int)newFd < 0 ? Marshal.GetLastWin32Error() : 0;
+        }
+
         /// <summary>Reads the contents of a symbolic link</summary>
         /// <param name="path">Path to the symbolic link</param>
         /// <returns>Contents of the symbolic link</returns>

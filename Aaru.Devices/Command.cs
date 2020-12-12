@@ -462,5 +462,15 @@ namespace Aaru.Devices
                 default: throw new InvalidOperationException($"Platform {ptId} not yet supported.");
             }
         }
+
+        internal static int ReOpen(PlatformID ptId, string devicePath, object fd, out object newFd)
+        {
+            switch(ptId)
+            {
+                case PlatformID.Win32NT: return Windows.Command.ReOpen(devicePath, (SafeFileHandle)fd, out newFd);
+                case PlatformID.Linux:   return Linux.Command.ReOpen(devicePath, (int)fd, out newFd);
+                default:                 throw new InvalidOperationException($"Platform {ptId} not yet supported.");
+            }
+        }
     }
 }
