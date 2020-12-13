@@ -140,6 +140,9 @@ namespace Aaru.Core.Devices.Scanning
                 return results;
             }
 
+            // TODO: This command execution is corrupting the stack
+            supportsCmd23 = false;
+
             if(supportsCmd23)
             {
                 sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
