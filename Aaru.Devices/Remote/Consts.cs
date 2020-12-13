@@ -37,6 +37,6 @@ namespace Aaru.Devices.Remote
         public const uint REMOTE_ID      = 0x52434944; // "DICR"
         public const uint PACKET_ID      = 0x544B4350; // "PCKT"
         public const int  PACKET_VERSION = 1;
-        public const int  MAX_PROTOCOL   = 1;
+        public const int  MAX_PROTOCOL   = 2;
     }
 }
