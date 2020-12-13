@@ -1619,6 +1619,9 @@ namespace Aaru.Devices.Remote
 
         public bool ReOpen()
         {
+            if(ServerProtocolVersion < 2)
+                return false;
+
             var cmdPkt = new AaruPacketCmdReOpen
             {
                 hdr = new AaruPacketHeader
@@ -1710,6 +1713,9 @@ namespace Aaru.Devices.Remote
         {
             duration = 0;
             buffer   = null;
+
+            if(ServerProtocolVersion < 2)
+                return false;
 
             var cmdPkt = new AaruPacketCmdOsRead
             {
