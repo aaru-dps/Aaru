@@ -268,9 +268,6 @@ namespace Aaru.Core.Devices.Dumping
             if(blocksToRead > _maximumReadable)
                 blocksToRead = (ushort)_maximumReadable;
 
-            // TODO: This command execution is corrupting the stack
-            supportsCmd23 = false;
-
             if(supportsCmd23 && blocksToRead > 1)
             {
                 sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,

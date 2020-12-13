@@ -140,9 +140,6 @@ namespace Aaru.Core.Devices.Scanning
                 return results;
             }
 
-            // TODO: This command execution is corrupting the stack
-            supportsCmd23 = false;
-
             if(supportsCmd23)
             {
                 sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout,
@@ -326,8 +323,7 @@ namespace Aaru.Core.Devices.Scanning
 
                 PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
-                _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout,
-                          out double seekCur);
+                _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout, out double seekCur);
 
                 if(seekCur > results.SeekMax &&
                    seekCur > 0)

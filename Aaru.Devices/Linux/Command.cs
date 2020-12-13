@@ -454,11 +454,12 @@ namespace Aaru.Devices.Linux
             // Create array for buffers
             IntPtr[] bufferPointers = new IntPtr[commands.Length];
 
-            // Allocate memory for the native array for commands
-            IntPtr ioMultiCmd = Marshal.AllocHGlobal(sizeof(ulong) + (Marshal.SizeOf<MmcIocCmd>() * commands.Length));
+            // Allocate memory for the array for commands
+            byte[] ioMultiCmd = new byte[sizeof(ulong) + (Marshal.SizeOf<MmcIocCmd>() * commands.Length)];
 
-            // First value of native array is uint64 with count of commands
-            Marshal.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, sizeof(ulong));
+            // First value of array is uint64 with count of commands
+            Array.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, 0, sizeof(ulong));
+
             off = sizeof(ulong);
 
             for(int i = 0; i < commands.Length; i++)
@@ -489,16 +490,23 @@ namespace Aaru.Devices.Linux
                 // Copy buffer to unmanaged space
                 Marshal.Copy(commands[i].buffer, 0, bufferPointers[i], commands[i].buffer.Length);
 
-                // Copy command to unmanaged space
-                Marshal.StructureToPtr(ioCmd, ioMultiCmd + off, false);
+                // Copy command to array
+                byte[] ioCmdBytes = Helpers.Marshal.StructureToByteArrayLittleEndian(ioCmd);
+                Array.Copy(ioCmdBytes, 0, ioMultiCmd, off, Marshal.SizeOf<MmcIocCmd>());
 
                 // Advance pointer
                 off += Marshal.SizeOf<MmcIocCmd>();
             }
 
+            // Allocate unmanaged memory for array of commands
+            IntPtr ioMultiCmdPtr = Marshal.AllocHGlobal(ioMultiCmd.Length);
+
+            // Copy array of commands to unmanaged memory
+            Marshal.Copy(ioMultiCmd, 0, ioMultiCmdPtr, ioMultiCmd.Length);
+
             // Send command
             DateTime start = DateTime.UtcNow;
-            int      error = Extern.ioctlMmcMulti(fd, LinuxIoctl.MmcIocMultiCmd, ioMultiCmd);
+            int      error = Extern.ioctlMmcMulti(fd, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
             DateTime end   = DateTime.UtcNow;
 
             sense |= error < 0;
@@ -510,16 +518,20 @@ namespace Aaru.Devices.Linux
 
             off = sizeof(ulong);
 
+            // Copy array from unmanaged memory
+            Marshal.Copy(ioMultiCmdPtr, ioMultiCmd, 0, ioMultiCmd.Length);
+
             // TODO: Use real pointers this is too slow
             for(int i = 0; i < commands.Length; i++)
             {
                 byte[] tmp = new byte[Marshal.SizeOf<MmcIocCmd>()];
 
                 // Copy command to managed space
-                var gch = GCHandle.Alloc(commands[i]);
-                Marshal.Copy(ioMultiCmd + off, tmp, 0, tmp.Length);
-                Marshal.Copy(tmp, 0, GCHandle.ToIntPtr(gch), tmp.Length);
-                gch.Free();
+                Array.Copy(ioMultiCmd, off, tmp, 0, tmp.Length);
+                MmcIocCmd command = Helpers.Marshal.ByteArrayToStructureLittleEndian<MmcIocCmd>(tmp);
+
+                // Copy response
+                commands[i].response = command.response;
 
                 // Copy buffer to managed space
                 Marshal.Copy(bufferPointers[i], commands[i].buffer, 0, commands[i].buffer.Length);
@@ -531,7 +543,8 @@ namespace Aaru.Devices.Linux
                 off += Marshal.SizeOf<MmcIocCmd>();
             }
 
-            Marshal.FreeHGlobal(ioMultiCmd);
+            // Free unmanaged memory
+            Marshal.FreeHGlobal(ioMultiCmdPtr);
 
             return error;
         }
