@@ -1617,7 +1617,95 @@ namespace Aaru.Devices.Remote
             return error;
         }
 
-        public bool ReOpen() => throw new NotImplementedException();
+        public bool ReOpen()
+        {
+            var cmdPkt = new AaruPacketCmdReOpen
+            {
+                hdr = new AaruPacketHeader
+                {
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdReOpen>(),
+                    version    = Consts.PACKET_VERSION,
+                    packetType = AaruPacketType.CommandReOpenDevice
+                }
+            };
+
+            byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            int len = _socket.Send(buf, SocketFlags.None);
+
+            if(len != buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
+
+                return false;
+            }
+
+            byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if(len < hdrBuf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return false;
+            }
+
+            AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
+
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
+            {
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+
+                return false;
+            }
+
+            if(hdr.packetType != AaruPacketType.Nop)
+            {
+                AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                                           hdr.packetType);
+
+                return false;
+            }
+
+            if(hdr.version != Consts.PACKET_VERSION)
+            {
+                AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
+
+            if(len < buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return false;
+            }
+
+            AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
+
+            switch(nop.reasonCode)
+            {
+                case AaruNopReason.ReOpenOk: return true;
+                case AaruNopReason.CloseError:
+                case AaruNopReason.OpenError:
+                    AaruConsole.ErrorWriteLine("ReOpen error closing device...");
+
+                    break;
+                default:
+                    AaruConsole.ErrorWriteLine("ReOpen error {0} with reason: {1}...", nop.errno, nop.reason);
+
+                    break;
+            }
+
+            return false;
+        }
 
         public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration) =>
             throw new NotImplementedException();

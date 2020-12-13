@@ -392,4 +392,10 @@ namespace Aaru.Devices.Remote
         public AaruPacketHeader hdr;
         public ulong            cmd_count;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruPacketCmdReOpen
+    {
+        public AaruPacketHeader hdr;
+    }
 }
