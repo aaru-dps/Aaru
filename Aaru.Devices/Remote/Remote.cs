@@ -1437,11 +1437,32 @@ namespace Aaru.Devices.Remote
         public int SendMultipleMmcCommands(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
                                            uint timeout = 0)
         {
-            duration = 0;
-            sense    = true;
+            if(ServerProtocolVersion < 2)
+                return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
 
-            // TODO: Not yet implemented
-            return -1;
+            throw new NotImplementedException();
+        }
+
+        int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
+                                             uint timeout)
+        {
+            sense    = false;
+            duration = 0;
+            int error = 0;
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                error = SendMmcCommand(command.command, command.write, command.isApplication, command.flags,
+                                       command.argument, command.blockSize, command.blocks, ref command.buffer,
+                                       out command.response, out double cmdDuration, out bool cmdSense, timeout);
+
+                if(cmdSense)
+                    sense = true;
+
+                duration += cmdDuration;
+            }
+
+            return error;
         }
 
         public bool ReOpen() => throw new NotImplementedException();
