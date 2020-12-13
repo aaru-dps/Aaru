@@ -44,7 +44,7 @@ namespace Aaru.Devices.Remote
         CommandGetFireWireData    = 21, ResponseGetFireWireData = 22, CommandGetPcmciaData     = 23,
         ResponseGetPcmciaData     = 24, CommandCloseDevice      = 25, CommandAmIRoot           = 26,
         ResponseAmIRoot           = 27, MultiCommandSdhci       = 28, ResponseMultiSdhci       = 29,
-        CommandReOpenDevice       = 30
+        CommandReOpenDevice       = 30, CommandOsRead           = 31, ResponseOsRead           = 32
     }
 
     public enum AaruNopReason : byte

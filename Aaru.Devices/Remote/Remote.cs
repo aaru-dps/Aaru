@@ -1665,8 +1665,7 @@ namespace Aaru.Devices.Remote
 
             if(hdr.packetType != AaruPacketType.Nop)
             {
-                AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
-                                           hdr.packetType);
+                AaruConsole.ErrorWriteLine("Expected NOP Packet, got packet type {0}...", hdr.packetType);
 
                 return false;
             }
@@ -1707,7 +1706,96 @@ namespace Aaru.Devices.Remote
             return false;
         }
 
-        public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration) =>
-            throw new NotImplementedException();
+        public bool BufferedOsRead(out byte[] buffer, long offset, uint length, out double duration)
+        {
+            duration = 0;
+            buffer   = null;
+
+            var cmdPkt = new AaruPacketCmdOsRead
+            {
+                hdr = new AaruPacketHeader
+                {
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    len        = (uint)Marshal.SizeOf<AaruPacketCmdOsRead>(),
+                    version    = Consts.PACKET_VERSION,
+                    packetType = AaruPacketType.CommandOsRead
+                },
+                length = length,
+                offset = (ulong)offset
+            };
+
+            byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            int len = _socket.Send(buf, SocketFlags.None);
+
+            if(len != buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
+
+                return false;
+            }
+
+            byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if(len < hdrBuf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return false;
+            }
+
+            AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
+
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
+            {
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+
+                return false;
+            }
+
+            if(hdr.packetType != AaruPacketType.ResponseOsRead)
+            {
+                AaruConsole.ErrorWriteLine("Expected OS Read Response Packet, got packet type {0}...", hdr.packetType);
+
+                return false;
+            }
+
+            if(hdr.version != Consts.PACKET_VERSION)
+            {
+                AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
+
+            if(len < buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return false;
+            }
+
+            AaruPacketResOsRead osRead = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResOsRead>(buf);
+
+            duration = osRead.duration;
+
+            if(osRead.errno != 0)
+            {
+                AaruConsole.ErrorWriteLine("Remote error {0} in OS Read...", osRead.errno);
+
+                return false;
+            }
+
+            buffer = new byte[length];
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResOsRead>(), buffer, 0, length);
+
+            return true;
+        }
     }
 }

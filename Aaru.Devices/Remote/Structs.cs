@@ -398,4 +398,20 @@ namespace Aaru.Devices.Remote
     {
         public AaruPacketHeader hdr;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruPacketCmdOsRead
+    {
+        public AaruPacketHeader hdr;
+        public ulong            offset;
+        public uint             length;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruPacketResOsRead
+    {
+        public AaruPacketHeader hdr;
+        public int              errno;
+        public uint             duration;
+    }
 }
