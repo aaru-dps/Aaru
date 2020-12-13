@@ -870,22 +870,25 @@ namespace Aaru.Devices.Remote
                     remote_id  = Consts.REMOTE_ID,
                     packet_id  = Consts.PACKET_ID,
                     version    = Consts.PACKET_VERSION,
-                    packetType = AaruPacketType.CommandAtaLba48
+                    packetType = AaruPacketType.CommandSdhci
                 },
-                command     = command,
-                write       = write,
-                application = isApplication,
-                flags       = flags,
-                argument    = argument,
-                block_size  = blockSize,
-                blocks      = blocks,
-                timeout     = timeout * 1000
+                command = new AaruCmdSdhci
+                {
+                    command     = command,
+                    write       = write,
+                    application = isApplication,
+                    flags       = flags,
+                    argument    = argument,
+                    block_size  = blockSize,
+                    blocks      = blocks,
+                    timeout     = timeout * 1000
+                }
             };
 
             if(buffer != null)
-                cmdPkt.buf_len = (uint)buffer.Length;
+                cmdPkt.command.buf_len = (uint)buffer.Length;
 
-            cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.command.buf_len);
 
             byte[] pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             byte[] buf    = new byte[cmdPkt.hdr.len];
@@ -893,7 +896,7 @@ namespace Aaru.Devices.Remote
             Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdSdhci>());
 
             if(buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
 
             int len = _socket.Send(buf, SocketFlags.None);
 
@@ -944,17 +947,17 @@ namespace Aaru.Devices.Remote
 
             AaruPacketResSdhci res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResSdhci>(buf);
 
-            buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<AaruPacketResSdhci>(), buffer, 0, res.buf_len);
-            duration    = res.duration;
-            sense       = res.sense != 0;
+            buffer = new byte[res.res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResSdhci>(), buffer, 0, res.res.buf_len);
+            duration    = res.res.duration;
+            sense       = res.res.sense != 0;
             response    = new uint[4];
-            response[0] = res.response[0];
-            response[1] = res.response[1];
-            response[2] = res.response[2];
-            response[3] = res.response[3];
+            response[0] = res.res.response[0];
+            response[1] = res.res.response[1];
+            response[2] = res.res.response[2];
+            response[3] = res.res.response[3];
 
-            return (int)res.error_no;
+            return (int)res.res.error_no;
         }
 
         public DeviceType GetDeviceType()
@@ -1440,11 +1443,160 @@ namespace Aaru.Devices.Remote
             if(ServerProtocolVersion < 2)
                 return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
 
-            throw new NotImplementedException();
+            sense    = false;
+            duration = 0;
+
+            long packetSize = Marshal.SizeOf<AaruPacketMultiCmdSdhci>() +
+                              (Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength);
+
+            foreach(Device.MmcSingleCommand command in commands)
+                packetSize += command.buffer?.Length ?? 0;
+
+            var packet = new AaruPacketMultiCmdSdhci
+            {
+                cmd_count = (ulong)commands.LongLength,
+                hdr = new AaruPacketHeader
+                {
+                    len        = (uint)packetSize,
+                    packetType = AaruPacketType.MultiCommandSdhci,
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    version    = Consts.PACKET_VERSION
+                }
+            };
+
+            byte[] buf = new byte[packetSize];
+            byte[] tmp = Marshal.StructureToByteArrayLittleEndian(packet);
+
+            Array.Copy(tmp, 0, buf, 0, tmp.Length);
+
+            int off = tmp.Length;
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                var cmd = new AaruCmdSdhci
+                {
+                    application = command.isApplication,
+                    argument    = command.argument,
+                    block_size  = command.blockSize,
+                    blocks      = command.blocks,
+                    buf_len     = (uint)(command.buffer?.Length ?? 0),
+                    command     = command.command,
+                    flags       = command.flags,
+                    timeout     = timeout,
+                    write       = command.write
+                };
+
+                tmp = Marshal.StructureToByteArrayLittleEndian(cmd);
+                Array.Copy(tmp, 0, buf, off, tmp.Length);
+
+                off += tmp.Length;
+            }
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                if((command.buffer?.Length ?? 0) == 0)
+                    continue;
+
+                Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
+
+                off += command.buffer.Length;
+            }
+
+            int len = _socket.Send(buf, SocketFlags.None);
+
+            if(len != buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
+
+                return -1;
+            }
+
+            byte[] hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
+
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if(len < hdrBuf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return -1;
+            }
+
+            AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
+
+            if(hdr.remote_id != Consts.REMOTE_ID ||
+               hdr.packet_id != Consts.PACKET_ID)
+            {
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+
+                return -1;
+            }
+
+            if(hdr.packetType != AaruPacketType.ResponseMultiSdhci)
+            {
+                AaruConsole.ErrorWriteLine("Expected multi MMC/SD command Response Packet, got packet type {0}...",
+                                           hdr.packetType);
+
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
+
+            if(len < buf.Length)
+            {
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
+
+                return -1;
+            }
+
+            AaruPacketMultiCmdSdhci res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketMultiCmdSdhci>(buf);
+
+            if(res.cmd_count != (ulong)commands.Length)
+            {
+                AaruConsole.ErrorWriteLine("Expected the response to {0} SD/MMC commands, but got {1} responses...",
+                                           commands.Length, res.cmd_count);
+
+                return -1;
+            }
+
+            off = Marshal.SizeOf<AaruPacketMultiCmdSdhci>();
+
+            int error = 0;
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                AaruResSdhci cmdRes =
+                    Marshal.ByteArrayToStructureLittleEndian<AaruResSdhci>(buf, off, Marshal.SizeOf<AaruResSdhci>());
+
+                command.response =  cmdRes.response;
+                duration         += cmdRes.duration;
+
+                if(cmdRes.error_no != 0 &&
+                   error           == 0)
+                    error = (int)cmdRes.error_no;
+
+                if(cmdRes.sense != 0)
+                    sense = true;
+
+                if(cmdRes.buf_len > 0)
+                    command.buffer = new byte[cmdRes.buf_len];
+
+                off += Marshal.SizeOf<AaruResSdhci>();
+            }
+
+            foreach(Device.MmcSingleCommand command in commands)
+            {
+                Array.Copy(buf, off, command.buffer, 0, command.buffer.Length);
+                off += command.buffer.Length;
+            }
+
+            return error;
         }
 
         int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
-                                             uint timeout)
+                                      uint timeout)
         {
             sense    = false;
             duration = 0;

@@ -210,10 +210,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AaruPacketCmdSdhci
+    public struct AaruCmdSdhci
     {
-        public AaruPacketHeader hdr;
-        public MmcCommands      command;
+        public MmcCommands command;
         [MarshalAs(UnmanagedType.U1)]
         public bool write;
         [MarshalAs(UnmanagedType.U1)]
@@ -227,10 +226,16 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct AaruPacketResSdhci
+    public struct AaruPacketCmdSdhci
     {
         public AaruPacketHeader hdr;
-        public uint             buf_len;
+        public AaruCmdSdhci     command;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruResSdhci
+    {
+        public uint buf_len;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public uint[] response;
@@ -238,6 +243,13 @@ namespace Aaru.Devices.Remote
         public uint duration;
         public uint sense;
         public uint error_no;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruPacketResSdhci
+    {
+        public AaruPacketHeader hdr;
+        public AaruResSdhci     res;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -372,5 +384,12 @@ namespace Aaru.Devices.Remote
     {
         public AaruPacketHeader hdr;
         public uint             am_i_root;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct AaruPacketMultiCmdSdhci
+    {
+        public AaruPacketHeader hdr;
+        public ulong            cmd_count;
     }
 }
