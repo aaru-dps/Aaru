@@ -11,7 +11,7 @@
         <ReleaseVersion>$(Version)</ReleaseVersion>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>5.2.99.3331</Version>
+        <Version>5.2.99.3380-alpha</Version>
         <Company>Claunia.com</Company>
         <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
         <Product>Aaru Data Preservation Suite</Product>
@@ -19,9 +19,19 @@
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <LangVersion>8</LangVersion>
+        <Description>Data transfer objects used to interchange data between Aaru and Aaru.Server.</Description>
+        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     </PropertyGroup>
     <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
+      <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
         <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
@@ -52,7 +62,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
     </ItemGroup>
     <ItemGroup>
       <Compile Include="CdOffsetDto.cs" />
