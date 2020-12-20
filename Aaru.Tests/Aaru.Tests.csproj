@@ -6,6 +6,7 @@
     <IsPackable>false</IsPackable>
 
     <LangVersion>8</LangVersion>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@
     <AssemblyName>Aaru.Gui</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.99.0.3214</Version>
+    <Version>5.99.0.3380</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -13,6 +13,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <NoWarn>CS0649,CS0169</NoWarn>
     <LangVersion>8</LangVersion>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
