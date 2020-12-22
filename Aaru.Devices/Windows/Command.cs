@@ -596,8 +596,10 @@ namespace Aaru.Devices.Windows
             duration = 0;
             sense    = false;
 
-            if(commands.Length     >= 2 &&
-               commands[1].command == MmcCommands.ReadMultipleBlock)
+            if(commands.Length     == 3                             &&
+               commands[0].command == MmcCommands.SetBlocklen       &&
+               commands[1].command == MmcCommands.ReadMultipleBlock &&
+               commands[2].command == MmcCommands.StopTransmission)
                 return SendMmcCommand(fd, commands[1].command, commands[1].write, commands[1].isApplication,
                                       commands[1].flags, commands[1].argument, commands[1].blockSize,
                                       commands[1].blocks, ref commands[1].buffer, out commands[1].response,
@@ -642,7 +644,6 @@ namespace Aaru.Devices.Windows
             DateTime start = DateTime.Now;
 
             bool sense = !Extern.SetFilePointerEx(fd, offset, out _, MoveMethod.Begin);
-            ;
 
             DateTime end = DateTime.Now;
 
