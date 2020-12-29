@@ -326,8 +326,7 @@ namespace Aaru.Core.Media.Info
                                             MediaType = MediaType.REV35;
 
                                             break;
-                                        default:
-                                            // TODO: Unknown value
+                                        case 34185728:
                                             MediaType = MediaType.REV70;
 
                                             break;

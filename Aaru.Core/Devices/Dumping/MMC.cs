@@ -291,8 +291,7 @@ namespace Aaru.Core.Devices.Dumping
 
                         break;
 
-                    // TODO: Unknown value
-                    default:
+                    case 34185728:
                         dskType = MediaType.REV70;
 
                         break;
