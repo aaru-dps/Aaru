@@ -283,8 +283,7 @@ namespace Aaru.Core.Media.Info
                     break;
             }
 
-            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice &&
-               !(dev.IsUsb && (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42)))
+            if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
             {
                 sense = dev.GetConfiguration(out cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current, dev.Timeout,
                                              out _);
@@ -293,6 +292,10 @@ namespace Aaru.Core.Media.Info
                 {
                     AaruConsole.DebugWriteLine("Media-Info command", "READ GET CONFIGURATION:\n{0}",
                                                Sense.PrettifySense(senseBuf));
+
+                    if(dev.IsUsb &&
+                       (scsiMediumType == 0x40 || scsiMediumType == 0x41 || scsiMediumType == 0x42))
+                        MediaType = MediaType.FlashDrive;
                 }
                 else
                 {
@@ -1398,7 +1401,7 @@ namespace Aaru.Core.Media.Info
                 case MediaType.Unknown:
                     MediaType = MediaTypeFromDevice.GetFromScsi((byte)dev.ScsiType, dev.Manufacturer, dev.Model,
                                                                 scsiMediumType, scsiDensityCode, Blocks, BlockSize,
-                                                                dev.IsUsb);
+                                                                dev.IsUsb, true);
 
                     break;
             }

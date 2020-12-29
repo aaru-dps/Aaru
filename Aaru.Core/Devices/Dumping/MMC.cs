@@ -59,8 +59,9 @@ namespace Aaru.Core.Devices.Dumping
             MediaType dskType = MediaType.Unknown;
             bool      sense;
             byte[]    tmpBuf;
-            bool      compactDisc = true;
-            bool      isXbox      = false;
+            bool      compactDisc      = true;
+            bool      gotConfiguration = false;
+            bool      isXbox           = false;
             _speedMultiplier = 1;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
@@ -69,6 +70,7 @@ namespace Aaru.Core.Devices.Dumping
 
             if(!sense)
             {
+                gotConfiguration = true;
                 Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
                 _dumpLog.WriteLine("Device reports current profile is 0x{0:X4}", ftr.CurrentProfile);
 
@@ -248,8 +250,9 @@ namespace Aaru.Core.Devices.Dumping
                     decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
             }
 
-            if(decMode.HasValue &&
-               _dev.IsUsb       &&
+            if(decMode.HasValue  &&
+               _dev.IsUsb        &&
+               !gotConfiguration &&
                (decMode.Value.Header.MediumType == MediumTypes.UnknownBlockDevice  ||
                 decMode.Value.Header.MediumType == MediumTypes.ReadOnlyBlockDevice ||
                 decMode.Value.Header.MediumType == MediumTypes.ReadWriteBlockDevice))

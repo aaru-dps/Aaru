@@ -992,7 +992,8 @@ namespace Aaru.DiscImages
                                                                            densityCode, _imageInfo.Sectors,
                                                                            _imageInfo.SectorSize,
                                                                            _mediaTags.ContainsKey(MediaTagType.
-                                                                               USB_Descriptors));
+                                                                               USB_Descriptors),
+                                                                           _rawCompactDisc);
                 }
 
                 if(_imageInfo.MediaType == MediaType.Unknown)

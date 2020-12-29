@@ -309,7 +309,7 @@ namespace Aaru.Core.Devices.Dumping
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
                                                           scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize,
-                                                          _dev.IsUsb);
+                                                          _dev.IsUsb, false);
 
             if(dskType == MediaType.Unknown)
                 dskType = MediaType.UnknownTape;
