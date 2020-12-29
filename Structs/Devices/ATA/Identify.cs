@@ -1029,7 +1029,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
 
         static string DescrambleATAString(IList<byte> buffer, int offset, int length)
         {
-            byte[] outbuf = buffer[(offset + length) - 1] != 0x00 ? new byte[length + 1] : new byte[length];
+            byte[] outbuf = buffer[offset + length - 1] != 0x00 ? new byte[length + 1] : new byte[length];
 
             for(int i = 0; i < length; i += 2)
             {
