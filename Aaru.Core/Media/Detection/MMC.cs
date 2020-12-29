@@ -38,6 +38,7 @@ using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.Console;
+using Aaru.Decoders.Bluray;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Sega;
@@ -282,20 +283,21 @@ namespace Aaru.Core.Media.Detection
                                             Device dev, out bool hiddenTrack, out bool hiddenData,
                                             int firstTrackLastSession)
         {
-            uint   startOfFirstDataTrack = uint.MaxValue;
-            byte[] cmdBuf;
-            bool   sense;
-            byte   secondSessionFirstTrack = 0;
-            byte[] sector0;
-            byte[] sector1                      = null;
-            byte[] ps2BootSectors               = null;
-            byte[] playdia1                     = null;
-            byte[] playdia2                     = null;
-            byte[] firstDataSectorNotZero       = null;
-            byte[] secondDataSectorNotZero      = null;
-            byte[] firstTrackSecondSession      = null;
-            byte[] firstTrackSecondSessionAudio = null;
-            byte[] videoNowColorFrame;
+            uint                startOfFirstDataTrack = uint.MaxValue;
+            DI.DiscInformation? blurayDi              = null;
+            byte[]              cmdBuf;
+            bool                sense;
+            byte                secondSessionFirstTrack = 0;
+            byte[]              sector0;
+            byte[]              sector1                      = null;
+            byte[]              ps2BootSectors               = null;
+            byte[]              playdia1                     = null;
+            byte[]              playdia2                     = null;
+            byte[]              firstDataSectorNotZero       = null;
+            byte[]              secondDataSectorNotZero      = null;
+            byte[]              firstTrackSecondSession      = null;
+            byte[]              firstTrackSecondSessionAudio = null;
+            byte[]              videoNowColorFrame;
             hiddenTrack = false;
             hiddenData  = false;
 
@@ -1001,6 +1003,15 @@ namespace Aaru.Core.Media.Detection
                 case MediaType.HDDVDROM:
                 case MediaType.BDROM:
                 case MediaType.Unknown:
+                    if(mediaType == MediaType.BDROM)
+                    {
+                        sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
+                                                      MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out _);
+
+                        if(!sense)
+                            blurayDi = DI.Decode(cmdBuf);
+                    }
+
                     sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 1, false, dev.Timeout,
                                        out _);
 
@@ -2243,6 +2254,21 @@ namespace Aaru.Core.Media.Detection
 
                             AaruConsole.DebugWriteLine("Media detection",
                                                        "Found Sony PlayStation 4 boot sectors, setting disc type to PS4 Blu-ray.");
+                        }
+                    }
+
+                    if(blurayDi                              != null &&
+                       blurayDi?.Units?.Length               > 0     &&
+                       blurayDi?.Units[0].DiscTypeIdentifier != null)
+                    {
+                        string blurayType = StringHandlers.CToString(blurayDi?.Units[0].DiscTypeIdentifier);
+
+                        if(blurayType == "XG4")
+                        {
+                            AaruConsole.DebugWriteLine("Media detection",
+                                                       "Blu-ray type set to \"XG4\", setting disc type to Xbox One Disc (XGD4).");
+
+                            mediaType = MediaType.XGD4;
                         }
                     }
 
