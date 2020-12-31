@@ -21,4 +21,4 @@
 	url = https://github.com/aaru-dps/Aaru.Helpers
 [submodule "cuetools.net"]
 	path = cuetools.net
-	url = https://github.com/claunia/cuetools.net
+	url = https://github.com/gchudov/cuetools.net

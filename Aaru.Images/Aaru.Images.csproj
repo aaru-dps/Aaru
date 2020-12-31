@@ -66,7 +66,7 @@
     <PackageReference Include="plist-cil" Version="2.1.0" />
     <PackageReference Include="SharpCompress" Version="0.25.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AaruFormat\NonClosableStream.cs" />
@@ -548,7 +548,7 @@
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>Aaru.Filters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.FLAKE.csproj" />
+    <ProjectReference Include="..\cuetools.net\CUETools.Codecs.Flake\CUETools.Codecs.Flake.csproj" />
     <ProjectReference Include="..\cuetools.net\CUETools.Codecs\CUETools.Codecs.csproj" />
   </ItemGroup>
   <ItemGroup>
