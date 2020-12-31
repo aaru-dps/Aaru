@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.Checksums;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
@@ -220,7 +221,8 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(dumping && dev.Manufacturer.ToLowerInvariant().StartsWith("plextor"))
                 {
-                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0} due to Plextor firmware bug", track.TrackSequence);
+                    AaruConsole.DebugWriteLine("Pregap calculator", "Skipping track {0} due to Plextor firmware bug",
+                                               track.TrackSequence);
 
                     continue;
                 }

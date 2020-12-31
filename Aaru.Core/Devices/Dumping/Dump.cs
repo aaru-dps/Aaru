@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
@@ -80,6 +81,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly bool                       _stopOnError;
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _trim;
+        readonly bool                       _useBufferedReads;
         bool                                _aborted;
         AaruContext                         _ctx;   // Main database context
         Database.Models.Device              _dbDev; // Device database entry
@@ -93,7 +95,6 @@ namespace Aaru.Core.Devices.Dumping
         int                                 _speed;
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;
-        readonly bool                       _useBufferedReads;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>

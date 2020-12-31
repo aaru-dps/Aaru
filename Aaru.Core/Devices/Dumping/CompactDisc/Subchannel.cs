@@ -30,6 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 

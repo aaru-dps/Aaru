@@ -30,6 +30,8 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes;
+
 namespace Aaru.Core
 {
     public sealed partial class Sidecar

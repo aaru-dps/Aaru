@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.Devices;
 
@@ -43,8 +44,8 @@ namespace Aaru.Core.Devices.Scanning
         readonly string _ibgLogPath;
         readonly string _mhddLogPath;
         readonly bool   _seekTest;
-        bool            _aborted;
         readonly bool   _useBufferedReads;
+        bool            _aborted;
 
         /// <param name="mhddLogPath">Path to a MHDD log file</param>
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>

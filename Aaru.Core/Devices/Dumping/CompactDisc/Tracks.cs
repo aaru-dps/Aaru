@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
@@ -112,8 +113,8 @@ namespace Aaru.Core.Devices.Dumping
                                         (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
                                             ? TrackType.Data : TrackType.Audio,
                             TrackStartSector =
-                                (ulong)(((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) +
-                                         trk.PFRAME) - 150),
+                                (ulong)((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) + trk.PFRAME -
+                                        150),
                             TrackBytesPerSector    = (int)sectorSize,
                             TrackRawBytesPerSector = (int)sectorSize
                         });
@@ -158,7 +159,7 @@ namespace Aaru.Core.Devices.Dumping
                             phour  = trk.PHOUR;
                         }
 
-                        lastSector = ((phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe) - 150;
+                        lastSector = (phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe - 150;
                         leadOutStarts?.Add(trk.SessionNumber, lastSector + 1);
                     }
                     else if(trk.POINT == 0xA0 &&
