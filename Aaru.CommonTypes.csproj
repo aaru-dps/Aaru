@@ -60,6 +60,7 @@
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>Metadata/cicm.cs</Link>
     </Compile>
+    <Compile Include="Delegates.cs" />
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Enums\ErrorNumber.cs" />
     <Compile Include="Enums\Images.cs" />
@@ -127,7 +128,7 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all"/>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\LICENSE.MIT">
