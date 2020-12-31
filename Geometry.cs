@@ -33,7 +33,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2020 Natalia Portillo
+// Copyright © 2011-2021 Natalia Portillo
 // ****************************************************************************/
 
 using System.Linq;
