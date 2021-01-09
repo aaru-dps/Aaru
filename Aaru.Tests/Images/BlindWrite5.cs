@@ -1225,23 +1225,20 @@ namespace Aaru.Tests.Images
                 Assert.AreEqual(_tracks[i], images[i].Tracks.Count, $"Tracks: {_testFiles[i]}");
 
             for(int i = 0; i < _testFiles.Length; i++)
-                _trackSessions[i].Should().
-                                  BeEquivalentTo(images[i].Tracks.Select(t => t.TrackSession),
-                                                 $"Track session: {_testFiles[i]}");
+                images[i].Tracks.Select(t => t.TrackSession).Should().
+                          BeEquivalentTo(_trackSessions[i], $"Track session: {_testFiles[i]}");
 
             for(int i = 0; i < _testFiles.Length; i++)
-                _trackStarts[i].Should().BeEquivalentTo(images[i].Tracks.Select(t => t.TrackStartSector),
-                                                        $"Track start: {_testFiles[i]}");
+                images[i].Tracks.Select(t => t.TrackStartSector).Should().
+                          BeEquivalentTo(_trackStarts[i], $"Track start: {_testFiles[i]}");
 
             for(int i = 0; i < _testFiles.Length; i++)
-                _trackEnds[i].Should().
-                              BeEquivalentTo(images[i].Tracks.Select(t => t.TrackEndSector),
-                                             $"Track end: {_testFiles[i]}");
+                images[i].Tracks.Select(t => t.TrackEndSector).Should().
+                          BeEquivalentTo(_trackEnds[i], $"Track end: {_testFiles[i]}");
 
             for(int i = 0; i < _testFiles.Length; i++)
-                _trackPregaps[i].Should().
-                                 BeEquivalentTo(images[i].Tracks.Select(t => t.TrackPregap),
-                                                $"Track pregap: {_testFiles[i]}");
+                images[i].Tracks.Select(t => t.TrackPregap).Should().
+                          BeEquivalentTo(_trackPregaps[i], $"Track pregap: {_testFiles[i]}");
 
             for(int i = 0; i < _testFiles.Length; i++)
             {
