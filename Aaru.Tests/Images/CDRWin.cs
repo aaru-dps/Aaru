@@ -46,308 +46,821 @@ namespace Aaru.Tests.Images
     {
         readonly string[] _testFiles =
         {
-            "audiocd_cdtext.cue", "cdi.cue", "cdrom80mm.cue", "cdrom.cue", "cdrw.cue", "fakecdtext.cue", "gdrom.cue",
-            "mixed.cue", "multitrack.cue", "pcengine.cue", "pcfx.cue", "videocd.cue"
+            "pcengine.cue", "pcfx.cue", "report_audiocd.cue", "report_cdr.cue", "report_cdrw.cue",
+            "test_audiocd_cdtext.cue", "test_incd_udf200_finalized.cue", "test_multi_karaoke_sampler.cue",
+            "test_multiple_indexes.cue", "test_videocd.cue", "cdg/report_audiocd.cue",
+            "cdg/test_multi_karaoke_sampler.cue", "cooked_cdg/test_multi_karaoke_sampler.cue",
+            "cooked/report_cdrom.cue", "cooked/report_cdrw.cue", "cooked/test_multi_karaoke_sampler.cue"
         };
 
         readonly ulong[] _sectors =
         {
-            222187, 309834, 19042, 502, 1219, 1385, 6250, 283247, 328360, 160356, 246305, 205072
+            // pcengine.cue
+            160356,
+
+            // pcfx.cue
+            246305,
+
+            // report_audiocd.cue
+            247073,
+
+            // report_cdr.cue
+            254265,
+
+            // report_cdrw.cue
+            308224,
+
+            // test_audiocd_cdtext.cue
+            277696,
+
+            // test_incd_udf200_finalized.cue
+            350134,
+
+            // test_multi_karaoke_sampler.cue
+            329008,
+
+            // test_multiple_indexes.cue
+            65536,
+
+            // test_videocd.cue
+            48794,
+
+            // cdg/report_audiocd.cue
+            247073,
+
+            // cdg/test_multi_karaoke_sampler.cue
+            329008,
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            329008,
+
+            // cooked/report_cdrom.cue
+            254265,
+
+            // cooked/report_cdrw.cue
+            308224,
+
+            // cooked/test_multi_karaoke_sampler.cue
+            329008
         };
 
         readonly MediaType[] _mediaTypes =
         {
-            MediaType.CDDA, MediaType.CDROMXA, MediaType.CDROM, MediaType.CDROM, MediaType.CDROM, MediaType.CDDA,
-            MediaType.CDROMXA, MediaType.CDROMXA, MediaType.CDROM, MediaType.CD, MediaType.CD, MediaType.CDROMXA
+            // pcengine.cue
+            MediaType.CD,
+
+            // pcfx.cue
+            MediaType.CD,
+
+            // report_audiocd.cue
+            MediaType.CDDA,
+
+            // report_cdr.cue
+            MediaType.CDROM,
+
+            // report_cdrw.cue
+            MediaType.CDROM,
+
+            // test_audiocd_cdtext.cue
+            MediaType.CDDA,
+
+            // test_incd_udf200_finalized.cue
+            MediaType.CDROMXA,
+
+            // test_multi_karaoke_sampler.cue
+            MediaType.CDROMXA,
+
+            // test_multiple_indexes.cue
+            MediaType.CDDA,
+
+            // test_videocd.cue
+            MediaType.CDROMXA,
+
+            // cdg/report_audiocd.cue
+            MediaType.CDDA,
+
+            // cdg/test_multi_karaoke_sampler.cue
+            MediaType.CDROMXA,
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            MediaType.CDROMXA,
+
+            // cooked/report_cdrom.cue
+            MediaType.CDROM,
+
+            // cooked/report_cdrw.cue
+            MediaType.CDROM,
+
+            // cooked/test_multi_karaoke_sampler.cue
+            MediaType.CDROMXA
         };
 
         readonly string[] _md5S =
         {
-            "1a4f916dff70030e26fe0454729d0e79", "bcbfe40d07149ce495ac7648b42dfafd", "20a0307dc58aa2ab409e903b3ba85518",
-            "a637b6849f983623efd86563af30e6d9", "a280948374cacd96d11417be74b504e1", "d68b727b1ea31011ad36f06c1e79d0b1",
-            "919202f8dc03fefd2d8a3cb92f5a1a0a", "c68e679f86b62b02b9cb66b5e217d15b", "41458c6ff3e35aa635cc2f2fdb5582ae",
-            "8eb436b476c9df343acb89ac1ba7e1b4", "73e2855fff156f95fb8f0ae7c58d1b9d", "47284e4065fbb26c94cf13870cb31c5d"
+            // pcengine.cue
+            "8eb436b476c9df343acb89ac1ba7e1b4",
+
+            // pcfx.cue
+            "73e2855fff156f95fb8f0ae7c58d1b9d",
+
+            // report_audiocd.cue
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // report_cdr.cue
+            "bf4bbec517101d0d6f45d2e4d50cb875",
+
+            // report_cdrw.cue
+            "1e55aa420ca8f8ea77d5b597c9cfc19b",
+
+            // test_audiocd_cdtext.cue
+            "7c8fc7bb768cff15d702ac8cd10108d7",
+
+            // test_incd_udf200_finalized.cue
+            "13d4c3def37e968b2ddc5cf5a9f18fdc",
+
+            // test_multi_karaoke_sampler.cue
+            "f09312ba25a479fb81912a2965babd22",
+
+            // test_multiple_indexes.cue
+            "1b13a8f8aeb23f0b8bbc68518217e771",
+
+            // test_videocd.cue
+            "0d80890beeadf3f6e2cf2f88d0067afe",
+
+            // cdg/report_audiocd.cue
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // cdg/test_multi_karaoke_sampler.cue
+            "f09312ba25a479fb81912a2965babd22",
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            "f09312ba25a479fb81912a2965babd22",
+
+            // cooked/report_cdrom.cue
+            "bf4bbec517101d0d6f45d2e4d50cb875",
+
+            // cooked/report_cdrw.cue
+            "1e55aa420ca8f8ea77d5b597c9cfc19b",
+
+            // cooked/test_multi_karaoke_sampler.cue
+            "f09312ba25a479fb81912a2965babd22"
         };
 
         readonly string[] _longMd5S =
         {
-            "1a4f916dff70030e26fe0454729d0e79", "a00ef23e29318cf3deca0d497df2ee85", "a940232a64a51e2848fdd7ea22cbb5f1",
-            "e242fd3e7e353af1661b453dfe7f0562", "5657eb302e16577ddade84c87219f5e6", "d68b727b1ea31011ad36f06c1e79d0b1",
-            "9e624b9d02cb876640015e7f7027766c", "e431e3438d45af3156c0c2348d29217a", "38c1bb71be9f5cd17dc8151b4edb9c32",
-            "bdcd5cabf4f48333f9dbb08967dce7a8", "f421fc4af3ac528911b6d824825ff9b5", "93dccc154dabfbe98790b462f1b8dec3"
+            // pcengine.cue
+            "bdcd5cabf4f48333f9dbb08967dce7a8",
+
+            // pcfx.cue
+            "f421fc4af3ac528911b6d824825ff9b5",
+
+            // report_audiocd.cue
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // report_cdr.cue
+            "3d3f9cf7d1ba2249b1e7960071e5af46",
+
+            // report_cdrw.cue
+            "3af5f943ddb9427d9c63a4ce3b704db9",
+
+            // test_audiocd_cdtext.cue
+            "7c8fc7bb768cff15d702ac8cd10108d7",
+
+            // test_incd_udf200_finalized.cue
+            "31e772f6997eb8dbf3ecf9aca9ea6bc6",
+
+            // test_multi_karaoke_sampler.cue
+            "f48603d11883593f45ec4a3824681e4e",
+
+            // test_multiple_indexes.cue
+            "1b13a8f8aeb23f0b8bbc68518217e771",
+
+            // test_videocd.cue
+            "96ac6c364e4c3cb2f043197a45a97183",
+
+            // cdg/report_audiocd.cue
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // cdg/test_multi_karaoke_sampler.cue
+            "f48603d11883593f45ec4a3824681e4e",
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            "UNKNOWN",
+
+            // cooked/report_cdrom.cue
+            "3d3f9cf7d1ba2249b1e7960071e5af46",
+
+            // cooked/report_cdrw.cue
+            "3af5f943ddb9427d9c63a4ce3b704db9",
+
+            // cooked/test_multi_karaoke_sampler.cue
+            "f48603d11883593f45ec4a3824681e4e"
         };
 
         readonly string[] _subchannelMd5S =
         {
-            null, null, null, null, null, null, null, null, null, null, null, null
+            // pcengine.cue
+            null,
+
+            // pcfx.cue
+            null,
+
+            // report_audiocd.cue
+            null,
+
+            // report_cdr.cue
+            null,
+
+            // report_cdrw.cue
+            null,
+
+            // test_audiocd_cdtext.cue
+            null,
+
+            // test_incd_udf200_finalized.cue
+            null,
+
+            // test_multi_karaoke_sampler.cue
+            null,
+
+            // test_multiple_indexes.cue
+            null,
+
+            // test_videocd.cue
+            null,
+
+            // cdg/report_audiocd.cue
+            "UNKNOWN",
+
+            // cdg/test_multi_karaoke_sampler.cue
+            "UNKNOWN",
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            "UNKNOWN",
+
+            // cooked/report_cdrom.cue
+            null,
+
+            // cooked/report_cdrw.cue
+            null,
+
+            // cooked/test_multi_karaoke_sampler.cue
+            null
         };
 
         readonly int[] _tracks =
         {
-            13, 1, 1, 1, 1, 3, 2, 11, 3, 16, 8, 18
+            // pcengine.cue
+            16,
+
+            // pcfx.cue
+            8,
+
+            // report_audiocd.cue
+            14,
+
+            // report_cdr.cue
+            1,
+
+            // report_cdrw.cue
+            1,
+
+            // test_audiocd_cdtext.cue
+            11,
+
+            // test_incd_udf200_finalized.cue
+            1,
+
+            // test_multi_karaoke_sampler.cue
+            16,
+
+            // test_multiple_indexes.cue
+            5,
+
+            // test_videocd.cue
+            2,
+
+            // cdg/report_audiocd.cue
+            14,
+
+            // cdg/test_multi_karaoke_sampler.cue
+            16,
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            16,
+
+            // cooked/report_cdrom.cue
+            1,
+
+            // cooked/report_cdrw.cue
+            1,
+
+            // cooked/test_multi_karaoke_sampler.cue
+            16
         };
 
         readonly int[][] _trackSessions =
         {
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1
-            },
-            new[]
-            {
-                1, 1, 1
-            },
-            new[]
-            {
-                1, 1
-            },
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-            new[]
-            {
-                1, 1, 1
-            },
+            // pcengine.cue
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // pcfx.cue
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1
             },
+
+            // report_audiocd.cue
             new[]
             {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // report_cdr.cue
+            new[]
+            {
+                1
+            },
+
+            // report_cdrw.cue
+            new[]
+            {
+                1
+            },
+
+            // test_audiocd_cdtext.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // test_incd_udf200_finalized.cue
+            new[]
+            {
+                1
+            },
+
+            // test_multi_karaoke_sampler.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // test_multiple_indexes.cue
+            new[]
+            {
+                1, 1, 1, 1, 1
+            },
+
+            // test_videocd.cue
+            new[]
+            {
+                1, 1
+            },
+
+            // cdg/report_audiocd.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // cdg/test_multi_karaoke_sampler.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // cooked/report_cdrom.cue
+            new[]
+            {
+                1
+            },
+
+            // cooked/report_cdrw.cue
+            new[]
+            {
+                1
+            },
+
+            // cooked/test_multi_karaoke_sampler.cue
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             }
         };
 
         readonly ulong[][] _trackStarts =
         {
-            new ulong[]
-            {
-                0, 14560, 31457, 48337, 69970, 86560, 103335, 122390, 139785, 153840, 172520, 190375, 205315
-            },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0
-            },
-            new ulong[]
-            {
-                0, 300, 750
-            },
-            new ulong[]
-            {
-                0, 300
-            },
-            new ulong[]
-            {
-                0, 16586, 39743, 50856, 88537, 116103, 149609, 188638, 213994, 243325, 259429
-            },
-            new ulong[]
-            {
-                0, 48658, 207528
-            },
+            // pcengine.cue
             new ulong[]
             {
                 0, 3365, 38239, 46692, 52976, 61294, 68038, 74872, 82605, 85956, 90742, 98749, 106168, 111713, 119745,
                 125629
             },
+
+            // pcfx.cue
             new ulong[]
             {
                 0, 4170, 4684, 5716, 41834, 220420, 225121, 234973
             },
+
+            // report_audiocd.cue
             new ulong[]
             {
-                0, 2100, 12985, 20451, 39498, 47368, 56600, 67387, 71546, 77030, 80535, 95180, 110808, 115449, 118723,
-                123266, 128328, 131637
+                0, 16399, 29901, 47800, 63164, 78775, 94582, 116975, 136016, 153922, 170601, 186389, 201649, 224299
+            },
+
+            // report_cdr.cue
+            new ulong[]
+            {
+                0
+            },
+
+            // report_cdrw.cue
+            new ulong[]
+            {
+                0
+            },
+
+            // test_audiocd_cdtext.cue
+            new ulong[]
+            {
+                0, 29752, 65034, 78426, 95080, 126147, 154959, 191685, 222776, 243438, 269600
+            },
+
+            // test_incd_udf200_finalized.cue
+            new ulong[]
+            {
+                0
+            },
+
+            // test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                0, 1737, 32449, 52372, 70004, 99798, 119461, 136699, 155490, 175526, 206161, 226150, 244055, 273665,
+                293452, 310411
+            },
+
+            // test_multiple_indexes.cue
+            new ulong[]
+            {
+                0, 4654, 13725, 41035, 54839
+            },
+
+            // test_videocd.cue
+            new ulong[]
+            {
+                0, 1252
+            },
+
+            // cdg/report_audiocd.cue
+            new ulong[]
+            {
+                0, 16399, 29901, 47800, 63164, 78775, 94582, 116975, 136016, 153922, 170601, 186389, 201649, 224299
+            },
+
+            // cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                0, 1737, 32449, 52372, 70004, 99798, 119461, 136699, 155490, 175526, 206161, 226150, 244055, 273665,
+                293452, 310411
+            },
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                0, 1737, 32449, 52372, 70004, 99798, 119461, 136699, 155490, 175526, 206161, 226150, 244055, 273665,
+                293452, 310411
+            },
+
+            // cooked/report_cdrom.cue
+            new ulong[]
+            {
+                0
+            },
+
+            // cooked/report_cdrw.cue
+            new ulong[]
+            {
+                0
+            },
+
+            // cooked/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                0, 1737, 32449, 52372, 70004, 99798, 119461, 136699, 155490, 175526, 206161, 226150, 244055, 273665,
+                293452, 310411
             }
         };
 
         readonly ulong[][] _trackEnds =
         {
-            new ulong[]
-            {
-                14559, 31456, 48336, 69969, 86559, 103334, 122389, 139784, 153839, 172519, 190374, 205314, 222186
-            },
-            new ulong[]
-            {
-                309833
-            },
-            new ulong[]
-            {
-                19041
-            },
-            new ulong[]
-            {
-                501
-            },
-            new ulong[]
-            {
-                1218
-            },
-            new ulong[]
-            {
-                299, 749, 1384
-            },
-            new ulong[]
-            {
-                299, 6249
-            },
-            new ulong[]
-            {
-                16585, 39742, 50855, 88536, 116102, 149608, 188637, 213993, 243324, 259428, 283246
-            },
-            new ulong[]
-            {
-                48657, 207527, 328359
-            },
+            // pcengine.cue
             new ulong[]
             {
                 3364, 38238, 46691, 52975, 61293, 68037, 74871, 82604, 85955, 90741, 98748, 106167, 111712, 119744,
                 125628, 160355
             },
+
+            // pcfx.cue
             new ulong[]
             {
                 4169, 4683, 5715, 41833, 220419, 225120, 234972, 246304
             },
+
+            // report_audiocd.cue
             new ulong[]
             {
-                2099, 12984, 20450, 39497, 47367, 56599, 67386, 71545, 77029, 80534, 95179, 110807, 115448, 118722,
-                123265, 128327, 131636, 205071
+                16398, 29900, 47799, 63163, 78774, 94581, 116974, 136015, 153921, 170600, 186388, 201648, 224298, 247072
+            },
+
+            // report_cdr.cue
+            new ulong[]
+            {
+                254264
+            },
+
+            // report_cdrw.cue
+            new ulong[]
+            {
+                308223
+            },
+
+            // test_audiocd_cdtext.cue
+            new ulong[]
+            {
+                29751, 65033, 78425, 95079, 126146, 154958, 191684, 222775, 243437, 269599, 277695
+            },
+
+            // test_incd_udf200_finalized.cue
+            new ulong[]
+            {
+                350133
+            },
+
+            // test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                1736, 32448, 52371, 70003, 99797, 119460, 136698, 155489, 175525, 206160, 226149, 244054, 273664,
+                293451, 310410, 329007
+            },
+
+            // test_multiple_indexes.cue
+            new ulong[]
+            {
+                4653, 13724, 41034, 54838, 65535
+            },
+
+            // test_videocd.cue
+            new ulong[]
+            {
+                1251, 48793
+            },
+
+            // cdg/report_audiocd.cue
+            new ulong[]
+            {
+                16398, 29900, 47799, 63163, 78774, 94581, 116974, 136015, 153921, 170600, 186388, 201648, 224298, 247072
+            },
+
+            // cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                1736, 32448, 52371, 70003, 99797, 119460, 136698, 155489, 175525, 206160, 226149, 244054, 273664,
+                293451, 310410, 329007
+            },
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                1736, 32448, 52371, 70003, 99797, 119460, 136698, 155489, 175525, 206160, 226149, 244054, 273664,
+                293451, 310410, 329007
+            },
+
+            // cooked/report_cdrom.cue
+            new ulong[]
+            {
+                254264
+            },
+
+            // cooked/report_cdrw.cue
+            new ulong[]
+            {
+                308223
+            },
+
+            // cooked/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                1736, 32448, 52371, 70003, 99797, 119460, 136698, 155489, 175525, 206160, 226149, 244054, 273664,
+                293451, 310410, 329007
             }
         };
 
         readonly ulong[][] _trackPregaps =
         {
-            new ulong[]
-            {
-                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
-            },
-            new ulong[]
-            {
-                150
-            },
-            new ulong[]
-            {
-                150
-            },
-            new ulong[]
-            {
-                150
-            },
-            new ulong[]
-            {
-                150
-            },
-            new ulong[]
-            {
-                150, 150, 150
-            },
-            new ulong[]
-            {
-                150, 150
-            },
-            new ulong[]
-            {
-                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
-            },
-            new ulong[]
-            {
-                150, 0, 0
-            },
+            // pcengine.cue
             new ulong[]
             {
                 150, 225, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 225
             },
+
+            // pcfx.cue
             new ulong[]
             {
                 150, 225, 0, 0, 0, 150, 150, 150
             },
+
+            // report_audiocd.cue
             new ulong[]
             {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // report_cdr.cue
+            new ulong[]
+            {
+                150
+            },
+
+            // report_cdrw.cue
+            new ulong[]
+            {
+                150
+            },
+
+            // test_audiocd_cdtext.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // test_incd_udf200_finalized.cue
+            new ulong[]
+            {
+                150
+            },
+
+            // test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // test_multiple_indexes.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150
+            },
+
+            // test_videocd.cue
+            new ulong[]
+            {
+                150, 0
+            },
+
+            // cdg/report_audiocd.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
+            },
+
+            // cooked/report_cdrom.cue
+            new ulong[]
+            {
+                150
+            },
+
+            // cooked/report_cdrw.cue
+            new ulong[]
+            {
+                150
+            },
+
+            // cooked/test_multi_karaoke_sampler.cue
+            new ulong[]
+            {
+                150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150
             }
         };
 
         readonly byte[][] _trackFlags =
         {
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-            new byte[]
-            {
-                4
-            },
-            new byte[]
-            {
-                4
-            },
-            new byte[]
-            {
-                4
-            },
-            new byte[]
-            {
-                4
-            },
-            new byte[]
-            {
-                2, 2, 2
-            },
-            new byte[]
-            {
-                4, 0
-            },
-            new byte[]
-            {
-                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-            new byte[]
-            {
-                4, 4, 4
-            },
+            // pcengine.cue
             new byte[]
             {
                 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
             },
+
+            // pcfx.cue
             new byte[]
             {
                 0, 4, 4, 4, 4, 0, 0, 0
             },
+
+            // report_audiocd.cue
             new byte[]
             {
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // report_cdr.cue
+            new byte[]
+            {
+                4
+            },
+
+            // report_cdrw.cue
+            new byte[]
+            {
+                4
+            },
+
+            // test_audiocd_cdtext.cue
+            new byte[]
+            {
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            },
+
+            // test_incd_udf200_finalized.cue
+            new byte[]
+            {
+                7
+            },
+
+            // test_multi_karaoke_sampler.cue
+            new byte[]
+            {
+                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // test_multiple_indexes.cue
+            new byte[]
+            {
+                2, 0, 0, 8, 1
+            },
+
+            // test_videocd.cue
+            new byte[]
+            {
+                4, 4
+            },
+
+            // cdg/report_audiocd.cue
+            new byte[]
+            {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // cdg/test_multi_karaoke_sampler.cue
+            new byte[]
+            {
+                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // cooked_cdg/test_multi_karaoke_sampler.cue
+            new byte[]
+            {
+                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // cooked/report_cdrom.cue
+            new byte[]
+            {
+                4
+            },
+
+            // cooked/report_cdrw.cue
+            new byte[]
+            {
+                4
+            },
+
+            // cooked/test_multi_karaoke_sampler.cue
+            new byte[]
+            {
+                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             }
         };
 
