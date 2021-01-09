@@ -173,5 +173,59 @@ namespace Aaru.Decoders.DVD
             /// <summary>Bytes 4 to 2052 Disc key for CSS, Album Identifier for CPPM</summary>
             public byte[] Key;
         }
+
+        public struct TitleKey
+        {
+            /// <summary>Bytes 0 to 1 Data length</summary>
+            public ushort DataLength;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+            /// <summary>Byte 4 CPM</summary>
+            public byte CMI;
+            /// <summary>Bytes 5 to 10 Title key for CSS</summary>
+            public byte[] Key;
+            /// <summary>Byte 11 Reserved</summary>
+            public byte Reserved3;
+            /// <summary>Byte 12 Reserved</summary>
+            public byte Reserved4;
+        }
+
+        public struct AuthenticationSuccessFlag
+        {
+            /// <summary>Bytes 0 to 1 Data length</summary>
+            public ushort DataLength;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+            /// <summary>Byte 4 Reserved</summary>
+            public byte Reserved3;
+            /// <summary>Byte 5 Reserved</summary>
+            public byte Reserved4;
+            /// <summary>Byte 6 Reserved</summary>
+            public byte Reserved5;
+            /// <summary>Byte 7 Reserved and ASF</summary>
+            public byte ASF;
+        }
+
+        public struct RegionalPlaybackControlState
+        {
+            /// <summary>Bytes 0 to 1 Data length</summary>
+            public ushort DataLength;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+            /// <summary>Byte 4 Type Code and # of Vendor Resets Available and # of User Controlled Changes Available</summary>
+            public byte TypeCode_VendorResetsAvailable_UserControlledChangesAvailable;
+            /// <summary>Byte 5 Region Mask</summary>
+            public byte RegionMask;
+            /// <summary>Byte 6 RPC Scheme</summary>
+            public byte RPCScheme;
+            /// <summary>Byte 7 Reserved</summary>
+            public byte Reserved3;
+        }
     }
 }
