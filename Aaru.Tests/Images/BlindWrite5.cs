@@ -45,826 +45,1148 @@ namespace Aaru.Tests.Images
     {
         readonly string[] _testFiles =
         {
-            "audiocd_cdtext.B5T", "cdg.B5T", "cdplus.B5T", "cdr.B5T", "cdrom80mm.B5T", "cdrom.B5T", "cdrw.B5T",
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            //"dvdrom.B5T", 
-            "cdi.B5T", "gdrom.B5T", "jaguarcd.B5T", "mixed.B5T", "multitrack.B5T", "pcengine.B5T", "pcfx.B5T",
-            "videocd.B5T"
+            "dvdrom.B5T", "gigarec.B5T", "jaguarcd.B5T", "pcengine.B5T", "pcfx.B5T", "report_audiocd.B5T",
+            "report_cdr.B5T", "report_cdrom.B5T", "report_cdrw_2x.B5T", "test_all_tracks_are_track1.B5T",
+            "test_audiocd_cdtext.B5T", "test_castrated_leadout.B5T", "test_data_track_as_audio.B5T",
+            "test_data_track_as_audio_fixed_sub.B5T", "test_disc_starts_at_track2.B5T", "test_enhancedcd.B5T",
+            "test_incd_udf200_finalized.B5T", "test_multiple_indexes.B5T", "test_multisession.B5T",
+            "test_track1_overlaps_session2.B5T", "test_track2_inside_session2_leadin.B5T",
+            "test_track2_inside_track1.B5T", "test_videocd.B5T"
         };
 
         readonly ulong[] _sectors =
         {
-            // "audiocd_cdtext.B5T"
-            222187,
+            // dvdrom.B5T
+            0,
 
-            // "cdg.B5T"
-            309546,
+            // gigarec.B5T
+            469652,
 
-            // "cdplus.B5T"
-            303316,
-
-            // "cdr.B5T"
-            97765,
-
-            // "cdrom80mm.B5T"
-            19042,
-
-            // "cdrom.B5T"
-            502,
-
-            // "cdrw.B5T"
-            355500,
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //2287072,
-            // "cdi.B5T"
-            309834,
-
-            // "gdrom.B5T"
-            6400,
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             243587,
 
-            // "mixed.B5T"
-            283397,
-
-            // "multitrack.B5T"
-            328360,
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             160956,
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             246680,
 
-            // "videocd.B5T"
-            205072
+            // report_audiocd.B5T
+            247073,
+
+            // report_cdr.B5T
+            254265,
+
+            // report_cdrom.B5T
+            254265,
+
+            // report_cdrw_2x.B5T
+            308224,
+
+            // test_all_tracks_are_track1.B5T
+            0,
+
+            // test_audiocd_cdtext.B5T
+            277696,
+
+            // test_castrated_leadout.B5T
+            0,
+
+            // test_data_track_as_audio.B5T
+            62385,
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            62385,
+
+            // test_disc_starts_at_track2.B5T
+            62385,
+
+            // test_enhancedcd.B5T
+            59206,
+
+            // test_incd_udf200_finalized.B5T
+            350134,
+
+            // test_multiple_indexes.B5T
+            65536,
+
+            // test_multisession.B5T
+            51168,
+
+            // test_track1_overlaps_session2.B5T
+            0,
+
+            // test_track2_inside_session2_leadin.B5T
+            62385,
+
+            // test_track2_inside_track1.B5T
+            0,
+
+            // test_videocd.B5T
+            48794
         };
 
         readonly MediaType[] _mediaTypes =
         {
-            // "audiocd_cdtext.B5T"
-            MediaType.CDDA,
+            // dvdrom.B5T
+            MediaType.DVDROM,
 
-            // "cdg.B5T"
-            MediaType.CDDA,
-
-            // "cdplus.B5T"
-            MediaType.CDPLUS,
-
-            // "cdr.B5T"
+            // gigarec.B5T
             MediaType.CDR,
 
-            // "cdrom80mm.B5T"
-            MediaType.CDROM,
-
-            // "cdrom.B5T"
-            MediaType.CDROM,
-
-            // "cdrw.B5T"
-            MediaType.CDRW,
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //MediaType.DVDROM,
-            // "cdi.B5T"
-            MediaType.CDROMXA,
-
-            // "gdrom.B5T"
-            MediaType.CDROMXA,
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             MediaType.CDDA,
 
-            // "mixed.B5T"
-            MediaType.CDROMXA,
+            // pcengine.B5T
+            MediaType.CD,
 
-            // "multitrack.B5T"
+            // pcfx.B5T
+            MediaType.CD,
+
+            // report_audiocd.B5T
+            MediaType.CDDA,
+
+            // report_cdr.B5T
+            MediaType.CDR,
+
+            // report_cdrom.B5T
             MediaType.CDROM,
 
-            // "pcengine.B5T"
-            MediaType.CD,
+            // report_cdrw_2x.B5T
+            MediaType.CDRW,
 
-            // "pcfx.B5T"
-            MediaType.CD,
+            // test_all_tracks_are_track1.B5T
+            MediaType.CDR,
 
-            // "videocd.B5T"
-            MediaType.CDROMXA
+            // test_audiocd_cdtext.B5T
+            MediaType.CDR,
+
+            // test_castrated_leadout.B5T
+            MediaType.CDR,
+
+            // test_data_track_as_audio.B5T
+            MediaType.CDR,
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            MediaType.CDR,
+
+            // test_disc_starts_at_track2.B5T
+            MediaType.CDR,
+
+            // test_enhancedcd.B5T
+            MediaType.CDR,
+
+            // test_incd_udf200_finalized.B5T
+            MediaType.CDR,
+
+            // test_multiple_indexes.B5T
+            MediaType.CDR,
+
+            // test_multisession.B5T
+            MediaType.CDR,
+
+            // test_track1_overlaps_session2.B5T
+            MediaType.CDR,
+
+            // test_track2_inside_session2_leadin.B5T
+            MediaType.CDR,
+
+            // test_track2_inside_track1.B5T
+            MediaType.CDR,
+
+            // test_videocd.B5T
+            MediaType.CDR
         };
 
         readonly string[] _md5S =
         {
-            // "audiocd_cdtext.B5T"
-            "1a4f916dff70030e26fe0454729d0e79",
+            // dvdrom.B5T
+            "UNKNOWN",
 
-            // "cdg.B5T"
-            "d61ace888212ea274071e4c454dfaf5c",
+            // gigarec.B5T
+            "e2e967adc0e5c530964ac4eebe8cac47",
 
-            // "cdplus.B5T"
-            "22c1dc74889d87ffb80e0a4d03cac230",
-
-            // "cdr.B5T"
-            "d5c765d46834abc33a1f303a379ec840",
-
-            // "cdrom80mm.B5T"
-            "20a0307dc58aa2ab409e903b3ba85518",
-
-            // "cdrom.B5T"
-            "a637b6849f983623efd86563af30e6d9",
-
-            // "cdrw.B5T"
-            "bd2bc3f0a72a4c41b1afc7267bd70430",
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //"b9b0b4318e6264c405c3f96128901815",
-            // "cdi.B5T"
-            "b6aea697cf5580f3f798ffc4d86f48b8",
-
-            // "gdrom.B5T"
-            "b8795d40ccbd9d480cfe79961b9fb3cc",
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             "3dd5bd0f7d95a40d411761d69255567a",
 
-            // "mixed.B5T"
-            "556b0159070ee11a926f3932650c8f2c",
-
-            // "multitrack.B5T"
-            "41458c6ff3e35aa635cc2f2fdb5582ae",
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             "4f5165069b3c5f11afe5f59711bd945d",
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             "c1bc8de499756453d1387542bb32bb4d",
 
-            // "videocd.B5T"
-            "47284e4065fbb26c94cf13870cb31c5d"
+            // report_audiocd.B5T
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // report_cdr.B5T
+            "65e79ef740833188a0f5be19da14c09d",
+
+            // report_cdrom.B5T
+            "bf4bbec517101d0d6f45d2e4d50cb875",
+
+            // report_cdrw_2x.B5T
+            "1e55aa420ca8f8ea77d5b597c9cfc19b",
+
+            // test_all_tracks_are_track1.B5T
+            "UNKNOWN",
+
+            // test_audiocd_cdtext.B5T
+            "7c8fc7bb768cff15d702ac8cd10108d7",
+
+            // test_castrated_leadout.B5T
+            "UNKNOWN",
+
+            // test_data_track_as_audio.B5T
+            "ce3d63e831b4e6191b05ec9ce452ad91",
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            "ce3d63e831b4e6191b05ec9ce452ad91",
+
+            // test_disc_starts_at_track2.B5T
+            "25fb1b49726aaac09196ea56490beeb1",
+
+            // test_enhancedcd.B5T
+            "3736dbfcb7bf5648e3ac067379087001",
+
+            // test_incd_udf200_finalized.B5T
+            "901e4fe17ea6591b1fd53ba822428ef4",
+
+            // test_multiple_indexes.B5T
+            "1b13a8f8aeb23f0b8bbc68518217e771",
+
+            // test_multisession.B5T
+            "e2e19cf38891e67a0829d01842b4052e",
+
+            // test_track1_overlaps_session2.B5T
+            "UNKNOWN",
+
+            // test_track2_inside_session2_leadin.B5T
+            "4e797aa5dedaac71a0e67ebd9ac9d555",
+
+            // test_track2_inside_track1.B5T
+            "UNKNOWN",
+
+            // test_videocd.B5T
+            "203a40d27b9bee018705c2df8d15e96d"
         };
 
         readonly string[] _longMd5S =
         {
-            // "audiocd_cdtext.B5T"
-            "1a4f916dff70030e26fe0454729d0e79",
+            // dvdrom.B5T
+            "UNKNOWN",
 
-            // "cdg.B5T"
-            "d61ace888212ea274071e4c454dfaf5c",
+            // gigarec.B5T
+            "1dc7801008110af6b8015aad64d91739",
 
-            // "cdplus.B5T"
-            "b59128c19a617782f5a1f22263046ad7",
-
-            // "cdr.B5T"
-            "18569ebb43ef9eb45f5f26bcbff3ebd7",
-
-            // "cdrom80mm.B5T"
-            "a940232a64a51e2848fdd7ea22cbb5f1",
-
-            // "cdrom.B5T"
-            "e242fd3e7e353af1661b453dfe7f0562",
-
-            // "cdrw.B5T"
-            "40a83558b159ea0a7dae0f87f9fd60d8",
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //"b9b0b4318e6264c405c3f96128901815",
-            // "cdi.B5T"
-            "a071c4ff0e6bf75dec2f9293af52fc64",
-
-            // "gdrom.B5T"
-            "b2297e21f26a509701d48507626e8990",
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             "3dd5bd0f7d95a40d411761d69255567a",
 
-            // "mixed.B5T"
-            "ca7e0d49553f026098bfc5cfd5cdc7d0",
-
-            // "multitrack.B5T"
-            "6d8d9c35156b26cad81e1c598cc326ac",
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             "fd30db9486f67654179c90c8a5052edb",
 
-            // "pcfx.B6T"    
+            // pcfx.B5T
             "455ec326506d2c5b974c4617c1010796",
 
-            // "videocd.B6T"
-            "93dccc154dabfbe98790b462f1b8dec3"
+            // report_audiocd.B5T
+            "c09f408a4416634d8ac1c1ffd0ed75a5",
+
+            // report_cdr.B5T
+            "47b32c32a6427ad1e6b4b1bd047df716",
+
+            // report_cdrom.B5T
+            "3d3f9cf7d1ba2249b1e7960071e5af46",
+
+            // report_cdrw_2x.B5T
+            "3af5f943ddb9427d9c63a4ce3b704db9",
+
+            // test_all_tracks_are_track1.B5T
+            "UNKNOWN",
+
+            // test_audiocd_cdtext.B5T
+            "7c8fc7bb768cff15d702ac8cd10108d7",
+
+            // test_castrated_leadout.B5T
+            "UNKNOWN",
+
+            // test_data_track_as_audio.B5T
+            "4bd5511229857ca167b45e607dea12dc",
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            "4bd5511229857ca167b45e607dea12dc",
+
+            // test_disc_starts_at_track2.B5T
+            "8fd0dbe9085363cc20709f0ca76a373d",
+
+            // test_enhancedcd.B5T
+            "c2dfd5a32678c3ff049c143c98ad36a5",
+
+            // test_incd_udf200_finalized.B5T
+            "7b489457540c40037aabcf3f21e0201e",
+
+            // test_multiple_indexes.B5T
+            "1b13a8f8aeb23f0b8bbc68518217e771",
+
+            // test_multisession.B5T
+            "3e646a04eb29a8e0ad892b6ac00ba962",
+
+            // test_track1_overlaps_session2.B5T
+            "UNKNOWN",
+
+            // test_track2_inside_session2_leadin.B5T
+            "311d641c93a3fe1dfae7deb3a2be28c7",
+
+            // test_track2_inside_track1.B5T
+            "UNKNOWN",
+
+            // test_videocd.B5T
+            "a686cade367db0a12fef1d9862f39e1d"
         };
 
         readonly string[] _subchannelMd5S =
         {
-            // "audiocd_cdtext.B5T"
+            // dvdrom.B5T
             null,
 
-            // "cdg.B5T"
+            // gigarec.B5T
             null,
 
-            // "cdplus.B5T"
+            // jaguarcd.B5T
             null,
 
-            // "cdr.B5T"
+            // pcengine.B5T
             null,
 
-            // "cdrom80mm.B5T"
+            // pcfx.B5T
             null,
 
-            // "cdrom.B5T"
+            // report_audiocd.B5T
             null,
 
-            // "cdrw.B5T"
+            // report_cdr.B5T
             null,
 
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //null,
-            // "cdi.B5T"
+            // report_cdrom.B5T
             null,
 
-            // "gdrom.B5T"
+            // report_cdrw_2x.B5T
             null,
 
-            // "jaguarcd.B5T"
+            // test_all_tracks_are_track1.B5T
             null,
 
-            // "mixed.B5T"
+            // test_audiocd_cdtext.B5T
             null,
 
-            // "multitrack.B5T"
+            // test_castrated_leadout.B5T
             null,
 
-            // "pcengine.B6T"
+            // test_data_track_as_audio.B5T
             null,
 
-            // "pcfx.B6T"    
+            // test_data_track_as_audio_fixed_sub.B5T
             null,
 
-            // "videocd.B6T"
+            // test_disc_starts_at_track2.B5T
+            null,
+
+            // test_enhancedcd.B5T
+            null,
+
+            // test_incd_udf200_finalized.B5T
+            null,
+
+            // test_multiple_indexes.B5T
+            null,
+
+            // test_multisession.B5T
+            null,
+
+            // test_track1_overlaps_session2.B5T
+            null,
+
+            // test_track2_inside_session2_leadin.B5T
+            null,
+
+            // test_track2_inside_track1.B5T
+            null,
+
+            // test_videocd.B5T
             null
         };
 
         readonly int[] _tracks =
         {
-            // "audiocd_cdtext.B5T"
-            13,
-
-            // "cdg.B5T"
-            16,
-
-            // "cdplus.B5T"
-            14,
-
-            // "cdr.B5T"
-            2,
-
-            // "cdrom80mm.B5T"
+            // dvdrom.B5T
             1,
 
-            // "cdrom.B5T"
+            // gigarec.B5T
             1,
 
-            // "cdrw.B5T"
-            1,
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            //1, 
-            // "cdi.B5T"
-            1,
-
-            // "gdrom.B5T"
-            2,
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             11,
 
-            // "mixed.B5T"
-            11,
-
-            // "multitrack.B5T"
-            3,
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             16,
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             8,
 
-            // "videocd.B5T"
-            18
+            // report_audiocd.B5T
+            14,
+
+            // report_cdr.B5T
+            1,
+
+            // report_cdrom.B5T
+            1,
+
+            // report_cdrw_2x.B5T
+            1,
+
+            // test_all_tracks_are_track1.B5T
+            2,
+
+            // test_audiocd_cdtext.B5T
+            11,
+
+            // test_castrated_leadout.B5T
+            11,
+
+            // test_data_track_as_audio.B5T
+            2,
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            2,
+
+            // test_disc_starts_at_track2.B5T
+            2,
+
+            // test_enhancedcd.B5T
+            3,
+
+            // test_incd_udf200_finalized.B5T
+            1,
+
+            // test_multiple_indexes.B5T
+            5,
+
+            // test_multisession.B5T
+            4,
+
+            // test_track1_overlaps_session2.B5T
+            2,
+
+            // test_track2_inside_session2_leadin.B5T
+            3,
+
+            // test_track2_inside_track1.B5T
+            3,
+
+            // test_videocd.B5T
+            2
         };
 
         readonly int[][] _trackSessions =
         {
-            // "audiocd_cdtext.B5T"
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // "cdg.B5T"
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // "cdplus.B5T"
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2
-            },
-
-            // "cdr.B5T"
-            new[]
-            {
-                1, 2
-            },
-
-            // "cdrom80mm.B5T"
+            // dvdrom.B5T
             new[]
             {
                 1
             },
 
-            // "cdrom.B5T"
+            // gigarec.B5T
             new[]
             {
                 1
             },
 
-            // "cdrw.B5T"
-            new[]
-            {
-                1
-            },
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            /*
-            new[]
-            {
-                1
-            },
-            */
-            // "cdi.B5T"
-            new[]
-            {
-                1
-            },
-
-            // "gdrom.B5T"
-            new[]
-            {
-                1, 1
-            },
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             new[]
             {
                 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
             },
 
-            // "mixed.B5T"
-            new[]
-            {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            },
-
-            // "multitrack.B5T"
-            new[]
-            {
-                1, 1, 1
-            },
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             },
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             new[]
             {
                 1, 1, 1, 1, 1, 1, 1, 1
             },
 
-            // "videocd.B5T"
+            // report_audiocd.B5T
             new[]
             {
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // report_cdr.B5T
+            new[]
+            {
+                1
+            },
+
+            // report_cdrom.B5T
+            new[]
+            {
+                1
+            },
+
+            // report_cdrw_2x.B5T
+            new[]
+            {
+                1
+            },
+
+            // test_all_tracks_are_track1.B5T
+            new[]
+            {
+                1, 2
+            },
+
+            // test_audiocd_cdtext.B5T
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // test_castrated_leadout.B5T
+            new[]
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+            },
+
+            // test_data_track_as_audio.B5T
+            new[]
+            {
+                1, 2
+            },
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            new[]
+            {
+                1, 2
+            },
+
+            // test_disc_starts_at_track2.B5T
+            new[]
+            {
+                1, 2
+            },
+
+            // test_enhancedcd.B5T
+            new[]
+            {
+                1, 1, 2
+            },
+
+            // test_incd_udf200_finalized.B5T
+            new[]
+            {
+                1
+            },
+
+            // test_multiple_indexes.B5T
+            new[]
+            {
+                1, 1, 1, 1, 1
+            },
+
+            // test_multisession.B5T
+            new[]
+            {
+                1, 2, 3, 4
+            },
+
+            // test_track1_overlaps_session2.B5T
+            new[]
+            {
+                1
+            },
+
+            // test_track2_inside_session2_leadin.B5T
+            new[]
+            {
+                1, 1, 2
+            },
+
+            // test_track2_inside_track1.B5T
+            new[]
+            {
+                1, 1, 1
+            },
+
+            // test_videocd.B5T
+            new[]
+            {
+                1, 1
             }
         };
 
         readonly ulong[][] _trackStarts =
         {
-            // "audiocd_cdtext.B5T"
-            new ulong[]
-            {
-                0, 14710, 31607, 48487, 70120, 86710, 103485, 122540, 139935, 153990, 172670, 190525, 205465
-            },
-
-            // "cdg.B5T"
-            new ulong[]
-            {
-                0, 17377, 38525, 54936, 72860, 90755, 114546, 136451, 154773, 172150, 193298, 209709, 227633, 245528,
-                269319, 291224
-            },
-
-            // "cdplus.B5T"
-            new ulong[]
-            {
-                0, 15661, 33959, 51330, 71973, 87582, 103305, 117691, 136167, 153418, 166932, 187113, 201441, 234030
-            },
-
-            // "cdr.B5T"
-            new ulong[]
-            {
-                0, 42737
-            },
-
-            // "cdrom80mm.B5T"
+            // dvdrom.B5T
             new ulong[]
             {
                 0
             },
 
-            // "cdrom.B5T"
+            // gigarec.B5T
             new ulong[]
             {
                 0
             },
 
-            // "cdrw.B5T"
-            new ulong[]
-            {
-                0
-            },
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            /*
-            new ulong[]
-            {
-                0
-            },
-            */
-            // "cdi.B5T"
-            new ulong[]
-            {
-                0
-            },
-
-            // "gdrom.B5T"
-            new ulong[]
-            {
-                0, 450
-            },
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             new ulong[]
             {
                 0, 27490, 28237, 78892, 100054, 133203, 160908, 181466, 202024, 222582, 243140
             },
 
-            // "mixed.B5T"
-            new ulong[]
-            {
-                0, 16586, 40043, 51156, 88837, 116403, 149909, 188938, 214294, 243625, 259729
-            },
-
-            // "multitrack.B5T"
-            new ulong[]
-            {
-                0, 48658, 207528
-            },
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             new ulong[]
             {
                 0, 3590, 38464, 47217, 53501, 61819, 68563, 75397, 83130, 86481, 91267, 99274, 106693, 112238, 120270,
                 126229
             },
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             new ulong[]
             {
                 0, 4395, 4909, 5941, 42059, 220645, 225646, 235498
             },
 
-            // "videocd.B5T"
+            // report_audiocd.B5T
             new ulong[]
             {
-                0, 2100, 12985, 20451, 39498, 47368, 56600, 67387, 71546, 77030, 80535, 95180, 110808, 115449, 118723,
-                123266, 128328, 131637
+                0, 16549, 30051, 47950, 63314, 78925, 94732, 117125, 136166, 154072, 170751, 186539, 201799, 224449
+            },
+
+            // report_cdr.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // report_cdrom.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // report_cdrw_2x.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // test_all_tracks_are_track1.B5T
+            new ulong[]
+            {
+                0, 25539
+            },
+
+            // test_audiocd_cdtext.B5T
+            new ulong[]
+            {
+                0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
+            },
+
+            // test_castrated_leadout.B5T
+            new ulong[]
+            {
+                0, 29902, 65184, 78576, 95230, 126297, 155109, 191835, 222926, 243588, 269750
+            },
+
+            // test_data_track_as_audio.B5T
+            new ulong[]
+            {
+                0, 36789
+            },
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            new ulong[]
+            {
+                0, 36789
+            },
+
+            // test_disc_starts_at_track2.B5T
+            new ulong[]
+            {
+                0, 36789
+            },
+
+            // test_enhancedcd.B5T
+            new ulong[]
+            {
+                0, 14405, 40203
+            },
+
+            // test_incd_udf200_finalized.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // test_multiple_indexes.B5T
+            new ulong[]
+            {
+                0, 4804, 13875, 41185, 54989
+            },
+
+            // test_multisession.B5T
+            new ulong[]
+            {
+                0, 19383, 32710, 45228
+            },
+
+            // test_track1_overlaps_session2.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // test_track2_inside_session2_leadin.B5T
+            new ulong[]
+            {
+                0, 25500, 36789
+            },
+
+            // test_track2_inside_track1.B5T
+            new ulong[]
+            {
+                0, 13350, 36939
+            },
+
+            // test_videocd.B5T
+            new ulong[]
+            {
+                0, 1252
             }
         };
 
         readonly ulong[][] _trackEnds =
         {
-            // "audiocd_cdtext.B5T"
+            // dvdrom.B5T
             new ulong[]
             {
-                14709, 31606, 48486, 70119, 86709, 103484, 122539, 139934, 153989, 172669, 190524, 205464, 222186
+                0
             },
 
-            // "cdg.B5T"
+            // gigarec.B5T
             new ulong[]
             {
-                17376, 38524, 54935, 72859, 90754, 114545, 136450, 154772, 172149, 193297, 209708, 227632, 245527,
-                269318, 291223, 309545
+                469651
             },
 
-            // "cdplus.B5T"
-            new ulong[]
-            {
-                15660, 33958, 51329, 71972, 87581, 103304, 117690, 136166, 153417, 166931, 187112, 201440, 222779,
-                303315
-            },
-
-            // "cdr.B5T"
-            new ulong[]
-            {
-                31336, 97764
-            },
-
-            // "cdrom80mm.B5T"
-            new ulong[]
-            {
-                19041
-            },
-
-            // "cdrom.B5T"
-            new ulong[]
-            {
-                501
-            },
-
-            // "cdrw.B5T"
-            new ulong[]
-            {
-                355499
-            },
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            /*
-            new ulong[]
-            {
-            2287071
-            },
-            */
-            // "cdi.B5T"
-            new ulong[]
-            {
-                309833
-            },
-
-            // "gdrom.B5T"
-            new ulong[]
-            {
-                449, 6399
-            },
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             new ulong[]
             {
                 16239, 28236, 78891, 100053, 133202, 160907, 181465, 202023, 222581, 243139, 243586
             },
 
-            // "mixed.B5T"
-            new ulong[]
-            {
-                16585, 40042, 51155, 88836, 116402, 149908, 188937, 214293, 243624, 259728, 283396
-            },
-
-            // "multitrack.B5T"
-            new ulong[]
-            {
-                48657, 207527, 328359
-            },
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             new ulong[]
             {
                 3589, 38463, 47216, 53500, 61818, 68562, 75396, 83129, 86480, 91266, 99273, 106692, 112237, 120269,
                 126228, 160955
             },
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             new ulong[]
             {
                 4394, 4908, 5940, 42058, 220644, 225645, 235497, 246679
             },
 
-            // "videocd.B5T"
+            // report_audiocd.B5T
             new ulong[]
             {
-                2099, 12984, 20450, 39497, 47367, 56599, 67386, 71545, 77029, 80534, 95179, 110807, 115448, 118722,
-                123265, 128327, 131636, 205071
+                16548, 30050, 47949, 63313, 78924, 94731, 117124, 136165, 154071, 170750, 186538, 201798, 224448, 247072
+            },
+
+            // report_cdr.B5T
+            new ulong[]
+            {
+                254264
+            },
+
+            // report_cdrom.B5T
+            new ulong[]
+            {
+                254264
+            },
+
+            // report_cdrw_2x.B5T
+            new ulong[]
+            {
+                308223
+            },
+
+            // test_all_tracks_are_track1.B5T
+            new ulong[]
+            {
+                25538, 51077
+            },
+
+            // test_audiocd_cdtext.B5T
+            new ulong[]
+            {
+                29901, 65183, 78575, 95229, 126296, 155108, 191834, 222925, 243587, 269749, 277695
+            },
+
+            // test_castrated_leadout.B5T
+            new ulong[]
+            {
+                29901, 65183, 78575, 95229, 126296, 155108, 191834, 222925, 243587, 269749, 1049
+            },
+
+            // test_data_track_as_audio.B5T
+            new ulong[]
+            {
+                25538, 62384
+            },
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            new ulong[]
+            {
+                25538, 62384
+            },
+
+            // test_disc_starts_at_track2.B5T
+            new ulong[]
+            {
+                25538, 62384
+            },
+
+            // test_enhancedcd.B5T
+            new ulong[]
+            {
+                14404, 28952, 59205
+            },
+
+            // test_incd_udf200_finalized.B5T
+            new ulong[]
+            {
+                350133
+            },
+
+            // test_multiple_indexes.B5T
+            new ulong[]
+            {
+                4803, 13874, 41184, 54988, 65535
+            },
+
+            // test_multisession.B5T
+            new ulong[]
+            {
+                8132, 25959, 38477, 51167
+            },
+
+            // test_track1_overlaps_session2.B5T
+            new ulong[]
+            {
+                0
+            },
+
+            // test_track2_inside_session2_leadin.B5T
+            new ulong[]
+            {
+                25499, 25538, 62384
+            },
+
+            // test_track2_inside_track1.B5T
+            new ulong[]
+            {
+                13349, 25538, 62384
+            },
+
+            // test_videocd.B5T
+            new ulong[]
+            {
+                1251, 48793
             }
         };
 
         readonly ulong[][] _trackPregaps =
         {
-            // "audiocd_cdtext.B5T"
+            // dvdrom.B5T
             new ulong[]
             {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                0
             },
 
-            // "cdg.B5T"
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "cdplus.B5T"
-            new ulong[]
-            {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 150
-            },
-
-            // "cdr.B5T"
-            new ulong[]
-            {
-                150, 150
-            },
-
-            // "cdrom80mm.B5T"
+            // gigarec.B5T
             new ulong[]
             {
                 150
             },
 
-            // "cdrom.B5T"
-            new ulong[]
-            {
-                150
-            },
-
-            // "cdrw.B5T"
-            new ulong[]
-            {
-                150
-            },
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            /*
-            new ulong[]
-            {
-            0
-            },
-            */
-            // "cdi.B5T"
-            new ulong[]
-            {
-                150
-            },
-
-            // "gdrom.B5T"
-            new ulong[]
-            {
-                150, 0
-            },
-
-            // "jaguarcd.B5T"
+            // jaguarcd.B5T
             new ulong[]
             {
                 150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
 
-            // "mixed.B5T"
-            new ulong[]
-            {
-                150, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "multitrack.B5T"
-            new ulong[]
-            {
-                150, 0, 0
-            },
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             new ulong[]
             {
                 150, 0, 150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             new ulong[]
             {
                 150, 0, 0, 0, 0, 150, 0, 0
             },
 
-            // "videocd.B5T"
+            // report_audiocd.B5T
             new ulong[]
             {
-                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // report_cdr.B5T
+            new ulong[]
+            {
+                150
+            },
+
+            // report_cdrom.B5T
+            new ulong[]
+            {
+                150
+            },
+
+            // report_cdrw_2x.B5T
+            new ulong[]
+            {
+                150
+            },
+
+            // test_all_tracks_are_track1.B5T
+            new ulong[]
+            {
+                150, 150
+            },
+
+            // test_audiocd_cdtext.B5T
+            new ulong[]
+            {
+                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // test_castrated_leadout.B5T
+            new ulong[]
+            {
+                150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // test_data_track_as_audio.B5T
+            new ulong[]
+            {
+                150, 150
+            },
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            new ulong[]
+            {
+                150, 150
+            },
+
+            // test_disc_starts_at_track2.B5T
+            new ulong[]
+            {
+                150, 150
+            },
+
+            // test_enhancedcd.B5T
+            new ulong[]
+            {
+                150, 0, 150
+            },
+
+            // test_incd_udf200_finalized.B5T
+            new ulong[]
+            {
+                150
+            },
+
+            // test_multiple_indexes.B5T
+            new ulong[]
+            {
+                150, 0, 0, 0, 0
+            },
+
+            // test_multisession.B5T
+            new ulong[]
+            {
+                150, 150, 150, 150
+            },
+
+            // test_track1_overlaps_session2.B5T
+            new ulong[]
+            {
+                150
+            },
+
+            // test_track2_inside_session2_leadin.B5T
+            new ulong[]
+            {
+                150, 0, 150
+            },
+
+            // test_track2_inside_track1.B5T
+            new ulong[]
+            {
+                150, 0, 150
+            },
+
+            // test_videocd.B5T
+            new ulong[]
+            {
+                150, 0
             }
         };
 
         readonly byte[][] _trackFlags =
         {
-            // "audiocd_cdtext.B5T"
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "cdg.B5T"
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "cdplus.B5T"
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
-            },
-
-            // "cdr.B5T"
-            new byte[]
-            {
-                4, 4
-            },
-
-            // "cdrom80mm.B5T"
-            new byte[]
-            {
-                4
-            },
-
-            // "cdrom.B5T"
-            new byte[]
-            {
-                4
-            },
-
-            // "cdrw.B5T"
-            new byte[]
-            {
-                4
-            },
-
-            // TODO: https://github.com/aaru-dps/Aaru/issues/430
-            // "dvdrom.B5T"
-            /*
+            // dvdrom.B5T
             null,
-            */
-            // "cdi.B5T"
+
+            // gigarec.B5T
             new byte[]
             {
                 4
             },
 
-            // "gdrom.B5T"
+            // jaguarcd.B5T
             new byte[]
             {
-                4, 0
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
             },
 
-            // "jaguarcd.B5T"
-            new byte[]
-            {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "mixed.B5T"
-            new byte[]
-            {
-                4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            },
-
-            // "multitrack.B5T"
-            new byte[]
-            {
-                4, 4, 4
-            },
-
-            // "pcengine.B5T"
+            // pcengine.B5T
             new byte[]
             {
                 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
             },
 
-            // "pcfx.B5T"
+            // pcfx.B5T
             new byte[]
             {
                 0, 4, 4, 4, 4, 0, 0, 0
             },
 
-            // "videocd.B5T"
+            // report_audiocd.B5T
             new byte[]
             {
-                4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            },
+
+            // report_cdr.B5T
+            new byte[]
+            {
+                4
+            },
+
+            // report_cdrom.B5T
+            new byte[]
+            {
+                4
+            },
+
+            // report_cdrw_2x.B5T
+            new byte[]
+            {
+                4
+            },
+
+            // test_all_tracks_are_track1.B5T
+            new byte[]
+            {
+                4, 4
+            },
+
+            // test_audiocd_cdtext.B5T
+            new byte[]
+            {
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            },
+
+            // test_castrated_leadout.B5T
+            new byte[]
+            {
+                2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+            },
+
+            // test_data_track_as_audio.B5T
+            new byte[]
+            {
+                4, 2
+            },
+
+            // test_data_track_as_audio_fixed_sub.B5T
+            new byte[]
+            {
+                4, 2
+            },
+
+            // test_disc_starts_at_track2.B5T
+            new byte[]
+            {
+                4, 4
+            },
+
+            // test_enhancedcd.B5T
+            new byte[]
+            {
+                0, 0, 4
+            },
+
+            // test_incd_udf200_finalized.B5T
+            new byte[]
+            {
+                7
+            },
+
+            // test_multiple_indexes.B5T
+            new byte[]
+            {
+                2, 0, 0, 8, 1
+            },
+
+            // test_multisession.B5T
+            new byte[]
+            {
+                4, 4, 4, 4
+            },
+
+            // test_track1_overlaps_session2.B5T
+            new byte[]
+            {
+                4, 4
+            },
+
+            // test_track2_inside_session2_leadin.B5T
+            new byte[]
+            {
+                4, 4, 4
+            },
+
+            // test_track2_inside_track1.B5T
+            new byte[]
+            {
+                4, 4, 4
+            },
+
+            // test_videocd.B5T
+            new byte[]
+            {
+                4, 4
             }
         };
 
@@ -889,6 +1211,7 @@ namespace Aaru.Tests.Images
             for(int i = 0; i < _testFiles.Length; i++)
             {
                 images[i] = new DiscImages.BlindWrite5();
+                System.Console.WriteLine(_testFiles[i]);
                 Assert.AreEqual(true, images[i].Open(filters[i]), $"Open: {_testFiles[i]}");
             }
 
