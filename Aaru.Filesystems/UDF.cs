@@ -254,7 +254,7 @@ namespace Aaru.Filesystems
 
             sbInformation.AppendFormat("Volume uses {0} bytes per block", lvd.logicalBlockSize).AppendLine();
 
-            sbInformation.AppendFormat("Volume was las written in {0}", EcmaToDateTime(lvid.recordingDateTime)).
+            sbInformation.AppendFormat("Volume was last written in {0}", EcmaToDateTime(lvid.recordingDateTime)).
                           AppendLine();
 
             sbInformation.AppendFormat("Volume contains {0} partitions", lvid.numberOfPartitions).AppendLine();
