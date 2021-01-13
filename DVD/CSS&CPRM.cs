@@ -70,6 +70,23 @@ namespace Aaru.Decoders.DVD
                 Reserved4         = response[7]
             };
         }
+        
+        public static RegionalPlaybackControlState? DecodeRegionalPlaybackControlState(byte[] response)
+        {
+            if(response?.Length != 8)
+                return null;
+
+            return new RegionalPlaybackControlState
+            {
+                DataLength = (ushort)((response[0] << 8) + response[1]),
+                Reserved1 = response[2],
+                Reserved2 = response[3],
+                TypeCode_VendorResetsAvailable_UserControlledChangesAvailable = response[4],
+                RegionMask = response[5],
+                RPCScheme = response[6],
+                Reserved3 = response[7]
+            };
+        }
 
         public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)
         {
