@@ -39,12 +39,15 @@ using Aaru.Decoders.Bluray;
 using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decryption;
+using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using Schemas;
 using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 
@@ -505,6 +508,109 @@ namespace Aaru.Core.Devices.Dumping
                         tmpBuf = new byte[cmdBuf.Length - 4];
                         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                         mediaTags.Add(MediaTagType.DVD_CMI, tmpBuf);
+
+                        CSS_CPRM.LeadInCopyright? cmi = CSS_CPRM.DecodeLeadInCopyright(cmdBuf);
+
+                        if(cmi!.Value.CopyrightType == CopyrightType.NoProtection)
+                        {
+                            UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
+                        }
+                        else
+                        {
+                            if(!_decryption)
+                            {
+                                UpdateStatus?.Invoke("Drive reports the disc uses copy protection. " +
+                                                     "The dump might be incorrect unless decryption is enabled.");
+                            }
+                            else
+                            {
+                                if(cmi!.Value.CopyrightType == CopyrightType.CSS)
+                                {
+                                    UpdateStatus?.Invoke("Drive reports disc uses CSS copy protection.");
+
+                                    var dvdDecrypt = new DVDDecryption(_dev);
+
+                                    sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
+                                                                  CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.
+                                                                      CopyrightType, _dev.Timeout, out _);
+
+                                    if(!sense)
+                                    {
+                                        byte[] busKey = cmdBuf;
+
+                                        UpdateStatus?.Invoke("Reading disc key.");
+                                        sense = dvdDecrypt.ReadDiscKey(out cmdBuf, out _, _dev.Timeout, out _);
+
+                                        if(!sense)
+                                        {
+                                            CSS_CPRM.DiscKey? decodedDiscKey = CSS.DecodeDiscKey(cmdBuf, busKey);
+
+                                            sense = dvdDecrypt.ReadAsf(out cmdBuf, out _,
+                                                                       DvdCssKeyClass.DvdCssCppmOrCprm, _dev.Timeout,
+                                                                       out _);
+
+                                            if(!sense)
+                                            {
+                                                if(cmdBuf[7] == 1)
+                                                {
+                                                    UpdateStatus?.Invoke("Disc and drive authentication succeeded.");
+
+                                                    sense = dvdDecrypt.ReadRpc(out cmdBuf, out _,
+                                                                               DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                                               _dev.Timeout, out _);
+
+                                                    if(!sense)
+                                                    {
+                                                        CSS_CPRM.RegionalPlaybackControlState? rpc =
+                                                            CSS_CPRM.DecodeRegionalPlaybackControlState(cmdBuf);
+
+                                                        if(rpc.HasValue)
+                                                        {
+                                                            if(CSS.CheckRegion(rpc.Value, cmi.Value))
+                                                            {
+                                                                UpdateStatus?.Invoke("Disc and drive regions match.");
+                                                            }
+                                                            else
+                                                            {
+                                                                UpdateStatus?.
+                                                                    Invoke("Disc and drive regions do not match. The dump might be incorrect");
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if(decodedDiscKey.HasValue)
+                                                    {
+                                                        mediaTags.Add(MediaTagType.DVD_DiscKey,
+                                                                      decodedDiscKey.Value.Key);
+
+                                                        UpdateStatus?.Invoke("Decrypting disc key.");
+
+                                                        CSS.DecryptDiscKey(decodedDiscKey.Value.Key,
+                                                                           out byte[] discKey);
+
+                                                        if(discKey != null)
+                                                        {
+                                                            UpdateStatus?.Invoke("Decryption of disc key succeeded.");
+                                                            mediaTags.Add(MediaTagType.DVD_DiscKey_Decrypted, discKey);
+                                                        }
+                                                        else
+                                                        {
+                                                            UpdateStatus?.Invoke("Decryption of disc key failed.");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    UpdateStatus?.
+                                        Invoke($"Drive reports disc uses {CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.CopyrightType.ToString()} copy protection. " +
+                                               "This is not yet supported and the dump might be incorrect.");
+                                }
+                            }
+                        }
                     }
             }
             #endregion DVD-ROM
