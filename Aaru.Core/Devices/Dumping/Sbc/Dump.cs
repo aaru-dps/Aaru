@@ -53,6 +53,7 @@ using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 using MediaType = Aaru.CommonTypes.MediaType;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
 using Version = Aaru.CommonTypes.Interop.Version;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 
@@ -65,7 +66,9 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="opticalDisc">If device contains an optical disc (e.g. DVD or BD)</param>
         /// <param name="mediaTags">Media tags as retrieved in MMC layer</param>
         /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
-        void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc)
+        /// <param name="dvdDecrypt">DVD CSS decryption module</param>
+        void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc,
+                 DVDDecryption dvdDecrypt = null)
         {
             bool               sense;
             byte               scsiMediumType     = 0;
@@ -671,7 +674,7 @@ namespace Aaru.Core.Devices.Dumping
             else
                 ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                             ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                            ref newTrim);
+                            ref newTrim, dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted]);
 
             end = DateTime.UtcNow;
             mhddLog.Close();

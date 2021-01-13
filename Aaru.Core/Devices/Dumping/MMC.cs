@@ -59,12 +59,13 @@ namespace Aaru.Core.Devices.Dumping
         /// <summary>Dumps an optical disc</summary>
         void Mmc()
         {
-            MediaType dskType = MediaType.Unknown;
-            bool      sense;
-            byte[]    tmpBuf;
-            bool      compactDisc      = true;
-            bool      gotConfiguration = false;
-            bool      isXbox           = false;
+            MediaType     dskType = MediaType.Unknown;
+            bool          sense;
+            byte[]        tmpBuf;
+            bool          compactDisc      = true;
+            bool          gotConfiguration = false;
+            bool          isXbox           = false;
+            DVDDecryption dvdDecrypt       = null;
             _speedMultiplier = 1;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
@@ -528,7 +529,7 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     UpdateStatus?.Invoke("Drive reports disc uses CSS copy protection.");
 
-                                    var dvdDecrypt = new DVDDecryption(_dev);
+                                    dvdDecrypt = new DVDDecryption(_dev);
 
                                     sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
                                                                   CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.
@@ -866,7 +867,7 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            Sbc(mediaTags, dskType, true);
+            Sbc(mediaTags, dskType, true, dvdDecrypt);
         }
 
         static void AddMediaTagToSidecar(string outputPath, KeyValuePair<MediaTagType, byte[]> tag,
