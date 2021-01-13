@@ -115,28 +115,28 @@ namespace Aaru.Decoders.DVD
                 sb.Append("Disc can be played in the following regions:");
 
                 if((decoded.RegionInformation & 0x01) != 0x01)
-                    sb.Append(" 0");
-
-                if((decoded.RegionInformation & 0x02) != 0x02)
                     sb.Append(" 1");
 
-                if((decoded.RegionInformation & 0x04) != 0x04)
+                if((decoded.RegionInformation & 0x02) != 0x02)
                     sb.Append(" 2");
 
-                if((decoded.RegionInformation & 0x08) != 0x08)
+                if((decoded.RegionInformation & 0x04) != 0x04)
                     sb.Append(" 3");
 
-                if((decoded.RegionInformation & 0x10) != 0x10)
+                if((decoded.RegionInformation & 0x08) != 0x08)
                     sb.Append(" 4");
 
-                if((decoded.RegionInformation & 0x20) != 0x20)
+                if((decoded.RegionInformation & 0x10) != 0x10)
                     sb.Append(" 5");
 
-                if((decoded.RegionInformation & 0x40) != 0x40)
+                if((decoded.RegionInformation & 0x20) != 0x20)
                     sb.Append(" 6");
 
-                if((decoded.RegionInformation & 0x80) != 0x80)
+                if((decoded.RegionInformation & 0x40) != 0x40)
                     sb.Append(" 7");
+
+                if((decoded.RegionInformation & 0x80) != 0x80)
+                    sb.Append(" 8");
             }
 
             return sb.ToString();
