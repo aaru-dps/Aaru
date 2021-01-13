@@ -357,6 +357,7 @@ namespace Aaru.DiscImages
                 case DataType.XboxPfi:                          return MediaTagType.Xbox_PFI;
                 case DataType.CompactDiscMediaCatalogueNumber:  return MediaTagType.CD_MCN;
                 case DataType.CompactDiscLeadIn:                return MediaTagType.CD_LeadIn;
+                case DataType.DvdDiscKeyDecrypted:              return MediaTagType.DVD_DiscKey_Decrypted;
                 default:                                        throw new ArgumentOutOfRangeException();
             }
         }
@@ -435,6 +436,7 @@ namespace Aaru.DiscImages
                 case MediaTagType.Xbox_PFI: return DataType.XboxPfi;
                 case MediaTagType.CD_MCN: return DataType.CompactDiscMediaCatalogueNumber;
                 case MediaTagType.CD_LeadIn: return DataType.CompactDiscLeadIn;
+                case MediaTagType.DVD_DiscKey_Decrypted: return DataType.DvdDiscKeyDecrypted;
                 default: throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
             }
         }

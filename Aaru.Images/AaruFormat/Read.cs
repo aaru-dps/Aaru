@@ -353,6 +353,29 @@ namespace Aaru.DiscImages
                                                            GC.GetTotalMemory(false));
 
                                 break;
+                            case DataType.DvdSectorCpiMai: 
+                                _sectorCpiMai = data;
+                                
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdCmi))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdCmi);
+                                
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKey))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKey);
+                                
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
+
+                                break;
+                            case DataType.DvdDiscKeyDecrypted: 
+                                _sectorDecryptedTitleKey = data;
+                                
+                                if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKeyDecrypted))
+                                    _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKeyDecrypted);
+                                
+                                AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                           GC.GetTotalMemory(false));
+
+                                break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
 
@@ -1528,6 +1551,9 @@ namespace Aaru.DiscImages
                     case SectorTagType.CdSectorSubHeader:
                     case SectorTagType.CdSectorSync: break;
                     case SectorTagType.CdTrackFlags:
+                    case SectorTagType.DvdCmi:
+                    case SectorTagType.DvdTitleKey:
+                    case SectorTagType.DvdTitleKeyDecrypted: 
                         return _trackFlags.TryGetValue((byte)sectorAddress, out byte flags) ? new[]
                         {
                             flags
@@ -1696,6 +1722,51 @@ namespace Aaru.DiscImages
 
                         break;
                     }
+                    
+                    case TrackType.Data:
+                    {
+                        if(_imageInfo.MediaType == MediaType.DVDROM)
+                        {
+                            switch(tag)
+                            {
+                                case SectorTagType.DvdCmi:
+                                {
+                                    sectorOffset = 0;
+                                    sectorSize   = 1;
+                                    sectorSkip   = 5;
+                                    dataSource   = _sectorCpiMai;
+
+                                    break;
+                                }
+                                case SectorTagType.DvdTitleKey:
+                                {
+                                    sectorOffset = 1;
+                                    sectorSize   = 5;
+                                    sectorSkip   = 0;
+                                    dataSource   = _sectorCpiMai;
+
+                                    break;
+                                }
+                                case SectorTagType.DvdTitleKeyDecrypted:
+                                {
+                                    sectorOffset = 0;
+                                    sectorSize   = 5;
+                                    sectorSkip   = 0;
+                                    dataSource   = _sectorDecryptedTitleKey;
+
+                                    break;
+                                }
+                                default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                            }
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Unsupported tag requested", nameof(tag));
+                        }
+
+                        break;
+                    }
+
 
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }

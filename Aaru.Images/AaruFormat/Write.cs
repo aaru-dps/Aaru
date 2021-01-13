@@ -534,6 +534,19 @@ namespace Aaru.DiscImages
                                                                GC.GetTotalMemory(false));
 
                                     break;
+                                case DataType.DvdSectorCpiMai: 
+                                    _sectorCpiMai = data;
+                                    
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
+                                case DataType.DvdSectorTitleKeyDecrypted: 
+                                    _sectorDecryptedTitleKey = data;
+                                    
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+                                    break;
                                 default:
                                     MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
 
@@ -4272,6 +4285,52 @@ namespace Aaru.DiscImages
                     _sectorSubchannel ??= new byte[_imageInfo.Sectors * 96];
 
                     Array.Copy(data, 0, _sectorSubchannel, (int)(96 * sectorAddress), 96);
+
+                    return true;
+                }
+                
+                case SectorTagType.DvdCmi:
+                {
+                    if(data.Length != 1)
+                    {
+                        ErrorMessage = "Incorrect data size for CMI";
+
+                        return false;
+                    }
+                    
+                    _sectorCpiMai ??= new byte[_imageInfo.Sectors * 6];
+                    
+                    Array.Copy(data, 0, _sectorCpiMai, (int)(6 * sectorAddress), 1);
+
+                    return true;
+                }
+                case SectorTagType.DvdTitleKey:
+                {
+                    if(data.Length != 5)
+                    {
+                        ErrorMessage = "Incorrect data size for title key";
+
+                        return false;
+                    }
+                    
+                    _sectorCpiMai ??= new byte[_imageInfo.Sectors * 6];
+                    
+                    Array.Copy(data, 0, _sectorCpiMai, (int)(1 + (6 * sectorAddress)), 5);
+                    
+                    return true;
+                }
+                case SectorTagType.DvdTitleKeyDecrypted:
+                {
+                    if(data.Length != 5)
+                    {
+                        ErrorMessage = "Incorrect data size for decrypted title key";
+
+                        return false;
+                    }
+                    
+                    _sectorDecryptedTitleKey ??= new byte[_imageInfo.Sectors * 5];
+                    
+                    Array.Copy(data, 0, _sectorDecryptedTitleKey, (int)(5 * sectorAddress), 5);
 
                     return true;
                 }

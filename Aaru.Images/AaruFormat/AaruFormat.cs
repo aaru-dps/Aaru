@@ -137,6 +137,8 @@ namespace Aaru.DiscImages
         bool _rewinded;
         /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
         byte[] _sectorPrefix;
+        byte[]            _sectorCpiMai;
+        byte[]            _sectorDecryptedTitleKey;
         uint[]            _sectorPrefixDdt;
         NonClosableStream _sectorPrefixMs;
         /// <summary>Cache for data that goes side by side with user data (e.g. CompactDisc subchannel).</summary>

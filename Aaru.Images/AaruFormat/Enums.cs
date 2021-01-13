@@ -211,7 +211,13 @@ namespace Aaru.DiscImages
             /// <summary>CompactDisc MODE 2 subheader</summary>
             CompactDiscMode2Subheader = 78,
             /// <summary>CompactDisc Lead-in</summary>
-            CompactDiscLeadIn = 79
+            CompactDiscLeadIn = 79,
+            /// <summary>Decrypted DVD Disc Key</summary>
+            DvdDiscKeyDecrypted = 80,
+            /// <summary>DVD CPI_MAI</summary>
+            DvdSectorCpiMai = 81,
+            /// <summary>Decrypted DVD Title Key</summary>
+            DvdSectorTitleKeyDecrypted = 82
         }
 
         /// <summary>List of known blocks types</summary>
