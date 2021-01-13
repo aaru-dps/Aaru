@@ -96,6 +96,8 @@ namespace Aaru.Core.Devices.Dumping
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;
         bool                                _decryption;
+        bool                                _storeEncrypted;
+        bool                                _titleKeys;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -133,6 +135,8 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="maximumReadable">Number of maximum blocks to be read at once (can be overriden by database)</param>
         /// <param name="useBufferedReads">
         /// <param name="decryption">If decryption should be used.</param>
+        /// <param name="storeEncrypted">Store encrypted data as is</param>
+        /// <param name="titleKeys">Dump DVD CSS title keys</param>
         ///     If MMC/SD does not support CMD23, use OS buffered reads instead of multiple single block
         ///     commands
         /// </param>
@@ -143,7 +147,7 @@ namespace Aaru.Core.Devices.Dumping
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
                     bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
-                    bool useBufferedReads, bool decryption)
+                    bool useBufferedReads, bool decryption, bool storeEncrypted, bool titleKeys)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -182,6 +186,8 @@ namespace Aaru.Core.Devices.Dumping
             _generateSubchannels   = generateSubchannels;
             _useBufferedReads      = useBufferedReads;
             _decryption            = decryption;
+            _storeEncrypted        = storeEncrypted;
+            _titleKeys             = titleKeys;
         }
 
         /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
