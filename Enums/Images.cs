@@ -109,7 +109,11 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>DVD sector copyright information</summary>
         DvdCmi = 12,
         /// <summary>Floppy address mark (contents depend on underlying floppy format)</summary>
-        FloppyAddressMark = 13
+        FloppyAddressMark = 13,
+        /// <summary>DVD sector title key, 5 bytes</summary>
+        DvdTitleKey = 14,
+        /// <summary>Decrypted DVD sector title key, 5 bytes</summary>
+        DvdTitleKeyDecrypted = 15
     }
 
     /// <summary>Metadata present for each media.</summary>
@@ -264,7 +268,9 @@ namespace Aaru.CommonTypes.Enums
         /// <summary>User TOC, contains fragments, track names, and can be from 1 to 3 sectors of 2336 bytes</summary>
         MiniDiscUTOC = 71,
         /// <summary>Not entirely clear kind of TOC that only appears on MD-DATA discs</summary>
-        MiniDiscDTOC = 72
+        MiniDiscDTOC = 72,
+        /// <summary>Decrypted DVD disc key</summary>
+        DVD_DiscKey_Decrypted = 73
     }
 
     /// <summary>Enumeration of media types defined in CICM metadata</summary>
