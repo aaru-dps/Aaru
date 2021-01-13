@@ -173,6 +173,13 @@ namespace Aaru
                 }, "Shows debug output from plugins.")
                 {
                     Argument = new Argument<bool>(() => false)
+                },
+                new Option(new[]
+                {
+                    "--decryption" 
+                }, "Enables the ability to decrypt encrypted data.")
+                {
+                    Argument = new Argument<bool>(() => true)
                 }
             };
 

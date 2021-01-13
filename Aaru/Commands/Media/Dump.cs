@@ -298,7 +298,7 @@ namespace Aaru.Commands.Media
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                                  bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
-                                 uint maxBlocks, bool useBufferedReads)
+                                 uint maxBlocks, bool useBufferedReads, bool decryption)
         {
             MainClass.PrintCopyright();
 
@@ -634,7 +634,8 @@ namespace Aaru.Commands.Media
                                       outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
                                       firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
                                       fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads);
+                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads,
+                                      decryption);
 
                 dumper.UpdateStatus         += Progress.UpdateStatus;
                 dumper.ErrorMessage         += Progress.ErrorMessage;
