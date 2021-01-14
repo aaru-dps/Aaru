@@ -186,6 +186,16 @@ namespace Aaru.Core.Devices.Dumping
                                 }
                             }
                         }
+                        
+                        if(!_storeEncrypted && _titleKeys)
+                        {
+                            // Todo: Flag in the _outputPlugin that a sector has been decrypted
+                            buffer = CSS.DecryptSector(buffer,
+                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi),
+                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead,
+                                                           SectorTagType.DvdTitleKeyDecrypted),
+                                                       blocksToRead, blockSize);
+                        }
                     }
 
                     mhddLog.Write(i, cmdDuration);
