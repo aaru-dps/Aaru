@@ -45,10 +45,12 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Decoders.Xbox;
+using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 namespace Aaru.Core.Media.Info
 {
@@ -712,18 +714,33 @@ namespace Aaru.Core.Media.Info
                     #endregion DVD-R and HD DVD-R
                 }
 
+                var dvdDecrypt = new Dump(dev);
+                sense = dvdDecrypt.ReadBusKey(out cmdBuf, out senseBuf, CopyrightType.CSS, dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                  MmcDiscStructureFormat.DiscKey, dvdDecrypt.Agid, dev.Timeout, out _);
+
+                    if(sense)
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Disc Key\n{0}",
+                                                   Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        DvdDiscKey = cmdBuf;
+
+                    sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                  MmcDiscStructureFormat.SectorCopyrightInformation, dvdDecrypt.Agid,
+                                                  dev.Timeout, out _);
+
+                    if(sense)
+                        AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Sector CMI\n{0}",
+                                                   Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                    else
+                        DvdSectorCmi = cmdBuf;
+                }
+
                 #region Require drive authentication, won't work
                 /*
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.DiscKey, 0, dev.Timeout, out _);
-                if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Disc Key\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_disckey.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
-                sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.SectorCopyrightInformation, 0, dev.Timeout, out _);
-                if(sense)
-                    AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Sector CMI\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
-                else
-                    DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_sectorcmi.bin", "SCSI READ DISC STRUCTURE", cmdBuf);
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.DVD, 0, 0, MmcDiscStructureFormat.MediaIdentifier, 0, dev.Timeout, out _);
                 if(sense)
                     AaruConsole.DebugWriteLine("Media-Info command", "READ DISC STRUCTURE: Media ID\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
@@ -1514,5 +1531,7 @@ namespace Aaru.Core.Media.Info
         public DensitySupport.DensitySupportHeader?     DensitySupportHeader          { get; }
         public byte[]                                   MediaTypeSupport              { get; }
         public DensitySupport.MediaTypeSupportHeader?   MediaTypeSupportHeader        { get; }
+        public byte[]                                   DvdSectorCmi                  { get; }
+        public byte[]                                   DvdDiscKey                    { get; }
     }
 }
