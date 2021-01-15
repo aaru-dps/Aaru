@@ -25,12 +25,17 @@
 // ****************************************************************************/
 
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
+using Aaru.Decoders.DVD;
 using Aaru.Decoders.SCSI;
+using Aaru.Decryption;
+using Aaru.Decryption.DVD;
 using Aaru.Devices;
 using Schemas;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -307,6 +312,100 @@ namespace Aaru.Core.Devices.Dumping
 
             if(newBlank)
                 _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+
+            EndProgress?.Invoke();
+        }
+
+        void RetryTitleKeys(DVDDecryption dvdDecrypt, byte[] discKey, ref double totalDuration)
+        {
+            int    pass    = 1;
+            bool   forward = true;
+            bool   sense;
+            byte[] buffer;
+
+            InitProgress?.Invoke();
+
+            repeatRetry:
+            ulong[] tmpArray = _resume.MissingTitleKeys.ToArray();
+
+            foreach(ulong missingKey in tmpArray)
+            {
+                if(_aborted)
+                {
+                    UpdateStatus?.Invoke("Aborted!");
+                    _dumpLog.WriteLine("Aborted!");
+
+                    break;
+                }
+
+                PulseProgress?.Invoke(string.Format("Retrying title key {0}, pass {1}, {2}", missingKey, pass,
+                                                    forward ? "forward" : "reverse"));
+
+                sense = dvdDecrypt.ReadTitleKey(out buffer, out _, DvdCssKeyClass.DvdCssCppmOrCprm, missingKey,
+                                                _dev.Timeout, out double cmdDuration);
+
+                totalDuration += cmdDuration;
+
+                if(!sense &&
+                   !_dev.Error)
+                {
+                    CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+
+                    if(titleKey.HasValue)
+                    {
+                        _outputPlugin.WriteSectorTag(new[]
+                        {
+                            titleKey.Value.CMI
+                        }, missingKey, SectorTagType.DvdCmi);
+
+                        if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
+                           titleKey.Value.Key.All(k => k == 0))
+                        {
+                            _outputPlugin.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, missingKey, SectorTagType.DvdTitleKey);
+
+                            _outputPlugin.WriteSectorTag(new byte[]
+                            {
+                                0, 0, 0, 0, 0
+                            }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+
+                            _resume.MissingTitleKeys.Remove(missingKey);
+                            UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                            _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+                        }
+                        else
+                        {
+                            _outputPlugin.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
+                            _resume.MissingTitleKeys.Remove(missingKey);
+
+                            if(discKey != null)
+                            {
+                                CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
+                                _outputPlugin.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
+                            }
+
+                            UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
+                            _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
+                        }
+                    }
+                }
+            }
+
+            if(pass < _retryPasses &&
+               !_aborted           &&
+               _resume.MissingTitleKeys.Count > 0)
+            {
+                pass++;
+                forward = !forward;
+                _resume.MissingTitleKeys.Sort();
+
+                if(!forward)
+                    _resume.MissingTitleKeys.Reverse();
+
+                goto repeatRetry;
+            }
 
             EndProgress?.Invoke();
         }
