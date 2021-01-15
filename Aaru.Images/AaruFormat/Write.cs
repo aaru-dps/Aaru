@@ -537,12 +537,21 @@ namespace Aaru.DiscImages
                                 case DataType.DvdSectorCpiMai: 
                                     _sectorCpiMai = data;
                                     
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdCmi))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdCmi);
+                                    
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKey))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKey);
+                                    
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                                GC.GetTotalMemory(false));
 
                                     break;
                                 case DataType.DvdSectorTitleKeyDecrypted: 
                                     _sectorDecryptedTitleKey = data;
+                                    
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKeyDecrypted))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKeyDecrypted);
                                     
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                                GC.GetTotalMemory(false));

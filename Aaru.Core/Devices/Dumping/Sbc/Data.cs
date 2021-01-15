@@ -63,7 +63,7 @@ namespace Aaru.Core.Devices.Dumping
         void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
                          ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
                          ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                         ref double imageWriteDuration, ref bool newTrim, DVDDecryption dvdDecrypt, byte[] discKey)
+                         ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
         {
             ulong    sectorSpeedStart = 0;
             bool     sense;

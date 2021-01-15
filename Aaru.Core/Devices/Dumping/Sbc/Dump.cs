@@ -667,6 +667,12 @@ namespace Aaru.Core.Devices.Dumping
 
             bool newTrim = false;
 
+            if(_decryption && _titleKeys)
+            {
+                UpdateStatus?.Invoke("Title keys dumping is enabled. This will be very slow.");
+                _resume.MissingTitleKeys ??= new List<ulong>(Enumerable.Range(0, (int)blocks).Select(n => (ulong)n));
+            }
+
             if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
                 ReadOpticalData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                                 ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
@@ -674,7 +680,7 @@ namespace Aaru.Core.Devices.Dumping
             else
                 ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                             ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                            ref newTrim, dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted]);
+                            ref newTrim, ref dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted]);
 
             end = DateTime.UtcNow;
             mhddLog.Close();

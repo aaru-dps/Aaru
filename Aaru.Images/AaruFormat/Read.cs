@@ -364,17 +364,17 @@ namespace Aaru.DiscImages
                                 
                                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                            GC.GetTotalMemory(false));
-
+                            
                                 break;
-                            case DataType.DvdDiscKeyDecrypted: 
+                            case DataType.DvdSectorTitleKeyDecrypted: 
                                 _sectorDecryptedTitleKey = data;
                                 
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKeyDecrypted))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKeyDecrypted);
-                                
+
                                 AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                            GC.GetTotalMemory(false));
-
+                            
                                 break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
