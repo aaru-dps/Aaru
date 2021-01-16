@@ -668,7 +668,7 @@ namespace Aaru.Core.Devices.Dumping
 
             bool newTrim = false;
 
-            if(_decryption && _titleKeys)
+            if(Settings.Settings.Current.EnableDecryption && _titleKeys)
             {
                 UpdateStatus?.Invoke("Title keys dumping is enabled. This will be very slow.");
                 _resume.MissingTitleKeys ??= new List<ulong>(Enumerable.Range(0, (int)blocks).Select(n => (ulong)n));
@@ -681,7 +681,9 @@ namespace Aaru.Core.Devices.Dumping
             else
                 ReadSbcData(blocks, blocksToRead, blockSize, currentTry, extents, ref currentSpeed, ref minSpeed,
                             ref maxSpeed, ref totalDuration, scsiReader, mhddLog, ibgLog, ref imageWriteDuration,
-                            ref newTrim, ref dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted]);
+                            ref newTrim, ref dvdDecrypt,
+                            mediaTags.ContainsKey(MediaTagType.DVD_DiscKey_Decrypted)
+                                ? mediaTags[MediaTagType.DVD_DiscKey_Decrypted] : null);
 
             end = DateTime.UtcNow;
             mhddLog.Close();
@@ -732,10 +734,10 @@ namespace Aaru.Core.Devices.Dumping
                _retryPasses > 0)
                 RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents);
 
-            if(_resume.MissingTitleKeys.Count > 0 &&
-               !_aborted                          &&
-               _retryPasses > 0                   &&
-               _decryption                        &&
+            if(_resume.MissingTitleKeys.Count > 0         &&
+               !_aborted                                  &&
+               _retryPasses > 0                           &&
+               Settings.Settings.Current.EnableDecryption &&
                _titleKeys)
                 RetryTitleKeys(dvdDecrypt, mediaTags[MediaTagType.DVD_DiscKey_Decrypted], ref totalDuration);
             #endregion Error handling

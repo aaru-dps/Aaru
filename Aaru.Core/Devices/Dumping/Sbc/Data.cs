@@ -105,22 +105,18 @@ namespace Aaru.Core.Devices.Dumping
                 if(!sense &&
                    !_dev.Error)
                 {
-                    if(_decryption)
+                    if(Settings.Settings.Current.EnableDecryption)
                     {
                         if(_titleKeys && discKey != null)
                         {
                             for(ulong j = 0; j < blocksToRead; j++)
                             {
                                 if(_aborted)
-                                {
                                     break;
-                                }
 
                                 if(!_resume.MissingTitleKeys.Contains(i + j))
-                                {
                                     // Key is already dumped.
                                     continue;
-                                }
 
                                 byte[] tmpBuf;
 
@@ -133,15 +129,14 @@ namespace Aaru.Core.Devices.Dumping
                                     CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
 
                                     if(titleKey.HasValue)
-                                    {
                                         _outputPlugin.WriteSectorTag(new[]
                                         {
                                             titleKey.Value.CMI
                                         }, i + j, SectorTagType.DvdCmi);
-                                    }
                                     else
                                         continue;
 
+                                    // If the CMI bit is 1, the sector is using copy protection, else it is not
                                     if((titleKey.Value.CMI & 0x80) >> 7 == 0)
                                     {
                                         // The CMI indicates this sector is not encrypted.
@@ -159,11 +154,11 @@ namespace Aaru.Core.Devices.Dumping
 
                                         continue;
                                     }
-
+                                    
+                                    // According to libdvdcss, if the key is all zeroes, the sector is actually
+                                    // not encrypted even if the CMI says it is.
                                     if(titleKey.Value.Key.All(k => k == 0))
                                     {
-                                        // According to libdvdcss, if the key is all zeroes, the sector is actually
-                                        // not encrypted even if the CMI says it is.
                                         _outputPlugin.WriteSectorTag(new byte[]
                                         {
                                             0, 0, 0, 0, 0
@@ -189,14 +184,12 @@ namespace Aaru.Core.Devices.Dumping
                         }
                         
                         if(!_storeEncrypted && _titleKeys)
-                        {
                             // Todo: Flag in the _outputPlugin that a sector has been decrypted
                             buffer = CSS.DecryptSector(buffer,
                                                        _outputPlugin.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi),
                                                        _outputPlugin.ReadSectorsTag(i, blocksToRead,
                                                            SectorTagType.DvdTitleKeyDecrypted),
                                                        blocksToRead, blockSize);
-                        }
                     }
 
                     mhddLog.Write(i, cmdDuration);

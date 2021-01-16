@@ -514,16 +514,12 @@ namespace Aaru.Core.Devices.Dumping
                         CSS_CPRM.LeadInCopyright? cmi = CSS_CPRM.DecodeLeadInCopyright(cmdBuf);
 
                         if(cmi!.Value.CopyrightType == CopyrightType.NoProtection)
-                        {
                             UpdateStatus?.Invoke("Drive reports no copy protection on disc.");
-                        }
                         else
                         {
-                            if(!_decryption)
-                            {
+                            if(!Settings.Settings.Current.EnableDecryption)
                                 UpdateStatus?.Invoke("Drive reports the disc uses copy protection. " +
-                                                     "The dump might be incorrect unless decryption is enabled.");
-                            }
+                                                     "The dump will be incorrect unless decryption is enabled.");
                             else
                             {
                                 if(cmi!.Value.CopyrightType == CopyrightType.CSS)
@@ -568,15 +564,9 @@ namespace Aaru.Core.Devices.Dumping
 
                                                         if(rpc.HasValue)
                                                         {
-                                                            if(CSS.CheckRegion(rpc.Value, cmi.Value))
-                                                            {
-                                                                UpdateStatus?.Invoke("Disc and drive regions match.");
-                                                            }
-                                                            else
-                                                            {
-                                                                UpdateStatus?.
-                                                                    Invoke("Disc and drive regions do not match. The dump might be incorrect");
-                                                            }
+                                                            UpdateStatus?.Invoke(CSS.CheckRegion(rpc.Value, cmi.Value)
+                                                                ? "Disc and drive regions match."
+                                                                : "Disc and drive regions do not match. The dump will be incorrect");
                                                         }
                                                     }
 
@@ -596,9 +586,7 @@ namespace Aaru.Core.Devices.Dumping
                                                             mediaTags.Add(MediaTagType.DVD_DiscKey_Decrypted, discKey);
                                                         }
                                                         else
-                                                        {
                                                             UpdateStatus?.Invoke("Decryption of disc key failed.");
-                                                        }
                                                     }
                                                 }
                                             }
@@ -609,7 +597,7 @@ namespace Aaru.Core.Devices.Dumping
                                 {
                                     UpdateStatus?.
                                         Invoke($"Drive reports disc uses {CSS_CPRM.DecodeLeadInCopyright(cmdBuf)!.Value.CopyrightType.ToString()} copy protection. " +
-                                               "This is not yet supported and the dump might be incorrect.");
+                                               "This is not yet supported and the dump will be incorrect.");
                                 }
                             }
                         }

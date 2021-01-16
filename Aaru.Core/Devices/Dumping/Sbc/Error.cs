@@ -359,6 +359,8 @@ namespace Aaru.Core.Devices.Dumping
                             titleKey.Value.CMI
                         }, missingKey, SectorTagType.DvdCmi);
 
+                        // If the CMI bit is 1, the sector is using copy protection, else it is not
+                        // If the decoded title key is zeroed, there should be no copy protection
                         if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
                            titleKey.Value.Key.All(k => k == 0))
                         {
