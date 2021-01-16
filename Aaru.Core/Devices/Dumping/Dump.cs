@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2020-2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -95,6 +96,8 @@ namespace Aaru.Core.Devices.Dumping
         int                                 _speed;
         int                                 _speedMultiplier;
         bool                                _supportsPlextorD8;
+        readonly bool                       _storeEncrypted;
+        readonly bool                       _titleKeys;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -134,6 +137,8 @@ namespace Aaru.Core.Devices.Dumping
         ///     If MMC/SD does not support CMD23, use OS buffered reads instead of multiple single block
         ///     commands
         /// </param>
+        /// <param name="storeEncrypted">Store encrypted data as is</param>
+        /// <param name="titleKeys">Dump DVD CSS title keys</param>
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
@@ -141,7 +146,7 @@ namespace Aaru.Core.Devices.Dumping
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed, bool @private,
                     bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel, bool fixSubchannelCrc,
                     bool skipCdireadyHole, ErrorLog errorLog, bool generateSubchannels, uint maximumReadable,
-                    bool useBufferedReads)
+                    bool useBufferedReads, bool storeEncrypted, bool titleKeys)
         {
             _doResume              = doResume;
             _dev                   = dev;
@@ -179,6 +184,8 @@ namespace Aaru.Core.Devices.Dumping
             _errorLog              = errorLog;
             _generateSubchannels   = generateSubchannels;
             _useBufferedReads      = useBufferedReads;
+            _storeEncrypted        = storeEncrypted;
+            _titleKeys             = titleKeys;
         }
 
         /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>

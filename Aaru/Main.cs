@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2020-2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -173,7 +174,7 @@ namespace Aaru
                 }, "Shows debug output from plugins.")
                 {
                     Argument = new Argument<bool>(() => false)
-                }
+                },
             };
 
             rootCommand.Description =

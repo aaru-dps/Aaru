@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2020-2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -529,6 +530,29 @@ namespace Aaru.DiscImages
                                     break;
                                 case DataType.CompactDiscMode2Subheader:
                                     _mode2Subheaders = data;
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
+                                case DataType.DvdSectorCpiMai:
+                                    _sectorCpiMai = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdCmi))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdCmi);
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKey))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKey);
+
+                                    AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
+                                                               GC.GetTotalMemory(false));
+
+                                    break;
+                                case DataType.DvdSectorTitleKeyDecrypted:
+                                    _sectorDecryptedTitleKey = data;
+
+                                    if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdTitleKeyDecrypted))
+                                        _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdTitleKeyDecrypted);
 
                                     AaruConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                                GC.GetTotalMemory(false));
@@ -3590,6 +3614,153 @@ namespace Aaru.DiscImages
                         _blockStream = null;
                     }
 
+                    if(_sectorCpiMai != null)
+                    {
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.DvdSectorCpiMai,
+                            offset    = (ulong)_imageStream.Position
+                        };
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing DVD CPI_MAI block to position {0}",
+                                                   idxEntry.offset);
+
+                        Crc64Context.Data(_sectorCpiMai, out byte[] blockCrc);
+
+                        var cpiMaiBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.DvdSectorCpiMai,
+                            length     = (uint)_sectorCpiMai.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 6
+                        };
+
+                        byte[] lzmaProperties = null;
+
+                        if(!_compress)
+                        {
+                            cpiMaiBlock.compression = CompressionType.None;
+                            cpiMaiBlock.cmpCrc64    = cpiMaiBlock.crc64;
+                            cpiMaiBlock.cmpLength   = cpiMaiBlock.length;
+                            _blockStream            = new NonClosableStream(_sectorCpiMai);
+                        }
+                        else
+                        {
+                            startCompress = DateTime.Now;
+                            _blockStream  = new NonClosableStream();
+
+                            lzmaProperties =
+                                CompressDataToStreamWithLZMA(_sectorCpiMai, _lzmaEncoderProperties, _blockStream);
+
+                            var cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(_blockStream.ToArray());
+                            blockCrc                = cmpCrc.Final();
+                            cpiMaiBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            cpiMaiBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            cpiMaiBlock.compression = CompressionType.Lzma;
+
+                            endCompress = DateTime.Now;
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0} seconds to compress CPI_MAI",
+                                                       (endCompress - startCompress).TotalSeconds);
+                        }
+
+                        _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                        MemoryMarshal.Write(_structureBytes, ref cpiMaiBlock);
+                        _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
+
+                        if(cpiMaiBlock.compression == CompressionType.Lzma ||
+                           cpiMaiBlock.compression == CompressionType.LzmaClauniaSubchannelTransform)
+                            _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+
+                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+
+                        _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                              t.dataType  == DataType.DvdSectorCpiMai);
+
+                        _index.Add(idxEntry);
+                        _blockStream.ReallyClose();
+                        _blockStream = null;
+                    }
+
+                    if(_sectorDecryptedTitleKey != null)
+                    {
+                        idxEntry = new IndexEntry
+                        {
+                            blockType = BlockType.DataBlock,
+                            dataType  = DataType.DvdSectorTitleKeyDecrypted,
+                            offset    = (ulong)_imageStream.Position
+                        };
+
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                   "Writing decrypted DVD title key block to position {0}",
+                                                   idxEntry.offset);
+
+                        Crc64Context.Data(_sectorDecryptedTitleKey, out byte[] blockCrc);
+
+                        var titleKeyBlock = new BlockHeader
+                        {
+                            identifier = BlockType.DataBlock,
+                            type       = DataType.DvdSectorTitleKeyDecrypted,
+                            length     = (uint)_sectorDecryptedTitleKey.Length,
+                            crc64      = BitConverter.ToUInt64(blockCrc, 0),
+                            sectorSize = 5
+                        };
+
+                        byte[] lzmaProperties = null;
+
+                        if(!_compress)
+                        {
+                            titleKeyBlock.compression = CompressionType.None;
+                            titleKeyBlock.cmpCrc64    = titleKeyBlock.crc64;
+                            titleKeyBlock.cmpLength   = titleKeyBlock.length;
+                            _blockStream              = new NonClosableStream(_sectorDecryptedTitleKey);
+                        }
+                        else
+                        {
+                            startCompress = DateTime.Now;
+                            _blockStream  = new NonClosableStream();
+
+                            lzmaProperties =
+                                CompressDataToStreamWithLZMA(_sectorDecryptedTitleKey, _lzmaEncoderProperties,
+                                                             _blockStream);
+
+                            var cmpCrc = new Crc64Context();
+                            cmpCrc.Update(lzmaProperties);
+                            cmpCrc.Update(_blockStream.ToArray());
+                            blockCrc                  = cmpCrc.Final();
+                            titleKeyBlock.cmpLength   = (uint)_blockStream.Length + LZMA_PROPERTIES_LENGTH;
+                            titleKeyBlock.cmpCrc64    = BitConverter.ToUInt64(blockCrc, 0);
+                            titleKeyBlock.compression = CompressionType.Lzma;
+
+                            endCompress = DateTime.Now;
+
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
+                                                       "Took {0} seconds to compress decrypted DVD title keys",
+                                                       (endCompress - startCompress).TotalSeconds);
+                        }
+
+                        _structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                        MemoryMarshal.Write(_structureBytes, ref titleKeyBlock);
+                        _imageStream.Write(_structureBytes, 0, _structureBytes.Length);
+
+                        if(titleKeyBlock.compression == CompressionType.Lzma ||
+                           titleKeyBlock.compression == CompressionType.LzmaClauniaSubchannelTransform)
+                            _imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
+
+                        _imageStream.Write(_blockStream.ToArray(), 0, (int)_blockStream.Length);
+
+                        _index.RemoveAll(t => t.blockType == BlockType.DataBlock &&
+                                              t.dataType  == DataType.DvdSectorTitleKeyDecrypted);
+
+                        _index.Add(idxEntry);
+                        _blockStream.ReallyClose();
+                        _blockStream = null;
+                    }
+
                     List<TrackEntry>            trackEntries            = new List<TrackEntry>();
                     List<CompactDiscIndexEntry> compactDiscIndexEntries = new List<CompactDiscIndexEntry>();
 
@@ -4272,6 +4443,52 @@ namespace Aaru.DiscImages
                     _sectorSubchannel ??= new byte[_imageInfo.Sectors * 96];
 
                     Array.Copy(data, 0, _sectorSubchannel, (int)(96 * sectorAddress), 96);
+
+                    return true;
+                }
+
+                case SectorTagType.DvdCmi:
+                {
+                    if(data.Length != 1)
+                    {
+                        ErrorMessage = "Incorrect data size for CMI";
+
+                        return false;
+                    }
+
+                    _sectorCpiMai ??= new byte[_imageInfo.Sectors * 6];
+
+                    Array.Copy(data, 0, _sectorCpiMai, (int)(6 * sectorAddress), 1);
+
+                    return true;
+                }
+                case SectorTagType.DvdTitleKey:
+                {
+                    if(data.Length != 5)
+                    {
+                        ErrorMessage = "Incorrect data size for title key";
+
+                        return false;
+                    }
+
+                    _sectorCpiMai ??= new byte[_imageInfo.Sectors * 6];
+
+                    Array.Copy(data, 0, _sectorCpiMai, (int)(1 + (6 * sectorAddress)), 5);
+
+                    return true;
+                }
+                case SectorTagType.DvdTitleKeyDecrypted:
+                {
+                    if(data.Length != 5)
+                    {
+                        ErrorMessage = "Incorrect data size for decrypted title key";
+
+                        return false;
+                    }
+
+                    _sectorDecryptedTitleKey ??= new byte[_imageInfo.Sectors * 5];
+
+                    Array.Copy(data, 0, _sectorDecryptedTitleKey, (int)(5 * sectorAddress), 5);
 
                     return true;
                 }

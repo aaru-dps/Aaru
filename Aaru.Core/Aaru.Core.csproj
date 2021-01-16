@@ -149,6 +149,7 @@
       <Name>Aaru.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+    <ProjectReference Include="..\Aaru.Decryption\Aaru.Decryption.csproj" />
     <ProjectReference Include="..\Aaru.Dto\Aaru.Dto.csproj" />
     <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj">
       <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>

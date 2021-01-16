@@ -22,13 +22,19 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2020-2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
 using System.Linq;
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.Core.Logging;
+using Aaru.Decoders.DVD;
+using Aaru.Decryption;
+using Aaru.Decryption.DVD;
 using Schemas;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -53,10 +59,12 @@ namespace Aaru.Core.Devices.Dumping
         /// <param name="ibgLog">ImgBurn log</param>
         /// <param name="imageWriteDuration">Total time spent writing to image</param>
         /// <param name="newTrim">Set if we need to start a trim</param>
+        /// <param name="dvdDecrypt">DVD CSS decryption module</param>
+        /// <param name="discKey">The DVD disc key</param>
         void ReadSbcData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
                          ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
                          ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                         ref double imageWriteDuration, ref bool newTrim)
+                         ref double imageWriteDuration, ref bool newTrim, ref DVDDecryption dvdDecrypt, byte[] discKey)
         {
             ulong    sectorSpeedStart = 0;
             bool     sense;
@@ -97,6 +105,93 @@ namespace Aaru.Core.Devices.Dumping
                 if(!sense &&
                    !_dev.Error)
                 {
+                    if(Settings.Settings.Current.EnableDecryption)
+                    {
+                        if(_titleKeys && discKey != null)
+                        {
+                            for(ulong j = 0; j < blocksToRead; j++)
+                            {
+                                if(_aborted)
+                                    break;
+
+                                if(!_resume.MissingTitleKeys.Contains(i + j))
+                                    // Key is already dumped.
+                                    continue;
+
+                                byte[] tmpBuf;
+
+                                bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf, out _,
+                                                                        DvdCssKeyClass.DvdCssCppmOrCprm, i + j,
+                                                                        _dev.Timeout, out _);
+
+                                if(!tmpSense)
+                                {
+                                    CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
+
+                                    if(titleKey.HasValue)
+                                        _outputPlugin.WriteSectorTag(new[]
+                                        {
+                                            titleKey.Value.CMI
+                                        }, i + j, SectorTagType.DvdCmi);
+                                    else
+                                        continue;
+
+                                    // If the CMI bit is 1, the sector is using copy protection, else it is not
+                                    if((titleKey.Value.CMI & 0x80) >> 7 == 0)
+                                    {
+                                        // The CMI indicates this sector is not encrypted.
+                                        _outputPlugin.WriteSectorTag(new byte[]
+                                        {
+                                            0, 0, 0, 0, 0
+                                        }, i + j, SectorTagType.DvdTitleKey);
+
+                                        _outputPlugin.WriteSectorTag(new byte[]
+                                        {
+                                            0, 0, 0, 0, 0
+                                        }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+
+                                        _resume.MissingTitleKeys.Remove(i + j);
+
+                                        continue;
+                                    }
+                                    
+                                    // According to libdvdcss, if the key is all zeroes, the sector is actually
+                                    // not encrypted even if the CMI says it is.
+                                    if(titleKey.Value.Key.All(k => k == 0))
+                                    {
+                                        _outputPlugin.WriteSectorTag(new byte[]
+                                        {
+                                            0, 0, 0, 0, 0
+                                        }, i + j, SectorTagType.DvdTitleKey);
+
+                                        _outputPlugin.WriteSectorTag(new byte[]
+                                        {
+                                            0, 0, 0, 0, 0
+                                        }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+
+                                        _resume.MissingTitleKeys.Remove(i + j);
+
+                                        continue;
+                                    }
+
+                                    _outputPlugin.WriteSectorTag(titleKey.Value.Key, i + j, SectorTagType.DvdTitleKey);
+                                    _resume.MissingTitleKeys.Remove(i                  + j);
+
+                                    CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out tmpBuf);
+                                    _outputPlugin.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                                }
+                            }
+                        }
+                        
+                        if(!_storeEncrypted && _titleKeys)
+                            // Todo: Flag in the _outputPlugin that a sector has been decrypted
+                            buffer = CSS.DecryptSector(buffer,
+                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdCmi),
+                                                       _outputPlugin.ReadSectorsTag(i, blocksToRead,
+                                                           SectorTagType.DvdTitleKeyDecrypted),
+                                                       blocksToRead, blockSize);
+                    }
+
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;

@@ -296,6 +296,14 @@ namespace Aaru.Commands.Media
                     AaruConsole.WriteLine("Lead-In CMI:\n{0}", CSS_CPRM.PrettifyLeadInCopyright(scsiInfo.DvdCmi));
                 }
 
+                if(scsiInfo.DvdDiscKey != null)
+                    DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_disckey.bin",
+                                     "SCSI READ DISC STRUCTURE", scsiInfo.DvdDiscKey);
+
+                if(scsiInfo.DvdSectorCmi != null)
+                    DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_sectorcmi.bin",
+                                     "SCSI READ DISC STRUCTURE", scsiInfo.DvdSectorCmi);
+
                 if(scsiInfo.DvdBca != null)
                     DataFile.WriteTo("Media-Info command", outputPrefix, "_readdiscstructure_dvd_bca.bin",
                                      "SCSI READ DISC STRUCTURE", scsiInfo.DvdBca);

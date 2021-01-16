@@ -28,6 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2021 Natalia Portillo
+// Copyright © 2020-2021 Rebecca Wallander
 // ****************************************************************************/
 
 using System;
@@ -289,6 +290,24 @@ namespace Aaru.Commands.Media
                     Required = false
                 });
 
+            Add(new Option(new[]
+                {
+                    "--store-encrypted"
+                }, "Store encrypted data as is.")
+                {
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--title-keys"
+                }, "Try to read the title keys from CSS encrypted DVDs (very slow).")
+                {
+                    Argument = new Argument<bool>(() => true),
+                    Required = false
+                });
+
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
@@ -298,7 +317,8 @@ namespace Aaru.Commands.Media
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel,
                                  bool @private, bool fixSubchannelPosition, bool retrySubchannel, bool fixSubchannel,
                                  bool fixSubchannelCrc, bool generateSubchannels, bool skipCdiReadyHole, bool eject,
-                                 uint maxBlocks, bool useBufferedReads)
+                                 uint maxBlocks, bool useBufferedReads, bool storeEncrypted,
+                                 bool titleKeys)
         {
             MainClass.PrintCopyright();
 
@@ -348,6 +368,8 @@ namespace Aaru.Commands.Media
             AaruConsole.DebugWriteLine("Dump-Media command", "--eject={0}", eject);
             AaruConsole.DebugWriteLine("Dump-Media command", "--max-blocks={0}", maxBlocks);
             AaruConsole.DebugWriteLine("Dump-Media command", "--use-buffered-reads={0}", useBufferedReads);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--store-encrypted={0}", storeEncrypted);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--title-keys={0}", titleKeys);
 
             // TODO: Disabled temporarily
             //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -546,11 +568,12 @@ namespace Aaru.Commands.Media
                         return (int)ErrorNumber.InvalidResume;
                     }
 
-                if(resumeClass                 != null                 &&
-                   resumeClass.NextBlock       > resumeClass.LastBlock &&
-                   resumeClass.BadBlocks.Count == 0                    &&
-                   !resumeClass.Tape                                   &&
-                   (resumeClass.BadSubchannels is null || resumeClass.BadSubchannels.Count == 0))
+                if(resumeClass                 != null                                               &&
+                   resumeClass.NextBlock       > resumeClass.LastBlock                               &&
+                   resumeClass.BadBlocks.Count == 0                                                  &&
+                   !resumeClass.Tape                                                                 &&
+                   (resumeClass.BadSubchannels is null   || resumeClass.BadSubchannels.Count   == 0) &&
+                   (resumeClass.MissingTitleKeys is null || resumeClass.MissingTitleKeys.Count == 0))
                 {
                     AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
 
@@ -634,7 +657,8 @@ namespace Aaru.Commands.Media
                                       outputPrefix + extension, parsedOptions, sidecar, skip, metadata, trim,
                                       firstPregap, fixOffset, debug, wantedSubchannel, speed, @private,
                                       fixSubchannelPosition, retrySubchannel, fixSubchannel, fixSubchannelCrc,
-                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads);
+                                      skipCdiReadyHole, errorLog, generateSubchannels, maxBlocks, useBufferedReads,
+                                      storeEncrypted, titleKeys);
 
                 dumper.UpdateStatus         += Progress.UpdateStatus;
                 dumper.ErrorMessage         += Progress.ErrorMessage;
