@@ -734,7 +734,7 @@ namespace Aaru.Core.Devices.Dumping
                _retryPasses > 0)
                 RetrySbcData(scsiReader, currentTry, extents, ref totalDuration, blankExtents);
 
-            if(_resume.MissingTitleKeys.Count > 0         &&
+            if(_resume.MissingTitleKeys?.Count > 0        &&
                !_aborted                                  &&
                _retryPasses > 0                           &&
                Settings.Settings.Current.EnableDecryption &&
