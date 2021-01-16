@@ -8,6 +8,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
       <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
+      <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj" />
     </ItemGroup>
 
 </Project>
