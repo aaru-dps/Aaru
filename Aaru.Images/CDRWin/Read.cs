@@ -861,7 +861,7 @@ namespace Aaru.DiscImages
                         cueTracks[lastSessionTrack].Sectors = (ulong)(leadout - startSector);
                     }
                     else
-                        sessions[s - 1].EndSector = (sessions[s - 1].StartSector + sessionSectors) - 1;
+                        sessions[s - 1].EndSector = sessions[s - 1].StartSector + sessionSectors - 1;
 
                     CdrWinTrack firstSessionTrack = cueTracks.OrderBy(t => t.Sequence).First(t => t.Session == s);
 
@@ -1411,6 +1411,10 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
         {
+            if(tag == SectorTagType.CdTrackFlags ||
+               tag == SectorTagType.CdTrackIsrc)
+                return ReadSectorsTag(sectorAddress, length, 0, tag);
+
             foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
                                                      from cdrwinTrack in _discImage.Tracks
                                                      where cdrwinTrack.Sequence      == kvp.Key
