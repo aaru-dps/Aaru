@@ -24,4 +24,4 @@
 	url = https://github.com/gchudov/cuetools.net
 [submodule "Aaru.Decryption"]
 	path = Aaru.Decryption
-	url = git@github.com:aaru-dps/Aaru.Decryption.git
+	url = https://github.com/aaru-dps/Aaru.Decryption
