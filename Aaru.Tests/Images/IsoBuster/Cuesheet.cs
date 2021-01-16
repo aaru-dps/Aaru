@@ -39,10 +39,10 @@ using Aaru.Filters;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Images
+namespace Aaru.Tests.Images.IsoBuster
 {
     [TestFixture]
-    public class IsoBusterCuesheet
+    public class Cuesheet
     {
         readonly string[] _testFiles =
         {
