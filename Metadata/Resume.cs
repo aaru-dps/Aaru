@@ -60,6 +60,8 @@ namespace Aaru.CommonTypes.Metadata
         public List<int> BadSubchannels;
         [XmlArrayItem("Extent")]
         public ExtentType[] BlankExtents;
+        [XmlArrayItem("Block")]
+        public List<ulong> MissingTitleKeys;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
