@@ -22,7 +22,7 @@ that commonly would require you to use separate applications.
 To see last changes, check the [changelog](Changelog.md).
 To see list of pending things to do, check the [list of issues](https://github.com/aaru-dps/Aaru/issues).
 
-If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
+If you want to contribute in any way please read thea [contributing guide](CONTRIBUTING.md).
 
 Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
 
