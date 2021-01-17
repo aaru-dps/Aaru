@@ -71,8 +71,8 @@ namespace Aaru.Tests.Devices
             if(sense)
                 AaruConsole.WriteLine("READ CD failed...");
 
-            AaruConsole.WriteLine("Sending MediaTek READ CACHE to the device...");
-            sense = dev.MediaTekReadCache(out buffer, out senseBuffer, 0, 0xB00, dev.Timeout, out duration);
+            AaruConsole.WriteLine("Sending MediaTek READ DRAM to the device...");
+            sense = dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, dev.Timeout, out duration);
 
             menu:
             AaruConsole.WriteLine("Device: {0}", devPath);

@@ -1840,7 +1840,7 @@ namespace Aaru.Devices
         #endregion
 
         #region MediaTek vendor commands
-        MediaTekReadCache = 0xF1
+        MediaTekVendorCommand = 0xF1
         #endregion
     }
     #endregion SCSI Commands
@@ -2885,7 +2885,7 @@ namespace Aaru.Devices
     {
         LogicalBlockAddress = 0, LogicalTrackNumber = 1, SessionNumber = 2
     }
-    
+
     public enum CssReportKeyFormat : byte
     {
         AgidForCssCppm = 0x00, ChallengeKey   = 0x01, Key1     = 0x02,

@@ -1675,10 +1675,10 @@ namespace Aaru.Core.Devices.Report
 
                 if(triedLba0)
                 {
-                    AaruConsole.WriteLine("Trying MediaTek command F1h subcommand 06h...");
+                    AaruConsole.WriteLine("Trying MediaTek READ DRAM command...");
 
                     mediaTest.CanReadF1_06 =
-                        !_dev.MediaTekReadCache(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
+                        !_dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
 
                     mediaTest.ReadF1_06Data = mediaTest.CanReadF1_06 == true ? buffer : senseBuffer;
 
@@ -1745,10 +1745,10 @@ namespace Aaru.Core.Devices.Report
 
                     if(triedLeadOut)
                     {
-                        AaruConsole.WriteLine("Trying MediaTek command F1h subcommand 06h for Lead-Out...");
+                        AaruConsole.WriteLine("Trying MediaTek READ DRAM command for Lead-Out...");
 
                         mediaTest.CanReadF1_06LeadOut =
-                            !_dev.MediaTekReadCache(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
+                            !_dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, _dev.Timeout, out _);
 
                         mediaTest.ReadF1_06LeadOutData = mediaTest.CanReadF1_06LeadOut == true ? buffer : senseBuffer;
 
@@ -1823,9 +1823,9 @@ namespace Aaru.Core.Devices.Report
                                                              firstSessionLeadOutTrack.PFRAME           + 150);
 
                         // Skip second session track pre-gap
-                        uint secondSessionLeadInLba = (uint)(((secondSessionFirstTrack.PMIN * 60 * 75) +
-                                                              (secondSessionFirstTrack.PSEC * 75)      +
-                                                              secondSessionFirstTrack.PFRAME) - 300);
+                        uint secondSessionLeadInLba = (uint)((secondSessionFirstTrack.PMIN * 60 * 75) +
+                                                             (secondSessionFirstTrack.PSEC * 75)      +
+                                                             secondSessionFirstTrack.PFRAME - 300);
 
                         AaruConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
 
